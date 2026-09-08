@@ -33,12 +33,12 @@ import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.server.buyReturn
 import kz.mybrain.superkassa.desktop.server.documentDetails
 import kz.mybrain.superkassa.desktop.server.sellReturn
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.history.DASH
-import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentLines
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentSplit
 import kz.mybrain.superkassa.desktop.ui.payment.SplitIssue
@@ -73,9 +73,9 @@ fun RefundPanel(
     val journal = journalTexts(session.language).returns
     ElevatedCard(modifier = modifier.fillMaxHeight()) {
         if (basis == null) {
-            JournalEmpty(
+            EmptyState(
                 icon = AppIcons.noBasis,
-                line = journal.chooseBasis,
+                title = journal.chooseBasis,
                 hint = journal.chooseBasisHint,
                 modifier = Modifier.fillMaxHeight()
             )

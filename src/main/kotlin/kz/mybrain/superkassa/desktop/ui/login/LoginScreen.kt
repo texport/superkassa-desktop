@@ -8,24 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -57,7 +48,6 @@ import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.LanguagePicker
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.components.underFieldLabel
 import kz.mybrain.superkassa.desktop.ui.setup.ConnectKkmScreen
@@ -233,115 +223,6 @@ private fun EmptyKkms(onReload: () -> Unit, onCabinet: () -> Unit, onRegister: (
         TextButton(onClick = onReload) { Text(texts.login.reload) }
     }
 }
-
-@Composable
-private fun SearchField(value: String, onChange: (String) -> Unit) {
-    val texts = LocalStrings.current
-    OutlinedTextField(
-        value = value,
-        onValueChange = onChange,
-        label = { Text(texts.login.search) },
-        leadingIcon = { Icon(AppIcons.kkm, contentDescription = null) },
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.roomy)
-    )
-}
-
-/**
- * Перечень касс.
- *
- * Одна карточка на весь список, а не карточка на строку: по Material 3
- * выбор из однородных значений — это список со строками, а рамка вокруг
- * каждой строки делает десяток касс похожим на десяток разных разделов.
- */
-@Composable
-private fun KkmList(
-    kkms: List<Kkm>,
-    nameOf: (Kkm) -> String,
-    chosenId: String?,
-    rememberedId: String?,
-    modifier: Modifier = Modifier,
-    onPick: (Kkm) -> Unit
-) {
-    val state = rememberLazyListState()
-    var shown by remember { mutableStateOf(false) }
-
-    // Список прокручивается к запомненной кассе один раз — когда пришёл
-    // с узла. Она часто стоит ниже видимой части, и без этого кассир
-    // видел внизу «Касса FNS-2000042», а в списке ни одной отмеченной
-    // строки. На выбор кассира прокрутка не отвечает: строка уезжала
-    // из-под пальца в тот самый миг, когда по ней попали.
-    LaunchedEffect(kkms.isEmpty()) {
-        if (kkms.isEmpty() || shown) return@LaunchedEffect
-        shown = true
-        val at = kkms.indexOfFirst { it.kkmId == chosenId }
-        if (at >= 0) state.scrollToItem(at)
-    }
-
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth()
-            .padding(horizontal = Spacing.roomy)
-            .padding(top = Spacing.snug)
-    ) {
-        ScrollableList(state = state, modifier = Modifier.fillMaxWidth().selectableGroup()) {
-            items(kkms) { kkm ->
-                KkmRow(
-                    kkm = kkm,
-                    name = nameOf(kkm),
-                    selected = kkm.kkmId == chosenId,
-                    remembered = kkm.kkmId == rememberedId,
-                    onPick = { onPick(kkm) }
-                )
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            }
-        }
-    }
-}
-
-@Composable
-private fun KkmRow(
-    kkm: Kkm,
-    name: String,
-    selected: Boolean,
-    remembered: Boolean,
-    onPick: () -> Unit
-) {
-    val texts = LocalStrings.current
-    ListItem(
-        headlineContent = { Text(name, style = MaterialTheme.typography.titleMedium) },
-        supportingContent = { Text(kkmDetail(kkm, name, texts.login.factory)) },
-        leadingContent = { RadioButton(selected = selected, onClick = null) },
-        trailingContent = {
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-                if (remembered) Chip(texts.login.yourKkm, StatusColors.delivered)
-                if (kkm.isBlocked) Chip(texts.shell.blocked, StatusColors.refused)
-                if (kkm.isAutonomous) Chip(texts.shell.autonomous, StatusColors.pending)
-            }
-        },
-        colors = if (selected) {
-            ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-        } else {
-            ListItemDefaults.colors()
-        },
-        modifier = Modifier.selectable(selected = selected, onClick = onPick)
-    )
-}
-
-/**
- * Чем эта касса отличается от соседней в списке.
- *
- * Название кассы — уже её регистрационный номер, и подписывать его словами
- * «регистрационный номер» в каждой строке значит повторить одно и то же
- * десять раз подряд. Остаются различия: чьё это, где стоит и какой завод.
- */
-private fun kkmDetail(kkm: Kkm, name: String, factoryLabel: String): String = listOfNotNull(
-    // Своё название вытеснило регистрационный номер из первой строки —
-    // тогда номер уходит в подпись: по нему кассу ищут в кабинете ОФД.
-    kkm.title.takeIf { it != name },
-    kkm.orgTitle.takeIf { it.isNotBlank() },
-    kkm.orgAddress.takeIf { it.isNotBlank() },
-    kkm.factoryNumber?.let { "$factoryLabel $it" }
-).joinToString(" · ")
 
 /**
  * Пин и вход.

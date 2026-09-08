@@ -1,6 +1,5 @@
 package kz.mybrain.superkassa.desktop.ui.returns
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -15,8 +14,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,14 +27,14 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
-import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
+import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -68,15 +65,15 @@ fun ReturnsScreen(session: Session) {
         when {
             // Закрытая смена — состояние, а не отказ: об этом сказано словами
             // и подсказкой, а не пустым списком, из которого ничего не понять.
-            !session.shiftOpen -> JournalEmpty(
+            !session.shiftOpen -> EmptyState(
                 icon = AppIcons.noBasis,
-                line = journal.shiftClosed,
+                title = journal.shiftClosed,
                 hint = journal.shiftClosedHint,
                 modifier = Modifier.weight(1f)
             )
-            candidates.isEmpty() -> JournalEmpty(
+            candidates.isEmpty() -> EmptyState(
                 icon = AppIcons.noBasis,
-                line = kind.emptyText(journal),
+                title = kind.emptyText(journal),
                 hint = journal.noBasisHint,
                 modifier = Modifier.weight(1f)
             )
@@ -174,46 +171,19 @@ private fun BasisRow(
     onChoose: () -> Unit
 ) {
     val texts = LocalStrings.current
-    ListItem(
-        headlineContent = {
-            Text(
-                text = "${texts.returns.receiptNo} ${candidate.docNo}",
-                style = MaterialTheme.typography.titleSmall
-            )
-        },
-        supportingContent = {
-            // Узел хранит фискальный признак и номером документа: писать
-            // одно и то же число дважды подряд незачем.
-            val sign = candidate.fiscalSign ?: candidate.autonomousSign
-            if (sign != null && sign != candidate.docNo?.toString()) {
-                Text(
-                    text = "${journal.fiscalSign}: $sign",
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-        },
-        trailingContent = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
-            ) {
-                Text(Money.formatTiyn(candidate.totalAmount), style = MoneyStyle.row)
-                DeliveryChip(candidate.ofdStatus, candidate.isAutonomous == true)
-            }
-        },
-        colors = ListItemDefaults.colors(containerColor = basisTint(selected)),
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onChoose)
+    // Узел хранит фискальный признак и номером документа: писать
+    // одно и то же число дважды подряд незачем.
+    val sign = (candidate.fiscalSign ?: candidate.autonomousSign)
+        ?.takeIf { it != candidate.docNo?.toString() }
+    RecordRow(
+        title = "${texts.returns.receiptNo} ${candidate.docNo}",
+        subtitle = sign?.let { "${journal.fiscalSign}: $it" },
+        amount = Money.formatTiyn(candidate.totalAmount),
+        selected = selected,
+        onClick = onChoose,
+        trailing = { DeliveryChip(candidate.ofdStatus, candidate.isAutonomous == true) }
     )
 }
-
-/** Выбранный чек выделен ролью «всё хорошо», а не собственной краской. */
-@Composable
-private fun basisTint(selected: Boolean) =
-    if (selected) {
-        MaterialTheme.colorScheme.secondaryContainer
-    } else {
-        MaterialTheme.colorScheme.surfaceContainerLow
-    }
 
 /** Доли ширины: список чеков шире панели, в нём читают, а не вводят. */
 private const val BASIS_COLUMN = 1.3f

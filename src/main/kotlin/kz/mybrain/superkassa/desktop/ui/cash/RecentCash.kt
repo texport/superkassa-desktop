@@ -1,34 +1,28 @@
 package kz.mybrain.superkassa.desktop.ui.cash
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
-import androidx.compose.material.icons.outlined.Savings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.documents
 import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.DrawerTexts
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.time.Instant
 import java.time.ZoneId
@@ -46,11 +40,10 @@ import java.time.format.DateTimeFormatter
  */
 @Composable
 internal fun RecentCash(session: Session, money: DrawerTexts, recent: List<Document>) {
-    Text(money.recent, style = MaterialTheme.typography.titleMedium)
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+    SectionCard(title = money.recent) {
         if (recent.isEmpty()) {
-            NothingYet(money)
-            return@OutlinedCard
+            EmptyState(AppIcons.cash, money.recentEmpty, money.recentEmptyHint, dense = true)
+            return@SectionCard
         }
         recent.forEachIndexed { index, document ->
             if (index > 0) {
@@ -72,16 +65,17 @@ internal fun RecentCash(session: Session, money: DrawerTexts, recent: List<Docum
 @Composable
 private fun CashRow(session: Session, document: Document) {
     val paidIn = document.docType == CASH_IN
-    ListItem(
-        leadingContent = {
+    RecordRow(
+        title = session.titleOf(Dictionary.DocumentTypes, document.docType),
+        amount = Money.formatTiyn(document.totalAmount),
+        leading = {
             Icon(
                 imageVector = if (paidIn) Icons.Outlined.ArrowDownward else Icons.Outlined.ArrowUpward,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
-        headlineContent = { Text(session.titleOf(Dictionary.DocumentTypes, document.docType)) },
-        supportingContent = {
+        support = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
                 verticalAlignment = Alignment.CenterVertically
@@ -90,36 +84,7 @@ private fun CashRow(session: Session, document: Document) {
                 DeliveryChip(document.ofdStatus, document.isAutonomous == true)
             }
         },
-        trailingContent = {
-            Text(
-                text = Money.formatTiyn(document.totalAmount),
-                style = MoneyStyle.row,
-                modifier = Modifier.width(Sizes.fieldAmount)
-            )
-        }
     )
-}
-
-/** Пустой список: значок, что здесь будет, и когда это появится. */
-@Composable
-private fun NothingYet(money: DrawerTexts) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Savings,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(money.recentEmpty, style = MaterialTheme.typography.titleSmall)
-        Text(
-            text = money.recentEmptyHint,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
 }
 
 /**

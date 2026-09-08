@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.EventBusy
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Menu
@@ -116,6 +117,9 @@ object AppIcons {
     val noDocuments: ImageVector = Icons.Filled.EventBusy
     val noBasis: ImageVector = Icons.Filled.ReceiptLong
     val queueClear: ImageVector = Icons.Filled.CloudDone
+
+    /** Кассиры этой кассы. */
+    val cashiers: ImageVector = Icons.Filled.Groups
 
     /** Место на карте: где стоит торговая точка. */
     val place: ImageVector = Icons.Filled.Place

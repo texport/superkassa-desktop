@@ -229,115 +229,6 @@ private fun MapArea(
     }
 }
 
-/**
- * Управление картой: своё место, приближение, отдаление.
- *
- * Кнопки лежат на своей поверхности, а не прямо на плитках: значок
- * без подложки терялся на пёстрой карте — на светлом квартале его
- * не было видно вовсе.
- */
-@Composable
-private fun MapControls(
-    state: MapState,
-    texts: CabinetTexts,
-    preferences: Preferences,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(Sizes.corner),
-        tonalElevation = Sizes.dialogElevation
-    ) {
-        Column {
-            LocateButton(state, texts, preferences)
-            IconButton(onClick = { state.zoomBy(1) }) {
-                Icon(AppIcons.zoomIn, contentDescription = texts.zoomIn)
-            }
-            IconButton(onClick = { state.zoomBy(-1) }) {
-                Icon(AppIcons.zoomOut, contentDescription = texts.zoomOut)
-            }
-        }
-    }
-}
-
-/**
- * «Где я»: сперва служба геопозиции самой машины, потом — адрес подключения.
- *
- * У макбука служба своя, и точность у неё домовая: разрешение на неё
- * спрашивает система своим окном, приложение к нему не прикасается.
- * Свой вопрос остаётся только для запасного пути — там наружу уходит
- * адрес подключения, и это решение владельца.
- *
- * Метку выбранной точки кнопка не ставит ни в том, ни в другом случае:
- * своё место — это своё место, а точку выбирает владелец нажатием.
- */
-@Composable
-private fun LocateButton(state: MapState, texts: CabinetTexts, preferences: Preferences) {
-    val scope = rememberCoroutineScope()
-    val locator = remember { MapLocator() }
-    var asking by remember { mutableStateOf(false) }
-    var busy by remember { mutableStateOf(false) }
-
-    /** Запасной путь: город по адресу подключения — и только по разрешению. */
-    suspend fun byConnection() {
-        locator.locate()?.let { state.showLocation(it.latitude, it.longitude, it.city, CITY_ZOOM) }
-    }
-
-    fun locate() = scope.launch {
-        busy = true
-        // Сначала спрашиваем саму машину: её служба геопозиции указывает
-        // на дом, и разрешение у владельца просит система своим окном.
-        val system = MacLocation.locate()
-        if (system != null) {
-            state.showLocation(system.latitude, system.longitude, "", HOUSE_ZOOM, precise = true)
-        } else {
-            when (preferences.locationAllowed) {
-                true -> byConnection()
-                false -> Unit
-                null -> asking = true
-            }
-        }
-        busy = false
-    }
-
-    IconButton(enabled = !busy, onClick = { locate() }) {
-        Icon(AppIcons.myLocation, contentDescription = texts.myLocation)
-    }
-    if (asking) {
-        LocationConsent(
-            texts = texts,
-            onAllow = {
-                preferences.locationAllowed = true
-                asking = false
-                scope.launch { byConnection() }
-            },
-            onDeny = {
-                preferences.locationAllowed = false
-                asking = false
-            }
-        )
-    }
-}
-
-/**
- * Вопрос об определении места.
- *
- * Сказано ровно то, что произойдёт: наружу уйдёт адрес подключения,
- * а обратно придёт город — не дом. Умолчание здесь было бы обманом:
- * владелец вправе знать, что кассa обратилась в чужую службу.
- */
-@Composable
-private fun LocationConsent(texts: CabinetTexts, onAllow: () -> Unit, onDeny: () -> Unit) {
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = onDeny,
-        icon = { Icon(AppIcons.myLocation, contentDescription = null) },
-        title = { Text(texts.locationAsk) },
-        text = { Text(texts.locationAskHint) },
-        confirmButton = { Button(onClick = onAllow) { Text(texts.locationAllow) } },
-        dismissButton = { TextButton(onClick = onDeny) { Text(texts.locationDeny) } }
-    )
-}
-
 /** Что выбрано и что с этим делать. */
 @Composable
 private fun MapFooter(
@@ -391,10 +282,10 @@ private fun MapFooter(
 }
 
 /** Увеличение, на котором виден город: с него начинается найденное по адресу подключения. */
-private const val CITY_ZOOM = 12
+internal const val CITY_ZOOM = 12
 
 /** Увеличение, на котором различимы дома: на нём открывается найденный адрес. */
-private const val HOUSE_ZOOM = 17
+internal const val HOUSE_ZOOM = 17
 
 /** Затеняется каждая вторая строка найденного. */
 private const val STRIPE = 2

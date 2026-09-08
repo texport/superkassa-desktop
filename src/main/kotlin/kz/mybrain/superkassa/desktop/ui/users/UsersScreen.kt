@@ -1,23 +1,15 @@
 package kz.mybrain.superkassa.desktop.ui.users
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
@@ -26,11 +18,13 @@ import kz.mybrain.superkassa.desktop.server.KkmUser
 import kz.mybrain.superkassa.desktop.server.changeUserPin
 import kz.mybrain.superkassa.desktop.server.removeUser
 import kz.mybrain.superkassa.desktop.server.users
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
-import kz.mybrain.superkassa.desktop.ui.strings.CashierTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -78,11 +72,10 @@ fun UsersScreen(session: Session) {
 
         AddCashier(session, money) { reload() }
 
-        Text(money.cashiers.listTitle, style = MaterialTheme.typography.titleMedium)
-        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+        SectionCard(title = money.cashiers.listTitle) {
             if (loaded.isEmpty()) {
-                NoCashiers(money.cashiers)
-                return@OutlinedCard
+                EmptyState(AppIcons.cashiers, money.cashiers.empty, money.cashiers.emptyHint, dense = true)
+                return@SectionCard
             }
             loaded.forEachIndexed { index, user ->
                 if (index > 0) {
@@ -100,28 +93,6 @@ fun UsersScreen(session: Session) {
                 )
             }
         }
-    }
-}
-
-/** Пустой список: значок, что здесь будет, и с чего начать. */
-@Composable
-private fun NoCashiers(money: CashierTexts) {
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Icon(
-            imageVector = Icons.Outlined.Groups,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Text(money.empty, style = MaterialTheme.typography.titleSmall)
-        Text(
-            text = money.emptyHint,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 

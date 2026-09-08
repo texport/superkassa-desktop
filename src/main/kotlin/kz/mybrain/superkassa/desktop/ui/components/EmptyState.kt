@@ -22,24 +22,32 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Пустой экран обязан сказать три вещи: что здесь бывает, почему сейчас
  * пусто и что сделать. Голая строка «нет данных» оставляет кассира гадать,
  * сломалось что-то или так и должно быть.
+ *
+ * Одно на всё приложение. Своих было три — у журнала, у кассиров
+ * и у движения денег, — и они разошлись: разный значок по размеру,
+ * разный оттенок, разные отступы. Внутри карточки или плотного списка
+ * то же состояние показывается [dense]: значок мельче, воздуха меньше.
+ *
+ * @param dense плотный вид для списка внутри карточки.
  */
 @Composable
 fun EmptyState(
     icon: ImageVector,
     title: String,
     hint: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    dense: Boolean = false
 ) {
     Column(
         modifier = modifier.fillMaxWidth().padding(Spacing.roomy),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        verticalArrangement = Arrangement.spacedBy(if (dense) Spacing.tight else Spacing.snug)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.outline,
-            modifier = Modifier.size(Sizes.emptyIcon)
+            modifier = Modifier.size(if (dense) Sizes.emptyIconDense else Sizes.emptyIcon)
         )
         Text(
             text = title,

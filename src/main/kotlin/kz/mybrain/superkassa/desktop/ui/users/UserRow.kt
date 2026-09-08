@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.PersonOutline
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -13,7 +12,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,9 +24,12 @@ import androidx.compose.ui.Alignment
 import kz.mybrain.superkassa.desktop.server.KkmUser
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.ui.history.DASH
 import kz.mybrain.superkassa.desktop.ui.strings.CashierTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -55,17 +56,17 @@ internal fun UserRow(
     var pinAsked by remember { mutableStateOf(false) }
     var deleteAsked by remember { mutableStateOf(false) }
 
-    ListItem(
-        leadingContent = {
+    RecordRow(
+        title = user.name ?: DASH,
+        leading = {
             Icon(
-                imageVector = Icons.Outlined.PersonOutline,
+                imageVector = AppIcons.cashiers,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
-        headlineContent = { Text(user.name ?: "—") },
-        supportingContent = { WhoIs(cashiers, roleTitle, deletable) },
-        trailingContent = {
+        support = { WhoIs(cashiers, roleTitle, deletable) },
+        trailing = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
                 verticalAlignment = Alignment.CenterVertically

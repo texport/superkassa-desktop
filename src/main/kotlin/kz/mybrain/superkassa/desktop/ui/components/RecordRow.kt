@@ -30,6 +30,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * @param amount сумма строки; набирается денежным шрифтом, чтобы цифры
  *   в списке стояли столбцом.
+ * @param support служебная часть строки, когда её мало одной строкой
+ *   текста: у задачи очереди там причина отказа и время следующей попытки.
  * @param striped затенена ли строка: признак чередования, а не состояния.
  * @param selected выбрана ли строка в списке, у которого есть выбранное:
  *   она берёт вторичный контейнер схемы, как выделенный пункт по Material 3.
@@ -40,6 +42,7 @@ fun RecordRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     amount: String? = null,
+    support: @Composable (() -> Unit)? = null,
     striped: Boolean = false,
     selected: Boolean = false,
     leading: @Composable (() -> Unit)? = null,
@@ -59,7 +62,7 @@ fun RecordRow(
                 overflow = TextOverflow.Ellipsis
             )
         },
-        supportingContent = subtitle?.takeIf { it.isNotBlank() }?.let { note ->
+        supportingContent = support ?: subtitle?.takeIf { it.isNotBlank() }?.let { note ->
             {
                 Text(
                     text = note,

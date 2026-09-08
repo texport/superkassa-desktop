@@ -4,18 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.style.TextAlign
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.time.Instant
 import java.time.ZoneId
@@ -29,36 +24,6 @@ import java.time.format.DateTimeFormatter
  * Собственных красок здесь нет: всё берётся ролями схемы.
  */
 
-/**
- * Пустое состояние: значок, строка и подсказка.
- *
- * Пустой экран без объяснения кассир читает как поломку. Строка говорит,
- * что именно пусто, подсказка — что с этим делать.
- */
-@Composable
-fun JournalEmpty(icon: ImageVector, line: String, hint: String, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.fillMaxWidth().padding(Spacing.roomy),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight, Alignment.CenterVertically)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.size(Sizes.emptyIconDense)
-        )
-        Text(line, style = MaterialTheme.typography.titleMedium, textAlign = TextAlign.Center)
-        Text(
-            text = hint,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center
-        )
-    }
-}
-
-/** Ожидание ответа узла на месте будущего списка, а не строкой над ним. */
 @Composable
 fun JournalLoading(modifier: Modifier = Modifier) {
     val texts = LocalStrings.current

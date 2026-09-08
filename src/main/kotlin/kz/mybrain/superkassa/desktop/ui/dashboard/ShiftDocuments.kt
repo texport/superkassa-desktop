@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -23,10 +22,10 @@ import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -73,15 +72,15 @@ private fun DocumentRow(
     onPrint: () -> Unit
 ) {
     val texts = LocalStrings.current
-    ListItem(
-        headlineContent = { Text(documentTitle) },
-        supportingContent = { Text(document.docNo?.toString() ?: DASH) },
-        trailingContent = {
+    RecordRow(
+        title = documentTitle,
+        subtitle = document.docNo?.toString() ?: DASH,
+        amount = Money.formatTiyn(document.totalAmount),
+        trailing = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(Money.formatTiyn(document.totalAmount), style = MoneyStyle.row)
                 DeliveryChip(document.ofdStatus, document.isAutonomous == true, document.docType)
                 // Код отказа вместо кнопки повтора: документ, который ОФД
                 // отверг, повторной отправкой не исправить — операцию нужно

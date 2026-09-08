@@ -11,8 +11,6 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,11 +24,11 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.QueueTask
 import kz.mybrain.superkassa.desktop.server.retryFailedQueue
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
+import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.history.DASH
-import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
 import kz.mybrain.superkassa.desktop.ui.history.momentText
-import kz.mybrain.superkassa.desktop.ui.history.rowTint
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.QueueJournalTexts
@@ -61,7 +59,7 @@ fun QueueScreen(session: Session) {
         Text(texts.queue.title, style = MaterialTheme.typography.headlineSmall)
         QueueSummary(session, journal, waiting.size, failed.isNotEmpty())
         if (session.queueTasks.isEmpty()) {
-            JournalEmpty(AppIcons.queueClear, texts.queue.empty, journal.emptyHint, Modifier.weight(1f))
+            EmptyState(AppIcons.queueClear, texts.queue.empty, journal.emptyHint, Modifier.weight(1f))
         } else {
             QueueList(waiting, done, journal, session.language.code, Modifier.weight(1f))
         }
@@ -154,14 +152,11 @@ private fun QueueRow(
     language: String
 ) {
     val state = queueStateOf(task.status)
-    ListItem(
-        headlineContent = {
-            Text("${journal.task}: ${task.type ?: DASH}", style = MaterialTheme.typography.titleSmall)
-        },
-        supportingContent = { QueueSupport(task, state, texts, journal, language) },
-        trailingContent = { Chip(stateTitle(state, task.status, texts, journal), stateColor(state)) },
-        colors = ListItemDefaults.colors(containerColor = rowTint(striped)),
-        modifier = Modifier.fillMaxWidth()
+    RecordRow(
+        title = "${journal.task}: ${task.type ?: DASH}",
+        support = { QueueSupport(task, state, texts, journal, language) },
+        striped = striped,
+        trailing = { Chip(stateTitle(state, task.status, texts, journal), stateColor(state)) }
     )
 }
 

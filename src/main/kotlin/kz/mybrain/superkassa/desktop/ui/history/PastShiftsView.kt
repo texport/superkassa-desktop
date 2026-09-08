@@ -1,17 +1,13 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,7 +25,9 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
+import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.ShiftJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
@@ -116,7 +114,7 @@ private fun ColumnScope.ShiftList(
         return
     }
     if (shifts.isEmpty()) {
-        JournalEmpty(AppIcons.noDocuments, journal.none, journal.noneHint, Modifier.weight(1f))
+        EmptyState(AppIcons.noDocuments, journal.none, journal.noneHint, Modifier.weight(1f))
         return
     }
     ScrollableList(modifier = Modifier.weight(1f)) {
@@ -147,14 +145,12 @@ private fun ShiftRow(
     onOpen: () -> Unit,
     onZReport: () -> Unit
 ) {
-    ListItem(
-        headlineContent = {
-            Text("${journal.number} ${shift.shiftNo ?: DASH}", style = MaterialTheme.typography.titleSmall)
-        },
-        supportingContent = {
-            Text(shiftMoments(journal, shift), style = MaterialTheme.typography.bodySmall)
-        },
-        trailingContent = {
+    RecordRow(
+        title = "${journal.number} ${shift.shiftNo ?: DASH}",
+        subtitle = shiftMoments(journal, shift),
+        striped = striped,
+        onClick = onOpen,
+        trailing = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
                 verticalAlignment = Alignment.CenterVertically
@@ -167,9 +163,7 @@ private fun ShiftRow(
                     TextButton(onClick = onZReport) { Text(journal.zReport) }
                 }
             }
-        },
-        colors = ListItemDefaults.colors(containerColor = rowTint(striped)),
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onOpen)
+        }
     )
 }
 
@@ -203,9 +197,9 @@ private fun ColumnScope.ShiftDocuments(
         )
     }
     if (documents.isEmpty()) {
-        JournalEmpty(
+        EmptyState(
             icon = AppIcons.noDocuments,
-            line = journal.emptyDocuments,
+            title = journal.emptyDocuments,
             hint = journal.emptyDocumentsHint,
             modifier = Modifier.weight(1f)
         )

@@ -31,6 +31,7 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.PAGE
 import kz.mybrain.superkassa.desktop.server.documents
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
@@ -84,15 +85,15 @@ fun DayJournal(session: Session) {
         TypeFilter(session, journal, types, type) { chosenType = it }
         when {
             loading -> JournalLoading(Modifier.weight(1f))
-            loaded.isEmpty() -> JournalEmpty(
+            loaded.isEmpty() -> EmptyState(
                 icon = AppIcons.noDocuments,
-                line = journal.emptyDay,
+                title = journal.emptyDay,
                 hint = journal.emptyDayHint,
                 modifier = Modifier.weight(1f)
             )
-            shown.isEmpty() -> JournalEmpty(
+            shown.isEmpty() -> EmptyState(
                 icon = AppIcons.noDocuments,
-                line = journal.emptyForType,
+                title = journal.emptyForType,
                 hint = journal.emptyForTypeHint,
                 modifier = Modifier.weight(1f)
             )

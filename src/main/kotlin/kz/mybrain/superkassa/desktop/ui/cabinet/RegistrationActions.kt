@@ -155,7 +155,6 @@ private fun DeregistrationFields(
             value = comment,
             onValueChange = onComment,
             label = { Text(texts.comment) },
-            supportingText = { Text(texts.optional) },
             singleLine = true,
             modifier = Modifier.width(Sizes.fieldName)
         )
