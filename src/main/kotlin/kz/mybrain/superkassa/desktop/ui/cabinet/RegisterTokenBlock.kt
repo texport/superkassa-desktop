@@ -22,8 +22,11 @@ import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
  *
  * Выдаётся по требованию владельца и показывается один раз: это ключ,
  * которым касса подписывает запросы, и место ему в настройках кассы,
- * а не в журнале кабинета. Поэтому раздел свёрнут по умолчанию — ключ
- * не должен лежать на экране, пока его не спросили.
+ * а не в журнале кабинета.
+ *
+ * Кнопка гаснет там, где кабинет токен не выдаст: по черновику и по кассе
+ * с поданным заявлением. Прежде она нажималась всегда, и владелец получал
+ * отказ сервера — по-английски и кодом.
  *
  * Выданное значение обёрнуто в область выделения: его переносят в другое
  * приложение, а переписывать десять цифр с экрана руками — верный способ
@@ -34,8 +37,10 @@ fun RegisterTokenBlock(cabinet: CabinetSession, texts: CabinetTexts, register: C
     val scope = rememberCoroutineScope()
     var issued by remember(register.id) { mutableStateOf<Long?>(null) }
 
+    Text(text = texts.token, style = MaterialTheme.typography.titleSmall)
+    val allowed = tokenAllowed(register)
     Text(
-        text = texts.tokenHint,
+        text = if (allowed) texts.tokenHint else texts.tokenOnlyRegistered,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
@@ -47,6 +52,7 @@ fun RegisterTokenBlock(cabinet: CabinetSession, texts: CabinetTexts, register: C
     BusyButton(
         text = texts.issueToken,
         busy = cabinet.busy,
+        enabled = allowed,
         onClick = {
             scope.launch {
                 val token = cabinet.token ?: return@launch

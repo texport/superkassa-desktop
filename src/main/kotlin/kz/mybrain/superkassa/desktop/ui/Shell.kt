@@ -34,6 +34,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetBar
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetScreen
+import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMessage
 import kz.mybrain.superkassa.desktop.ui.cash.CashScreen
 import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
 import kz.mybrain.superkassa.desktop.ui.components.KkmStatusChips
@@ -48,6 +49,7 @@ import kz.mybrain.superkassa.desktop.ui.sale.SaleScreen
 import kz.mybrain.superkassa.desktop.ui.settings.SettingsScreen
 import kz.mybrain.superkassa.desktop.ui.setup.ConnectKkmScreen
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -93,6 +95,7 @@ fun Shell(session: Session) {
             snackbarHost = { MessageHost(messages) }
         ) { padding ->
             MessageEffect(session.lastMessage, messages) { session.lastMessage = null }
+            CabinetMessageEffect(session, cabinet)
             Box(modifier = Modifier.fillMaxSize().padding(padding)) {
                 LoginScreen(session, cabinet)
             }
@@ -136,6 +139,9 @@ fun Shell(session: Session) {
         snackbarHost = { MessageHost(messages) }
     ) { padding ->
         MessageEffect(session.lastMessage, messages) { session.lastMessage = null }
+        // Помехи кабинета идут тем же путём, что и отказы кассы: сообщение
+        // в приложении одно, и место ему внизу окна.
+        CabinetMessageEffect(session, cabinet)
         Row(modifier = Modifier.fillMaxSize().padding(padding)) {
             // Ширина рельса считается по самой длинной подписи набора:
             // у Material она фиксированная, и «Новая касса» упиралась
@@ -232,6 +238,23 @@ private fun KkmTopBar(session: Session, onSignOut: () -> Unit, onRefresh: () -> 
 
 /** Разделитель между сведениями в подзаголовке. */
 private const val SEPARATOR = " · "
+
+/**
+ * Передаёт помеху кабинета общему показу сообщений.
+ *
+ * Кабинет живёт своим сеансом, а окно у приложения одно: отказ ИСНА
+ * и отказ узла владелец читает в одном и том же месте, а не ищет
+ * красную строку по разделам.
+ */
+@Composable
+private fun CabinetMessageEffect(session: Session, cabinet: CabinetSession) {
+    val texts = cabinetTexts(session.language)
+    LaunchedEffect(cabinet.problem) {
+        val problem = cabinet.problem ?: return@LaunchedEffect
+        session.lastMessage = cabinetMessage(problem, texts)
+        cabinet.clearProblem()
+    }
+}
 
 /**
  * Полоска ожидания под шапкой.

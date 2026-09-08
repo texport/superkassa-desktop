@@ -46,7 +46,6 @@ fun CabinetScreen(session: Session, cabinet: CabinetSession) {
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
         CabinetTabs(page, texts) { page = it }
-        CabinetIssue(cabinet, texts)
         CabinetPage(session, cabinet, texts, page)
     }
 }

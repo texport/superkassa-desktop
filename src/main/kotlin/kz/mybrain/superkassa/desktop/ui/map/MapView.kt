@@ -39,12 +39,7 @@ import kotlin.math.roundToInt
  * считаются из проекции, а не из картинки.
  */
 @Composable
-fun MapView(
-    state: MapState,
-    tiles: MapTiles,
-    modifier: Modifier = Modifier,
-    onPick: (Double, Double) -> Unit
-) {
+fun MapView(state: MapState, tiles: MapTiles, modifier: Modifier = Modifier) {
     var canvas by remember { mutableStateOf(IntSize.Zero) }
     var revision by remember { mutableIntStateOf(0) }
 
@@ -74,7 +69,6 @@ fun MapView(
                         MapProjection.latitudeOf(world.y.toDouble(), state.zoom),
                         MapProjection.longitudeOf(world.x.toDouble(), state.zoom)
                     )
-                    onPick(state.markerLatitude!!, state.markerLongitude!!)
                 }
             }
     ) {

@@ -22,7 +22,6 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
 import kz.mybrain.superkassa.desktop.app.Session
-import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetIssue
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
@@ -92,7 +91,6 @@ fun ConnectKkmScreen(
         )
         when (way) {
             SetupWay.ViaCabinet -> {
-                CabinetIssue(cabinet, cabinetTexts(session.language))
                 // Вход нужен всем шагам, кроме первого, и жить он обязан
                 // здесь: спрятанный внутри пройденного шага, он исчезал
                 // вместе с ним — мастер, продолженный назавтра, упирался

@@ -45,9 +45,21 @@ class CabinetSession(
     var registers: List<CabinetRegister> by mutableStateOf(emptyList())
         private set
 
-    /** Что именно не получилось; показывается в разделе кабинета. */
+    /**
+     * Что именно не получилось.
+     *
+     * Помеха не показывается на месте: её забирает каркас окна и выводит
+     * тем же всплывающим сообщением, что и отказы кассы. Красная строка
+     * посреди раздела оставалась висеть после исправления и терялась,
+     * когда раздел прокручивали.
+     */
     var problem: CabinetProblem? by mutableStateOf(null)
         private set
+
+    /** Помеха показана — снять её. */
+    fun clearProblem() {
+        problem = null
+    }
 
     /** Идёт обращение к кабинету или ожидание подписи. */
     var busy: Boolean by mutableStateOf(false)

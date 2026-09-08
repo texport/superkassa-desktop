@@ -180,7 +180,7 @@ private fun MapArea(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
-        MapView(state, tiles, Modifier.fillMaxSize()) { _, _ -> }
+        MapView(state, tiles, Modifier.fillMaxSize())
         MapControls(state, texts, preferences, Modifier.align(Alignment.TopEnd).padding(Spacing.snug))
     }
 }

@@ -41,6 +41,15 @@ fun noActionsReason(register: CabinetRegister, texts: CabinetTexts): String =
         texts.noApplications
     }
 
+/**
+ * Выдаётся ли сейчас токен.
+ *
+ * Кабинет выдаёт его кассе, стоящей на учёте, и только когда по ней нет
+ * поданного заявления. Прежде кнопка нажималась всегда, и по черновику
+ * приходил отказ — по-английски и кодом.
+ */
+fun tokenAllowed(register: CabinetRegister): Boolean = register.status in ON_RECORD
+
 /** Состояния кассы, стоящей на учёте. */
 private val ON_RECORD = setOf("REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS")
 

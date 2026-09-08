@@ -16,7 +16,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
-import kz.mybrain.superkassa.desktop.app.CabinetProblem
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
@@ -73,7 +72,6 @@ fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts
                         }
                     }
                 )
-                CabinetIssue(cabinet, texts)
                 Text(
                     text = "${texts.address}: ${session.preferences.cabinetUrl}",
                     style = MaterialTheme.typography.labelMedium,
@@ -82,28 +80,4 @@ fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts
             }
         }
     }
-}
-
-/**
- * Почему последнее действие в кабинете не удалось.
- *
- * Каждая помеха названа тем, что владелец должен сделать: запустить
- * NCALayer, повторить подпись, войти заново. Голый код отказа
- * оставлялся бы разбираться поддержке, а не владельцу.
- */
-@Composable
-fun CabinetIssue(cabinet: CabinetSession, texts: CabinetTexts) {
-    val problem = cabinet.problem ?: return
-    Text(
-        text = when (problem) {
-            is CabinetProblem.Refused -> problem.text
-            is CabinetProblem.Unreachable -> "${texts.unreachable} · ${problem.reason}"
-            CabinetProblem.NoNcaLayer -> texts.noNcaLayer
-            is CabinetProblem.SignDeclined ->
-                listOf(texts.signDeclined, problem.detail).filter { it.isNotBlank() }.joinToString(" · ")
-            CabinetProblem.SessionExpired -> texts.sessionExpired
-        },
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.error
-    )
 }
