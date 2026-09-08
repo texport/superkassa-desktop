@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,30 +21,30 @@ import kz.mybrain.superkassa.desktop.server.cabinet.documentsOverview
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.CounterTile
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
-import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
-import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
- * Что доехало до ОФД по выбранной кассе.
+ * Что доехало до ОФД по этой кассе.
  *
  * Кабинет показывает не то, что лежит в узле, а то, что принял сервер
- * приёма данных: расхождение между ними и есть главный смысл этого
- * раздела. Поэтому чек здесь назван состоянием доставки и отметкой КГД,
+ * приёма данных: расхождение между ними и есть главный смысл раздела.
+ * Поэтому чек здесь назван состоянием доставки и отметкой КГД,
  * а не «пробит».
  *
  * Список читается страницами и за выбранный срок: за год работы кассы
  * чеков десятки тысяч, и «первые пятьдесят за всё время» показывали
  * позапрошлый месяц вместо сегодняшнего дня.
+ *
+ * Своего раздела у документов больше нет: они принадлежат кассе, и
+ * выбирать её вторым списком после того, как она уже открыта, владельцу
+ * было незачем.
  */
 @Composable
-fun DocumentsPage(cabinet: CabinetSession, texts: CabinetTexts) {
+fun RegisterDocuments(cabinet: CabinetSession, texts: CabinetTexts, registerId: String) {
     val scope = rememberCoroutineScope()
-    var registerId by remember { mutableStateOf<String?>(null) }
     var kind by remember { mutableStateOf(DocumentKind.Receipts) }
     var span by remember { mutableStateOf(DocumentSpan.Week) }
     var overview by remember { mutableStateOf<DocumentsOverview?>(null) }
@@ -54,34 +53,19 @@ fun DocumentsPage(cabinet: CabinetSession, texts: CabinetTexts) {
     // владелец будет по «Закрыть», а не поиском своего места в списке.
     var opened by remember { mutableStateOf<OpenedDocument?>(null) }
 
-    LaunchedEffect(cabinet.token) { cabinet.refreshRegisters() }
-
     LaunchedEffect(registerId, kind, span, cabinet.token) {
-        val token = cabinet.token
-        val id = registerId
-        if (token == null || id == null) return@LaunchedEffect
+        val token = cabinet.token ?: return@LaunchedEffect
         opened = null
-        overview = cabinet.guard { cabinet.client.documentsOverview(token, id) }
+        overview = cabinet.guard { cabinet.client.documentsOverview(token, registerId) }
         list.reset()
-        list.loadNext(cabinet, token, id, kind, span, texts)
+        list.loadNext(cabinet, token, registerId, kind, span, texts)
     }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        LabelledPicker(
-            label = texts.chooseRegister,
-            options = cabinet.registers,
-            selected = cabinet.registers.firstOrNull { it.id == registerId },
-            title = { chosen -> chosen?.let { registerTitle(it) }.orEmpty() },
-            onSelect = { registerId = it.id }
-        )
-        if (registerId == null) {
-            EmptyState(AppIcons.kkm, texts.pickRegisterFirst, texts.pickRegisterFirstHint)
-            return@Column
-        }
-        OverviewCard(overview, texts)
+        DocumentCounters(overview, texts)
         ChoiceSegments(
             options = DocumentKind.entries,
             selected = kind,
@@ -89,19 +73,18 @@ fun DocumentsPage(cabinet: CabinetSession, texts: CabinetTexts) {
             onSelect = { kind = it }
         )
         DocumentSpanSegments(kind, span, texts) { span = it }
-        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.snug) {
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
             val document = opened
             if (document != null) {
                 OpenedCard(document, texts) { opened = null }
-                return@ScrollableColumn
+                return@Column
             }
             DocumentList(list, kind, texts, onOpen = { row ->
                 scope.launch { opened = openDocument(cabinet, registerId, kind, row) }
             }) {
                 scope.launch {
                     val token = cabinet.token ?: return@launch
-                    val id = registerId ?: return@launch
-                    list.loadNext(cabinet, token, id, kind, span, texts)
+                    list.loadNext(cabinet, token, registerId, kind, span, texts)
                 }
             }
         }
@@ -122,24 +105,22 @@ private fun OpenedCard(document: OpenedDocument, texts: CabinetTexts, onClose: (
 /**
  * Сколько чего у кассы накопилось по данным ОФД.
  *
- * Счётчики стояли строками «подпись — значение» в ряд и читались как
- * реквизиты карточки. Число здесь и есть содержание, поэтому оно набрано
- * крупно, а подпись под ним.
+ * Ряд крупных чисел без карточки вокруг: раздел и так внутри карточки
+ * кассы, и вторая рамка вокруг четырёх чисел добавляла бы линий, а не
+ * смысла.
  */
 @Composable
-private fun OverviewCard(overview: DocumentsOverview?, texts: CabinetTexts) {
+private fun DocumentCounters(overview: DocumentsOverview?, texts: CabinetTexts) {
     val counts = overview ?: return
-    SectionCard(title = texts.documents) {
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
-        ) {
-            CounterTile(counts.receiptsCount.toString(), texts.receipts)
-            CounterTile(counts.shiftsCount.toString(), texts.shifts)
-            CounterTile(counts.reportsCount.toString(), texts.reports)
-            CounterTile(counts.cashMovementsCount.toString(), texts.cashMovements)
-        }
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
+        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+    ) {
+        CounterTile(counts.receiptsCount.toString(), texts.receipts)
+        CounterTile(counts.shiftsCount.toString(), texts.shifts)
+        CounterTile(counts.reportsCount.toString(), texts.reports)
+        CounterTile(counts.cashMovementsCount.toString(), texts.cashMovements)
     }
 }
 
@@ -159,10 +140,10 @@ private fun DocumentList(
     onOpen: (DocumentRow) -> Unit,
     onMore: () -> Unit
 ) {
-    SectionCard(title = kind.title(texts)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
         if (list.rows.isEmpty()) {
             EmptyState(AppIcons.history, texts.documentsEmpty, texts.documentsEmptyHint)
-            return@SectionCard
+            return@Column
         }
         if (kind == DocumentKind.Receipts) {
             Text(

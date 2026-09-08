@@ -113,7 +113,7 @@ fun DocumentJournalRow(
                     Icon(AppIcons.preview, contentDescription = texts.preview.title)
                 }
                 IconButton(enabled = document.printable, onClick = onPrint) {
-                    Icon(JournalIcons.print, contentDescription = texts.preview.print)
+                    Icon(AppIcons.print, contentDescription = texts.preview.print)
                 }
             }
         }

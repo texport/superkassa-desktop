@@ -1,14 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,12 +22,10 @@ import kz.mybrain.superkassa.desktop.server.cabinet.addRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.kkmModels
 import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 import kz.mybrain.superkassa.desktop.server.factoryInfo
-import kz.mybrain.superkassa.desktop.ui.components.BusyButton
+import kz.mybrain.superkassa.desktop.ui.components.FormDialog
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
-import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
  * Заведение кассы в кабинете — одной формой для мастера и для окна.
@@ -46,74 +38,22 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Под кнопкой перечислено недостающее. Прежде она просто не нажималась,
  * и владелец перебирал поля, гадая, какое из пяти пустое.
  *
- * В разделе касс форма живёт отдельным окном, а не карточкой под списком:
- * пять полей в узкой колонке отжимали список наверх и рвали его вёрстку,
- * а заводят кассу раз в жизни. В мастере подключения она остаётся
- * карточкой — там это шаг, а не отступление от списка.
- */
-@Composable
-fun AddRegisterCard(
-    session: Session,
-    cabinet: CabinetSession,
-    texts: CabinetTexts,
-    known: FactoryStamp? = null,
-    onAdded: (CabinetRegister) -> Unit = {}
-) {
-    SectionCard(title = texts.addRegister) {
-        AddRegisterForm(session, cabinet, texts, known, Modifier.fillMaxWidth(), onAdded)
-    }
-}
-
-/**
- * Заведение кассы окном.
- *
- * Окно закрывается только по удаче: на отказе кабинета владелец должен
- * видеть, что именно он выбрал, а не пустой список и погасшее окно.
+ * Форма живёт окном: пять полей в узкой колонке отжимали список наверх
+ * и рвали его вёрстку, а кассу создают раз в жизни. Окно одно и на раздел
+ * касс, и на мастер подключения — две формы разошлись бы на первой правке.
  */
 @Composable
 fun AddRegisterDialog(
     session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
+    known: FactoryStamp? = null,
     onDismiss: () -> Unit,
-    onAdded: (CabinetRegister) -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = { if (!cabinet.busy) onDismiss() },
-        icon = { Icon(AppIcons.kkm, contentDescription = null) },
-        title = { Text(texts.addRegister) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-                AddRegisterForm(session, cabinet, texts, known = null, modifier = Modifier.fillMaxWidth()) { created ->
-                    onAdded(created)
-                    onDismiss()
-                }
-            }
-        },
-        confirmButton = {},
-        dismissButton = {
-            TextButton(enabled = !cabinet.busy, onClick = onDismiss) { Text(texts.close) }
-        }
-    )
-}
-
-/**
- * Поля заводимой кассы, кнопка и перечень незаполненного.
- *
- * @param known заводской номер и год, выданные узлом: в мастере они
- *   получены на первом шаге и правке не подлежат.
- */
-@Composable
-private fun AddRegisterForm(
-    session: Session,
-    cabinet: CabinetSession,
-    texts: CabinetTexts,
-    known: FactoryStamp?,
-    modifier: Modifier = Modifier,
     onAdded: (CabinetRegister) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val draft = remember(known) { RegisterDraft(known) }
+    val issued = ourModel(draft.model)
     var places by remember { mutableStateOf<List<RetailPlace>>(emptyList()) }
     var models by remember { mutableStateOf<List<KkmModel>>(emptyList()) }
 
@@ -123,29 +63,32 @@ private fun AddRegisterForm(
         models = cabinet.guard { cabinet.client.kkmModels(token) }?.items.orEmpty()
     }
 
-    // У своей модели заводской номер и год выдаёт узел — он их и присваивает
-    // при выпуске. Владельцу их набирать неоткуда, а набранное от руки
-    // разошлось бы с тем, что касса отнесёт в ОФД при регистрации.
-    val ours = ourModel(draft.model)
     LaunchedEffect(draft.model?.modelCode) {
-        if (!ours || draft.factory.isNotBlank()) return@LaunchedEffect
+        if (!issued || draft.factory.isNotBlank()) return@LaunchedEffect
         session.guard(texts.factoryNumber) { session.client.factoryInfo() }?.let { info ->
             draft.factory = info.factoryNumber
             draft.year = info.manufactureYear.toString()
         }
     }
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-        RegisterFields(texts, draft, places, models, stamped = known != null, issued = ours)
-        val missing = missingFields(texts, draft)
-        BusyButton(
-            text = texts.addRegister,
-            busy = cabinet.busy,
-            enabled = missing.isEmpty(),
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { scope.launch { add(cabinet, draft, known, onAdded) } }
-        )
-        MissingLine(texts, missing)
+    FormDialog(
+        title = texts.addRegister,
+        icon = AppIcons.kkm,
+        action = texts.addRegister,
+        close = texts.close,
+        busy = cabinet.busy,
+        missing = missingFields(texts, draft),
+        onDismiss = onDismiss,
+        onAction = {
+            scope.launch {
+                add(cabinet, draft, known) { created ->
+                    onAdded(created)
+                    onDismiss()
+                }
+            }
+        }
+    ) {
+        RegisterFields(texts, draft, places, models, stamped = known != null, issued = issued)
     }
 }
 
@@ -179,17 +122,17 @@ private fun RegisterFields(
         FormField(
             label = texts.factoryNumber,
             value = draft.factory,
-            hint = if (issued) texts.factoryIssued else texts.required,
+            hint = texts.factoryIssued.takeIf { issued },
             enabled = !issued
         ) { draft.factory = it }
         FormField(
             label = texts.manufactureYear,
             value = draft.year,
-            hint = if (issued) texts.factoryIssued else texts.required,
+            hint = texts.factoryIssued.takeIf { issued },
             enabled = !issued
         ) { draft.year = it.filter(Char::isDigit).take(YEAR_DIGITS) }
     }
-    FormField(texts.internalName, draft.name, texts.internalNameHint) { draft.name = it }
+    FormField(texts.internalName, draft.name) { draft.name = it }
 }
 
 /** Поле формы во всю ширину карточки с подписью под ним. */
@@ -197,7 +140,7 @@ private fun RegisterFields(
 private fun FormField(
     label: String,
     value: String,
-    hint: String,
+    hint: String? = null,
     enabled: Boolean = true,
     onChange: (String) -> Unit
 ) {
@@ -205,21 +148,10 @@ private fun FormField(
         value = value,
         onValueChange = onChange,
         label = { Text(label) },
-        supportingText = { Text(hint) },
+        supportingText = hint?.let { { Text(it) } },
         singleLine = true,
         enabled = enabled,
         modifier = Modifier.fillMaxWidth()
-    )
-}
-
-/** Чего не хватает для заведения кассы — словами, а не погашенной кнопкой. */
-@Composable
-private fun MissingLine(texts: CabinetTexts, missing: List<String>) {
-    if (missing.isEmpty()) return
-    Text(
-        text = "${texts.missing}: ${missing.joinToString(", ")}",
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
 

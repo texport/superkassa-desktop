@@ -31,7 +31,11 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Preferences
+import kz.mybrain.superkassa.desktop.ui.cabinet.MAX_LATITUDE
+import kz.mybrain.superkassa.desktop.ui.cabinet.MAX_LONGITUDE
+import kz.mybrain.superkassa.desktop.ui.cabinet.degreesOf
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
+import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -97,6 +101,7 @@ fun MapPickerDialog(
                 )
                 AddressLookup(state, geocoder, texts)
                 MapArea(state, tiles, texts, preferences, Modifier.weight(1f))
+                DegreesEntry(state, texts)
                 MapFooter(state, texts, onDismiss, onPicked)
             }
         }
@@ -148,6 +153,45 @@ private fun AddressLookup(state: MapState, geocoder: MapGeocoder, texts: Cabinet
             }
         )
     }
+}
+
+/**
+ * Ввод градусов руками.
+ *
+ * Место карты — на карте, но у кого координаты уже есть — из замера или
+ * из чужой карты, — тому проще их вписать. Поле живёт здесь, а не в форме
+ * точки: в форме два поля градусов с подписями занимали четыре строки
+ * и стояли перед владельцем всегда, а нужны они изредка.
+ */
+@Composable
+private fun DegreesEntry(state: MapState, texts: CabinetTexts) {
+    var latitude by remember { mutableStateOf("") }
+    var longitude by remember { mutableStateOf("") }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        DegreeField(texts.latitude, latitude, MAX_LATITUDE) { latitude = it }
+        DegreeField(texts.longitude, longitude, MAX_LONGITUDE) { longitude = it }
+        val point = degreesOf(latitude, MAX_LATITUDE) to degreesOf(longitude, MAX_LONGITUDE)
+        FieldButton(text = texts.pickPoint, enabled = point.first != null && point.second != null) {
+            state.show(point.first!!.toDouble(), point.second!!.toDouble(), HOUSE_ZOOM)
+        }
+    }
+}
+
+/** Поле градусов: отмечает недопустимое значение до нажатия. */
+@Composable
+private fun DegreeField(label: String, value: String, limit: String, onChange: (String) -> Unit) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onChange,
+        label = { Text(label) },
+        isError = value.isNotBlank() && degreesOf(value, limit) == null,
+        singleLine = true,
+        modifier = Modifier.width(Sizes.fieldChoice)
+    )
 }
 
 /** Шапка окна: название слева, выход справа. */

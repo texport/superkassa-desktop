@@ -29,6 +29,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.renameRetailPlace
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
+import kz.mybrain.superkassa.desktop.ui.map.MapPoint
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -116,8 +117,9 @@ private fun PlaceMove(
     val scope = rememberCoroutineScope()
     var query by remember(place.id) { mutableStateOf("") }
     var chosen by remember(place.id) { mutableStateOf<RegisterAddress?>(null) }
-    var latitude by remember(place.id) { mutableStateOf(place.latitude?.toPlainString().orEmpty()) }
-    var longitude by remember(place.id) { mutableStateOf(place.longitude?.toPlainString().orEmpty()) }
+    var point by remember(place.id) {
+        mutableStateOf(place.latitude?.let { lat -> place.longitude?.let { MapPoint(lat, it) } })
+    }
 
     AddressSearch(session, cabinet, texts, query, { query = it }) { address ->
         chosen = address
@@ -126,14 +128,14 @@ private fun PlaceMove(
     if (chosen != null) {
         Chip(texts.addressChosen, StatusColors.delivered)
     }
-    PlaceCoordinates(texts, session.preferences, latitude, longitude, query, { latitude = it }, { longitude = it })
+    PlacePoint(texts, session.preferences, point, query) { point = it }
     BusyButton(
         text = texts.changeAddress,
         busy = cabinet.busy,
-        enabled = chosen != null && coordinatesReady(latitude, longitude),
+        enabled = chosen != null && point != null,
         onClick = {
             scope.launch {
-                if (move(cabinet, place, chosen, latitude, longitude)) {
+                if (move(cabinet, place, chosen, point)) {
                     chosen = null
                     query = ""
                     onChanged()
@@ -148,18 +150,20 @@ private suspend fun move(
     cabinet: CabinetSession,
     place: RetailPlace,
     address: RegisterAddress?,
-    latitude: String,
-    longitude: String
+    point: MapPoint?
 ): Boolean {
     val token = cabinet.token ?: return false
     val chosen = address ?: return false
-    val moved = degreesOf(latitude, MAX_LATITUDE) ?: return false
-    val meridian = degreesOf(longitude, MAX_LONGITUDE) ?: return false
+    val where = point ?: return false
     return cabinet.guard {
         cabinet.client.moveRetailPlace(
             token,
             place.id,
-            RetailPlaceAddress(addressRef = chosen.addressRef, latitude = moved, longitude = meridian)
+            RetailPlaceAddress(
+                addressRef = chosen.addressRef,
+                latitude = where.latitude,
+                longitude = where.longitude
+            )
         )
     } != null
 }

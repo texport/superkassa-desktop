@@ -21,6 +21,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import kz.mybrain.superkassa.desktop.ui.theme.MapColors
+import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kotlin.math.roundToInt
 
 /**
@@ -51,6 +53,12 @@ fun MapView(state: MapState, tiles: MapTiles, modifier: Modifier = Modifier) {
         }
     }
 
+    val paint = MapPaint(
+        chosen = MapColors.chosen,
+        located = MapColors.located,
+        edge = MapColors.edge,
+        halo = MapColors.halo
+    )
     Box(
         modifier = modifier
             // Плитки рисуются целиком, и крайние выходят за окно карты.
@@ -72,21 +80,29 @@ fun MapView(state: MapState, tiles: MapTiles, modifier: Modifier = Modifier) {
                 }
             }
     ) {
-        MapCanvas(state, tiles, canvas, revision)
+        MapCanvas(state, tiles, canvas, revision, paint)
     }
 }
 
 /** Само полотно: плитки, сетка на месте недошедших и метка выбранной точки. */
 @Composable
-private fun MapCanvas(state: MapState, tiles: MapTiles, canvas: IntSize, revision: Int) {
+private fun MapCanvas(state: MapState, tiles: MapTiles, canvas: IntSize, revision: Int, paint: MapPaint) {
     androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
         @Suppress("UNUSED_EXPRESSION")
         revision
         drawTiles(state, tiles, canvas)
-        drawLocation(state, canvas)
-        drawMarker(state, canvas)
+        drawLocation(state, canvas, paint)
+        drawMarker(state, canvas, paint)
     }
 }
+
+/**
+ * Цвета знаков, снятые со схемы.
+ *
+ * Полотно рисует вне композиции и до схемы не дотягивается: цвета
+ * берутся один раз в показе и отдаются рисованию готовыми.
+ */
+private data class MapPaint(val chosen: Color, val located: Color, val edge: Color, val halo: Color)
 
 /** Рисует плитки, попадающие в окно. */
 private fun DrawScope.drawTiles(state: MapState, tiles: MapTiles, canvas: IntSize) {
@@ -107,7 +123,7 @@ private fun DrawScope.drawTiles(state: MapState, tiles: MapTiles, canvas: IntSiz
  * не меняется с увеличением — он не обещает точности, а показывает,
  * что это именно своё место.
  */
-private fun DrawScope.drawLocation(state: MapState, canvas: IntSize) {
+private fun DrawScope.drawLocation(state: MapState, canvas: IntSize, paint: MapPaint) {
     val latitude = state.locationLatitude ?: return
     val longitude = state.locationLongitude ?: return
     val corner = topLeft(state, canvas)
@@ -115,21 +131,21 @@ private fun DrawScope.drawLocation(state: MapState, canvas: IntSize) {
         (MapProjection.xOf(longitude, state.zoom) - corner.x).toFloat(),
         (MapProjection.yOf(latitude, state.zoom) - corner.y).toFloat()
     )
-    drawCircle(MapColors.locationHalo, radius = LOCATION_HALO, center = at)
-    drawCircle(MapColors.markerEdge, radius = LOCATION_RADIUS + MARKER_EDGE, center = at)
-    drawCircle(MapColors.location, radius = LOCATION_RADIUS, center = at)
+    drawCircle(paint.halo, radius = Sizes.mapHalo.toPx(), center = at)
+    drawCircle(paint.edge, radius = (Sizes.mapLocation + Sizes.mapMarkerEdge).toPx(), center = at)
+    drawCircle(paint.located, radius = Sizes.mapLocation.toPx(), center = at)
 }
 
 /** Метка выбранной точки: кружок с обводкой, видимый на любой подложке. */
-private fun DrawScope.drawMarker(state: MapState, canvas: IntSize) {
+private fun DrawScope.drawMarker(state: MapState, canvas: IntSize, paint: MapPaint) {
     val latitude = state.markerLatitude ?: return
     val longitude = state.markerLongitude ?: return
     val corner = topLeft(state, canvas)
     val x = MapProjection.xOf(longitude, state.zoom) - corner.x
     val y = MapProjection.yOf(latitude, state.zoom) - corner.y
     val at = Offset(x.toFloat(), y.toFloat())
-    drawCircle(MapColors.markerEdge, radius = MARKER_RADIUS + MARKER_EDGE, center = at)
-    drawCircle(MapColors.marker, radius = MARKER_RADIUS, center = at)
+    drawCircle(paint.edge, radius = (Sizes.mapMarker + Sizes.mapMarkerEdge).toPx(), center = at)
+    drawCircle(paint.chosen, radius = Sizes.mapMarker.toPx(), center = at)
 }
 
 /** Точка полотна мира, попавшая в левый верхний угол окна. */
@@ -165,17 +181,3 @@ private fun visibleTiles(state: MapState, canvas: IntSize): List<TileIndex> {
 
 /** Номер плитки в сетке мира. */
 private data class TileIndex(val x: Int, val y: Int)
-
-/** Цвета карты: подложка под недошедшие плитки и метка. */
-private object MapColors {
-    val empty = Color(0xFFE8E8E4)
-    val marker = Color(0xFFD32F2F)
-    val markerEdge = Color(0xFFFFFFFF)
-    val location = Color(0xFF1A73E8)
-    val locationHalo = Color(0x331A73E8)
-}
-
-private const val MARKER_RADIUS = 7f
-private const val MARKER_EDGE = 3f
-private const val LOCATION_RADIUS = 6f
-private const val LOCATION_HALO = 22f

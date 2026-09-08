@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.setup
 
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,11 +13,13 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 import kz.mybrain.superkassa.desktop.ui.cabinet.AddPlaceCard
-import kz.mybrain.superkassa.desktop.ui.cabinet.AddRegisterCard
+import kz.mybrain.superkassa.desktop.ui.cabinet.AddRegisterDialog
 import kz.mybrain.superkassa.desktop.ui.cabinet.FactoryStamp
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
+import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 
@@ -70,14 +73,50 @@ fun CabinetStepCard(
         // только начал, точек нет ни одной. Прежде мастер показывал пустой
         // список и упирался: точку заводили в другом разделе и возвращались.
         if (places == 0) {
-            AddPlaceCard(session, cabinet, texts, opened = true) { scope.launch { countPlaces() } }
+            AddPlaceStep(session, cabinet, texts) { scope.launch { countPlaces() } }
             return@SetupStepCard
         }
-        AddRegisterCard(
+        AddRegisterStep(
             session = session,
             cabinet = cabinet,
             texts = texts,
             known = FactoryStamp(draft.factoryNumber.orEmpty(), draft.manufactureYear.orEmpty())
         ) { created -> draft.rememberRegister(created.id, created.kkmId) }
+    }
+}
+
+/**
+ * Создание первой точки прямо в мастере.
+ *
+ * Форма открывается окном — тем же, что и в разделе кабинета: две формы
+ * заведения точки разошлись бы на первой правке.
+ */
+@Composable
+private fun AddPlaceStep(
+    session: Session,
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    onAdded: () -> Unit
+) {
+    var adding by remember { mutableStateOf(false) }
+    FilledTonalButton(onClick = { adding = true }) { Text(texts.addPlace) }
+    if (adding) {
+        AddPlaceCard(session, cabinet, texts, onDismiss = { adding = false }, onAdded = onAdded)
+    }
+}
+
+/** Создание кассы в мастере: то же окно, что и в разделе точек. */
+@Composable
+private fun AddRegisterStep(
+    session: Session,
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    known: FactoryStamp,
+    onAdded: (CabinetRegister) -> Unit
+) {
+    var adding by remember { mutableStateOf(false) }
+    FilledTonalButton(onClick = { adding = true }) { Text(texts.addRegister) }
+    if (adding) {
+        AddRegisterDialog(session, cabinet, texts, known, onDismiss = { adding = false }, onAdded = onAdded)
     }
 }

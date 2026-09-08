@@ -19,6 +19,7 @@ data class CabinetTexts(
     val signOut: String,
     val noNcaLayer: String,
     val signDeclined: String,
+    val signWindowClosed: String,
     val sessionExpired: String,
     val unreachable: String,
     val address: String,

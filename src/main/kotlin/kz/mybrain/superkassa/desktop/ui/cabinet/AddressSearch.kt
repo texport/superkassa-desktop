@@ -65,7 +65,6 @@ fun AddressSearch(
                 value = query,
                 onValueChange = onQuery,
                 label = { Text(texts.placeAddress) },
-                supportingText = { Text(texts.addressSearchHint) },
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )

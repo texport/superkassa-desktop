@@ -62,6 +62,39 @@ object StatusColors {
 }
 
 /**
+ * Знаки на карте.
+ *
+ * Выбранная точка — главное на карте, и красит её главная роль схемы.
+ * Своё место — другое по смыслу, и роль у него третичная: рядом с главной
+ * оно различимо и с ней не спорит. Обводка знака берёт поверхность —
+ * так знак читается и на светлом квартале, и на тёмном лесу.
+ *
+ * Своих цветов у карты нет намеренно: плитки рисует чужая служба,
+ * а всё, что поверх них рисует приложение, обязано жить в его схеме.
+ */
+object MapColors {
+    val chosen: Color
+        @Composable get() = MaterialTheme.colorScheme.primary
+
+    val located: Color
+        @Composable get() = MaterialTheme.colorScheme.tertiary
+
+    val edge: Color
+        @Composable get() = MaterialTheme.colorScheme.surface
+
+    /** Ореол своего места: та же роль, но прозрачная. */
+    val halo: Color
+        @Composable get() = MaterialTheme.colorScheme.tertiary.copy(alpha = HALO_ALPHA)
+
+    /** Подложка там, где плитка не пришла. */
+    val empty: Color
+        @Composable get() = MaterialTheme.colorScheme.surfaceContainerHighest
+}
+
+/** Насколько прозрачен ореол своего места. */
+private const val HALO_ALPHA = 0.2f
+
+/**
  * Тёмная ли сейчас касса.
  *
  * Спрашивать систему второй раз нельзя: кассир мог выбрать тему сам,

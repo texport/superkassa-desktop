@@ -100,6 +100,9 @@ private fun RegisterLiveBlocks(
     RegisterBlockCard(RegisterBlock.Card, open, onToggle, texts.card) {
         RegistrationCardBlock(cabinet, texts, card)
     }
+    RegisterBlockCard(RegisterBlock.Documents, open, onToggle, texts.documents) {
+        RegisterDocuments(cabinet, texts, register.id)
+    }
 }
 
 /** След регистрационных действий: к нему возвращаются редко. */
@@ -141,7 +144,7 @@ private fun RegisterBlockCard(
 }
 
 /** Разделы карточки кассы. */
-enum class RegisterBlock { Technical, Applications, Card, Journal }
+enum class RegisterBlock { Technical, Applications, Card, Documents, Journal }
 
 /**
  * Что раскрыто при открытии кассы.

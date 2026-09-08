@@ -8,9 +8,13 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddBusiness
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.EventBusy
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.History
@@ -22,9 +26,11 @@ import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.QueuePlayNext
+import androidx.compose.material.icons.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material.icons.outlined.Info
@@ -100,6 +106,16 @@ object AppIcons {
 
     /** Личный кабинет ОФД: дела владельца, а не кассира. */
     val cabinet: ImageVector = Icons.Filled.Business
+
+    /** Перелистывание дня в журнале. */
+    val earlierDay: ImageVector = Icons.Filled.ChevronLeft
+    val laterDay: ImageVector = Icons.Filled.ChevronRight
+    val today: ImageVector = Icons.Filled.Today
+
+    /** Пустые состояния: нечего показать, нечего вернуть, нечего отправлять. */
+    val noDocuments: ImageVector = Icons.Filled.EventBusy
+    val noBasis: ImageVector = Icons.Filled.ReceiptLong
+    val queueClear: ImageVector = Icons.Filled.CloudDone
 
     /** Место на карте: где стоит торговая точка. */
     val place: ImageVector = Icons.Filled.Place

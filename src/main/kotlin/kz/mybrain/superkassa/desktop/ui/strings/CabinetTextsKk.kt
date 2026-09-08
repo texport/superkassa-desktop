@@ -9,6 +9,7 @@ internal val cabinetTextsKk = CabinetTexts(
     signOut = "Шығу",
     noNcaLayer = "NCALayer жауап бермейді. Оны іске қосып, қайта кіріңіз",
     signDeclined = "Қолтаңба алынбады",
+    signWindowClosed = "Қол қою терезесі жабылды",
     sessionExpired = "Рұқсат мерзімі бітті — қайта кіріңіз",
     unreachable = "Кабинет көрсетілген мекенжайда жауап бермейді",
     address = "Кабинет мекенжайы",

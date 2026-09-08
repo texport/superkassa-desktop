@@ -5,6 +5,10 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import java.math.BigDecimal
+
+/** Где стоит торговая точка: широта и долгота, как их ждёт кабинет. */
+data class MapPoint(val latitude: BigDecimal, val longitude: BigDecimal)
 
 /**
  * Где сейчас карта и куда поставлена точка.

@@ -36,6 +36,7 @@ import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -84,13 +85,13 @@ fun DayJournal(session: Session) {
         when {
             loading -> JournalLoading(Modifier.weight(1f))
             loaded.isEmpty() -> JournalEmpty(
-                icon = JournalIcons.noDocuments,
+                icon = AppIcons.noDocuments,
                 line = journal.emptyDay,
                 hint = journal.emptyDayHint,
                 modifier = Modifier.weight(1f)
             )
             shown.isEmpty() -> JournalEmpty(
-                icon = JournalIcons.noDocuments,
+                icon = AppIcons.noDocuments,
                 line = journal.emptyForType,
                 hint = journal.emptyForTypeHint,
                 modifier = Modifier.weight(1f)
@@ -144,14 +145,14 @@ private fun DayBar(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         IconButton(enabled = !loading, onClick = { onDay(day.minusDays(1)) }) {
-            Icon(JournalIcons.earlierDay, contentDescription = journal.earlierDay)
+            Icon(AppIcons.earlierDay, contentDescription = journal.earlierDay)
         }
         Text(DAY.format(day), style = MaterialTheme.typography.titleMedium)
         IconButton(enabled = !loading && day < today, onClick = { onDay(day.plusDays(1)) }) {
-            Icon(JournalIcons.laterDay, contentDescription = journal.laterDay)
+            Icon(AppIcons.laterDay, contentDescription = journal.laterDay)
         }
         TextButton(enabled = !loading && day != today, onClick = { onDay(today) }) {
-            Icon(JournalIcons.today, contentDescription = null)
+            Icon(AppIcons.today, contentDescription = null)
             Text(journal.today, modifier = Modifier.padding(start = Spacing.tight))
         }
     }

@@ -84,15 +84,18 @@ private fun CabinetPage(
     when (page) {
         CabinetTab.Company -> CompanyPage(cabinet, texts, session.language)
         CabinetTab.Places -> PlacesPage(session, cabinet, texts)
-        CabinetTab.Registers -> RegistersPage(session, cabinet, texts)
-        CabinetTab.Documents -> DocumentsPage(cabinet, texts)
     }
 }
 
-/** Разделы кабинета: тот же порядок, в каком владелец их заводит. */
+/**
+ * Разделы кабинета.
+ *
+ * Их два, а не четыре. Кассы и документы своих разделов не имеют: касса
+ * стоит в торговой точке, документы принадлежат кассе, и разложенные
+ * по отдельным вкладкам они заставляли владельца выбирать одно и то же
+ * дважды — точку в одной вкладке, ту же кассу в другой, её же в третьей.
+ */
 enum class CabinetTab(val title: (CabinetTexts) -> String) {
     Company({ it.company }),
-    Places({ it.places }),
-    Registers({ it.registers }),
-    Documents({ it.documents })
+    Places({ it.places })
 }

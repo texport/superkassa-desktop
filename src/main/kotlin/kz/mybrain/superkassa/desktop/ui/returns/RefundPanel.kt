@@ -39,7 +39,6 @@ import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.history.DASH
 import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
-import kz.mybrain.superkassa.desktop.ui.history.JournalIcons
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentLines
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentSplit
 import kz.mybrain.superkassa.desktop.ui.payment.SplitIssue
@@ -49,6 +48,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.PaymentTexts
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -74,7 +74,7 @@ fun RefundPanel(
     ElevatedCard(modifier = modifier.fillMaxHeight()) {
         if (basis == null) {
             JournalEmpty(
-                icon = JournalIcons.noBasis,
+                icon = AppIcons.noBasis,
                 line = journal.chooseBasis,
                 hint = journal.chooseBasisHint,
                 modifier = Modifier.fillMaxHeight()

@@ -122,8 +122,14 @@ class NcaLayer(private val address: String = DEFAULT_ADDRESS) {
         /** Где NCALayer слушает на этой машине. */
         const val DEFAULT_ADDRESS: String = "wss://127.0.0.1:13579"
 
-        /** Окно подписи закрыто владельцем — так это называется на экране. */
-        private const val WINDOW_CLOSED = "\u041e\u043a\u043d\u043e \u043f\u043e\u0434\u043f\u0438\u0441\u0438 \u0437\u0430\u043a\u0440\u044b\u0442\u043e"
+        /**
+         * Владелец закрыл окно подписи.
+         *
+         * Здесь стоит код, а не готовая строка: слова подбирает показ
+         * на языке владельца, а по-русски посреди кода их читал бы
+         * и казах, и англичанин.
+         */
+        const val WINDOW_CLOSED: String = "WINDOW_CLOSED"
 
         private const val SIGN_TIMEOUT_MS = 180_000L
         private const val PROBE_TIMEOUT_MS = 2_000L

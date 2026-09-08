@@ -66,7 +66,6 @@ fun OkedPicker(cabinet: CabinetSession, texts: CabinetTexts, language: Language,
             value = query,
             onValueChange = { query = it },
             label = { Text(texts.okedSearch) },
-            supportingText = { Text(texts.okedSearchHint) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )

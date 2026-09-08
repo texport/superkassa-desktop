@@ -29,7 +29,6 @@ import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.history.DASH
 import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
-import kz.mybrain.superkassa.desktop.ui.history.JournalIcons
 import kz.mybrain.superkassa.desktop.ui.history.momentText
 import kz.mybrain.superkassa.desktop.ui.history.rowTint
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
@@ -62,7 +61,7 @@ fun QueueScreen(session: Session) {
         Text(texts.queue.title, style = MaterialTheme.typography.headlineSmall)
         QueueSummary(session, journal, waiting.size, failed.isNotEmpty())
         if (session.queueTasks.isEmpty()) {
-            JournalEmpty(JournalIcons.queueClear, texts.queue.empty, journal.emptyHint, Modifier.weight(1f))
+            JournalEmpty(AppIcons.queueClear, texts.queue.empty, journal.emptyHint, Modifier.weight(1f))
         } else {
             QueueList(waiting, done, journal, session.language.code, Modifier.weight(1f))
         }

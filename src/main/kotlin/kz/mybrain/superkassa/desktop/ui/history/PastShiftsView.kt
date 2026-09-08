@@ -33,6 +33,7 @@ import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.ShiftJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
@@ -115,7 +116,7 @@ private fun ColumnScope.ShiftList(
         return
     }
     if (shifts.isEmpty()) {
-        JournalEmpty(JournalIcons.noDocuments, journal.none, journal.noneHint, Modifier.weight(1f))
+        JournalEmpty(AppIcons.noDocuments, journal.none, journal.noneHint, Modifier.weight(1f))
         return
     }
     ScrollableList(modifier = Modifier.weight(1f)) {
@@ -194,7 +195,7 @@ private fun ColumnScope.ShiftDocuments(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onBack) {
-            Icon(JournalIcons.earlierDay, contentDescription = journal.back)
+            Icon(AppIcons.earlierDay, contentDescription = journal.back)
         }
         Text(
             text = "${journal.number} ${shift.shiftNo ?: DASH} · ${journal.documents}",
@@ -203,7 +204,7 @@ private fun ColumnScope.ShiftDocuments(
     }
     if (documents.isEmpty()) {
         JournalEmpty(
-            icon = JournalIcons.noDocuments,
+            icon = AppIcons.noDocuments,
             line = journal.emptyDocuments,
             hint = journal.emptyDocumentsHint,
             modifier = Modifier.weight(1f)

@@ -1,12 +1,18 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,37 +21,36 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
-import kz.mybrain.superkassa.desktop.server.cabinet.removeRetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
-import kz.mybrain.superkassa.desktop.ui.components.Collapsible
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
-import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
- * Торговые точки компании.
+ * Хозяйство владельца так, как оно устроено: точка — кассы — документы.
  *
- * Адрес не набирается руками, а выбирается из регистра: в заявление уходит
- * его код (РКА), и произвольная строка там не пройдёт. Поэтому поле адреса
- * — поиск по регистру, а не свободный ввод.
+ * Прежде это были три раздела подряд: точки, кассы, документы. Владелец
+ * выбирал точку в одном, ту же кассу во втором и её же в третьем — а из
+ * списка касс было не видно, какая где стоит. Теперь список один: точки,
+ * под каждой её кассы, а выбранная касса раскрывается справа вместе
+ * со своими документами.
  */
 @Composable
 fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     val scope = rememberCoroutineScope()
     val places = remember { mutableStateListOf<RetailPlace>() }
-    var opened by remember { mutableStateOf<String?>(null) }
+    var place by remember { mutableStateOf<String?>(null) }
+    var register by remember { mutableStateOf<String?>(null) }
 
     suspend fun reload() {
         val token = cabinet.token ?: return
@@ -53,85 +58,152 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
             places.clear()
             places.addAll(page.items)
         }
-    }
-
-    fun remove(place: RetailPlace) = scope.launch {
-        val token = cabinet.token ?: return@launch
-        if (cabinet.guard { cabinet.client.removeRetailPlace(token, place.id) } != null) reload()
+        cabinet.refreshRegisters()
     }
 
     LaunchedEffect(cabinet.token) { reload() }
 
-    ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
-        SectionCard(title = texts.places) {
-            if (places.isEmpty()) {
-                EmptyState(AppIcons.newKkm, texts.placesEmpty, texts.placesEmptyHint)
-            }
-            places.forEachIndexed { at, place ->
-                // Правка раскрывается по нажатию на строку: список из десятка
-                // точек с развёрнутыми формами не читается, а переименовывают
-                // и переезжают редко.
-                val open = place.id == opened
-                PlaceRow(session.language, place, texts, at % STRIPE == 1, { remove(place) }) {
-                    opened = if (open) null else place.id
-                }
-                Collapsible(open) {
-                    PlaceEditRow(session, cabinet, texts, place) { scope.launch { reload() } }
-                }
-            }
-        }
-        AddPlaceCard(session, cabinet, texts) { scope.launch { reload() } }
+    Row(modifier = Modifier.fillMaxSize()) {
+        PlaceTree(
+            session = session,
+            cabinet = cabinet,
+            texts = texts,
+            places = places,
+            place = place,
+            register = register,
+            onPlace = {
+                place = it
+                register = null
+            },
+            onRegister = { register = it },
+            onChanged = { scope.launch { reload() } }
+        )
+        VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        Detail(session, cabinet, texts, places, place, register) { scope.launch { reload() } }
     }
 }
 
-/** Строка точки: название, адрес под ним и сколько касс к ней привязано. */
+/** Дерево слева: точки и их кассы, под ними — создание того и другого. */
 @Composable
-private fun PlaceRow(
-    language: Language,
-    place: RetailPlace,
+private fun PlaceTree(
+    session: Session,
+    cabinet: CabinetSession,
     texts: CabinetTexts,
-    striped: Boolean,
-    onRemove: () -> Unit,
-    onOpen: () -> Unit
+    places: List<RetailPlace>,
+    place: String?,
+    register: String?,
+    onPlace: (String) -> Unit,
+    onRegister: (String) -> Unit,
+    onChanged: () -> Unit
 ) {
-    RecordRow(
-        title = place.name,
-        subtitle = addressIn(language, place.address, place.addressKz),
-        striped = striped,
-        onClick = onOpen,
-        trailing = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "${texts.registerCount}: ${place.cashRegisterCount}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                PlaceRemove(place, texts, onRemove)
+    Column(
+        modifier = Modifier.width(Sizes.registerColumn).fillMaxHeight(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+    ) {
+        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.tight, gutter = Spacing.screen) {
+            SectionCard(title = texts.places) {
+                if (places.isEmpty()) {
+                    EmptyState(AppIcons.newKkm, texts.placesEmpty, texts.placesEmptyHint)
+                }
+                places.forEach { item ->
+                    PlaceBranch(cabinet, texts, item, place, register, onPlace, onRegister)
+                }
             }
         }
+        CreateButtons(session, cabinet, texts, place, onChanged)
+    }
+}
+
+/** Точка и её кассы под ней. Свёрнутая точка показывает только себя. */
+@Composable
+private fun PlaceBranch(
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    item: RetailPlace,
+    place: String?,
+    register: String?,
+    onPlace: (String) -> Unit,
+    onRegister: (String) -> Unit
+) {
+    val open = item.id == place
+    RecordRow(
+        title = item.name,
+        subtitle = "${texts.registerCount}: ${item.cashRegisterCount}",
+        selected = open && register == null,
+        onClick = { onPlace(item.id) }
     )
+    if (!open) return
+    cabinet.registers.filter { it.retailPlace?.id == item.id }.forEach { kkm ->
+        RecordRow(
+            title = registerTitle(kkm),
+            subtitle = kkm.registrationNumber,
+            selected = kkm.id == register,
+            modifier = Modifier.padding(start = Spacing.normal),
+            onClick = { onRegister(kkm.id) },
+            trailing = { CabinetStatusChip(kkm.status, texts) }
+        )
+    }
 }
 
 /**
- * Удаление точки — или объяснение, почему его нет.
+ * Создание точки и кассы — окнами.
  *
- * Погашенная кнопка молчит о причине: владелец видел, что точку удалить
- * нельзя, но не знал, что мешает именно привязанная касса. Вместо неё
- * стоит объяснение под значком.
+ * Кнопки отступают от правого края на то же поле, что и список над ними:
+ * иначе кнопка шире карточки ровно на ширину полосы прокрутки, и края
+ * не сходятся.
  */
 @Composable
-private fun PlaceRemove(place: RetailPlace, texts: CabinetTexts, onRemove: () -> Unit) {
-    if (place.cashRegisterCount > 0) {
-        InfoTip(texts.placeRemoveBlocked)
-        return
+private fun CreateButtons(
+    session: Session,
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    place: String?,
+    onChanged: () -> Unit
+) {
+    var addingPlace by remember { mutableStateOf(false) }
+    var addingRegister by remember { mutableStateOf(false) }
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen),
+        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+    ) {
+        FilledTonalButton(onClick = { addingPlace = true }, modifier = Modifier.fillMaxWidth()) {
+            Text(texts.addPlace)
+        }
+        FilledTonalButton(
+            enabled = place != null,
+            onClick = { addingRegister = true },
+            modifier = Modifier.fillMaxWidth()
+        ) { Text(texts.addRegister) }
     }
-    IconButton(onClick = onRemove) {
-        Icon(AppIcons.close, contentDescription = texts.remove)
+    if (addingPlace) {
+        AddPlaceCard(session, cabinet, texts, onDismiss = { addingPlace = false }, onAdded = onChanged)
+    }
+    if (addingRegister) {
+        AddRegisterDialog(session, cabinet, texts, onDismiss = { addingRegister = false }) { onChanged() }
     }
 }
 
-/** Затеняется каждая вторая строка списка. */
-private const val STRIPE = 2
+/** Справа — выбранная касса целиком, а до выбора кассы сама точка. */
+@Composable
+private fun RowScope.Detail(
+    session: Session,
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    places: List<RetailPlace>,
+    place: String?,
+    register: String?,
+    onChanged: () -> Unit
+) {
+    val chosen = cabinet.registers.firstOrNull { it.id == register }
+    val chosenPlace = places.firstOrNull { it.id == place }
+    when {
+        chosen != null -> RegisterDetails(cabinet, texts, chosen, modifier = Modifier.weight(1f))
+        chosenPlace != null -> PlaceCard(session, cabinet, texts, chosenPlace, Modifier.weight(1f), onChanged)
+        else -> EmptyState(
+            icon = AppIcons.newKkm,
+            title = texts.pickRegisterFirst,
+            hint = texts.pickRegisterFirstHint,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}

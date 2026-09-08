@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
+
 /**
  * Выбор значения из справочника узла.
  *

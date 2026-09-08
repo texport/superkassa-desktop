@@ -33,10 +33,10 @@ import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
-import kz.mybrain.superkassa.desktop.ui.history.JournalIcons
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -69,13 +69,13 @@ fun ReturnsScreen(session: Session) {
             // Закрытая смена — состояние, а не отказ: об этом сказано словами
             // и подсказкой, а не пустым списком, из которого ничего не понять.
             !session.shiftOpen -> JournalEmpty(
-                icon = JournalIcons.noBasis,
+                icon = AppIcons.noBasis,
                 line = journal.shiftClosed,
                 hint = journal.shiftClosedHint,
                 modifier = Modifier.weight(1f)
             )
             candidates.isEmpty() -> JournalEmpty(
-                icon = JournalIcons.noBasis,
+                icon = AppIcons.noBasis,
                 line = kind.emptyText(journal),
                 hint = journal.noBasisHint,
                 modifier = Modifier.weight(1f)

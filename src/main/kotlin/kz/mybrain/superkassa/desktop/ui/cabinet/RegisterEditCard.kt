@@ -52,7 +52,6 @@ fun RegisterEditCard(
 
     EditRow(
         label = texts.internalName,
-        hint = texts.internalNameHint,
         save = texts.save,
         initial = register.internalName.orEmpty(),
         key = register.id,
@@ -64,7 +63,6 @@ fun RegisterEditCard(
     }
     EditRow(
         label = texts.factoryNumber,
-        hint = if (draft) texts.required else texts.factoryLocked,
         save = texts.save,
         initial = register.factoryNumber.orEmpty(),
         key = register.id,
@@ -137,7 +135,6 @@ private suspend fun restamp(cabinet: CabinetSession, id: String, value: String):
 @Composable
 private fun EditRow(
     label: String,
-    hint: String,
     save: String,
     initial: String,
     key: String,
@@ -155,7 +152,6 @@ private fun EditRow(
             value = value,
             onValueChange = { value = it },
             label = { Text(label) },
-            supportingText = { Text(hint) },
             singleLine = true,
             enabled = enabled,
             modifier = Modifier.width(Sizes.fieldForm)
