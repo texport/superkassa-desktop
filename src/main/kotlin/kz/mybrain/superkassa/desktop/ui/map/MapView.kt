@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -57,6 +58,10 @@ fun MapView(
 
     Box(
         modifier = modifier
+            // Плитки рисуются целиком, и крайние выходят за окно карты.
+            // Полотно Compose само их не обрезает: без этого карта
+            // закрашивала шапку окна сверху и подпись с кнопками снизу.
+            .clipToBounds()
             .onSizeChanged { canvas = it }
             .background(MapColors.empty)
             .pointerInput(state.zoom) {

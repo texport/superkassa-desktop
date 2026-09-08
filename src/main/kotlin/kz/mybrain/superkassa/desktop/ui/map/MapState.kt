@@ -71,10 +71,11 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
      * Нужно при открытии карты у точки, которую уже переносили: иначе
      * владелец видит середину страны вместо своего магазина.
      */
-    fun show(latitude: Double, longitude: Double) {
+    fun show(latitude: Double, longitude: Double, toZoom: Int? = null) {
         mark(latitude, longitude)
         centerLatitude = markerLatitude ?: latitude
         centerLongitude = markerLongitude ?: longitude
+        toZoom?.let { zoom = it.coerceIn(MIN_ZOOM, MAX_ZOOM) }
     }
 
     /**

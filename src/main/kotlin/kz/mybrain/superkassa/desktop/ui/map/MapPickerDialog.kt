@@ -14,10 +14,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +31,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Preferences
+import kz.mybrain.superkassa.desktop.ui.components.BusyButton
+import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -52,14 +56,24 @@ fun MapPickerDialog(
     preferences: Preferences,
     latitude: BigDecimal?,
     longitude: BigDecimal?,
+    address: String = "",
     onDismiss: () -> Unit,
     onPicked: (BigDecimal, BigDecimal) -> Unit
 ) {
     val tiles = remember { MapTiles() }
+    val geocoder = remember { MapGeocoder() }
     val state = remember {
         MapState().also {
-            if (latitude != null && longitude != null) it.show(latitude.toDouble(), longitude.toDouble())
+            if (latitude != null && longitude != null) it.show(latitude.toDouble(), longitude.toDouble(), HOUSE_ZOOM)
         }
+    }
+
+    // Адрес точки уже выбран в государственном регистре — по нему карта
+    // и открывается на доме. Прежде она открывалась в середине Алматы,
+    // и владелец вёл её к своей улице руками.
+    LaunchedEffect(address) {
+        if (state.marked || address.isBlank()) return@LaunchedEffect
+        geocoder.find(address).firstOrNull()?.let { state.show(it.latitude, it.longitude, HOUSE_ZOOM) }
     }
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -81,10 +95,58 @@ fun MapPickerDialog(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                AddressLookup(state, geocoder, texts)
                 MapArea(state, tiles, texts, preferences, Modifier.weight(1f))
                 MapFooter(state, texts, onDismiss, onPicked)
             }
         }
+    }
+}
+
+/**
+ * Поиск дома по адресу.
+ *
+ * Это единственный способ поставить точку на дом, а не на город:
+ * определение по адресу подключения указывает на поставщика связи.
+ * Найденное показывается строками — как найденные адреса в самом
+ * кабинете, — и выбранное сразу становится точкой.
+ */
+@Composable
+private fun AddressLookup(state: MapState, geocoder: MapGeocoder, texts: CabinetTexts) {
+    val scope = rememberCoroutineScope()
+    var query by remember { mutableStateOf("") }
+    var found by remember { mutableStateOf<List<MapPlace>>(emptyList()) }
+    var searching by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = { query = it },
+            label = { Text(texts.findHouse) },
+            singleLine = true,
+            modifier = Modifier.weight(1f)
+        )
+        BusyButton(text = texts.findAddress, busy = searching, enabled = query.isNotBlank()) {
+            scope.launch {
+                searching = true
+                found = geocoder.find(query)
+                searching = false
+            }
+        }
+    }
+    found.forEachIndexed { at, place ->
+        RecordRow(
+            title = place.city,
+            striped = at % STRIPE == 1,
+            onClick = {
+                state.show(place.latitude, place.longitude, HOUSE_ZOOM)
+                found = emptyList()
+            }
+        )
     }
 }
 
@@ -263,5 +325,11 @@ private fun MapFooter(
     }
 }
 
-/** Увеличение, на котором виден город: с него начинается и найденное место. */
+/** Увеличение, на котором виден город: с него начинается найденное по адресу подключения. */
 private const val CITY_ZOOM = 12
+
+/** Увеличение, на котором различимы дома: на нём открывается найденный адрес. */
+private const val HOUSE_ZOOM = 17
+
+/** Затеняется каждая вторая строка найденного. */
+private const val STRIPE = 2

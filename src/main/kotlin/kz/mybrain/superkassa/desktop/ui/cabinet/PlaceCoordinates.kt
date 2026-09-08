@@ -27,8 +27,9 @@ import java.math.BigDecimal
  * не было вовсе: непрочитанное значение молча уходило нулём — то есть
  * в Гвинейский залив вместо Алматы.
  *
- * Место указывается на карте: в адресном регистре координат нет, и
- * владелец брал их неизвестно откуда. Поля градусов остались рядом
+ * Место указывается на карте, и карта открывается на выбранном адресе:
+ * в адресном регистре координат нет, и владелец брал их неизвестно
+ * откуда. Поля градусов остались рядом
  * с картой, а не вместо неё: карта требует сети, а касса стоит и там,
  * где сети нет, — и тогда координаты приходят из другого источника
  * и вводятся руками.
@@ -39,6 +40,7 @@ fun PlaceCoordinates(
     preferences: Preferences,
     latitude: String,
     longitude: String,
+    address: String = "",
     onLatitude: (String) -> Unit,
     onLongitude: (String) -> Unit
 ) {
@@ -57,6 +59,7 @@ fun PlaceCoordinates(
             preferences = preferences,
             latitude = degreesOf(latitude, MAX_LATITUDE),
             longitude = degreesOf(longitude, MAX_LONGITUDE),
+            address = address,
             onDismiss = { onMap = false }
         ) { chosenLatitude, chosenLongitude ->
             onLatitude(chosenLatitude.toPlainString())
