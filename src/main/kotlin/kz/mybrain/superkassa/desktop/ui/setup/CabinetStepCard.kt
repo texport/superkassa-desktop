@@ -74,6 +74,7 @@ fun CabinetStepCard(
             return@SetupStepCard
         }
         AddRegisterCard(
+            session = session,
             cabinet = cabinet,
             texts = texts,
             known = FactoryStamp(draft.factoryNumber.orEmpty(), draft.manufactureYear.orEmpty())

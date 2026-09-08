@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.KkmModel
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterCreate
@@ -26,6 +27,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.addRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.kkmModels
 import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
+import kz.mybrain.superkassa.desktop.server.factoryInfo
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
@@ -51,13 +53,14 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  */
 @Composable
 fun AddRegisterCard(
+    session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
     known: FactoryStamp? = null,
     onAdded: (CabinetRegister) -> Unit = {}
 ) {
     SectionCard(title = texts.addRegister) {
-        AddRegisterForm(cabinet, texts, known, Modifier.fillMaxWidth(), onAdded)
+        AddRegisterForm(session, cabinet, texts, known, Modifier.fillMaxWidth(), onAdded)
     }
 }
 
@@ -69,6 +72,7 @@ fun AddRegisterCard(
  */
 @Composable
 fun AddRegisterDialog(
+    session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
     onDismiss: () -> Unit,
@@ -80,7 +84,7 @@ fun AddRegisterDialog(
         title = { Text(texts.addRegister) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-                AddRegisterForm(cabinet, texts, known = null, modifier = Modifier.fillMaxWidth()) { created ->
+                AddRegisterForm(session, cabinet, texts, known = null, modifier = Modifier.fillMaxWidth()) { created ->
                     onAdded(created)
                     onDismiss()
                 }
@@ -101,6 +105,7 @@ fun AddRegisterDialog(
  */
 @Composable
 private fun AddRegisterForm(
+    session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
     known: FactoryStamp?,
@@ -118,8 +123,20 @@ private fun AddRegisterForm(
         models = cabinet.guard { cabinet.client.kkmModels(token) }?.items.orEmpty()
     }
 
+    // У своей модели заводской номер и год выдаёт узел — он их и присваивает
+    // при выпуске. Владельцу их набирать неоткуда, а набранное от руки
+    // разошлось бы с тем, что касса отнесёт в ОФД при регистрации.
+    val ours = ourModel(draft.model)
+    LaunchedEffect(draft.model?.modelCode) {
+        if (!ours || draft.factory.isNotBlank()) return@LaunchedEffect
+        session.guard(texts.factoryNumber) { session.client.factoryInfo() }?.let { info ->
+            draft.factory = info.factoryNumber
+            draft.year = info.manufactureYear.toString()
+        }
+    }
+
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-        RegisterFields(texts, draft, places, models, stamped = known != null)
+        RegisterFields(texts, draft, places, models, stamped = known != null, issued = ours)
         val missing = missingFields(texts, draft)
         BusyButton(
             text = texts.addRegister,
@@ -139,7 +156,8 @@ private fun RegisterFields(
     draft: RegisterDraft,
     places: List<RetailPlace>,
     models: List<KkmModel>,
-    stamped: Boolean
+    stamped: Boolean,
+    issued: Boolean
 ) {
     LabelledPicker(
         label = texts.place,
@@ -156,23 +174,40 @@ private fun RegisterFields(
         onSelect = { draft.model = it }
     )
     if (!stamped) {
-        FormField(texts.factoryNumber, draft.factory, texts.required) { draft.factory = it }
-        FormField(texts.manufactureYear, draft.year, texts.required) {
-            draft.year = it.filter(Char::isDigit).take(YEAR_DIGITS)
-        }
+        // Выданные узлом номер и год показаны погашенными: они уже
+        // присвоены кассе, и правка сделала бы их неправдой.
+        FormField(
+            label = texts.factoryNumber,
+            value = draft.factory,
+            hint = if (issued) texts.factoryIssued else texts.required,
+            enabled = !issued
+        ) { draft.factory = it }
+        FormField(
+            label = texts.manufactureYear,
+            value = draft.year,
+            hint = if (issued) texts.factoryIssued else texts.required,
+            enabled = !issued
+        ) { draft.year = it.filter(Char::isDigit).take(YEAR_DIGITS) }
     }
     FormField(texts.internalName, draft.name, texts.internalNameHint) { draft.name = it }
 }
 
 /** Поле формы во всю ширину карточки с подписью под ним. */
 @Composable
-private fun FormField(label: String, value: String, hint: String, onChange: (String) -> Unit) {
+private fun FormField(
+    label: String,
+    value: String,
+    hint: String,
+    enabled: Boolean = true,
+    onChange: (String) -> Unit
+) {
     OutlinedTextField(
         value = value,
         onValueChange = onChange,
         label = { Text(label) },
         supportingText = { Text(hint) },
         singleLine = true,
+        enabled = enabled,
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -187,6 +222,22 @@ private fun MissingLine(texts: CabinetTexts, missing: List<String>) {
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }
+
+/**
+ * Наша ли это модель.
+ *
+ * Заводской номер своей кассе присваивает узел при выпуске, и в кабинете
+ * его не набирают, а получают. Чужая касса приезжает с номером на корпусе,
+ * и его вводит владелец.
+ *
+ * Модель узнаётся по наименованию из справочника: своего признака
+ * «наша модель» справочник ИСНА не отдаёт.
+ */
+private fun ourModel(model: KkmModel?): Boolean =
+    model?.name.orEmpty().contains(OUR_MODEL, ignoreCase = true)
+
+/** Как называется своя касса в справочнике моделей. */
+private const val OUR_MODEL = "Суперкасса"
 
 /** Какие обязательные поля пусты. */
 private fun missingFields(texts: CabinetTexts, draft: RegisterDraft): List<String> = listOfNotNull(

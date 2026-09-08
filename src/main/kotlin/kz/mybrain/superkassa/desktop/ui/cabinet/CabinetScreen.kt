@@ -85,7 +85,7 @@ private fun CabinetPage(
     when (page) {
         CabinetTab.Company -> CompanyPage(cabinet, texts, session.language)
         CabinetTab.Places -> PlacesPage(session, cabinet, texts)
-        CabinetTab.Registers -> RegistersPage(cabinet, texts)
+        CabinetTab.Registers -> RegistersPage(session, cabinet, texts)
         CabinetTab.Documents -> DocumentsPage(cabinet, texts)
     }
 }

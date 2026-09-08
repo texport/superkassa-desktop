@@ -29,11 +29,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Карточка была лентой из семи одинаковых карточек в полтора экрана
  * прокрутки: паспорт, правка, состояние, регистрационная карта, заявления,
  * токен, журнал — и всё это открыто одновременно. Теперь развёрнуто то,
- * ради чего кассу открывают: её состояние и заявления в ИСНА. Правка,
- * токен и журнал остаются заголовками и раскрываются по нажатию.
+ * ради чего кассу открывают: состояние и заявления в ИСНА. Регистрационная
+ * карта и журнал остаются заголовками и раскрываются по нажатию.
  *
  * Паспорт не сворачивается: это ответ на вопрос «какая это касса»,
- * и без него остальные разделы теряют предмет.
+ * и без него остальные разделы теряют предмет. Правка реквизитов и выдача
+ * токена живут в нём же — своих разделов у них больше нет.
  */
 @Composable
 fun RegisterDetails(
@@ -64,11 +65,11 @@ fun RegisterDetails(
         open = if (block in open) open - block else open + block
     }
     ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.snug) {
-        RegisterPassport(card, texts)
+        RegisterPassport(cabinet, texts, card) { scope.launch { reload() } }
         RegisterLiveBlocks(cabinet, texts, register, card, state, open, toggle) {
             scope.launch { reload() }
         }
-        RegisterAdminBlocks(cabinet, texts, card, actions, open, toggle) { scope.launch { reload() } }
+        RegisterAdminBlocks(texts, actions, open, toggle)
     }
 }
 
@@ -101,23 +102,14 @@ private fun RegisterLiveBlocks(
     }
 }
 
-/** Разделы, к которым возвращаются редко: правка, ключ и след действий. */
+/** След регистрационных действий: к нему возвращаются редко. */
 @Composable
 private fun RegisterAdminBlocks(
-    cabinet: CabinetSession,
     texts: CabinetTexts,
-    card: CabinetRegister,
     actions: List<RegistrationAction>,
     open: Set<RegisterBlock>,
-    onToggle: (RegisterBlock) -> Unit,
-    onChanged: () -> Unit
+    onToggle: (RegisterBlock) -> Unit
 ) {
-    RegisterBlockCard(RegisterBlock.Edit, open, onToggle, texts.editRegister) {
-        RegisterEditCard(cabinet, texts, card, onChanged)
-    }
-    RegisterBlockCard(RegisterBlock.Token, open, onToggle, texts.token) {
-        RegisterTokenBlock(cabinet, texts, card)
-    }
     RegisterBlockCard(
         block = RegisterBlock.Journal,
         open = open,
@@ -149,7 +141,7 @@ private fun RegisterBlockCard(
 }
 
 /** Разделы карточки кассы. */
-enum class RegisterBlock { Technical, Applications, Card, Edit, Token, Journal }
+enum class RegisterBlock { Technical, Applications, Card, Journal }
 
 /**
  * Что раскрыто при открытии кассы.

@@ -27,11 +27,17 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * Заведено один раз на всё приложение: полоса, её ширина и отступ под неё
  * должны быть одинаковыми в каждой панели.
+ *
+ * @param gutter поле под полосу прокрутки. Задаётся снаружи там, где
+ *   от него зависит вёрстка соседей: у колонки касс это поле и есть
+ *   зазор до разделителя, и с общим значением он получался вдвое шире
+ *   отступа от края экрана.
  */
 @Composable
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
     spacing: Dp = Spacing.normal,
+    gutter: Dp = Spacing.normal,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scroll = rememberScrollState()
@@ -40,7 +46,7 @@ fun ScrollableColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scroll)
-                .padding(end = Spacing.normal),
+                .padding(end = gutter),
             verticalArrangement = Arrangement.spacedBy(spacing),
             content = content
         )

@@ -164,6 +164,7 @@ data class CabinetTexts(
     val deliveryRefused: String,
     val cardMissingHint: String,
     val factoryLocked: String,
+    val factoryIssued: String,
     val missing: String,
     val periodToday: String,
     val periodWeek: String,

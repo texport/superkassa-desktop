@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
@@ -37,19 +38,16 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * после каждой кассы сбивал бы сравнение.
  */
 @Composable
-fun RegistersPage(cabinet: CabinetSession, texts: CabinetTexts) {
+fun RegistersPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     var chosen by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(cabinet.token) { cabinet.refreshRegisters() }
 
-    // Между колонкой и разделителем — узкий отступ: под полосу прокрутки
-    // столбец уже отвёл своё поле, и второй широкий зазор поверх читался
-    // как пустота непонятного назначения.
-    Row(
-        modifier = Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug)
-    ) {
-        RegisterList(cabinet, texts, chosen) { chosen = it }
+    // Своего зазора у ряда нет: его даёт поле под полосу прокрутки
+    // в колонке слева, и равно оно отступу от края экрана. Второй зазор
+    // поверх делал полосу пустоты вдвое шире, чем поля вокруг.
+    Row(modifier = Modifier.fillMaxSize()) {
+        RegisterList(session, cabinet, texts, chosen) { chosen = it }
         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         val register = cabinet.registers.firstOrNull { it.id == chosen }
         if (register == null) {
@@ -68,6 +66,7 @@ fun RegistersPage(cabinet: CabinetSession, texts: CabinetTexts) {
 /** Колонка со списком касс и формой заведения под ним. */
 @Composable
 private fun RegisterList(
+    session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
     chosen: String?,
@@ -80,7 +79,7 @@ private fun RegisterList(
     ) {
         // Строка о пустом списке стоит внутри прокрутки, а не над ней:
         // сверху она отрывалась от кнопки заведения на всю высоту окна.
-        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.tight) {
+        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.tight, gutter = Spacing.screen) {
             SectionCard(title = texts.registers) {
                 if (cabinet.registers.isEmpty()) {
                     EmptyState(AppIcons.kkm, texts.registersEmpty, texts.registersEmptyHint)
@@ -98,7 +97,7 @@ private fun RegisterList(
         }
     }
     if (adding) {
-        AddRegisterDialog(cabinet, texts, onDismiss = { adding = false }) { created ->
+        AddRegisterDialog(session, cabinet, texts, onDismiss = { adding = false }) { created ->
             onChoose(created.id)
         }
     }
