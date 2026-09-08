@@ -63,7 +63,7 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     LaunchedEffect(cabinet.token) { reload() }
 
     ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
-        SectionCard(title = texts.places, count = places.size.toString()) {
+        SectionCard(title = texts.places) {
             if (places.isEmpty()) {
                 EmptyState(AppIcons.newKkm, texts.placesEmpty, texts.placesEmptyHint)
             }

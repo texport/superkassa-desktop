@@ -30,7 +30,6 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * @param title название раздела.
  * @param expanded развёрнут ли раздел сейчас.
  * @param onToggle переключение состояния.
- * @param count сколько строк в разделе — подписью рядом с названием.
  * @param trailing то, что видно и в свёрнутом виде справа от названия.
  * @param always то, что остаётся на экране и свёрнутым: главное в разделе.
  * @param content содержимое, которое прячется.
@@ -40,7 +39,6 @@ fun CollapsibleSection(
     title: String,
     expanded: Boolean,
     onToggle: () -> Unit,
-    count: String? = null,
     trailing: @Composable () -> Unit = {},
     always: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
@@ -49,7 +47,7 @@ fun CollapsibleSection(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        SectionHeader(title, expanded, onToggle, count, trailing)
+        SectionHeader(title, expanded, onToggle, trailing)
         always()
         Collapsible(expanded) {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug), content = content)
@@ -69,7 +67,6 @@ fun SectionHeader(
     title: String,
     expanded: Boolean,
     onToggle: () -> Unit,
-    count: String? = null,
     trailing: @Composable () -> Unit = {}
 ) {
     val texts = LocalStrings.current
@@ -78,7 +75,7 @@ fun SectionHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        SectionTitle(title, count, Modifier.weight(1f))
+        SectionTitle(title, Modifier.weight(1f))
         trailing()
         IconButton(onClick = onToggle) {
             Icon(

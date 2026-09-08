@@ -38,7 +38,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  */
 @Composable
 fun OkedsCard(texts: CabinetTexts, okeds: MutableList<Oked>, busy: Boolean, onSave: () -> Unit) {
-    SectionCard(title = texts.okeds, count = okeds.size.toString()) {
+    SectionCard(title = texts.okeds) {
         if (okeds.isEmpty()) {
             EmptyState(AppIcons.settings, texts.okedsEmpty, texts.okedsEmptyHint)
         }

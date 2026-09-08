@@ -171,6 +171,7 @@ data class CabinetTexts(
     val periodAll: String,
     val showMore: String,
     val allShown: String,
+    val shownOf: String,
     val openedAt: String,
     val closedAt: String,
     val revenue: String,

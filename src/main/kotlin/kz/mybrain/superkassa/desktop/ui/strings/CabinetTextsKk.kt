@@ -161,6 +161,7 @@ internal val cabinetTextsKk = CabinetTexts(
     periodAll = "Барлығы",
     showMore = "Тағы көрсету",
     allShown = "Кезең толық көрсетілді",
+    shownOf = "%2\$s ішінен %1\$s көрсетілді",
     openedAt = "Ауысым ашылды",
     closedAt = "Ауысым жабылды",
     revenue = "Түсім",

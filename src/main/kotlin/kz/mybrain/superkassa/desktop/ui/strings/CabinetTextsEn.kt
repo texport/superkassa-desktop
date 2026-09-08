@@ -161,6 +161,7 @@ internal val cabinetTextsEn = CabinetTexts(
     periodAll = "All",
     showMore = "Show more",
     allShown = "The whole period is shown",
+    shownOf = "Shown %1\$s of %2\$s",
     openedAt = "Shift opened",
     closedAt = "Shift closed",
     revenue = "Revenue",

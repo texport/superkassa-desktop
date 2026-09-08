@@ -78,7 +78,7 @@ private fun RegisterList(
         // Строка о пустом списке стоит внутри прокрутки, а не над ней:
         // сверху она отрывалась от кнопки заведения на всю высоту окна.
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.tight) {
-            SectionCard(title = texts.registers, count = cabinet.registers.size.toString()) {
+            SectionCard(title = texts.registers) {
                 if (cabinet.registers.isEmpty()) {
                     EmptyState(AppIcons.kkm, texts.registersEmpty, texts.registersEmptyHint)
                 }

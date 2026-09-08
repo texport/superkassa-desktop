@@ -22,9 +22,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * заново, и они разъехались: где-то заголовок стоял под содержимым, где-то
  * внутреннее поле было вдвое уже. Здесь эта раскладка объявлена один раз.
  *
- * @param count сколько строк в разделе. Стоит вплотную к названию
- *   и приглушённой подписью: голое число у правого края читалось как
- *   оторванная от всего цифра, а к названию оно и относится.
+ * Счётчика строк у заголовка нет намеренно: короткий список владелец
+ * пересчитывает глазами, а число рядом с названием читается как
+ * оторванная от всего цифра. Там, где длину списка глазами не увидеть,
+ * она сказана словами под ним — рядом с кнопкой подгрузки.
+ *
  * @param trailing то, что стоит в строке заголовка справа: состояние
  *   или объяснение раздела.
  */
@@ -32,7 +34,6 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun SectionCard(
     title: String,
     modifier: Modifier = Modifier,
-    count: String? = null,
     trailing: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -46,7 +47,7 @@ fun SectionCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
             ) {
-                SectionTitle(title, count, Modifier.weight(1f))
+                SectionTitle(title, Modifier.weight(1f))
                 trailing()
             }
             content()
@@ -67,7 +68,6 @@ fun CollapsibleCard(
     expanded: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
-    count: String? = null,
     trailing: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -77,7 +77,6 @@ fun CollapsibleCard(
                 title = title,
                 expanded = expanded,
                 onToggle = onToggle,
-                count = count,
                 trailing = trailing,
                 content = content
             )
@@ -85,33 +84,14 @@ fun CollapsibleCard(
     }
 }
 
-/**
- * Название раздела и, если есть, счётчик строк рядом с ним.
- *
- * Счётчик набран подписью в приглушённом цвете и стоит сразу за
- * названием: он поясняет название, а не спорит с ним за внимание.
- * Правый край строки заголовка оставлен состоянию и действиям.
- */
+/** Название раздела — одной строкой во всех карточках приложения. */
 @Composable
-fun SectionTitle(title: String, count: String?, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.Bottom,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false)
-        )
-        if (!count.isNullOrBlank()) {
-            Text(
-                text = count,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
+fun SectionTitle(title: String, modifier: Modifier = Modifier) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        modifier = modifier
+    )
 }

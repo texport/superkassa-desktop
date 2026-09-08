@@ -125,7 +125,7 @@ private fun ColumnScope.ShiftList(
     }
     // Под списком видно, кончились ли смены: молчание внизу не отличает
     // «всё» от «оборвалось на двухсотой».
-    MoreRow(more, loading, journal.showMore, journal.allShown, onMore)
+    MoreRow(more, loading, journal.showMore, journal.allShown, onMore = onMore)
 }
 
 /**

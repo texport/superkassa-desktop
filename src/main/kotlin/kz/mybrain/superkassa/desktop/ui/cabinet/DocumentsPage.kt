@@ -146,8 +146,10 @@ private fun OverviewCard(overview: DocumentsOverview?, texts: CabinetTexts) {
 /**
  * Список документов выбранного вида.
  *
- * В заголовке — сколько показано из скольких: у страничного списка
- * одно число ниоткуда не говорит, весь это срок или его начало.
+ * Сколько показано из скольких сказано под списком, рядом с кнопкой
+ * подгрузки: у страничного списка одно число ниоткуда не говорит, весь
+ * это срок или его начало, — а в заголовке оно читалось как оторванная
+ * от всего цифра.
  */
 @Composable
 private fun DocumentList(
@@ -157,7 +159,7 @@ private fun DocumentList(
     onOpen: (DocumentRow) -> Unit,
     onMore: () -> Unit
 ) {
-    SectionCard(title = kind.title(texts), count = "${list.rows.size} / ${list.total}") {
+    SectionCard(title = kind.title(texts)) {
         if (list.rows.isEmpty()) {
             EmptyState(AppIcons.history, texts.documentsEmpty, texts.documentsEmptyHint)
             return@SectionCard
@@ -172,7 +174,14 @@ private fun DocumentList(
         list.rows.forEachIndexed { at, row ->
             RecordRowOf(row, texts, at % STRIPE == 1) { onOpen(row) }
         }
-        MoreRow(list.hasMore, list.loading, texts.showMore, texts.allShown, onMore)
+        MoreRow(
+            more = list.hasMore,
+            loading = list.loading,
+            showMore = texts.showMore,
+            allShown = texts.allShown,
+            note = texts.shownOf.format(list.rows.size, list.total),
+            onMore = onMore
+        )
     }
 }
 
