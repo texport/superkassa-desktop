@@ -33,6 +33,16 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
     var markerLongitude: Double? by mutableStateOf(null)
         private set
 
+    var locationLatitude: Double? by mutableStateOf(null)
+        private set
+
+    var locationLongitude: Double? by mutableStateOf(null)
+        private set
+
+    /** Город, в котором нас определили: показывается подписью под картой. */
+    var locationCity: String by mutableStateOf("")
+        private set
+
     /** Выбрана ли точка. */
     val marked: Boolean get() = markerLatitude != null && markerLongitude != null
 
@@ -68,16 +78,24 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
     }
 
     /**
-     * Ведёт карту в найденное место, не ставя метку.
+     * Отмечает, где мы, и ведёт туда карту.
      *
-     * Место определяется до города, и поставленная метка выглядела бы
-     * выбранной точкой — а выбирает её владелец нажатием.
+     * Своё место — не выбранная точка: оно определено до города и рисуется
+     * своим знаком, синим кружком, а выбранная точка остаётся красной
+     * булавкой. Прежде кнопка только двигала карту, и владелец не видел,
+     * произошло ли хоть что-нибудь.
      */
-    fun moveTo(latitude: Double, longitude: Double, toZoom: Int) {
-        centerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
-        centerLongitude = longitude.coerceIn(-HALF_TURN, HALF_TURN)
+    fun showLocation(latitude: Double, longitude: Double, city: String, toZoom: Int) {
+        locationLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
+        locationLongitude = longitude.coerceIn(-HALF_TURN, HALF_TURN)
+        locationCity = city
+        centerLatitude = locationLatitude ?: latitude
+        centerLongitude = locationLongitude ?: longitude
         zoom = toZoom.coerceIn(MIN_ZOOM, MAX_ZOOM)
     }
+
+    /** Знаем ли, где мы. */
+    val located: Boolean get() = locationLatitude != null && locationLongitude != null
 
     private companion object {
         /** Середина Алматы: с чего-то карта начинаться должна. */

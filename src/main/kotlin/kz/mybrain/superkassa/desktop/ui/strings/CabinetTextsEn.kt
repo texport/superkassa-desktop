@@ -172,6 +172,7 @@ internal val cabinetTextsEn = CabinetTexts(
     zoomIn = "Zoom in",
     zoomOut = "Zoom out",
     myLocation = "Show my city",
+    myLocationShown = "The blue dot is your city by connection address",
     locationAsk = "Detect the location?",
     locationAskHint = "The application will ask an external service which city your " +
         "connection address belongs to. Only the address itself leaves the machine — " +

@@ -49,12 +49,24 @@ class MapStateTest {
     }
 
     @Test
-    fun `перевод в найденный город метку не ставит`() {
+    fun `своё место отмечается своим знаком, а не выбранной точкой`() {
         val state = MapState()
-        state.moveTo(51.1801, 71.446, 12)
+        state.showLocation(51.1801, 71.446, "Астана", 12)
         assertEquals(51.1801, state.centerLatitude, 1e-6)
+        assertEquals(51.1801, state.locationLatitude!!, 1e-6)
+        assertEquals("Астана", state.locationCity)
         assertEquals(12, state.zoom)
+        assertTrue(state.located)
         assertFalse(state.marked, "место определено до города — выбранной точкой это не является")
+    }
+
+    @Test
+    fun `выбор точки не стирает своё место`() {
+        val state = MapState()
+        state.showLocation(51.1801, 71.446, "Астана", 12)
+        state.mark(51.15, 71.40)
+        assertTrue(state.located, "синий кружок города остаётся на карте рядом с выбранной точкой")
+        assertTrue(state.marked)
     }
 
     @Test

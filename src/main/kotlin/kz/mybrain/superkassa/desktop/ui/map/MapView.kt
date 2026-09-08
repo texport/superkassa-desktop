@@ -84,6 +84,7 @@ private fun MapCanvas(state: MapState, tiles: MapTiles, canvas: IntSize, revisio
         @Suppress("UNUSED_EXPRESSION")
         revision
         drawTiles(state, tiles, canvas)
+        drawLocation(state, canvas)
         drawMarker(state, canvas)
     }
 }
@@ -97,6 +98,27 @@ private fun DrawScope.drawTiles(state: MapState, tiles: MapTiles, canvas: IntSiz
         val y = (tile.y * MapProjection.TILE - corner.y).roundToInt()
         drawImage(bitmap, dstOffset = IntOffset(x, y))
     }
+}
+
+/**
+ * Где мы — синим кружком в ореоле, как это принято в картах.
+ *
+ * Знак другой, чем у выбранной точки, и намеренно: место определено
+ * по адресу подключения и указывает на город, а не на дом. Ореол
+ * не меняется с увеличением — он не обещает точности, а показывает,
+ * что это именно своё место.
+ */
+private fun DrawScope.drawLocation(state: MapState, canvas: IntSize) {
+    val latitude = state.locationLatitude ?: return
+    val longitude = state.locationLongitude ?: return
+    val corner = topLeft(state, canvas)
+    val at = Offset(
+        (MapProjection.xOf(longitude, state.zoom) - corner.x).toFloat(),
+        (MapProjection.yOf(latitude, state.zoom) - corner.y).toFloat()
+    )
+    drawCircle(MapColors.locationHalo, radius = LOCATION_HALO, center = at)
+    drawCircle(MapColors.markerEdge, radius = LOCATION_RADIUS + MARKER_EDGE, center = at)
+    drawCircle(MapColors.location, radius = LOCATION_RADIUS, center = at)
 }
 
 /** Метка выбранной точки: кружок с обводкой, видимый на любой подложке. */
@@ -150,7 +172,11 @@ private object MapColors {
     val empty = Color(0xFFE8E8E4)
     val marker = Color(0xFFD32F2F)
     val markerEdge = Color(0xFFFFFFFF)
+    val location = Color(0xFF1A73E8)
+    val locationHalo = Color(0x331A73E8)
 }
 
 private const val MARKER_RADIUS = 7f
 private const val MARKER_EDGE = 3f
+private const val LOCATION_RADIUS = 6f
+private const val LOCATION_HALO = 22f

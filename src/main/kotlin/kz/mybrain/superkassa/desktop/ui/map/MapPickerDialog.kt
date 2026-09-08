@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -63,12 +64,15 @@ fun MapPickerDialog(
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(
-            modifier = Modifier.width(Sizes.mapWidth),
+            // Высота окна задана, а карта берёт остаток: при высоте
+            // по содержимому карта распирала окно, и подсказку с шапкой
+            // выдавливало за верхний край.
+            modifier = Modifier.width(Sizes.mapWidth).height(Sizes.mapDialogHeight),
             shape = RoundedCornerShape(Sizes.corner),
             tonalElevation = Sizes.dialogElevation
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
+                modifier = Modifier.fillMaxSize().padding(Spacing.normal),
                 verticalArrangement = Arrangement.spacedBy(Spacing.snug)
             ) {
                 MapHeader(texts, onDismiss)
@@ -77,7 +81,7 @@ fun MapPickerDialog(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                MapArea(state, tiles, texts, preferences)
+                MapArea(state, tiles, texts, preferences, Modifier.weight(1f))
                 MapFooter(state, texts, onDismiss, onPicked)
             }
         }
@@ -106,9 +110,15 @@ private fun MapHeader(texts: CabinetTexts, onDismiss: () -> Unit) {
 
 /** Карта и управление ею. */
 @Composable
-private fun MapArea(state: MapState, tiles: MapTiles, texts: CabinetTexts, preferences: Preferences) {
-    Box(modifier = Modifier.fillMaxWidth().height(Sizes.mapHeight)) {
-        MapView(state, tiles, Modifier.fillMaxWidth().height(Sizes.mapHeight)) { _, _ -> }
+private fun MapArea(
+    state: MapState,
+    tiles: MapTiles,
+    texts: CabinetTexts,
+    preferences: Preferences,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.fillMaxWidth()) {
+        MapView(state, tiles, Modifier.fillMaxSize()) { _, _ -> }
         MapControls(state, texts, preferences, Modifier.align(Alignment.TopEnd).padding(Spacing.snug))
     }
 }
@@ -160,7 +170,7 @@ private fun LocateButton(state: MapState, texts: CabinetTexts, preferences: Pref
 
     fun locate() = scope.launch {
         busy = true
-        locator.locate()?.let { state.moveTo(it.latitude, it.longitude, CITY_ZOOM) }
+        locator.locate()?.let { state.showLocation(it.latitude, it.longitude, it.city, CITY_ZOOM) }
         busy = false
     }
 
@@ -220,17 +230,27 @@ private fun MapFooter(
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = if (latitude == null || longitude == null) {
-                texts.pointNotChosen
-            } else {
-                "${texts.latitude}: ${MapProjection.degrees(latitude)} · " +
-                    "${texts.longitude}: ${MapProjection.degrees(longitude)}"
-            },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f)
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = if (latitude == null || longitude == null) {
+                    texts.pointNotChosen
+                } else {
+                    "${texts.latitude}: ${MapProjection.degrees(latitude)} · " +
+                        "${texts.longitude}: ${MapProjection.degrees(longitude)}"
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            // Под координатами сказано, что синий кружок — не выбранная
+            // точка, а город: иначе владелец принял бы его за выбор.
+            if (state.located) {
+                Text(
+                    text = "${texts.myLocationShown}: ${state.locationCity}",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
         TextButton(onClick = onDismiss) { Text(texts.close) }
         Button(
             enabled = latitude != null && longitude != null,
