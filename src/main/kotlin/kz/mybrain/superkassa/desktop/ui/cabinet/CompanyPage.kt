@@ -64,6 +64,7 @@ fun CompanyPage(cabinet: CabinetSession, texts: CabinetTexts) {
                 }
             }
         }
+        AddOkedCard(texts, okeds)
     }
 }
 

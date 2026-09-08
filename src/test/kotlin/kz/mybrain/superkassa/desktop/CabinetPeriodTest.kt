@@ -13,10 +13,12 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.server.cabinet.DocumentPeriod
+import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.ReceiptSearch
 import kz.mybrain.superkassa.desktop.server.cabinet.cashMovements
 import kz.mybrain.superkassa.desktop.server.cabinet.receipts
 import kz.mybrain.superkassa.desktop.server.cabinet.reports
+import kz.mybrain.superkassa.desktop.server.cabinet.saveOkeds
 import kz.mybrain.superkassa.desktop.ui.cabinet.DocumentKind
 import kz.mybrain.superkassa.desktop.ui.cabinet.DocumentSpan
 import java.time.Instant
@@ -28,11 +30,16 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Срок, за который кабинет отдаёт документы.
+ * Что кабинет получает от рабочего места: срок документов и виды
+ * деятельности.
  *
  * Проверяется то, из-за чего раздел показал бы не тот период: граница
  * считается от начала суток рабочего места, а не «минус столько-то
  * часов», и «сегодня» обязано включать смену, открытую утром.
+ *
+ * Здесь же признак основного вида деятельности: кабинет ждёт примитив
+ * `boolean` и на пропущенном поле отвечает отказом разбора — а пропускался
+ * он ровно у неосновных, то есть у всех, кроме первого.
  */
 class CabinetPeriodTest {
 
@@ -113,6 +120,20 @@ class CabinetPeriodTest {
             client.cashMovements("token", "id", page = 0, period = period)
         }
         sent.forEach { assertTrue(it.url.toString().contains("dateFrom=2026-09-01T00:00:00Z"), it.url.toString()) }
+    }
+
+    @Test
+    fun `неосновной вид деятельности уходит с явным признаком`() {
+        val sent = mutableListOf<HttpRequestData>()
+        val client = capturing(sent, """{"companyId":"c","okeds":[]}""")
+        runBlocking {
+            client.saveOkeds(
+                "token",
+                listOf(Oked("47111", "Розничная торговля", primary = true), Oked("47112", "Ещё один"))
+            )
+        }
+        val body = (sent.single().body as TextContent).text
+        assertTrue(body.contains("\"primary\":false"), body)
     }
 
     private fun capturing(sent: MutableList<HttpRequestData>, body: String): CabinetClient {

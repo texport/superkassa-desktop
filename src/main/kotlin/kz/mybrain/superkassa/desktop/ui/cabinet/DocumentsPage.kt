@@ -157,12 +157,7 @@ private fun DocumentList(
     onOpen: (DocumentRow) -> Unit,
     onMore: () -> Unit
 ) {
-    SectionCard(
-        title = kind.title(texts),
-        trailing = {
-            Text("${list.rows.size} / ${list.total}", style = MaterialTheme.typography.labelLarge)
-        }
-    ) {
+    SectionCard(title = kind.title(texts), count = "${list.rows.size} / ${list.total}") {
         if (list.rows.isEmpty()) {
             EmptyState(AppIcons.history, texts.documentsEmpty, texts.documentsEmptyHint)
             return@SectionCard

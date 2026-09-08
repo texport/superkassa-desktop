@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlaceCreate
 import kz.mybrain.superkassa.desktop.server.cabinet.addRetailPlace
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.Chip
-import kz.mybrain.superkassa.desktop.ui.components.SectionCard
+import kz.mybrain.superkassa.desktop.ui.components.CollapsibleCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
@@ -30,9 +30,21 @@ import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
  * кабинет точку не примет, и отказ пришёл бы уже после нажатия. Поэтому же
  * выбранный адрес отмечен плашкой — по одному только заполненному полю
  * владелец не отличал набранное от выбранного.
+ *
+ * Карточка сворачивается и по умолчанию свёрнута: пять полей под списком
+ * точек отжимали список наверх, а заводят точку редко. В мастере
+ * подключения она открыта сразу — там завести точку и есть текущий шаг.
+ *
+ * @param opened открыта ли карточка при появлении.
  */
 @Composable
-fun AddPlaceCard(session: Session, cabinet: CabinetSession, texts: CabinetTexts, onAdded: () -> Unit) {
+fun AddPlaceCard(
+    session: Session,
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    opened: Boolean = false,
+    onAdded: () -> Unit
+) {
     val scope = rememberCoroutineScope()
     var name by remember { mutableStateOf("") }
     var query by remember { mutableStateOf("") }
@@ -42,7 +54,12 @@ fun AddPlaceCard(session: Session, cabinet: CabinetSession, texts: CabinetTexts,
     var latitude by remember { mutableStateOf("") }
     var longitude by remember { mutableStateOf("") }
 
-    SectionCard(title = texts.addPlace) {
+    var expanded by remember { mutableStateOf(opened) }
+    CollapsibleCard(
+        title = texts.addPlace,
+        expanded = expanded,
+        onToggle = { expanded = !expanded }
+    ) {
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },

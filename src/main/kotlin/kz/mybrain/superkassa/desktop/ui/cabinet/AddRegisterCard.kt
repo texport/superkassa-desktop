@@ -1,9 +1,14 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,9 +30,11 @@ import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
- * Заведение кассы в кабинете — одной формой для раздела и для мастера.
+ * Заведение кассы в кабинете — одной формой для мастера и для окна.
  *
  * Заведённая касса — ещё не поставленная на учёт: она получает состояние
  * «черновик» и ждёт заявления в ИСНА. Модель и торговая точка выбираются
@@ -36,6 +43,11 @@ import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
  *
  * Под кнопкой перечислено недостающее. Прежде она просто не нажималась,
  * и владелец перебирал поля, гадая, какое из пяти пустое.
+ *
+ * В разделе касс форма живёт отдельным окном, а не карточкой под списком:
+ * пять полей в узкой колонке отжимали список наверх и рвали его вёрстку,
+ * а заводят кассу раз в жизни. В мастере подключения она остаётся
+ * карточкой — там это шаг, а не отступление от списка.
  */
 @Composable
 fun AddRegisterCard(
@@ -43,6 +55,57 @@ fun AddRegisterCard(
     texts: CabinetTexts,
     known: FactoryStamp? = null,
     onAdded: (CabinetRegister) -> Unit = {}
+) {
+    SectionCard(title = texts.addRegister) {
+        AddRegisterForm(cabinet, texts, known, Modifier.fillMaxWidth(), onAdded)
+    }
+}
+
+/**
+ * Заведение кассы окном.
+ *
+ * Окно закрывается только по удаче: на отказе кабинета владелец должен
+ * видеть, что именно он выбрал, а не пустой список и погасшее окно.
+ */
+@Composable
+fun AddRegisterDialog(
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    onDismiss: () -> Unit,
+    onAdded: (CabinetRegister) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { if (!cabinet.busy) onDismiss() },
+        icon = { Icon(AppIcons.kkm, contentDescription = null) },
+        title = { Text(texts.addRegister) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+                AddRegisterForm(cabinet, texts, known = null, modifier = Modifier.fillMaxWidth()) { created ->
+                    onAdded(created)
+                    onDismiss()
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            TextButton(enabled = !cabinet.busy, onClick = onDismiss) { Text(texts.close) }
+        }
+    )
+}
+
+/**
+ * Поля заводимой кассы, кнопка и перечень незаполненного.
+ *
+ * @param known заводской номер и год, выданные узлом: в мастере они
+ *   получены на первом шаге и правке не подлежат.
+ */
+@Composable
+private fun AddRegisterForm(
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    known: FactoryStamp?,
+    modifier: Modifier = Modifier,
+    onAdded: (CabinetRegister) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val draft = remember(known) { RegisterDraft(known) }
@@ -55,7 +118,7 @@ fun AddRegisterCard(
         models = cabinet.guard { cabinet.client.kkmModels(token) }?.items.orEmpty()
     }
 
-    SectionCard(title = texts.addRegister) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
         RegisterFields(texts, draft, places, models, stamped = known != null)
         val missing = missingFields(texts, draft)
         BusyButton(
@@ -69,12 +132,7 @@ fun AddRegisterCard(
     }
 }
 
-/**
- * Поля заводимой кассы.
- *
- * @param stamped выданы ли заводской номер и год узлом: в мастере они
- *   получены на первом шаге и правке не подлежат.
- */
+/** Поля заводимой кассы. */
 @Composable
 private fun RegisterFields(
     texts: CabinetTexts,

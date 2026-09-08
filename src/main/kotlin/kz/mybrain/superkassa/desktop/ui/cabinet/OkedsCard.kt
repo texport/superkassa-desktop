@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.CollapsibleCard
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
@@ -37,10 +38,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  */
 @Composable
 fun OkedsCard(texts: CabinetTexts, okeds: MutableList<Oked>, busy: Boolean, onSave: () -> Unit) {
-    SectionCard(
-        title = texts.okeds,
-        trailing = { Text(okeds.size.toString(), style = MaterialTheme.typography.labelLarge) }
-    ) {
+    SectionCard(title = texts.okeds, count = okeds.size.toString()) {
         if (okeds.isEmpty()) {
             EmptyState(AppIcons.settings, texts.okedsEmpty, texts.okedsEmptyHint)
         }
@@ -49,10 +47,30 @@ fun OkedsCard(texts: CabinetTexts, okeds: MutableList<Oked>, busy: Boolean, onSa
                 okeds.removeAt(at)
             }
         }
-        // Первый заведённый вид становится основным сам: заявление без
-        // основного ОКЭД кабинет не примет, а выбирать из одного нечего.
-        OkedAddRow(texts, okeds.map { it.code }) { okeds.add(it.copy(primary = okeds.isEmpty())) }
         BusyButton(text = texts.saveOkeds, busy = busy, onClick = onSave)
+    }
+}
+
+/**
+ * Заведение вида деятельности — отдельной сворачиваемой карточкой.
+ *
+ * Свёрнута по умолчанию и стоит под списком: развёрнутая форма уезжала
+ * вниз с каждым добавленным видом, и владелец, заводя пятый, пролистывал
+ * до неё весь список заново. Свёрнутая, она остаётся строкой заголовка
+ * на виду.
+ *
+ * Первый заведённый вид становится основным сам: заявление без основного
+ * ОКЭД кабинет не примет, а выбирать из одного нечего.
+ */
+@Composable
+fun AddOkedCard(texts: CabinetTexts, okeds: MutableList<Oked>) {
+    var expanded by remember { mutableStateOf(false) }
+    CollapsibleCard(
+        title = texts.addOked,
+        expanded = expanded,
+        onToggle = { expanded = !expanded }
+    ) {
+        OkedAddRow(texts, okeds.map { it.code }) { okeds.add(it.copy(primary = okeds.isEmpty())) }
     }
 }
 

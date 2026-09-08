@@ -70,7 +70,7 @@ fun CabinetStepCard(
         // только начал, точек нет ни одной. Прежде мастер показывал пустой
         // список и упирался: точку заводили в другом разделе и возвращались.
         if (places == 0) {
-            AddPlaceCard(session, cabinet, texts) { scope.launch { countPlaces() } }
+            AddPlaceCard(session, cabinet, texts, opened = true) { scope.launch { countPlaces() } }
             return@SetupStepCard
         }
         AddRegisterCard(

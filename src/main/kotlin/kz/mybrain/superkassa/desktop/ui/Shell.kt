@@ -1,6 +1,5 @@
 package kz.mybrain.superkassa.desktop.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -20,8 +18,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -38,7 +33,9 @@ import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetScreen
+import kz.mybrain.superkassa.desktop.ui.cabinet.ownerLine
 import kz.mybrain.superkassa.desktop.ui.cash.CashScreen
+import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
 import kz.mybrain.superkassa.desktop.ui.components.KkmStatusChips
 import kz.mybrain.superkassa.desktop.ui.components.LanguagePicker
 import kz.mybrain.superkassa.desktop.ui.components.ReceiptPreview
@@ -51,6 +48,7 @@ import kz.mybrain.superkassa.desktop.ui.sale.SaleScreen
 import kz.mybrain.superkassa.desktop.ui.settings.SettingsScreen
 import kz.mybrain.superkassa.desktop.ui.setup.ConnectKkmScreen
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -116,16 +114,23 @@ fun Shell(session: Session) {
     Scaffold(
         topBar = {
             Column {
-                KkmTopBar(
-                    session = session,
-                    onSignOut = { session.signOut() },
-                    onRefresh = {
-                        scope.launch {
-                            session.refreshKkms()
-                            session.refreshSelected()
+                // Шапка называет то, чем владелец сейчас распоряжается:
+                // в кабинете это компания и он сам, в остальных разделах —
+                // касса и кассир. Раздел один, и шапка одна.
+                if (section == Section.Cabinet && cabinet.open) {
+                    CabinetTopBar(session, cabinet)
+                } else {
+                    KkmTopBar(
+                        session = session,
+                        onSignOut = { session.signOut() },
+                        onRefresh = {
+                            scope.launch {
+                                session.refreshKkms()
+                                session.refreshSelected()
+                            }
                         }
-                    }
-                )
+                    )
+                }
                 BusyLine(session.busy)
             }
         },
@@ -209,48 +214,43 @@ fun Shell(session: Session) {
  * состояния стоят до действий: кассир читает слева направо и должен
  * узнать о блокировке раньше, чем дотянется до кнопки.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun KkmTopBar(session: Session, onSignOut: () -> Unit, onRefresh: () -> Unit) {
     val texts = LocalStrings.current
     val kkm = session.selected
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
-        title = {
-            // Заголовок и действия отступают от краёв окна теми же полями,
-            // что и содержимое разделов: иначе номер кассы начинается
-            // от самого края стекла.
-            Column(modifier = Modifier.padding(start = Spacing.roomy)) {
-                Text(
-                    text = kkm?.let { session.displayName(it) } ?: texts.shell.noKkm,
-                    style = MaterialTheme.typography.titleMedium
-                )
-                if (kkm != null) {
-                    Text(
-                        text = listOfNotNull(kkm.orgTitle, session.whoami?.name).joinToString(SEPARATOR),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        },
-        actions = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = Spacing.roomy)
-            ) {
-                KkmStatusChips(session)
-                IconButton(onClick = onRefresh) {
-                    Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
-                }
-                LanguagePicker(session)
-                TextButton(onClick = onSignOut) { Text(texts.shell.changeCashier) }
-            }
+    AppTopBar(
+        title = kkm?.let { session.displayName(it) } ?: texts.shell.noKkm,
+        subtitle = kkm?.let { listOfNotNull(it.orgTitle, session.whoami?.name).joinToString(SEPARATOR) }
+    ) {
+        KkmStatusChips(session)
+        IconButton(onClick = onRefresh) {
+            Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
         }
-    )
+        LanguagePicker(session)
+        TextButton(onClick = onSignOut) { Text(texts.shell.changeCashier) }
+    }
+}
+
+/**
+ * Шапка кабинета: кто вошёл и чем он распоряжается.
+ *
+ * Язык и выход стоят там же, где у кассы, и теми же элементами: владелец,
+ * перешедший из кассовой части в кабинет, не должен искать их заново.
+ * Язык переключается здесь же — кабинет государственный, и владелец вправе
+ * вести его по-казахски, не выходя обратно на экран входа.
+ */
+@Composable
+private fun CabinetTopBar(session: Session, cabinet: CabinetSession) {
+    val texts = cabinetTexts(session.language)
+    val scope = rememberCoroutineScope()
+    AppTopBar(
+        title = cabinet.company?.name.orEmpty(),
+        subtitle = ownerLine(cabinet, texts),
+        badge = AppIcons.cabinet
+    ) {
+        LanguagePicker(session)
+        TextButton(onClick = { scope.launch { cabinet.signOut() } }) { Text(texts.signOut) }
+    }
 }
 
 /** Разделитель между сведениями в подзаголовке. */

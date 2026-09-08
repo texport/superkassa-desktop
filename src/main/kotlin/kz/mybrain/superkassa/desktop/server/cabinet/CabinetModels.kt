@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.server.cabinet
 
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
@@ -51,7 +52,22 @@ data class EdsLoginRequest(val challengeId: String, val signatureCms: String)
 
 /** Вид деятельности компании. */
 @Serializable
-data class Oked(val code: String, val name: String? = null, val primary: Boolean = false)
+data class Oked(
+    val code: String,
+    val name: String? = null,
+    /**
+     * Основной ли это вид деятельности.
+     *
+     * Значение пишется в запрос всегда, даже когда оно совпадает
+     * со значением по умолчанию: kotlinx.serialization по умолчанию
+     * умолчания опускает, а кабинет ждёт примитив `boolean` и на
+     * отсутствующем поле отвечает отказом разбора. Ломалось это
+     * не на первом виде деятельности, а на втором — первый становится
+     * основным сам, и `true` в запрос попадал.
+     */
+    @EncodeDefault
+    val primary: Boolean = false
+)
 
 /** Компания и её виды деятельности. */
 @Serializable

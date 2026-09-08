@@ -45,7 +45,6 @@ fun CabinetScreen(session: Session, cabinet: CabinetSession) {
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        CabinetHeader(session, cabinet, texts)
         CabinetTabs(page, texts) { page = it }
         CabinetIssue(cabinet, texts)
         CabinetPage(session, cabinet, texts, page)

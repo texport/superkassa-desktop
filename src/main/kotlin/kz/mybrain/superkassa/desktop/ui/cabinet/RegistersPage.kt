@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -68,19 +70,15 @@ private fun RegisterList(
     chosen: String?,
     onChoose: (String) -> Unit
 ) {
+    var adding by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.width(Sizes.registerColumn).fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
         // Строка о пустом списке стоит внутри прокрутки, а не над ней:
-        // сверху она отрывалась от формы заведения на всю высоту окна.
+        // сверху она отрывалась от кнопки заведения на всю высоту окна.
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.tight) {
-            SectionCard(
-                title = texts.registers,
-                trailing = {
-                    Text(cabinet.registers.size.toString(), style = MaterialTheme.typography.labelLarge)
-                }
-            ) {
+            SectionCard(title = texts.registers, count = cabinet.registers.size.toString()) {
                 if (cabinet.registers.isEmpty()) {
                     EmptyState(AppIcons.kkm, texts.registersEmpty, texts.registersEmptyHint)
                 }
@@ -89,7 +87,17 @@ private fun RegisterList(
                 }
             }
         }
-        AddRegisterCard(cabinet, texts)
+        // Под списком стоит кнопка, а не форма: пять полей в узкой колонке
+        // отжимали список наверх и рвали его вёрстку, а заводят кассу
+        // раз в жизни.
+        FilledTonalButton(onClick = { adding = true }, modifier = Modifier.fillMaxWidth()) {
+            Text(texts.addRegister)
+        }
+    }
+    if (adding) {
+        AddRegisterDialog(cabinet, texts, onDismiss = { adding = false }) { created ->
+            onChoose(created.id)
+        }
     }
 }
 

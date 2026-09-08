@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -33,6 +30,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * @param title название раздела.
  * @param expanded развёрнут ли раздел сейчас.
  * @param onToggle переключение состояния.
+ * @param count сколько строк в разделе — подписью рядом с названием.
  * @param trailing то, что видно и в свёрнутом виде справа от названия.
  * @param always то, что остаётся на экране и свёрнутым: главное в разделе.
  * @param content содержимое, которое прячется.
@@ -42,6 +40,7 @@ fun CollapsibleSection(
     title: String,
     expanded: Boolean,
     onToggle: () -> Unit,
+    count: String? = null,
     trailing: @Composable () -> Unit = {},
     always: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
@@ -50,7 +49,7 @@ fun CollapsibleSection(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        SectionHeader(title, expanded, onToggle, trailing)
+        SectionHeader(title, expanded, onToggle, count, trailing)
         always()
         Collapsible(expanded) {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug), content = content)
@@ -70,6 +69,7 @@ fun SectionHeader(
     title: String,
     expanded: Boolean,
     onToggle: () -> Unit,
+    count: String? = null,
     trailing: @Composable () -> Unit = {}
 ) {
     val texts = LocalStrings.current
@@ -78,13 +78,7 @@ fun SectionHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
-        )
+        SectionTitle(title, count, Modifier.weight(1f))
         trailing()
         IconButton(onClick = onToggle) {
             Icon(
