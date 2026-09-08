@@ -1,0 +1,151 @@
+package kz.mybrain.superkassa.desktop.ui.cabinet
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetReceiptDetails
+import kz.mybrain.superkassa.desktop.server.cabinet.DocumentsOverview
+import kz.mybrain.superkassa.desktop.server.cabinet.documentsOverview
+import kz.mybrain.superkassa.desktop.server.cabinet.receipt
+import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
+import kz.mybrain.superkassa.desktop.ui.components.CounterTile
+import kz.mybrain.superkassa.desktop.ui.components.EmptyState
+import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
+import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
+import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+
+/**
+ * Что доехало до ОФД по выбранной кассе.
+ *
+ * Кабинет показывает не то, что лежит в узле, а то, что принял сервер
+ * приёма данных: расхождение между ними и есть главный смысл этого
+ * раздела. Поэтому чек здесь назван состоянием доставки и отметкой КГД,
+ * а не «пробит».
+ */
+@Composable
+fun DocumentsPage(cabinet: CabinetSession, texts: CabinetTexts) {
+    val scope = rememberCoroutineScope()
+    var registerId by remember { mutableStateOf<String?>(null) }
+    var kind by remember { mutableStateOf(DocumentKind.Receipts) }
+    var overview by remember { mutableStateOf<DocumentsOverview?>(null) }
+    var rows by remember { mutableStateOf<List<DocumentRow>>(emptyList()) }
+    // Открытый чек показывается вместо списка: возвращаться к нему
+    // владелец будет по «Закрыть», а не поиском своего места в списке.
+    var opened by remember { mutableStateOf<CabinetReceiptDetails?>(null) }
+
+    LaunchedEffect(cabinet.token) { cabinet.refreshRegisters() }
+
+    LaunchedEffect(registerId, kind, cabinet.token) {
+        val token = cabinet.token
+        val id = registerId
+        if (token == null || id == null) return@LaunchedEffect
+        opened = null
+        overview = cabinet.guard { cabinet.client.documentsOverview(token, id) }
+        rows = cabinet.guard { loadDocuments(cabinet, token, id, kind, texts) }.orEmpty()
+    }
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+    ) {
+        LabelledPicker(
+            label = texts.chooseRegister,
+            options = cabinet.registers,
+            selected = cabinet.registers.firstOrNull { it.id == registerId },
+            title = { chosen -> chosen?.let { registerTitle(it) }.orEmpty() },
+            onSelect = { registerId = it.id }
+        )
+        if (registerId == null) {
+            EmptyState(AppIcons.kkm, texts.pickRegisterFirst, texts.pickRegisterFirstHint)
+            return@Column
+        }
+        OverviewCard(overview, texts)
+        ChoiceSegments(
+            options = DocumentKind.entries,
+            selected = kind,
+            label = { it.title(texts) },
+            onSelect = { kind = it }
+        )
+        val receipt = opened
+        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.snug) {
+            if (receipt != null) {
+                ReceiptCard(receipt, texts) { opened = null }
+                return@ScrollableColumn
+            }
+            DocumentList(rows, kind, texts) { row ->
+                scope.launch { opened = openReceipt(cabinet, registerId, row) }
+            }
+        }
+    }
+}
+
+/**
+ * Сколько чего у кассы накопилось по данным ОФД.
+ *
+ * Счётчики стояли строками «подпись — значение» в ряд и читались как
+ * реквизиты карточки. Число здесь и есть содержание, поэтому оно набрано
+ * крупно, а подпись под ним.
+ */
+@Composable
+private fun OverviewCard(overview: DocumentsOverview?, texts: CabinetTexts) {
+    val counts = overview ?: return
+    SectionCard(title = texts.documents) {
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
+            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        ) {
+            CounterTile(counts.receiptsCount.toString(), texts.receipts)
+            CounterTile(counts.shiftsCount.toString(), texts.shifts)
+            CounterTile(counts.reportsCount.toString(), texts.reports)
+            CounterTile(counts.cashMovementsCount.toString(), texts.cashMovements)
+        }
+    }
+}
+
+/** Список документов выбранного вида. */
+@Composable
+private fun DocumentList(
+    rows: List<DocumentRow>,
+    kind: DocumentKind,
+    texts: CabinetTexts,
+    onOpen: (DocumentRow) -> Unit
+) {
+    SectionCard(
+        title = kind.title(texts),
+        trailing = { Text(rows.size.toString(), style = MaterialTheme.typography.labelLarge) }
+    ) {
+        if (rows.isEmpty()) {
+            EmptyState(AppIcons.history, texts.documentsEmpty, texts.documentsEmptyHint)
+            return@SectionCard
+        }
+        if (kind == DocumentKind.Receipts) {
+            Text(
+                text = texts.receiptsHint,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        rows.forEachIndexed { at, row -> RecordRowOf(row, texts, at % STRIPE == 1) { onOpen(row) } }
+    }
+}
+
+/** Затеняется каждая вторая строка списка. */
+private const val STRIPE = 2

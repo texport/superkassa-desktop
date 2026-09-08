@@ -1,0 +1,150 @@
+package kz.mybrain.superkassa.desktop.ui.sale
+
+import kz.mybrain.superkassa.desktop.ui.payment.CASH_PAYMENT
+import kz.mybrain.superkassa.desktop.ui.payment.SplitIssue
+import kz.mybrain.superkassa.desktop.ui.payment.UNSUPPORTED_PAYMENTS
+import kz.mybrain.superkassa.desktop.ui.strings.PaymentTexts
+import kz.mybrain.superkassa.desktop.ui.strings.SaleStrings
+import kz.mybrain.superkassa.desktop.ui.strings.SaleTexts
+import java.math.BigDecimal
+
+/**
+ * Всё, от чего зависит, можно ли пробить чек.
+ *
+ * Собрано в один снимок намеренно: правила проверяются вне Compose и
+ * тестируются без запуска экрана, а экран только показывает найденную
+ * причину.
+ */
+data class SaleState(
+    val hasKkm: Boolean = true,
+    val kkmBlocked: Boolean = false,
+    val hasPin: Boolean = true,
+    val shiftOpen: Boolean = true,
+    val positions: Int = 1,
+    val hasItemDiscount: Boolean = false,
+    val receiptDiscount: BigDecimal? = null,
+    val total: BigDecimal = BigDecimal.ONE,
+    val paymentCodes: List<String> = listOf(CASH_PAYMENT),
+    /** Чем разбиение оплаты не годится, если оплат несколько. */
+    val splitIssue: SplitIssue? = null,
+    /**
+     * Виды оплаты, которые узел сейчас не принимает.
+     *
+     * Приходят из справочника узла: там у каждого вида есть признак
+     * допустимости. Пока справочник не прочитан, берётся последнее
+     * известное состояние протокола.
+     */
+    val unsupportedPayments: Set<String> = UNSUPPORTED_PAYMENTS,
+    val taken: BigDecimal? = null,
+    /** Наличная часть чека: с неё берётся сдача. `null` — весь чек наличными. */
+    val cashSum: BigDecimal? = null,
+    val customerBin: String = "",
+    val missingDomainField: DomainField? = null
+)
+
+/**
+ * Причина, по которой чек пробить нельзя.
+ *
+ * Каждая причина названа словами кассира: он должен понять, что исправить,
+ * не зная ни кода отказа, ни номера версии протокола.
+ */
+enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
+    NoKkm({ sale, _ -> sale.blockNoKkm }),
+    NoPin({ sale, _ -> sale.blockNoPin }),
+    KkmBlocked({ sale, _ -> sale.blockKkmBlocked }),
+    ShiftClosed({ sale, _ -> sale.blockShiftClosed }),
+    EmptyBasket({ sale, _ -> sale.blockEmptyBasket }),
+    DomainFields({ sale, _ -> sale.fillIn }),
+    PaymentUnsupported({ sale, _ -> sale.blockPaymentUnsupported }),
+    PaymentSplitEmpty({ _, payment -> payment.splitEmpty }),
+    PaymentSplitExcess({ _, payment -> payment.splitExcess }),
+    DiscountScopes({ sale, _ -> sale.blockDiscountScopes }),
+    TotalNotPositive({ sale, _ -> sale.blockTotalNotPositive }),
+    CustomerBin({ sale, _ -> sale.blockBin }),
+    TakenTooSmall({ sale, _ -> sale.blockTakenTooSmall });
+
+    /**
+     * Причина словами. Незаполненное отраслевое поле называется поимённо:
+     * «заполните реквизиты» кассиру не говорит, какое именно поле пустует.
+     *
+     * Числовому полю сказано, что от него нужно число: «Заполните: Тариф»
+     * над заполненным полем со словом «Городской» — это не причина,
+     * а загадка.
+     */
+    fun reason(
+        sale: SaleStrings,
+        texts: SaleTexts,
+        payment: PaymentTexts,
+        field: DomainField? = null
+    ): String {
+        val head = text(texts, payment)
+        if (this != DomainFields || field == null) return head
+        return if (field.numeric) {
+            texts.numberField.format(field.label(sale))
+        } else {
+            "$head: ${field.label(sale)}"
+        }
+    }
+}
+
+/**
+ * Первая причина, мешающая пробить чек, или `null`, если помех нет.
+ *
+ * Порядок от общего к частному: пока касса не выбрана, разбираться
+ * в скидках бессмысленно, и показывать кассиру нужно именно то, с чего
+ * начинать.
+ */
+@Suppress("ReturnCount")
+fun blockOf(state: SaleState): SaleBlock? {
+    if (!state.hasKkm) return SaleBlock.NoKkm
+    if (!state.hasPin) return SaleBlock.NoPin
+    if (state.kkmBlocked) return SaleBlock.KkmBlocked
+    if (!state.shiftOpen) return SaleBlock.ShiftClosed
+    if (state.positions == 0) return SaleBlock.EmptyBasket
+    if (state.missingDomainField != null) return SaleBlock.DomainFields
+    if (state.paymentCodes.any { it in state.unsupportedPayments }) return SaleBlock.PaymentUnsupported
+    when (state.splitIssue) {
+        SplitIssue.Empty -> return SaleBlock.PaymentSplitEmpty
+        SplitIssue.Excess -> return SaleBlock.PaymentSplitExcess
+        null -> Unit
+    }
+    if (state.hasItemDiscount && (state.receiptDiscount ?: BigDecimal.ZERO) > BigDecimal.ZERO) {
+        return SaleBlock.DiscountScopes
+    }
+    if (state.total <= BigDecimal.ZERO) return SaleBlock.TotalNotPositive
+    if (!binAccepted(state.customerBin)) return SaleBlock.CustomerBin
+    if (takenTooSmall(state)) return SaleBlock.TakenTooSmall
+    return null
+}
+
+/**
+ * Сдача покупателю.
+ *
+ * Считается от наличной части чека, а не от итога: при оплате картой
+ * и наличными вместе сдача с итога ушла бы в ноль и покупатель
+ * недополучил бы свои деньги.
+ *
+ * Отрицательной сдачи не бывает: «сдача −200 ₸» кассиру ничего не
+ * объясняет, а недостачу называет отдельная причина.
+ */
+fun changeOf(taken: BigDecimal?, cashSum: BigDecimal): BigDecimal? =
+    taken?.takeIf { it >= cashSum }?.subtract(cashSum)
+
+/**
+ * ИИН/БИН покупателя необязателен, но если введён — ровно двенадцать цифр.
+ *
+ * Узел длину не проверяет и такой чек примет: отвергнет его уже ОФД,
+ * когда исправлять будет нечего.
+ */
+fun binAccepted(bin: String): Boolean =
+    bin.isEmpty() || (bin.length == BIN_LENGTH && bin.all(Char::isDigit))
+
+private fun takenTooSmall(state: SaleState): Boolean {
+    val cash = state.cashSum ?: state.total
+    if (cash.signum() <= 0) return false
+    val taken = state.taken ?: return false
+    return taken < cash
+}
+
+/** Ровно столько цифр в ИИН и в БИН. */
+const val BIN_LENGTH: Int = 12

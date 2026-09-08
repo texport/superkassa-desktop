@@ -1,0 +1,110 @@
+package kz.mybrain.superkassa.desktop.ui.settings
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.strings.KkmSetupTexts
+import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+
+/**
+ * Сверка кассы с ОФД.
+ *
+ * Всё, что касса знает о себе, приходит от ОФД: организация, адрес,
+ * регистрационные номера, счётчики и номер смены. Разойтись они могут
+ * после автономной работы или замены сведений в кабинете ОФД — тогда
+ * кассир сверяет их отсюда, а не переустанавливает кассу.
+ *
+ * Условие стоит под своей кнопкой, а не общим списком внизу: у сверки
+ * сведений и сверки счётчиков требования разные, и общий список заставлял
+ * бы вспоминать, какое из них к чему.
+ */
+@Composable
+fun OfdSyncCard(session: Session) {
+    val money = moneyTexts(session.language).kkm
+    val scope = rememberCoroutineScope()
+    var busy by remember { mutableStateOf(false) }
+    val ready = session.selected != null && !busy
+
+    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
+            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        ) {
+            Text(money.syncTitle, style = MaterialTheme.typography.titleMedium)
+            SyncAction(
+                title = money.syncService,
+                hint = money.syncServiceHint,
+                enabled = ready,
+                onClick = {
+                    scope.launch {
+                        busy = true
+                        sync(session, money, service = true)
+                        busy = false
+                    }
+                }
+            )
+            SyncAction(
+                title = money.syncCounters,
+                hint = money.syncCountersHint,
+                enabled = ready,
+                onClick = {
+                    scope.launch {
+                        busy = true
+                        sync(session, money, service = false)
+                        busy = false
+                    }
+                }
+            )
+        }
+    }
+}
+
+/**
+ * Кнопка сверки и условие, при котором узел её выполнит.
+ *
+ * Условие — под значком: строкой во всю ширину оно занимало у каждой
+ * кнопки по две строки экрана, а читают его один раз.
+ */
+@Composable
+private fun SyncAction(title: String, hint: String, enabled: Boolean, onClick: () -> Unit) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedButton(onClick = onClick, enabled = enabled) { Text(title) }
+        InfoTip(hint)
+    }
+}
+
+private suspend fun sync(session: Session, money: KkmSetupTexts, service: Boolean) {
+    val kkm = session.selected ?: return
+    val what = if (service) money.syncService else money.syncCounters
+    session.guard(what) {
+        if (service) {
+            session.client.syncOfdServiceInfo(kkm.kkmId, session.pin)
+        } else {
+            session.client.syncOfdCounters(kkm.kkmId, session.pin)
+        }
+    } ?: return
+    session.refreshKkms()
+    session.refreshSelected()
+    session.report(if (service) money.syncServiceDone else money.syncCountersDone)
+}

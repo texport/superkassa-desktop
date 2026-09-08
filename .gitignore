@@ -1,0 +1,15 @@
+# Сборка
+.gradle/
+build/
+.kotlin/
+
+# Среда разработки
+.idea/
+*.iml
+local.properties
+
+# Система
+.DS_Store
+
+# Дампы
+*.hprof

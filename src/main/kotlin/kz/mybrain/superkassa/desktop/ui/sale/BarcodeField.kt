@@ -1,0 +1,129 @@
+package kz.mybrain.superkassa.desktop.ui.sale
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.server.NomenclatureItem
+import kz.mybrain.superkassa.desktop.server.lookupBarcode
+import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import java.math.BigDecimal
+
+/**
+ * Добавление позиции по штрихкоду.
+ *
+ * Справочник ведёт ОФД, поэтому цена, наименование и ставка НДС берутся
+ * у него, а не вводятся кассиром: расхождение цены на кассе и в справочнике —
+ * повод для претензии покупателя. Сканер сам дописывает Enter, поэтому
+ * поиск начинается по Enter, а кнопка поиска живёт значком в самом поле:
+ * отдельная кнопка рядом занимала бы место, которого в кассовой колонке нет.
+ */
+@Composable
+fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
+    val texts = LocalStrings.current
+    val extra = LocalSaleTexts.current
+    val scope = rememberCoroutineScope()
+    var barcode by remember { mutableStateOf("") }
+    var searching by remember { mutableStateOf(false) }
+    var notFound by remember { mutableStateOf(false) }
+
+    val kkm = session.selected
+    val rates = LocalVatRates.current
+    val ready = !searching && barcode.isNotBlank() && kkm != null
+    val search: () -> Boolean = {
+        if (ready) {
+            searching = true
+            scope.launch {
+                val found = session.guard(texts.sale.barcodeSearch) {
+                    session.client.lookupBarcode(kkm.kkmId, barcode, session.pin)
+                }
+                val position = found?.let { positionOf(it, rates, defaultVatOf(session, rates)) }
+                if (position != null) {
+                    onFound(position)
+                    barcode = ""
+                }
+                // Отсутствие в справочнике и молчание узла — разные беды:
+                // о второй кассиру говорит полоса сообщений, и повторять
+                // её здесь «нет такого штрихкода» значит соврать.
+                notFound = position == null && session.lastMessage == null
+                searching = false
+            }
+        }
+        ready
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth().onPreviewKeyEvent { event ->
+            event.type == KeyEventType.KeyDown && event.key in ENTER_KEYS && search()
+        },
+        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+    ) {
+        OutlinedTextField(
+            value = barcode,
+            onValueChange = {
+                barcode = it.filter(Char::isDigit)
+                notFound = false
+            },
+            label = { Text(texts.sale.barcode) },
+            singleLine = true,
+            trailingIcon = {
+                IconButton(enabled = ready, onClick = { search() }) {
+                    Icon(Icons.Outlined.Search, contentDescription = texts.sale.barcodeFind)
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Hint(
+            problem = when {
+                kkm == null -> extra.blockNoKkm
+                notFound -> texts.sale.barcodeMissing
+                else -> null
+            },
+            // Строка под полем говорит только о деле: идёт поиск, товар
+            // не найден, кассы нет. Про то, что сканер сам жмёт Enter,
+            // написано в подсказке заголовка — это правило, а не событие.
+            hint = if (searching) texts.sale.barcodeSearching else null
+        )
+    }
+}
+
+/** Найденное в справочнике — сразу позиция: одна штука по цене справочника. */
+private fun positionOf(item: NomenclatureItem, rates: List<VatRate>, fallbackVat: String): Position? {
+    val price = item.sellPrice ?: return null
+    return Position(
+        name = item.title,
+        price = price,
+        quantity = BigDecimal.ONE,
+        // Ставку называет сам справочник; своей догадки по проценту здесь
+        // больше нет — узел отдаёт код группы, а не число.
+        // Справочник ставку называет не всегда; тогда берётся ставка самой
+        // кассы, а не «Без НДС»: иначе у плательщика НДС каждый
+        // отсканированный товар уходил бы в чек необлагаемым.
+        vatGroup = item.vatGroup?.takeIf { code -> rates.any { it.code == code } } ?: fallbackVat,
+        measureUnitCode = item.measureUnitCode,
+        nameKk = item.nameKk?.takeIf { it.isNotBlank() }
+    )
+}
+
+/** Сканер завершает код обычным Enter, ручной ввод — любым из двух. */
+private val ENTER_KEYS = setOf(Key.Enter, Key.NumPadEnter)
