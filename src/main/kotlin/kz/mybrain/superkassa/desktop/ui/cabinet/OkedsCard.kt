@@ -2,11 +2,9 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -15,7 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.Chip
@@ -23,10 +21,9 @@ import kz.mybrain.superkassa.desktop.ui.components.CollapsibleCard
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
-import kz.mybrain.superkassa.desktop.ui.components.underFieldLabel
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -59,18 +56,24 @@ fun OkedsCard(texts: CabinetTexts, okeds: MutableList<Oked>, busy: Boolean, onSa
  * до неё весь список заново. Свёрнутая, она остаётся строкой заголовка
  * на виду.
  *
+ * Вид выбирается из классификатора, а не набирается: ИСНА сверяется
+ * с тем же классификатором, и набранное руками возвращалось отказом.
+ *
  * Первый заведённый вид становится основным сам: заявление без основного
  * ОКЭД кабинет не примет, а выбирать из одного нечего.
  */
 @Composable
-fun AddOkedCard(texts: CabinetTexts, okeds: MutableList<Oked>) {
+fun AddOkedCard(cabinet: CabinetSession, texts: CabinetTexts, language: Language, okeds: MutableList<Oked>) {
     var expanded by remember { mutableStateOf(false) }
     CollapsibleCard(
         title = texts.addOked,
         expanded = expanded,
         onToggle = { expanded = !expanded }
     ) {
-        OkedAddRow(texts, okeds.map { it.code }) { okeds.add(it.copy(primary = okeds.isEmpty())) }
+        OkedPicker(cabinet, texts, language, okeds.map { it.code }) { chosen ->
+            okeds.add(chosen.copy(primary = okeds.isEmpty()))
+            expanded = false
+        }
     }
 }
 
@@ -112,49 +115,6 @@ private fun OkedRow(
             }
         }
     )
-}
-
-/**
- * Строка заведения нового вида деятельности.
- *
- * @param known коды, которые уже в списке: повторный кабинет не примет.
- */
-@Composable
-private fun OkedAddRow(texts: CabinetTexts, known: List<String>, onAdd: (Oked) -> Unit) {
-    var code by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.Top
-    ) {
-        OutlinedTextField(
-            value = code,
-            onValueChange = { code = it },
-            label = { Text(texts.okedCode) },
-            supportingText = { Text(texts.required) },
-            singleLine = true,
-            modifier = Modifier.width(Sizes.fieldPin)
-        )
-        // Наименование обязательно: кабинет отвергает вид деятельности
-        // без него, и прежде отказ приходил уже после нажатия «Сохранить».
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text(texts.okedName) },
-            supportingText = { Text(texts.required) },
-            singleLine = true,
-            modifier = Modifier.width(Sizes.fieldName)
-        )
-        TextButton(
-            enabled = code.isNotBlank() && name.isNotBlank() && code.trim() !in known,
-            modifier = Modifier.underFieldLabel(),
-            onClick = {
-                onAdd(Oked(code = code.trim(), name = name.trim(), primary = false))
-                code = ""
-                name = ""
-            }
-        ) { Text(texts.addOked) }
-    }
 }
 
 /**

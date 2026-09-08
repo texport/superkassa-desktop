@@ -142,10 +142,17 @@ class NcaLayer(private val address: String = DEFAULT_ADDRESS) {
  * кладёт подписанное внутрь CMS: кабинет принимает и присоединённую,
  * и отсоединённую подпись, но с присоединённой ему нечего сверять
  * с содержимым по памяти.
+ *
+ * `origin` — то, чьё имя NCALayer покажет владельцу в окне подписи:
+ * «{0} запрашивает разрешение». Без него окно называет просителя
+ * `UNIDENTIFIED`, и владелец подписывает, не зная кому. Поле читает сам
+ * модуль подписи — `BasicsModuleService.process` и `PKIExtras` берут его
+ * из запроса значением по умолчанию `UNIDENTIFIED`.
  */
 internal fun ncaSignRequest(base64Content: String): JsonObject = buildJsonObject {
     put("module", "kz.gov.pki.knca.basics")
     put("method", "sign")
+    put("origin", ORIGIN)
     putJsonObject("args") {
         put("format", "cms")
         put("data", base64Content)
@@ -264,6 +271,14 @@ private fun declined(answer: JsonObject): EdsRefusal {
 
 /** Прежний модуль отвечает кодом успеха строкой. */
 private const val LEGACY_OK = "200"
+
+/**
+ * Чьё имя NCALayer показывает владельцу в окне подписи.
+ *
+ * Латиницей и без пояснений: строка встаёт в шаблон «{0} запрашивает
+ * разрешение» и должна читаться названием приложения, а не предложением.
+ */
+internal const val ORIGIN = "Superkassa"
 
 /** Подпись документа: расширенное назначение ключа НУЦ РК. */
 private const val SIGNING_OID = "1.3.6.1.5.5.7.3.4"

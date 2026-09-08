@@ -36,6 +36,15 @@ class EdsProtocolTest {
     }
 
     @Test
+    fun `запрос называет приложение, а не остаётся неопознанным`() {
+        val request = ncaSignRequest("cGF5bG9hZA==")
+        // Без этого поля NCALayer пишет владельцу «UNIDENTIFIED запрашивает
+        // разрешение»: имя просителя модуль подписи берёт из запроса,
+        // а не из соединения.
+        assertEquals("Superkassa", request["origin"]?.jsonPrimitive?.content)
+    }
+
+    @Test
     fun `подпись просится присоединённой и с развёрнутым base64`() {
         val params = ncaSignRequest("cGF5bG9hZA==")["args"]?.jsonObject?.get("signingParams")?.jsonObject
         assertEquals("true", params?.get("decode")?.jsonPrimitive?.content)

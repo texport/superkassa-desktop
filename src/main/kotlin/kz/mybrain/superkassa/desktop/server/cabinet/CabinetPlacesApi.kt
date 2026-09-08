@@ -36,6 +36,17 @@ suspend fun CabinetClient.addresses(token: String, query: String): RegisterAddre
 suspend fun CabinetClient.kkmModels(token: String): CabinetPage<KkmModel> =
     request(HttpMethod.Get, "/api/reference/kkm-models?page=0&size=$PAGE_SIZE", token = token)
 
+/**
+ * Классификатор ОКЭД: пустой запрос — начало списка, цифры — поиск
+ * по коду, остальное — по наименованию на русском или казахском.
+ */
+suspend fun CabinetClient.okedReference(token: String, query: String): CabinetPage<OkedEntry> =
+    request(
+        HttpMethod.Get,
+        "/api/reference/okeds?page=0&size=$PAGE_SIZE&query=${query.encoded()}",
+        token = token
+    )
+
 /** Часть запроса в адресной строке: пробелы и кириллица не пролезают как есть. */
 private fun String.encoded(): String =
     java.net.URLEncoder.encode(this, Charsets.UTF_8)

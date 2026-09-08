@@ -24,6 +24,7 @@ import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -35,7 +36,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * заявление.
  */
 @Composable
-fun CompanyPage(cabinet: CabinetSession, texts: CabinetTexts) {
+fun CompanyPage(cabinet: CabinetSession, texts: CabinetTexts, language: Language) {
     val scope = rememberCoroutineScope()
     var profile by remember { mutableStateOf<CompanyProfile?>(null) }
     val okeds = remember { mutableStateListOf<Oked>() }
@@ -64,7 +65,7 @@ fun CompanyPage(cabinet: CabinetSession, texts: CabinetTexts) {
                 }
             }
         }
-        AddOkedCard(texts, okeds)
+        AddOkedCard(cabinet, texts, language, okeds)
     }
 }
 

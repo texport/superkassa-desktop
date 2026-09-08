@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.PointOfSale
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material.icons.filled.QueuePlayNext
@@ -98,4 +99,7 @@ object AppIcons {
 
     /** Личный кабинет ОФД: дела владельца, а не кассира. */
     val cabinet: ImageVector = Icons.Filled.Business
+
+    /** Место на карте: где стоит торговая точка. */
+    val place: ImageVector = Icons.Filled.Place
 }

@@ -141,6 +141,15 @@ data class RegisterAddress(
 @Serializable
 data class RegisterAddresses(val items: List<RegisterAddress> = emptyList())
 
+/**
+ * Вид деятельности из классификатора ОКЭД.
+ *
+ * Отличается от [Oked] компании: там — что владелец за собой записал
+ * и какой из видов основной, здесь — что вообще существует в классификаторе.
+ */
+@Serializable
+data class OkedEntry(val code: String, val name: String = "", val nameKz: String = "")
+
 /** Модель кассового аппарата из справочника. */
 @Serializable
 data class KkmModel(val modelCode: String, val name: String? = null, val active: Boolean = true)
