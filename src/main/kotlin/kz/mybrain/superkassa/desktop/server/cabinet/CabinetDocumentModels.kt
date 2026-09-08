@@ -151,7 +151,12 @@ data class CabinetReceipt(
     val kgdMarkAt: String? = null
 )
 
-/** Отбор чеков. */
+/**
+ * Отбор чеков.
+ *
+ * Границы периода — строками ISO-8601 в UTC: кабинет разбирает их
+ * в момент времени сам, а своего представления времени у отбора нет.
+ */
 @Serializable
 data class ReceiptSearch(
     val page: Int = 0,
@@ -160,7 +165,9 @@ data class ReceiptSearch(
     val shiftNumber: Int? = null,
     @Contextual val sumFrom: BigDecimal? = null,
     @Contextual val sumTo: BigDecimal? = null,
-    val operationTypes: List<String>? = null
+    val operationTypes: List<String>? = null,
+    val dateFrom: String? = null,
+    val dateTo: String? = null
 )
 
 /** Итоги смены. */

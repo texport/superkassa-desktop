@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.ShiftJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
@@ -124,15 +125,7 @@ private fun ColumnScope.ShiftList(
     }
     // Под списком видно, кончились ли смены: молчание внизу не отличает
     // «всё» от «оборвалось на двухсотой».
-    if (more) {
-        TextButton(enabled = !loading, onClick = onMore) { Text(journal.showMore) }
-    } else {
-        Text(
-            text = journal.allShown,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
+    MoreRow(more, loading, journal.showMore, journal.allShown, onMore)
 }
 
 /**

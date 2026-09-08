@@ -17,14 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
-import kz.mybrain.superkassa.desktop.server.cabinet.CabinetReceiptDetails
 import kz.mybrain.superkassa.desktop.server.cabinet.DocumentsOverview
 import kz.mybrain.superkassa.desktop.server.cabinet.documentsOverview
-import kz.mybrain.superkassa.desktop.server.cabinet.receipt
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.CounterTile
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
+import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
@@ -38,27 +37,33 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * приёма данных: расхождение между ними и есть главный смысл этого
  * раздела. Поэтому чек здесь назван состоянием доставки и отметкой КГД,
  * а не «пробит».
+ *
+ * Список читается страницами и за выбранный срок: за год работы кассы
+ * чеков десятки тысяч, и «первые пятьдесят за всё время» показывали
+ * позапрошлый месяц вместо сегодняшнего дня.
  */
 @Composable
 fun DocumentsPage(cabinet: CabinetSession, texts: CabinetTexts) {
     val scope = rememberCoroutineScope()
     var registerId by remember { mutableStateOf<String?>(null) }
     var kind by remember { mutableStateOf(DocumentKind.Receipts) }
+    var span by remember { mutableStateOf(DocumentSpan.Week) }
     var overview by remember { mutableStateOf<DocumentsOverview?>(null) }
-    var rows by remember { mutableStateOf<List<DocumentRow>>(emptyList()) }
-    // Открытый чек показывается вместо списка: возвращаться к нему
+    val list = remember { DocumentListState() }
+    // Открытый документ показывается вместо списка: возвращаться к нему
     // владелец будет по «Закрыть», а не поиском своего места в списке.
-    var opened by remember { mutableStateOf<CabinetReceiptDetails?>(null) }
+    var opened by remember { mutableStateOf<OpenedDocument?>(null) }
 
     LaunchedEffect(cabinet.token) { cabinet.refreshRegisters() }
 
-    LaunchedEffect(registerId, kind, cabinet.token) {
+    LaunchedEffect(registerId, kind, span, cabinet.token) {
         val token = cabinet.token
         val id = registerId
         if (token == null || id == null) return@LaunchedEffect
         opened = null
         overview = cabinet.guard { cabinet.client.documentsOverview(token, id) }
-        rows = cabinet.guard { loadDocuments(cabinet, token, id, kind, texts) }.orEmpty()
+        list.reset()
+        list.loadNext(cabinet, token, id, kind, span, texts)
     }
 
     Column(
@@ -83,16 +88,34 @@ fun DocumentsPage(cabinet: CabinetSession, texts: CabinetTexts) {
             label = { it.title(texts) },
             onSelect = { kind = it }
         )
-        val receipt = opened
+        DocumentSpanSegments(kind, span, texts) { span = it }
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.snug) {
-            if (receipt != null) {
-                ReceiptCard(receipt, texts) { opened = null }
+            val document = opened
+            if (document != null) {
+                OpenedCard(document, texts) { opened = null }
                 return@ScrollableColumn
             }
-            DocumentList(rows, kind, texts) { row ->
-                scope.launch { opened = openReceipt(cabinet, registerId, row) }
+            DocumentList(list, kind, texts, onOpen = { row ->
+                scope.launch { opened = openDocument(cabinet, registerId, kind, row) }
+            }) {
+                scope.launch {
+                    val token = cabinet.token ?: return@launch
+                    val id = registerId ?: return@launch
+                    list.loadNext(cabinet, token, id, kind, span, texts)
+                }
             }
         }
+    }
+}
+
+/** Раскрытый документ той карточкой, которая ему подходит. */
+@Composable
+private fun OpenedCard(document: OpenedDocument, texts: CabinetTexts, onClose: () -> Unit) {
+    when (document) {
+        is OpenedDocument.Receipt -> ReceiptCard(document.details, texts, onClose)
+        is OpenedDocument.Report -> ReportCard(document.details, texts, onClose)
+        is OpenedDocument.Movement -> CashMovementCard(document.details, texts, onClose)
+        is OpenedDocument.Shift -> ShiftCard(document.shift, texts, onClose)
     }
 }
 
@@ -120,19 +143,27 @@ private fun OverviewCard(overview: DocumentsOverview?, texts: CabinetTexts) {
     }
 }
 
-/** Список документов выбранного вида. */
+/**
+ * Список документов выбранного вида.
+ *
+ * В заголовке — сколько показано из скольких: у страничного списка
+ * одно число ниоткуда не говорит, весь это срок или его начало.
+ */
 @Composable
 private fun DocumentList(
-    rows: List<DocumentRow>,
+    list: DocumentListState,
     kind: DocumentKind,
     texts: CabinetTexts,
-    onOpen: (DocumentRow) -> Unit
+    onOpen: (DocumentRow) -> Unit,
+    onMore: () -> Unit
 ) {
     SectionCard(
         title = kind.title(texts),
-        trailing = { Text(rows.size.toString(), style = MaterialTheme.typography.labelLarge) }
+        trailing = {
+            Text("${list.rows.size} / ${list.total}", style = MaterialTheme.typography.labelLarge)
+        }
     ) {
-        if (rows.isEmpty()) {
+        if (list.rows.isEmpty()) {
             EmptyState(AppIcons.history, texts.documentsEmpty, texts.documentsEmptyHint)
             return@SectionCard
         }
@@ -143,7 +174,10 @@ private fun DocumentList(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
-        rows.forEachIndexed { at, row -> RecordRowOf(row, texts, at % STRIPE == 1) { onOpen(row) } }
+        list.rows.forEachIndexed { at, row ->
+            RecordRowOf(row, texts, at % STRIPE == 1) { onOpen(row) }
+        }
+        MoreRow(list.hasMore, list.loading, texts.showMore, texts.allShown, onMore)
     }
 }
 

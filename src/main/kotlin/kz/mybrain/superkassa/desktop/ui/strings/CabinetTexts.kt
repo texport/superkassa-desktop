@@ -164,7 +164,21 @@ data class CabinetTexts(
     val deliveryRefused: String,
     val cardMissingHint: String,
     val factoryLocked: String,
-    val missing: String
+    val missing: String,
+    val periodToday: String,
+    val periodWeek: String,
+    val periodMonth: String,
+    val periodAll: String,
+    val showMore: String,
+    val allShown: String,
+    val openedAt: String,
+    val closedAt: String,
+    val revenue: String,
+    val cashInDrawer: String,
+    val sales: String,
+    val returns: String,
+    val autonomous: String,
+    val documentMoment: String
 )
 
 /** Надписи области на выбранном языке. */

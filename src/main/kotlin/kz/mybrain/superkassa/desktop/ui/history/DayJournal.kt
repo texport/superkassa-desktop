@@ -31,6 +31,7 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.PAGE
 import kz.mybrain.superkassa.desktop.server.documents
+import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -112,7 +113,7 @@ fun DayJournal(session: Session) {
                         )
                     }
                 }
-                MoreRow(journal, more, loading) {
+                MoreRow(more, loading, journal.showMore, journal.allShown) {
                     scope.launch {
                         loading = true
                         more = loadDay(session, texts.sections.history, day, loaded)
@@ -121,30 +122,6 @@ fun DayJournal(session: Session) {
                 }
             }
         }
-    }
-}
-
-/**
- * Кнопка «показать ещё» под списком.
- *
- * Когда день показан целиком, вместо кнопки стоит строка об этом:
- * молчание внизу списка не отличает «всё» от «оборвалось».
- */
-@Composable
-private fun MoreRow(
-    journal: HistoryJournalTexts,
-    more: Boolean,
-    loading: Boolean,
-    onMore: () -> Unit
-) {
-    if (more) {
-        TextButton(enabled = !loading, onClick = onMore) { Text(journal.showMore) }
-    } else {
-        Text(
-            text = journal.allShown,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
 
