@@ -35,7 +35,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Список показывается сразу, до всякого ввода: у владельца нет под рукой
  * классификатора, чтобы вспомнить, с чего начать. Строка поиска отбирает
  * по коду, если набраны цифры, и по наименованию на любом из языков —
- * если слова.
+ * если слова. Подробное идёт первым: владелец ищет свой вид деятельности,
+ * а не раздел, в который тот входит.
  *
  * Уже добавленные виды из списка выпадают: кабинет второй такой же
  * не примет, а строка, которая ничего не делает, читается как поломка.
@@ -44,6 +45,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun OkedPicker(cabinet: CabinetSession, texts: CabinetTexts, language: Language, known: List<String>, onAdd: (Oked) -> Unit) {
     var query by remember { mutableStateOf("") }
     var found by remember { mutableStateOf<List<OkedEntry>>(emptyList()) }
+    var total by remember { mutableStateOf(0L) }
 
     // Поиск идёт за набором, а не по кнопке: классификатор большой,
     // и владелец сужает список, дописывая слово. Пауза перед обращением
@@ -51,7 +53,9 @@ fun OkedPicker(cabinet: CabinetSession, texts: CabinetTexts, language: Language,
     LaunchedEffect(query, cabinet.token) {
         val token = cabinet.token ?: return@LaunchedEffect
         if (query.isNotEmpty()) delay(TYPING_PAUSE_MS)
-        found = cabinet.guard { cabinet.client.okedReference(token, query.trim()) }?.items.orEmpty()
+        val page = cabinet.guard { cabinet.client.okedReference(token, query.trim()) }
+        found = page?.items.orEmpty()
+        total = page?.totalElements ?: 0
     }
 
     Column(
@@ -81,6 +85,15 @@ fun OkedPicker(cabinet: CabinetSession, texts: CabinetTexts, language: Language,
                 subtitle = entry.code,
                 striped = at % STRIPE == 1,
                 onClick = { onAdd(Oked(code = entry.code, name = okedName(entry, language))) }
+            )
+        }
+        // В классификаторе две тысячи позиций, и «торговля» находит сотни:
+        // без этой строки владелец считал бы, что его вида в нём нет.
+        if (total > offered.size) {
+            Text(
+                text = texts.shownOf.format(offered.size, total),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
