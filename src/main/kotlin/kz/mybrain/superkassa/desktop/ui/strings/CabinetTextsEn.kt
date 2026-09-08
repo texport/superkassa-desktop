@@ -173,6 +173,7 @@ internal val cabinetTextsEn = CabinetTexts(
     zoomOut = "Zoom out",
     myLocation = "Show my city",
     myLocationShown = "The blue dot is your city by connection address",
+    myLocationPrecise = "The blue dot is where you are, by this machine location service",
     findHouse = "Street address",
     locationAsk = "Detect the location?",
     locationAskHint = "The application will ask an external service which city your " +

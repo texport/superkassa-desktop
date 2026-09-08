@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.ktor.serialization.json)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.swing)
+    implementation(libs.jna)
     testImplementation(libs.kotlin.test)
     testImplementation(libs.ktor.client.mock)
     detektPlugins(libs.detekt.formatting)
@@ -46,6 +47,15 @@ compose.desktop {
                 // Значок нарисован из иконки Material 3 задачей `makeIcon`:
                 // тот же набор, что и значки в интерфейсе.
                 iconFile.set(project.file("icon.icns"))
+                // Зачем приложению место — этой строкой система спрашивает
+                // владельца. Без неё macOS окна разрешения не показывает
+                // вовсе и молча отказывает службе геопозиции.
+                infoPlist {
+                    extraKeysRawXml = """
+                        <key>NSLocationWhenInUseUsageDescription</key>
+                        <string>Чтобы поставить торговую точку на карте там, где она стоит.</string>
+                    """.trimIndent()
+                }
             }
         }
     }

@@ -43,6 +43,16 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
     var locationCity: String by mutableStateOf("")
         private set
 
+    /**
+     * Точное ли это место.
+     *
+     * Служба геопозиции самой машины указывает на дом, определение
+     * по адресу подключения — на город поставщика связи. Разница
+     * в километрах, и владелец должен знать, что перед ним.
+     */
+    var locationPrecise: Boolean by mutableStateOf(false)
+        private set
+
     /** Выбрана ли точка. */
     val marked: Boolean get() = markerLatitude != null && markerLongitude != null
 
@@ -86,10 +96,11 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
      * булавкой. Прежде кнопка только двигала карту, и владелец не видел,
      * произошло ли хоть что-нибудь.
      */
-    fun showLocation(latitude: Double, longitude: Double, city: String, toZoom: Int) {
+    fun showLocation(latitude: Double, longitude: Double, city: String, toZoom: Int, precise: Boolean = false) {
         locationLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
         locationLongitude = longitude.coerceIn(-HALF_TURN, HALF_TURN)
         locationCity = city
+        locationPrecise = precise
         centerLatitude = locationLatitude ?: latitude
         centerLongitude = locationLongitude ?: longitude
         zoom = toZoom.coerceIn(MIN_ZOOM, MAX_ZOOM)

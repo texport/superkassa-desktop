@@ -173,6 +173,7 @@ internal val cabinetTextsRu = CabinetTexts(
     zoomOut = "Отдалить",
     myLocation = "Показать мой город",
     myLocationShown = "Синий кружок — ваш город по адресу подключения",
+    myLocationPrecise = "Синий кружок — где вы сейчас, по службе геопозиции этой машины",
     findHouse = "Адрес дома",
     locationAsk = "Определить место?",
     locationAskHint = "Приложение спросит внешнюю службу, какому городу отвечает адрес " +

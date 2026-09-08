@@ -173,6 +173,7 @@ internal val cabinetTextsKk = CabinetTexts(
     zoomOut = "Алыстату",
     myLocation = "Қаламды көрсету",
     myLocationShown = "Көк дөңгелек — қосылым мекенжайы бойынша қалаңыз",
+    myLocationPrecise = "Көк дөңгелек — осы машинаның геопозиция қызметі бойынша қазіргі орныңыз",
     findHouse = "Үй мекенжайы",
     locationAsk = "Орналасқан жерді анықтау керек пе?",
     locationAskHint = "Қосымша сыртқы қызметтен қосылым мекенжайыңыз қай қалаға сәйкес " +

@@ -183,6 +183,7 @@ data class CabinetTexts(
     val zoomOut: String,
     val myLocation: String,
     val myLocationShown: String,
+    val myLocationPrecise: String,
     val findHouse: String,
     val locationAsk: String,
     val locationAskHint: String,

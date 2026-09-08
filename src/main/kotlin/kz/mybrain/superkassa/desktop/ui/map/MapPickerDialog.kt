@@ -217,11 +217,15 @@ private fun MapControls(
 }
 
 /**
- * «Где я»: спрашивает разрешение и ведёт карту в найденный город.
+ * «Где я»: сперва служба геопозиции самой машины, потом — адрес подключения.
  *
- * Разрешение спрашивается один раз и запоминается — так же, как это
- * делает браузер. Метку кнопка не ставит: место определяется до города,
- * и поставленная метка выглядела бы выбранной точкой.
+ * У макбука служба своя, и точность у неё домовая: разрешение на неё
+ * спрашивает система своим окном, приложение к нему не прикасается.
+ * Свой вопрос остаётся только для запасного пути — там наружу уходит
+ * адрес подключения, и это решение владельца.
+ *
+ * Метку выбранной точки кнопка не ставит ни в том, ни в другом случае:
+ * своё место — это своё место, а точку выбирает владелец нажатием.
  */
 @Composable
 private fun LocateButton(state: MapState, texts: CabinetTexts, preferences: Preferences) {
@@ -230,16 +234,29 @@ private fun LocateButton(state: MapState, texts: CabinetTexts, preferences: Pref
     var asking by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
 
+    /** Запасной путь: город по адресу подключения — и только по разрешению. */
+    suspend fun byConnection() {
+        locator.locate()?.let { state.showLocation(it.latitude, it.longitude, it.city, CITY_ZOOM) }
+    }
+
     fun locate() = scope.launch {
         busy = true
-        locator.locate()?.let { state.showLocation(it.latitude, it.longitude, it.city, CITY_ZOOM) }
+        // Сначала спрашиваем саму машину: её служба геопозиции указывает
+        // на дом, и разрешение у владельца просит система своим окном.
+        val system = MacLocation.locate()
+        if (system != null) {
+            state.showLocation(system.latitude, system.longitude, "", HOUSE_ZOOM, precise = true)
+        } else {
+            when (preferences.locationAllowed) {
+                true -> byConnection()
+                false -> Unit
+                null -> asking = true
+            }
+        }
         busy = false
     }
 
-    IconButton(
-        enabled = !busy && preferences.locationAllowed != false,
-        onClick = { if (preferences.locationAllowed == true) locate() else asking = true }
-    ) {
+    IconButton(enabled = !busy, onClick = { locate() }) {
         Icon(AppIcons.myLocation, contentDescription = texts.myLocation)
     }
     if (asking) {
@@ -248,7 +265,7 @@ private fun LocateButton(state: MapState, texts: CabinetTexts, preferences: Pref
             onAllow = {
                 preferences.locationAllowed = true
                 asking = false
-                locate()
+                scope.launch { byConnection() }
             },
             onDeny = {
                 preferences.locationAllowed = false
@@ -307,7 +324,11 @@ private fun MapFooter(
             // точка, а город: иначе владелец принял бы его за выбор.
             if (state.located) {
                 Text(
-                    text = "${texts.myLocationShown}: ${state.locationCity}",
+                    text = if (state.locationPrecise) {
+                        texts.myLocationPrecise
+                    } else {
+                        "${texts.myLocationShown}: ${state.locationCity}"
+                    },
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
