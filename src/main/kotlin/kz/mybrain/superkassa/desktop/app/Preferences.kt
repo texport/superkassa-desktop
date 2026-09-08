@@ -94,6 +94,25 @@ class Preferences(private val file: File = defaultFile()) {
     private val cabinetFile = File(file.parentFile, "cabinet")
 
     /**
+     * Разрешил ли владелец определять место по адресу подключения.
+     *
+     * Спрашивается один раз и запоминается — так же, как это делает
+     * браузер: определение места отдаёт наружу адрес подключения,
+     * и решение об этом принимает владелец, а не приложение.
+     * Пусто — не спрашивали ещё; отказ хранится наравне с согласием,
+     * чтобы не спрашивать снова при каждом открытии карты.
+     */
+    var locationAllowed: Boolean?
+        get() = when (read(locationFile)) {
+            ALLOWED -> true
+            DENIED -> false
+            else -> null
+        }
+        set(value) = write(locationFile, value?.let { if (it) ALLOWED else DENIED })
+
+    private val locationFile = File(file.parentFile, "location")
+
+    /**
      * Пройденное в мастере подключения кассы.
      *
      * По файлу на значение — как и остальные настройки рабочего места:
@@ -193,6 +212,10 @@ class Preferences(private val file: File = defaultFile()) {
 
         /** Отметка свёрнутого рельса: файла с другим содержимым не бывает. */
         const val COLLAPSED = "collapsed"
+
+        /** Ответ владельца на вопрос об определении места. */
+        const val ALLOWED = "allowed"
+        const val DENIED = "denied"
 
         fun defaultFile(): File = File(System.getProperty("user.home"), ".superkassa/kkm")
     }

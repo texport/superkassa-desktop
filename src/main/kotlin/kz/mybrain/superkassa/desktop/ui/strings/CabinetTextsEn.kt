@@ -171,6 +171,14 @@ internal val cabinetTextsEn = CabinetTexts(
     pointNotChosen = "No point chosen",
     zoomIn = "Zoom in",
     zoomOut = "Zoom out",
+    myLocation = "Show my city",
+    locationAsk = "Detect the location?",
+    locationAskHint = "The application will ask an external service which city your " +
+        "connection address belongs to. Only the address itself leaves the machine — " +
+        "neither the register nor the company is named. The accuracy is a city, not " +
+        "a building: place the point itself by clicking the map.",
+    locationAllow = "Allow",
+    locationDeny = "Do not allow",
     noApplications = "The register is off the record — no applications are filed for it",
     applicationInFlight = "An application is already filed — the next one after the ISNA reply",
     openedAt = "Shift opened",

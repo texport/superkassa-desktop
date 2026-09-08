@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.map.MapPickerDialog
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
@@ -35,6 +36,7 @@ import java.math.BigDecimal
 @Composable
 fun PlaceCoordinates(
     texts: CabinetTexts,
+    preferences: Preferences,
     latitude: String,
     longitude: String,
     onLatitude: (String) -> Unit,
@@ -52,6 +54,7 @@ fun PlaceCoordinates(
     if (onMap) {
         MapPickerDialog(
             texts = texts,
+            preferences = preferences,
             latitude = degreesOf(latitude, MAX_LATITUDE),
             longitude = degreesOf(longitude, MAX_LONGITUDE),
             onDismiss = { onMap = false }

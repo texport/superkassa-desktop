@@ -75,7 +75,7 @@ fun AddPlaceCard(
         if (chosen != null) {
             Chip(texts.addressChosen, StatusColors.delivered)
         }
-        PlaceCoordinates(texts, latitude, longitude, { latitude = it }, { longitude = it })
+        PlaceCoordinates(texts, session.preferences, latitude, longitude, { latitude = it }, { longitude = it })
         BusyButton(
             text = texts.addPlace,
             busy = cabinet.busy,

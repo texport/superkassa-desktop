@@ -67,6 +67,18 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
         centerLongitude = markerLongitude ?: longitude
     }
 
+    /**
+     * Ведёт карту в найденное место, не ставя метку.
+     *
+     * Место определяется до города, и поставленная метка выглядела бы
+     * выбранной точкой — а выбирает её владелец нажатием.
+     */
+    fun moveTo(latitude: Double, longitude: Double, toZoom: Int) {
+        centerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
+        centerLongitude = longitude.coerceIn(-HALF_TURN, HALF_TURN)
+        zoom = toZoom.coerceIn(MIN_ZOOM, MAX_ZOOM)
+    }
+
     private companion object {
         /** Середина Алматы: с чего-то карта начинаться должна. */
         const val ALMATY_LATITUDE = 43.238949

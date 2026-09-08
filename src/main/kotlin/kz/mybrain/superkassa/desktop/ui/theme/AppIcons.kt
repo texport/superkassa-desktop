@@ -16,6 +16,7 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.PointOfSale
@@ -102,4 +103,7 @@ object AppIcons {
 
     /** Место на карте: где стоит торговая точка. */
     val place: ImageVector = Icons.Filled.Place
+
+    /** Где сейчас рабочее место: перевести карту в свой город. */
+    val myLocation: ImageVector = Icons.Filled.MyLocation
 }
