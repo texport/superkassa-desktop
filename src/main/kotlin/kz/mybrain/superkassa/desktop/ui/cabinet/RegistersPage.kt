@@ -42,9 +42,12 @@ fun RegistersPage(cabinet: CabinetSession, texts: CabinetTexts) {
 
     LaunchedEffect(cabinet.token) { cabinet.refreshRegisters() }
 
+    // Между колонкой и разделителем — узкий отступ: под полосу прокрутки
+    // столбец уже отвёл своё поле, и второй широкий зазор поверх читался
+    // как пустота непонятного назначения.
     Row(
         modifier = Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.normal)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
         RegisterList(cabinet, texts, chosen) { chosen = it }
         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -35,7 +37,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Заголовок и действия отступают от краёв окна теми же полями, что
  * и содержимое разделов: иначе название начинается от самого края стекла.
  *
- * @param badge необязательный опознавательный значок слева.
+ * @param badge опознавательный значок слева. Уступает место возврату:
+ *   там, где из раздела есть выход назад, стрелка важнее значка.
+ * @param onBack возврат из раздела, если он есть.
  * @param actions кнопки справа: у каждого раздела свои.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,15 +48,27 @@ fun AppTopBar(
     title: String,
     subtitle: String? = null,
     badge: ImageVector? = null,
+    onBack: (() -> Unit)? = null,
+    backLabel: String? = null,
     actions: @Composable RowScope.() -> Unit
 ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        navigationIcon = { badge?.let { TopBarBadge(it) } },
+        navigationIcon = {
+            when {
+                onBack != null -> IconButton(
+                    onClick = onBack,
+                    modifier = Modifier.padding(start = Spacing.snug)
+                ) { Icon(AppIcons.back, contentDescription = backLabel) }
+
+                badge != null -> TopBarBadge(badge)
+            }
+        },
         title = {
-            Column(modifier = Modifier.padding(start = if (badge == null) Spacing.roomy else Spacing.tight)) {
+            val lead = if (badge == null && onBack == null) Spacing.roomy else Spacing.tight
+            Column(modifier = Modifier.padding(start = lead)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,

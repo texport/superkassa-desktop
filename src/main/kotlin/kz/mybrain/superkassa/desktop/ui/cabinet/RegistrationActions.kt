@@ -61,22 +61,45 @@ fun RegistrationActionsBlock(
         places = cabinet.guard { cabinet.client.retailPlaces(token) }?.items.orEmpty()
     }
 
+    // Выбранным остаётся только то, что по нынешнему состоянию кассы
+    // подаётся: иначе владелец возвращается к разделу и видит выбранным
+    // заявление, которое ИСНА отвергнет.
+    val available = availableActions(register)
+    LaunchedEffect(register.status) {
+        kind = available.firstOrNull() ?: return@LaunchedEffect
+    }
+    if (available.isEmpty()) {
+        NoActions(register, texts)
+        ApplicationResult(sent, texts)
+        return
+    }
     ChoiceSegments(
         options = ActionKind.entries,
         selected = kind,
         label = { it.title(texts) },
+        available = { it in available },
         onSelect = { kind = it }
     )
     ApplicationFields(kind, texts, places, placeId, reason, comment, { placeId = it }, { reason = it }) {
         comment = it
     }
-    BusyButton(text = texts.submitApplication, busy = cabinet.busy) {
+    BusyButton(text = texts.submitApplication, busy = cabinet.busy, enabled = kind in available) {
         scope.launch {
             sent = submitApplication(cabinet, kind, register.id, placeId, reason, comment)
             onDone()
         }
     }
     ApplicationResult(sent, texts)
+}
+
+/** Почему заявлений сейчас нет — вместо ряда погашенных сегментов. */
+@Composable
+private fun NoActions(register: CabinetRegister, texts: CabinetTexts) {
+    Text(
+        text = noActionsReason(register, texts),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /** Что нужно уточнить у выбранного вида заявления. */

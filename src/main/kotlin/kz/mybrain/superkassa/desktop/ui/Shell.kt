@@ -32,8 +32,8 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
+import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetBar
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetScreen
-import kz.mybrain.superkassa.desktop.ui.cabinet.ownerLine
 import kz.mybrain.superkassa.desktop.ui.cash.CashScreen
 import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
 import kz.mybrain.superkassa.desktop.ui.components.KkmStatusChips
@@ -48,7 +48,6 @@ import kz.mybrain.superkassa.desktop.ui.sale.SaleScreen
 import kz.mybrain.superkassa.desktop.ui.settings.SettingsScreen
 import kz.mybrain.superkassa.desktop.ui.setup.ConnectKkmScreen
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -118,7 +117,7 @@ fun Shell(session: Session) {
                 // в кабинете это компания и он сам, в остальных разделах —
                 // касса и кассир. Раздел один, и шапка одна.
                 if (section == Section.Cabinet && cabinet.open) {
-                    CabinetTopBar(session, cabinet)
+                    CabinetBar(session, cabinet)
                 } else {
                     KkmTopBar(
                         session = session,
@@ -228,28 +227,6 @@ private fun KkmTopBar(session: Session, onSignOut: () -> Unit, onRefresh: () -> 
         }
         LanguagePicker(session)
         TextButton(onClick = onSignOut) { Text(texts.shell.changeCashier) }
-    }
-}
-
-/**
- * Шапка кабинета: кто вошёл и чем он распоряжается.
- *
- * Язык и выход стоят там же, где у кассы, и теми же элементами: владелец,
- * перешедший из кассовой части в кабинет, не должен искать их заново.
- * Язык переключается здесь же — кабинет государственный, и владелец вправе
- * вести его по-казахски, не выходя обратно на экран входа.
- */
-@Composable
-private fun CabinetTopBar(session: Session, cabinet: CabinetSession) {
-    val texts = cabinetTexts(session.language)
-    val scope = rememberCoroutineScope()
-    AppTopBar(
-        title = cabinet.company?.name.orEmpty(),
-        subtitle = ownerLine(cabinet, texts),
-        badge = AppIcons.cabinet
-    ) {
-        LanguagePicker(session)
-        TextButton(onClick = { scope.launch { cabinet.signOut() } }) { Text(texts.signOut) }
     }
 }
 

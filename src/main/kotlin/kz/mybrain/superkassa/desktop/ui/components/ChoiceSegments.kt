@@ -15,6 +15,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 /**
  * Выбор одного из нескольких — сегментами Material 3.
  *
+ * Отдельные сегменты гаснут: набор один, а к нынешнему состоянию подходит
+ * не всякий из них — заявление о постановке на учёт для кассы, уже стоящей
+ * на учёте, кабинет отвергнет. Погашенный сегмент остаётся на месте:
+ * спрятанный, он не объясняет, куда делся выбор.
+ *
  * Заведено один раз: подпись сегмента не переносится ни при каком языке.
  * Material переносит её по умолчанию, и «Сатып алу» вставало в две строки,
  * разрывая ряд по высоте. По Material 3 подпись сегмента обязана
@@ -28,6 +33,7 @@ fun <T> ChoiceSegments(
     label: (T) -> String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    available: (T) -> Boolean = { true },
     onSelect: (T) -> Unit
 ) {
     // Ширина сегмента считается по самой длинной подписи набора, а не
@@ -42,7 +48,7 @@ fun <T> ChoiceSegments(
         options.forEachIndexed { at, option ->
             SegmentedButton(
                 selected = option == selected,
-                enabled = enabled,
+                enabled = enabled && available(option),
                 onClick = { onSelect(option) },
                 shape = SegmentedButtonDefaults.itemShape(at, options.size),
                 modifier = Modifier.width(segment),
