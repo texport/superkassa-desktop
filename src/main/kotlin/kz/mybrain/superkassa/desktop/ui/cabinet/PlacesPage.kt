@@ -183,7 +183,13 @@ private fun CreateButtons(
     }
 }
 
-/** Справа — выбранная касса целиком, а до выбора кассы сама точка. */
+/**
+ * Справа — выбранная касса целиком, а до выбора кассы сама точка.
+ *
+ * Отступ от разделителя такой же, какой слева даёт поле под полосу
+ * прокрутки: карточки справа начинались вплотную к черте, и колонки
+ * выглядели прижатыми друг к другу.
+ */
 @Composable
 private fun RowScope.Detail(
     session: Session,
@@ -196,14 +202,15 @@ private fun RowScope.Detail(
 ) {
     val chosen = cabinet.registers.firstOrNull { it.id == register }
     val chosenPlace = places.firstOrNull { it.id == place }
+    val pane = Modifier.weight(1f).padding(start = Spacing.screen)
     when {
-        chosen != null -> RegisterDetails(cabinet, texts, chosen, modifier = Modifier.weight(1f))
-        chosenPlace != null -> PlaceCard(session, cabinet, texts, chosenPlace, Modifier.weight(1f), onChanged)
+        chosen != null -> RegisterDetails(cabinet, texts, chosen, modifier = pane)
+        chosenPlace != null -> PlaceCard(session, cabinet, texts, chosenPlace, pane, onChanged)
         else -> EmptyState(
             icon = AppIcons.newKkm,
             title = texts.pickRegisterFirst,
             hint = texts.pickRegisterFirstHint,
-            modifier = Modifier.weight(1f)
+            modifier = pane
         )
     }
 }
