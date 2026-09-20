@@ -21,7 +21,20 @@ import java.net.URI
  * и адрес узла ведёт на другую машину (один узел на несколько рабочих
  * мест). Уже отвечающий узел второй раз тоже не запускается.
  */
-class LocalNode(private val address: String, private val home: File = defaultHome()) {
+class LocalNode(
+    private val address: String,
+    private val home: File = defaultHome(),
+    /** Где установщик разложил ресурсы приложения; при разработке их нет. */
+    private val resources: File? = packagedResources(),
+    /**
+     * Удалось ли вернуть файлу право на запуск.
+     *
+     * Отдельным правилом, потому что проверить его на рабочей машине
+     * нельзя: право возвращает владелец файла, а в общей папке владелец —
+     * не кассир. Подставляется в проверках.
+     */
+    private val allowRun: (File) -> Boolean = { it.canExecute() || it.setExecutable(true, false) }
+) {
 
     private var started: Process? = null
 
@@ -31,7 +44,7 @@ class LocalNode(private val address: String, private val home: File = defaultHom
      * @return `true`, если узел был запущен этим вызовом.
      */
     fun start(): Boolean {
-        val jar = bundledJar() ?: return false
+        val jar = File(resources ?: return false, JAR_NAME).takeIf { it.isFile } ?: return false
         val place = placeOf(address) ?: return false
         if (answers(place)) return false
         val process = runCatching { launch(jar) }.getOrNull() ?: return false
@@ -87,13 +100,40 @@ class LocalNode(private val address: String, private val home: File = defaultHom
      * файла. Рядом с узлом лежит собранный для него `jlink`-рантайм —
      * им и запускаем.
      */
-    private fun javaBinary(): File? {
-        val binaries = resources()?.resolve(RUNTIME_NAME)?.resolve("bin") ?: return null
+    fun javaBinary(): File? =
+        runnable(resources?.resolve(RUNTIME_NAME)) ?: runnable(ownRuntime())
+
+    /**
+     * Запускающий файл рантайма, если им можно воспользоваться.
+     *
+     * Право на запуск теряется по дороге: установщик раскладывает ресурсы
+     * приложения обычными файлами, и `jlink`-овский `bin/java` приезжает
+     * без него. Вернуть его удаётся не всегда — программы ставятся в общие
+     * папки, принадлежащие не кассиру.
+     */
+    @Suppress("ReturnCount")
+    private fun runnable(runtime: File?): File? {
+        val binaries = File(runtime ?: return null, "bin")
         val java = sequenceOf("java.exe", "java").map { File(binaries, it) }.firstOrNull { it.isFile }
-        // Право на запуск теряется по дороге: установщик раскладывает
-        // ресурсы приложения обычными файлами, и `jlink`-овский `bin/java`
-        // приезжает без него. Без этой строки узел молча не поднимался.
-        return java?.also { if (!it.canExecute()) it.setExecutable(true, false) }
+            ?: return null
+        return java.takeIf(allowRun)
+    }
+
+    /**
+     * Свой список рантайма — там, где у кассира есть права.
+     *
+     * Нужен, когда касса поставлена в общую папку: `/opt` в Linux,
+     * `/Applications` в macOS. Там файлы принадлежат не кассиру, право
+     * на запуск ему не вернуть, и узел не поднимался бы вовсе. Список
+     * снимается один раз, при первом запуске.
+     */
+    private fun ownRuntime(): File? {
+        val source = resources?.resolve(RUNTIME_NAME)?.takeIf { it.isDirectory } ?: return null
+        val own = File(home, RUNTIME_NAME)
+        if (!File(own, "bin").isDirectory) {
+            runCatching { source.copyRecursively(own, overwrite = true) }.getOrElse { return null }
+        }
+        return own
     }
 
     private companion object {
@@ -125,9 +165,8 @@ class LocalNode(private val address: String, private val home: File = defaultHom
 
         fun defaultHome(): File = Preferences.defaultFile().parentFile
 
-        fun resources(): File? = System.getProperty(RESOURCES_DIR)?.let(::File)?.takeIf { it.isDirectory }
-
-        fun bundledJar(): File? = resources()?.let { File(it, JAR_NAME) }?.takeIf { it.isFile }
+        fun packagedResources(): File? =
+            System.getProperty(RESOURCES_DIR)?.let(::File)?.takeIf { it.isDirectory }
 
         /** Адрес узла на этой машине; `null` — узел чужой или адрес непонятен. */
         fun placeOf(address: String): InetSocketAddress? {

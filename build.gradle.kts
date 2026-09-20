@@ -179,6 +179,13 @@ val nodeRuntime by tasks.registering(Exec::class) {
 
 tasks.matching { it.name.startsWith("prepareAppResources") }.configureEach {
     dependsOn(nodeRuntime)
+    // Раскладка ресурсов снимает право на запуск, и `jlink`-овский
+    // `bin/java` приезжает обычным файлом. Возвращаем его здесь; там,
+    // где установщик его всё равно потеряет, касса снимает свой список
+    // рантайма — см. `LocalNode.ownRuntime`.
+    (this as? Copy)?.eachFile {
+        if (path.startsWith("node-runtime/bin/")) permissions { unix("755") }
+    }
 }
 
 /** Путь до средства из той же Java, которой собрано приложение. */
