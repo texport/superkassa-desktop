@@ -28,6 +28,12 @@ jobs:
         with:
           path: superkassa-desktop
 
+      - name: Кодек протокола
+        uses: actions/checkout@v4
+        with:
+          repository: texport/ofd-proto-codec
+          path: ofd-proto-codec
+
       - name: Ядро
         uses: actions/checkout@v4
         with:
@@ -45,6 +51,12 @@ jobs:
         with:
           java-version: '21'
           distribution: 'zulu'
+
+      # Кодек ядру нужен версии, которой в Maven Central нет: собирается
+      # из исходников и кладётся в локальное хранилище перед ядром.
+      - name: Кодек в локальное хранилище
+        working-directory: ofd-proto-codec
+        run: ./gradlew publishToMavenLocal
 
       - name: Ядро в локальное хранилище
         working-directory: superkassa-core
