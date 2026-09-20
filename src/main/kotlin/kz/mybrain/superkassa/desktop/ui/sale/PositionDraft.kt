@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui.sale
 
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.SaleTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.math.BigDecimal
 
 /** Поле формы ввода позиции: по нему подсвечивается ошибка. */
@@ -38,7 +40,15 @@ data class PositionDraft(
     val quantity: String = DEFAULT_QUANTITY,
     val vatGroup: String = NO_VAT,
     val discount: String = "",
-    val storno: Boolean = false
+    val storno: Boolean = false,
+    /**
+     * Единица измерения по ОКЕИ.
+     *
+     * Без неё узел ставит штуку, и полтора килограмма баранины уходили
+     * в ОФД как «1,5 шт». Количество протокол везёт в тысячных долях,
+     * то есть весовой товар в чеке допустим — недоставало только единицы.
+     */
+    val measureUnitCode: String? = null
 ) {
     val problems: List<DraftProblem>
         get() = buildList {
@@ -69,12 +79,13 @@ data class PositionDraft(
                 quantity = amount(quantity, QUANTITY_SCALE).value ?: BigDecimal.ONE,
                 vatGroup = vatGroup,
                 discount = amount(discount).value ?: BigDecimal.ZERO,
-                storno = storno
+                storno = storno,
+                measureUnitCode = measureUnitCode
             )
         }
 
     /** Форма после добавления: наименование и цена очищаются, ставка остаётся. */
-    fun cleared(): PositionDraft = PositionDraft(vatGroup = vatGroup)
+    fun cleared(): PositionDraft = PositionDraft(vatGroup = vatGroup, measureUnitCode = measureUnitCode)
 
     private fun priceProblems(): List<DraftProblem> = when (val parsed = amount(price)) {
         is Amount.NotANumber -> listOf(DraftProblem.PriceNotANumber)
@@ -131,20 +142,15 @@ sealed interface Amount {
  * от «не число» различается «мельче допустимого» — это разные ошибки
  * и разные подсказки.
  */
-fun amount(text: String, maxScale: Int = TIYN_SCALE): Amount {
-    val normalized = text.replace(',', '.').filterNot { it == ' ' || it == NBSP }.trim()
+fun amount(text: String, maxScale: Int = Money.TIYN_SCALE): Amount {
+    val normalized = text.replace(',', '.').filterNot { it == ' ' || it == Glyphs.NBSP }.trim()
     if (normalized.isEmpty()) return Amount.Empty
     val parsed = normalized.toBigDecimalOrNull() ?: return Amount.NotANumber
     return if (parsed.scale() > maxScale) Amount.TooPrecise else Amount.Value(parsed)
 }
-
-/** Тиын — сотая доля тенге, и глубже деньги не делятся. */
-const val TIYN_SCALE: Int = 2
 
 /** Весовой товар взвешивается до грамма: тысячная доля килограмма. */
 const val QUANTITY_SCALE: Int = 3
 
 /** Штучный товар — обычный случай, и количество для него подставлено сразу. */
 const val DEFAULT_QUANTITY: String = "1"
-
-private const val NBSP = '\u00A0'

@@ -12,11 +12,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.desktop.app.Preferences
+import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.server.cabinet.RegisterAddress
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.map.MapPickerDialog
 import kz.mybrain.superkassa.desktop.ui.map.MapPoint
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -30,14 +33,19 @@ import java.math.BigDecimal
  * градусы руками можно там же — в окне карты, где это нужно тем, у кого
  * координаты уже есть.
  *
- * @param address выбранный адрес: карта откроется на нём.
+ * @param address выбранный в регистре адрес: карта откроется на нём,
+ *   и в самой карте адрес выбирается тем же регистром.
+ * @param onAddress адрес, выбранный в окне карты: он и адрес формы —
+ *   одна и та же запись регистра.
  */
 @Composable
 fun PlacePoint(
+    session: Session,
+    cabinet: CabinetSession,
     texts: CabinetTexts,
-    preferences: Preferences,
     point: MapPoint?,
-    address: String,
+    address: RegisterAddress?,
+    onAddress: (RegisterAddress) -> Unit,
     onPoint: (MapPoint) -> Unit
 ) {
     var onMap by remember { mutableStateOf(false) }
@@ -47,7 +55,7 @@ fun PlacePoint(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = point?.let { "${texts.latitude}: ${it.latitude} · ${texts.longitude}: ${it.longitude}" }
+            text = point?.let { "${texts.latitude}: ${it.latitude}${Glyphs.SEPARATOR}${texts.longitude}: ${it.longitude}" }
                 ?: texts.pointNotChosen,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -57,11 +65,13 @@ fun PlacePoint(
     }
     if (onMap) {
         MapPickerDialog(
+            session = session,
+            cabinet = cabinet,
             texts = texts,
-            preferences = preferences,
             latitude = point?.latitude,
             longitude = point?.longitude,
             address = address,
+            onAddress = onAddress,
             onDismiss = { onMap = false }
         ) { latitude, longitude -> onPoint(MapPoint(latitude, longitude)) }
     }

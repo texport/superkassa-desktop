@@ -42,6 +42,14 @@ fun noActionsReason(register: CabinetRegister, texts: CabinetTexts): String =
     }
 
 /**
+ * Ждёт ли касса ответа ИСНА по поданному заявлению.
+ *
+ * Пока ждёт, кабинет держит кассу снятой с обслуживания, а карточка
+ * перечитывается сама: ответ приходит через десятки секунд.
+ */
+fun awaitingIsna(register: CabinetRegister): Boolean = register.status.endsWith(IN_ISNA_PROCESS)
+
+/**
  * Выдаётся ли сейчас токен.
  *
  * Кабинет выдаёт его кассе, стоящей на учёте, и только когда по ней нет

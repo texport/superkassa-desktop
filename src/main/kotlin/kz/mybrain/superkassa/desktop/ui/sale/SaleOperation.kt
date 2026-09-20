@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.sale
 
 import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.FiscalResult
 import kz.mybrain.superkassa.desktop.server.ReceiptPayment
 import kz.mybrain.superkassa.desktop.server.ReceiptRequest
@@ -80,7 +81,8 @@ suspend fun issueReceipt(
         markupSum = input.markup,
         taken = input.cashTaken,
         customerBin = input.customerBin.takeIf { it.isNotBlank() },
-        domain = input.domain.toDomain()
+        domain = input.domain.toDomain(),
+        defaultVatGroup = kkm.defaultVatGroup
     )
     val title = input.operation.title(texts.sale)
     val result = session.guard(title) { input.operation.send(session, kkm.kkmId, request) }

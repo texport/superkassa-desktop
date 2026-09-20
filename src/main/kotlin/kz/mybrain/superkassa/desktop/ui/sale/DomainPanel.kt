@@ -4,25 +4,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Check
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -59,36 +52,16 @@ fun DomainPanel(input: DomainInput, onChange: (DomainInput) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DomainKindPicker(selected: DomainKind, onSelect: (DomainKind) -> Unit) {
     val texts = LocalStrings.current
-    var open by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(
-        expanded = open,
-        onExpandedChange = { open = it },
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        OutlinedTextField(
-            value = selected.title(texts.enums),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(texts.sale.domainKind) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
-            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable)
-        )
-        ExposedDropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            DomainKind.entries.forEach { kind ->
-                DropdownMenuItem(
-                    text = { Text(kind.title(texts.enums)) },
-                    onClick = {
-                        onSelect(kind)
-                        open = false
-                    }
-                )
-            }
-        }
-    }
+    LabelledPicker(
+        label = texts.sale.domainKind,
+        options = DomainKind.entries,
+        selected = selected,
+        title = { kind -> kind?.title(texts.enums).orEmpty() },
+        onSelect = onSelect
+    )
 }
 
 /** Поля выбранной отрасли — и ничего сверх них. */
@@ -141,7 +114,7 @@ private fun TaxiFields(input: DomainInput, onChange: (DomainInput) -> Unit) {
             onClick = { onChange(input.copy(isOrder = !input.isOrder)) },
             label = { Text(texts.byOrder) },
             leadingIcon = if (input.isOrder) {
-                { Icon(Icons.Outlined.Check, contentDescription = null) }
+                { Icon(AppIcons.chosen, contentDescription = null) }
             } else {
                 null
             },

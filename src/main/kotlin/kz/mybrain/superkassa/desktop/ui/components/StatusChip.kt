@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
@@ -31,7 +32,7 @@ fun DeliveryChip(status: String?, autonomous: Boolean = false, documentType: Str
         status == FAILED -> texts.refused to StatusColors.refused
         status == INTERNAL -> texts.internal to MaterialTheme.colorScheme.outline
         status == PENDING -> texts.queued to StatusColors.pending
-        else -> (status ?: "—") to MaterialTheme.colorScheme.outline
+        else -> (status ?: Glyphs.DASH) to MaterialTheme.colorScheme.outline
     }
     Chip(text, color)
 }

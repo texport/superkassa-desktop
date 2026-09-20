@@ -75,7 +75,10 @@ fun PaymentLines(
         }
         // Почему вид в списке погас — один раз под всеми строками:
         // в каждой строке это была бы одна и та же фраза трижды.
-        if (unsupportedNote.isNotBlank()) {
+        // И только когда погасшие виды в списке есть: без этого условия
+        // касса писала «протокол его не принимает» под наличными,
+        // то есть под видом оплаты, который принимают все версии.
+        if (unsupportedNoteVisible(unsupportedNote, entries)) {
             Text(
                 text = unsupportedNote,
                 style = MaterialTheme.typography.labelMedium,

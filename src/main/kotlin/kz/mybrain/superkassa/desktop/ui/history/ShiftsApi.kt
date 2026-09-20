@@ -14,6 +14,17 @@ import kz.mybrain.superkassa.desktop.server.ServerClient
 suspend fun ServerClient.shifts(kkmId: String, pin: String, offset: Int = 0): List<Shift> =
     request(HttpMethod.Get, "/kkm/$kkmId/shifts?limit=$SHIFT_PAGE&offset=$offset", pin = pin)
 
+/**
+ * Последняя смена кассы — то, что узел считает её состоянием.
+ *
+ * Узел отвечает на это обращение и по кассе, снятой с учёта, тогда как
+ * список документов текущей смены у заблокированной кассы отказывает
+ * кодом KKM_BLOCKED. Выводить открытость смены из удачи того обращения
+ * значит называть закрытой смену, которую узел держит открытой.
+ */
+suspend fun ServerClient.lastShift(kkmId: String, pin: String): Shift? =
+    request<List<Shift>>(HttpMethod.Get, "/kkm/$kkmId/shifts?limit=1", pin = pin).firstOrNull()
+
 /** Документы одной смены, включая её открытие и закрытие. */
 suspend fun ServerClient.documentsOfShift(kkmId: String, shiftId: String, pin: String): List<Document> =
     request(HttpMethod.Get, "/kkm/$kkmId/shifts/$shiftId/documents?limit=$DOCUMENT_LIMIT", pin = pin)

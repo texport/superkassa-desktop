@@ -41,7 +41,15 @@ import kotlin.math.roundToInt
  * считаются из проекции, а не из картинки.
  */
 @Composable
-fun MapView(state: MapState, tiles: MapTiles, modifier: Modifier = Modifier) {
+fun MapView(
+    state: MapState,
+    tiles: MapTiles,
+    modifier: Modifier = Modifier,
+    // Знаки касс: карта выбора точки их не знает и работает как прежде.
+    // Пока обработчик задан, нажатие выбирает знак, а не ставит точку.
+    pins: List<MapPin> = emptyList(),
+    onPin: ((MapPin?) -> Unit)? = null
+) {
     var canvas by remember { mutableStateOf(IntSize.Zero) }
     var revision by remember { mutableIntStateOf(0) }
 
@@ -57,7 +65,8 @@ fun MapView(state: MapState, tiles: MapTiles, modifier: Modifier = Modifier) {
         chosen = MapColors.chosen,
         located = MapColors.located,
         edge = MapColors.edge,
-        halo = MapColors.halo
+        halo = MapColors.halo,
+        pins = MapPinPaint(chosen = MapColors.chosen, other = MapColors.pin, edge = MapColors.edge)
     )
     Box(
         modifier = modifier
@@ -70,27 +79,30 @@ fun MapView(state: MapState, tiles: MapTiles, modifier: Modifier = Modifier) {
             .pointerInput(state.zoom) {
                 detectDragGestures { _, dragged -> state.pan(dragged.x, dragged.y) }
             }
-            .pointerInput(state.zoom, canvas) {
-                detectTapGestures { at ->
-                    val world = worldOf(state, canvas, at)
-                    state.mark(
-                        MapProjection.latitudeOf(world.y.toDouble(), state.zoom),
-                        MapProjection.longitudeOf(world.x.toDouble(), state.zoom)
-                    )
-                }
+            .pointerInput(state.zoom, canvas, pins, onPin) {
+                val reach = Sizes.mapPinReach.toPx()
+                detectTapGestures { at -> state.tapped(canvas, at, pins, onPin, reach) }
             }
     ) {
-        MapCanvas(state, tiles, canvas, revision, paint)
+        MapCanvas(state, tiles, canvas, revision, paint, pins)
     }
 }
 
-/** Само полотно: плитки, сетка на месте недошедших и метка выбранной точки. */
+/** Само полотно: плитки, сетка на месте недошедших, знаки касс и метка. */
 @Composable
-private fun MapCanvas(state: MapState, tiles: MapTiles, canvas: IntSize, revision: Int, paint: MapPaint) {
+private fun MapCanvas(
+    state: MapState,
+    tiles: MapTiles,
+    canvas: IntSize,
+    revision: Int,
+    paint: MapPaint,
+    pins: List<MapPin>
+) {
     androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
         @Suppress("UNUSED_EXPRESSION")
         revision
         drawTiles(state, tiles, canvas)
+        drawPins(pins, state.zoom, topLeft(state, canvas), paint.pins)
         drawLocation(state, canvas, paint)
         drawMarker(state, canvas, paint)
     }
@@ -102,7 +114,13 @@ private fun MapCanvas(state: MapState, tiles: MapTiles, canvas: IntSize, revisio
  * Полотно рисует вне композиции и до схемы не дотягивается: цвета
  * берутся один раз в показе и отдаются рисованию готовыми.
  */
-private data class MapPaint(val chosen: Color, val located: Color, val edge: Color, val halo: Color)
+private data class MapPaint(
+    val chosen: Color,
+    val located: Color,
+    val edge: Color,
+    val halo: Color,
+    val pins: MapPinPaint
+)
 
 /** Рисует плитки, попадающие в окно. */
 private fun DrawScope.drawTiles(state: MapState, tiles: MapTiles, canvas: IntSize) {
@@ -149,27 +167,18 @@ private fun DrawScope.drawMarker(state: MapState, canvas: IntSize, paint: MapPai
 }
 
 /** Точка полотна мира, попавшая в левый верхний угол окна. */
-private fun topLeft(state: MapState, canvas: IntSize): Offset {
-    val centerX = MapProjection.xOf(state.centerLongitude, state.zoom)
-    val centerY = MapProjection.yOf(state.centerLatitude, state.zoom)
-    return Offset((centerX - canvas.width / 2.0).toFloat(), (centerY - canvas.height / 2.0).toFloat())
-}
-
-/** Точка полотна мира под нажатием. */
-private fun worldOf(state: MapState, canvas: IntSize, at: Offset): Offset {
-    val corner = topLeft(state, canvas)
-    return Offset(corner.x + at.x, corner.y + at.y)
-}
+private fun topLeft(state: MapState, canvas: IntSize): MapPixel =
+    MapProjection.corner(state.centerLatitude, state.centerLongitude, state.zoom, canvas.width, canvas.height)
 
 /** Какие плитки попадают в окно. */
 private fun visibleTiles(state: MapState, canvas: IntSize): List<TileIndex> {
     if (canvas.width == 0 || canvas.height == 0) return emptyList()
     val corner = topLeft(state, canvas)
     val edge = MapProjection.tiles(state.zoom)
-    val fromX = MapProjection.tileOf(corner.x.toDouble())
-    val fromY = MapProjection.tileOf(corner.y.toDouble())
-    val toX = MapProjection.tileOf(corner.x + canvas.width.toDouble())
-    val toY = MapProjection.tileOf(corner.y + canvas.height.toDouble())
+    val fromX = MapProjection.tileOf(corner.x)
+    val fromY = MapProjection.tileOf(corner.y)
+    val toX = MapProjection.tileOf(corner.x + canvas.width)
+    val toY = MapProjection.tileOf(corner.y + canvas.height)
     val tiles = mutableListOf<TileIndex>()
     for (y in fromY..toY) {
         for (x in fromX..toX) {

@@ -10,14 +10,20 @@ import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetShift
 import kz.mybrain.superkassa.desktop.server.cabinet.ReceiptSearch
 import kz.mybrain.superkassa.desktop.server.cabinet.cashMovement
 import kz.mybrain.superkassa.desktop.server.cabinet.receipt
 import kz.mybrain.superkassa.desktop.server.cabinet.receipts
 import kz.mybrain.superkassa.desktop.server.cabinet.report
+import kz.mybrain.superkassa.desktop.ui.cabinet.shiftRow
+import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
 
 /**
  * Фискальные документы кабинета: разбор ответов.
@@ -60,42 +66,110 @@ class CabinetDocumentsTest {
         val client = clientReturning(
             """{"transactionId":"t-1","receiptNumber":"12","operationType":"SALE","total":435.84,
                "operator":{"code":1,"name":"Администратор"},
-               "items":[{"name":"Кофе","quantity":3.0,"price":150.55,"sum":435.84}],
-               "payments":[{"type":"CASH","sum":435.84}],
-               "taxes":[{"type":"VAT","percent":16,"sum":60.12}],
-               "amounts":{"total":435.84,"taken":500.00,"change":64.16}}"""
+               "items":[{"positionNumber":1,"name":"Кофе","quantity":3.0,"price":150.55,"amount":435.84,
+                         "taxPercent":16,"taxAmount":60.12}],
+               "taxTotal":60.12,"cashTotal":435.84,"cardTotal":0,"protocolDocumentId":"3846668294"}"""
         )
         val receipt = runBlocking { client.receipt("token", "kkm", "t-1") }
         assertEquals("Кофе", receipt.items.single().name)
         assertEquals(0, BigDecimal("150.55").compareTo(receipt.items.single().price))
         assertEquals("CASH", receipt.payments.single().type)
-        assertEquals(16, receipt.taxes.single().percent)
-        assertEquals(0, BigDecimal("64.16").compareTo(receipt.amounts?.change))
+        assertEquals(16, receipt.items.single().taxes.single().percent)
+        assertEquals(0, BigDecimal("60.12").compareTo(receipt.taxes.single().sum))
+        assertEquals("3846668294", receipt.kkmDocumentNumber)
+        assertEquals(0, BigDecimal("435.84").compareTo(receipt.amounts?.total))
         assertEquals("Администратор", receipt.operator?.name)
     }
 
     @Test
     fun `отчёт несёт смену и её границы`() {
         val client = clientReturning(
-            """{"transactionId":"z-1","type":"Z","shiftNumber":3,"total":1000.00,
-               "shiftOpenedAt":"2026-09-07T09:00:00Z","shiftClosedAt":"2026-09-07T21:00:00Z",
-               "deliveryStatus":"ONLINE_OK"}"""
+            """{"transactionId":"z-1","reportType":"Z","shiftNumber":3,"saleTotal":1000.00,
+               "returnTotal":100.00,"cashBalance":900.00,"receiptsCount":7,"deliveryStatus":"ONLINE_OK"}"""
         )
         val report = runBlocking { client.report("token", "kkm", "z-1") }
         assertEquals("Z", report.type)
         assertEquals(3, report.shiftNumber)
-        assertEquals("2026-09-07T21:00:00Z", report.shiftClosedAt)
+        assertEquals(7, report.receiptsCount)
+        // Наличные отчёта — остаток ящика, а не оплаченное наличными:
+        // подписью «Наличные в кассе» стояло второе, и карточка показывала
+        // не ту сумму.
+        assertEquals(0, BigDecimal("900.00").compareTo(report.cashBalance))
     }
 
+    /**
+     * Прежде проверка требовала у движения кассира. Кабинет его по движению
+     * не отдаёт — и не отдавал: поле стояло в модели впустую, а карточка
+     * рисовала «Пробит —» с прочерком. Проверяется то, что приходит.
+     */
     @Test
-    fun `движение денег несёт сумму и кассира`() {
+    fun `движение денег несёт сумму, смену и состояние передачи`() {
         val client = clientReturning(
-            """{"transactionId":"m-1","type":"DEPOSIT","amount":5000.00,"shiftNumber":3,
-               "operator":{"code":1,"name":"Айгүл Серікова"}}"""
+            """{"transactionId":"m-1","movementType":"DEPOSIT","amount":5000.00,"shiftNumber":3,
+               "protocolDocumentId":"69","sendStatus":"ACCEPTED"}"""
         )
         val movement = runBlocking { client.cashMovement("token", "kkm", "m-1") }
         assertEquals("DEPOSIT", movement.type)
         assertEquals(0, BigDecimal("5000.00").compareTo(movement.amount))
-        assertEquals("Айгүл Серікова", movement.operator?.name)
+        assertEquals(3, movement.shiftNumber)
+        assertEquals("69", movement.protocolDocumentId)
+        assertEquals("ACCEPTED", movement.sendStatus)
+    }
+
+    @Test
+    fun `пакет протокола доходит до узла и объектом, и строкой`() {
+        val asObject = clientReturning(
+            """{"transactionId":"t-1","payload":{"request":{"command":"COMMAND_TICKET"},"response":{}}}"""
+        )
+        val asText = clientReturning(
+            """{"transactionId":"z-1","payload":"{\"request\":{\"command\":\"COMMAND_REPORT\"}}"}"""
+        )
+        val movement = clientReturning("""{"transactionId":"m-1"}""")
+
+        val receipt = runBlocking { asObject.receipt("token", "kkm", "t-1") }
+        val report = runBlocking { asText.report("token", "kkm", "z-1") }
+
+        assertEquals(
+            """{"request":{"command":"COMMAND_TICKET"},"response":{}}""",
+            receipt.packet
+        )
+        assertEquals("""{"request":{"command":"COMMAND_REPORT"}}""", report.packet)
+        assertNull(runBlocking { movement.cashMovement("token", "kkm", "m-1") }.packet)
+    }
+
+    @Test
+    fun `у смены печатать нечего — её Z-отчёт стоит своей строкой`() {
+        val shift = shiftRow(
+            CabinetShift(shiftNumber = 3, state = "CLOSED", saleTotal = BigDecimal("100.00")),
+            cabinetTexts(Language.Ru)
+        )
+
+        assertFalse(shift.entry.printable)
+    }
+
+    /**
+     * Выручка смены — продажи за вычетом возвратов.
+     *
+     * Прежде и строка журнала, и подпись «Выручка» брали продажи как есть:
+     * у смены 12 кассы 260940000021 стояло 3 570 ₸ при возвратах 1 900 ₸,
+     * и сами возвраты были перечислены строкой ниже в той же карточке.
+     */
+    @Test
+    fun `выручка смены уменьшена на возвраты`() {
+        val shift = CabinetShift(
+            shiftNumber = 12,
+            state = "CLOSED",
+            receiptsCount = 10,
+            saleTotal = BigDecimal("3570.00"),
+            returnTotal = BigDecimal("1900.00"),
+            buyTotal = BigDecimal("400.00"),
+            cashBalance = BigDecimal("6070.00")
+        )
+
+        assertEquals(0, BigDecimal("1670.00").compareTo(shift.total))
+        assertEquals(0, BigDecimal("1670.00").compareTo(shift.totals?.revenue))
+        // Продажи и покупка остаются собой: их владелец сверяет с лентой.
+        assertEquals(0, BigDecimal("3570.00").compareTo(shift.totals?.salesSum))
+        assertEquals(0, BigDecimal("400.00").compareTo(shift.totals?.purchasesSum))
     }
 }

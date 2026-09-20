@@ -26,6 +26,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.signRegistration
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -65,7 +66,7 @@ fun ApplicationStepCard(
         texts = setup,
         done = onRecord,
         ready = draft.cabinetRegisterId != null && cabinet.open,
-        summary = listOfNotNull(setup.registered, card?.registrationNumber).joinToString(" · ")
+        summary = listOfNotNull(setup.registered, card?.registrationNumber).joinToString(Glyphs.SEPARATOR)
     ) {
         if (onRecord) return@SetupStepCard
         Text(

@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import kz.mybrain.superkassa.desktop.ui.components.Money
-import kz.mybrain.superkassa.desktop.ui.history.DASH
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.ZoneId
@@ -16,13 +16,13 @@ import java.time.format.DateTimeFormatter
  * и по-человечески.
  */
 fun cabinetMoment(iso: String?): String {
-    val value = iso?.takeIf { it.isNotBlank() } ?: return DASH
+    val value = iso?.takeIf { it.isNotBlank() } ?: return Glyphs.DASH
     return runCatching { MOMENT.format(Instant.parse(value)) }.getOrDefault(value)
 }
 
 /** Только день: для регистрационной карты и заявлений час не нужен. */
 fun cabinetDay(iso: String?): String {
-    val value = iso?.takeIf { it.isNotBlank() } ?: return DASH
+    val value = iso?.takeIf { it.isNotBlank() } ?: return Glyphs.DASH
     return runCatching { DAY.format(Instant.parse(value)) }.getOrDefault(value)
 }
 
@@ -30,7 +30,7 @@ fun cabinetDay(iso: String?): String {
  * Сумма кабинета словами кассира: разряды разделены, копеек не бывает —
  * бывают тиыны.
  */
-fun cabinetSum(value: BigDecimal?): String = value?.let { Money.format(it) } ?: DASH
+fun cabinetSum(value: BigDecimal?): String = value?.let { Money.format(it) } ?: Glyphs.DASH
 
 /**
  * Количество товара в строке чека.
@@ -39,7 +39,7 @@ fun cabinetSum(value: BigDecimal?): String = value?.let { Money.format(it) } ?: 
  * после запятой, и «2,000 × 450,00 ₸» читается как две тысячи штук.
  */
 fun cabinetQuantity(value: BigDecimal?): String =
-    value?.stripTrailingZeros()?.toPlainString() ?: DASH
+    value?.stripTrailingZeros()?.toPlainString() ?: Glyphs.DASH
 
 private val MOMENT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm").withZone(ZoneId.systemDefault())

@@ -5,13 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.server.UnitOfMeasurement
+import kz.mybrain.superkassa.desktop.ui.components.onEnter
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -49,7 +41,13 @@ fun AddPositionForm(session: Session, onAdd: (Position) -> Unit) {
     val texts = LocalStrings.current
     val extra = LocalSaleTexts.current
     val vat = defaultVatOf(session, LocalVatRates.current)
-    var draft by remember(vat) { mutableStateOf(PositionDraft(vatGroup = vat)) }
+    val units = session.units
+    // Штука — то, чем торгуют чаще всего, и она же подставляется узлом.
+    // Ставим её явно: подставленное узлом кассир на экране не видит.
+    val unit = remember(units) { units.firstOrNull { it.code == PIECE }?.code }
+    var draft by remember(vat, unit) {
+        mutableStateOf(PositionDraft(vatGroup = vat, measureUnitCode = unit))
+    }
     val submit: () -> Boolean = {
         val ready = draft.position
         if (ready != null) {
@@ -60,12 +58,10 @@ fun AddPositionForm(session: Session, onAdd: (Position) -> Unit) {
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth().onPreviewKeyEvent { event ->
-            event.type == KeyEventType.KeyDown && event.key in ENTER_KEYS && submit()
-        },
+        modifier = Modifier.fillMaxWidth().onEnter { submit() },
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        DraftFields(draft) { draft = it }
+        DraftFields(draft, units) { draft = it }
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
             verticalAlignment = Alignment.CenterVertically
@@ -82,7 +78,11 @@ fun AddPositionForm(session: Session, onAdd: (Position) -> Unit) {
 
 /** Поля позиции сверху вниз: что, почём, сколько, по какой ставке. */
 @Composable
-private fun DraftFields(draft: PositionDraft, onChange: (PositionDraft) -> Unit) {
+private fun DraftFields(
+    draft: PositionDraft,
+    units: List<UnitOfMeasurement>,
+    onChange: (PositionDraft) -> Unit
+) {
     val texts = LocalStrings.current
     OutlinedTextField(
         value = draft.name,
@@ -99,18 +99,26 @@ private fun DraftFields(draft: PositionDraft, onChange: (PositionDraft) -> Unit)
             onChange(draft.copy(quantity = it))
         }
     }
-    // Ставка и скидка стоят в одной строке, а не столбиком: форма позиции
-    // целиком помещается в панель, и кассиру не приходится прокручивать её
-    // посреди набора — прокрутка на фокусе уводила поле из-под курсора.
+    // Единица и скидка делят строку: с ценой единица в кассовую колонку
+    // не влезает, а отдельной строкой она отодвигала «Добавить» под сгиб —
+    // на окне ниже тысячи точек до кнопки приходилось прокручивать трижды,
+    // и так на каждую позицию чека.
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        VatPicker(draft.vatGroup, Modifier.weight(1f)) { onChange(draft.copy(vatGroup = it)) }
+        UnitPicker(
+            selected = draft.measureUnitCode,
+            units = units,
+            modifier = Modifier.weight(1f)
+        ) { onChange(draft.copy(measureUnitCode = it)) }
         DraftAmountField(draft, DraftField.Discount, texts.sale.discount) {
             onChange(draft.copy(discount = it))
         }
     }
+    // Ставка — своей строкой и только у плательщика НДС: у кассы без НДС
+    // выбирать нечего, и строка не занимает высоту зря.
+    VatPicker(draft.vatGroup, Modifier.fillMaxWidth()) { onChange(draft.copy(vatGroup = it)) }
 }
 
 /**
@@ -136,39 +144,3 @@ private fun RowScope.DraftAmountField(
         modifier = Modifier.weight(1f)
     )
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun VatPicker(selected: String, modifier: Modifier = Modifier, onSelect: (String) -> Unit) {
-    val texts = LocalStrings.current
-    val rates = LocalVatRates.current
-    var open by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(
-        expanded = open,
-        onExpandedChange = { open = it },
-        modifier = modifier
-    ) {
-        OutlinedTextField(
-            value = vatTitle(rates, selected),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text(texts.sale.vat) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
-            modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable)
-        )
-        ExposedDropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            rates.forEach { rate ->
-                DropdownMenuItem(
-                    text = { Text(rate.title) },
-                    onClick = {
-                        onSelect(rate.code)
-                        open = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-/** Обычный Enter и Enter на цифровой части клавиатуры — одно и то же действие. */
-private val ENTER_KEYS = setOf(Key.Enter, Key.NumPadEnter)

@@ -4,7 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CancellationException
-import kz.mybrain.superkassa.desktop.eds.EdsProblem
+import kz.mybrain.superkassa.desktop.app.log.AppLog
+import kz.mybrain.superkassa.desktop.app.log.LogSource
 import kz.mybrain.superkassa.desktop.eds.EdsRefusal
 import kz.mybrain.superkassa.desktop.eds.NcaLayer
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
@@ -12,10 +13,12 @@ import kz.mybrain.superkassa.desktop.server.cabinet.CabinetCompany
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRefusal
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetUser
+import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.edsChallenge
 import kz.mybrain.superkassa.desktop.server.cabinet.edsLogin
 import kz.mybrain.superkassa.desktop.server.cabinet.logout
 import kz.mybrain.superkassa.desktop.server.cabinet.registers
+import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 
 /**
  * Работа в личном кабинете ОФД.
@@ -24,25 +27,45 @@ import kz.mybrain.superkassa.desktop.server.cabinet.registers
  * а за кассой стоит кассир со своим пином. Смешивать их в одном состоянии
  * значит однажды показать кассиру то, что видит владелец.
  *
- * Доступ живёт только в памяти приложения: на диск он не пишется. Ключ
- * ЭЦП сюда не попадает вовсе — его держит NCALayer.
+ * Сам сеанс держит только то, что видно с экрана кабинета. Доступ владельца
+ * живёт в [CabinetAccess], разбор помех — в [CabinetProblem], вход без ЭЦП —
+ * в [signInAsDeveloper]. Ключ ЭЦП сюда не попадает вовсе — его держит NCALayer.
  */
 class CabinetSession(
     val client: CabinetClient = CabinetClient(),
     private val eds: NcaLayer = NcaLayer()
 ) {
+    internal val access = CabinetAccess()
+
+    /**
+     * Куда отдать названия касс, прочитанные в кабинете.
+     *
+     * Названия кассам даёт владелец в кабинете, а нужны они кассиру
+     * на входе — до того, как кабинет вообще открыт. Поэтому прочитанное
+     * один раз уходит узлу. Кому именно отдавать, сеанс кабинета не знает:
+     * он знает только, что названия появились.
+     */
+    var onRegisterNames: (suspend (List<CabinetRegister>) -> Unit)? = null
+
     /** Выданный кабинетом доступ; `null` — владелец не входил. */
-    var token: String? by mutableStateOf(null)
-        private set
+    val token: String? get() = access.token
 
-    var user: CabinetUser? by mutableStateOf(null)
-        private set
+    val user: CabinetUser? get() = access.user
 
-    var company: CabinetCompany? by mutableStateOf(null)
-        private set
+    val company: CabinetCompany? get() = access.company
 
     /** Кассы компании из кабинета. */
     var registers: List<CabinetRegister> by mutableStateOf(emptyList())
+        private set
+
+    /**
+     * Торговые точки компании.
+     *
+     * Список один на сеанс: заявление о перерегистрации выбирает точку
+     * из него же, и своей копии не держит. Со своей копией только что
+     * созданная точка в заявлении не появлялась до повторного входа.
+     */
+    var places: List<RetailPlace> by mutableStateOf(emptyList())
         private set
 
     /**
@@ -77,22 +100,23 @@ class CabinetSession(
      */
     suspend fun signIn(): Boolean = guard {
         val challenge = client.edsChallenge()
-        val signature = eds.signCms(challenge.payload)
-        val entered = client.edsLogin(challenge.challengeId, signature)
-        token = entered.accessToken
-        user = entered.user
-        company = entered.company
+        access.enter(client.edsLogin(challenge.challengeId, eds.signCms(challenge.payload)))
         true
     } ?: false
+
+    /** Вход без ЭЦП — временный режим показа; всё о нём в [CabinetDeveloperEntry]. */
+    suspend fun signInAsDeveloper(iin: String, bin: String): Boolean = enterAsDeveloper(iin, bin)
 
     /** Выход: доступ отзывается и в кабинете, и здесь. */
     suspend fun signOut() {
         val current = token ?: return
-        guard { client.logout(current) }
-        token = null
-        user = null
-        company = null
+        if (current != DEVELOPER_ACCESS) {
+            guard { client.logout(current) }
+        }
+        client.debugIdentity = null
+        access.forget()
         registers = emptyList()
+        places = emptyList()
     }
 
     /**
@@ -107,6 +131,13 @@ class CabinetSession(
     suspend fun refreshRegisters() {
         val current = token ?: return
         guard { registers = client.registers(current).items }
+        onRegisterNames?.invoke(registers)
+    }
+
+    /** Перечитывает торговые точки компании. */
+    suspend fun refreshPlaces() {
+        val current = token ?: return
+        guard { places = client.retailPlaces(current).items }
     }
 
     /**
@@ -115,6 +146,7 @@ class CabinetSession(
      *
      * Истёкший доступ не отказ, а конец сеанса: владельца возвращает
      * ко входу, а не оставляет с пустым списком без объяснения.
+     * Кто есть кто среди исключений — в [CabinetProblem].
      */
     suspend fun <T> guard(block: suspend () -> T): T? {
         problem = null
@@ -122,67 +154,45 @@ class CabinetSession(
         return try {
             block()
         } catch (refusal: CabinetRefusal) {
-            // Истёкшим доступ считается только когда он был: при входе
-            // никакого доступа ещё нет, и 401 там означает отказ по
-            // подписи — сертификат просрочен, корень не тот, подпись
-            // не сходится. Прятать это за «войдите заново» значит
-            // предлагать повторить то, что не сработает.
-            if (refusal.httpStatus == UNAUTHORIZED && token != null) {
-                token = null
-                user = null
-                company = null
-                problem = CabinetProblem.SessionExpired
-            } else {
-                problem = CabinetProblem.Refused(refusal.code, refusal.text)
-            }
+            problem = if (refusal.endsSession(entered = token != null)) endSession() else refusal.asProblem()
             null
         } catch (refusal: EdsRefusal) {
-            problem = when (refusal.problem) {
-                EdsProblem.Unreachable -> CabinetProblem.NoNcaLayer
-                EdsProblem.Declined -> CabinetProblem.SignDeclined(refusal.detail)
-            }
+            problem = refusal.asProblem()
             null
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (failure: Exception) {
-            // Имя класса без текста ошибки не объясняет ничего: по
-            // «IllegalArgumentException» неизвестно ни где, ни что.
-            problem = CabinetProblem.Unreachable(
-                listOfNotNull(failure::class.simpleName, failure.message)
-                    .joinToString(" · ")
-                    .take(MAX_REASON)
-            )
+            problem = failure.asCabinetProblem()
             null
         } finally {
             busy = false
         }
     }
 
-    /** Сообщение снимается, когда владелец начал новое действие. */
-    fun forgetProblem() {
-        problem = null
+    /**
+     * Выполняет обращение, о котором владельцу знать незачем.
+     *
+     * Отличается от [guard] молчанием: справочное наименование владелец
+     * не запрашивал, и отказ по нему не должен закрывать собой то, что
+     * он делает сейчас. Отказ уходит в журнал.
+     */
+    suspend fun <T> quiet(what: String, block: suspend () -> T): T? = try {
+        block()
+    } catch (cancelled: CancellationException) {
+        throw cancelled
+    } catch (failure: Exception) {
+        AppLog.warn(LogSource.Cabinet, "$what: ${failure::class.simpleName}")
+        null
     }
 
-    private companion object {
-        const val UNAUTHORIZED = 401
-        const val MAX_REASON = 300
+    /** Доступ истёк: сеанс кончился, и владельца возвращает ко входу. */
+    private fun endSession(): CabinetProblem {
+        access.forget()
+        return CabinetProblem.SessionExpired
     }
-}
 
-/** Почему действие в кабинете не удалось. */
-sealed interface CabinetProblem {
-    /** Кабинет ответил отказом по существу. */
-    data class Refused(val code: String, val text: String) : CabinetProblem
-
-    /** Кабинет не отвечает по заданному адресу. */
-    data class Unreachable(val reason: String) : CabinetProblem
-
-    /** NCALayer не запущен на этой машине. */
-    data object NoNcaLayer : CabinetProblem
-
-    /** Владелец не подписал: закрыл окно или ошибся паролем. */
-    data class SignDeclined(val detail: String) : CabinetProblem
-
-    /** Доступ истёк — нужно войти заново. */
-    data object SessionExpired : CabinetProblem
+    companion object {
+        /** Отметка доступа в сеансе без ЭЦП: у кабинета такого доступа нет, запросы идут по личности. */
+        const val DEVELOPER_ACCESS: String = "development"
+    }
 }

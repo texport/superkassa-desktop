@@ -16,15 +16,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CompanyProfile
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.company
 import kz.mybrain.superkassa.desktop.server.cabinet.saveOkeds
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
-import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -36,7 +38,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * заявление.
  */
 @Composable
-fun CompanyPage(cabinet: CabinetSession, texts: CabinetTexts, language: Language) {
+fun CompanyPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     val scope = rememberCoroutineScope()
     var profile by remember { mutableStateOf<CompanyProfile?>(null) }
     val okeds = remember { mutableStateListOf<Oked>() }
@@ -52,20 +54,26 @@ fun CompanyPage(cabinet: CabinetSession, texts: CabinetTexts, language: Language
 
     LaunchedEffect(cabinet.token) { reload() }
 
-    ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
-        CompanyCard(cabinet, profile, texts)
-        OkedsCard(texts, okeds, cabinet.busy) {
-            scope.launch {
-                val token = cabinet.token ?: return@launch
-                // Перечитывание только по удаче: guard снимает сообщение
-                // в начале обращения, и отказ сохранения стирался прежде,
-                // чем владелец успевал его прочитать.
-                if (cabinet.guard { cabinet.client.saveOkeds(token, okeds.toList()) } != null) {
-                    reload()
+    // Пока ответа нет, показывать нечего: реквизиты компании и её виды
+    // деятельности приходят одним обращением.
+    val state = if (profile == null) ScreenState.Working else ScreenState.Ready
+    val titles = rememberOkedTitles(session, cabinet, okeds.toList())
+    ScreenSlot(state, Modifier.fillMaxWidth()) {
+        ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+            CompanyCard(cabinet, profile, texts)
+            OkedsCard(texts, okeds, cabinet.busy, title = titles) {
+                scope.launch {
+                    val token = cabinet.token ?: return@launch
+                    // Перечитывание только по удаче: guard снимает сообщение
+                    // в начале обращения, и отказ сохранения стирался прежде,
+                    // чем владелец успевал его прочитать.
+                    if (cabinet.guard { cabinet.client.saveOkeds(token, okeds.toList()) } != null) {
+                        reload()
+                    }
                 }
             }
+            AddOkedCard(session, cabinet, texts, okeds)
         }
-        AddOkedCard(cabinet, texts, language, okeds)
     }
 }
 

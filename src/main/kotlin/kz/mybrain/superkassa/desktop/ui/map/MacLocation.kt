@@ -40,6 +40,9 @@ object MacLocation {
     suspend fun locate(): MapPlace? {
         if (!available) return null
         val manager = runCatching { newManager() }.getOrNull() ?: return null
+        // Отказавшему владельцу система не ответит никогда: ждать её
+        // восемь секунд на каждое нажатие значит подвесить окно впустую.
+        if (refused(manager)) return null
         onMainThread(manager, "requestWhenInUseAuthorization")
         onMainThread(manager, "startUpdatingLocation")
         try {
@@ -51,6 +54,21 @@ object MacLocation {
             onMainThread(manager, "stopUpdatingLocation")
         }
         return null
+    }
+
+    /**
+     * Отказано ли приложению в месте.
+     *
+     * `restricted` и `denied` — решение владельца или правил машины,
+     * и переспрашивать его нечем: окно разрешения система больше
+     * не покажет. Неизвестный ответ считается не отказом: лучше подождать
+     * зря, чем не спросить вовсе.
+     */
+    private fun refused(manager: Pointer): Boolean {
+        val status = runCatching {
+            msgSend.invokeInt(arrayOf(manager, selector("authorizationStatus")))
+        }.getOrNull() ?: return false
+        return status == RESTRICTED || status == DENIED
     }
 
     /** Положение, если система его уже знает. */
@@ -105,6 +123,12 @@ object MacLocation {
 
     /** Как попросить систему выполнить действие в главном потоке. */
     private const val MAIN_THREAD = "performSelectorOnMainThread:withObject:waitUntilDone:"
+
+    /** Место запрещено правилами машины. */
+    private const val RESTRICTED = 1
+
+    /** Владелец в месте отказал. */
+    private const val DENIED = 2
 
     /** Сколько ждать ответа системы и как часто спрашивать. */
     private const val WAIT_MS = 8_000

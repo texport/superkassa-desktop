@@ -7,18 +7,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.KkmUser
 import kz.mybrain.superkassa.desktop.server.changeUserPin
 import kz.mybrain.superkassa.desktop.server.removeUser
 import kz.mybrain.superkassa.desktop.server.users
-import kz.mybrain.superkassa.desktop.ui.components.EmptyState
+import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
@@ -41,6 +46,9 @@ fun UsersScreen(session: Session) {
     val money = moneyTexts(session.language)
     val scope = rememberCoroutineScope()
     val loaded = remember { mutableStateListOf<KkmUser>() }
+    // Узел отдаёт кассиров отдельным обращением: до ответа список пуст,
+    // и «кассиров нет» про кассу с пятью кассирами — неправда.
+    var answered by remember(session.selected?.kkmId) { mutableStateOf(false) }
 
     /**
      * Перечитывает список кассиров.
@@ -60,6 +68,7 @@ fun UsersScreen(session: Session) {
             ?: return
         loaded.clear()
         loaded.addAll(list)
+        answered = true
     }
 
     LaunchedEffect(session.selected?.kkmId, session.pin) { reload() }
@@ -73,24 +82,27 @@ fun UsersScreen(session: Session) {
         AddCashier(session, money) { reload() }
 
         SectionCard(title = money.cashiers.listTitle) {
-            if (loaded.isEmpty()) {
-                EmptyState(AppIcons.cashiers, money.cashiers.empty, money.cashiers.emptyHint, dense = true)
-                return@SectionCard
+            val state = when {
+                loaded.isNotEmpty() -> ScreenState.Ready
+                !answered -> ScreenState.Working
+                else -> ScreenState.Empty(AppIcons.cashiers, money.cashiers.empty, money.cashiers.emptyHint)
             }
-            loaded.forEachIndexed { index, user ->
-                if (index > 0) {
-                    HorizontalDivider()
+            ScreenSlot(state, dense = true) {
+                loaded.forEachIndexed { index, user ->
+                    if (index > 0) {
+                        HorizontalDivider()
+                    }
+                    UserRow(
+                        money = money,
+                        roleTitle = session.titleOf(Dictionary.UserRoles, user.role),
+                        user = user,
+                        deletable = !UserRules.lastOfRole(loaded, user),
+                        onChangePin = { newPin ->
+                            changePin(session, texts, user, newPin) { reload(changedPin = newPin) }
+                        },
+                        onRemove = { scope.launch { removeCashier(session, texts, user) { reload() } } }
+                    )
                 }
-                UserRow(
-                    money = money,
-                    roleTitle = session.titleOf(Dictionary.UserRoles, user.role),
-                    user = user,
-                    deletable = !UserRules.lastOfRole(loaded, user),
-                    onChangePin = { newPin ->
-                        changePin(session, texts, user, newPin) { reload(changedPin = newPin) }
-                    },
-                    onRemove = { scope.launch { removeCashier(session, texts, user) { reload() } } }
-                )
             }
         }
     }

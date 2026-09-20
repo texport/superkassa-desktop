@@ -1,8 +1,5 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -10,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
@@ -23,7 +19,6 @@ import kz.mybrain.superkassa.desktop.server.cabinet.kkmModels
 import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 import kz.mybrain.superkassa.desktop.server.factoryInfo
 import kz.mybrain.superkassa.desktop.ui.components.FormDialog
-import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 
@@ -35,8 +30,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
  * из справочников кабинета: произвольные значения ИСНА не примет, и отказ
  * пришёл бы уже после подписи заявления.
  *
- * Под кнопкой перечислено недостающее. Прежде она просто не нажималась,
- * и владелец перебирал поля, гадая, какое из пяти пустое.
+ * Пока обязательное не заполнено, кнопка погашена и ничего под собой
+ * не объясняет: незаполненные поля видно по самой форме, и перечень
+ * под кнопкой повторял их названия второй раз.
  *
  * Форма живёт окном: пять полей в узкой колонке отжимали список наверх
  * и рвали его вёрстку, а кассу создают раз в жизни. Окно одно и на раздел
@@ -90,69 +86,6 @@ fun AddRegisterDialog(
     ) {
         RegisterFields(texts, draft, places, models, stamped = known != null, issued = issued)
     }
-}
-
-/** Поля заводимой кассы. */
-@Composable
-private fun RegisterFields(
-    texts: CabinetTexts,
-    draft: RegisterDraft,
-    places: List<RetailPlace>,
-    models: List<KkmModel>,
-    stamped: Boolean,
-    issued: Boolean
-) {
-    LabelledPicker(
-        label = texts.place,
-        options = places,
-        selected = draft.place,
-        title = { it?.name.orEmpty() },
-        onSelect = { draft.place = it }
-    )
-    LabelledPicker(
-        label = texts.model,
-        options = models,
-        selected = draft.model,
-        title = { it?.name ?: it?.modelCode.orEmpty() },
-        onSelect = { draft.model = it }
-    )
-    if (!stamped) {
-        // Выданные узлом номер и год показаны погашенными: они уже
-        // присвоены кассе, и правка сделала бы их неправдой.
-        FormField(
-            label = texts.factoryNumber,
-            value = draft.factory,
-            hint = texts.factoryIssued.takeIf { issued },
-            enabled = !issued
-        ) { draft.factory = it }
-        FormField(
-            label = texts.manufactureYear,
-            value = draft.year,
-            hint = texts.factoryIssued.takeIf { issued },
-            enabled = !issued
-        ) { draft.year = it.filter(Char::isDigit).take(YEAR_DIGITS) }
-    }
-    FormField(texts.internalName, draft.name) { draft.name = it }
-}
-
-/** Поле формы во всю ширину карточки с подписью под ним. */
-@Composable
-private fun FormField(
-    label: String,
-    value: String,
-    hint: String? = null,
-    enabled: Boolean = true,
-    onChange: (String) -> Unit
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onChange,
-        label = { Text(label) },
-        supportingText = hint?.let { { Text(it) } },
-        singleLine = true,
-        enabled = enabled,
-        modifier = Modifier.fillMaxWidth()
-    )
 }
 
 /**

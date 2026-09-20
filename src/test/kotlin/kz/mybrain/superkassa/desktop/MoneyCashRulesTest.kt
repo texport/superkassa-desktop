@@ -92,6 +92,27 @@ class MoneyCashRulesTest {
         assertEquals("key-3", CashRules.attemptFor(first, CashMove.Deposit, BigDecimal("100")) { "key-3" }.key)
     }
 
+    /**
+     * Заблокированной кассе деньги не проводят даже при открытой смене.
+     *
+     * У кассы, снятой с учёта, смена на узле остаётся открытой; пока
+     * экран считал её закрытой, кнопки были недоступны по другой причине
+     * и совпадение скрывало отсутствие проверки.
+     */
+    @Test
+    fun `заблокированной кассе движение наличных не разрешается`() {
+        val decision = CashRules.check("100", CashMove.Deposit, DRAWER, open, kkmBlocked = true)
+
+        assertEquals(CashRefusal.KkmBlocked, refusal(decision))
+    }
+
+    @Test
+    fun `незаблокированной кассе при открытой смене сумма принимается`() {
+        val decision = CashRules.check("100", CashMove.Deposit, DRAWER, open, kkmBlocked = false)
+
+        assertTrue(decision is CashDecision.Ready)
+    }
+
     /** Остаток ящика тестового узла: 4275,50 ₸. */
     private companion object {
         const val DRAWER = 427_550L

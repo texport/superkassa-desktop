@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.enrollKkm
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.KkmInitRequest
-import kz.mybrain.superkassa.desktop.server.initKkm
-import kz.mybrain.superkassa.desktop.ui.components.EnvironmentPicker
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
-import kz.mybrain.superkassa.desktop.ui.components.ProviderPicker
+import kz.mybrain.superkassa.desktop.ui.components.OfdChoice
+import kz.mybrain.superkassa.desktop.ui.components.OfdTarget
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
@@ -47,20 +47,23 @@ fun OfdStep(session: Session) {
     val scope = rememberCoroutineScope()
     val providers = session.dictionaries[Dictionary.OfdProviders].orEmpty()
     val environments = session.dictionaries[Dictionary.OfdEnvironments].orEmpty()
-    var provider by remember { mutableStateOf("") }
-    var environment by remember { mutableStateOf("") }
+    var target by remember { mutableStateOf(OfdTarget()) }
     var systemId by remember { mutableStateOf("") }
     var token by remember { mutableStateOf("") }
     var adminPin by remember { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
 
-    // Пока владелец не выбрал сам, подставлено первое значение справочника.
-    val chosenProvider = provider.ifEmpty { providers.firstOrNull()?.code.orEmpty() }
-    val chosenEnvironment = environment.ifEmpty { environments.firstOrNull()?.code.orEmpty() }
+    // Пока владелец не выбрал сам, подставлен ОФД этого рабочего места —
+    // тот, с которым работают его кассы. Прежде здесь стояло первое
+    // значение справочника, то есть чужой ОФД.
+    val own = workplaceOfd(session.kkms, providers, environments)
+    val chosen = target.copy(
+        provider = target.provider.ifEmpty { own.provider },
+        environment = target.environment.ifEmpty { own.environment }
+    )
     val cashiers = moneyTexts(session.language).cashiers
     val pinTrouble = pinProblem(adminPin, cashiers, texts.users.forbiddenPin)
-    val filled = systemId.isNotBlank() && token.isNotBlank() &&
-        chosenProvider.isNotEmpty() && chosenEnvironment.isNotEmpty() &&
+    val filled = systemId.isNotBlank() && token.isNotBlank() && chosen.complete &&
         UserRules.pinAccepted(adminPin)
 
     FlowRow(
@@ -68,18 +71,7 @@ fun OfdStep(session: Session) {
         verticalArrangement = Arrangement.spacedBy(Spacing.tight),
         itemVerticalAlignment = Alignment.Top
     ) {
-        ProviderPicker(
-            entries = providers,
-            language = session.language.code,
-            selectedCode = chosenProvider,
-            onSelect = { provider = it }
-        )
-        EnvironmentPicker(
-            entries = environments,
-            language = session.language.code,
-            selectedCode = chosenEnvironment,
-            onSelect = { environment = it }
-        )
+        OfdChoice(chosen, providers, environments, session.language.code) { target = it }
         OutlinedTextField(
             value = systemId,
             onValueChange = { systemId = it.filter(Char::isDigit) },
@@ -113,7 +105,7 @@ fun OfdStep(session: Session) {
         ) {
             busy = true
             scope.launch {
-                val done = connect(session, chosenProvider, chosenEnvironment, systemId, token, adminPin)
+                val done = connect(session, chosen, systemId, token, adminPin)
                 if (done) {
                     systemId = ""
                     token = ""
@@ -125,31 +117,21 @@ fun OfdStep(session: Session) {
     }
 }
 
-/** Заводит кассу на узле и объявляет, в каком она состоянии. */
-@Suppress("LongParameterList")
+/** Заводит кассу на узле: ход общий с мастером и с кабинетом. */
 private suspend fun connect(
     session: Session,
-    provider: String,
-    environment: String,
+    target: OfdTarget,
     systemId: String,
     token: String,
     adminPin: String
 ): Boolean {
-    val texts = stringsOf(session.language).settings
-    val request = KkmInitRequest(provider, environment, systemId, token, adminPin)
-    val created = session.guard(texts.registerKkm) {
-        session.client.initKkm(request, BOOTSTRAP_PIN)
-    } ?: return false
-    session.refreshKkms()
-    session.report("${texts.registered}: ${session.titleOf(Dictionary.KkmStates, created.state)}")
-    return true
+    val what = stringsOf(session.language).settings.registerKkm
+    val request = KkmInitRequest(
+        ofdId = target.provider,
+        ofdEnvironment = target.environment,
+        ofdSystemId = systemId,
+        ofdToken = token,
+        adminPin = adminPin
+    )
+    return session.enrollKkm(request, what) != null
 }
-
-/**
- * Пин, которым узел подтверждает право заводить кассы.
- *
- * Это не пин будущей кассы: её администратор получает тот, что набран
- * в поле рядом. Со стандартным касса рождалась бы недоступной — узел
- * не пускает по нему, а сменить его можно только войдя.
- */
-private const val BOOTSTRAP_PIN = "0000"

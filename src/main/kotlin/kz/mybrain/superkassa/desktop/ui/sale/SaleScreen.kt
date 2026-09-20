@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
@@ -52,7 +55,8 @@ fun SaleScreen(session: Session) {
     val texts = LocalStrings.current
     CompositionLocalProvider(
         LocalSaleTexts provides saleTexts(session.language),
-        LocalVatRates provides vatRatesOf(session, texts.enums)
+        LocalVatRates provides vatRatesOf(session, texts.enums),
+        LocalUnits provides session.units
     ) {
         Row(
             modifier = Modifier.fillMaxSize().padding(Spacing.screen),
@@ -72,6 +76,20 @@ fun SaleScreen(session: Session) {
  */
 @Composable
 private fun ReceiptColumn(form: SaleForm, basket: Basket, modifier: Modifier) {
+    // Какой позиции считывают марки: окно открывается поверх листа чека
+    // и живёт, пока кассир подносит к сканеру одну бутылку за другой.
+    var stamping by remember { mutableStateOf<Int?>(null) }
+    stamping?.let { at ->
+        val position = basket.positions.getOrNull(at)
+        if (position == null) {
+            stamping = null
+        } else {
+            ExciseDialog(
+                stamps = position.exciseStamps,
+                onChanged = { basket.stampAt(at, it) }
+            ) { stamping = null }
+        }
+    }
     Column(
         modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
@@ -81,6 +99,7 @@ private fun ReceiptColumn(form: SaleForm, basket: Basket, modifier: Modifier) {
             basket = basket,
             modifier = Modifier.weight(1f),
             onStorno = { basket.stornoAt(it) },
+            onExcise = { stamping = it },
             onRemove = { basket.removeAt(it) }
         )
     }
@@ -108,6 +127,10 @@ private fun TillColumn(
         modifier = Modifier.width(TILL_WIDTH).fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
+        // Прокручивается ввод и реквизиты, а не деньги: «Итого» и «Пробить
+        // чек» кассир видит в каждом чеке. Обратный порядок пробовался —
+        // ввод позиции переставал прокручиваться, зато под сгиб уезжала
+        // главная кнопка экрана, и это хуже.
         ScrollableColumn(modifier = Modifier.weight(1f)) {
             PositionEntryCard(
                 session = session,

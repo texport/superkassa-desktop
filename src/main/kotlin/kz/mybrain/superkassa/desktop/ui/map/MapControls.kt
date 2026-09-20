@@ -51,10 +51,10 @@ internal fun MapControls(
         Column {
             LocateButton(state, texts, preferences)
             IconButton(onClick = { state.zoomBy(1) }) {
-                Icon(AppIcons.zoomIn, contentDescription = texts.zoomIn)
+                Icon(AppIcons.zoomIn, contentDescription = texts.map.zoomIn)
             }
             IconButton(onClick = { state.zoomBy(-1) }) {
-                Icon(AppIcons.zoomOut, contentDescription = texts.zoomOut)
+                Icon(AppIcons.zoomOut, contentDescription = texts.map.zoomOut)
             }
         }
     }
@@ -74,7 +74,7 @@ internal fun MapControls(
 @Composable
 private fun LocateButton(state: MapState, texts: CabinetTexts, preferences: Preferences) {
     val scope = rememberCoroutineScope()
-    val locator = remember { MapLocator() }
+    val locator = remember { MapServices(preferences).locator }
     var asking by remember { mutableStateOf(false) }
     var busy by remember { mutableStateOf(false) }
 
@@ -101,7 +101,7 @@ private fun LocateButton(state: MapState, texts: CabinetTexts, preferences: Pref
     }
 
     IconButton(enabled = !busy, onClick = { locate() }) {
-        Icon(AppIcons.myLocation, contentDescription = texts.myLocation)
+        Icon(AppIcons.myLocation, contentDescription = texts.map.myLocation)
     }
     if (asking) {
         LocationConsent(
@@ -131,9 +131,9 @@ private fun LocationConsent(texts: CabinetTexts, onAllow: () -> Unit, onDeny: ()
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDeny,
         icon = { Icon(AppIcons.myLocation, contentDescription = null) },
-        title = { Text(texts.locationAsk) },
-        text = { Text(texts.locationAskHint) },
-        confirmButton = { Button(onClick = onAllow) { Text(texts.locationAllow) } },
-        dismissButton = { TextButton(onClick = onDeny) { Text(texts.locationDeny) } }
+        title = { Text(texts.map.locationAsk) },
+        text = { Text(texts.map.locationAskHint) },
+        confirmButton = { Button(onClick = onAllow) { Text(texts.map.locationAllow) } },
+        dismissButton = { TextButton(onClick = onDeny) { Text(texts.map.locationDeny) } }
     )
 }

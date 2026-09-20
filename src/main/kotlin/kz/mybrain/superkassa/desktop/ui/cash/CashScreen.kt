@@ -11,11 +11,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshSelected
+import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.CashRequest
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
@@ -29,6 +34,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.DrawerTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
@@ -46,8 +52,14 @@ fun CashScreen(session: Session) {
     val texts = LocalStrings.current
     val money = moneyTexts(session.language)
     val recent = remember { mutableStateListOf<Document>() }
+    // Журнал за сутки читается у узла: до ответа «внесений и изъятий нет»
+    // говорило бы о дне, про который ещё не спрашивали.
+    var answered by remember(session.selected?.kkmId) { mutableStateOf(false) }
 
-    LaunchedEffect(session.selected?.kkmId, session.pin) { reloadRecent(session, money, recent) }
+    LaunchedEffect(session.selected?.kkmId, session.pin) {
+        reloadRecent(session, money, recent)
+        answered = true
+    }
 
     ScrollableColumn(
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
@@ -58,7 +70,7 @@ fun CashScreen(session: Session) {
         CashForm(session, money) { move, amount, key ->
             perform(session, texts, money, move, amount, key, recent)
         }
-        RecentCash(session, money.drawer, recent)
+        RecentCash(session, money.drawer, recent, loading = !answered)
     }
 }
 
@@ -138,6 +150,6 @@ private suspend fun perform(
     reloadRecent(session, money, recent)
     val done = if (move == CashMove.Deposit) texts.cash.deposited else texts.cash.withdrawn
     val delivery = session.titleOf(Dictionary.DeliveryStatuses, result.deliveryStatus)
-    session.report("$done ${Money.format(amount)} · $delivery")
+    session.report("$done ${Money.format(amount)}${Glyphs.SEPARATOR}$delivery")
     return true
 }

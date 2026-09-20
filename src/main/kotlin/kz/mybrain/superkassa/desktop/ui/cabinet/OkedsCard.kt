@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.Chip
@@ -21,8 +22,8 @@ import kz.mybrain.superkassa.desktop.ui.components.CollapsibleCard
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
+import kz.mybrain.superkassa.desktop.ui.components.stripedAt
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
-import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -34,13 +35,25 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * тоже допустим: у только что заведённой компании их ещё нет.
  */
 @Composable
-fun OkedsCard(texts: CabinetTexts, okeds: MutableList<Oked>, busy: Boolean, onSave: () -> Unit) {
+fun OkedsCard(
+    texts: CabinetTexts,
+    okeds: MutableList<Oked>,
+    busy: Boolean,
+    title: (Oked) -> String,
+    onSave: () -> Unit
+) {
     SectionCard(title = texts.okeds) {
         if (okeds.isEmpty()) {
             EmptyState(AppIcons.settings, texts.okedsEmpty, texts.okedsEmptyHint)
         }
         okeds.toList().forEachIndexed { at, oked ->
-            OkedRow(oked, texts, striped = at % STRIPE == 1, onPrimary = { markPrimary(okeds, oked) }) {
+            OkedRow(
+                oked,
+                texts,
+                title = title(oked),
+                striped = stripedAt(at),
+                onPrimary = { markPrimary(okeds, oked) }
+            ) {
                 okeds.removeAt(at)
             }
         }
@@ -63,14 +76,14 @@ fun OkedsCard(texts: CabinetTexts, okeds: MutableList<Oked>, busy: Boolean, onSa
  * ОКЭД кабинет не примет, а выбирать из одного нечего.
  */
 @Composable
-fun AddOkedCard(cabinet: CabinetSession, texts: CabinetTexts, language: Language, okeds: MutableList<Oked>) {
+fun AddOkedCard(session: Session, cabinet: CabinetSession, texts: CabinetTexts, okeds: MutableList<Oked>) {
     var expanded by remember { mutableStateOf(false) }
     CollapsibleCard(
         title = texts.addOked,
         expanded = expanded,
         onToggle = { expanded = !expanded }
     ) {
-        OkedPicker(cabinet, texts, language, okeds.map { it.code }) { chosen ->
+        OkedPicker(session, cabinet, texts, okeds.map { it.code }) { chosen ->
             okeds.add(chosen.copy(primary = okeds.isEmpty()))
             expanded = false
         }
@@ -88,12 +101,13 @@ fun AddOkedCard(cabinet: CabinetSession, texts: CabinetTexts, language: Language
 private fun OkedRow(
     oked: Oked,
     texts: CabinetTexts,
+    title: String,
     striped: Boolean,
     onPrimary: () -> Unit,
     onRemove: () -> Unit
 ) {
     RecordRow(
-        title = oked.name?.takeIf { it.isNotBlank() } ?: oked.code,
+        title = title,
         subtitle = oked.code,
         striped = striped,
         trailing = {
@@ -128,6 +142,3 @@ private fun markPrimary(okeds: MutableList<Oked>, chosen: Oked) {
     okeds.clear()
     okeds.addAll(marked)
 }
-
-/** Затеняется каждая вторая строка списка. */
-private const val STRIPE = 2

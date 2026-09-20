@@ -58,6 +58,50 @@ internal suspend fun ServerClient.nodeSettingsBody(): String {
     return response.bodyAsText()
 }
 
+/**
+ * Кто и в каком виде отвечает на этой машине.
+ *
+ * Версия узла, режим, версия протокола и хранилище — первое, что
+ * спрашивает поддержка при разборе. Раньше их негде было увидеть:
+ * «узел недоступен» на экране ничего из этого не называло.
+ */
+internal suspend fun ServerClient.nodeInfo(): NodeInfo =
+    request(HttpMethod.Get, "/info")
+
+/** Состояние составных частей узла. */
+internal suspend fun ServerClient.nodeHealth(): NodeHealth =
+    request(HttpMethod.Get, "/health")
+
+/**
+ * Данные авторизации кассы в ОФД.
+ *
+ * Номером следующего запроса сверяют расхождения: ОФД считает их своим
+ * счётом, и разошедшийся номер объясняет отказы, которых иначе не понять.
+ */
+internal suspend fun ServerClient.ofdAuthInfo(kkmId: String, pin: String): OfdAuthInfo =
+    request(HttpMethod.Post, "/kkm/$kkmId/ofd/auth", null, pin)
+
+@Serializable
+internal data class NodeInfo(
+    val name: String? = null,
+    val version: String? = null,
+    val mode: String? = null,
+    val nodeId: String? = null,
+    val ofdProtocolVersion: String? = null,
+    /** Версия ядра внутри узла: узел выпускается своим темпом, ядро своим. */
+    val coreVersion: String? = null,
+    val storage: NodeStorage? = null
+)
+
+@Serializable
+internal data class NodeStorage(val engine: String? = null)
+
+@Serializable
+internal data class NodeHealth(val status: String? = null, val storage: String? = null)
+
+@Serializable
+internal data class OfdAuthInfo(val nextReqNum: Long? = null, val token: String? = null)
+
 private suspend fun ServerClient.post(path: String, pin: String) {
     val response = call(HttpMethod.Post, path, null, pin)
     if (!response.status.isSuccess()) throw refusalOf(response)

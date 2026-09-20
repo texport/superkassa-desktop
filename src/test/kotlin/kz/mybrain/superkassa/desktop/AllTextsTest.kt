@@ -1,7 +1,11 @@
 package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.strings.analyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.debugTexts
+import kz.mybrain.superkassa.desktop.ui.strings.machineTexts
+import kz.mybrain.superkassa.desktop.ui.strings.mapAddressTexts
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
 import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 import kz.mybrain.superkassa.desktop.ui.strings.setupTexts
@@ -40,9 +44,13 @@ class AllTextsTest {
     private fun sets(language: Language): List<Any> = listOf(
         stringsOf(language),
         cabinetTexts(language),
+        analyticsTexts(language),
+        machineTexts(language),
+        mapAddressTexts(language),
         saleTexts(language),
         paymentTexts(language),
-        setupTexts(language)
+        setupTexts(language),
+        debugTexts(language)
     )
 
     @Test

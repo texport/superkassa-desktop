@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Сообщения кассиру — снекбаром поверх содержимого.
@@ -48,8 +49,13 @@ fun MessageEffect(
         val current = shown ?: return@LaunchedEffect
         val text = when (current) {
             is Message.Done -> current.text
-            is Message.Refusal -> "${current.text} · ${texts.common.refusalCode}: ${current.code}"
-            is Message.NodeUnavailable -> "${texts.common.nodeUnavailable} · ${current.what}: ${current.reason}"
+            // Код отказа на экране кассиру ничего не даёт: узел отвечает
+            // словами, и «KKM_BRANDING_SETTINGS_REQUIRES_PROGRAMMING» рядом
+            // с ними — служебный шум. Код уходит в журнал, а на экран
+            // попадает только там, где слов нет вовсе.
+            is Message.Refusal ->
+                current.text.ifBlank { "${texts.common.refusalCode}: ${current.code}" }
+            is Message.NodeUnavailable -> "${texts.common.nodeUnavailable}${Glyphs.SEPARATOR}${current.what}"
         }
         val result = state.showSnackbar(
             message = text,

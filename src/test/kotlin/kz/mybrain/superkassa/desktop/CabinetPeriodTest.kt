@@ -20,7 +20,9 @@ import kz.mybrain.superkassa.desktop.server.cabinet.receipts
 import kz.mybrain.superkassa.desktop.server.cabinet.reports
 import kz.mybrain.superkassa.desktop.server.cabinet.saveOkeds
 import kz.mybrain.superkassa.desktop.ui.cabinet.DocumentKind
-import kz.mybrain.superkassa.desktop.ui.cabinet.DocumentSpan
+import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetPeriodOf
+import kz.mybrain.superkassa.desktop.ui.history.JournalPeriod
+import kz.mybrain.superkassa.desktop.ui.history.JournalSpan
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -46,29 +48,42 @@ class CabinetPeriodTest {
     private val almaty = ZoneId.of("Asia/Almaty")
 
     @Test
-    fun `сегодня начинается с полуночи рабочего места`() {
-        val period = DocumentSpan.Today.period(almaty)
+    fun `день начинается с полуночи рабочего места`() {
+        val period = cabinetPeriodOf(JournalPeriod.of(JournalSpan.Day, LocalDate.now(almaty)), almaty)
         assertEquals(LocalDate.now(almaty).atStartOfDay(almaty).toInstant(), period.from)
-        assertNull(period.to, "верхней границы у срока нет: свежее приходит и сейчас")
+        assertNull(period.to, "у сегодняшнего окна верхней границы нет: свежее приходит и сейчас")
     }
 
     @Test
     fun `неделя включает сегодняшний день и шесть прошлых`() {
-        val period = DocumentSpan.Week.period(almaty)
+        val period = cabinetPeriodOf(JournalPeriod.of(JournalSpan.Week, LocalDate.now(almaty)), almaty)
         val expected = LocalDate.now(almaty).minusDays(6).atStartOfDay(almaty).toInstant()
         assertEquals(expected, period.from)
     }
 
     @Test
     fun `месяц включает сегодняшний день и двадцать девять прошлых`() {
-        val period = DocumentSpan.Month.period(almaty)
+        val period = cabinetPeriodOf(JournalPeriod.of(JournalSpan.Month, LocalDate.now(almaty)), almaty)
         val expected = LocalDate.now(almaty).minusDays(29).atStartOfDay(almaty).toInstant()
         assertEquals(expected, period.from)
     }
 
     @Test
+    fun `перелистнутое назад окно кончается своей границей, а не сегодня`() {
+        val week = JournalPeriod.of(JournalSpan.Week, LocalDate.of(2026, 9, 14)).shiftedBy(-1)
+        val period = cabinetPeriodOf(week, almaty)
+
+        assertEquals(LocalDate.of(2026, 9, 1).atStartOfDay(almaty).toInstant(), period.from)
+        assertEquals(
+            LocalDate.of(2026, 9, 8).atStartOfDay(almaty).toInstant(),
+            period.to,
+            "без верхней границы «прошлая неделя» отдавала бы и эту"
+        )
+    }
+
+    @Test
     fun `у всего времени границ нет`() {
-        val period = DocumentSpan.All.period(almaty)
+        val period = cabinetPeriodOf(JournalPeriod.of(JournalSpan.All, LocalDate.now(almaty)), almaty)
         assertNull(period.from)
         assertNull(period.to)
         assertEquals("", period.query(), "пустой срок не добавляет параметров в запрос")

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.server.cabinet.DocumentPeriod
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 
 /**
@@ -21,10 +22,10 @@ import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
  */
 class DocumentListState {
 
-    private val loaded = mutableStateListOf<DocumentRow>()
+    private val loaded = mutableStateListOf<CabinetDocumentRow>()
 
     /** Показанные строки. */
-    val rows: List<DocumentRow> get() = loaded
+    val rows: List<CabinetDocumentRow> get() = loaded
 
     /** Сколько строк у кабинета за выбранным сроком. */
     var total: Long by mutableStateOf(0)
@@ -65,13 +66,13 @@ class DocumentListState {
         token: String,
         registerId: String,
         kind: DocumentKind,
-        span: DocumentSpan,
+        period: DocumentPeriod,
         texts: CabinetTexts
     ) {
         if (loading) return
         loading = true
         val slice = try {
-            cabinet.guard { loadDocuments(cabinet, token, registerId, kind, page, span.period(), texts) }
+            cabinet.guard { loadDocuments(cabinet, token, registerId, kind, page, period, texts) }
         } finally {
             loading = false
         }
@@ -80,4 +81,13 @@ class DocumentListState {
         total = slice.total
         page += 1
     }
+
+    /**
+     * Что стоит за строкой журнала.
+     *
+     * Журнал показывает строки, не зная, откуда они пришли, и обратно
+     * к записи кабинета ведёт ключ строки: у чека, отчёта и движения
+     * денег это идентификатор операции, у смены — её номер.
+     */
+    fun targetOf(key: String): RowTarget? = loaded.firstOrNull { it.entry.key == key }?.target
 }

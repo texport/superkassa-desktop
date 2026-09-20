@@ -3,6 +3,11 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -13,105 +18,147 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.delay
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.OkedEntry
-import kz.mybrain.superkassa.desktop.server.cabinet.okedReference
-import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.server.cabinet.okedSuggestions
+import kz.mybrain.superkassa.desktop.ui.components.onEscape
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
-import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.theme.Durations
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
- * Выбор вида деятельности из классификатора ОКЭД.
+ * Ввод вида деятельности: выбор из классификатора ОКЭД.
  *
- * Прежде код и наименование набирались руками. Классификатор ведёт
- * уполномоченный орган, ИСНА сверяется с ним же — и набранное владельцем
- * «47111 Магазин» уходило в заявление как есть, чтобы вернуться отказом.
- * Придумать наименование к коду тем более нельзя: в регистрационной карте
- * оно печатается тем, что записано в классификаторе.
+ * Прежде код и наименование набирались руками, и в заявление в ИСНА уходило
+ * написанное владельцем. Классификатор теперь держит кабинет, поэтому вид
+ * деятельности выбирается из него: набранное ищется по коду и по части
+ * наименования, а в компанию уходит ровно то, что стоит в классификаторе.
  *
- * Список показывается сразу, до всякого ввода: у владельца нет под рукой
- * классификатора, чтобы вспомнить, с чего начать. Строка поиска отбирает
- * по коду, если набраны цифры, и по наименованию на любом из языков —
- * если слова. Подробное идёт первым: владелец ищет свой вид деятельности,
- * а не раздел, в который тот входит.
+ * Уже добавленный код в подсказках не показывается: такой список кабинет
+ * отвергнет.
  *
- * Уже добавленные виды из списка выпадают: кабинет второй такой же
- * не примет, а строка, которая ничего не делает, читается как поломка.
+ * @param known добавленные коды — их из подсказок убирают.
  */
 @Composable
-fun OkedPicker(cabinet: CabinetSession, texts: CabinetTexts, language: Language, known: List<String>, onAdd: (Oked) -> Unit) {
+fun OkedPicker(
+    session: Session,
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    known: List<String>,
+    onAdd: (Oked) -> Unit
+) {
     var query by remember { mutableStateOf("") }
     var found by remember { mutableStateOf<List<OkedEntry>>(emptyList()) }
-    var total by remember { mutableStateOf(0L) }
+    var searched by remember { mutableStateOf(false) }
+    var open by remember { mutableStateOf(false) }
+    var touched by remember { mutableStateOf(false) }
 
-    // Поиск идёт за набором, а не по кнопке: классификатор большой,
-    // и владелец сужает список, дописывая слово. Пауза перед обращением
-    // держит одно обращение на слово, а не на букву.
-    LaunchedEffect(query, cabinet.token) {
+    val needle = query.trim()
+    // Однобуквенный запрос кабинет отвергает, как и в адресном регистре:
+    // ищем либо с пустой строки — она отдаёт начало классификатора, —
+    // либо от двух знаков.
+    val askable = askableQuery(needle)
+    LaunchedEffect(needle) {
+        if (!askable) return@LaunchedEffect
         val token = cabinet.token ?: return@LaunchedEffect
-        if (query.isNotEmpty()) delay(TYPING_PAUSE_MS)
-        val page = cabinet.guard { cabinet.client.okedReference(token, query.trim()) }
-        found = page?.items.orEmpty()
-        total = page?.totalElements ?: 0
+        if (needle.isNotEmpty()) delay(Durations.afterTyping)
+        found = cabinet.guard { cabinet.client.okedSuggestions(token, needle).items }
+            .orEmpty()
+            .filterNot { it.code in known }
+        searched = true
+        open = touched && found.isNotEmpty()
     }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
+        Suggestions(
+            texts = texts,
+            query = query,
+            found = found,
+            open = open && found.isNotEmpty(),
+            title = { entry -> titleOf(session, entry) },
+            onOpen = { open = it },
+            onQuery = {
+                query = it
+                touched = true
+                open = true
+            }
+        ) { entry ->
+            open = false
+            query = ""
+            onAdd(Oked(code = entry.code, name = titleOf(session, entry)))
+        }
+        val nothing = searched && found.isEmpty() && needle.isNotEmpty()
+        Hint(if (nothing) texts.okedNotFound else texts.okedSearchHint)
+    }
+}
+
+/** Поле поиска и найденное выпадающим списком: как в подборе адреса. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Suggestions(
+    texts: CabinetTexts,
+    query: String,
+    found: List<OkedEntry>,
+    open: Boolean,
+    title: (OkedEntry) -> String,
+    onOpen: (Boolean) -> Unit,
+    onQuery: (String) -> Unit,
+    onPick: (OkedEntry) -> Unit
+) {
+    // Escape закрывает раскрытый список — тем же правилом, что и у всех
+    // выпадающих списков приложения: сам он нажатия не слышит.
+    val closing = Modifier.fillMaxWidth().onEscape {
+        if (open) onOpen(false)
+        open
+    }
+    ExposedDropdownMenuBox(expanded = open, onExpandedChange = onOpen, modifier = closing) {
         OutlinedTextField(
             value = query,
-            onValueChange = { query = it },
+            onValueChange = onQuery,
             label = { Text(texts.okedSearch) },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { state -> if (state.isFocused) onOpen(true) }
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
         )
-        val offered = found.filterNot { it.code in known }
-        if (offered.isEmpty()) {
-            Text(
-                text = texts.okedNotFound,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            return@Column
-        }
-        offered.forEachIndexed { at, entry ->
-            RecordRow(
-                title = okedName(entry, language),
-                subtitle = entry.code,
-                striped = at % STRIPE == 1,
-                onClick = { onAdd(Oked(code = entry.code, name = okedName(entry, language))) }
-            )
-        }
-        // В классификаторе две тысячи позиций, и «торговля» находит сотни:
-        // без этой строки владелец считал бы, что его вида в нём нет.
-        if (total > offered.size) {
-            Text(
-                text = texts.shownOf.format(offered.size, total),
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        ExposedDropdownMenu(expanded = open, onDismissRequest = { onOpen(false) }) {
+            found.forEach { entry ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            text = "${entry.code}${Glyphs.SEPARATOR}${title(entry)}",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    onClick = { onPick(entry) }
+                )
+            }
         }
     }
 }
 
-/**
- * Наименование вида деятельности на языке владельца.
- *
- * Уходит в кабинет вместе с кодом и печатается в регистрационной карте,
- * поэтому берётся из классификатора, а не составляется приложением.
- * Пустая казахская форма — обычное дело: справочник отдаёт её не всегда.
- */
-fun okedName(entry: OkedEntry, language: Language): String = when (language) {
-    Language.Kk -> entry.nameKz.takeIf { it.isNotBlank() } ?: entry.name
-    else -> entry.name.takeIf { it.isNotBlank() } ?: entry.nameKz
+/** Подсказка под полем: одна строка на все состояния, чтобы поле не прыгало. */
+@Composable
+private fun Hint(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
-/** Сколько ждать после последней набранной буквы, прежде чем искать. */
-private const val TYPING_PAUSE_MS = 300L
-
-/** Затеняется каждая вторая строка списка. */
-private const val STRIPE = 2
+/** Наименование на языке интерфейса: в заявление уходит то, что видит владелец. */
+internal fun titleOf(session: Session, entry: OkedEntry): String =
+    addressIn(session.language, entry.name, entry.nameKz)

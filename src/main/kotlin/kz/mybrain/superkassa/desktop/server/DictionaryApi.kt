@@ -40,7 +40,9 @@ enum class Dictionary(val path: String) {
     OfdEnvironments("ofd-environments"),
     ReceiptOperationTypes("receipt-operation-types"),
     CashOperationTypes("cash-operation-types"),
-    VatGroups("vat-groups")
+    VatGroups("vat-groups"),
+    TaxRegimes("tax-regimes"),
+    PaperWidths("paper-widths")
 }
 
 suspend fun ServerClient.dictionary(dictionary: Dictionary): List<DictionaryEntry> =

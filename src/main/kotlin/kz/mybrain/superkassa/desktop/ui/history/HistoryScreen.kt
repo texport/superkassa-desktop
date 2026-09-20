@@ -61,6 +61,6 @@ fun HistoryScreen(session: Session) {
 
 /** Взгляд на журнал: по дню или по сменам. */
 enum class HistoryView(val title: (HistoryJournalTexts) -> String) {
-    Day({ it.byDay }),
+    Day({ it.byPeriod }),
     Shifts({ it.byShift })
 }

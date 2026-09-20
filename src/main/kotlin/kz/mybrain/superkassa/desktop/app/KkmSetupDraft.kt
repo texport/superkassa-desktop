@@ -36,6 +36,16 @@ class KkmSetupDraft(private val preferences: Preferences) {
     var systemId: String? by mutableStateOf(preferences.setupValue(SYSTEM_ID))
         private set
 
+    /**
+     * Название, которое владелец дал кассе в кабинете.
+     *
+     * Запоминается вместе с кассой, потому что мастер бросают на середине:
+     * назвали сегодня, завели в узле через неделю. Без этого касса
+     * рождалась бы на узле безымянной.
+     */
+    var name: String? by mutableStateOf(preferences.setupValue(NAME))
+        private set
+
     /** Запоминает выданный узлом номер: второй вызов дал бы другой. */
     fun rememberFactory(number: String, year: String) {
         factoryNumber = number
@@ -44,12 +54,14 @@ class KkmSetupDraft(private val preferences: Preferences) {
         preferences.setupValue(YEAR, year)
     }
 
-    /** Запоминает кассу, заведённую в кабинете. */
-    fun rememberRegister(id: String, kkmId: Int) {
+    /** Запоминает кассу, заведённую в кабинете, вместе с её названием. */
+    fun rememberRegister(id: String, kkmId: Int, name: String? = null) {
         cabinetRegisterId = id
         systemId = kkmId.toString()
+        this.name = name?.takeIf { it.isNotBlank() }
         preferences.setupValue(REGISTER, id)
         preferences.setupValue(SYSTEM_ID, kkmId.toString())
+        preferences.setupValue(NAME, this.name)
     }
 
     /** Подключение завершено или начато заново: пройденное забывается. */
@@ -58,7 +70,8 @@ class KkmSetupDraft(private val preferences: Preferences) {
         manufactureYear = null
         cabinetRegisterId = null
         systemId = null
-        listOf(FACTORY, YEAR, REGISTER, SYSTEM_ID).forEach { preferences.setupValue(it, null) }
+        name = null
+        listOf(FACTORY, YEAR, REGISTER, SYSTEM_ID, NAME).forEach { preferences.setupValue(it, null) }
     }
 
     /** На каком шаге мастер откроется. */
@@ -73,6 +86,7 @@ class KkmSetupDraft(private val preferences: Preferences) {
         const val YEAR = "year"
         const val REGISTER = "register"
         const val SYSTEM_ID = "system"
+        const val NAME = "name"
     }
 }
 

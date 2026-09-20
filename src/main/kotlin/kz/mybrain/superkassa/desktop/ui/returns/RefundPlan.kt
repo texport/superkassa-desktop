@@ -7,6 +7,7 @@ import kz.mybrain.superkassa.desktop.server.ReceiptPayment
 import kz.mybrain.superkassa.desktop.server.ReceiptRequest
 import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.sale.QUANTITY_SCALE
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.ZoneOffset
@@ -31,7 +32,7 @@ sealed interface RefundAmount {
 fun refundAmountOf(entered: String, basisTiyn: Long): RefundAmount {
     if (entered.isBlank()) return RefundAmount.Rejected(RefundProblem.Empty)
     val parsed = Money.parse(entered) ?: return RefundAmount.Rejected(RefundProblem.NotANumber)
-    val tiyn = parsed.movePointRight(TIYN_SCALE).toLong()
+    val tiyn = parsed.movePointRight(Money.TIYN_SCALE).toLong()
     if (tiyn <= 0L) return RefundAmount.Rejected(RefundProblem.NotPositive)
     if (tiyn > basisTiyn) return RefundAmount.Rejected(RefundProblem.TooLarge)
     return RefundAmount.Ready(tiyn)
@@ -39,7 +40,7 @@ fun refundAmountOf(entered: String, basisTiyn: Long): RefundAmount {
 
 /** Сумма из журнала в том виде, в каком её принимает поле ввода. */
 fun tengeText(tiyn: Long): String =
-    BigDecimal.valueOf(tiyn, TIYN_SCALE).toPlainString().replace('.', DECIMAL_SEPARATOR)
+    BigDecimal.valueOf(tiyn, Money.TIYN_SCALE).toPlainString().replace('.', DECIMAL_SEPARATOR)
 
 /**
  * Запятая, а не точка.
@@ -97,12 +98,6 @@ fun refundRequest(
         )
     )
 }
-
-/** Количество приходит в тысячных долях единицы. */
-private const val QUANTITY_SCALE = 3
-
-/** Сколько знаков в тиыне: сотая доля тенге. */
-private const val TIYN_SCALE = 2
 
 private val TICKET_MOMENT: DateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(ZoneOffset.UTC)

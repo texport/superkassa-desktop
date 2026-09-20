@@ -73,8 +73,5 @@ internal fun RefundItems(
 internal fun chosenTiyn(items: List<SoldItem>, chosen: Set<Int>): Long =
     chosen.mapNotNull { items.getOrNull(it) }
         .fold(BigDecimal.ZERO) { sum, item -> sum + item.sum }
-        .movePointRight(TIYN_SCALE)
+        .movePointRight(Money.TIYN_SCALE)
         .toLong()
-
-/** Знаков после запятой у тенге. */
-private const val TIYN_SCALE = 2

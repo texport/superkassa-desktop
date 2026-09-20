@@ -10,8 +10,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterState
 import kz.mybrain.superkassa.desktop.server.cabinet.RegistrationAction
@@ -38,6 +40,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  */
 @Composable
 fun RegisterDetails(
+    session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
     register: CabinetRegister,
@@ -52,23 +55,45 @@ fun RegisterDetails(
     var card by remember(register.id) { mutableStateOf(register) }
     var open by remember(register.id) { mutableStateOf(OPENED_AT_START) }
 
+    // Вместе с карточкой перечитывается и список касс: статус в дереве слева
+    // иначе оставался «черновиком» у кассы, только что поставленной на учёт.
     suspend fun reload() {
         val token = cabinet.token ?: return
         card = cabinet.guard { cabinet.client.register(token, register.id) } ?: register
         state = cabinet.guard { cabinet.client.registerState(token, register.id) }
         actions = cabinet.guard { cabinet.client.registrationActions(token, register.id) }?.items.orEmpty()
+        cabinet.refreshRegisters()
     }
 
     LaunchedEffect(register.id, cabinet.token) { reload() }
+
+    // Пока заявление в ИСНА, карточка перечитывается сама: ответ приходит
+    // через десятки секунд, и подпись под кнопками обещает владельцу, что
+    // журнал обновится без него. Без этого касса оставалась «в обработке»
+    // и снятой с обслуживания, пока раздел не открывали заново.
+    //
+    // Ожидание читается и по карточке, и по строке списка: пока заявление
+    // в работе, запрос карточки может и не удаться, и одной карточки мало —
+    // со снятием с учёта опрос так и не начинался.
+    LaunchedEffect(card.status, register.status) {
+        while (awaitingIsna(card) || awaitingIsna(register)) {
+            delay(ISNA_ANSWER_POLL_MS)
+            reload()
+        }
+    }
 
     val toggle: (RegisterBlock) -> Unit = { block ->
         open = if (block in open) open - block else open + block
     }
     ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.snug) {
-        RegisterPassport(cabinet, texts, card) { scope.launch { reload() } }
+        RegisterPassport(session, cabinet, texts, card, state) { scope.launch { reload() } }
         RegisterLiveBlocks(cabinet, texts, register, card, state, open, toggle) {
             scope.launch { reload() }
         }
+        // Документы кассы живут своим экраном: в карточке остаётся переход
+        // к ним, а список с поиском, отбором и печатью открывается во всю
+        // ширину рабочего места.
+        RegisterDocumentsCard(session.language, register)
         RegisterAdminBlocks(texts, actions, open, toggle)
     }
 }
@@ -99,9 +124,6 @@ private fun RegisterLiveBlocks(
     }
     RegisterBlockCard(RegisterBlock.Card, open, onToggle, texts.card) {
         RegistrationCardBlock(cabinet, texts, card)
-    }
-    RegisterBlockCard(RegisterBlock.Documents, open, onToggle, texts.documents) {
-        RegisterDocuments(cabinet, texts, register.id)
     }
 }
 
@@ -144,7 +166,7 @@ private fun RegisterBlockCard(
 }
 
 /** Разделы карточки кассы. */
-enum class RegisterBlock { Technical, Applications, Card, Documents, Journal }
+enum class RegisterBlock { Technical, Applications, Card, Journal }
 
 /**
  * Что раскрыто при открытии кассы.
@@ -153,3 +175,6 @@ enum class RegisterBlock { Technical, Applications, Card, Documents, Journal }
  * заголовками, чтобы карточка помещалась на экран целиком.
  */
 private val OPENED_AT_START = setOf(RegisterBlock.Technical, RegisterBlock.Applications)
+
+/** Как часто спрашивать кабинет об ответе ИСНА: он приходит через десятки секунд. */
+private const val ISNA_ANSWER_POLL_MS = 5_000L

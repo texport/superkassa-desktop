@@ -11,8 +11,13 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import kz.mybrain.superkassa.desktop.app.LocalNode
+import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.log.AppLog
+import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.Shell
+import kz.mybrain.superkassa.desktop.ui.debug.LogWindow
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
@@ -26,6 +31,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
  */
 fun main() {
     System.setProperty("apple.awt.application.name", APP_NAME)
+    // Узел поднимается до окна: установщик несёт его с собой, и кассиру
+    // не из чего понять, что программ на самом деле две. Окно ждёт ответа
+    // узла — иначе список касс встретит пустотой, пока тот загружается.
+    // При разработке узла в ресурсах нет, и ожидания тоже.
+    val node = LocalNode(Preferences().nodeUrl)
+    if (node.start()) node.awaitReady()
     application { SuperkassaApplication() }
 }
 
@@ -34,7 +45,15 @@ private const val APP_NAME = "Superkassa"
 
 @Composable
 private fun ApplicationScope.SuperkassaApplication() {
-    val session = remember { Session() }
+    // Адрес узла читается из настроек при каждом обращении: его меняют
+    // с экрана входа, и перезапуск ради этого не нужен.
+    val session = remember {
+        // Журнал поднимается до первого обращения к узлу: иначе запуск,
+        // ради разбора которого отладку и включали, в него не попадёт.
+        AppLog.start()
+        val preferences = Preferences()
+        Session(ServerClient(address = { preferences.nodeUrl }), preferences)
+    }
     // Размер окна берётся тот, каким кассир оставил его в прошлый раз;
     // при первом запуске — подобранный под ноутбучный экран.
     val remembered = remember { session.rememberedWindowSize }
@@ -61,5 +80,10 @@ private fun ApplicationScope.SuperkassaApplication() {
                 Shell(session)
             }
         }
+    }
+    // Журнал — соседнее окно, а не раздел кассы: по нему отлаживают
+    // то, что делают в главном окне, и одно не должно закрывать другое.
+    if (AppLog.debugMode) {
+        LogWindow(session.language, session.appearance) { AppLog.switchDebugMode(false) }
     }
 }

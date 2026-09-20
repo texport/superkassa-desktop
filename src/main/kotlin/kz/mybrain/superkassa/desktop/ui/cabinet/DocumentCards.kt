@@ -13,7 +13,10 @@ import kz.mybrain.superkassa.desktop.server.cabinet.ShiftTotals
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
 import kz.mybrain.superkassa.desktop.ui.components.MinorSumLine
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
+import kz.mybrain.superkassa.desktop.ui.history.JournalDelivery
+import kz.mybrain.superkassa.desktop.ui.history.JournalDeliveryChip
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -34,15 +37,20 @@ fun ReportCard(report: CabinetReportDetails, texts: CabinetTexts, onClose: () ->
         title = listOfNotNull(
             documentTitle(report.type, texts),
             report.shiftNumber?.let { "${texts.shift} $it" }
-        ).joinToString(" · "),
-        trailing = { CardTail(report.deliveryStatus, texts, onClose) }
+        ).joinToString(Glyphs.SEPARATOR),
+        trailing = { CardTail(cabinetState(report.deliveryStatus, report.sendStatus), texts, onClose) }
     ) {
         DetailLine(texts.documentMoment, cabinetMoment(report.createdAt))
-        DetailLine(texts.receiptMoment, cabinetMoment(report.kkmTime))
-        DetailLine(texts.openedAt, cabinetMoment(report.shiftOpenedAt))
-        DetailLine(texts.closedAt, cabinetMoment(report.shiftClosedAt))
-        DetailLine(texts.registrationNumber, report.registrationNumber)
-        MinorSumLine(texts.revenue, cabinetSum(report.total))
+        DetailLine(texts.receipts, report.receiptsCount?.toString())
+        DetailLine(texts.kkmDocumentNumber, report.kkmDocumentNumber)
+        MinorSumLine(texts.sales, cabinetSum(report.total))
+        MinorSumLine(texts.returns, cabinetSum(report.returnTotal))
+        // Покупка у населения — там же, где она стоит на ленте кассы:
+        // отчёт в кабинете обязан сходиться с отчётом, который кассир
+        // держит в руках.
+        report.buyTotal?.let { MinorSumLine(texts.operationPurchase, cabinetSum(it)) }
+        report.buyReturnTotal?.let { MinorSumLine(texts.operationPurchaseReturn, cabinetSum(it)) }
+        MinorSumLine(texts.cashInDrawer, cabinetSum(report.cashBalance))
     }
 }
 
@@ -80,8 +88,14 @@ fun ShiftCard(shift: CabinetShift, texts: CabinetTexts, onClose: () -> Unit) {
 private fun ShiftTotalsLines(totals: ShiftTotals?, texts: CabinetTexts) {
     val sums = totals ?: return
     MinorSumLine(texts.cashInDrawer, cabinetSum(sums.cashSum))
-    MinorSumLine("${texts.sales} · ${sums.salesCount}", cabinetSum(sums.salesSum))
-    MinorSumLine("${texts.returns} · ${sums.returnsCount}", cabinetSum(sums.returnsSum))
+    DetailLine(texts.receipts, sums.receiptsCount.toString())
+    MinorSumLine(texts.sales, cabinetSum(sums.salesSum))
+    MinorSumLine(texts.returns, cabinetSum(sums.returnsSum))
+    // Покупка у населения показывается, только когда она в смене была:
+    // у торговой точки без приёма от населения строка стояла бы нулём
+    // в каждой смене и занимала место зря.
+    sums.purchasesSum?.let { MinorSumLine(texts.operationPurchase, cabinetSum(it)) }
+    sums.purchaseReturnsSum?.let { MinorSumLine(texts.operationPurchaseReturn, cabinetSum(it)) }
 }
 
 /** Внесение или изъятие: сумма, смена и кто оформил. */
@@ -89,28 +103,23 @@ private fun ShiftTotalsLines(totals: ShiftTotals?, texts: CabinetTexts) {
 fun CashMovementCard(movement: CabinetCashMovementDetails, texts: CabinetTexts, onClose: () -> Unit) {
     SectionCard(
         title = documentTitle(movement.type, texts),
-        trailing = { CardTail(delivery = null, texts = texts, onClose = onClose) }
+        trailing = { CardTail(cabinetState(null, movement.sendStatus), texts, onClose) }
     ) {
         DetailLine(texts.documentMoment, cabinetMoment(movement.createdAt))
-        DetailLine(texts.receiptMoment, cabinetMoment(movement.kkmTime))
         DetailLine(texts.shift, movement.shiftNumber?.toString())
-        DetailLine(texts.operator, movement.operator?.name)
-        DetailLine(texts.registrationNumber, movement.registrationNumber)
-        if (movement.offline == true) {
-            DetailLine(texts.status, texts.autonomous)
-        }
+        DetailLine(texts.documentNumber, movement.protocolDocumentId)
         MinorSumLine(documentTitle(movement.type, texts), cabinetSum(movement.amount))
     }
 }
 
 /** Правый край карточки: состояние доставки, если оно есть, и выход. */
 @Composable
-private fun CardTail(delivery: String?, texts: CabinetTexts, onClose: () -> Unit) {
+private fun CardTail(delivery: JournalDelivery?, texts: CabinetTexts, onClose: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (delivery != null) DeliveryChip(delivery, texts)
+        JournalDeliveryChip(delivery)
         TextButton(onClick = onClose) { Text(texts.close) }
     }
 }

@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import kz.mybrain.superkassa.desktop.ui.strings.SectionStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -28,3 +29,16 @@ enum class Section(
     Cabinet(AppIcons.cabinet, { it.cabinet }, adminOnly = true),
     Settings(AppIcons.settings, { it.settings }, adminOnly = true)
 }
+
+/**
+ * Переход в другой раздел из глубины экрана.
+ *
+ * Раздел выбирает рельс, и до него от экрана кабинета три вложения. Кнопка
+ * «Перейти к кассе» лежит в паспорте кассы, поэтому переход отдаётся через
+ * окружение — так же, как язык и словари, — а не протягивается обработчиком
+ * через каждый промежуточный экран.
+ *
+ * Значение по умолчанию ничего не делает: за пределами рабочего окна —
+ * в наборах текстов и в тестах отдельного экрана — переходить некуда.
+ */
+val LocalSectionSwitch = staticCompositionLocalOf<(Section) -> Unit> { {} }

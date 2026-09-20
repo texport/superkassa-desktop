@@ -6,8 +6,10 @@ import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.desktop.server.cabinet.RegistrationAction
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.ui.components.stripedAt
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Журнал регистрационных действий кассы.
@@ -29,8 +31,8 @@ fun RegisterJournal(actions: List<RegistrationAction>, texts: CabinetTexts) {
                 cabinetMoment(action.createdAt),
                 action.registrationNumber,
                 action.reasonMessage
-            ).joinToString(" · "),
-            striped = at % STRIPE == 1,
+            ).joinToString(Glyphs.SEPARATOR),
+            striped = stripedAt(at),
             trailing = { CabinetStatusChip(action.status, texts) }
         )
     }
@@ -41,6 +43,3 @@ fun RegisterJournal(actions: List<RegistrationAction>, texts: CabinetTexts) {
 fun ActionsCount(count: Int) {
     Text(text = count.toString(), style = MaterialTheme.typography.labelLarge)
 }
-
-/** Затеняется каждая вторая строка списка. */
-private const val STRIPE = 2

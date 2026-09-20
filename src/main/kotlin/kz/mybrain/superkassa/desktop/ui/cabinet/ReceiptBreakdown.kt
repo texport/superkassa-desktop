@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.desktop.ui.components.HeroSumLine
 import kz.mybrain.superkassa.desktop.ui.components.MinorSumLine
 import kz.mybrain.superkassa.desktop.ui.components.NamedSumRow
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Состав чека: позиции, оплата, налоги и итог.
@@ -38,7 +39,7 @@ fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetTexts) {
         receipt.taxes.forEach { tax ->
             NamedSumRow(
                 name = listOfNotNull(taxTitle(tax.type, texts), tax.percent?.let { "$it %" })
-                    .joinToString(" · "),
+                    .joinToString(Glyphs.SEPARATOR),
                 amount = cabinetSum(tax.sum)
             )
         }

@@ -1,13 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui.users
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,13 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.KkmUserRequest
 import kz.mybrain.superkassa.desktop.server.addUser
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.RolePicker
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
@@ -56,85 +52,73 @@ internal fun AddCashier(session: Session, money: MoneyTexts, onCreated: suspend 
     val pinTrouble = pinProblem(pin, cashiers, texts.users.forbiddenPin)
     val nameMissing = name.isBlank() && pin.isNotEmpty()
 
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+    SectionCard(title = cashiers.addTitle, info = cashiers.roles) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+            itemVerticalAlignment = Alignment.Top
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                verticalAlignment = Alignment.CenterVertically
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(texts.users.name) },
+                singleLine = true,
+                isError = nameMissing,
+                supportingText = if (nameMissing) {
+                    { Text(cashiers.nameRequired) }
+                } else {
+                    null
+                },
+                modifier = Modifier.fieldWidth(texts.users.name, Sizes.fieldForm)
+            )
+            RolePicker(
+                entries = session.dictionaries[Dictionary.UserRoles].orEmpty(),
+                language = session.language.code,
+                selectedCode = role,
+                onSelect = { role = it }
+            )
+            OutlinedTextField(
+                value = pin,
+                onValueChange = { pin = UserRules.digitsOf(it) },
+                label = { Text(texts.common.pin) },
+                singleLine = true,
+                isError = pinTrouble != null,
+                placeholder = { Text(cashiers.pinLength) },
+                supportingText = pinTrouble?.let { { Text(it) } },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fieldWidth(texts.common.pin, Sizes.fieldPin)
+            )
+            FieldButton(
+                text = texts.users.create,
+                kind = FieldButtonKind.Filled,
+                enabled = session.selected != null && UserRules.canCreate(name, pin)
             ) {
-                Text(cashiers.addTitle, style = MaterialTheme.typography.titleMedium)
-                InfoTip(cashiers.roles)
-            }
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-                verticalArrangement = Arrangement.spacedBy(Spacing.tight),
-                itemVerticalAlignment = Alignment.Top
-            ) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text(texts.users.name) },
-                    singleLine = true,
-                    isError = nameMissing,
-                    supportingText = if (nameMissing) {
-                        { Text(cashiers.nameRequired) }
-                    } else {
-                        null
-                    },
-                    modifier = Modifier.fieldWidth(texts.users.name, Sizes.fieldForm)
-                )
-                RolePicker(
-                    entries = session.dictionaries[Dictionary.UserRoles].orEmpty(),
-                    language = session.language.code,
-                    selectedCode = role,
-                    onSelect = { role = it }
-                )
-                OutlinedTextField(
-                    value = pin,
-                    onValueChange = { pin = UserRules.digitsOf(it) },
-                    label = { Text(texts.common.pin) },
-                    singleLine = true,
-                    isError = pinTrouble != null,
-                    placeholder = { Text(cashiers.pinLength) },
-                    supportingText = pinTrouble?.let { { Text(it) } },
-                    visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fieldWidth(texts.common.pin, Sizes.fieldPin)
-                )
-                FieldButton(
-                    text = texts.users.create,
-                    kind = FieldButtonKind.Filled,
-                    enabled = session.selected != null && UserRules.canCreate(name, pin)
-                ) {
-                    scope.launch {
-                        val created = name.trim()
-                        if (create(session, texts.users.create, created, role, pin)) {
-                            name = ""
-                            pin = ""
-                            // Список перечитывается до сообщения: он снимает
-                            // предыдущее, и объяви мы итог раньше — кассир
-                            // остался бы без подтверждения.
-                            onCreated()
-                            // Итог согласован с названием роли, а не с именем:
-                            // «заведён» рядом с женским именем звучит ошибкой,
-                            // и род человека тут вообще ни при чём.
-                            val who = session.titleOf(Dictionary.UserRoles, role)
-                            session.report("$who ${texts.users.created}: $created")
-                        }
+                scope.launch {
+                    val created = name.trim()
+                    if (create(session, texts.users.create, created, role, pin)) {
+                        name = ""
+                        pin = ""
+                        // Список перечитывается до сообщения: он снимает
+                        // предыдущее, и объяви мы итог раньше — кассир
+                        // остался бы без подтверждения.
+                        onCreated()
+                        // Итог согласован с названием роли, а не с именем:
+                        // «заведён» рядом с женским именем звучит ошибкой,
+                        // и род человека тут вообще ни при чём.
+                        val who = session.titleOf(Dictionary.UserRoles, role)
+                        session.report("$who ${texts.users.created}: $created")
                     }
                 }
             }
-            // Про несовпадение пинов сказано тогда, когда пин уже набран:
-            // до этого правило ничего не объясняет и просто занимает строку.
-            if (UserRules.pinAccepted(pin)) {
-                Text(
-                    text = cashiers.pinUnique,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+        }
+        // Про несовпадение пинов сказано тогда, когда пин уже набран:
+        // до этого правило ничего не объясняет и просто занимает строку.
+        if (UserRules.pinAccepted(pin)) {
+            Text(
+                text = cashiers.pinUnique,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

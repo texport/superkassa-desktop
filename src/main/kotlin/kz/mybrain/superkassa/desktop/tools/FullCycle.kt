@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.tools
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.CashRequest
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.KkmInitRequest

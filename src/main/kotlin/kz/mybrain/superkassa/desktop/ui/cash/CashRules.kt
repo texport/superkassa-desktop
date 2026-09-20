@@ -12,7 +12,7 @@ enum class CashMove { Deposit, Withdraw }
  * Причина отделена от надписи намеренно: правило проверяется тестом,
  * а текст выбирается языком кассира.
  */
-enum class CashRefusal { NotANumber, NotPositive, TooLarge, NotEnough, ShiftClosed }
+enum class CashRefusal { NotANumber, NotPositive, TooLarge, NotEnough, ShiftClosed, KkmBlocked }
 
 /** Приговор введённой сумме. */
 sealed interface CashDecision {
@@ -54,11 +54,24 @@ object CashRules {
      */
     val maxAmount: BigDecimal = BigDecimal("99999999.99")
 
-    fun check(text: String, move: CashMove, drawerTiyn: Long?, shiftOpen: Boolean): CashDecision {
+    /**
+     * @param kkmBlocked заблокирована ли касса — в том числе снята с учёта.
+     * Узел движения наличных такой кассе не проводит, а смена у неё может
+     * оставаться открытой: без этой проверки открытая смена снятой с учёта
+     * кассы снова делала кнопки доступными.
+     */
+    fun check(
+        text: String,
+        move: CashMove,
+        drawerTiyn: Long?,
+        shiftOpen: Boolean,
+        kkmBlocked: Boolean = false
+    ): CashDecision {
         if (text.isBlank()) return CashDecision.Empty
         val amount = Money.parse(text) ?: return CashDecision.Refused(CashRefusal.NotANumber)
         if (amount <= BigDecimal.ZERO) return CashDecision.Refused(CashRefusal.NotPositive)
         if (amount > maxAmount) return CashDecision.Refused(CashRefusal.TooLarge)
+        if (kkmBlocked) return CashDecision.Refused(CashRefusal.KkmBlocked)
         if (!shiftOpen) return CashDecision.Refused(CashRefusal.ShiftClosed)
         if (move == CashMove.Withdraw && drawerTiyn != null && tiynOf(amount) > drawerTiyn) {
             return CashDecision.Refused(CashRefusal.NotEnough)
@@ -96,7 +109,5 @@ object CashRules {
     }
 
     /** Сумма в тиынах: остаток ящика узел хранит в них. */
-    fun tiynOf(amount: BigDecimal): Long = amount.movePointRight(DECIMALS).toLong()
-
-    private const val DECIMALS = 2
+    fun tiynOf(amount: BigDecimal): Long = amount.movePointRight(Money.TIYN_SCALE).toLong()
 }

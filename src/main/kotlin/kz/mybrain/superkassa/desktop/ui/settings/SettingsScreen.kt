@@ -41,10 +41,15 @@ fun SettingsScreen(session: Session) {
         PanelBehaviourCard(session)
 
         GroupTitle(texts.settings.groupService)
+        TaxSettingsCard(session)
         OfdSyncCard(session)
+        NodeAddressCard(session)
         CabinetAddressCard(session)
+        MapServicesCard(session)
         OfdTokenCard(session)
         DiagnosticsCard(session)
+        DebugCard(session)
+        NodeFactsCard(session)
 
         GroupTitle(texts.settings.groupIrreversible)
         DecommissionCard(session)

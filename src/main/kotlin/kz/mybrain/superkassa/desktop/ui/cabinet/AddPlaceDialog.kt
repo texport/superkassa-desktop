@@ -71,11 +71,21 @@ fun AddPlaceCard(
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-        AddressSearch(session, cabinet, texts, query, { query = it }) { address ->
+        val onQuery: (String) -> Unit = { entered ->
+            query = entered
+            // Пустая подпись — адрес снят: выбранный раньше не должен уйти в кабинет
+            if (entered.isBlank()) chosen = null
+        }
+        // Адрес выбирается или здесь, или в окне карты — тем же регистром
+        // и в то же место: расходиться адресу точки и дому на карте нельзя.
+        // Со сменой адреса координаты снимаются: они принадлежали прежнему дому.
+        val onAddress: (RegisterAddress) -> Unit = { address ->
+            if (address.addressRef != chosen?.addressRef) point = null
             chosen = address
             query = addressIn(session.language, address.address, address.addressKz)
         }
-        PlacePoint(texts, session.preferences, point, query) { point = it }
+        AddressSearch(session, cabinet, texts, query, onQuery, onChoose = onAddress)
+        PlacePoint(session, cabinet, texts, point, chosen, onAddress) { point = it }
     }
 }
 

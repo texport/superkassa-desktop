@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.factoryInfo
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Шаг 1: заводской номер кассы.
@@ -29,7 +30,7 @@ fun FactoryStepCard(session: Session, setup: SetupTexts, draft: KkmSetupDraft) {
         texts = setup,
         done = number != null,
         ready = true,
-        summary = listOfNotNull(number, draft.manufactureYear).joinToString(" · ")
+        summary = listOfNotNull(number, draft.manufactureYear).joinToString(Glyphs.SEPARATOR)
     ) {
         if (number != null) return@SetupStepCard
         FilledTonalButton(

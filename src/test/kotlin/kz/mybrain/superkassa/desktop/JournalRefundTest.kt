@@ -6,6 +6,7 @@ import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.returns.RefundAmount
 import kz.mybrain.superkassa.desktop.ui.returns.RefundProblem
 import kz.mybrain.superkassa.desktop.ui.returns.ReturnKind
+import kz.mybrain.superkassa.desktop.ui.returns.matches
 import kz.mybrain.superkassa.desktop.ui.returns.refundAmountOf
 import kz.mybrain.superkassa.desktop.ui.returns.refundRequest
 import kz.mybrain.superkassa.desktop.ui.returns.tengeText
@@ -119,4 +120,23 @@ class JournalRefundTest {
     }
 
     private fun <T : Any> requireNonNull(value: T?): T = requireNotNull(value)
+
+    /**
+     * Чек-основание ищется по номеру, напечатанному на бумажном чеке.
+     *
+     * Совпадение по вхождению: кассир набирает последние цифры, а не
+     * переписывает номер целиком. Пустой набор ничего не отсеивает —
+     * иначе список пропадал бы до первой набранной цифры.
+     */
+    @Test
+    fun `основание отбирается по номеру чека`() {
+        val document = Document(id = "d1", docNo = 100042, totalAmount = 1000)
+
+        assertTrue(document.matches(""))
+        assertTrue(document.matches("  "))
+        assertTrue(document.matches("100042"))
+        assertTrue(document.matches("0042"))
+        assertTrue(!document.matches("77"))
+        assertTrue(!Document(id = "d2").matches("1"))
+    }
 }

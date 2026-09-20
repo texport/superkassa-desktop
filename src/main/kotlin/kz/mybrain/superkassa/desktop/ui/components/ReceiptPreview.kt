@@ -58,18 +58,24 @@ import org.jetbrains.skia.Image as SkiaImage
  * мыши с Ctrl и значками — словами «уже» и «шире» это читалось как ширина
  * бумаги, а не как увеличение.
  *
- * @param image печатная форма в PNG; `null` — окно не показывается.
+ * Окно открывается по нажатию, а не по готовой картинке: узел рисует
+ * форму секунду-другую, и всё это время в окне стоит общее ожидание —
+ * иначе нажатие не отзывалось ничем.
+ *
+ * @param image печатная форма в PNG; `null` — ещё не нарисована.
+ * @param drawing узел сейчас рисует: окно открыто, картинки ещё нет.
  * @param onPrint отправка на принтер; `null` — печатать нечем.
  * @param onSave сохранение в файл; `null` — сохранять нечем.
  */
 @Composable
 fun ReceiptPreview(
     image: ByteArray?,
+    drawing: Boolean = false,
     onPrint: (() -> Unit)? = null,
     onSave: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
-    if (image == null) return
+    if (image == null && !drawing) return
     val texts = LocalStrings.current.preview
     Dialog(
         onDismissRequest = onDismiss,
@@ -82,23 +88,26 @@ fun ReceiptPreview(
         ) {
             var tapeWidth by remember { mutableStateOf(Tape.defaultWidth) }
             val bitmap = remember(image) {
-                runCatching { SkiaImage.makeFromEncoded(image).toComposeImageBitmap() }.getOrNull()
+                image?.let { runCatching { SkiaImage.makeFromEncoded(it).toComposeImageBitmap() }.getOrNull() }
+            }
+            val state = when {
+                image == null -> ScreenState.Working
+                bitmap == null -> ScreenState.Empty(AppIcons.warning, texts.missing)
+                else -> ScreenState.Ready
             }
             Column(modifier = Modifier.fillMaxSize()) {
                 PreviewBar(
                     tapeWidth = tapeWidth,
                     onWidth = { tapeWidth = it },
-                    onPrint = onPrint,
-                    onSave = onSave,
+                    onPrint = onPrint.takeIf { bitmap != null },
+                    onSave = onSave.takeIf { bitmap != null },
                     onDismiss = onDismiss
                 )
-                if (bitmap == null) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(texts.missing, style = MaterialTheme.typography.bodyLarge)
-                    }
-                } else {
-                    TapeView(bitmap = BitmapPainter(bitmap), width = tapeWidth, title = texts.title) {
-                        tapeWidth = (tapeWidth + it).coerceIn(Tape.minWidth, Tape.maxWidth)
+                ScreenSlot(state, Modifier.fillMaxSize(), centered = true) {
+                    bitmap?.let { tape ->
+                        TapeView(bitmap = BitmapPainter(tape), width = tapeWidth, title = texts.title) {
+                            tapeWidth = (tapeWidth + it).coerceIn(Tape.minWidth, Tape.maxWidth)
+                        }
                     }
                 }
             }

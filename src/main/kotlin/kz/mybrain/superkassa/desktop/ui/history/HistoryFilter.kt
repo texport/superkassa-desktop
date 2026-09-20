@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
@@ -18,10 +19,6 @@ fun documentTypesIn(documents: List<Document>, order: List<String>): List<String
     documents.mapNotNull { it.docType }
         .distinct()
         .sortedWith(compareBy({ order.indexOf(it).takeIf { at -> at >= 0 } ?: order.size }, { it }))
-
-/** Отбор по типу документа. Пустой отбор означает «все типы». */
-fun filterByType(documents: List<Document>, type: String?): List<Document> =
-    if (type == null) documents else documents.filter { it.docType == type }
 
 /**
  * Название типа документа для кассира.

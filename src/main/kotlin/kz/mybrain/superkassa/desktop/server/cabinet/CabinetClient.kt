@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.HttpResponse
@@ -18,6 +19,8 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
+import kz.mybrain.superkassa.desktop.app.log.LogSource
+import kz.mybrain.superkassa.desktop.app.log.logged
 import kz.mybrain.superkassa.desktop.server.DecimalAsNumber
 import java.math.BigDecimal
 
@@ -47,39 +50,59 @@ class CabinetClient(
     var baseUrl: String = DEFAULT_URL,
     private val http: HttpClient = defaultHttpClient()
 ) {
+    /**
+     * От чьего имени идут запросы в режиме разработки кабинета.
+     *
+     * На период MVP кабинет не требует входа по ЭЦП: пользователя и компанию
+     * он берёт из заголовков `X-Debug-Iin` и `X-Debug-Bin`, а без них —
+     * из своей настройки. Пока личность задана, доступ по ЭЦП не передаётся:
+     * его у такого сеанса нет.
+     */
+    var debugIdentity: DebugIdentity? = null
+
     /** Выполняет запрос и разбирает ответ, отделяя отказ от недоступности. */
     suspend inline fun <reified T> request(
         method: HttpMethod,
         path: String,
         body: Any? = null,
-        token: String? = null
+        token: String? = null,
+        idempotencyKey: String? = null
     ): T {
-        val response = call(method, path, body, token)
+        val response = call(method, path, body, token, idempotencyKey)
         if (!response.status.isSuccess()) {
             throw refusalOf(response)
         }
         return response.body()
     }
 
-    suspend fun call(method: HttpMethod, path: String, body: Any?, token: String?): HttpResponse =
-        http.request(baseUrl + path) {
-            this.method = method
-            contentType(ContentType.Application.Json)
-            if (token != null) {
-                headers.append(HttpHeaders.Authorization, "Bearer $token")
-            }
-            if (body != null) {
-                setBody(body)
+    suspend fun call(
+        method: HttpMethod,
+        path: String,
+        body: Any?,
+        token: String?,
+        idempotencyKey: String? = null
+    ): HttpResponse =
+        logged(LogSource.Cabinet, method, path, body) {
+            http.request(baseUrl + path) {
+                this.method = method
+                contentType(ContentType.Application.Json)
+                identify(token)
+                if (idempotencyKey != null) {
+                    headers.append("Idempotency-Key", idempotencyKey)
+                }
+                if (body != null) {
+                    setBody(body)
+                }
             }
         }
 
     /** Ответ не в JSON — например, PDF регистрационной карты. */
     suspend fun bytes(path: String, accept: ContentType, token: String?): ByteArray {
-        val response = http.request(baseUrl + path) {
-            method = HttpMethod.Get
-            headers.append(HttpHeaders.Accept, accept.toString())
-            if (token != null) {
-                headers.append(HttpHeaders.Authorization, "Bearer $token")
+        val response = logged(LogSource.Cabinet, HttpMethod.Get, path, body = null) {
+            http.request(baseUrl + path) {
+                method = HttpMethod.Get
+                headers.append(HttpHeaders.Accept, accept.toString())
+                identify(token)
             }
         }
         if (!response.status.isSuccess()) {
@@ -88,12 +111,24 @@ class CabinetClient(
         return response.bodyAsBytes()
     }
 
+    private fun HttpRequestBuilder.identify(token: String?) {
+        val identity = debugIdentity
+        if (identity != null) {
+            headers.append(DebugIdentity.IIN_HEADER, identity.iin)
+            headers.append(DebugIdentity.BIN_HEADER, identity.bin)
+            return
+        }
+        if (token != null) {
+            headers.append(HttpHeaders.Authorization, "Bearer $token")
+        }
+    }
+
     suspend fun refusalOf(response: HttpResponse): CabinetRefusal {
         val text = response.bodyAsText()
         val error = runCatching { lenientJson.decodeFromString<CabinetError>(text) }.getOrNull()
         return CabinetRefusal(
             code = error?.code ?: "HTTP_${response.status.value}",
-            text = error?.message?.takeIf { it.isNotBlank() } ?: text.take(MAX_ERROR_LENGTH),
+            text = error?.text() ?: text.take(MAX_ERROR_LENGTH),
             httpStatus = response.status.value
         )
     }
@@ -102,7 +137,7 @@ class CabinetClient(
 
     companion object {
         /** Кабинет рядом с узлом: у узла занят 8080, поэтому по умолчанию 8090. */
-        const val DEFAULT_URL: String = "http://127.0.0.1:8090"
+        const val DEFAULT_URL: String = "http://bfd-cabinet.ecc.kz"
 
         private const val MAX_ERROR_LENGTH = 200
 
@@ -123,5 +158,31 @@ class CabinetClient(
 }
 
 /** Отказ кабинета как он приходит по сети. */
+/**
+ * Отказ кабинета. Кабинет отвечает по RFC 9457: причина в `detail`,
+ * заголовок в `title`; прежняя форма с `message` тоже читается.
+ */
 @kotlinx.serialization.Serializable
-data class CabinetError(val code: String? = null, val message: String? = null)
+data class CabinetError(
+    val code: String? = null,
+    val message: String? = null,
+    val detail: String? = null,
+    val title: String? = null,
+    val errors: List<CabinetFieldError> = emptyList()
+) {
+    fun text(): String? {
+        val fields = errors.mapNotNull { it.message }.joinToString("; ").takeIf { it.isNotBlank() }
+        return listOfNotNull(message, detail, fields, title).firstOrNull { it.isNotBlank() }
+    }
+}
+
+@kotlinx.serialization.Serializable
+data class CabinetFieldError(val field: String? = null, val message: String? = null)
+
+/** Личность владельца в режиме разработки кабинета: ИИН пользователя и БИН компании. */
+data class DebugIdentity(val iin: String, val bin: String) {
+    companion object {
+        const val IIN_HEADER: String = "X-Debug-Iin"
+        const val BIN_HEADER: String = "X-Debug-Bin"
+    }
+}

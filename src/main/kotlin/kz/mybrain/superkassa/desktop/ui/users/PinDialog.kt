@@ -2,8 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.users
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -27,6 +25,7 @@ import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.CashierTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -58,7 +57,7 @@ internal fun ChangePinDialog(
 
     AlertDialog(
         onDismissRequest = { if (!busy) onDismiss() },
-        icon = { Icon(Icons.Outlined.Password, contentDescription = null) },
+        icon = { Icon(AppIcons.pin, contentDescription = null) },
         title = { Text(money.cashiers.changePinFor.format(who)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {

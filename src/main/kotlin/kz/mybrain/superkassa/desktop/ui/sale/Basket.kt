@@ -29,8 +29,21 @@ class Basket {
      */
     fun stornoAt(index: Int) {
         val position = positions.getOrNull(index) ?: return
-        if (position.storno) return
-        positions[index] = position.copy(storno = true)
+        // Пока чек не пробит, отметка сторно — черновик, а не фискальное
+        // решение: кассир вправе снять её тем же нажатием. Прежде снять
+        // её было нечем — строку приходилось удалять и набирать заново.
+        positions[index] = position.copy(storno = !position.storno)
+    }
+
+    /**
+     * Заменяет акцизные марки позиции.
+     *
+     * Марки считываются после того, как товар уже в чеке: кассир сперва
+     * пробивает бутылку, потом подносит к сканеру её марку.
+     */
+    fun stampAt(index: Int, stamps: List<String>) {
+        val position = positions.getOrNull(index) ?: return
+        positions[index] = position.copy(exciseStamps = stamps)
     }
 
     fun removeAt(index: Int) {
@@ -62,7 +75,7 @@ class Basket {
      */
     fun totalWith(discount: BigDecimal?, markup: BigDecimal?): BigDecimal {
         val base = total - (discount ?: BigDecimal.ZERO) + (markup ?: BigDecimal.ZERO)
-        return if (base < BigDecimal.ZERO) BigDecimal.ZERO.setScale(TIYN_SCALE) else base
+        return if (base < BigDecimal.ZERO) BigDecimal.ZERO.setScale(Money.TIYN_SCALE) else base
     }
 
     fun toReceiptItems(): List<ReceiptItem> = positions.map { position ->
@@ -74,7 +87,9 @@ class Basket {
             vatGroup = position.vatGroup,
             discountSum = position.discount.takeIf { it > BigDecimal.ZERO },
             measureUnitCode = position.measureUnitCode,
-            isStorno = position.storno.takeIf { it }
+            isStorno = position.storno.takeIf { it },
+            ntin = position.ntin,
+            listExciseStamp = position.exciseStamps.takeIf { it.isNotEmpty() }
         )
     }
 }
@@ -101,11 +116,20 @@ data class Position(
      * с русским: чек в Казахстане двуязычный. В ОФД не уходит — у позиции
      * чека в CPCR одно имя, второго поля нет ни в одной версии протокола.
      */
-    val nameKk: String? = null
+    val nameKk: String? = null,
+    /** НТИН из справочника: узел передаёт его в ОФД полем `ntin`. */
+    val ntin: String? = null,
+    /**
+     * Акцизные марки, считанные с товара.
+     *
+     * Кассир сканирует их с бутылки или пачки, по марке на единицу товара.
+     * Пустой перечень — обычная позиция: марка есть не у всякого товара.
+     */
+    val exciseStamps: List<String> = emptyList()
 ) {
     /** Стоимость позиции без учёта направления: цена × количество − скидка. */
     val lineSum: BigDecimal
-        get() = (price.multiply(quantity) - discount).setScale(TIYN_SCALE, RoundingMode.DOWN)
+        get() = (price.multiply(quantity) - discount).setScale(Money.TIYN_SCALE, RoundingMode.DOWN)
 
     val total: BigDecimal
         get() = if (storno) lineSum.negate() else lineSum

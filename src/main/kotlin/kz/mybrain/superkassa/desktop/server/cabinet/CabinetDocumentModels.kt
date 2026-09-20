@@ -1,21 +1,21 @@
 package kz.mybrain.superkassa.desktop.server.cabinet
 
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
-/**
- * Состояние кассы, регистрационные действия и фискальные документы кабинета.
- *
- * Продолжение [CabinetModels]: там компания, точки и кассы, здесь — то,
- * что о кассе знает сервер приёма данных.
- */
-
 /** Техническое состояние кассы глазами сервера приёма. */
+/**
+ * Что о кассе знает сервис приёма. Кабинет отвечает признаком `active`
+ * и причиной простоя; экранам состояние отдаётся тем же кодом, что и статус
+ * кассы у сервера, — чтобы плашка была одна на все экраны.
+ */
 @Serializable
 data class TechnicalState(
     val found: Boolean = false,
-    val status: String? = null,
+    val active: Boolean? = null,
+    val inactiveReason: String? = null,
     val trafficSuspended: Boolean? = null,
     val ofdDisconnected: Boolean? = null,
     val billingStatus: Int? = null,
@@ -24,7 +24,15 @@ data class TechnicalState(
     val validationMask: Int? = null,
     val lastContactAt: String? = null,
     val snapshotAt: String? = null
-)
+) {
+    val status: String?
+        get() = when {
+            !found -> null
+            active == true -> "KKM_ACTIVE"
+            active == false -> "KKM_INACTIVE"
+            else -> null
+        }
+}
 
 /** Состояние кассы: учётное, синхронизация и техническое. */
 @Serializable
@@ -81,17 +89,16 @@ data class DeregistrationRequest(val reason: String, val comment: String? = null
 /** Регистрационное действие в журнале кассы. */
 @Serializable
 data class RegistrationAction(
-    val id: String,
+    @SerialName("actionId") val id: String,
     val actionType: String,
     val status: String,
     val externalRequestId: String? = null,
-    val result: String? = null,
     val registrationNumber: String? = null,
     val reasonCode: String? = null,
     val reasonMessage: String? = null,
     val createdAt: String? = null,
     val sentAt: String? = null,
-    val processedAt: String? = null,
+    @SerialName("completedAt") val processedAt: String? = null,
     val stateSyncStatus: String? = null
 )
 
@@ -99,10 +106,19 @@ data class RegistrationAction(
 @Serializable
 data class RegistrationCard(
     val cashRegisterId: String,
-    val status: String,
-    val pdfStatus: String? = null,
+    val status: String? = null,
+    val companyBin: String? = null,
+    val companyName: String? = null,
+    val retailPlaceName: String? = null,
+    val address: String? = null,
+    val rka: String? = null,
+    val cato: String? = null,
+    val modelName: String? = null,
+    val factoryNumber: String? = null,
+    val kkmId: Long? = null,
+    val registrationNumber: String? = null,
+    val lastSuccessfulAction: String? = null,
     val updatedAt: String? = null,
-    val actionId: String? = null,
     val deregisteredAt: String? = null,
     val deregistrationReason: String? = null
 )
@@ -134,189 +150,4 @@ data class CabinetPage<T>(
     val size: Int = 0,
     val totalElements: Long = 0,
     val items: List<T> = emptyList()
-)
-
-/** Чек в списке. */
-@Serializable
-data class CabinetReceipt(
-    val transactionId: String,
-    val receiptNumber: String? = null,
-    val shiftNumber: Int? = null,
-    val operationType: String? = null,
-    @Contextual val total: BigDecimal? = null,
-    val createdAt: String? = null,
-    val sendStatus: String? = null,
-    val deliveryStatus: String? = null,
-    val kgdMark: String? = null,
-    val kgdMarkAt: String? = null
-)
-
-/**
- * Отбор чеков.
- *
- * Границы периода — строками ISO-8601 в UTC: кабинет разбирает их
- * в момент времени сам, а своего представления времени у отбора нет.
- */
-@Serializable
-data class ReceiptSearch(
-    val page: Int = 0,
-    val size: Int = PAGE_SIZE,
-    val receiptNumber: String? = null,
-    val shiftNumber: Int? = null,
-    @Contextual val sumFrom: BigDecimal? = null,
-    @Contextual val sumTo: BigDecimal? = null,
-    val operationTypes: List<String>? = null,
-    val dateFrom: String? = null,
-    val dateTo: String? = null
-)
-
-/** Итоги смены. */
-@Serializable
-data class ShiftTotals(
-    @Contextual val revenue: BigDecimal? = null,
-    @Contextual val cashSum: BigDecimal? = null,
-    val salesCount: Int = 0,
-    @Contextual val salesSum: BigDecimal? = null,
-    val returnsCount: Int = 0,
-    @Contextual val returnsSum: BigDecimal? = null
-)
-
-/** Смена в списке. */
-@Serializable
-data class CabinetShift(
-    val shiftNumber: Int,
-    val state: String? = null,
-    val openedAt: String? = null,
-    val closedAt: String? = null,
-    val zReportTransactionId: String? = null,
-    @Contextual val total: BigDecimal? = null,
-    val totals: ShiftTotals? = null
-)
-
-/** Отчёт в списке. */
-@Serializable
-data class CabinetReport(
-    val transactionId: String,
-    val type: String? = null,
-    val shiftNumber: Int? = null,
-    val createdAt: String? = null,
-    val kkmTime: String? = null,
-    @Contextual val total: BigDecimal? = null,
-    val sendStatus: String? = null,
-    val deliveryStatus: String? = null
-)
-
-/** Внесение или изъятие в списке. */
-@Serializable
-data class CabinetCashMovement(
-    val transactionId: String,
-    val type: String? = null,
-    @Contextual val amount: BigDecimal? = null,
-    val shiftNumber: Int? = null,
-    val createdAt: String? = null,
-    val kkmTime: String? = null
-)
-
-/** Сколько строк кабинет отдаёт за раз. */
-const val PAGE_SIZE: Int = 50
-
-/** Кассир, оформивший документ. */
-@Serializable
-data class DocumentOperator(val code: Int? = null, val name: String? = null)
-
-/** Налог позиции или чека. */
-@Serializable
-data class DocumentTax(
-    val type: String? = null,
-    val percent: Int? = null,
-    @Contextual val sum: BigDecimal? = null,
-    val inTotalSum: Boolean? = null
-)
-
-/** Позиция чека. */
-@Serializable
-data class DocumentItem(
-    val type: String? = null,
-    val name: String? = null,
-    val sectionCode: String? = null,
-    @Contextual val quantity: BigDecimal? = null,
-    @Contextual val price: BigDecimal? = null,
-    @Contextual val sum: BigDecimal? = null,
-    val measureUnitCode: String? = null,
-    val barcode: String? = null,
-    val taxes: List<DocumentTax> = emptyList()
-)
-
-/** Оплата чека. */
-@Serializable
-data class DocumentPayment(val type: String? = null, @Contextual val sum: BigDecimal? = null)
-
-/** Итоги чека. */
-@Serializable
-data class DocumentAmounts(
-    @Contextual val total: BigDecimal? = null,
-    @Contextual val taken: BigDecimal? = null,
-    @Contextual val change: BigDecimal? = null,
-    @Contextual val discount: BigDecimal? = null,
-    @Contextual val markup: BigDecimal? = null
-)
-
-/**
- * Чек целиком, как его принял ОФД.
- *
- * Поля, которых не было в сообщении кассы, равны `null`: ноль означает
- * присланный ноль, а не отсутствие — на этом различии держится разбор
- * расхождений с кассой.
- */
-@Serializable
-data class CabinetReceiptDetails(
-    val transactionId: String,
-    val receiptNumber: String? = null,
-    val fiscalNumber: String? = null,
-    val qrUrl: String? = null,
-    val shiftNumber: Int? = null,
-    val operationType: String? = null,
-    @Contextual val total: BigDecimal? = null,
-    val createdAt: String? = null,
-    val kkmTime: String? = null,
-    val registrationNumber: String? = null,
-    val operator: DocumentOperator? = null,
-    val items: List<DocumentItem> = emptyList(),
-    val payments: List<DocumentPayment> = emptyList(),
-    val taxes: List<DocumentTax> = emptyList(),
-    val amounts: DocumentAmounts? = null,
-    val sendStatus: String? = null,
-    val deliveryStatus: String? = null,
-    val kgdMark: String? = null,
-    val kgdMarkAt: String? = null
-)
-
-/** Отчёт целиком: смена, итоги и состояние доставки. */
-@Serializable
-data class CabinetReportDetails(
-    val transactionId: String,
-    val type: String? = null,
-    val shiftNumber: Int? = null,
-    val createdAt: String? = null,
-    val kkmTime: String? = null,
-    val shiftOpenedAt: String? = null,
-    val shiftClosedAt: String? = null,
-    @Contextual val total: BigDecimal? = null,
-    val registrationNumber: String? = null,
-    val sendStatus: String? = null,
-    val deliveryStatus: String? = null
-)
-
-/** Внесение или изъятие целиком: сумма, смена и кто оформил. */
-@Serializable
-data class CabinetCashMovementDetails(
-    val transactionId: String,
-    val type: String? = null,
-    @Contextual val amount: BigDecimal? = null,
-    val shiftNumber: Int? = null,
-    val createdAt: String? = null,
-    val kkmTime: String? = null,
-    val registrationNumber: String? = null,
-    val operator: DocumentOperator? = null,
-    val offline: Boolean? = null
 )

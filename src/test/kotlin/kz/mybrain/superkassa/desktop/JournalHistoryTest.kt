@@ -13,7 +13,6 @@ import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.history.dayRange
 import kz.mybrain.superkassa.desktop.ui.history.documentTypeTitle
 import kz.mybrain.superkassa.desktop.ui.history.documentTypesIn
-import kz.mybrain.superkassa.desktop.ui.history.filterByType
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
 import java.io.File
@@ -69,15 +68,6 @@ class JournalHistoryTest {
             documentTypesIn(documents, order),
             "снятый с учёта тип не теряется, но и вперёд справочника не лезет"
         )
-    }
-
-    @Test
-    fun `отбор по типу оставляет только его, а пустой отбор — всё`() {
-        val documents = listOf(document("SALE"), document("RETURN"), document("SALE"))
-
-        assertEquals(2, filterByType(documents, "SALE").size)
-        assertEquals(3, filterByType(documents, null).size)
-        assertEquals(0, filterByType(documents, "CASH_IN").size)
     }
 
     @Test

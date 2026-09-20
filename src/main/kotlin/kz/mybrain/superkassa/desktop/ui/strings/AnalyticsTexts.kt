@@ -1,0 +1,153 @@
+package kz.mybrain.superkassa.desktop.ui.strings
+
+/**
+ * Надписи раздела «Аналитика» личного кабинета.
+ *
+ * Раздел отвечает на три вопроса владельца сети: где стоят кассы,
+ * откуда они выходят на связь и чем торгуют. Разговор здесь свой —
+ * источники положения, кассы без места на карте, адреса обмена,
+ * выручка и виды расчётов, — и в наборе кабинета эти полсотни строк
+ * терялись бы среди заявлений и чеков.
+ *
+ * Значения вынесены по языкам в соседние файлы, как у остальных наборов.
+ */
+data class AnalyticsTexts(
+    val title: String,
+    val mapTab: String,
+    val exchangeTab: String,
+
+    val positionSource: String,
+    val sourceAddress: String,
+    val sourceCabinet: String,
+    val sourceKkm: String,
+    val sourceAddressHint: String,
+    val sourceCabinetHint: String,
+    val sourceKkmHint: String,
+
+    val refresh: String,
+    val unreachable: String,
+    val unreachableHint: String,
+    val notDeployed: String,
+    val notDeployedHint: String,
+    val refused: String,
+
+    val placed: String,
+    val withoutPosition: String,
+    val kkmCount: String,
+    val kkmColumn: String,
+    val addressCount: String,
+
+    val mapEmpty: String,
+    val mapEmptyHint: String,
+    val pickPin: String,
+    val pickPinHint: String,
+
+    val withoutPositionEmpty: String,
+    val withoutPositionEmptyHint: String,
+    val reasonNoAddress: String,
+    val reasonNoCabinetPoint: String,
+    val reasonNoKkmPoint: String,
+    val reasonSearching: String,
+    val reasonNotOnMap: String,
+
+    val registrationNumber: String,
+    val noRegistrationNumber: String,
+    val retailPlace: String,
+    val blocked: String,
+    val lastContact: String,
+    val neverSeen: String,
+    val positionFrom: String,
+    val fromAddress: String,
+    val fromCabinet: String,
+    val fromKkm: String,
+    val geoSource: String,
+
+    val exchangeTitle: String,
+    val exchangeHint: String,
+    val exchangeEmpty: String,
+    val exchangeEmptyHint: String,
+    val exchangeNotFound: String,
+    val exchangeNotFoundHint: String,
+    val search: String,
+    val allRegisters: String,
+    val exchangeAddress: String,
+    val firstSeen: String,
+    val lastSeen: String,
+
+    val sales: AnalyticsSalesTexts
+)
+
+/**
+ * Надписи торговой сводки.
+ *
+ * Вынесены вложенным набором, а не досыпаны к прежним трём десяткам:
+ * разговор здесь другой — деньги, чеки и доставка документов, — и общий
+ * список из семидесяти полей перестал бы читаться.
+ *
+ * Названий видов расчётов тут нет намеренно: наличные, карта и мобильный
+ * платёж уже названы в справочнике кассы, и второй перевод разошёлся бы
+ * с тем, что напечатано на чеке. Своё здесь только «прочее» — строка,
+ * которой в справочнике нет.
+ */
+data class AnalyticsSalesTexts(
+    val tab: String,
+    val forPeriod: String,
+
+    val revenue: String,
+    val receipts: String,
+    val average: String,
+    val refunds: String,
+    val tax: String,
+    val net: String,
+
+    val empty: String,
+    val emptyHint: String,
+
+    val openShifts: String,
+    val offline: String,
+    /** Документы, о которых известно, что они ждут ответа КГД. */
+    val queuedCount: String,
+
+    /** Документы, о доставке которых не известно ничего. */
+    val unknownCount: String,
+
+    /**
+     * Деньги, выданные из кассы за скупленное у населения.
+     *
+     * Названия самой покупки и возврата покупки тут нет намеренно: они
+     * уже заведены в наборе кабинета и стоят в журнале документов,
+     * а второй перевод разошёлся бы с первым.
+     */
+    val paidOut: String,
+
+    /** Почему покупка стоит в стороне от выручки. */
+    val purchasesHint: String,
+
+    val byDay: String,
+    val byHour: String,
+    val payments: String,
+    val paymentOther: String,
+    val noPayments: String,
+    val nothingToDraw: String,
+
+    val registers: String,
+    val places: String,
+    val allRegistersShown: String,
+    val allPlacesShown: String,
+    val colName: String,
+
+    val delivery: String,
+    val delivered: String,
+    val queued: String,
+
+    /** Плитка: о доставке ничего не известно. */
+    val unknown: String,
+    val rejected: String
+)
+
+/** Надписи аналитики на выбранном языке. */
+fun analyticsTexts(language: Language): AnalyticsTexts = when (language) {
+    Language.Kk -> analyticsTextsKk
+    Language.Ru -> analyticsTextsRu
+    Language.En -> analyticsTextsEn
+}

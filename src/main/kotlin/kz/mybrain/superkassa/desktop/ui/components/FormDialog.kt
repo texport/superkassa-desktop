@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,10 +24,10 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * вниз. Заводят точку и кассу раз в жизни, а список смотрят каждый день —
  * значит место формы в окне, а списка на экране.
  *
- * Незаполненное перечислено под кнопкой словами, а не подписями
- * «Обязательно» под каждым полем: подпись висит всегда и читается как
- * часть поля, а перечень появляется тогда, когда он нужен, — и называет
- * ровно то, чего не хватает.
+ * Незаполненное видно по самой форме, и подписи под кнопкой нет:
+ * перечень пустых полей повторял их названия второй раз и читался
+ * как отказ, хотя владелец ещё не нажимал. Кнопка просто погашена,
+ * пока форма не заполнена.
  *
  * @param missing чего не хватает; пустой список открывает кнопку.
  */
@@ -58,22 +57,8 @@ fun FormDialog(
             )
         },
         confirmButton = {
-            Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
-                Button(enabled = !busy && missing.isEmpty(), onClick = onAction) { Text(action) }
-                MissingLine(missing)
-            }
+            Button(enabled = !busy && missing.isEmpty(), onClick = onAction) { Text(action) }
         },
         dismissButton = { TextButton(enabled = !busy, onClick = onDismiss) { Text(close) } }
-    )
-}
-
-/** Чего не хватает — одной строкой под кнопкой. */
-@Composable
-private fun MissingLine(missing: List<String>) {
-    if (missing.isEmpty()) return
-    Text(
-        text = missing.joinToString(", "),
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }

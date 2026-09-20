@@ -4,54 +4,75 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
-import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
-import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
-import kz.mybrain.superkassa.desktop.ui.components.Money
-import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
+import kz.mybrain.superkassa.desktop.ui.history.loadDay
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import java.time.LocalDate
 
 /**
  * Возврат по чеку-основанию.
  *
- * Две колонки: слева чеки открытой смены, годные в основание, справа —
- * сумма возврата и единственное главное действие экрана. Возврат
- * по возврату протокол не допускает, и такие чеки в список не попадают:
- * кассир не должен узнавать о запрете из отказа ОФД.
+ * Две колонки: слева чеки, годные в основание, справа — сумма возврата
+ * и единственное главное действие экрана. Возврат по возврату протокол
+ * не допускает, и такие чеки в список не попадают: кассир не должен
+ * узнавать о запрете из отказа ОФД.
+ *
+ * Основание ищется по дню, а не берётся из открытой смены: покупатель
+ * приходит с чеком позавчерашнего дня, и протокол этого не запрещает —
+ * чек-основание описывается номером, датой и итогом, а смена в нём
+ * не участвует. Сама же операция возврата требует открытой смены,
+ * и это остаётся условием экрана.
  */
 @Composable
 fun ReturnsScreen(session: Session) {
-    val journal = journalTexts(session.language).returns
+    val scope = rememberCoroutineScope()
+    val texts = journalTexts(session.language)
+    val journal = texts.returns
     var kind by remember { mutableStateOf(ReturnKind.Sell) }
     var basisId by remember { mutableStateOf<String?>(null) }
+    var day by remember { mutableStateOf(LocalDate.now()) }
+    var number by remember { mutableStateOf("") }
+    val documents = remember { mutableStateListOf<Document>() }
+    var loading by remember { mutableStateOf(false) }
+    var more by remember { mutableStateOf(false) }
 
-    val candidates = kind.basisIn(session.documents)
+    // День перечитывается и после пробитого чека: возврат по только что
+    // выданному чеку — обычное дело, а список, набранный при открытии
+    // экрана, о нём не знает.
+    LaunchedEffect(day, session.selected?.kkmId, session.documents.size) {
+        documents.clear()
+        loading = true
+        more = loadDay(session, journal.basis, day, documents)
+        loading = false
+    }
+
+    val candidates = kind.basisIn(documents).filter { it.matches(number) }
     val chosen = candidates.firstOrNull { it.id == basisId }
 
     Column(
@@ -62,22 +83,20 @@ fun ReturnsScreen(session: Session) {
             kind = it
             basisId = null
         }
-        when {
+        BasisSearch(texts.history, day, number, loading, onNumber = { number = it }) {
+            day = it
+            basisId = null
+        }
+        val state = when {
             // Закрытая смена — состояние, а не отказ: об этом сказано словами
             // и подсказкой, а не пустым списком, из которого ничего не понять.
-            !session.shiftOpen -> EmptyState(
-                icon = AppIcons.noBasis,
-                title = journal.shiftClosed,
-                hint = journal.shiftClosedHint,
-                modifier = Modifier.weight(1f)
-            )
-            candidates.isEmpty() -> EmptyState(
-                icon = AppIcons.noBasis,
-                title = kind.emptyText(journal),
-                hint = journal.noBasisHint,
-                modifier = Modifier.weight(1f)
-            )
-            else -> Row(
+            !session.shiftOpen -> ScreenState.Empty(AppIcons.noBasis, journal.shiftClosed, journal.shiftClosedHint)
+            loading && candidates.isEmpty() -> ScreenState.Working
+            candidates.isEmpty() -> ScreenState.Empty(AppIcons.noBasis, kind.emptyText(journal), journal.noBasisHint)
+            else -> ScreenState.Ready
+        }
+        ScreenSlot(state, Modifier.weight(1f)) {
+            Row(
                 modifier = Modifier.fillMaxWidth().weight(1f),
                 horizontalArrangement = Arrangement.spacedBy(Spacing.normal)
             ) {
@@ -85,7 +104,17 @@ fun ReturnsScreen(session: Session) {
                     candidates = candidates,
                     chosen = chosen,
                     journal = journal,
-                    modifier = Modifier.weight(BASIS_COLUMN)
+                    history = texts.history,
+                    more = more,
+                    loading = loading,
+                    modifier = Modifier.weight(BASIS_COLUMN),
+                    onMore = {
+                        loading = true
+                        scope.launch {
+                            more = loadDay(session, journal.basis, day, documents)
+                            loading = false
+                        }
+                    }
                 ) { basisId = it.id }
                 RefundPanel(session, kind, chosen, Modifier.weight(REFUND_COLUMN)) { basisId = null }
             }
@@ -125,64 +154,6 @@ private fun ColumnScope.ReturnHeader(
         // а место на экране оно занимало бы в каждой смене.
         InfoTip(journal.basisHint)
     }
-}
-
-/** Перечень чеков-оснований: список в карточке, выбранный выделен подложкой. */
-@Composable
-private fun BasisList(
-    candidates: List<Document>,
-    chosen: Document?,
-    journal: ReturnJournalTexts,
-    modifier: Modifier,
-    onChoose: (Document) -> Unit
-) {
-    Card(
-        modifier = modifier.fillMaxHeight(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)
-    ) {
-        Text(
-            text = "${journal.basisColumn}: ${candidates.size}",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = Spacing.normal, vertical = Spacing.snug)
-        )
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        LazyColumn {
-            items(candidates) { candidate ->
-                BasisRow(candidate, candidate.id == chosen?.id, journal) { onChoose(candidate) }
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            }
-        }
-    }
-}
-
-/**
- * Чек-основание строкой списка.
- *
- * Номер — заголовок, фискальный признак — подпись под ним, сумма и состояние
- * доставки — справа. Признак виден до нажатия: по нему кассир сверяет
- * бумажный чек покупателя со строкой на экране.
- */
-@Composable
-private fun BasisRow(
-    candidate: Document,
-    selected: Boolean,
-    journal: ReturnJournalTexts,
-    onChoose: () -> Unit
-) {
-    val texts = LocalStrings.current
-    // Узел хранит фискальный признак и номером документа: писать
-    // одно и то же число дважды подряд незачем.
-    val sign = (candidate.fiscalSign ?: candidate.autonomousSign)
-        ?.takeIf { it != candidate.docNo?.toString() }
-    RecordRow(
-        title = "${texts.returns.receiptNo} ${candidate.docNo}",
-        subtitle = sign?.let { "${journal.fiscalSign}: $it" },
-        amount = Money.formatTiyn(candidate.totalAmount),
-        selected = selected,
-        onClick = onChoose,
-        trailing = { DeliveryChip(candidate.ofdStatus, candidate.isAutonomous == true) }
-    )
 }
 
 /** Доли ширины: список чеков шире панели, в нём читают, а не вводят. */

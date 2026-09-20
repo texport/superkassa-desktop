@@ -55,6 +55,24 @@ fun actionTitle(code: String, texts: CabinetTexts): String = when (code) {
     else -> code
 }
 
+/**
+ * Поле карты, названное словом, а не именем контракта.
+ *
+ * Кабинет перечисляет изменённое кодами полей; владелец читает список
+ * версий, чтобы понять, что именно переписала перерегистрация, и
+ * `RETAIL_PLACE` ему об этом не говорит. Незнакомый код показывается
+ * как пришёл: своего списка, расходящегося с кабинетом, здесь не заводят.
+ */
+fun cardFieldTitle(code: String, texts: CabinetTexts): String = when (code.uppercase()) {
+    "ADDRESS", "RKA", "CATO" -> texts.address
+    "RETAIL_PLACE", "RETAILPLACE", "RETAIL_PLACE_ID" -> texts.placeName
+    "MODEL", "KKM_MODEL", "MODEL_NAME" -> texts.model
+    "FACTORY_NUMBER", "FACTORYNUMBER" -> texts.factoryNumber
+    "REGISTRATION_NUMBER", "RNM" -> texts.registrationNumber
+    "INTERNAL_NAME", "NAME" -> texts.internalName
+    else -> code
+}
+
 /** Состояния, означающие сделанное. */
 private val DONE = setOf("REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS", "KKM_ACTIVE", "ACCEPTED", "OPEN")
 

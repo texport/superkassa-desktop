@@ -5,16 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountBalanceWallet
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,9 +20,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
-import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
-import kz.mybrain.superkassa.desktop.ui.strings.DrawerTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -61,8 +52,9 @@ internal fun CashForm(
     var busy by remember { mutableStateOf(false) }
 
     val drawer = session.cashInDrawer
-    val deposit = CashRules.check(amount, CashMove.Deposit, drawer, session.shiftOpen)
-    val withdraw = CashRules.check(amount, CashMove.Withdraw, drawer, session.shiftOpen)
+    val blocked = session.selected?.isBlocked == true
+    val deposit = CashRules.check(amount, CashMove.Deposit, drawer, session.shiftOpen, blocked)
+    val withdraw = CashRules.check(amount, CashMove.Withdraw, drawer, session.shiftOpen, blocked)
     val ready = session.selected != null && !busy
     val advice = adviceOn(deposit, withdraw, money.drawer, drawer)
 
@@ -138,70 +130,5 @@ internal fun CashForm(
                 }
             }
         )
-    }
-}
-
-/** Вопрос перед проведением: сумма словами кассира и остаток после. */
-@Composable
-private fun ConfirmCash(
-    money: DrawerTexts,
-    pending: CashAttempt,
-    drawer: Long?,
-    busy: Boolean,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    val question = if (pending.move == CashMove.Deposit) money.confirmDeposit else money.confirmWithdraw
-    val after = CashRules.after(drawer, pending.amount, pending.move)
-    AlertDialog(
-        onDismissRequest = { if (!busy) onCancel() },
-        icon = { Icon(Icons.Outlined.AccountBalanceWallet, contentDescription = null) },
-        title = { Text(question.format(Money.format(pending.amount))) },
-        text = {
-            Text(
-                text = after?.let { money.afterOperation.format(Money.formatTiyn(it)) }
-                    ?: money.unknownBalance,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        },
-        confirmButton = {
-            Button(enabled = !busy, onClick = onConfirm) {
-                Text(if (busy) money.working else money.confirm)
-            }
-        },
-        dismissButton = {
-            TextButton(enabled = !busy, onClick = onCancel) { Text(money.cancel) }
-        }
-    )
-}
-
-/** Строка под полем суммы: что мешает провести деньги либо как их вводить. */
-private data class Advice(val text: String, val error: Boolean)
-
-/**
- * Что сказать под полем ввода.
- *
- * Строка под полем одна: три предупреждения столбиком читаются как три
- * разные беды. Закрытая смена и нехватка денег в ящике поле красным не
- * красят — введено верно, мешает состояние кассы, а не набранные цифры.
- */
-private fun adviceOn(
-    deposit: CashDecision,
-    withdraw: CashDecision,
-    money: DrawerTexts,
-    drawer: Long?
-): Advice {
-    val shortage = (withdraw as? CashDecision.Refused)?.reason == CashRefusal.NotEnough
-    val refused = deposit as? CashDecision.Refused
-        ?: return when {
-            shortage -> Advice(money.notEnough.format(Money.formatTiyn(drawer)), error = false)
-            else -> Advice(money.amountHint, error = false)
-        }
-    return when (refused.reason) {
-        CashRefusal.NotANumber -> Advice(money.notANumber, error = true)
-        CashRefusal.NotPositive -> Advice(money.notPositive, error = true)
-        CashRefusal.TooLarge -> Advice(money.tooLarge, error = true)
-        CashRefusal.NotEnough -> Advice(money.notEnough.format(Money.formatTiyn(drawer)), error = true)
-        CashRefusal.ShiftClosed -> Advice(money.shiftClosed, error = false)
     }
 }

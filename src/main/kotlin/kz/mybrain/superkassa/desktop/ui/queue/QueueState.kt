@@ -61,3 +61,7 @@ fun waitingTasks(tasks: List<QueueTask>): List<QueueTask> =
 /** Задачи, которые повторяет кнопка «Повторить неудачные». */
 fun failedTasks(tasks: List<QueueTask>): List<QueueTask> =
     tasks.filter { queueStateOf(it.status) == QueueState.Failed }
+
+/** Задачи, отвергнутые окончательно: повтор их не берёт, а на экране они видны. */
+fun rejectedTasks(tasks: List<QueueTask>): List<QueueTask> =
+    tasks.filter { queueStateOf(it.status) == QueueState.Rejected }

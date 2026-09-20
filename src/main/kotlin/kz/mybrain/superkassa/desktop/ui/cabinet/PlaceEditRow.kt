@@ -121,14 +121,26 @@ private fun PlaceMove(
         mutableStateOf(place.latitude?.let { lat -> place.longitude?.let { MapPoint(lat, it) } })
     }
 
-    AddressSearch(session, cabinet, texts, query, { query = it }) { address ->
+    val onQuery: (String) -> Unit = { entered ->
+        query = entered
+        if (entered.isBlank()) chosen = null
+    }
+    // Со сменой адреса координаты снимаются: они принадлежали прежнему дому,
+    // и переезд с чужими координатами — то самое расхождение, из-за которого
+    // точка оказывалась в другом районе.
+    val here = chosen ?: place.registerAddress()
+    val onAddress: (RegisterAddress) -> Unit = { address ->
+        if (address.addressRef != here?.addressRef) point = null
         chosen = address
         query = addressIn(session.language, address.address, address.addressKz)
     }
+    AddressSearch(session, cabinet, texts, query, onQuery, owner = place.id, onChoose = onAddress)
     if (chosen != null) {
         Chip(texts.addressChosen, StatusColors.delivered)
     }
-    PlacePoint(texts, session.preferences, point, query) { point = it }
+    // Пока новый адрес не выбран, карта открывается на нынешнем адресе точки:
+    // переезжают обычно в соседний дом, а не в другой город.
+    PlacePoint(session, cabinet, texts, point, here, onAddress) { point = it }
     BusyButton(
         text = texts.changeAddress,
         busy = cabinet.busy,
@@ -144,6 +156,12 @@ private fun PlaceMove(
         }
     )
 }
+
+/** Нынешний адрес точки записью регистра: на нём открывается карта до выбора нового. */
+private fun RetailPlace.registerAddress(): RegisterAddress? =
+    addressRef?.let {
+        RegisterAddress(addressRef = it, address = address, addressKz = addressKz, rka = rka, cato = cato)
+    }
 
 /** Переселяет точку. Ложь означает отказ: выбранное остаётся на месте. */
 private suspend fun move(

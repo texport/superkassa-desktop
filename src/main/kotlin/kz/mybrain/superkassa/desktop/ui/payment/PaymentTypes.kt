@@ -43,3 +43,17 @@ val UNSUPPORTED_PAYMENTS: Set<String> = setOf("CREDIT", "TARE")
  */
 private val KNOWN_PAYMENTS = listOf("CASH", "CARD", "ELECTRONIC", "MOBILE", "CREDIT", "TARE")
     .map { DictionaryEntry(code = it, supported = it !in UNSUPPORTED_PAYMENTS) }
+
+/**
+ * Показывать ли пояснение о погасших видах оплаты.
+ *
+ * Пояснение относится к погасшим строкам списка, а не к выбранному виду.
+ * Без этого условия касса писала «протокол 2.0.4 его не принимает» под
+ * наличными — видом, который принимают все версии протокола, — и кассир
+ * читал это как отказ принять деньги.
+ *
+ * @param note сама фраза; пустая — пояснения нет.
+ * @param entries виды оплаты из справочника узла.
+ */
+fun unsupportedNoteVisible(note: String, entries: List<DictionaryEntry>): Boolean =
+    note.isNotBlank() && entries.any { !it.supported }

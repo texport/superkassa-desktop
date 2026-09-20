@@ -33,6 +33,16 @@ suspend fun ServerClient.initKkm(body: KkmInitRequest, pin: String): Kkm =
 suspend fun ServerClient.updateBranding(kkmId: String, branding: Branding, pin: String): Kkm =
     request(HttpMethod.Put, "/kkm/$kkmId/settings/branding", branding, pin)
 
+/**
+ * Сохраняет название кассы на узле.
+ *
+ * Название живёт у кассы, а не на рабочем месте: иначе назвавший её
+ * владелец видит название только за своей машиной, а кассир за соседней —
+ * по-прежнему регистрационный номер.
+ */
+suspend fun ServerClient.updateKkmName(kkmId: String, name: String?, pin: String): Kkm =
+    request(HttpMethod.Put, "/kkm/$kkmId/settings/name", KkmNameRequest(name), pin)
+
 /** Сколько касс читать за раз: парк узла в режиме DESKTOP заведомо меньше. */
 private const val PAGE_LIMIT = 500
 

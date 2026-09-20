@@ -3,12 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.users
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DeleteOutline
-import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -23,13 +17,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import kz.mybrain.superkassa.desktop.server.KkmUser
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.ConfirmDangerDialog
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
-import kz.mybrain.superkassa.desktop.ui.history.DASH
 import kz.mybrain.superkassa.desktop.ui.strings.CashierTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -57,7 +52,7 @@ internal fun UserRow(
     var deleteAsked by remember { mutableStateOf(false) }
 
     RecordRow(
-        title = user.name ?: DASH,
+        title = user.name ?: Glyphs.DASH,
         leading = {
             Icon(
                 imageVector = AppIcons.cashiers,
@@ -79,7 +74,7 @@ internal fun UserRow(
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 ) {
-                    Icon(Icons.Outlined.DeleteOutline, contentDescription = texts.users.delete)
+                    Icon(AppIcons.remove, contentDescription = texts.users.delete)
                 }
             }
         }
@@ -94,9 +89,10 @@ internal fun UserRow(
         )
     }
     if (deleteAsked) {
-        ConfirmDelete(
-            money = cashiers,
-            who = user.name ?: roleTitle,
+        ConfirmDangerDialog(
+            what = cashiers.deleteConfirm.format(user.name ?: roleTitle),
+            explain = cashiers.deleteExplain,
+            action = LocalStrings.current.users.delete,
             cancel = money.drawer.cancel,
             onCancel = { deleteAsked = false },
             onConfirm = {
@@ -124,38 +120,4 @@ private fun WhoIs(money: CashierTexts, roleTitle: String, deletable: Boolean) {
             }
         }
     }
-}
-
-/** Вопрос перед удалением: кого и что при этом останется. */
-@Composable
-private fun ConfirmDelete(
-    money: CashierTexts,
-    who: String,
-    cancel: String,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    val texts = LocalStrings.current
-    AlertDialog(
-        onDismissRequest = onCancel,
-        icon = {
-            Icon(
-                imageVector = Icons.Outlined.WarningAmber,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.error
-            )
-        },
-        title = { Text(money.deleteConfirm.format(who)) },
-        text = { Text(money.deleteExplain, style = MaterialTheme.typography.bodyMedium) },
-        confirmButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError
-                )
-            ) { Text(texts.users.delete) }
-        },
-        dismissButton = { TextButton(onClick = onCancel) { Text(cancel) } }
-    )
 }

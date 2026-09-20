@@ -71,3 +71,28 @@ object MoneyStyle {
         textAlign = TextAlign.End
     )
 }
+
+/**
+ * Начертание строк журнала.
+ *
+ * Журнал читают глазами по столбцам: время под временем, уровень под
+ * уровнем. Пропорциональный шрифт сдвигает их на каждой строке, и найти
+ * нужный обмен среди сотни записей становится работой. Шрифт задаётся
+ * здесь, а не в окне журнала, — как и начертание сумм.
+ */
+object LogStyle {
+
+    /** Сама строка: время, уровень, источник и текст. */
+    val line: TextStyle = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontSize = 13.sp,
+        lineHeight = 18.sp
+    )
+
+    /** Тело запроса или ответа под строкой: его читают редко и вчитываясь. */
+    val body: TextStyle = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontSize = 12.sp,
+        lineHeight = 17.sp
+    )
+}

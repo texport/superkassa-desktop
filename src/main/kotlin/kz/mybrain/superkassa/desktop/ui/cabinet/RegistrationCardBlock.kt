@@ -1,9 +1,12 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +25,8 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RegistrationCard
 import kz.mybrain.superkassa.desktop.server.cabinet.registrationCard
 import kz.mybrain.superkassa.desktop.server.cabinet.registrationCardPdf
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
-import kz.mybrain.superkassa.desktop.ui.components.EmptyState
+import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -52,20 +56,35 @@ fun RegistrationCardBlock(cabinet: CabinetSession, texts: CabinetTexts, register
     }
 
     val issued = card
-    if (issued == null) {
-        EmptyState(AppIcons.print, texts.cardMissing, texts.cardMissingHint)
-        return
+    // Карту кабинет отдаёт отдельным обращением, и до ответа блок
+    // говорил «карты нет» — про кассу, у которой она есть.
+    val state = when {
+        issued != null -> ScreenState.Ready
+        register.registrationCardAvailable -> ScreenState.Working
+        else -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.cardMissingHint)
     }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        DetailLine(statusTitle(issued.status, texts), cabinetMoment(issued.updatedAt))
-        FilledTonalButton(
-            enabled = !cabinet.busy,
-            onClick = { scope.launch { savePdf(cabinet, register) } }
-        ) { Text(texts.savePdf) }
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+        ScreenSlot(state, dense = true) {
+            if (issued == null) return@ScreenSlot
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DetailLine(statusTitle(issued.status ?: register.status, texts), cabinetMoment(issued.updatedAt))
+                FilledTonalButton(
+                    enabled = !cabinet.busy,
+                    onClick = { scope.launch { savePdf(cabinet, register) } }
+                ) { Text(texts.savePdf) }
+            }
+        }
+        // Версии карты спрашиваются у кассы, дошедшей до учёта: до него
+        // версии не с чего заводиться, а обращение за ней обернулось бы
+        // отказом кабинета на экране только что заведённой кассы.
+        if (!register.registrationNumber.isNullOrBlank()) {
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            RegistrationCardVersions(cabinet, texts, register)
+        }
     }
 }
 

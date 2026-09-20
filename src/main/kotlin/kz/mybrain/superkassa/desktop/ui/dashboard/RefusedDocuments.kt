@@ -17,12 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.documentDetails
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
@@ -94,23 +96,22 @@ private fun RefusedRow(session: Session, document: Document, operator: String?) 
             text = listOfNotNull(
                 session.titleOf(Dictionary.DocumentTypes, document.docType),
                 operator
-            ).joinToString(SEPARATOR),
+            ).joinToString(Glyphs.SEPARATOR),
             style = MaterialTheme.typography.bodyMedium,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
         Text(Money.formatTiyn(document.totalAmount), style = MoneyStyle.row)
-        Text(
-            text = "${texts.common.refusalCode} ${document.ofdErrorCode ?: DASH}",
-            style = MaterialTheme.typography.labelMedium,
-            color = StatusColors.refused
-        )
+        // Код показывается, только когда он есть: у протокольного отказа
+        // ОФД своего кода не присылает, и строка «Код отказа —» ничего
+        // кассиру не сообщала.
+        document.refusalCode?.let { code ->
+            Text(
+                text = "${texts.common.refusalCode} $code",
+                style = MaterialTheme.typography.labelMedium,
+                color = StatusColors.refused
+            )
+        }
     }
 }
-
-/** Разделитель между видом документа и кассиром. */
-private const val SEPARATOR = " · "
-
-/** Прочерк там, где кода нет. */
-private const val DASH = "—"

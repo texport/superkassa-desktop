@@ -3,8 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.sale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -16,16 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.NomenclatureItem
 import kz.mybrain.superkassa.desktop.server.lookupBarcode
+import kz.mybrain.superkassa.desktop.ui.components.onEnter
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -73,9 +68,7 @@ fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
     }
 
     Column(
-        modifier = Modifier.fillMaxWidth().onPreviewKeyEvent { event ->
-            event.type == KeyEventType.KeyDown && event.key in ENTER_KEYS && search()
-        },
+        modifier = Modifier.fillMaxWidth().onEnter { search() },
         verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
     ) {
         OutlinedTextField(
@@ -88,7 +81,7 @@ fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
             singleLine = true,
             trailingIcon = {
                 IconButton(enabled = ready, onClick = { search() }) {
-                    Icon(Icons.Outlined.Search, contentDescription = texts.sale.barcodeFind)
+                    Icon(AppIcons.find, contentDescription = texts.sale.barcodeFind)
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -120,10 +113,13 @@ private fun positionOf(item: NomenclatureItem, rates: List<VatRate>, fallbackVat
         // кассы, а не «Без НДС»: иначе у плательщика НДС каждый
         // отсканированный товар уходил бы в чек необлагаемым.
         vatGroup = item.vatGroup?.takeIf { code -> rates.any { it.code == code } } ?: fallbackVat,
-        measureUnitCode = item.measureUnitCode,
-        nameKk = item.nameKk?.takeIf { it.isNotBlank() }
+        // Справочник единицу называет не всегда; тогда берётся штука,
+        // а не пустое место: без единицы узел ставит её сам, и на экране
+        // строка чека выглядела бы иначе, чем набранная руками.
+        measureUnitCode = item.measureUnitCode?.takeIf { it.isNotBlank() } ?: PIECE,
+        nameKk = item.nameKk?.takeIf { it.isNotBlank() },
+        // НТИН приходит из справочника и уходит в ОФД: без него позиция
+        // прослеживается только наименованием, набранным кассиром.
+        ntin = item.ntin?.takeIf { it.isNotBlank() }
     )
 }
-
-/** Сканер завершает код обычным Enter, ручной ввод — любым из двух. */
-private val ENTER_KEYS = setOf(Key.Enter, Key.NumPadEnter)

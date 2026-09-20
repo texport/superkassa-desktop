@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap
  * заменяется на свой или оплаченный — адрес для этого вынесен в [source].
  */
 class MapTiles(
-    private val source: String = OPEN_STREET_MAP,
+    val source: String = MapService.TILES,
     private val folder: File = File(System.getProperty("user.home"), ".superkassa/tiles")
 ) {
 
@@ -64,7 +64,7 @@ class MapTiles(
 
     private fun fromNetwork(zoom: Int, x: Int, y: Int): ByteArray? = runCatching {
         val connection = URI.create("$source/$zoom/$x/$y.png").toURL().openConnection()
-        connection.setRequestProperty("User-Agent", AGENT)
+        connection.setRequestProperty("User-Agent", MapService.AGENT)
         connection.connectTimeout = TIMEOUT_MS
         connection.readTimeout = TIMEOUT_MS
         val bytes = connection.getInputStream().use { it.readBytes() }
@@ -80,8 +80,6 @@ class MapTiles(
     private fun key(zoom: Int, x: Int, y: Int): String = "$zoom/$x/$y"
 
     private companion object {
-        const val OPEN_STREET_MAP = "https://tile.openstreetmap.org"
-        const val AGENT = "Superkassa/1.0 (kassa workplace)"
         const val TIMEOUT_MS = 5_000
     }
 }

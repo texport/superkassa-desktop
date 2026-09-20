@@ -9,7 +9,9 @@ import androidx.compose.ui.Alignment
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetReceiptDetails
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
+import kz.mybrain.superkassa.desktop.ui.history.JournalDeliveryChip
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -30,13 +32,14 @@ fun ReceiptCard(receipt: CabinetReceiptDetails, texts: CabinetTexts, onClose: ()
         title = listOfNotNull(
             documentTitle(receipt.operationType, texts),
             receipt.receiptNumber
-        ).joinToString(" · "),
+        ).joinToString(Glyphs.SEPARATOR),
         trailing = { ReceiptTail(receipt, texts, onClose) }
     ) {
         DetailLine(texts.receiptMoment, cabinetMoment(receipt.createdAt))
         DetailLine(texts.operator, receipt.operator?.name)
         DetailLine(texts.shift, receipt.shiftNumber?.toString())
-        DetailLine(texts.fiscalSign, receipt.fiscalNumber)
+        // Фискальный признак стоит в заголовке карточки; здесь — номер документа по счётчику кассы
+        DetailLine(texts.kkmDocumentNumber, receipt.kkmDocumentNumber)
         // Отметка КГД — то, ради чего чек и смотрят в кабинете: её
         // отсутствие названо словами, а не пропущенной строкой.
         DetailLine(texts.kgdMarked, receipt.kgdMark ?: texts.noKgdMark)
@@ -51,7 +54,7 @@ private fun ReceiptTail(receipt: CabinetReceiptDetails, texts: CabinetTexts, onC
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        DeliveryChip(receipt.deliveryStatus, texts)
+        JournalDeliveryChip(cabinetState(receipt.deliveryStatus, receipt.sendStatus))
         TextButton(onClick = onClose) { Text(texts.close) }
     }
 }

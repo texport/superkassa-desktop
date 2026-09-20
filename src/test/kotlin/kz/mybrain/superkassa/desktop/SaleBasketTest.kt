@@ -33,6 +33,23 @@ class SaleBasketTest {
         storno = storno
     )
 
+    /**
+     * Пока чек не пробит, сторно — черновая отметка: кассир нажал не ту
+     * строку и вправе снять её тем же значком. Прежде снять было нечем,
+     * и строку приходилось удалять и набирать заново.
+     */
+    @Test
+    fun `сторно снимается повторным нажатием, пока чек не пробит`() {
+        val basket = Basket()
+        basket.add(position("100"))
+
+        basket.stornoAt(0)
+        assertTrue(basket.positions.single().storno, "сторно поставлено")
+
+        basket.stornoAt(0)
+        assertFalse(basket.positions.single().storno, "сторно снято")
+    }
+
     @Test
     fun `сторно уводит позицию в минус, а не просто помечает её`() {
         val basket = Basket()

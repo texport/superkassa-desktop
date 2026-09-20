@@ -23,10 +23,13 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -40,8 +43,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 fun RegistersPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     var chosen by remember { mutableStateOf<String?>(null) }
+    var answered by remember(cabinet.token) { mutableStateOf(false) }
 
-    LaunchedEffect(cabinet.token) { cabinet.refreshRegisters() }
+    LaunchedEffect(cabinet.token) {
+        cabinet.refreshRegisters()
+        answered = true
+    }
 
     // Своего зазора у ряда нет: его даёт поле под полосу прокрутки
     // в колонке слева, и равно оно отступу от края экрана. Второй зазор
@@ -50,15 +57,15 @@ fun RegistersPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts
         RegisterList(session, cabinet, texts, chosen) { chosen = it }
         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         val register = cabinet.registers.firstOrNull { it.id == chosen }
-        if (register == null) {
-            EmptyState(
-                icon = AppIcons.kkm,
-                title = texts.chooseRegister,
-                hint = texts.chooseRegisterHint,
-                modifier = Modifier.weight(1f)
-            )
-        } else {
-            RegisterDetails(cabinet, texts, register, modifier = Modifier.weight(1f))
+        val state = when {
+            !answered -> ScreenState.Working
+            register == null -> ScreenState.Empty(AppIcons.kkm, texts.chooseRegister, texts.chooseRegisterHint)
+            else -> ScreenState.Ready
+        }
+        ScreenSlot(state, Modifier.weight(1f)) {
+            if (register != null) {
+                RegisterDetails(session, cabinet, texts, register, modifier = Modifier.weight(1f))
+            }
         }
     }
 }
@@ -121,7 +128,7 @@ private fun RegisterRow(
     RecordRow(
         title = registerTitle(register),
         subtitle = listOfNotNull(register.registrationNumber, register.retailPlace?.name)
-            .joinToString(" · "),
+            .joinToString(Glyphs.SEPARATOR),
         selected = selected,
         onClick = onSelect,
         trailing = { CabinetStatusChip(register.status, texts) }

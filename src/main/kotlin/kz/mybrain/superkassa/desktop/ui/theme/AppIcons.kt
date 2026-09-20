@@ -6,6 +6,8 @@ import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddBusiness
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronLeft
@@ -34,8 +36,21 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
+import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.ArrowDownward
+import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.DarkMode
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.Password
+import androidx.compose.material.icons.outlined.QrCodeScanner
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.Undo
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.ui.graphics.vector.ImageVector
 
 /**
@@ -113,6 +128,16 @@ object AppIcons {
     val laterDay: ImageVector = Icons.Filled.ChevronRight
     val today: ImageVector = Icons.Filled.Today
 
+    /**
+     * Порядок строк журнала: от меньшего к большему и обратно.
+     *
+     * Своя пара, а не значки внесения и изъятия денег: те говорят
+     * о движении денег в ящике, и одолженные журналу читались бы как
+     * приход и расход, а не как порядок сортировки.
+     */
+    val ascending: ImageVector = Icons.Filled.ArrowUpward
+    val descending: ImageVector = Icons.Filled.ArrowDownward
+
     /** Пустые состояния: нечего показать, нечего вернуть, нечего отправлять. */
     val noDocuments: ImageVector = Icons.Filled.EventBusy
     val noBasis: ImageVector = Icons.Filled.ReceiptLong
@@ -126,4 +151,43 @@ object AppIcons {
 
     /** Где сейчас рабочее место: перевести карту в свой город. */
     val myLocation: ImageVector = Icons.Filled.MyLocation
+
+    /** Найти товар по штрихкоду. */
+    val find: ImageVector = Icons.Outlined.Search
+
+    /** Пустая корзина: в чеке ещё ничего не набрано. */
+    val emptyBasket: ImageVector = Icons.Outlined.ShoppingCart
+
+    /** Сторно: отмена уже пробитой строки. */
+    val storno: ImageVector = Icons.Outlined.Undo
+
+    /** Убрать строку или запись до того, как она ушла в ОФД. */
+    val remove: ImageVector = Icons.Outlined.Delete
+
+    /** Предупреждение перед необратимым. */
+    val warning: ImageVector = Icons.Outlined.WarningAmber
+
+    /** Денежный ящик: внесение и изъятие. */
+    val drawer: ImageVector = Icons.Outlined.AccountBalanceWallet
+
+    /** Деньги внесены в ящик. */
+    val paidIn: ImageVector = Icons.Outlined.ArrowDownward
+
+    /** Деньги изъяты из ящика. */
+    val paidOut: ImageVector = Icons.Outlined.ArrowUpward
+
+    /** Пин кассира. */
+    val pin: ImageVector = Icons.Outlined.Password
+
+    /** Акцизная марка на позиции чека. */
+    val excise: ImageVector = Icons.Outlined.QrCodeScanner
+
+    /** Режим отладки и журнал приложения. */
+    val debug: ImageVector = Icons.Outlined.BugReport
+
+    /** Светлая тема: день в зале. */
+    val lightTheme: ImageVector = Icons.Outlined.LightMode
+
+    /** Тёмная тема: ночная смена. */
+    val darkTheme: ImageVector = Icons.Outlined.DarkMode
 }

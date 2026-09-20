@@ -1,15 +1,9 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,18 +13,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshKkms
 import kz.mybrain.superkassa.desktop.server.enterProgramming
 import kz.mybrain.superkassa.desktop.server.exitProgramming
 import kz.mybrain.superkassa.desktop.server.pingOfd
 import kz.mybrain.superkassa.desktop.ui.components.Chip
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.FactLines
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
@@ -61,105 +55,66 @@ fun DiagnosticsCard(session: Session) {
     val programming = session.selected?.state == PROGRAMMING
     val ready = session.selected != null && !busy
 
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+    SectionCard(
+        title = texts.settings.diagnostics,
+        info = money.diagnosticsHint,
+        // Ответ ОФД — не состояние кассы, а итог только что нажатой
+        // проверки: он и остаётся здесь, в строке заголовка.
+        trailing = {
+            linkAlive?.let { alive ->
+                if (alive) {
+                    Chip(texts.settings.ofdAnswers, StatusColors.delivered)
+                } else {
+                    Chip(texts.settings.ofdSilent, StatusColors.refused)
+                }
+            }
+        }
+    ) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+            itemVerticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(texts.settings.diagnostics, style = MaterialTheme.typography.titleMedium)
-                    InfoTip(money.diagnosticsHint)
-                }
-                // Ответ ОФД — не состояние кассы, а итог только что нажатой
-                // проверки: он и остаётся здесь, рядом с кнопкой.
-                linkAlive?.let { alive ->
-                    if (alive) {
-                        Chip(texts.settings.ofdAnswers, StatusColors.delivered)
-                    } else {
-                        Chip(texts.settings.ofdSilent, StatusColors.refused)
+            OutlinedButton(
+                enabled = ready,
+                onClick = {
+                    scope.launch {
+                        busy = true
+                        linkAlive = pingLink(session, texts.settings.ofdLink)
+                        busy = false
                     }
                 }
-            }
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                verticalArrangement = Arrangement.spacedBy(Spacing.tight),
-                itemVerticalAlignment = Alignment.CenterVertically
-            ) {
+            ) { Text(texts.settings.checkOfdLink) }
+            OutlinedButton(
+                enabled = ready,
+                onClick = {
+                    scope.launch {
+                        busy = true
+                        summary = askOfd(session, texts.settings.ofdInfo)
+                        busy = false
+                    }
+                }
+            ) { Text(texts.settings.ofdInfo) }
+            // Войти в программирование предлагает та карточка, поля
+            // которой без него заперты. Здесь остаётся только выход —
+            // другого места для него на экране нет.
+            if (programming) {
                 OutlinedButton(
                     enabled = ready,
-                    onClick = {
-                        scope.launch {
-                            busy = true
-                            linkAlive = pingLink(session, texts.settings.ofdLink)
-                            busy = false
-                        }
-                    }
-                ) { Text(texts.settings.checkOfdLink) }
-                OutlinedButton(
-                    enabled = ready,
-                    onClick = {
-                        scope.launch {
-                            busy = true
-                            summary = askOfd(session, texts.settings.ofdInfo)
-                            busy = false
-                        }
-                    }
-                ) { Text(texts.settings.ofdInfo) }
-                // Войти в программирование предлагает та карточка, поля
-                // которой без него заперты. Здесь остаётся только выход —
-                // другого места для него на экране нет.
-                if (programming) {
-                    OutlinedButton(
-                        enabled = ready,
-                        onClick = { scope.launch { switchProgramming(session, enter = false) } }
-                    ) { Text(texts.settings.exitProgramming) }
-                }
+                    onClick = { scope.launch { switchProgramming(session, enter = false) } }
+                ) { Text(texts.settings.exitProgramming) }
             }
+        }
 
-            if (summary == null && node == null) {
-                Text(
-                    text = money.diagnosticsEmpty,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            summary?.let { Facts(texts.settings.ofdInfo, it.rows(money), money.ofdEmpty) }
-            node?.let { Facts(money.nodeTitle, it.rows(money), money.ofdEmpty) }
+        if (summary == null && node == null) {
+            Text(
+                text = money.diagnosticsEmpty,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
-    }
-}
-
-/** Подписанные строки сведений: подпись слева, значение справа. */
-@Composable
-private fun Facts(title: String, rows: List<Pair<String, String>>, empty: String) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        if (rows.isEmpty()) {
-            Text(empty, style = MaterialTheme.typography.bodySmall)
-            return@Column
-        }
-        rows.forEach { (label, value) ->
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.width(Sizes.fieldForm)
-                )
-                Text(value, style = MaterialTheme.typography.bodySmall)
-            }
-        }
+        summary?.let { FactLines(texts.settings.ofdInfo, it.rows(money), money.ofdEmpty) }
+        node?.let { FactLines(money.nodeTitle, it.rows(money), money.ofdEmpty) }
     }
 }
 

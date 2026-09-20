@@ -23,13 +23,13 @@ import java.net.URI
  * Ни имени, ни реквизитов кассы в запросе нет — служба видит только тот
  * адрес, с которого пришёл запрос.
  */
-class MapLocator(private val service: String = IP_INFO) {
+class MapLocator(val service: String = MapService.LOCATION) {
 
     /** Где мы, по мнению службы. `null` — сети нет или служба не ответила. */
     suspend fun locate(): MapPlace? = withContext(Dispatchers.IO) {
         runCatching {
             val connection = URI.create(service).toURL().openConnection()
-            connection.setRequestProperty("User-Agent", AGENT)
+            connection.setRequestProperty("User-Agent", MapService.AGENT)
             connection.setRequestProperty("Accept", "application/json")
             connection.connectTimeout = TIMEOUT_MS
             connection.readTimeout = TIMEOUT_MS
@@ -48,8 +48,6 @@ class MapLocator(private val service: String = IP_INFO) {
     }
 
     private companion object {
-        const val IP_INFO = "https://ipinfo.io/json"
-        const val AGENT = "Superkassa/1.0 (kassa workplace)"
         const val TIMEOUT_MS = 6_000
 
         val json = Json { ignoreUnknownKeys = true }

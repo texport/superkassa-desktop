@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.desktop.app.CabinetProblem
 import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.eds.NcaLayer
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Помеха кабинета — сообщением рабочего места.
@@ -20,7 +21,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
  */
 fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Message = when (problem) {
     is CabinetProblem.Refused -> Message.Refusal(refusalWords(problem.code, texts) ?: problem.text, problem.code)
-    is CabinetProblem.Unreachable -> Message.NodeUnavailable(texts.title, problem.reason)
+    is CabinetProblem.Unreachable -> Message.NodeUnavailable(texts.title)
     CabinetProblem.NoNcaLayer -> Message.Refusal(texts.noNcaLayer, NCALAYER)
     is CabinetProblem.SignDeclined -> Message.Refusal(signWords(problem.detail, texts), SIGN)
     CabinetProblem.SessionExpired -> Message.Refusal(texts.sessionExpired, EXPIRED)
@@ -35,7 +36,7 @@ fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Message = when
  */
 private fun signWords(detail: String, texts: CabinetTexts): String {
     val reason = if (detail == NcaLayer.WINDOW_CLOSED) texts.signWindowClosed else detail
-    return listOf(texts.signDeclined, reason).filter { it.isNotBlank() }.joinToString(" · ")
+    return listOf(texts.signDeclined, reason).filter { it.isNotBlank() }.joinToString(Glyphs.SEPARATOR)
 }
 
 /** Отказ кабинета словами владельца; `null` — такого кода приложение не знает. */

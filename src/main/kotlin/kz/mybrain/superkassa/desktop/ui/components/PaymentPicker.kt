@@ -3,21 +3,13 @@ package kz.mybrain.superkassa.desktop.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuAnchorType
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.ui.strings.EnumStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -49,45 +41,19 @@ fun PaymentPicker(
 ) {
     val texts = LocalStrings.current
     val refused = entries.filterNot { it.supported }
-    var open by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        ExposedDropdownMenuBox(
-            expanded = open,
-            onExpandedChange = { open = it },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            OutlinedTextField(
-                value = paymentTitle(entries, language, selectedCode, texts.enums),
-                onValueChange = {},
-                readOnly = true,
-                singleLine = true,
-                label = { Text(texts.sale.payment) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
-                modifier = Modifier.fillMaxWidth().menuAnchor(MenuAnchorType.PrimaryNotEditable)
-            )
-            ExposedDropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-                entries.forEach { entry ->
-                    DropdownMenuItem(
-                        enabled = entry.supported,
-                        text = {
-                            Text(
-                                text = paymentTitle(entries, language, entry.code, texts.enums),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        onClick = {
-                            onSelect(entry.code)
-                            open = false
-                        }
-                    )
-                }
-            }
-        }
+        LabelledPicker(
+            label = texts.sale.payment,
+            options = entries,
+            selected = entries.firstOrNull { it.code == selectedCode },
+            title = { entry -> paymentTitle(entries, language, entry?.code.orEmpty(), texts.enums) },
+            onSelect = { onSelect(it.code) },
+            available = { it.supported }
+        )
         // Погасший вид сам по себе не объясняет, почему он погас: причина
         // одна на все непринимаемые виды и пишется один раз.
         if (refused.isNotEmpty() && unsupportedNote.isNotBlank()) {

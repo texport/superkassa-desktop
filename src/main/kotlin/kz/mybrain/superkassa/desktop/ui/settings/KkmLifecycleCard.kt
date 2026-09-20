@@ -1,13 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,10 +11,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshKkms
+import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.KkmSetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -43,37 +40,31 @@ fun OfdSyncCard(session: Session) {
     var busy by remember { mutableStateOf(false) }
     val ready = session.selected != null && !busy
 
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
-        ) {
-            Text(money.syncTitle, style = MaterialTheme.typography.titleMedium)
-            SyncAction(
-                title = money.syncService,
-                hint = money.syncServiceHint,
-                enabled = ready,
-                onClick = {
-                    scope.launch {
-                        busy = true
-                        sync(session, money, service = true)
-                        busy = false
-                    }
+    SectionCard(title = money.syncTitle) {
+        SyncAction(
+            title = money.syncService,
+            hint = money.syncServiceHint,
+            enabled = ready,
+            onClick = {
+                scope.launch {
+                    busy = true
+                    sync(session, money, service = true)
+                    busy = false
                 }
-            )
-            SyncAction(
-                title = money.syncCounters,
-                hint = money.syncCountersHint,
-                enabled = ready,
-                onClick = {
-                    scope.launch {
-                        busy = true
-                        sync(session, money, service = false)
-                        busy = false
-                    }
+            }
+        )
+        SyncAction(
+            title = money.syncCounters,
+            hint = money.syncCountersHint,
+            enabled = ready,
+            onClick = {
+                scope.launch {
+                    busy = true
+                    sync(session, money, service = false)
+                    busy = false
                 }
-            )
-        }
+            }
+        )
     }
 }
 

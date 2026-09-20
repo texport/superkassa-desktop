@@ -1,0 +1,72 @@
+# Установщики кассы для трёх систем.
+#
+# jpackage и jlink кросс-сборки не умеют: установщик для Windows собирается
+# на Windows, deb — на Linux, dmg — на macOS. Поэтому матрица, а не один
+# запуск.
+#
+# Узел едет внутри установщика, и собрать его надо здесь же. Ядро в Maven
+# Central отстаёт от того, что нужно узлу, поэтому оно собирается из
+# исходников и кладётся в локальное хранилище — публиковать ради сборки
+# ничего не требуется.
+name: Установщики
+
+on:
+  workflow_dispatch:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+  installers:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Касса
+        uses: actions/checkout@v4
+        with:
+          path: superkassa-desktop
+
+      - name: Ядро
+        uses: actions/checkout@v4
+        with:
+          repository: texport/superkassa-core
+          path: superkassa-core
+
+      - name: Узел
+        uses: actions/checkout@v4
+        with:
+          repository: texport/superkassa-server
+          path: superkassa-server
+
+      - name: Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'zulu'
+
+      - name: Ядро в локальное хранилище
+        working-directory: superkassa-core
+        run: ./gradlew publishToMavenLocal
+
+      - name: Собрать узел
+        working-directory: superkassa-server
+        run: ./gradlew :server:bootJar
+
+      - name: Собрать установщик
+        working-directory: superkassa-desktop
+        shell: bash
+        run: |
+          jar=$(ls ../superkassa-server/server/build/libs/server-*.jar | grep -v plain | head -1)
+          ./gradlew packageDistributionForCurrentOS -PnodeJar="$(cd "$(dirname "$jar")" && pwd)/$(basename "$jar")"
+
+      - name: Выложить установщик
+        uses: actions/upload-artifact@v4
+        with:
+          name: superkassa-${{ matrix.os }}
+          path: |
+            superkassa-desktop/build/compose/binaries/main/msi/*.msi
+            superkassa-desktop/build/compose/binaries/main/deb/*.deb
+            superkassa-desktop/build/compose/binaries/main/dmg/*.dmg
+          if-no-files-found: error

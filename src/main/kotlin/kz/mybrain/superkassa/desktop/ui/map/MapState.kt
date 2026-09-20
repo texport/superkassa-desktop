@@ -76,7 +76,7 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
     /** Ставит точку. Центр не двигается: карта под рукой владельца не должна прыгать. */
     fun mark(latitude: Double, longitude: Double) {
         markerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
-        markerLongitude = longitude.coerceIn(-HALF_TURN, HALF_TURN)
+        markerLongitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
     }
 
     /**
@@ -102,7 +102,7 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
      */
     fun showLocation(latitude: Double, longitude: Double, city: String, toZoom: Int, precise: Boolean = false) {
         locationLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
-        locationLongitude = longitude.coerceIn(-HALF_TURN, HALF_TURN)
+        locationLongitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
         locationCity = city
         locationPrecise = precise
         centerLatitude = locationLatitude ?: latitude
@@ -123,6 +123,5 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
 
         const val MIN_ZOOM = 3
         const val MAX_ZOOM = 18
-        const val HALF_TURN = 180.0
     }
 }

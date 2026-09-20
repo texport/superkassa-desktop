@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.server
 import io.ktor.client.statement.readRawBytes
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
+import io.ktor.http.content.TextContent
 
 /**
  * Остальные обращения к узлу: номенклатура, печатные формы и повторная
@@ -76,6 +77,38 @@ suspend fun ServerClient.printDocument(
         "/kkm/$kkmId/documents/$documentId/print.${kind.extension}",
         kind.contentType,
         pin
+    )
+    if (response.status.value !in SUCCESS_RANGE) throw refusalOf(response)
+    return response.readRawBytes()
+}
+
+/**
+ * Печатная форма документа, переданного данными.
+ *
+ * Узел рисует и такой документ: касса-рисовальщик не обязана быть той,
+ * что его пробила. Данные — пакет протокола, запрос кассы и ответ ОФД;
+ * это всё, что о документе известно вне той кассы, и этого рисовальщику
+ * хватает. Свой рисунок в приложении завёл бы второй вид того же
+ * документа — здесь нет ни рисовальщика, ни браузера.
+ *
+ * @param packet пакет протокола целиком, как его отдал кабинет.
+ * @param kind что запросить у узла.
+ */
+suspend fun ServerClient.printPacket(
+    kkmId: String,
+    packet: String,
+    pin: String,
+    kind: PrintKind
+): ByteArray {
+    val response = callAccepting(
+        HttpMethod.Post,
+        "/kkm/$kkmId/documents/print.${kind.extension}",
+        kind.contentType,
+        pin,
+        // Пакет уходит как есть: разбирать и собирать его заново значило бы
+        // держать в приложении своё представление протокола, которого здесь
+        // быть не должно.
+        TextContent(packet, ContentType.Application.Json)
     )
     if (response.status.value !in SUCCESS_RANGE) throw refusalOf(response)
     return response.readRawBytes()

@@ -106,3 +106,18 @@ private fun rowBackground(striped: Boolean, selected: Boolean): Color = when {
     striped -> MaterialTheme.colorScheme.surfaceContainerLow
     else -> Color.Transparent
 }
+
+/**
+ * Затенена ли строка с этим номером.
+ *
+ * Чередование через одну, и правило одно на все списки: журнал, очередь,
+ * прошлые смены, действия кассы, ОКЭД. Посчитанное на месте, оно уже
+ * разошлось — где-то затенялись чётные строки, где-то нечётные, и два
+ * списка рядом в одном окне выглядели сбитыми на строку.
+ *
+ * @param at номер строки в списке, считая с нуля.
+ */
+fun stripedAt(at: Int): Boolean = at % EVERY_SECOND == 1
+
+/** Через одну: затеняется каждая вторая строка списка. */
+private const val EVERY_SECOND = 2

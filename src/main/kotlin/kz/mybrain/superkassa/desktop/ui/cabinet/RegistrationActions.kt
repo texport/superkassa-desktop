@@ -17,10 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
-import kz.mybrain.superkassa.desktop.server.cabinet.ApplicationSent
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
-import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
@@ -53,12 +51,12 @@ fun RegistrationActionsBlock(
     var reason by remember(register.id) { mutableStateOf(DeregistrationReason.CessationOfUse) }
     var comment by remember(register.id) { mutableStateOf("") }
     var placeId by remember(register.id) { mutableStateOf("") }
-    var sent by remember(register.id) { mutableStateOf<ApplicationSent?>(null) }
-    var places by remember { mutableStateOf<List<RetailPlace>>(emptyList()) }
+    var outcome by remember(register.id) { mutableStateOf<ApplicationOutcome?>(null) }
+    var stage by remember(register.id) { mutableStateOf<ApplicationStage?>(null) }
+    val places = cabinet.places
 
     LaunchedEffect(cabinet.token) {
-        val token = cabinet.token ?: return@LaunchedEffect
-        places = cabinet.guard { cabinet.client.retailPlaces(token) }?.items.orEmpty()
+        cabinet.refreshPlaces()
     }
 
     // Выбранным остаётся только то, что по нынешнему состоянию кассы
@@ -70,7 +68,7 @@ fun RegistrationActionsBlock(
     }
     if (available.isEmpty()) {
         NoActions(register, texts)
-        ApplicationResult(sent, texts)
+        ApplicationResult(outcome, texts)
         return
     }
     ChoiceSegments(
@@ -83,13 +81,15 @@ fun RegistrationActionsBlock(
     ApplicationFields(kind, texts, places, placeId, reason, comment, { placeId = it }, { reason = it }) {
         comment = it
     }
-    BusyButton(text = texts.submitApplication, busy = cabinet.busy, enabled = kind in available) {
+    BusyButton(text = stage?.title(texts) ?: texts.submitApplication, busy = cabinet.busy, enabled = kind in available) {
         scope.launch {
-            sent = submitApplication(cabinet, kind, register.id, placeId, reason, comment)
+            outcome = null
+            outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
+            stage = null
             onDone()
         }
     }
-    ApplicationResult(sent, texts)
+    ApplicationResult(outcome, texts)
 }
 
 /** Почему заявлений сейчас нет — вместо ряда погашенных сегментов. */
@@ -169,13 +169,24 @@ private fun DeregistrationFields(
  * «отправлено» читается как незавершённая работа приложения.
  */
 @Composable
-private fun ApplicationResult(sent: ApplicationSent?, texts: CabinetTexts) {
-    val done = sent ?: return
-    DetailLine(texts.applicationSent, statusTitle(done.actionStatus, texts))
-    DetailLine(texts.registerStatus, done.cashRegisterStatus?.let { statusTitle(it, texts) })
-    Text(
-        text = texts.applicationWait,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
+private fun ApplicationResult(outcome: ApplicationOutcome?, texts: CabinetTexts) {
+    when (outcome) {
+        null -> Unit
+        is ApplicationOutcome.Sent -> {
+            DetailLine(texts.applicationSent, statusTitle(outcome.sent.actionStatus, texts))
+            DetailLine(texts.registerStatus, outcome.sent.cashRegisterStatus?.let { statusTitle(it, texts) })
+            Text(
+                text = texts.applicationWait,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        // Неудача остаётся под кнопкой до следующей подачи: всплывающая строка
+        // каркаса гаснет за секунды, и владелец не успевал прочитать причину.
+        is ApplicationOutcome.Failed -> Text(
+            text = "${texts.applicationFailed}: ${cabinetMessage(outcome.problem, texts).words()}",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.error
+        )
+    }
 }

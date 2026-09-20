@@ -26,7 +26,7 @@ import java.net.URLEncoder
  * ищут раз в жизни точки. Перед выпуском на всех владельцев служба
  * заменяется на свою или оплаченную: адрес вынесен в [service].
  */
-class MapGeocoder(private val service: String = NOMINATIM) {
+class MapGeocoder(val service: String = MapService.SEARCH) {
 
     /** Что нашлось по адресу. Пусто — не нашлось или сети нет. */
     suspend fun find(address: String): List<MapPlace> = withContext(Dispatchers.IO) {
@@ -35,7 +35,7 @@ class MapGeocoder(private val service: String = NOMINATIM) {
             val query = URLEncoder.encode(address.trim(), Charsets.UTF_8)
             val url = "$service?format=jsonv2&limit=$LIMIT&countrycodes=kz&accept-language=ru&q=$query"
             val connection = URI.create(url).toURL().openConnection()
-            connection.setRequestProperty("User-Agent", AGENT)
+            connection.setRequestProperty("User-Agent", MapService.AGENT)
             connection.setRequestProperty("Accept", "application/json")
             connection.connectTimeout = TIMEOUT_MS
             connection.readTimeout = TIMEOUT_MS
@@ -45,8 +45,6 @@ class MapGeocoder(private val service: String = NOMINATIM) {
     }
 
     private companion object {
-        const val NOMINATIM = "https://nominatim.openstreetmap.org/search"
-        const val AGENT = "Superkassa/1.0 (kassa workplace)"
         const val TIMEOUT_MS = 8_000
         const val LIMIT = 5
 

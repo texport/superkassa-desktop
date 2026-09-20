@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun SectionCard(
     title: String,
     modifier: Modifier = Modifier,
+    info: String? = null,
     trailing: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -47,7 +49,12 @@ fun SectionCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
             ) {
-                SectionTitle(title, Modifier.weight(1f))
+                SectionTitle(title)
+                // Объяснение раздела живёт под значком у заголовка, а не
+                // абзацем под ним: абзац читают один раз, а место он занимает
+                // всегда. Значок — общий для всех карточек, второго не заводим.
+                info?.let { InfoTip(it) }
+                Spacer(Modifier.weight(1f))
                 trailing()
             }
             content()

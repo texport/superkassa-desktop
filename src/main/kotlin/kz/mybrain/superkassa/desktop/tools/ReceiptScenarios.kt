@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.tools
 
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.ParentTicket
 import kz.mybrain.superkassa.desktop.server.ReceiptItem

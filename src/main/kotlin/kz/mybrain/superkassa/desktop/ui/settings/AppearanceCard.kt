@@ -1,20 +1,12 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SettingStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
  * Светлая или тёмная касса.
@@ -27,18 +19,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 fun AppearanceCard(session: Session) {
     val texts = LocalStrings.current
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
-        ) {
-            Text(texts.settings.appearance, style = MaterialTheme.typography.titleMedium)
-            ChoiceSegments(
-                options = Appearance.entries,
-                selected = session.appearance,
-                label = { it.title(texts.settings) }
-            ) { session.switchAppearance(it) }
-        }
+    SectionCard(title = texts.settings.appearance) {
+        ChoiceSegments(
+            options = Appearance.entries,
+            selected = session.appearance,
+            label = { it.title(texts.settings) }
+        ) { session.switchAppearance(it) }
     }
 }
 

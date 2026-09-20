@@ -62,7 +62,7 @@ class JournalTextsTest {
             val texts = journalTexts(language)
             val pairs = listOf(
                 "history.emptyDay" to (texts.history.emptyDay to texts.history.emptyDayHint),
-                "history.emptyForType" to (texts.history.emptyForType to texts.history.emptyForTypeHint),
+                "history.emptyForFilter" to (texts.history.emptyForFilter to texts.history.emptyForFilterHint),
                 "shifts.none" to (texts.shifts.none to texts.shifts.noneHint),
                 "shifts.emptyDocuments" to (texts.shifts.emptyDocuments to texts.shifts.emptyDocumentsHint),
                 "returns.chooseBasis" to (texts.returns.chooseBasis to texts.returns.chooseBasisHint),

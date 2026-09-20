@@ -18,11 +18,11 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.enrollKkm
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.KkmInitRequest
 import kz.mybrain.superkassa.desktop.server.cabinet.issueToken
 import kz.mybrain.superkassa.desktop.server.cabinet.register
-import kz.mybrain.superkassa.desktop.server.initKkm
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.EnvironmentPicker
 import kz.mybrain.superkassa.desktop.ui.components.ProviderPicker
@@ -120,7 +120,6 @@ fun AdminStepCard(
                         val what = setup.stepAdmin
                         if (connect(session, cabinet, draft, Registration(chosenProvider, chosenEnvironment, pin), what)) {
                             draft.clear()
-                            session.refreshKkms()
                             onDone()
                         }
                     }
@@ -134,7 +133,8 @@ fun AdminStepCard(
  * Выдаёт токен и заводит кассу в узле одним действием.
  *
  * Между выдачей токена и заведением кассы токен нигде не задерживается:
- * ни на экране, ни в настройках рабочего места.
+ * ни на экране, ни в настройках рабочего места. Само заведение — общий
+ * ход [enrollKkm]: он же зовётся из настроек ОФД и из паспорта кассы.
  */
 private suspend fun connect(
     session: Session,
@@ -154,9 +154,7 @@ private suspend fun connect(
         ofdToken = issued.token.toString(),
         adminPin = registration.adminPin
     )
-    // В подпись сообщения идёт название шага, а не пин: строка отказа
-    // видна на экране, и пин администратора в ней быть не должен.
-    return session.guard(what) { session.client.initKkm(request, BOOTSTRAP_PIN) } != null
+    return session.enrollKkm(request, what, draft.name) != null
 }
 
 /** Оператор, чей кабинет заводит кассы в этом рабочем месте. */
@@ -164,11 +162,3 @@ private const val CABINET_PROVIDER = "BFD"
 
 /** Чем и от чьего имени касса заводится в узле. */
 private data class Registration(val provider: String, val environment: String, val adminPin: String)
-
-/**
- * Пин, которым узел подтверждает право заводить кассы.
- *
- * Это не пин будущей кассы: её администратор получает тот, что набран
- * в поле рядом.
- */
-private const val BOOTSTRAP_PIN = "0000"

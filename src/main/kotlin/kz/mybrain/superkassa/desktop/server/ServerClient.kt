@@ -17,20 +17,22 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
+import kz.mybrain.superkassa.desktop.app.log.LogSource
+import kz.mybrain.superkassa.desktop.app.log.logged
 import java.math.BigDecimal
 
 /**
  * Отказ узла, доведённый до приложения целиком.
  *
  * Узел отвечает кодом и трёхъязычным текстом; приложение показывает кассиру
- * русскую часть, но код сохраняет — по нему поддержка отличает «недостаточно
- * наличных» от «касса заблокирована», не читая журналы.
+ * часть на его языке, а код сохраняет — по нему поддержка отличает
+ * «недостаточно наличных» от «касса заблокирована», не читая журналы.
  */
 class ServerRefusal(
     val code: String,
-    val russianText: String,
+    val words: TrilingualText,
     val httpStatus: Int
-) : Exception("$code: $russianText")
+) : Exception("$code: ${words.ru}")
 
 /**
  * Обмен с узлом Суперкассы.
@@ -39,9 +41,18 @@ class ServerRefusal(
  * по петле и без шифрования: наружу порт не выставляется.
  */
 class ServerClient(
-    private val baseUrl: String = DEFAULT_URL,
+    /**
+     * Откуда брать адрес узла — при каждом обращении, а не однажды.
+     *
+     * Адрес меняют в настройках рабочего места, и перезапускать кассу ради
+     * этого незачем: следующее обращение уходит уже по новому адресу.
+     */
+    private val address: () -> String = { DEFAULT_URL },
     private val http: HttpClient = defaultHttpClient()
 ) {
+    /** Адрес узла с прежним именем: так его читают тесты и обращения ниже. */
+    private val baseUrl: String get() = address().trimEnd('/')
+
     /**
      * Выполняет запрос и разбирает ответ, отделяя отказ по существу
      * от недоступности узла.
@@ -60,31 +71,42 @@ class ServerClient(
     }
 
     suspend fun call(method: HttpMethod, path: String, body: Any?, pin: String?): HttpResponse =
-        http.request(baseUrl + path) {
-            this.method = method
-            contentType(ContentType.Application.Json)
-            if (pin != null) {
-                headers.append("Authorization", pin)
-            }
-            if (body != null) {
-                setBody(body)
+        logged(LogSource.Node, method, path, body) {
+            http.request(baseUrl + path) {
+                this.method = method
+                contentType(ContentType.Application.Json)
+                if (pin != null) {
+                    headers.append("Authorization", pin)
+                }
+                if (body != null) {
+                    setBody(body)
+                }
             }
         }
 
     /**
      * Обращение за ответом не в JSON — например, за картинкой печатной формы.
+     *
+     * Тело здесь тоже бывает: печатная форма документа, пробитого на другой
+     * кассе, рисуется по переданным данным, а не по хранимому документу.
      */
     suspend fun callAccepting(
         method: HttpMethod,
         path: String,
         accept: ContentType,
-        pin: String?
+        pin: String?,
+        body: Any? = null
     ): HttpResponse =
-        http.request(baseUrl + path) {
-            this.method = method
-            headers.append(HttpHeaders.Accept, accept.toString())
-            if (pin != null) {
-                headers.append("Authorization", pin)
+        logged(LogSource.Node, method, path, body) {
+            http.request(baseUrl + path) {
+                this.method = method
+                headers.append(HttpHeaders.Accept, accept.toString())
+                if (pin != null) {
+                    headers.append("Authorization", pin)
+                }
+                if (body != null) {
+                    setBody(body)
+                }
             }
         }
 
@@ -93,26 +115,15 @@ class ServerClient(
         val error = runCatching { lenientJson.decodeFromString<ServerError>(text) }.getOrNull()
         return ServerRefusal(
             code = error?.code ?: "HTTP_${response.status.value}",
-            russianText = russianPart(error?.message) ?: text.take(MAX_ERROR_LENGTH),
+            words = TrilingualText.of(error?.message ?: text.take(MAX_ERROR_LENGTH)),
             httpStatus = response.status.value
         )
-    }
-
-    /** Узел склеивает три языка в одну строку — кассиру нужна одна. */
-    private fun russianPart(message: String?): String? {
-        val text = message?.takeIf { it.isNotBlank() } ?: return null
-        val start = text.indexOf(RU_PREFIX)
-        if (start < 0) return text
-        val rest = text.substring(start + RU_PREFIX.length)
-        return rest.substringBefore(SEPARATOR).trim()
     }
 
     fun close() = http.close()
 
     companion object {
         const val DEFAULT_URL: String = "http://127.0.0.1:8080"
-        private const val RU_PREFIX = "RU:"
-        private const val SEPARATOR = " | "
         private const val MAX_ERROR_LENGTH = 200
 
         val lenientJson: Json = Json {

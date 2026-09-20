@@ -1,24 +1,23 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshKkms
+import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Branding
+import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.updateBranding
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SettingStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -51,44 +50,41 @@ fun PrintFormCard(session: Session) {
         }
     }
 
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+    SectionCard(title = texts.settings.printForm) {
+        Text(texts.settings.receiptLanguage, style = MaterialTheme.typography.bodyMedium)
+        ChoiceSegments(
+            options = ReceiptLanguageChoice.entries,
+            selected = ReceiptLanguageChoice.byCode(branding.language),
+            label = { it.title(texts.settings) },
+            enabled = programming
+        ) { save(branding.copy(language = it.code)) }
+
+        LabelWithTip(texts.settings.printLayout, texts.settings.printLayoutHint)
+        // Перечень макетов — от узла: свой список не узнал бы о новой
+        // ширине ленты, пока приложение не перевыпустят. Правило
+        // «код в миллиметры» остаётся здесь: узел везёт ширину числом.
+        val layouts = session.dictionaries[Dictionary.PaperWidths].orEmpty()
+        ChoiceSegments(
+            options = layouts.ifEmpty { null }?.map { it.code } ?: PrintLayout.entries.map { it.code },
+            selected = PrintLayout.byMillimetres(branding.paperWidthMm).code,
+            label = { code -> layoutTitle(session, code, texts.settings) },
+            enabled = programming
+        ) { save(branding.copy(paperWidthMm = PrintLayout.millimetresOf(it))) }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(texts.settings.printForm, style = MaterialTheme.typography.titleMedium)
-
-            Text(texts.settings.receiptLanguage, style = MaterialTheme.typography.bodyMedium)
-            ChoiceSegments(
-                options = ReceiptLanguageChoice.entries,
-                selected = ReceiptLanguageChoice.byCode(branding.language),
-                label = { it.title(texts.settings) },
-                enabled = programming
-            ) { save(branding.copy(language = it.code)) }
-
-            LabelWithTip(texts.settings.printLayout, texts.settings.printLayoutHint)
-            ChoiceSegments(
-                options = PrintLayout.entries,
-                selected = PrintLayout.byMillimetres(branding.paperWidthMm),
-                label = { it.title(texts.settings) },
-                enabled = programming
-            ) { save(branding.copy(paperWidthMm = it.millimetres)) }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Switch(
-                    checked = branding.printOfdTicketAds ?: true,
-                    enabled = programming,
-                    onCheckedChange = { save(branding.copy(printOfdTicketAds = it)) }
-                )
-                Text(texts.settings.printOfdAds, style = MaterialTheme.typography.bodyMedium)
-                InfoTip(texts.settings.printOfdAdsHint)
-            }
-
-            ReceiptLinesSection(branding, programming) { save(it) }
-            if (!programming) ProgrammingGate(session)
+            Switch(
+                checked = branding.printOfdTicketAds ?: true,
+                enabled = programming,
+                onCheckedChange = { save(branding.copy(printOfdTicketAds = it)) }
+            )
+            Text(texts.settings.printOfdAds, style = MaterialTheme.typography.bodyMedium)
+            InfoTip(texts.settings.printOfdAdsHint)
         }
+
+        ReceiptLinesSection(branding, programming) { save(it) }
+        if (!programming) ProgrammingGate(session)
     }
 }
 
@@ -119,17 +115,39 @@ enum class ReceiptLanguageChoice(val code: String, val title: (SettingStrings) -
  * макетов). Здесь три сегмента, а не число: кассиру нужен принтер, а не
  * миллиметры.
  */
-enum class PrintLayout(val millimetres: Int, val title: (SettingStrings) -> String) {
-    Narrow(58, { it.layoutTape58 }),
-    Wide(80, { it.layoutTape80 }),
-    Fullscreen(0, { it.layoutFullscreen });
+enum class PrintLayout(val code: String, val millimetres: Int, val title: (SettingStrings) -> String) {
+    Narrow("58", 58, { it.layoutTape58 }),
+    Wide("80", 80, { it.layoutTape80 }),
+    Fullscreen(FULLSCREEN, 0, { it.layoutFullscreen });
 
     companion object {
         /** Макет по значению узла; неизвестное читается как широкая лента. */
         fun byMillimetres(value: Int?): PrintLayout =
             entries.firstOrNull { it.millimetres == value } ?: Wide
+
+        /**
+         * Ширина в миллиметрах по коду справочника.
+         *
+         * `FULLSCREEN` — не ширина, а её отсутствие: страница печатается
+         * без ограничения, и узел ждёт ноль.
+         */
+        fun millimetresOf(code: String): Int =
+            if (code == FULLSCREEN) 0 else code.toIntOrNull() ?: Wide.millimetres
     }
 }
+
+/** Полная страница вместо ленты, как её называет справочник узла. */
+private const val FULLSCREEN = "FULLSCREEN"
+
+/**
+ * Название макета: своё для знакомых, от узла для остальных.
+ *
+ * Свои названия точнее — «Лента 58 мм» вместо «58мм», — но кончаются
+ * на первом же макете, которого приложение ещё не знает.
+ */
+private fun layoutTitle(session: Session, code: String, texts: SettingStrings): String =
+    PrintLayout.entries.firstOrNull { it.code == code }?.title(texts)
+        ?: session.titleOf(Dictionary.PaperWidths, code)
 
 /**
  * Подпись выбора и объяснение под значком рядом.

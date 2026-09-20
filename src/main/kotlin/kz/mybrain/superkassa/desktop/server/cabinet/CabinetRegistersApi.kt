@@ -33,5 +33,25 @@ suspend fun CabinetClient.registerState(token: String, id: String): RegisterStat
     request(HttpMethod.Get, "/api/cash-registers/$id/state", token = token)
 
 /** Выдаёт кассе новый технический токен. */
-suspend fun CabinetClient.issueToken(token: String, id: String): TokenIssued =
-    request(HttpMethod.Post, "/api/cash-registers/$id/token", token = token)
+/**
+ * Выпуск токена. Кабинет показывает значение только после подтверждения
+ * сервиса приёма; не успел — отвечает `PENDING`, и запрос повторяется
+ * с тем же ключом идемпотентности, пока подтверждение не придёт.
+ */
+suspend fun CabinetClient.issueToken(token: String, id: String): TokenIssued {
+    val key = java.util.UUID.randomUUID().toString()
+    var issued: TokenIssued = requestToken(token, id, key)
+    var attempts = 1
+    while (issued.pending && attempts < TOKEN_ATTEMPTS) {
+        kotlinx.coroutines.delay(TOKEN_RETRY_MS)
+        issued = requestToken(token, id, key)
+        attempts++
+    }
+    return issued
+}
+
+private suspend fun CabinetClient.requestToken(token: String, id: String, key: String): TokenIssued =
+    request(HttpMethod.Post, "/api/cash-registers/$id/token", token = token, idempotencyKey = key)
+
+private const val TOKEN_ATTEMPTS = 10
+private const val TOKEN_RETRY_MS = 1000L

@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
+import kz.mybrain.superkassa.desktop.app.CabinetProblem
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.server.cabinet.ApplicationPrepared
 import kz.mybrain.superkassa.desktop.server.cabinet.ApplicationSent
@@ -27,11 +28,13 @@ suspend fun submitApplication(
     registerId: String,
     placeId: String,
     reason: DeregistrationReason,
-    comment: String
-): ApplicationSent? {
-    val token = cabinet.token ?: return null
+    comment: String,
+    onStage: (ApplicationStage) -> Unit = {}
+): ApplicationOutcome {
+    val token = cabinet.token ?: return ApplicationOutcome.Failed(CabinetProblem.SessionExpired)
     val client = cabinet.client
-    return cabinet.guard {
+    val sent = cabinet.guard {
+        onStage(ApplicationStage.Preparing)
         val prepared: ApplicationPrepared = when (kind) {
             ActionKind.Registration -> client.prepareRegistration(token, registerId)
             ActionKind.Reregistration -> client.prepareReregistration(
@@ -45,13 +48,32 @@ suspend fun submitApplication(
                 DeregistrationRequest(reason = reason.code, comment = comment.trim().takeIf { it.isNotBlank() })
             )
         }
+        onStage(ApplicationStage.Signing)
         val sign = SignRequest(prepared.actionId, cabinet.sign(prepared.payloadToSign))
+        onStage(ApplicationStage.Sending)
         when (kind) {
             ActionKind.Registration -> client.signRegistration(token, registerId, sign)
             ActionKind.Reregistration -> client.signReregistration(token, registerId, sign)
             ActionKind.Deregistration -> client.signDeregistration(token, registerId, sign)
         }
     }
+    // Помеха читается сразу, пока каркас окна не забрал её во всплывающую строку:
+    // владелец должен видеть причину под кнопкой, а не ловить её три секунды.
+    return sent?.let(ApplicationOutcome::Sent)
+        ?: ApplicationOutcome.Failed(cabinet.problem ?: CabinetProblem.SignDeclined(""))
+}
+
+/** На каком шаге подача: каждый ждёт своего — кабинета, владельца с ключом, снова кабинета. */
+enum class ApplicationStage(val title: (CabinetTexts) -> String) {
+    Preparing({ it.stagePreparing }),
+    Signing({ it.stageSigning }),
+    Sending({ it.stageSending })
+}
+
+/** Чем закончилась подача: отправлено либо не отправлено — и почему. */
+sealed interface ApplicationOutcome {
+    data class Sent(val sent: ApplicationSent) : ApplicationOutcome
+    data class Failed(val problem: CabinetProblem) : ApplicationOutcome
 }
 
 /** Что владелец подаёт в ИСНА. */

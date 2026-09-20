@@ -89,6 +89,48 @@ object MapColors {
     /** Подложка там, где плитка не пришла. */
     val empty: Color
         @Composable get() = MaterialTheme.colorScheme.surfaceContainerHighest
+
+    /**
+     * Касса на карте аналитики.
+     *
+     * Вторичная роль, а не главная: главной покрашена та касса, карточку
+     * которой сейчас читают, и сотня равно ярких знаков не дала бы её
+     * разглядеть.
+     */
+    val pin: Color
+        @Composable get() = MaterialTheme.colorScheme.secondary
+}
+
+/**
+ * Столбики и доли торговой сводки.
+ *
+ * Своих цветов у графиков нет: столбик выручки красит главная роль —
+ * это и есть главное число экрана, — а тот, на который сейчас смотрят,
+ * берёт третичную, как и выбранная точка на карте.
+ *
+ * Доли видов расчётов различаются ролями схемы по кругу, а не своим
+ * набором цветов: видов расчётов шесть, и шесть придуманных оттенков
+ * спорили бы с оформлением приложения в тёмной теме.
+ */
+object ChartColors {
+    val bar: Color
+        @Composable get() = MaterialTheme.colorScheme.primary
+
+    val barChosen: Color
+        @Composable get() = MaterialTheme.colorScheme.tertiary
+
+    val axis: Color
+        @Composable get() = MaterialTheme.colorScheme.outlineVariant
+
+    val shares: List<Color>
+        @Composable get() = listOf(
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.tertiary,
+            MaterialTheme.colorScheme.secondary,
+            MaterialTheme.colorScheme.primaryContainer,
+            MaterialTheme.colorScheme.tertiaryContainer,
+            MaterialTheme.colorScheme.secondaryContainer
+        )
 }
 
 /** Насколько прозрачен ореол своего места. */

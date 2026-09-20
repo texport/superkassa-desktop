@@ -3,18 +3,14 @@ package kz.mybrain.superkassa.desktop.ui.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,7 +23,8 @@ import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.strings.LoginStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
@@ -70,11 +67,7 @@ internal fun KkmList(
         if (at >= 0) state.scrollToItem(at)
     }
 
-    OutlinedCard(
-        modifier = modifier.fillMaxWidth()
-            .padding(horizontal = Spacing.roomy)
-            .padding(top = Spacing.snug)
-    ) {
+    OutlinedCard(modifier = modifier.fillMaxWidth()) {
         ScrollableList(state = state, modifier = Modifier.fillMaxWidth().selectableGroup()) {
             items(kkms) { kkm ->
                 KkmRow(
@@ -101,7 +94,7 @@ private fun KkmRow(
     val texts = LocalStrings.current
     RecordRow(
         title = name,
-        subtitle = kkmDetail(kkm, name, texts.login.factory),
+        subtitle = kkmDetail(kkm, texts.login),
         selected = selected,
         leading = { RadioButton(selected = selected, onClick = null) },
         modifier = Modifier.selectable(selected = selected, onClick = onPick),
@@ -118,28 +111,22 @@ private fun KkmRow(
 /**
  * Чем эта касса отличается от соседней в списке.
  *
- * Название кассы — уже её регистрационный номер, и подписывать его словами
- * «регистрационный номер» в каждой строке значит повторить одно и то же
- * десять раз подряд. Остаются различия: чьё это, где стоит и какой завод.
+ * Первой строкой идёт название кассы, подписью — её номер в КГД, владелец
+ * и адрес установки. Номер подписан словом: без подписи он читался как
+ * часть названия, а кассир не понимал, какая из строк — его касса.
  */
-private fun kkmDetail(kkm: Kkm, name: String, factoryLabel: String): String = listOfNotNull(
-    // Своё название вытеснило регистрационный номер из первой строки —
-    // тогда номер уходит в подпись: по нему кассу ищут в кабинете ОФД.
-    kkm.title.takeIf { it != name },
+internal fun kkmDetail(kkm: Kkm, texts: LoginStrings): String = listOfNotNull(
+    kkmNumber(kkm, texts),
     kkm.orgTitle.takeIf { it.isNotBlank() },
     kkm.orgAddress.takeIf { it.isNotBlank() },
-    kkm.factoryNumber?.let { "$factoryLabel $it" }
-).joinToString(" · ")
+    kkm.factoryNumber?.let { "${texts.factory} $it" }
+).joinToString(Glyphs.SEPARATOR)
 
-@Composable
-internal fun SearchField(value: String, onChange: (String) -> Unit) {
-    val texts = LocalStrings.current
-    OutlinedTextField(
-        value = value,
-        onValueChange = onChange,
-        label = { Text(texts.login.search) },
-        leadingIcon = { Icon(AppIcons.kkm, contentDescription = null) },
-        singleLine = true,
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.roomy)
-    )
-}
+/**
+ * Регистрационный номер КГД с подписью.
+ *
+ * Пусто, пока касса не поставлена на учёт: номера у неё ещё нет,
+ * а подпись без числа обещает то, чего нет.
+ */
+internal fun kkmNumber(kkm: Kkm, texts: LoginStrings): String? =
+    kkm.kkmKgdId?.takeIf { it.isNotBlank() }?.let { "${texts.registrationNumber} $it" }

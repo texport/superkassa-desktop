@@ -7,39 +7,43 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterAddress
-import kz.mybrain.superkassa.desktop.server.cabinet.addresses
-import kz.mybrain.superkassa.desktop.ui.components.FieldButton
-import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.server.cabinet.addressNestedLocalities
+import kz.mybrain.superkassa.desktop.server.cabinet.resolveAddress
+import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
- * Поиск адреса в государственном регистре.
+ * Выбор адреса в государственном регистре по шагам.
  *
- * Один и тот же на заведение точки и на её переезд: это одно действие
- * владельца, и написанное дважды оно разошлось бы — в заведении найденное
- * уже показывалось строками, а в переезде подписью «Сменить адрес: …»
- * поперёк всей карточки.
+ * Свободного поиска по адресу целиком регистр не даёт: адрес собирается
+ * из региона, населённых пунктов, улицы и дома. Пунктов может быть
+ * несколько подряд — у Караганды под городом лежат районы, у Астаны
+ * районы лежат прямо под регионом, — поэтому после каждого пункта
+ * приложение спрашивает регистр, есть ли вложенные, и только затем
+ * переходит к улице. Выбор дома завершает подбор: регистр подтверждает
+ * адрес по коду РКА, и он уходит наружу целиком.
  *
- * Найденное показано теми же строками, что и остальные списки кабинета:
- * стопка текстовых кнопок не давала понять, где кончается один адрес
- * и начинается следующий.
+ * Поиск идёт за набором, а не по кнопке: регистр отвечает быстро,
+ * а кнопка у каждого шага читалась как ещё одно действие. Найденное
+ * раскрывается списком под полем, как у остальных выпадающих полей;
+ * пока ничего не набрано, в нём первые записи шага — с пустого поля
+ * подбор начинать не с чего.
  *
- * @param query что набрал владелец; хранится снаружи, потому что при
- *   выборе адреса поле заполняется его названием.
- * @param onChoose выбранный адрес; список найденного после этого гаснет.
+ * @param owner чей адрес подбирается; смена владельца (другая точка) сбрасывает
+ *   начатый путь — иначе выбранные для одной точки шаги показывались у другой.
+ * @param query подпись выбранного адреса; хранится снаружи, потому что
+ *   после выбора поле заполняется адресом.
+ * @param onChoose выбранный адрес; шаги после этого сворачиваются.
  */
 @Composable
 fun AddressSearch(
@@ -48,52 +52,64 @@ fun AddressSearch(
     texts: CabinetTexts,
     query: String,
     onQuery: (String) -> Unit,
+    owner: Any? = null,
     onChoose: (RegisterAddress) -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    var found by remember { mutableStateOf<List<RegisterAddress>>(emptyList()) }
+    val path = remember(owner) { AddressPath() }
+    // У пункта могут быть вложенные пункты: регистр спрашивается об этом
+    // сразу после выбора, и до ответа следующий шаг не показывается.
+    val last = path.chosen.lastOrNull()
+    LaunchedEffect(last) {
+        if (last?.level != LEVEL_LOCALITY) return@LaunchedEffect
+        val token = cabinet.token ?: return@LaunchedEffect
+        val nested = cabinet.guard { cabinet.client.addressNestedLocalities(token, last.id).items } ?: emptyList()
+        path.nestedResolved(nested.isNotEmpty())
+    }
+    val building = path.building
+    LaunchedEffect(building) {
+        val rka = building?.rka ?: return@LaunchedEffect
+        val token = cabinet.token ?: return@LaunchedEffect
+        val address = cabinet.guard { cabinet.client.resolveAddress(token, rka) } ?: return@LaunchedEffect
+        onQuery(addressIn(session.language, address.address, address.addressKz))
+        onChoose(address)
+        path.reset()
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-            verticalAlignment = Alignment.Top
-        ) {
-            OutlinedTextField(
-                value = query,
-                onValueChange = onQuery,
-                label = { Text(texts.placeAddress) },
-                singleLine = true,
-                modifier = Modifier.weight(1f)
-            )
-            FieldButton(text = texts.findAddress, enabled = query.isNotBlank()) {
-                scope.launch {
-                    val token = cabinet.token ?: return@launch
-                    found = cabinet.guard { cabinet.client.addresses(token, query) }?.items.orEmpty()
-                }
-            }
+        if (query.isNotBlank()) {
+            // Адрес подобран: шаги спрятаны, иначе список регионов раскрывался бы
+            // заново поверх готового адреса. Сменить его — отдельным действием.
+            Text(text = query, style = MaterialTheme.typography.bodyMedium)
+            TextButton(onClick = { onQuery("") }) { Text(texts.addressPickAgain) }
+            return@Column
         }
-        if (found.isEmpty()) return@Column
-        Text(
-            text = texts.foundAddresses,
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        found.forEachIndexed { at, address ->
-            RecordRow(
-                title = addressIn(session.language, address.address, address.addressKz),
-                subtitle = address.rka,
-                striped = at % STRIPE == 1,
-                onClick = {
-                    onChoose(address)
-                    found = emptyList()
-                }
-            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+        ) {
+            Text(text = texts.placeAddress, style = MaterialTheme.typography.titleSmall)
+            InfoTip(texts.addressStepHint)
+        }
+        path.chosen.forEachIndexed { at, level ->
+            ChosenLevel(label = path.labelAt(at, texts), name = level.name) { path.dropFrom(at) }
+        }
+        if (path.building == null && path.stepKnown) {
+            AddressStep(cabinet, texts, path)
         }
     }
 }
 
-/** Затеняется каждая вторая строка списка. */
-private const val STRIPE = 2
+/** Выбранный уровень показывается полем с названием; правка снимает его и всё, что ниже. */
+@Composable
+private fun ChosenLevel(label: String, name: String, onEdit: () -> Unit) {
+    OutlinedTextField(
+        value = name,
+        onValueChange = { onEdit() },
+        label = { Text(label) },
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth()
+    )
+}

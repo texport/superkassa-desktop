@@ -21,7 +21,17 @@ data class ReceiptItem(
     val measureUnitCode: String? = null,
     val isStorno: Boolean? = null,
     /** Наименование на казахском: печатается на чеке, в ОФД не уходит. */
-    val nameKk: String? = null
+    val nameKk: String? = null,
+    /** НТИН товара из справочника номенклатуры. */
+    val ntin: String? = null,
+    /**
+     * Акцизные марки позиции.
+     *
+     * Марка на бутылке и пачке — учётный документ КГД: без неё подакцизный
+     * товар в чеке считается непрослеженным. Марок бывает столько же,
+     * сколько единиц товара в позиции, поэтому это перечень, а не строка.
+     */
+    val listExciseStamp: List<String>? = null
 )
 
 /** Оплата по чеку. */
@@ -57,7 +67,15 @@ data class ReceiptRequest(
     val taken: BigDecimal? = null,
     val customerBin: String? = null,
     val parentTicket: ParentTicket? = null,
-    val domain: ReceiptDomain? = null
+    val domain: ReceiptDomain? = null,
+    /**
+     * Ставка НДС чека по умолчанию.
+     *
+     * Ею узел облагает позиции, у которых своей ставки нет. Касса берёт
+     * её из настроек самой кассы: у плательщика НДС чек без этого поля
+     * опирался бы на умолчание узла, а не на режим кассы.
+     */
+    val defaultVatGroup: String? = null
 )
 
 /**

@@ -29,4 +29,25 @@ class PreferencesTest {
         assertEquals(null, Preferences(file).defaultKkmId)
         file.delete()
     }
+
+    /**
+     * Свёрнутая колонка точек переживает перезапуск так же, как рельс:
+     * владелец сворачивает её, когда работает с одной кассой, и каждое
+     * утро повторять это нажатие не должен.
+     */
+    @Test
+    fun `свёрнутая колонка точек запоминается`() {
+        val home = File.createTempFile("places", "").also { it.delete() }
+        home.mkdirs()
+        val file = File(home, "kkm")
+
+        assertEquals(false, Preferences(file).placesCollapsed, "по умолчанию колонка развёрнута")
+
+        Preferences(file).placesCollapsed = true
+        assertEquals(true, Preferences(file).placesCollapsed)
+
+        Preferences(file).placesCollapsed = false
+        assertEquals(false, Preferences(file).placesCollapsed)
+        home.deleteRecursively()
+    }
 }

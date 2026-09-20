@@ -1,15 +1,10 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -36,34 +32,23 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun CabinetAddressCard(session: Session) {
     val texts = cabinetTexts(session.language)
     var address by remember { mutableStateOf(session.preferences.cabinetUrl) }
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+    SectionCard(title = texts.address, info = texts.addressHint) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(texts.address, style = MaterialTheme.typography.titleMedium)
-            Text(
-                text = texts.addressHint,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            OutlinedTextField(
+                value = address,
+                onValueChange = { address = it },
+                label = { Text(texts.address) },
+                singleLine = true,
+                modifier = Modifier.width(Sizes.fieldName)
             )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                OutlinedTextField(
-                    value = address,
-                    onValueChange = { address = it },
-                    label = { Text(texts.address) },
-                    singleLine = true,
-                    modifier = Modifier.width(Sizes.fieldName)
-                )
-                FilledTonalButton(
-                    modifier = Modifier.height(Sizes.fieldHeight),
-                    enabled = address.isNotBlank() && address != session.preferences.cabinetUrl,
-                    onClick = { session.preferences.cabinetUrl = address }
-                ) { Text(texts.save) }
-            }
+            FilledTonalButton(
+                modifier = Modifier.height(Sizes.fieldHeight),
+                enabled = address.isNotBlank() && address != session.preferences.cabinetUrl,
+                onClick = { session.preferences.cabinetUrl = address }
+            ) { Text(texts.save) }
         }
     }
 }

@@ -11,6 +11,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Kkm(
     val kkmId: String,
+    /**
+     * Название, данное кассе владельцем и сохранённое на узле.
+     *
+     * Хранит его узел, а не рабочее место: тогда одну и ту же кассу
+     * одинаково зовут за всеми машинами и видно это до входа кассира.
+     * У касс, заведённых до появления поля, названия нет.
+     */
+    val name: String? = null,
     val ofdSystemId: String? = null,
     val kkmKgdId: String? = null,
     val factoryNumber: String? = null,
@@ -23,6 +31,14 @@ data class Kkm(
     val autonomousSince: Long? = null,
     val taxRegime: String? = null,
     val defaultVatGroup: String? = null,
+    /**
+     * Закрывает ли узел смену сам по истечении суток.
+     *
+     * Узел не присылает поле, когда оно ложно, поэтому здесь ложь и стоит
+     * значением по умолчанию: иначе отсутствие поля читалось бы как
+     * включённое автозакрытие.
+     */
+    val autoCloseShift: Boolean = false,
     val ofdServiceInfo: OrgInfo? = null,
     val branding: Branding? = null
 ) {
@@ -131,6 +147,15 @@ data class TicketAd(
     val version: Long = 0,
     val text: String
 )
+
+/**
+ * Название кассы для узла.
+ *
+ * Пустое значение снимает название: касса снова показывается
+ * регистрационным номером.
+ */
+@Serializable
+data class KkmNameRequest(val name: String?)
 
 @Serializable
 data class KkmInitRequest(

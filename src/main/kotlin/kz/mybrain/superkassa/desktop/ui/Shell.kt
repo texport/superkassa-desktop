@@ -1,59 +1,26 @@
 package kz.mybrain.superkassa.desktop.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.rememberTextMeasurer
-import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.adoptCabinetNames
+import kz.mybrain.superkassa.desktop.app.loadDictionaries
+import kz.mybrain.superkassa.desktop.app.refreshKkms
+import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
-import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetBar
-import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetScreen
-import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMessage
-import kz.mybrain.superkassa.desktop.ui.cash.CashScreen
-import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
-import kz.mybrain.superkassa.desktop.ui.components.KkmStatusChips
-import kz.mybrain.superkassa.desktop.ui.components.LanguagePicker
-import kz.mybrain.superkassa.desktop.ui.components.ReceiptPreview
-import kz.mybrain.superkassa.desktop.ui.dashboard.DashboardScreen
-import kz.mybrain.superkassa.desktop.ui.history.HistoryScreen
-import kz.mybrain.superkassa.desktop.ui.login.LoginScreen
-import kz.mybrain.superkassa.desktop.ui.queue.QueueScreen
-import kz.mybrain.superkassa.desktop.ui.returns.ReturnsScreen
-import kz.mybrain.superkassa.desktop.ui.sale.SaleScreen
-import kz.mybrain.superkassa.desktop.ui.settings.SettingsScreen
-import kz.mybrain.superkassa.desktop.ui.setup.ConnectKkmScreen
-import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
-import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import kz.mybrain.superkassa.desktop.ui.users.UsersScreen
+import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetDocuments
 
 /**
  * Каркас окна.
@@ -65,15 +32,22 @@ import kz.mybrain.superkassa.desktop.ui.users.UsersScreen
  */
 @Composable
 fun Shell(session: Session) {
-    var section by remember { mutableStateOf(Section.Dashboard) }
     // Кабинет живёт рядом с кассовым сеансом, а не внутри него: вход туда
     // свой — по ЭЦП владельца, — и переживает переходы между разделами.
-    val cabinet = remember { CabinetSession(CabinetClient(session.preferences.cabinetUrl)) }
+    val cabinet = remember {
+        CabinetSession(CabinetClient(session.preferences.cabinetUrl)).apply {
+            // Названия касс владелец даёт в кабинете, а нужны они кассиру
+            // на входе, когда кабинет закрыт: прочитанное уходит узлу
+            // и оттуда его видит любое рабочее место.
+            onRegisterNames = { registers -> session.adoptCabinetNames(registers) }
+        }
+    }
     // Один хост сообщений на окно: снекбар лежит поверх содержимого
     // и не сдвигает разметку под руками кассира.
     val messages = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val texts = LocalStrings.current
+    // Куда владелец углубился внутри кабинета — знает окно, а не экран
+    // под ним: стрелка возврата в приложении одна и живёт в шапке.
+    val documents = remember { CabinetDocuments() }
 
     LaunchedEffect(Unit) {
         session.refreshKkms()
@@ -87,186 +61,89 @@ fun Shell(session: Session) {
         }
     }
 
-    if (!session.signedIn) {
-        // До входа кассир видит только вход: пустые разделы без выбранной
-        // кассы отвечают отказами и ничему не учат.
-        Scaffold(
-            topBar = { BusyLine(session.busy) },
-            snackbarHost = { MessageHost(messages) }
-        ) { padding ->
-            MessageEffect(session.lastMessage, messages) { session.lastMessage = null }
-            CabinetMessageEffect(session, cabinet)
-            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-                LoginScreen(session, cabinet)
-            }
-        }
-        return
+    if (session.signedIn) {
+        WorkShell(session, cabinet, documents, messages)
+    } else {
+        DoorShell(session, cabinet, messages)
     }
+}
 
-    // Кассиру видны только его разделы: очередь, кассиры и настройки узел
+/**
+ * Окно до входа: кассир видит только вход.
+ *
+ * Пустые разделы без выбранной кассы отвечают отказами и ничему не учат,
+ * поэтому ни рельса, ни шапки кассы здесь нет.
+ */
+@Composable
+private fun DoorShell(session: Session, cabinet: CabinetSession, messages: SnackbarHostState) {
+    Scaffold(
+        topBar = { BusyLine(session.busy) },
+        snackbarHost = { MessageHost(messages) }
+    ) { padding ->
+        ShellMessages(session, cabinet, messages)
+        Row(modifier = Modifier.fillMaxSize().padding(padding)) {
+            SectionDoor(session, cabinet)
+        }
+    }
+}
+
+/**
+ * Рабочее окно: рельс разделов, шапка и содержимое.
+ *
+ * Шапка идёт во всю ширину окна, а рельс разделов — под ней: иначе шапка
+ * начиналась правее рельса и накрывала его край, а окно выглядело
+ * собранным из двух несогласованных половин.
+ */
+@Composable
+private fun WorkShell(
+    session: Session,
+    cabinet: CabinetSession,
+    documents: CabinetDocuments,
+    messages: SnackbarHostState
+) {
+    var section by remember { mutableStateOf(Section.Dashboard) }
+    // Кассиру видны только его разделы: очередь, кассиров и настройки узел
     // отдаёт администратору, и пустой отказ вместо экрана ничему не учит.
     val sections = Section.entries.filter { session.isAdmin || !it.adminOnly }
     if (section !in sections) {
         section = Section.Dashboard
     }
-
-    // Шапка идёт во всю ширину окна, а рельс разделов — под ней: иначе
-    // шапка начиналась правее рельса и накрывала его край, а окно
-    // выглядело собранным из двух несогласованных половин.
     Scaffold(
-        topBar = {
-            Column {
-                // Шапка называет то, чем владелец сейчас распоряжается:
-                // в кабинете это компания и он сам, в остальных разделах —
-                // касса и кассир. Раздел один, и шапка одна.
-                if (section == Section.Cabinet && cabinet.open) {
-                    CabinetBar(session, cabinet)
-                } else {
-                    KkmTopBar(
-                        session = session,
-                        onSignOut = { session.signOut() },
-                        onRefresh = {
-                            scope.launch {
-                                session.refreshKkms()
-                                session.refreshSelected()
-                            }
-                        }
-                    )
-                }
-                BusyLine(session.busy)
-            }
-        },
+        topBar = { ShellBar(session, cabinet, documents, section) },
         snackbarHost = { MessageHost(messages) }
     ) { padding ->
-        MessageEffect(session.lastMessage, messages) { session.lastMessage = null }
-        // Помехи кабинета идут тем же путём, что и отказы кассы: сообщение
-        // в приложении одно, и место ему внизу окна.
-        CabinetMessageEffect(session, cabinet)
+        ShellMessages(session, cabinet, messages)
         Row(modifier = Modifier.fillMaxSize().padding(padding)) {
-            // Ширина рельса считается по самой длинной подписи набора:
-            // у Material она фиксированная, и «Новая касса» упиралась
-            // в край окна. Считается так же, как ширина сегментов, —
-            // одним правилом на весь интерфейс.
-            val measurer = rememberTextMeasurer()
-            val labelStyle = MaterialTheme.typography.labelMedium
-            val widest = sections.maxOfOrNull {
-                measurer.measure(it.title(texts.sections), labelStyle).size.width
-            } ?: 0
-            val railWidth = with(LocalDensity.current) { widest.toDp() } + Spacing.roomy * 2
-            NavigationRail(
-                containerColor = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.width(if (session.railCollapsed) Sizes.rail else maxOf(railWidth, Sizes.rail)),
-                header = {
-                    // Свёрнутый рельс отдаёт ширину чеку: значки кассир знает
-                    // наизусть, а подписи нужны первую неделю.
-                    IconButton(onClick = { session.toggleRail() }) {
-                        Icon(
-                            imageVector = AppIcons.menu,
-                            contentDescription = if (session.railCollapsed) {
-                                texts.common.expand
-                            } else {
-                                texts.common.collapse
-                            }
-                        )
-                    }
-                }
-            ) {
-                sections.forEach { entry ->
-                    NavigationRailItem(
-                        selected = section == entry,
-                        onClick = { section = entry },
-                        icon = { Icon(entry.icon, contentDescription = entry.title(texts.sections)) },
-                        label = if (session.railCollapsed) {
-                            null
-                        } else {
-                            { Text(entry.title(texts.sections)) }
-                        }
-                    )
-                }
+            SectionRail(
+                sections = sections,
+                current = section,
+                collapsed = session.railCollapsed,
+                onToggle = { session.toggleRail() }
+            ) { picked ->
+                // Отказ относится к действию, а не к окну: уходя с экрана
+                // своей рукой, кассир оставлял за собой отказ настроек,
+                // и тот висел поверх аналитики и журнала до нажатия.
+                // Переход, сделанный самим приложением, сообщение
+                // не гасит: там оно как раз об итоге действия.
+                session.lastMessage = null
+                cabinet.clearProblem()
+                section = picked
             }
-            // Своего отступа у каркаса нет: поля разделов уже задают его
-            // одним значением, и второй отступ поверх делал колонку
-            // содержимого шире положенного.
-            Box(modifier = Modifier.fillMaxSize()) {
-                when (section) {
-                    Section.Dashboard -> DashboardScreen(session)
-                    Section.Sale -> SaleScreen(session)
-                    Section.Returns -> ReturnsScreen(session)
-                    Section.Cash -> CashScreen(session)
-                    Section.History -> HistoryScreen(session)
-                    Section.Queue -> QueueScreen(session)
-                    Section.Users -> UsersScreen(session)
-                    Section.Register -> ConnectKkmScreen(session, cabinet)
-                    Section.Cabinet -> CabinetScreen(session, cabinet)
-                    Section.Settings -> SettingsScreen(session)
-                }
-                // Печатная форма живёт над всеми разделами: кассир открывает
-                // её из журнала и вправе уйти в продажу, не теряя окна.
-                ReceiptPreview(
-                    image = session.preview,
-                    onPrint = { session.printDesk.printShown() },
-                    onSave = { session.printDesk.saveShown() }
-                ) { session.preview = null }
+            CompositionLocalProvider(LocalSectionSwitch provides { asked -> section = asked }) {
+                SectionContent(session, cabinet, documents, section)
             }
         }
     }
 }
 
 /**
- * Шапка приложения: какая касса и в каком она состоянии.
+ * Показ сообщений окна.
  *
- * Заголовок — номер кассы, подзаголовок — организация и смена. Плашки
- * состояния стоят до действий: кассир читает слева направо и должен
- * узнать о блокировке раньше, чем дотянется до кнопки.
+ * Помехи кабинета идут тем же путём, что и отказы кассы: сообщение
+ * в приложении одно, и место ему внизу окна.
  */
 @Composable
-private fun KkmTopBar(session: Session, onSignOut: () -> Unit, onRefresh: () -> Unit) {
-    val texts = LocalStrings.current
-    val kkm = session.selected
-    AppTopBar(
-        title = kkm?.let { session.displayName(it) } ?: texts.shell.noKkm,
-        subtitle = kkm?.let { listOfNotNull(it.orgTitle, session.whoami?.name).joinToString(SEPARATOR) }
-    ) {
-        KkmStatusChips(session)
-        IconButton(onClick = onRefresh) {
-            Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
-        }
-        LanguagePicker(session)
-        TextButton(onClick = onSignOut) { Text(texts.shell.changeCashier) }
-    }
-}
-
-/** Разделитель между сведениями в подзаголовке. */
-private const val SEPARATOR = " · "
-
-/**
- * Передаёт помеху кабинета общему показу сообщений.
- *
- * Кабинет живёт своим сеансом, а окно у приложения одно: отказ ИСНА
- * и отказ узла владелец читает в одном и том же месте, а не ищет
- * красную строку по разделам.
- */
-@Composable
-private fun CabinetMessageEffect(session: Session, cabinet: CabinetSession) {
-    val texts = cabinetTexts(session.language)
-    LaunchedEffect(cabinet.problem) {
-        val problem = cabinet.problem ?: return@LaunchedEffect
-        session.lastMessage = cabinetMessage(problem, texts)
-        cabinet.clearProblem()
-    }
-}
-
-/**
- * Полоска ожидания под шапкой.
- *
- * Один индикатор на всё окно, а не свой у каждой кнопки: обращение к узлу
- * идёт из любого раздела, и кассир должен видеть, что касса занята,
- * не гадая, какая кнопка сейчас работает. Место постоянное — полоска
- * не сдвигает содержимое, когда появляется.
- */
-@Composable
-private fun BusyLine(busy: Boolean) {
-    Box(modifier = Modifier.fillMaxWidth().height(Sizes.busyLine)) {
-        if (busy) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-    }
+private fun ShellMessages(session: Session, cabinet: CabinetSession, messages: SnackbarHostState) {
+    MessageEffect(session.lastMessage, messages) { session.lastMessage = null }
+    CabinetMessageEffect(session, cabinet)
 }

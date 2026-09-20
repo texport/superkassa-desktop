@@ -43,6 +43,7 @@ data class CabinetTexts(
     val factoryNumber: String,
     val manufactureYear: String,
     val model: String,
+    val modelNotFound: String,
     val internalName: String,
     val status: String,
     val registrationNumber: String,
@@ -61,6 +62,13 @@ data class CabinetTexts(
     val card: String,
     val cardMissing: String,
     val savePdf: String,
+    /** Версии регистрационной карты: прежние записи КГД о кассе. */
+    val cardVersions: String,
+    val cardVersionsEmpty: String,
+    val cardVersionsEmptyHint: String,
+    val cardVersion: String,
+    val cardCurrentVersion: String,
+    val cardChanged: String,
     val documents: String,
     val receipts: String,
     val shifts: String,
@@ -81,7 +89,6 @@ data class CabinetTexts(
     val makePrimary: String,
     val latitude: String,
     val longitude: String,
-    val coordinatesHint: String,
     val rename: String,
     val changeAddress: String,
     val deleteRegister: String,
@@ -139,14 +146,15 @@ data class CabinetTexts(
     val required: String,
     val optional: String,
     val internalNameHint: String,
-    val addressSearchHint: String,
     val foundAddresses: String,
     val addressChosen: String,
     val addOked: String,
     val placeRemoveBlocked: String,
     val receiptMoment: String,
-    val fiscalSign: String,
+    val kkmDocumentNumber: String,
     val noKgdMark: String,
+    /** Кабинет не отдал пакет протокола: рисовать документ не по чему. */
+    val documentDataMissing: String,
     val receiptTaken: String,
     val receiptChange: String,
     val receiptDiscount: String,
@@ -178,19 +186,7 @@ data class CabinetTexts(
     val okedSearchHint: String,
     val okedNotFound: String,
     val pickOnMap: String,
-    val pickOnMapHint: String,
-    val pickPoint: String,
     val pointNotChosen: String,
-    val zoomIn: String,
-    val zoomOut: String,
-    val myLocation: String,
-    val myLocationShown: String,
-    val myLocationPrecise: String,
-    val findHouse: String,
-    val locationAsk: String,
-    val locationAskHint: String,
-    val locationAllow: String,
-    val locationDeny: String,
     val noApplications: String,
     val applicationInFlight: String,
     val openedAt: String,
@@ -200,7 +196,38 @@ data class CabinetTexts(
     val sales: String,
     val returns: String,
     val autonomous: String,
-    val documentMoment: String
+    val documentMoment: String,
+
+    /**
+     * Номер документа у ОФД.
+     *
+     * Не регистрационный номер кассы: тот выдаёт КГД, он один на кассу
+     * и стоит в паспорте. Здесь счётчик документа, и под чужой подписью
+     * он читался как РНМ.
+     */
+    val documentNumber: String,
+    val developerSignIn: String,
+    val developerSignInHint: String,
+    val addressRegion: String,
+    val addressLocality: String,
+    val addressStreet: String,
+    val addressBuilding: String,
+    val addressStepHint: String,
+    val okedCode: String,
+    val okedName: String,
+    val okedManualHint: String,
+    val stagePreparing: String,
+    val stageSigning: String,
+    val stageSending: String,
+    val applicationFailed: String,
+    val addressPickAgain: String,
+    val addressNotFound: String,
+    /** Поиск по колонке торговых точек: их бывают сотни. */
+    val placeSearch: String,
+    val placeNotFound: String,
+    val placeNotFoundHint: String,
+    /** Надписи выбора точки на карте. */
+    val map: MapTexts
 )
 
 /** Надписи области на выбранном языке. */

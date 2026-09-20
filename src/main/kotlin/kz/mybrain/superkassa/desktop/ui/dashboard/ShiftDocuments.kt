@@ -17,15 +17,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
-import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -41,23 +44,28 @@ fun ShiftDocuments(session: Session) {
 
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
         Text(texts.dashboard.shiftDocuments, style = MaterialTheme.typography.titleMedium)
-        if (session.documents.isEmpty()) {
-            EmptyState(
+        // Список приходит вместе с состоянием смены: до ответа узла пустота
+        // читалась как «за смену не пробито ничего».
+        val state = when {
+            session.documents.isNotEmpty() -> ScreenState.Ready
+            session.busy -> ScreenState.Working
+            else -> ScreenState.Empty(
                 icon = AppIcons.history,
                 title = texts.dashboard.shiftDocuments,
                 hint = if (session.shiftOpen) texts.sale.receipt else texts.dashboard.openShiftHint
             )
-            return@Column
         }
-        OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-            ScrollableList {
-                items(session.documents) { document ->
-                    DocumentRow(
-                        document = document,
-                        documentTitle = session.titleOf(Dictionary.DocumentTypes, document.docType),
-                        onPreview = { session.printDesk.preview(document) },
-                        onPrint = { session.printDesk.print(document) }
-                    )
+        ScreenSlot(state, dense = true) {
+            OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+                ScrollableList {
+                    items(session.documents) { document ->
+                        DocumentRow(
+                            document = document,
+                            documentTitle = session.titleOf(Dictionary.DocumentTypes, document.docType),
+                            onPreview = { session.printDesk.preview(document) },
+                            onPrint = { session.printDesk.print(document) }
+                        )
+                    }
                 }
             }
         }
@@ -74,7 +82,7 @@ private fun DocumentRow(
     val texts = LocalStrings.current
     RecordRow(
         title = documentTitle,
-        subtitle = document.docNo?.toString() ?: DASH,
+        subtitle = document.docNo?.toString() ?: Glyphs.DASH,
         amount = Money.formatTiyn(document.totalAmount),
         trailing = {
             Row(
@@ -85,9 +93,9 @@ private fun DocumentRow(
                 // Код отказа вместо кнопки повтора: документ, который ОФД
                 // отверг, повторной отправкой не исправить — операцию нужно
                 // провести заново. Кассиру полезен не повтор, а причина.
-                if (document.ofdErrorCode != null) {
+                if (document.refusalCode != null) {
                     Text(
-                        text = "${texts.common.refusalCode} ${document.ofdErrorCode}",
+                        text = "${texts.common.refusalCode} ${document.refusalCode}",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.error
                     )
@@ -109,6 +117,3 @@ private fun DocumentRow(
     )
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 }
-
-/** Прочерк вместо пустого места: пустая клетка читается как недосмотр. */
-private const val DASH = "—"

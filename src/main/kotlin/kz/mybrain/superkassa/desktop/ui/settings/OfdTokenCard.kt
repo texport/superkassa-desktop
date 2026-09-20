@@ -1,12 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,8 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshKkms
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -42,50 +38,38 @@ fun OfdTokenCard(session: Session) {
     var busy by remember { mutableStateOf(false) }
     val programming = kkm.isProgramming
 
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+    SectionCard(title = texts.settings.ofdToken, info = texts.settings.tokenHint) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            verticalAlignment = Alignment.Top
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(texts.settings.ofdToken, style = MaterialTheme.typography.titleMedium)
-                InfoTip(texts.settings.tokenHint)
-            }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-                verticalAlignment = Alignment.Top
-            ) {
-                OutlinedTextField(
-                    value = token,
-                    onValueChange = { token = it.filter(Char::isDigit) },
-                    label = { Text(texts.settings.newToken) },
-                    singleLine = true,
-                    enabled = programming && !busy,
-                    modifier = Modifier.fieldWidth(texts.settings.newToken, Sizes.fieldChoice)
-                )
-                FieldButton(
-                    text = texts.settings.saveToken,
-                    enabled = programming && !busy && token.isNotBlank(),
-                    onClick = {
-                        busy = true
-                        scope.launch {
-                            val saved = session.guard(texts.settings.saveToken) {
-                                session.client.updateOfdToken(kkm.kkmId, token, session.pin)
-                            }
-                            busy = false
-                            if (saved != null) {
-                                token = ""
-                                session.refreshKkms()
-                                session.report(texts.settings.tokenSaved)
-                            }
+            OutlinedTextField(
+                value = token,
+                onValueChange = { token = it.filter(Char::isDigit) },
+                label = { Text(texts.settings.newToken) },
+                singleLine = true,
+                enabled = programming && !busy,
+                modifier = Modifier.fieldWidth(texts.settings.newToken, Sizes.fieldChoice)
+            )
+            FieldButton(
+                text = texts.settings.saveToken,
+                enabled = programming && !busy && token.isNotBlank(),
+                onClick = {
+                    busy = true
+                    scope.launch {
+                        val saved = session.guard(texts.settings.saveToken) {
+                            session.client.updateOfdToken(kkm.kkmId, token, session.pin)
+                        }
+                        busy = false
+                        if (saved != null) {
+                            token = ""
+                            session.refreshKkms()
+                            session.report(texts.settings.tokenSaved)
                         }
                     }
-                )
-            }
-            if (!programming) ProgrammingGate(session)
+                }
+            )
         }
+        if (!programming) ProgrammingGate(session)
     }
 }

@@ -22,6 +22,7 @@ import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Шаг 2: касса заводится в кабинете ОФД.
@@ -57,7 +58,7 @@ fun CabinetStepCard(
         texts = setup,
         done = draft.cabinetRegisterId != null,
         ready = draft.factoryNumber != null,
-        summary = listOfNotNull(setup.addedToCabinet, draft.systemId).joinToString(" · ")
+        summary = listOfNotNull(setup.addedToCabinet, draft.systemId).joinToString(Glyphs.SEPARATOR)
     ) {
         if (draft.cabinetRegisterId != null) return@SetupStepCard
         if (!cabinet.open) {
@@ -81,7 +82,7 @@ fun CabinetStepCard(
             cabinet = cabinet,
             texts = texts,
             known = FactoryStamp(draft.factoryNumber.orEmpty(), draft.manufactureYear.orEmpty())
-        ) { created -> draft.rememberRegister(created.id, created.kkmId) }
+        ) { created -> draft.rememberRegister(created.id, created.kkmId, created.internalName) }
     }
 }
 

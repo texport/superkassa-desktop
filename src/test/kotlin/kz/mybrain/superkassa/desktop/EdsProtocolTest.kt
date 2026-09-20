@@ -45,10 +45,11 @@ class EdsProtocolTest {
     }
 
     @Test
-    fun `подпись просится присоединённой и с развёрнутым base64`() {
+    fun `подпись просится отсоединённой и с развёрнутым base64`() {
+        // Кабинет проверяет подпись, подставляя данные сам: вложенное содержимое ему не нужно.
         val params = ncaSignRequest("cGF5bG9hZA==")["args"]?.jsonObject?.get("signingParams")?.jsonObject
         assertEquals("true", params?.get("decode")?.jsonPrimitive?.content)
-        assertEquals("true", params?.get("encapsulate")?.jsonPrimitive?.content)
+        assertEquals("false", params?.get("encapsulate")?.jsonPrimitive?.content)
         assertEquals("false", params?.get("digested")?.jsonPrimitive?.content)
     }
 

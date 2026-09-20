@@ -5,18 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.WarningAmber
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshKkms
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.ConfirmDangerDialog
 import kz.mybrain.superkassa.desktop.ui.strings.KkmSetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -100,9 +96,10 @@ fun DecommissionCard(session: Session) {
     }
 
     if (asked) {
-        ConfirmDecommission(
-            money = money,
-            who = session.displayName(kkm),
+        ConfirmDangerDialog(
+            what = money.decommissionConfirm.format(session.displayName(kkm)),
+            explain = money.decommissionHint,
+            action = money.decommission,
             cancel = moneyTexts(session.language).drawer.cancel,
             onCancel = { asked = false },
             onConfirm = {
@@ -116,39 +113,6 @@ fun DecommissionCard(session: Session) {
 /** Обводка раздела цветом отказа. */
 @Composable
 private fun errorEdge() = SolidColor(MaterialTheme.colorScheme.error)
-
-/** Последний вопрос перед удалением кассы вместе с её документами. */
-@Composable
-private fun ConfirmDecommission(
-    money: KkmSetupTexts,
-    who: String,
-    cancel: String,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onCancel,
-        icon = {
-            Icon(
-                imageVector = Icons.Outlined.WarningAmber,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.error
-            )
-        },
-        title = { Text(money.decommissionConfirm.format(who)) },
-        text = { Text(money.decommissionHint, style = MaterialTheme.typography.bodyMedium) },
-        confirmButton = {
-            Button(
-                onClick = onConfirm,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.error,
-                    contentColor = MaterialTheme.colorScheme.onError
-                )
-            ) { Text(money.decommission) }
-        },
-        dismissButton = { TextButton(onClick = onCancel) { Text(cancel) } }
-    )
-}
 
 /**
  * Снимает кассу с учёта и уводит на выбор кассы.

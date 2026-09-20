@@ -36,12 +36,18 @@ fun EmptyState(
     title: String,
     hint: String? = null,
     modifier: Modifier = Modifier,
-    dense: Boolean = false
+    dense: Boolean = false,
+    centered: Boolean = false
 ) {
+    val spacing = if (dense) Spacing.tight else Spacing.snug
     Column(
         modifier = modifier.fillMaxWidth().padding(Spacing.roomy),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(if (dense) Spacing.tight else Spacing.snug)
+        verticalArrangement = if (centered) {
+            Arrangement.spacedBy(spacing, Alignment.CenterVertically)
+        } else {
+            Arrangement.spacedBy(spacing)
+        }
     ) {
         Icon(
             imageVector = icon,

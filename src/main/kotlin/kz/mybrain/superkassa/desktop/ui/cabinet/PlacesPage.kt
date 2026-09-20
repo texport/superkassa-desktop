@@ -1,22 +1,14 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -26,14 +18,9 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
-import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
-import kz.mybrain.superkassa.desktop.ui.components.RecordRow
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
-import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -44,31 +31,43 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * списка касс было не видно, какая где стоит. Теперь список один: точки,
  * под каждой её кассы, а выбранная касса раскрывается справа вместе
  * со своими документами.
+ *
+ * Список сворачивается, как рельс разделов: когда работают с одной кассой,
+ * её карточке нужна вся ширина окна, а свёрнутая колонка остаётся рельсом
+ * значков. Выбор помнится рабочим местом.
+ *
+ * Поиск сужает обе части списка сразу: у сети бывают сотни точек, и найти
+ * среди них кассу глазами нельзя.
  */
 @Composable
 fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     val scope = rememberCoroutineScope()
-    val places = remember { mutableStateListOf<RetailPlace>() }
+    val places = cabinet.places
     var place by remember { mutableStateOf<String?>(null) }
     var register by remember { mutableStateOf<String?>(null) }
+    var query by remember { mutableStateOf("") }
+    // Первого ответа кабинета ещё не было: пустая колонка до него читалась
+    // как «точек нет», хотя их просто ещё не спросили.
+    var answered by remember(cabinet.token) { mutableStateOf(false) }
 
     suspend fun reload() {
-        val token = cabinet.token ?: return
-        cabinet.guard { cabinet.client.retailPlaces(token) }?.let { page ->
-            places.clear()
-            places.addAll(page.items)
-        }
+        cabinet.refreshPlaces()
         cabinet.refreshRegisters()
+        answered = true
     }
 
     LaunchedEffect(cabinet.token) { reload() }
 
+    val refresh = { scope.launch { reload() } }
     Row(modifier = Modifier.fillMaxSize()) {
         PlaceTree(
-            session = session,
-            cabinet = cabinet,
             texts = texts,
-            places = places,
+            collapsed = session.placesCollapsed,
+            onToggle = { session.togglePlaces() },
+            rows = placeRows(places, cabinet.registers, place, query),
+            loading = !answered,
+            query = query,
+            onQuery = { query = it },
             place = place,
             register = register,
             onPlace = {
@@ -76,110 +75,10 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
                 register = null
             },
             onRegister = { register = it },
-            onChanged = { scope.launch { reload() } }
+            footer = { PlaceCreateButtons(session, cabinet, texts, place) { refresh() } }
         )
         VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        Detail(session, cabinet, texts, places, place, register) { scope.launch { reload() } }
-    }
-}
-
-/** Дерево слева: точки и их кассы, под ними — создание того и другого. */
-@Composable
-private fun PlaceTree(
-    session: Session,
-    cabinet: CabinetSession,
-    texts: CabinetTexts,
-    places: List<RetailPlace>,
-    place: String?,
-    register: String?,
-    onPlace: (String) -> Unit,
-    onRegister: (String) -> Unit,
-    onChanged: () -> Unit
-) {
-    Column(
-        modifier = Modifier.width(Sizes.registerColumn).fillMaxHeight(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
-        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.tight, gutter = Spacing.screen) {
-            SectionCard(title = texts.places) {
-                if (places.isEmpty()) {
-                    EmptyState(AppIcons.newKkm, texts.placesEmpty, texts.placesEmptyHint)
-                }
-                places.forEach { item ->
-                    PlaceBranch(cabinet, texts, item, place, register, onPlace, onRegister)
-                }
-            }
-        }
-        CreateButtons(session, cabinet, texts, place, onChanged)
-    }
-}
-
-/** Точка и её кассы под ней. Свёрнутая точка показывает только себя. */
-@Composable
-private fun PlaceBranch(
-    cabinet: CabinetSession,
-    texts: CabinetTexts,
-    item: RetailPlace,
-    place: String?,
-    register: String?,
-    onPlace: (String) -> Unit,
-    onRegister: (String) -> Unit
-) {
-    val open = item.id == place
-    RecordRow(
-        title = item.name,
-        subtitle = "${texts.registerCount}: ${item.cashRegisterCount}",
-        selected = open && register == null,
-        onClick = { onPlace(item.id) }
-    )
-    if (!open) return
-    cabinet.registers.filter { it.retailPlace?.id == item.id }.forEach { kkm ->
-        RecordRow(
-            title = registerTitle(kkm),
-            subtitle = kkm.registrationNumber,
-            selected = kkm.id == register,
-            modifier = Modifier.padding(start = Spacing.normal),
-            onClick = { onRegister(kkm.id) },
-            trailing = { CabinetStatusChip(kkm.status, texts) }
-        )
-    }
-}
-
-/**
- * Создание точки и кассы — окнами.
- *
- * Кнопки отступают от правого края на то же поле, что и список над ними:
- * иначе кнопка шире карточки ровно на ширину полосы прокрутки, и края
- * не сходятся.
- */
-@Composable
-private fun CreateButtons(
-    session: Session,
-    cabinet: CabinetSession,
-    texts: CabinetTexts,
-    place: String?,
-    onChanged: () -> Unit
-) {
-    var addingPlace by remember { mutableStateOf(false) }
-    var addingRegister by remember { mutableStateOf(false) }
-    Column(
-        modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
-        FilledTonalButton(onClick = { addingPlace = true }, modifier = Modifier.fillMaxWidth()) {
-            Text(texts.addPlace)
-        }
-        FilledTonalButton(
-            enabled = place != null,
-            onClick = { addingRegister = true },
-            modifier = Modifier.fillMaxWidth()
-        ) { Text(texts.addRegister) }
-    }
-    if (addingPlace) {
-        AddPlaceCard(session, cabinet, texts, onDismiss = { addingPlace = false }, onAdded = onChanged)
-    }
-    if (addingRegister) {
-        AddRegisterDialog(session, cabinet, texts, onDismiss = { addingRegister = false }) { onChanged() }
+        Detail(session, cabinet, texts, places, place, register) { refresh() }
     }
 }
 
@@ -204,7 +103,7 @@ private fun RowScope.Detail(
     val chosenPlace = places.firstOrNull { it.id == place }
     val pane = Modifier.weight(1f).padding(start = Spacing.screen)
     when {
-        chosen != null -> RegisterDetails(cabinet, texts, chosen, modifier = pane)
+        chosen != null -> RegisterDetails(session, cabinet, texts, chosen, modifier = pane)
         chosenPlace != null -> PlaceCard(session, cabinet, texts, chosenPlace, pane, onChanged)
         else -> EmptyState(
             icon = AppIcons.newKkm,

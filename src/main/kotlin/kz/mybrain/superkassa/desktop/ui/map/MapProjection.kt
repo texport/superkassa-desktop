@@ -54,6 +54,20 @@ object MapProjection {
     fun tileOf(pixel: Double): Int = floor(pixel / TILE).toInt()
 
     /**
+     * Левый верхний угол окна карты в точках полотна мира.
+     *
+     * Вынесено из показа сюда: по этому углу считается место каждой
+     * плитки и каждого знака. Когда знаков много, тот же расчёт нужен
+     * и вне рисования — чтобы понять, по какой из касс пришлось нажатие.
+     */
+    fun corner(centerLatitude: Double, centerLongitude: Double, zoom: Int, width: Int, height: Int): MapPixel =
+        MapPixel(xOf(centerLongitude, zoom) - width / 2.0, yOf(centerLatitude, zoom) - height / 2.0)
+
+    /** Куда внутри окна карты попадают эти градусы. */
+    fun screen(latitude: Double, longitude: Double, zoom: Int, corner: MapPixel): MapPixel =
+        MapPixel(xOf(longitude, zoom) - corner.x, yOf(latitude, zoom) - corner.y)
+
+    /**
      * Градусы в том виде, в каком их принимает кабинет.
      *
      * Шесть знаков после запятой — примерно десятая доля метра: точнее
@@ -65,5 +79,25 @@ object MapProjection {
 
     private const val HALF_TURN = 180.0
     private const val FULL_TURN = 360.0
+
+    /**
+     * Крайняя долгота: дальше начинается та же сторона мира.
+     *
+     * Совпадает с половиной оборота не случайно — за половину оборота
+     * от нулевого меридиана и лежит стык полушарий, — но смысл у них
+     * разный, и меряются ими разные вещи.
+     */
+    const val MAX_LONGITUDE: Double = HALF_TURN
+
     private const val DEGREE_SCALE = 6
 }
+
+/**
+ * Точка полотна карты.
+ *
+ * Одним типом меряются и мир целиком, и окно карты: в первом случае
+ * это точка от начала мира, во втором — от левого верхнего угла окна.
+ * Свой тип, а не пара чисел: перепутанные местами широта с долготой
+ * и x с y — самая частая ошибка в этих пересчётах.
+ */
+data class MapPixel(val x: Double, val y: Double)
