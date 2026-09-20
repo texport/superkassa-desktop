@@ -85,7 +85,16 @@ jobs:
         shell: bash
         run: |
           jar=$(ls ../superkassa-server/server/build/libs/server-*.jar | grep -v plain | head -1)
-          ./gradlew packageDistributionForCurrentOS -PnodeJar="$(cd "$(dirname "$jar")" && pwd)/$(basename "$jar")"
+          # По метке v1.0.2 установщик называется 1.0.2; без метки остаётся
+          # значение по умолчанию из сборки.
+          version="${GITHUB_REF_NAME#v}"
+          case "$version" in
+            [0-9]*) ;;
+            *) version="" ;;
+          esac
+          ./gradlew packageDistributionForCurrentOS \
+            -PnodeJar="$(cd "$(dirname "$jar")" && pwd)/$(basename "$jar")" \
+            ${version:+-PappVersion="$version"}
 
       - name: Выложить установщик
         uses: actions/upload-artifact@v4

@@ -48,7 +48,11 @@ compose.desktop {
             // в доке и в списке программ. macOS берёт его из имени пакета —
             // ни заголовок окна, ни `-Xdock:name` его не меняют.
             packageName = "Superkassa"
-            packageVersion = "1.0.0"
+            // Версия установщика — из метки выпуска: файл обязан называть
+            // себя сам. У выпуска v1.0.1 установщики звались 1.0.0,
+            // и отличить исправленную сборку от той, в которой узел
+            // не поднимался, можно было только по дате.
+            packageVersion = providers.gradleProperty("appVersion").getOrElse("1.0.0")
             macOS {
                 bundleID = "kz.mybrain.superkassa.desktop"
                 // Значок нарисован из иконки Material 3 задачей `makeIcon`:
