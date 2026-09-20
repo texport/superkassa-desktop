@@ -28,6 +28,12 @@ jobs:
         with:
           path: superkassa-desktop
 
+      - name: Протокол
+        uses: actions/checkout@v4
+        with:
+          repository: texport/ofd-kt-proto
+          path: ofd-kt-proto
+
       - name: Кодек протокола
         uses: actions/checkout@v4
         with:
@@ -52,8 +58,13 @@ jobs:
           java-version: '21'
           distribution: 'zulu'
 
-      # Кодек ядру нужен версии, которой в Maven Central нет: собирается
-      # из исходников и кладётся в локальное хранилище перед ядром.
+      # Цепочка версий, которых в Maven Central нет: протокол 2.0.4 →
+      # кодек → ядро. Каждое звено собирается из исходников и кладётся
+      # в локальное хранилище, публиковать ничего не требуется.
+      - name: Протокол в локальное хранилище
+        working-directory: ofd-kt-proto
+        run: ./gradlew publishToMavenLocal
+
       - name: Кодек в локальное хранилище
         working-directory: ofd-proto-codec
         run: ./gradlew publishToMavenLocal
