@@ -125,7 +125,13 @@ tasks.register<JavaExec>("makeIcon") {
  * ресурса.
  */
 val nodeJar: Provider<RegularFile> = providers.gradleProperty("nodeJar")
-    .map { layout.projectDirectory.file(it) }
+    .map { named ->
+        // Узел назвали, но его там нет — собирать установщик без узла
+        // нельзя: он поставится и молча не заработает. Пустая задача
+        // копирования об этом не скажет, поэтому проверка здесь.
+        require(File(named).isFile) { "узел не найден: $named" }
+        layout.projectDirectory.file(named)
+    }
     .orElse(provider { newestNodeJar()?.let(layout.projectDirectory::file) })
 
 val bundleNode by tasks.registering(Copy::class) {

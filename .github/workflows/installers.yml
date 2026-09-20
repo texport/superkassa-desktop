@@ -85,6 +85,8 @@ jobs:
         shell: bash
         run: |
           jar=$(ls ../superkassa-server/server/build/libs/server-*.jar | grep -v plain | head -1)
+          # Без узла установщик поставится и молча не заработает.
+          test -s "$jar" || { echo "узел не собрался: $jar"; exit 1; }
           # По метке v1.0.2 установщик называется 1.0.2; без метки остаётся
           # значение по умолчанию из сборки.
           version="${GITHUB_REF_NAME#v}"
