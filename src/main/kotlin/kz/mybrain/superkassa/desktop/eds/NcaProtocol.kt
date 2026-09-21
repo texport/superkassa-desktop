@@ -137,13 +137,17 @@ private fun JsonObject.text(key: String): String? = (this[key] as? JsonPrimitive
  * Когда код и сообщение на месте — берутся они. Когда ответ незнакомой
  * формы, до экрана доходит он сам: «подпись не получена» без единой
  * подробности не даёт понять, чинить запрос или запускать NCALayer.
+ *
+ * Прежний модуль спросить стоит: незнакомый модуль NCALayer тоже отвергает
+ * ответом, и отличить это от отказа владельца можно только по словам —
+ * ими и отличает [EdsRefusal.cancelled].
  */
 private fun declined(answer: JsonObject): EdsRefusal {
     val named = listOfNotNull(answer.text("code"), answer.text("message"))
         .filter { it.isNotBlank() }
         .joinToString(Glyphs.SEPARATOR)
     val detail = named.ifBlank { answer.toString() }
-    return EdsRefusal(EdsProblem.Declined, detail.take(MAX_MESSAGE))
+    return EdsRefusal(EdsProblem.Declined, detail.take(MAX_MESSAGE), askPreviousModule = true)
 }
 
 /** Прежний модуль отвечает кодом успеха строкой. */

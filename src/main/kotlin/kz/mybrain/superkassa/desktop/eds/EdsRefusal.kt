@@ -1,6 +1,14 @@
 package kz.mybrain.superkassa.desktop.eds
 
-/** Почему подпись не получена. */
+/**
+ * Почему подпись не получена.
+ *
+ * Различие тут одно и важное: [Unreachable] — NCALayer не отвечает вовсе,
+ * и владельцу надо его запустить; [Declined] — NCALayer на связи, а подписи
+ * нет. Второе приходило под первым именем, и владелец читал «Запустите
+ * NCALayer» про работающий NCALayer. Что именно случилось во втором
+ * случае — в [EdsRefusal.detail].
+ */
 enum class EdsProblem { Unreachable, Declined }
 
 /** Отказ подписи, доведённый до экрана словами владельца. */
@@ -9,20 +17,23 @@ class EdsRefusal(
     val detail: String,
     cause: Throwable? = null,
     /**
-     * Отказ случился до того, как запрос ушёл в NCALayer.
+     * Стоит ли просить ту же подпись прежним модулем.
      *
-     * Тогда окна подписи он не открывал и о запросе не знает — повтор
-     * владелец не заметит. После отправки повторять нельзя: окно
-     * откроется второй раз.
+     * Старые выпуски NCALayer модуля `basics` не знают: на запрос к нему
+     * они молчат или закрывают соединение, не показав окна. Это и значит
+     * «спроси прежним» — а не «повтори то же самое».
+     *
+     * Нельзя, когда окно владельцу уже показали: повтор откроет его
+     * второй раз подряд там, где человек только что отказался.
      */
-    val beforeRequest: Boolean = false
+    val askPreviousModule: Boolean = false
 ) : Exception(detail, cause) {
 
     /**
-     * Владелец сам закрыл окно подписи.
+     * Владелец сам отказался подписывать.
      *
-     * Повторять запрос другим модулем в этом случае значит открыть окно
-     * второй раз подряд там, где человек только что отказался.
+     * NCALayer говорит об этом своими словами — `action.canceled`, —
+     * и повторять нечего ни тем модулем, ни другим.
      */
     val cancelled: Boolean
         get() = CANCEL_WORDS.any { detail.contains(it, ignoreCase = true) }
@@ -33,19 +44,42 @@ class EdsRefusal(
 }
 
 /**
- * Отказ связи с NCALayer.
+ * NCALayer не отвечает: рукопожатия нет или соединение не поднялось.
  *
- * В подробностях стоит имя исключения: у отказов защищённого соединения
- * сообщение бывает пустым, и в журнале оставалось «подпись не получена:
- * Unreachable» — разбирать нечем, а разбирают такое по журналу с чужой
- * машины.
- *
- * @param sent ушёл ли запрос: от этого зависит, можно ли повторить.
+ * Причина сохраняется целиком: у отказов защищённого соединения сообщение
+ * бывает пустым, и разбирают такое по журналу с чужой машины — имя класса
+ * там единственная зацепка. На экран оно не идёт: владельцу нужно
+ * «запустите NCALayer», а не `SSLException`.
  */
-internal fun ncaUnreachable(failure: Throwable, sent: Boolean): EdsRefusal = EdsRefusal(
+internal fun ncaUnreachable(failure: Throwable? = null): EdsRefusal = EdsRefusal(
     problem = EdsProblem.Unreachable,
-    detail = listOfNotNull(failure::class.simpleName, failure.message?.takeIf { it.isNotBlank() })
-        .joinToString(": "),
+    detail = NcaLayer.NO_HANDSHAKE,
+    cause = failure
+)
+
+/**
+ * Запрос ушёл, а ответа нет.
+ *
+ * Отдельный случай от недоступного NCALayer: соединение поднялось,
+ * запрос он принял — значит, запускать его не надо, и предлагать это
+ * владельцу нельзя. Зато прежний модуль спросить стоит: так выглядит
+ * выпуск NCALayer, который не знает `basics`.
+ */
+internal fun ncaSilent(failure: Throwable? = null): EdsRefusal = EdsRefusal(
+    problem = EdsProblem.Declined,
+    detail = NcaLayer.NO_ANSWER,
     cause = failure,
-    beforeRequest = !sent
+    askPreviousModule = true
+)
+
+/**
+ * Владелец закрыл окно подписи: NCALayer рвёт соединение молча.
+ *
+ * Прежде это доходило до экрана именем класса — владелец видел «Кабинет
+ * не отвечает» там, где сам и закрыл окно.
+ */
+internal fun ncaWindowClosed(failure: Throwable? = null): EdsRefusal = EdsRefusal(
+    problem = EdsProblem.Declined,
+    detail = NcaLayer.WINDOW_CLOSED,
+    cause = failure
 )

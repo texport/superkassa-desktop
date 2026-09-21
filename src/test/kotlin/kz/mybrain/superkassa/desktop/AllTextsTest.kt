@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.analyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.debugTexts
+import kz.mybrain.superkassa.desktop.ui.strings.edsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.machineTexts
 import kz.mybrain.superkassa.desktop.ui.strings.mapAddressTexts
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
@@ -50,7 +51,8 @@ class AllTextsTest {
         saleTexts(language),
         paymentTexts(language),
         setupTexts(language),
-        debugTexts(language)
+        debugTexts(language),
+        edsTexts(language)
     )
 
     @Test
