@@ -26,6 +26,21 @@ internal fun Session.adoptKkms(loaded: List<Kkm>) {
     selected = selected?.let { was -> loaded.firstOrNull { it.kkmId == was.kkmId } ?: was }
 }
 
+/**
+ * Принимает состояние одной кассы — той, что выбрана.
+ *
+ * Отдельно от списка: перечитывать весь парк после каждого чека дорого,
+ * а состояние выбранной кассы меняется у неё же. Узел переводит кассу
+ * в BLOCKED, узнав из ответа ОФД, что она снята с учёта, — и шапка
+ * обязана это показать, не дожидаясь перезахода кассира.
+ */
+internal fun Session.adoptKkm(loaded: Kkm) {
+    kkms.replaceAll { if (it.kkmId == loaded.kkmId) loaded else it }
+    settings.adoptNames(listOf(loaded))
+    calls.answered()
+    if (selected?.kkmId == loaded.kkmId) selected = loaded
+}
+
 internal fun Session.adoptShift(shift: Shift?) = board.adoptShift(shift)
 
 internal fun Session.forgetShift() = board.forgetShift()

@@ -20,10 +20,12 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RegistrationAction
 import kz.mybrain.superkassa.desktop.server.cabinet.register
 import kz.mybrain.superkassa.desktop.server.cabinet.registerState
 import kz.mybrain.superkassa.desktop.server.cabinet.registrationActions
+import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.CollapsibleCard
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
  * Выбранная касса: чем она является, как себя чувствует и что с ней делали.
@@ -87,7 +89,7 @@ fun RegisterDetails(
     }
     ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.snug) {
         RegisterPassport(session, cabinet, texts, card, state) { scope.launch { reload() } }
-        RegisterLiveBlocks(cabinet, texts, register, card, state, open, toggle) {
+        RegisterLiveBlocks(session, cabinet, texts, register, card, state, open, toggle) {
             scope.launch { reload() }
         }
         // Документы кассы живут своим экраном: в карточке остаётся переход
@@ -101,6 +103,7 @@ fun RegisterDetails(
 /** То, ради чего кассу открывают: как она себя чувствует и что с ней подано. */
 @Composable
 private fun RegisterLiveBlocks(
+    session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
     register: CabinetRegister,
@@ -110,17 +113,32 @@ private fun RegisterLiveBlocks(
     onToggle: (RegisterBlock) -> Unit,
     onDone: () -> Unit
 ) {
+    // Показания источников считаются один раз: плашка в шапке карточки
+    // и сами показания внутри обязаны говорить об одном.
+    val claims = stateClaims(
+        kkm = closableHere(register, session.kkms),
+        register = register,
+        technical = state?.technicalState,
+        shift = session.shiftState
+    )
+    val disagreeing = disagreeing(claims)
     RegisterBlockCard(
         block = RegisterBlock.Technical,
         open = open,
         onToggle = onToggle,
         title = texts.technicalState,
-        trailing = { CabinetStatusChip(state?.technicalState?.status, texts) }
+        trailing = {
+            if (disagreeing.isEmpty()) {
+                CabinetStatusChip(state?.technicalState?.status, texts)
+            } else {
+                Chip(texts.stateDisagree, StatusColors.refused)
+            }
+        }
     ) {
-        RegisterTechnical(state, texts)
+        RegisterTechnical(state, texts, claims, disagreeing)
     }
     RegisterBlockCard(RegisterBlock.Applications, open, onToggle, texts.applications) {
-        RegistrationActionsBlock(cabinet, texts, register, onDone)
+        RegistrationActionsBlock(session, cabinet, texts, register, onDone)
     }
     RegisterBlockCard(RegisterBlock.Card, open, onToggle, texts.card) {
         RegistrationCardBlock(cabinet, texts, card)

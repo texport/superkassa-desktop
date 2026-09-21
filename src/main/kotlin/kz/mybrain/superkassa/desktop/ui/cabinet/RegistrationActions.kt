@@ -17,8 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
+import kz.mybrain.superkassa.desktop.server.closeShift
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
@@ -41,6 +43,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  */
 @Composable
 fun RegistrationActionsBlock(
+    session: Session,
     cabinet: CabinetSession,
     texts: CabinetTexts,
     register: CabinetRegister,
@@ -53,6 +56,7 @@ fun RegistrationActionsBlock(
     var placeId by remember(register.id) { mutableStateOf("") }
     var outcome by remember(register.id) { mutableStateOf<ApplicationOutcome?>(null) }
     var stage by remember(register.id) { mutableStateOf<ApplicationStage?>(null) }
+    var closingShift by remember(register.id) { mutableStateOf(false) }
     val places = cabinet.places
 
     LaunchedEffect(cabinet.token) {
@@ -81,15 +85,53 @@ fun RegistrationActionsBlock(
     ApplicationFields(kind, texts, places, placeId, reason, comment, { placeId = it }, { reason = it }) {
         comment = it
     }
+    // Подача вынесена отдельно: её же повторяет окно закрытия смены,
+    // и два вызова подряд разошлись бы на первой правке.
+    val submit: suspend () -> Unit = {
+        outcome = null
+        outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
+        stage = null
+        onDone()
+    }
     BusyButton(text = stage?.title(texts) ?: texts.submitApplication, busy = cabinet.busy, enabled = kind in available) {
-        scope.launch {
-            outcome = null
-            outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
-            stage = null
-            onDone()
-        }
+        scope.launch { submit() }
     }
     ApplicationResult(outcome, texts)
+
+    // Кабинет отказал из-за открытой смены — спрашиваем прямо здесь,
+    // а не оставляем владельца идти закрывать её окольным путём.
+    val shiftBlocks = outcome.blockedByShift()
+    val closable = if (shiftBlocks) closableHere(register, session.kkms) else null
+    if (closable != null) {
+        BusyButton(text = texts.closeShiftAndDeregister, busy = session.busy) { closingShift = true }
+    } else if (shiftBlocks) {
+        Note(texts.shiftOpenElsewhere)
+    }
+    if (closingShift && closable != null) {
+        CloseShiftBeforeDeregister(texts, session.busy, onDismiss = { closingShift = false }) { pin ->
+            scope.launch {
+                val closed = session.guard(texts.closeShiftAndDeregister) {
+                    session.client.closeShift(closable.kkmId, pin)
+                }
+                closingShift = false
+                if (closed != null) submit()
+            }
+        }
+    }
+}
+
+/** Помешала ли подаче открытая смена. */
+private fun ApplicationOutcome?.blockedByShift(): Boolean =
+    (this as? ApplicationOutcome.Failed)?.problem?.isShiftOpen() == true
+
+/** Строка пояснения под кнопкой: её читают один раз и решают. */
+@Composable
+private fun Note(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /** Почему заявлений сейчас нет — вместо ряда погашенных сегментов. */

@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.app
 
 import kz.mybrain.superkassa.desktop.server.counters
+import kz.mybrain.superkassa.desktop.server.kkm
 import kz.mybrain.superkassa.desktop.server.listKkms
 import kz.mybrain.superkassa.desktop.server.queue
 import kz.mybrain.superkassa.desktop.server.shiftDocuments
@@ -38,6 +39,7 @@ suspend fun Session.refreshSelected() {
     // кассиру нужнее, чем молчание.
     val done = lastMessage
     val problems = listOfNotNull(
+        readState(kkm.kkmId),
         readShift(kkm.kkmId),
         readDocuments(kkm.kkmId),
         readQueue(kkm.kkmId),
@@ -47,6 +49,19 @@ suspend fun Session.refreshSelected() {
     // спрашивал «что сделала кнопка», и подменять этот ответ отказом
     // фонового чтения значит не ответить вовсе.
     lastMessage = done ?: problems.firstOrNull()
+}
+
+/**
+ * Перечитывает состояние самой кассы.
+ *
+ * Узел узнаёт о снятии с учёта из ответа ОФД: код 18 он переводит кассу
+ * в BLOCKED. Приложение же после чека перечитывало смену, документы,
+ * очередь и счётчики — и не саму кассу. Кассир видел отказ по существу,
+ * а в шапке по-прежнему стояло «Активна», хотя узел уже знал обратное.
+ */
+private suspend fun Session.readState(kkmId: String): Message? {
+    guard<Unit>(texts.login.reload) { adoptKkm(client.kkm(kkmId, pin)) }
+    return lastMessage
 }
 
 /**
