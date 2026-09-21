@@ -105,7 +105,7 @@ fun CabinetDocumentsScreen(
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        DocumentCounters(overview, texts)
+        DocumentCounters(overview, texts, journal.spanAll)
         ChoiceSegments(
             options = DocumentKind.entries,
             selected = kind,

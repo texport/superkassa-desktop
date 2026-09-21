@@ -1,7 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -154,9 +155,14 @@ private fun EditRow(
     onSave: (String) -> Unit
 ) {
     var value by remember(key) { mutableStateOf(initial) }
-    Row(
+    // Кнопка переносится под поле, а не сжимается рядом с ним: поле
+    // стоит фиксированной ширины, и в узкой колонке кнопке оставалось
+    // столько, что «Сохранить» разрывалось на «Сохрани» и «ть».
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.Top
+        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        itemVerticalAlignment = Alignment.Top
     ) {
         OutlinedTextField(
             value = value,

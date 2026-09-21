@@ -57,7 +57,11 @@ fun OkedsCard(
                 okeds.removeAt(at)
             }
         }
-        BusyButton(text = texts.saveOkeds, busy = busy, onClick = onSave)
+        // На пустом списке кнопка гаснет: кабинет требует ровно один
+        // основной вид и пустой набор отвергает. Прежде главным действием
+        // пустой карточки стояло сохранение того, чего нет, а отказ
+        // приходил английской строкой сервера.
+        BusyButton(text = texts.saveOkeds, busy = busy, enabled = okeds.isNotEmpty(), onClick = onSave)
     }
 }
 

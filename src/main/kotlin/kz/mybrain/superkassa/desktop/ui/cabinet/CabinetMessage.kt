@@ -21,7 +21,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
  */
 fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Message = when (problem) {
     is CabinetProblem.Refused -> Message.Refusal(refusalWords(problem.code, texts) ?: problem.text, problem.code)
-    is CabinetProblem.Unreachable -> Message.NodeUnavailable(texts.title)
+    // Молчит кабинет, а не узел кассы. Общая строка о недоступной службе
+    // называет узел, и владелец читал «Узел кассы недоступен · Кабинет БФД»
+    // про работающий узел: касса при этом пробивает чеки, а не отвечает
+    // только кабинет. Поэтому здесь стоят слова самого кабинета, а код
+    // остаётся своим — поддержка по нему отличает молчание от отказа.
+    is CabinetProblem.Unreachable -> Message.Refusal(texts.unreachable, UNREACHABLE)
     CabinetProblem.NoNcaLayer -> Message.Refusal(texts.noNcaLayer, NCALAYER)
     is CabinetProblem.SignDeclined -> Message.Refusal(signWords(problem.detail, texts), SIGN)
     CabinetProblem.SessionExpired -> Message.Refusal(texts.sessionExpired, EXPIRED)
@@ -42,6 +47,10 @@ private fun signWords(detail: String, texts: CabinetTexts): String {
 /** Отказ кабинета словами владельца; `null` — такого кода приложение не знает. */
 private fun refusalWords(code: String, texts: CabinetTexts): String? = when (code) {
     "CASH_REGISTER_STATUS" -> texts.tokenOnlyRegistered
+    // Самый частый отказ по снятию с учёта, и приложение умеет его
+    // исправить само — кнопкой закрытия смены. Под кнопкой при этом
+    // стояло английское «Shift is open» от кабинета.
+    "SHIFT_IS_OPEN" -> texts.shiftOpenTitle
     "STATE_UNKNOWN" -> texts.hints.technicalUnknown
     "KKM_NOT_ACTIVE" -> texts.kkmNotActive
     "DEFAULT_PIN_NOT_ALLOWED" -> texts.defaultPinNotAllowed
@@ -52,3 +61,4 @@ private fun refusalWords(code: String, texts: CabinetTexts): String? = when (cod
 private const val NCALAYER = "NCALAYER"
 private const val SIGN = "SIGN"
 private const val EXPIRED = "SESSION_EXPIRED"
+private const val UNREACHABLE = "CABINET_UNREACHABLE"

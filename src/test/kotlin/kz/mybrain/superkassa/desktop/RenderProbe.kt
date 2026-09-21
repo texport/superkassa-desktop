@@ -13,6 +13,8 @@ import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
+import java.awt.Panel
+import java.awt.event.KeyEvent as AwtKeyEvent
 
 /**
  * Отрисовка экрана без окна.
@@ -65,6 +67,33 @@ class RenderProbe(
     }
 
     /**
+     * Набор текста в поле, получившее ввод.
+     *
+     * Поиск в классификаторе отзывается только на набранное: пустая
+     * строка отдаёт начало списка, и состояние «ничего не нашлось» без
+     * набора не воспроизводится вовсе. Одного кода клавиши для этого
+     * мало: набранный знак настольное поле берёт из события системы
+     * и без него нажатие пропускает. Событие собирается ровно такое,
+     * какое приходит от окна при наборе.
+     */
+    @OptIn(InternalComposeUiApi::class)
+    fun type(text: String) {
+        text.forEach { symbol ->
+            val typed = AwtKeyEvent(TYPIST, AwtKeyEvent.KEY_TYPED, 0L, 0, AwtKeyEvent.VK_UNDEFINED, symbol)
+            scene.sendKeyEvent(
+                KeyEvent(
+                    key = Key.Unknown,
+                    type = KeyEventType.Unknown,
+                    codePoint = symbol.code,
+                    nativeEvent = typed
+                )
+            )
+            frame()
+        }
+        repeat(SETTLE) { frame() }
+    }
+
+    /**
      * Нажатие мышью.
      *
      * Ярлычок места на карте выбирают именно им, и проверить выбор иначе
@@ -98,6 +127,9 @@ class RenderProbe(
     override fun close() = scene.close()
 
     private companion object {
+        /** Кто прислал набранный знак: сцена рисует без окна, и окна-хозяина у события нет. */
+        val TYPIST = Panel()
+
         const val WIDTH = 1180
         const val HEIGHT = 820
         const val FRAME = 16_000_000L

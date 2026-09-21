@@ -110,10 +110,17 @@ class CabinetRegistrationCardTest {
         assertEquals("/api/cash-registers/07aeaff1/registration-card/versions/2", seenPath)
     }
 
+    /**
+     * Адрес карты — адрес торговой точки, а не сетевой адрес кабинета.
+     *
+     * Подпись брали у экрана входа, где тем же словом назван адрес самой
+     * службы, и список изменений карты сообщал владельцу, что
+     * перерегистрация переписала «адрес кабинета».
+     */
     @Test
     fun `изменённое названо словами, а незнакомый код показан как пришёл`() {
         val texts = cabinetTexts(Language.Ru)
-        assertEquals(texts.address, cardFieldTitle("ADDRESS", texts))
+        assertEquals(texts.placeAddress, cardFieldTitle("ADDRESS", texts))
         assertEquals(texts.placeName, cardFieldTitle("RETAIL_PLACE", texts))
         assertEquals(texts.model, cardFieldTitle("KKM_MODEL", texts))
         assertEquals("СОВСЕМ_НОВОЕ_ПОЛЕ", cardFieldTitle("СОВСЕМ_НОВОЕ_ПОЛЕ", texts))

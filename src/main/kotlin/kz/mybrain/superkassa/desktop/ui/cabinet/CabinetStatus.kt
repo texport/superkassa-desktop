@@ -64,7 +64,11 @@ fun actionTitle(code: String, texts: CabinetTexts): String = when (code) {
  * как пришёл: своего списка, расходящегося с кабинетом, здесь не заводят.
  */
 fun cardFieldTitle(code: String, texts: CabinetTexts): String = when (code.uppercase()) {
-    "ADDRESS", "RKA", "CATO" -> texts.address
+    // Адрес карты — адрес торговой точки, записанный в КГД. Здесь стояла
+    // подпись «Адрес кабинета» — та, которой на экране входа назван
+    // сетевой адрес самой службы, — и список изменений карты сообщал,
+    // что перерегистрация переписала адрес кабинета.
+    "ADDRESS", "RKA", "CATO" -> texts.placeAddress
     "RETAIL_PLACE", "RETAILPLACE", "RETAIL_PLACE_ID" -> texts.placeName
     "MODEL", "KKM_MODEL", "MODEL_NAME" -> texts.model
     "FACTORY_NUMBER", "FACTORYNUMBER" -> texts.factoryNumber

@@ -43,10 +43,34 @@ class CabinetMessageTest {
         assertEquals("Server said this", assertIs<Message.Refusal>(message).text)
     }
 
+    /**
+     * Молчание кабинета названо молчанием кабинета.
+     *
+     * Прежде оно доходило общей строкой о недоступной службе, а та
+     * называет узел кассы: владелец читал «Узел кассы недоступен ·
+     * Кабинет БФД» — про узел, который в это время пробивает чеки.
+     * Строка теперь своя, кабинетная; код остаётся отдельным, и по нему
+     * поддержка отличает молчание службы от отказа по существу.
+     */
     @Test
-    fun `недоступный кабинет — это недоступная служба, а не отказ по существу`() {
+    fun `недоступный кабинет говорит о кабинете, а не об узле кассы`() {
         val message = cabinetMessage(CabinetProblem.Unreachable("Connection refused"), texts)
-        assertIs<Message.NodeUnavailable>(message)
+        val refusal = assertIs<Message.Refusal>(message)
+        assertEquals(texts.unreachable, refusal.text)
+        assertEquals("CABINET_UNREACHABLE", refusal.code)
+    }
+
+    /**
+     * Открытая смена — отказ, который приложение исправляет само.
+     *
+     * Кабинет отвечает `SHIFT_IS_OPEN` и английским пояснением, а рядом
+     * с этой строкой стоит кнопка закрытия смены по-русски: причина
+     * обязана говорить на том же языке, что и кнопка под ней.
+     */
+    @Test
+    fun `открытая смена названа словами владельца`() {
+        val message = cabinetMessage(CabinetProblem.Refused("SHIFT_IS_OPEN", "Shift is open"), texts)
+        assertEquals(texts.shiftOpenTitle, assertIs<Message.Refusal>(message).text)
     }
 
     @Test

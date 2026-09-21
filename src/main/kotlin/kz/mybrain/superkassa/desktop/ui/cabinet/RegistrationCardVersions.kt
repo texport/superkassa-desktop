@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,13 +37,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
- * Версии регистрационной карты кассы.
- *
- * Карта отражает состояние кассы на сегодня: перерегистрация переписывает
- * в ней адрес, РКА и торговую точку, и прежней записи в действующей карте
- * не остаётся. А спрашивают обычно именно прежнюю — ею подтверждают, где
- * касса стояла в те дни, за которые пришла проверка. Кабинет версии
- * хранит и отдаёт списком; приложение показывало только действующую.
+ * Версии регистрационной карты кассы. Зачем они нужны владельцу —
+ * в [RegistrationCardVersion].
  *
  * Новые версии сверху: последняя перерегистрация нужнее той, что была
  * три года назад.
@@ -109,9 +105,11 @@ private fun VersionRow(
     onOpen: () -> Unit,
     onSave: () -> Unit
 ) {
+    // Срок стоит внутри служебной части: строка списка показывает либо
+    // подпись, либо служебную часть, и подпись со сроком молча пропадала —
+    // владелец не видел того, за чем в этот раздел и приходит.
     RecordRow(
         title = "${texts.cardVersion} ${version.version}",
-        subtitle = versionPeriod(version),
         selected = chosen,
         onClick = onOpen,
         support = { VersionFacts(version, texts) },
@@ -157,16 +155,23 @@ private fun VersionCard(cabinet: CabinetSession, texts: CabinetTexts, register: 
         ) {
             DetailLine(texts.registrationNumber, shown.registrationNumber)
             DetailLine(texts.placeName, shown.retailPlaceName)
-            DetailLine(texts.address, shown.address)
+            // Адрес точки, а не сетевой адрес кабинета.
+            DetailLine(texts.placeAddress, shown.address)
             DetailLine(texts.model, shown.modelName)
         }
     }
 }
 
-/** Чем версия открыта и закрыта и что в ней стало другим. */
+/** Когда версия действовала, чем открыта и закрыта и что в ней стало другим. */
 @Composable
 private fun VersionFacts(version: RegistrationCardVersion, texts: CabinetTexts) {
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+        // Первой строкой и без подписи: диапазон дат говорит сам за себя.
+        Text(
+            text = versionPeriod(version),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         DetailLine(texts.openedAt, version.openedBy?.let { actionTitle(it, texts) })
         DetailLine(texts.closedAt, version.closedBy?.let { actionTitle(it, texts) })
         DetailLine(texts.cardChanged, changedWords(version, texts))

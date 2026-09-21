@@ -42,7 +42,9 @@ fun ReceiptCard(receipt: CabinetReceiptDetails, texts: CabinetTexts, onClose: ()
         // Фискальный признак стоит в заголовке карточки; здесь — номер документа по счётчику кассы
         DetailLine(texts.kkmDocumentNumber, receipt.kkmDocumentNumber)
         // Отметка КГД — то, ради чего чек и смотрят в кабинете: её
-        // отсутствие названо словами, а не пропущенной строкой.
+        // отсутствие названо словами, а не пропущенной строкой. Слова
+        // продолжают подпись, а не повторяют её: в строке стояло
+        // «Отметка КГД · Отметки КГД нет».
         DetailLine(texts.kgdMarked, receipt.kgdMark ?: texts.noKgdMark)
         ReceiptBreakdown(receipt, texts)
     }

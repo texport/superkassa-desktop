@@ -40,24 +40,37 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun CompanyPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     val scope = rememberCoroutineScope()
     var profile by remember { mutableStateOf<CompanyProfile?>(null) }
+    // Отказ по карточке компании держится здесь, а не берётся у сеанса:
+    // помеху сеанса каркас окна забирает во всплывающую строку и тут же
+    // гасит, и раздел про неё уже не узнает.
+    var refused by remember { mutableStateOf<String?>(null) }
     val okeds = remember { mutableStateListOf<Oked>() }
 
     suspend fun reload() {
         val token = cabinet.token ?: return
-        cabinet.guard { cabinet.client.company(token) }?.let { loaded ->
-            profile = loaded
+        val loaded = cabinet.guard { cabinet.client.company(token) }
+        refused = if (loaded == null) cabinet.problem?.let { cabinetMessage(it, texts).words() } ?: texts.unreachable else null
+        loaded?.let {
+            profile = it
             okeds.clear()
-            okeds.addAll(loaded.okeds)
+            okeds.addAll(it.okeds)
         }
     }
 
     LaunchedEffect(cabinet.token) { reload() }
 
     // Пока ответа нет, показывать нечего: реквизиты компании и её виды
-    // деятельности приходят одним обращением.
-    val state = if (profile == null) ScreenState.Working else ScreenState.Ready
+    // деятельности приходят одним обращением. Отказ — не ожидание:
+    // раздел стоял с кружком «Читается…» навсегда, а причина успевала
+    // мигнуть строкой внизу окна и погаснуть.
+    val trouble = refused.takeIf { profile == null }
+    val state = when {
+        trouble != null -> ScreenState.Trouble(trouble, onRetry = { scope.launch { reload() } })
+        profile == null -> ScreenState.Working
+        else -> ScreenState.Ready
+    }
     val titles = rememberOkedTitles(session, cabinet, okeds.toList())
-    ScreenSlot(state, Modifier.fillMaxWidth()) {
+    ScreenSlot(state, Modifier.fillMaxWidth(), centered = true) {
         ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
             CompanyCard(cabinet, profile, texts)
             OkedsCard(texts, okeds, cabinet.busy, title = titles) {
