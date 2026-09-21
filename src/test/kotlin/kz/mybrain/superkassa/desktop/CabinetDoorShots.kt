@@ -43,15 +43,23 @@ class CabinetDoorShots {
         }
     }
 
+    /**
+     * Дверь одна при любом режиме.
+     *
+     * Прежде при включённой отладке на экране входа открывался вход
+     * по набранным ИИН и БИН. Его убрали целиком: личность владельца
+     * приходит только из сертификата, и режим отладки на дверь больше
+     * не влияет.
+     */
     @Test
-    fun `обычный вид двери и вид с отладкой`() {
+    fun `дверь одна и не зависит от режима отладки`() {
         AppLog.switchDebugMode(false)
         val plain = door("signin-plain", null)
         AppLog.switchDebugMode(true)
         val debug = door("signin-debug", null)
 
         assertTrue(plain.isNotEmpty() && debug.isNotEmpty())
-        assertTrue(!plain.contentEquals(debug), "вход по ИИН и БИН виден и без отладки")
+        assertTrue(plain.contentEquals(debug), "режим отладки всё ещё меняет экран входа")
     }
 
     /**

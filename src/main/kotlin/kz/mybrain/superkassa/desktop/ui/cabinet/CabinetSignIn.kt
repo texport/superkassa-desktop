@@ -28,7 +28,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
-import kz.mybrain.superkassa.desktop.app.log.AppLog
 import kz.mybrain.superkassa.desktop.eds.NcaLayer
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
@@ -56,9 +55,9 @@ import kotlin.time.TimeSource
  * на неподвижный экран.
  *
  * Способ входа один — по ЭЦП. Вход по набранным ИИН и БИН стоял тут же
- * и предлагал ввести любые двенадцать цифр: на экране входа это выглядит
- * как вторая, неохраняемая дверь. Он остался средством отладки и виден
- * только при включённом режиме отладки — там же, где журнал обмена.
+ * и предлагал ввести любые двенадцать цифр: на экране входа это вторая,
+ * неохраняемая дверь, и владелец видел её первой. Убран целиком, вместе
+ * с подпоркой в сеансе: личность владельца приходит только из сертификата.
  */
 @Composable
 fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
@@ -86,7 +85,6 @@ fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts
                     InfoTip(texts.hints.signIn)
                 }
                 SignInAction(cabinet, session.language, texts)
-                if (AppLog.debugMode) DeveloperSignIn(session, cabinet, texts)
                 Text(
                     text = "${texts.address}: ${session.preferences.cabinetUrl}",
                     style = MaterialTheme.typography.labelMedium,

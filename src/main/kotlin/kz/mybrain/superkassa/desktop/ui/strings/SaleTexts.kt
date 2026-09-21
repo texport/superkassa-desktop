@@ -27,6 +27,9 @@ data class SaleTexts(
     val notANumber: String,
     val pricePrecision: String,
     val quantityPrecision: String,
+
+    /** Штучный товар дробным количеством не продаётся. */
+    val quantityWhole: String,
     val needName: String,
     val needPrice: String,
     val needQuantity: String,
@@ -43,6 +46,7 @@ data class SaleTexts(
     val blockKkmBlocked: String,
     val blockShiftClosed: String,
     val blockEmptyBasket: String,
+    val blockZeroPrice: String,
     val blockPaymentUnsupported: String,
     val blockDiscountScopes: String,
     val blockTotalNotPositive: String,
@@ -56,7 +60,18 @@ data class SaleTexts(
     val exciseCount: String,
     val exciseRepeated: String,
     val exciseTooLong: String,
-    val exciseDone: String
+    val exciseDone: String,
+
+    /**
+     * Окно цены для позиции, найденной в каталоге без цены.
+     *
+     * Каталог описывает товар, а цену назначает продавец, поэтому окно
+     * не сообщает об ошибке — оно спрашивает то, чего в каталоге нет.
+     */
+    val priceAsk: String,
+    val priceAskHint: String,
+    val priceAskCode: String,
+    val priceAskCancel: String
 )
 
 /** Надписи области на выбранном языке. */

@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
  *
  * Сам сеанс держит только то, что видно с экрана кабинета. Доступ владельца
  * живёт в [CabinetAccess], разбор помех — в [CabinetProblem], вход без ЭЦП —
- * в [signInAsDeveloper]. Ключ ЭЦП сюда не попадает вовсе — его держит NCALayer.
+ * Ключ ЭЦП сюда не попадает вовсе — его держит NCALayer.
  */
 class CabinetSession(
     val client: CabinetClient = CabinetClient(),
@@ -104,16 +104,10 @@ class CabinetSession(
         true
     } ?: false
 
-    /** Вход без ЭЦП — временный режим показа; всё о нём в [CabinetDeveloperEntry]. */
-    suspend fun signInAsDeveloper(iin: String, bin: String): Boolean = enterAsDeveloper(iin, bin)
-
     /** Выход: доступ отзывается и в кабинете, и здесь. */
     suspend fun signOut() {
         val current = token ?: return
-        if (current != DEVELOPER_ACCESS) {
-            guard { client.logout(current) }
-        }
-        client.debugIdentity = null
+        guard { client.logout(current) }
         access.forget()
         registers = emptyList()
         places = emptyList()
@@ -189,10 +183,5 @@ class CabinetSession(
     private fun endSession(): CabinetProblem {
         access.forget()
         return CabinetProblem.SessionExpired
-    }
-
-    companion object {
-        /** Отметка доступа в сеансе без ЭЦП: у кабинета такого доступа нет, запросы идут по личности. */
-        const val DEVELOPER_ACCESS: String = "development"
     }
 }

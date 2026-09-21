@@ -2,10 +2,11 @@ package kz.mybrain.superkassa.desktop.eds
 
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
-import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
@@ -59,7 +60,7 @@ internal class NcaExchange(private val address: String, private val signWindow: 
 
     /** Отвечает ли NCALayer: подключились и разошлись. */
     private suspend fun handshake(): Boolean = try {
-        withTimeout(HANDSHAKE) { ncaClient().use { it.webSocket(address) { } } }
+        withTimeout(HANDSHAKE) { ncaClient().use { it.knock() } }
         ncaJournal("рукопожатие прошло")
         true
     } catch (timeout: TimeoutCancellationException) {
@@ -98,17 +99,37 @@ internal class NcaExchange(private val address: String, private val signWindow: 
         }
     }
 
-    /** Обмен по поднятому соединению: запрос и первый ответ по делу. */
+    /**
+     * Обмен по поднятому соединению: запрос и первый ответ по делу.
+     *
+     * Соединение обрывается сразу, как ответ получен, а не закрывается
+     * вежливо. Вежливое закрытие ждёт закрывающего кадра от собеседника,
+     * а NCALayer его не присылает: подпись уже была в руках, а приложение
+     * стояло до истечения срока ожидания и потом объявляло отказ —
+     * владелец подписал, и подпись выбрасывалась.
+     */
     private suspend fun HttpClient.answerTo(request: JsonObject, sent: Sent): JsonObject? {
-        var answer: JsonObject? = null
-        webSocket(address) {
-            send(Frame.Text(request.toString()))
+        val session = webSocketSession(address)
+        return try {
+            session.send(Frame.Text(request.toString()))
             sent.mark = TimeSource.Monotonic.markNow()
             ncaJournal("запрос отправлен: ${ncaAddressee(request)}")
-            answer = answerFrame()
-            ncaJournal(if (answer == null) "ответа нет" else "ответ получен")
+            session.answerFrame().also {
+                ncaJournal(if (it == null) "ответа нет" else "ответ получен")
+            }
+        } finally {
+            session.cancel()
         }
-        return answer
+    }
+
+    /**
+     * Стук в дверь: соединение поднято и тут же оборвано.
+     *
+     * Здороваться незачем — нужен только ответ на вопрос, отвечает ли
+     * NCALayer вообще; а прощание зависит от собеседника и висло бы.
+     */
+    private suspend fun HttpClient.knock() {
+        webSocketSession(address).cancel()
     }
 
     /**

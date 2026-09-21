@@ -47,6 +47,7 @@ import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.Undo
 import androidx.compose.material.icons.outlined.Visibility
@@ -181,6 +182,9 @@ object AppIcons {
 
     /** Акцизная марка на позиции чека. */
     val excise: ImageVector = Icons.Outlined.QrCodeScanner
+
+    /** Цена, которую задаёт кассир: в каталоге её нет. */
+    val price: ImageVector = Icons.Outlined.Sell
 
     /** Режим отладки и журнал приложения. */
     val debug: ImageVector = Icons.Outlined.BugReport

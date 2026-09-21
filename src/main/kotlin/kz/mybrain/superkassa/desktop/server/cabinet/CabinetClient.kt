@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.server.cabinet
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.request
@@ -150,9 +151,35 @@ class CabinetClient(
             }
         }
 
+        /**
+         * Клиент кабинета со сроками ожидания.
+         *
+         * Сроков не было вовсе, и молчащий кабинет держал приложение
+         * сколько угодно: владелец подписал заявление, запрос ушёл —
+         * и экран остался занятым навсегда, без слова о причине.
+         * Отдельные сроки на соединение и на ответ: недоступную службу
+         * видно сразу, а долгий ответ на обычный запрос ждать незачем.
+         */
+        /** Сколько ждать соединения с кабинетом: его нет или он не слушает. */
+        private const val CONNECT_WAIT_MS = 10_000L
+
+        /**
+         * Сколько ждать ответа на запрос.
+         *
+         * Кабинет отвечает за сотни миллисекунд, самые долгие ответы —
+         * выпуск токена и подача заявления в КГД. Полминуты с запасом
+         * покрывают их и не оставляют экран занятым без конца.
+         */
+        private const val ANSWER_WAIT_MS = 30_000L
+
         fun defaultHttpClient(): HttpClient = HttpClient(CIO) {
             expectSuccess = false
             install(ContentNegotiation) { json(lenientJson) }
+            install(HttpTimeout) {
+                connectTimeoutMillis = CONNECT_WAIT_MS
+                requestTimeoutMillis = ANSWER_WAIT_MS
+                socketTimeoutMillis = ANSWER_WAIT_MS
+            }
         }
     }
 }

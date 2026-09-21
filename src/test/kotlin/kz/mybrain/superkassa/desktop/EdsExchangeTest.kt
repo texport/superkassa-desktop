@@ -23,6 +23,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 /**
  * Обмен с NCALayer живьём — на подставном вебсокете.
@@ -38,6 +39,29 @@ class EdsExchangeTest {
     private val payload = "cGF5bG9hZA=="
 
     private fun layer(fake: NcaFake, window: Duration = 1.seconds) = NcaLayer(fake.address, window)
+
+    /**
+     * Подпись получена — и отдана сразу, а не через срок ожидания.
+     *
+     * NCALayer закрывающего кадра не присылает и держит соединение
+     * открытым. Приложение прощалось вежливо и ждало его прощания:
+     * владелец подписывал, подпись приходила — и через три минуты
+     * он всё равно читал отказ, а подпись выбрасывалась.
+     */
+    @Test
+    fun `подпись отдаётся сразу, не дожидаясь прощания NCALayer`() {
+        NcaFake { NcaReply.Frames(listOf(SIGNED)) }.use { fake ->
+            val window = 30.seconds
+            val took = TimeSource.Monotonic.markNow()
+            val signature = runBlocking { layer(fake, window).signCms(payload) }
+
+            assertEquals("MIIC-signature", signature)
+            assertTrue(
+                took.elapsedNow() < window / 2,
+                "подпись пришла за ${took.elapsedNow()} — ждали прощания собеседника"
+            )
+        }
+    }
 
     /**
      * Соединение поднялось, запрос ушёл, ответа нет — и это не «запустите

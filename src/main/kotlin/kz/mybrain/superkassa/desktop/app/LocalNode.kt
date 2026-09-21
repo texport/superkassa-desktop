@@ -78,20 +78,30 @@ class LocalNode(
     /**
      * Запускает узел той же Java, что несёт установщик.
      *
-     * Рабочая папка — та же, где лежат настройки рабочего места: узел
-     * кладёт рядом свою базу, и она переживает переустановку кассы.
-     * Вывод уходит в файл: окна у узла нет, а разбирать отказ запуска
-     * по пустому месту нечем.
+     * Рабочее место узла — папка настроек кассы: узел кладёт туда свою
+     * базу, и она переживает переустановку кассы. Вывод уходит в файл:
+     * окна у узла нет, а разбирать отказ запуска по пустому месту нечем.
      */
     private fun launch(jar: File): Process {
         val java = javaBinary() ?: error("рантайм узла не собран")
         home.mkdirs()
-        return ProcessBuilder(java.path, "-jar", jar.path)
+        return ProcessBuilder(command(java, jar))
             .directory(home)
             .redirectErrorStream(true)
             .redirectOutput(File(home, LOG_NAME))
             .start()
     }
+
+    /**
+     * Командная строка узла.
+     *
+     * Рабочее место называется узлу явно, а не одной лишь рабочей папкой
+     * процесса: узел, которому её не назвали, считает относительный путь
+     * к базе от папки запуска и, поднятый из другой, молча заводит
+     * пустую базу — кассы и смены выглядят исчезнувшими.
+     */
+    fun command(java: File, jar: File): List<String> =
+        listOf(java.path, "-D$HOME_PROPERTY=${home.path}", "-jar", jar.path)
 
     /**
      * Чем запускать узел.
@@ -161,6 +171,9 @@ class LocalNode(
 
         /** Куда уходит вывод узла: имя рядом с настройками рабочего места. */
         private const val LOG_NAME = "node.log"
+
+        /** Свойство, которым узлу называют его рабочее место. */
+        const val HOME_PROPERTY = "superkassa.home"
 
         /** Файл, в который узел пишет свой вывод. */
         fun output(home: File = defaultHome()): File = File(home, LOG_NAME)

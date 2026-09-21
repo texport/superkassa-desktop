@@ -103,6 +103,7 @@ fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDeci
     shiftOpen = session.shiftOpen,
     positions = basket.positions.size,
     hasItemDiscount = basket.hasItemDiscount,
+    hasZeroPrice = basket.hasZeroPrice,
     receiptDiscount = amount(form.discount).value,
     total = total,
     paymentCodes = form.split.types,

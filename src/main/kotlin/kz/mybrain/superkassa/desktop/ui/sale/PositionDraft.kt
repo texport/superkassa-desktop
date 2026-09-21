@@ -23,6 +23,7 @@ enum class DraftProblem(val field: DraftField, val text: (SaleTexts) -> String) 
     QuantityNotANumber(DraftField.Quantity, { it.notANumber }),
     QuantityTooPrecise(DraftField.Quantity, { it.quantityPrecision }),
     QuantityNotPositive(DraftField.Quantity, { it.needQuantity }),
+    QuantityNotWhole(DraftField.Quantity, { it.quantityWhole }),
     DiscountNotANumber(DraftField.Discount, { it.notANumber }),
     DiscountTooPrecise(DraftField.Discount, { it.pricePrecision }),
     DiscountTooBig(DraftField.Discount, { it.discountTooBig })
@@ -102,9 +103,14 @@ data class PositionDraft(
             is Amount.TooPrecise -> listOf(DraftProblem.QuantityTooPrecise)
             is Amount.Empty -> listOf(DraftProblem.QuantityNotPositive)
             is Amount.Value -> listOfNotNull(
-                DraftProblem.QuantityNotPositive.takeIf { parsed.amount <= BigDecimal.ZERO }
+                DraftProblem.QuantityNotPositive.takeIf { parsed.amount <= BigDecimal.ZERO },
+                DraftProblem.QuantityNotWhole.takeIf { fractional(parsed.amount) }
             )
         }
+
+    /** Дробное количество у штучного товара: полторы штуки не продают. */
+    private fun fractional(counted: BigDecimal): Boolean =
+        wholeOnly(measureUnitCode) && counted.stripTrailingZeros().scale() > 0
 
     /**
      * Скидка на позицию необязательна, но не может съесть позицию целиком:
