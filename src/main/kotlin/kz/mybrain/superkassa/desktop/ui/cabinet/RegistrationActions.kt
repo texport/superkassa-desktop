@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
@@ -47,6 +48,8 @@ fun RegistrationActionsBlock(
     var placeId by remember(register.id) { mutableStateOf("") }
     var outcome by remember(register.id) { mutableStateOf<ApplicationOutcome?>(null) }
     var stage by remember(register.id) { mutableStateOf<ApplicationStage?>(null) }
+    // Начатая подача: ею же владелец её и прерывает, пока NCALayer ждёт подпись.
+    var running by remember(register.id) { mutableStateOf<Job?>(null) }
     var closingShift by remember(register.id) { mutableStateOf(false) }
     val places = cabinet.places
 
@@ -80,8 +83,13 @@ fun RegistrationActionsBlock(
     // и два вызова подряд разошлись бы на первой правке.
     val submit: suspend () -> Unit = {
         outcome = null
-        outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
-        stage = null
+        try {
+            outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
+        } finally {
+            // Отсчёт снимается и с отменённой подачи: иначе он остался бы
+            // на экране, хотя ждать его уже некому.
+            stage = null
+        }
         onDone()
     }
     val shiftBlocks = outcome.blockedByShift()
@@ -90,6 +98,14 @@ fun RegistrationActionsBlock(
     // без новой точки уходила в кабинет и возвращалась отказом, а поле
     // выбора при этом выглядело заполненным.
     val filled = kind != ActionKind.Reregistration || placeId.isNotBlank()
+    // Пока NCALayer ждёт подпись, на месте кнопки идёт отсчёт срока
+    // с отменой — тот же, что на двери входа. Прежде здесь стояла занятая
+    // кнопка: владелец до трёх минут смотрел в неподвижный экран.
+    if (stage == ApplicationStage.Signing) {
+        ApplicationSignWait(session.language, texts) { running?.cancel() }
+        ApplicationResult(outcome, texts)
+        return
+    }
     // Пока отказ по открытой смене стоит на экране, главным действием
     // становится то, которое его чинит: повторная подача кончится тем же
     // отказом, а две залитые кнопки подряд не говорят, какую нажимать.
@@ -99,7 +115,7 @@ fun RegistrationActionsBlock(
         enabled = kind in available && filled,
         kind = if (closable == null) FieldButtonKind.Filled else FieldButtonKind.Tonal
     ) {
-        scope.launch { submit() }
+        running = scope.launch { submit() }
     }
     // Погашенная кнопка сама не говорит, чего ей не хватает.
     if (!filled) Note(texts.hints.newPlaceNotChosen)
@@ -114,7 +130,9 @@ fun RegistrationActionsBlock(
     }
     if (closingShift && closable != null) {
         CloseShiftBeforeDeregister(texts, session.busy, onDismiss = { closingShift = false }) { pin ->
-            scope.launch {
+            // Подача отсюда — та же подача: её отсчёт прерывается той же
+            // отменой, и начатое запоминается там же.
+            running = scope.launch {
                 val closed = session.guard(texts.closeShiftAndDeregister) {
                     session.client.closeShift(closable.kkmId, pin)
                 }
