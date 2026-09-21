@@ -35,6 +35,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * @param striped затенена ли строка: признак чередования, а не состояния.
  * @param selected выбрана ли строка в списке, у которого есть выбранное:
  *   она берёт вторичный контейнер схемы, как выделенный пункт по Material 3.
+ * @param titleLines сколько строк отводится названию. По умолчанию одна:
+ *   в списках документов и касс название короткое, а ровный рост строк
+ *   держит столбцы сумм на одной линии. Две нужны там, где название —
+ *   формулировка классификатора: вид деятельности обрывался на середине
+ *   ровно в той части, которой один вид отличается от соседнего.
  */
 @Composable
 fun RecordRow(
@@ -47,6 +52,7 @@ fun RecordRow(
     selected: Boolean = false,
     leading: @Composable (() -> Unit)? = null,
     trailing: @Composable (() -> Unit)? = null,
+    titleLines: Int = 1,
     onClick: (() -> Unit)? = null
 ) {
     val opened = if (onClick == null) modifier else modifier.clickable(onClick = onClick)
@@ -58,7 +64,7 @@ fun RecordRow(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
+                maxLines = titleLines,
                 overflow = TextOverflow.Ellipsis
             )
         },

@@ -24,6 +24,7 @@ import kz.mybrain.superkassa.desktop.server.closeShift
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
+import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -93,15 +94,23 @@ fun RegistrationActionsBlock(
         stage = null
         onDone()
     }
-    BusyButton(text = stage?.title(texts) ?: texts.submitApplication, busy = cabinet.busy, enabled = kind in available) {
+    val shiftBlocks = outcome.blockedByShift()
+    val closable = if (shiftBlocks) closableHere(register, session.kkms) else null
+    // Пока отказ по открытой смене стоит на экране, главным действием
+    // становится то, которое его чинит: повторная подача кончится тем же
+    // отказом, а две залитые кнопки подряд не говорят, какую нажимать.
+    BusyButton(
+        text = stage?.title(texts) ?: texts.submitApplication,
+        busy = cabinet.busy,
+        enabled = kind in available,
+        kind = if (closable == null) FieldButtonKind.Filled else FieldButtonKind.Tonal
+    ) {
         scope.launch { submit() }
     }
     ApplicationResult(outcome, texts)
 
     // Кабинет отказал из-за открытой смены — спрашиваем прямо здесь,
     // а не оставляем владельца идти закрывать её окольным путём.
-    val shiftBlocks = outcome.blockedByShift()
-    val closable = if (shiftBlocks) closableHere(register, session.kkms) else null
     if (closable != null) {
         BusyButton(text = texts.closeShiftAndDeregister, busy = session.busy) { closingShift = true }
     } else if (shiftBlocks) {

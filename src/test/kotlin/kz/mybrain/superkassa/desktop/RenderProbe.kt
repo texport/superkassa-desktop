@@ -9,11 +9,13 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.unit.Density
+import kotlinx.coroutines.asCoroutineDispatcher
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
 import java.awt.Panel
+import java.util.concurrent.Executors
 import java.awt.event.KeyEvent as AwtKeyEvent
 
 /**
@@ -36,16 +38,44 @@ class RenderProbe(
 
     private var clock = 0L
 
-    private val scene = ImageComposeScene(width = width, height = height, density = Density(1f)) {
-        SuperkassaTheme(Appearance.Light) {
-            ProvideStrings(Language.Ru) { content() }
+    /**
+     * Свой поток на сцену — и состав, и действия, и рисование.
+     *
+     * Экраны запускают работу в `LaunchedEffect`, и ответ приходит в поток
+     * того, кто его завершил: запрос к узлу — в поток ввода-вывода, пауза —
+     * в поток таймера. Состояние, записанное оттуда, Compose при следующем
+     * кадре видит из другого потока и падает `Detected multithreaded access
+     * to SnapshotStateObserver`. Падение плавающее: оно зависит от того,
+     * успел ли ответ прийти до кадра, и проверка списка касс валилась
+     * через прогон.
+     *
+     * Своего потока хватает, чтобы всё это шло по одному: сцена получает
+     * его же и как контекст своих сопрограмм.
+     */
+    private val thread = Executors.newSingleThreadExecutor { work ->
+        Thread(work, "render-probe").apply { isDaemon = true }
+    }
+
+    private val scene = onScene {
+        ImageComposeScene(
+            width = width,
+            height = height,
+            density = Density(1f),
+            coroutineContext = thread.asCoroutineDispatcher()
+        ) {
+            SuperkassaTheme(Appearance.Light) {
+                ProvideStrings(Language.Ru) { content() }
+            }
         }
     }
 
+    /** Выполняет работу в потоке сцены и ждёт её: иначе поток разъедется с кадром. */
+    private fun <T> onScene(work: () -> T): T = thread.submit(work).get()
+
     /** Картинка очередного кадра: по ней видно, изменилось ли содержимое. */
-    fun frame(): ByteArray {
+    fun frame(): ByteArray = onScene {
         clock += FRAME
-        return scene.render(clock).encodeToData()?.bytes ?: ByteArray(0)
+        scene.render(clock).encodeToData()?.bytes ?: ByteArray(0)
     }
 
     /**
@@ -62,7 +92,7 @@ class RenderProbe(
      */
     @OptIn(InternalComposeUiApi::class)
     fun key(key: Key, type: KeyEventType = KeyEventType.KeyDown) {
-        scene.sendKeyEvent(KeyEvent(key = key, type = type))
+        onScene { scene.sendKeyEvent(KeyEvent(key = key, type = type)) }
         frame()
     }
 
@@ -80,14 +110,16 @@ class RenderProbe(
     fun type(text: String) {
         text.forEach { symbol ->
             val typed = AwtKeyEvent(TYPIST, AwtKeyEvent.KEY_TYPED, 0L, 0, AwtKeyEvent.VK_UNDEFINED, symbol)
-            scene.sendKeyEvent(
-                KeyEvent(
-                    key = Key.Unknown,
-                    type = KeyEventType.Unknown,
-                    codePoint = symbol.code,
-                    nativeEvent = typed
+            onScene {
+                scene.sendKeyEvent(
+                    KeyEvent(
+                        key = Key.Unknown,
+                        type = KeyEventType.Unknown,
+                        codePoint = symbol.code,
+                        nativeEvent = typed
+                    )
                 )
-            )
+            }
             frame()
         }
         repeat(SETTLE) { frame() }
@@ -100,16 +132,20 @@ class RenderProbe(
      * нельзя: обработчик нажатия живёт в самом ярлычке.
      */
     fun click(at: Offset) {
-        scene.sendPointerEvent(PointerEventType.Move, at)
-        scene.sendPointerEvent(PointerEventType.Press, at)
-        scene.sendPointerEvent(PointerEventType.Release, at)
+        onScene {
+            scene.sendPointerEvent(PointerEventType.Move, at)
+            scene.sendPointerEvent(PointerEventType.Press, at)
+            scene.sendPointerEvent(PointerEventType.Release, at)
+        }
         repeat(SETTLE) { frame() }
     }
 
     /** Колесо мыши над списком; кадры после него доводят прокрутку до конца хода. */
     fun wheel(at: Offset, ticks: Float) {
-        scene.sendPointerEvent(PointerEventType.Move, at)
-        scene.sendPointerEvent(PointerEventType.Scroll, at, scrollDelta = Offset(0f, ticks))
+        onScene {
+            scene.sendPointerEvent(PointerEventType.Move, at)
+            scene.sendPointerEvent(PointerEventType.Scroll, at, scrollDelta = Offset(0f, ticks))
+        }
         repeat(SETTLE) { frame() }
     }
 
@@ -124,7 +160,10 @@ class RenderProbe(
     fun changedFrom(before: ByteArray): Boolean =
         (1..LIMIT).any { !frame().contentEquals(before) }
 
-    override fun close() = scene.close()
+    override fun close() {
+        onScene { scene.close() }
+        thread.shutdownNow()
+    }
 
     private companion object {
         /** Кто прислал набранный знак: сцена рисует без окна, и окна-хозяина у события нет. */

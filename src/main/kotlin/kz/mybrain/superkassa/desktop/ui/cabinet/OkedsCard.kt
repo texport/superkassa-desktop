@@ -113,6 +113,10 @@ private fun OkedRow(
     RecordRow(
         title = title,
         subtitle = oked.code,
+        // Формулировка классификатора длинная, и владелец выбирает вид
+        // по словам, а не по коду: обрезанная на середине строка отнимала
+        // ровно то, чем один вид отличается от соседнего.
+        titleLines = OKED_TITLE_LINES,
         striped = striped,
         trailing = {
             Row(
@@ -146,3 +150,6 @@ private fun markPrimary(okeds: MutableList<Oked>, chosen: Oked) {
     okeds.clear()
     okeds.addAll(marked)
 }
+
+/** Сколько строк отводится формулировке вида деятельности. */
+private const val OKED_TITLE_LINES = 2
