@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,7 +12,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
@@ -58,7 +61,7 @@ internal fun PlaceTree(
         modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn).fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        TreeToggle(collapsed, onToggle)
+        TreeToggle(collapsed, texts.placesTreeHint, onToggle)
         if (collapsed) {
             PlaceRail(rows, place, register, onPlace, onRegister, Modifier.weight(1f))
             return@Column
@@ -137,12 +140,17 @@ private fun treeEmpty(texts: CabinetTexts, query: String): ScreenState.Empty {
  * в одном окне не должны выглядеть разными действиями.
  */
 @Composable
-private fun TreeToggle(collapsed: Boolean, onToggle: () -> Unit) {
+private fun TreeToggle(collapsed: Boolean, hint: String, onToggle: () -> Unit) {
     val common = LocalStrings.current.common
-    IconButton(onClick = onToggle) {
-        Icon(
-            imageVector = AppIcons.menu,
-            contentDescription = if (collapsed) common.expand else common.collapse
-        )
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        IconButton(onClick = onToggle) {
+            Icon(
+                imageVector = AppIcons.menu,
+                contentDescription = if (collapsed) common.expand else common.collapse
+            )
+        }
+        // Свёрнутая колонка — рельс шириной в одну кнопку: второй значок
+        // в неё не встаёт, да и объяснять нечего — списка не видно.
+        if (!collapsed) InfoTip(hint)
     }
 }

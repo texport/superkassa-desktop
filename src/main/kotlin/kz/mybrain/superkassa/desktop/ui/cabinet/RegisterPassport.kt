@@ -46,6 +46,7 @@ fun RegisterPassport(
 ) {
     SectionCard(
         title = texts.passport,
+        info = texts.passportHint,
         trailing = { CabinetStatusChip(register.status, texts) }
     ) {
         Text(

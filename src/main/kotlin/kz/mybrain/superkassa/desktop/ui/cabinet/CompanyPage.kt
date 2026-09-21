@@ -21,7 +21,6 @@ import kz.mybrain.superkassa.desktop.server.cabinet.CompanyProfile
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.company
 import kz.mybrain.superkassa.desktop.server.cabinet.saveOkeds
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
@@ -87,7 +86,7 @@ fun CompanyPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) 
  */
 @Composable
 private fun CompanyCard(cabinet: CabinetSession, profile: CompanyProfile?, texts: CabinetTexts) {
-    SectionCard(title = texts.company, trailing = { InfoTip(texts.companyFromEds) }) {
+    SectionCard(title = texts.company, info = texts.companyFromEds) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Spacing.hairline)

@@ -40,7 +40,11 @@ fun PlaceCard(
 ) {
     val scope = rememberCoroutineScope()
     ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.snug) {
-        SectionCard(title = texts.places, trailing = { PlaceRemoval(cabinet, texts, place, onChanged) }) {
+        SectionCard(
+            title = texts.places,
+            info = texts.placesHint,
+            trailing = { PlaceRemoval(cabinet, texts, place, onChanged) }
+        ) {
             Text(
                 text = place.name,
                 style = MaterialTheme.typography.headlineSmall,

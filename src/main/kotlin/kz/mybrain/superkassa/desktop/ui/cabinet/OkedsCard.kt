@@ -42,7 +42,7 @@ fun OkedsCard(
     title: (Oked) -> String,
     onSave: () -> Unit
 ) {
-    SectionCard(title = texts.okeds) {
+    SectionCard(title = texts.okeds, info = texts.okedsHint) {
         if (okeds.isEmpty()) {
             EmptyState(AppIcons.settings, texts.okedsEmpty, texts.okedsEmptyHint)
         }

@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -11,14 +10,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterAddress
 import kz.mybrain.superkassa.desktop.server.cabinet.addressNestedLocalities
 import kz.mybrain.superkassa.desktop.server.cabinet.resolveAddress
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.SubsectionTitle
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -86,13 +84,7 @@ fun AddressSearch(
             TextButton(onClick = { onQuery("") }) { Text(texts.addressPickAgain) }
             return@Column
         }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
-        ) {
-            Text(text = texts.placeAddress, style = MaterialTheme.typography.titleSmall)
-            InfoTip(texts.addressStepHint)
-        }
+        SubsectionTitle(texts.placeAddress, texts.addressStepHint)
         path.chosen.forEachIndexed { at, level ->
             ChosenLevel(label = path.labelAt(at, texts), name = level.name) { path.dropFrom(at) }
         }

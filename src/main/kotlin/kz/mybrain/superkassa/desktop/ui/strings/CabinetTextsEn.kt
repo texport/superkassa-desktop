@@ -110,7 +110,9 @@ internal val cabinetTextsEn = CabinetTexts(
     receiptTotal = "Total",
     operator = "Cashier",
     close = "Close",
-    companyFromEds = "The name and the details are issued by the KGD and are not editable here",
+    companyFromEds = "The company here is the one whose digital signature you signed " +
+        "in with: the name and the details are issued by the KGD and are not editable. " +
+        "Retail places, registers and applications all belong to it",
     placesEmptyHint = "A place is the address where a register stands. Until there is one, no register can be added",
     registersEmptyHint = "Create a register, then file a KGD application to put it on record",
     okedsEmptyHint = "The primary activity code goes into the registration application — set at least one",
@@ -224,6 +226,41 @@ internal val cabinetTextsEn = CabinetTexts(
     placeSearch = "Search: place, register, reg. no.",
     placeNotFound = "Nothing found",
     placeNotFoundHint = "Change the query or clear the search.",
+    registersHint = "Every cash register created in the cabinet, not only the ones " +
+        "running on this machine. A register is created here first, then filed for the " +
+        "record, and the KGD assigns it a registration number",
+    placesHint = "A retail place is the address where a register stands: it goes into the " +
+        "KGD application and is printed on the receipt. The coordinates are for the map — " +
+        "they show where the place is and where its registers connect from",
+    placesTreeHint = "The retail places of the company on the left, each with its " +
+        "registers under it: a register lives in a place, and without a place it cannot " +
+        "be created. The search covers the place name, the register name and its number",
+    okedsHint = "The activity types are what the company does, taken from the OKED " +
+        "classifier (NC RK 03-2019); the cabinet holds the classifier, so a type is " +
+        "picked from the list rather than typed in your own words. There is exactly one " +
+        "primary type: it goes into the application, and without it the KGD will not put " +
+        "a register on record",
+    passportHint = "The passport is how the register is recorded at the KGD: registration " +
+        "number, factory number, model and retail place. It also shows whether this " +
+        "register runs on this machine, and lets you edit what can still be edited",
+    onThisMachineHint = "The registers in the cabinet and the registers on this computer " +
+        "are different lists: a register can be on record and still run in another shop. " +
+        "This says whether a cashier can stand behind it here and now",
+    receiptCardHint = "The receipt in full: items, payment, taxes and who rang it up. The " +
+        "KGD mark is what the receipt is opened for: it means the receipt reached the BFD " +
+        "and was accepted",
+    reportCardHint = "The register report for a shift: revenue, refunds and the cash in " +
+        "the drawer. The numbers must match the tape the cashier holds — a mismatch means " +
+        "not everything reached the BFD",
+    shiftCardHint = "A shift is one register's working day, from opening to the Z report. " +
+        "The totals appear after it closes: an open shift has none yet, and the empty " +
+        "lines here are not a fault",
+    cashMovementHint = "A deposit or a withdrawal is money the cashier put into the " +
+        "drawer or took out of it without selling anything. It is not revenue, but it " +
+        "changes the cash in the register, and without it the drawer will not reconcile",
+    factoryNumberHint = "The number the manufacturer stamped on the register: it goes " +
+        "into the application and stands in the registration card. While the register " +
+        "is not on record it can be fixed here",
     map = MapTexts(
         pickOnMapHint = "Click the map where the place stands; drag the map with the mouse",
         pickPoint = "Take these coordinates",

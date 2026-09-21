@@ -40,7 +40,22 @@ private val analyticsSalesTextsEn = AnalyticsSalesTexts(
     delivered = "Delivered",
     queued = "In queue",
     unknown = "No information",
-    rejected = "Rejected"
+    rejected = "Rejected",
+
+    byDayHint = "Revenue by the days of the period: it shows which days feed you and which " +
+        "stand idle. An empty day is either a day off or a register that never connected",
+    byHourHint = "When people come: these hours are what the shifts and the cashier's lunch " +
+        "are planned by. The hours are counted by the register's clock, not by this one",
+    paymentsHint = "What people paid with: the shares of cash, cards and the other payment " +
+        "types. They show whether the terminal agrees with the register and how much money " +
+        "settled in the drawer",
+    registersHint = "How much each register sells: the rows show which one works and which " +
+        "one is silent. A silent register is either a closed place or a lost connection",
+    placesHint = "The same by retail place: a place's revenue is collected from all of its " +
+        "registers. Places are compared with each other — the total revenue is fully here",
+    deliveryHint = "Whether the documents reached the BFD. The rejected ones and the ones " +
+        "with no information are receipts the state may not have: they are dealt with at " +
+        "once, not at the end of the month"
 )
 
 /** Надписи аналитики по-английски. Состав полей задан в [AnalyticsTexts]. */

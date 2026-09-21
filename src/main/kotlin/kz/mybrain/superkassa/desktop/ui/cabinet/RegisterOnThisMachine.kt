@@ -24,6 +24,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RegisterState
 import kz.mybrain.superkassa.desktop.ui.LocalSectionSwitch
 import kz.mybrain.superkassa.desktop.ui.Section
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.SubsectionTitle
 import kz.mybrain.superkassa.desktop.ui.components.kkmStateColor
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.MachineTexts
@@ -52,7 +53,7 @@ fun RegisterOnThisMachine(
     var adopting by remember(register.id) { mutableStateOf(false) }
     val machine = machineTexts(session.language)
 
-    Text(text = machine.title, style = MaterialTheme.typography.titleSmall)
+    SubsectionTitle(machine.title, texts.onThisMachineHint)
     when (val work = nodeWork(register, session.kkms)) {
         is NodeWork.Here -> WorksHere(session, machine, work.kkm)
         NodeWork.NotOnRecord -> Explanation(machine.onlyOnRecord)

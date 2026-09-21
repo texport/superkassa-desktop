@@ -38,6 +38,7 @@ fun ReportCard(report: CabinetReportDetails, texts: CabinetTexts, onClose: () ->
             documentTitle(report.type, texts),
             report.shiftNumber?.let { "${texts.shift} $it" }
         ).joinToString(Glyphs.SEPARATOR),
+        info = texts.reportCardHint,
         trailing = { CardTail(cabinetState(report.deliveryStatus, report.sendStatus), texts, onClose) }
     ) {
         DetailLine(texts.documentMoment, cabinetMoment(report.createdAt))
@@ -66,6 +67,7 @@ fun ReportCard(report: CabinetReportDetails, texts: CabinetTexts, onClose: () ->
 fun ShiftCard(shift: CabinetShift, texts: CabinetTexts, onClose: () -> Unit) {
     SectionCard(
         title = "${texts.shift} ${shift.shiftNumber}",
+        info = texts.shiftCardHint,
         trailing = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
@@ -103,6 +105,7 @@ private fun ShiftTotalsLines(totals: ShiftTotals?, texts: CabinetTexts) {
 fun CashMovementCard(movement: CabinetCashMovementDetails, texts: CabinetTexts, onClose: () -> Unit) {
     SectionCard(
         title = documentTitle(movement.type, texts),
+        info = texts.cashMovementHint,
         trailing = { CardTail(cabinetState(null, movement.sendStatus), texts, onClose) }
     ) {
         DetailLine(texts.documentMoment, cabinetMoment(movement.createdAt))

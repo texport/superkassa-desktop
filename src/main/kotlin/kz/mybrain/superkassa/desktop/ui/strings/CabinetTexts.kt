@@ -246,6 +246,26 @@ data class CabinetTexts(
     val placeSearch: String,
     val placeNotFound: String,
     val placeNotFoundHint: String,
+    /**
+     * Подсказки разделов кабинета: что это за раздел и зачем он владельцу.
+     *
+     * Объяснение предмета, а не подпись к заголовку: «Виды деятельности»
+     * без него читались как список неизвестно чего. Собраны одним блоком,
+     * потому что все выходят под значком у заголовка карточки и правятся
+     * вместе — разойдясь по набору, они начали расходиться и по языку.
+     */
+    val registersHint: String,
+    val placesHint: String,
+    val placesTreeHint: String,
+    val okedsHint: String,
+    val passportHint: String,
+    val onThisMachineHint: String,
+    val receiptCardHint: String,
+    val reportCardHint: String,
+    val shiftCardHint: String,
+    val cashMovementHint: String,
+    val factoryNumberHint: String,
+
     /** Надписи выбора точки на карте. */
     val map: MapTexts
 )

@@ -42,17 +42,23 @@ fun AnalyticsSalesBody(
                 SalesPurchaseTiles(view.summary, sales, cabinet)
             }
         }
-        SectionCard(sales.byDay) { SalesChart(dayBars(view.days, view.range, sales), sales) }
-        SectionCard(sales.payments) {
+        SectionCard(sales.byDay, info = sales.byDayHint) {
+            SalesChart(dayBars(view.days, view.range, sales), sales)
+        }
+        SectionCard(sales.payments, info = sales.paymentsHint) {
             SalesShares(salesShares(view.summary.payments, enums, sales.paymentOther), sales)
         }
-        SectionCard(sales.byHour) { SalesChart(hourBars(view.hours, sales), sales) }
-        SectionCard(sales.registers) {
+        SectionCard(sales.byHour, info = sales.byHourHint) {
+            SalesChart(hourBars(view.hours, sales), sales)
+        }
+        SectionCard(sales.registers, info = sales.registersHint) {
             SalesTable(view.registers, SalesRows.Registers, texts, journal, sales.allRegistersShown)
         }
-        SectionCard(sales.places) {
+        SectionCard(sales.places, info = sales.placesHint) {
             SalesTable(view.places, SalesRows.Places, texts, journal, sales.allPlacesShown)
         }
-        SectionCard(sales.delivery) { SalesDeliveryTiles(view.delivery, sales) }
+        SectionCard(sales.delivery, info = sales.deliveryHint) {
+            SalesDeliveryTiles(view.delivery, sales)
+        }
     }
 }

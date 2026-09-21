@@ -23,6 +23,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.editRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.removeRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.renameRegister
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
+import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -53,6 +54,7 @@ fun RegisterEditCard(
     EditRow(
         label = texts.internalName,
         save = texts.save,
+        hint = texts.internalNameHint,
         initial = register.internalName.orEmpty(),
         key = register.id,
         enabled = true,
@@ -64,6 +66,7 @@ fun RegisterEditCard(
     EditRow(
         label = texts.factoryNumber,
         save = texts.save,
+        hint = if (draft) texts.factoryNumberHint else texts.factoryLocked,
         initial = register.factoryNumber.orEmpty(),
         key = register.id,
         enabled = draft,
@@ -131,11 +134,18 @@ private suspend fun restamp(cabinet: CabinetSession, id: String, value: String):
  * Кнопка загорается только когда значение отличается от записанного:
  * сохранение того же самого — обращение к кабинету впустую, а владельцу
  * оно выглядит как будто правка не применилась.
+ *
+ * Объяснение поля — под значком в самом поле, а не строкой под ним:
+ * строкой оно занимало бы три строки высоты у каждого из полей всегда,
+ * а читают его один раз.
+ *
+ * @param hint что это за поле, а у погашенного — почему его не правят.
  */
 @Composable
 private fun EditRow(
     label: String,
     save: String,
+    hint: String,
     initial: String,
     key: String,
     enabled: Boolean,
@@ -152,6 +162,7 @@ private fun EditRow(
             value = value,
             onValueChange = { value = it },
             label = { Text(label) },
+            trailingIcon = { InfoTip(hint) },
             singleLine = true,
             enabled = enabled,
             modifier = Modifier.width(Sizes.fieldForm)

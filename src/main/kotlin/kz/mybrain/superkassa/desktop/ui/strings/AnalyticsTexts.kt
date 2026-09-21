@@ -155,7 +155,21 @@ data class AnalyticsSalesTexts(
 
     /** Плитка: о доставке ничего не известно. */
     val unknown: String,
-    val rejected: String
+    val rejected: String,
+
+    /**
+     * Подсказки разделов сводки: что за число в разделе и что с ним делать.
+     *
+     * Держатся рядом с названиями самих разделов, а не отдельным блоком
+     * в конце: название и объяснение правятся одной правкой, и разойтись
+     * им негде.
+     */
+    val byDayHint: String,
+    val byHourHint: String,
+    val paymentsHint: String,
+    val registersHint: String,
+    val placesHint: String,
+    val deliveryHint: String
 )
 
 /** Надписи аналитики на выбранном языке. */
