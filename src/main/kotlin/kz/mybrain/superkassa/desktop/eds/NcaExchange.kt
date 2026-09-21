@@ -3,6 +3,8 @@ package kz.mybrain.superkassa.desktop.eds
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.webSocketSession
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlinx.coroutines.TimeoutCancellationException
@@ -109,7 +111,11 @@ internal class NcaExchange(private val address: String, private val signWindow: 
      * владелец подписал, и подпись выбрасывалась.
      */
     private suspend fun HttpClient.answerTo(request: JsonObject, sent: Sent): JsonObject? {
-        val session = webSocketSession(address)
+        // Имя просителя NCALayer берёт из заголовка рукопожатия, а не из
+        // запроса: продукт рассчитан на браузер, который посылает `Origin`
+        // сам. Ktor его не посылает, и окно подписи называло просителя
+        // `UNDENTIFIED` — владелец подписывал, не зная кому.
+        val session = webSocketSession(address) { header(HttpHeaders.Origin, ORIGIN) }
         return try {
             session.send(Frame.Text(request.toString()))
             sent.mark = TimeSource.Monotonic.markNow()
