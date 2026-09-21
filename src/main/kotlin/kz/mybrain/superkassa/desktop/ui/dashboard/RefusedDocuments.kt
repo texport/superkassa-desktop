@@ -87,30 +87,45 @@ internal fun RefusedDocuments(session: Session) {
 @Composable
 private fun RefusedRow(session: Session, document: Document, operator: String?) {
     val texts = LocalStrings.current
-    Row(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
     ) {
-        Text(
-            text = listOfNotNull(
-                session.titleOf(Dictionary.DocumentTypes, document.docType),
-                operator
-            ).joinToString(Glyphs.SEPARATOR),
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f)
-        )
-        Text(Money.formatTiyn(document.totalAmount), style = MoneyStyle.row)
-        // Код показывается, только когда он есть: у протокольного отказа
-        // ОФД своего кода не присылает, и строка «Код отказа —» ничего
-        // кассиру не сообщала.
-        document.refusalCode?.let { code ->
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                text = "${texts.common.refusalCode} $code",
-                style = MaterialTheme.typography.labelMedium,
-                color = StatusColors.refused
+                text = listOfNotNull(
+                    session.titleOf(Dictionary.DocumentTypes, document.docType),
+                    operator
+                ).joinToString(Glyphs.SEPARATOR),
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            Text(Money.formatTiyn(document.totalAmount), style = MoneyStyle.row)
+            // Код показывается, только когда он есть: у протокольного отказа
+            // ОФД своего кода не присылает, и строка «Код отказа —» ничего
+            // кассиру не сообщала.
+            document.refusalCode?.let { code ->
+                Text(
+                    text = "${texts.common.refusalCode} $code",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = StatusColors.refused
+                )
+            }
+        }
+        // Причина словами ОФД — то, по чему обслуживание находит, что
+        // именно в документе не так: один код отказа стоит и за снятой
+        // с учёта кассой, и за нехваткой реквизита в позиции.
+        document.ofdErrorText?.takeIf { it.isNotBlank() }?.let { reason ->
+            Text(
+                text = reason,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

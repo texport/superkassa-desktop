@@ -27,6 +27,8 @@ data class Document(
     val docType: String? = null,
     val ofdStatus: String? = null,
     val ofdErrorCode: Int? = null,
+    /** Причина отказа словами ОФД: по одному коду её не найти. */
+    val ofdErrorText: String? = null,
     val fiscalSign: String? = null,
     val autonomousSign: String? = null,
     val isAutonomous: Boolean? = null,
