@@ -7,6 +7,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -20,6 +22,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 
@@ -36,6 +39,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
  * не прячется, а гаснет: спрятать его значило бы разойтись с узлом молча.
  * @param width заданная ширина поля. При ней длинное название обрезается
  * многоточием: поле только читается, и вторую строку обрезала бы рамка.
+ * @param create чем заводят то, чего в списке ещё нет; `null` — нечем.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +51,8 @@ fun <T> LabelledPicker(
     onSelect: (T) -> Unit,
     modifier: Modifier = Modifier,
     available: (T) -> Boolean = { true },
-    width: Dp? = null
+    width: Dp? = null,
+    create: PickerCreate? = null
 ) {
     var open by remember { mutableStateOf(false) }
     val sized = if (width == null) modifier.fillMaxWidth() else modifier.width(width)
@@ -76,6 +81,17 @@ fun <T> LabelledPicker(
             }
         )
         ExposedDropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            create?.let { adding ->
+                DropdownMenuItem(
+                    leadingIcon = { Icon(AppIcons.add, contentDescription = null) },
+                    text = { Text(adding.title) },
+                    onClick = {
+                        open = false
+                        adding.onCreate()
+                    }
+                )
+                if (options.isNotEmpty()) HorizontalDivider()
+            }
             options.forEach { option ->
                 DropdownMenuItem(
                     enabled = available(option),

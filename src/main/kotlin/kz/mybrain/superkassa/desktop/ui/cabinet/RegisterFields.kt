@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.KkmModel
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
+import kz.mybrain.superkassa.desktop.ui.components.PickerCreate
 import kz.mybrain.superkassa.desktop.ui.components.SearchablePicker
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 
@@ -21,14 +22,19 @@ internal fun RegisterFields(
     places: List<RetailPlace>,
     models: List<KkmModel>,
     stamped: Boolean,
-    issued: Boolean
+    issued: Boolean,
+    onCreatePlace: () -> Unit
 ) {
+    // Точка заводится отсюда же: у владельца без торговых точек форма
+    // просила выбрать точку и не давала её создать — мастер подключения
+    // кассы упирался в тупик на первом же шаге.
     LabelledPicker(
         label = texts.place,
         options = places,
         selected = draft.place,
         title = { it?.name.orEmpty() },
-        onSelect = { draft.place = it }
+        onSelect = { draft.place = it },
+        create = PickerCreate(texts.addPlace, onCreatePlace)
     )
     // Модель — поиском, а не перебором: в справочнике ИСНА их сотни,
     // и владелец набирает то, что помнит, — часть названия или код.

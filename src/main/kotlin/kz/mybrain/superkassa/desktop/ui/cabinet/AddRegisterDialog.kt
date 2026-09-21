@@ -52,8 +52,11 @@ fun AddRegisterDialog(
     val issued = ourModel(draft.model)
     var places by remember { mutableStateOf<List<RetailPlace>>(emptyList()) }
     var models by remember { mutableStateOf<List<KkmModel>>(emptyList()) }
+    var addingPlace by remember { mutableStateOf(false) }
 
-    LaunchedEffect(cabinet.token) {
+    // Список точек перечитывается и после того, как точку завели отсюда же:
+    // иначе только что созданная в нём не появится.
+    LaunchedEffect(cabinet.token, addingPlace) {
         val token = cabinet.token ?: return@LaunchedEffect
         places = cabinet.guard { cabinet.client.retailPlaces(token) }?.items.orEmpty()
         models = cabinet.guard { cabinet.client.kkmModels(token) }?.items.orEmpty()
@@ -84,7 +87,24 @@ fun AddRegisterDialog(
             }
         }
     ) {
-        RegisterFields(texts, draft, places, models, stamped = known != null, issued = issued)
+        RegisterFields(
+            texts = texts,
+            draft = draft,
+            places = places,
+            models = models,
+            stamped = known != null,
+            issued = issued,
+            onCreatePlace = { addingPlace = true }
+        )
+    }
+    if (addingPlace) {
+        AddPlaceCard(
+            session = session,
+            cabinet = cabinet,
+            texts = texts,
+            onDismiss = { addingPlace = false },
+            onAdded = { addingPlace = false }
+        )
     }
 }
 
