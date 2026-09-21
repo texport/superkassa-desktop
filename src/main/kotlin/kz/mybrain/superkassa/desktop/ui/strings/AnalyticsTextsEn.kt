@@ -89,6 +89,9 @@ internal val analyticsTextsEn = AnalyticsTexts(
 
     mapEmpty = "No cash register on the map",
     mapEmptyHint = "With this position source there is nothing to place — see the list next to the map",
+    mapSearching = "Looking up register addresses on the map",
+    mapSearchingHint = "The cabinet gave retail place addresses without coordinates — " +
+        "points appear as the lookup goes",
     pickPin = "Pick a cash register on the map",
     pickPinHint = "Click a point — its card appears here",
 
@@ -105,8 +108,8 @@ internal val analyticsTextsEn = AnalyticsTexts(
     openKkmSales = "Cash register analytics",
     kkmSalesTitle = "What this cash register sells",
 
-    withoutPositionEmpty = "Every register is on the map",
-    withoutPositionEmptyHint = "With this position source the place of every register is known",
+    kkmListEmpty = "No registers in the cabinet",
+    kkmListEmptyHint = "Add a register on the retail places screen and file a KGD application to put it on record",
     reasonNoAddress = "The retail place has no address chosen",
     reasonNoCabinetPoint = "The cabinet holds no coordinates for the retail place",
     reasonNoKkmPoint = "The register has never sent its coordinates",
@@ -129,7 +132,7 @@ internal val analyticsTextsEn = AnalyticsTexts(
     exchangeHint = "A service detail: it shows that a register connects from somewhere other than " +
         "where it is recorded, and that several machines work behind one address",
     exchangeEmpty = "No exchange yet",
-    exchangeEmptyHint = "The address appears here after the register first contacts the receiving service",
+    exchangeEmptyHint = "The address appears here after the register first contacts BFD",
     exchangeNotFound = "Nothing found",
     exchangeNotFoundHint = "Change the search text or drop the register filter",
     search = "Search by address or register",

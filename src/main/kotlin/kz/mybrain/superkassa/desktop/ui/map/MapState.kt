@@ -96,9 +96,9 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
      * Отмечает, где мы, и ведёт туда карту.
      *
      * Своё место — не выбранная точка: оно определено до города и рисуется
-     * своим знаком, синим кружком, а выбранная точка остаётся красной
-     * булавкой. Прежде кнопка только двигала карту, и владелец не видел,
-     * произошло ли хоть что-нибудь.
+     * своим знаком — кружком третичной роли в ореоле, — а выбранная точка
+     * остаётся кружком главной роли. Прежде кнопка только двигала карту,
+     * и владелец не видел, произошло ли хоть что-нибудь.
      */
     fun showLocation(latitude: Double, longitude: Double, city: String, toZoom: Int, precise: Boolean = false) {
         locationLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)

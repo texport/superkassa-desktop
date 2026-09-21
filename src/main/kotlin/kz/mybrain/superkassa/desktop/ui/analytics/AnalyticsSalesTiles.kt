@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
@@ -37,6 +37,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
  * сколько смен открыто сейчас, сколько документов пробито автономно
  * и сколько ещё не доехало. Они набраны шкалой счётчика — той же, что
  * и остальные счётчики приложения, — и с главными числами не спорят.
+ *
+ * Ряд переносится, а не сжимается. Пятью долями ширины плитка выручки
+ * получала меньше, чем нужно её числу, и главное число экрана выходило
+ * обрезанным: «128 456 00…» вместо ста двадцати восьми миллионов тенге.
+ * Больше трёх главных чисел в ряд не ставится: перенос по одной плитке
+ * оставлял последнюю растянутой на всю ширину, и ряд читался кривым.
  */
 @Composable
 fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier = Modifier) {
@@ -45,9 +51,11 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        Row(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            verticalArrangement = Arrangement.spacedBy(Spacing.snug),
+            maxItemsInEachRow = HERO_IN_ROW
         ) {
             HeroTile(cabinetSum(summary.revenue), sales.revenue, Modifier.weight(1f))
             HeroTile(summary.receiptCount.toString(), sales.receipts, Modifier.weight(1f))
@@ -55,7 +63,10 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
             HeroTile(cabinetSum(summary.refunds), sales.refunds, Modifier.weight(1f))
             HeroTile(cabinetSum(summary.tax), sales.tax, Modifier.weight(1f))
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.normal)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
+            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        ) {
             CounterTile(summary.cashRegisterCount.toString(), texts.kkmCount)
             CounterTile(summary.openShiftCount.toString(), sales.openShifts)
             CounterTile(summary.offlineCount.toString(), sales.offline)
@@ -84,9 +95,10 @@ fun SalesPurchaseTiles(
     cabinet: CabinetTexts,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
         MinorTile(summary.purchaseCount.toString(), texts.receipts, Modifier.weight(1f))
         MinorTile(cabinetSum(summary.purchases), texts.paidOut, Modifier.weight(1f))
@@ -103,9 +115,10 @@ fun SalesPurchaseTiles(
  */
 @Composable
 fun SalesDeliveryTiles(delivery: SalesDelivery, texts: AnalyticsSalesTexts, modifier: Modifier = Modifier) {
-    Row(
+    FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
         StateTile(delivery.delivered, texts.delivered, StatusColors.delivered, Modifier.weight(1f))
         StateTile(delivery.queued, texts.queued, StatusColors.pending, Modifier.weight(1f))
@@ -122,6 +135,15 @@ fun SalesDeliveryTiles(delivery: SalesDelivery, texts: AnalyticsSalesTexts, modi
 private fun HeroTile(value: String, label: String, modifier: Modifier = Modifier) {
     Tile(value, label, MaterialTheme.typography.headlineMedium, MaterialTheme.colorScheme.onSurface, modifier)
 }
+
+/**
+ * Сколько главных чисел встаёт в ряд.
+ *
+ * Три: сумме в сотни миллионов тенге при крупной шкале нужна треть
+ * ширины раздела, а вторая строка с двумя плитками читается как ряд,
+ * а не как остаток.
+ */
+private const val HERO_IN_ROW = 3
 
 /** Плитка числа, которое не главное: шкала на ступень мельче выручки. */
 @Composable

@@ -88,6 +88,8 @@ internal val analyticsTextsRu = AnalyticsTexts(
 
     mapEmpty = "Ни одной кассы на карте",
     mapEmptyHint = "При этом источнике положения поставить на карту нечего — посмотрите список рядом",
+    mapSearching = "Ищем адреса касс на карте",
+    mapSearchingHint = "Кабинет отдал адреса торговых точек без координат — точки появятся по мере поиска",
     pickPin = "Выберите кассу на карте",
     pickPinHint = "Нажмите точку — здесь появится её карточка",
 
@@ -104,8 +106,8 @@ internal val analyticsTextsRu = AnalyticsTexts(
     openKkmSales = "Аналитика кассы",
     kkmSalesTitle = "Чем торгует касса",
 
-    withoutPositionEmpty = "Все кассы на карте",
-    withoutPositionEmptyHint = "При этом источнике положения известно место каждой кассы",
+    kkmListEmpty = "В кабинете нет ни одной кассы",
+    kkmListEmptyHint = "Заведите кассу в разделе торговых точек и подайте заявление в КГД на постановку на учёт",
     reasonNoAddress = "У торговой точки не выбран адрес",
     reasonNoCabinetPoint = "В кабинете не заданы координаты торговой точки",
     reasonNoKkmPoint = "Касса ни разу не присылала свои координаты",
@@ -128,7 +130,7 @@ internal val analyticsTextsRu = AnalyticsTexts(
     exchangeHint = "Сведение служебное: по нему видно, что касса выходит на связь не оттуда, " +
         "где числится, и что под одним адресом работает несколько машин",
     exchangeEmpty = "Обменов ещё не было",
-    exchangeEmptyHint = "Адрес появится здесь после первой связи кассы с сервисом приёма",
+    exchangeEmptyHint = "Адрес появится здесь после первой связи кассы с БФД",
     exchangeNotFound = "Ничего не нашлось",
     exchangeNotFoundHint = "Измените строку поиска или снимите отбор по кассе",
     search = "Поиск по адресу или кассе",

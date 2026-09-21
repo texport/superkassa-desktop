@@ -39,6 +39,11 @@ data class AnalyticsTexts(
 
     val mapEmpty: String,
     val mapEmptyHint: String,
+
+    /** Адреса касс ещё ищутся на карте: ждать, а не чинить. */
+    val mapSearching: String,
+    val mapSearchingHint: String,
+
     val pickPin: String,
     val pickPinHint: String,
 
@@ -55,8 +60,15 @@ data class AnalyticsTexts(
     val openKkmSales: String,
     val kkmSalesTitle: String,
 
-    val withoutPositionEmpty: String,
-    val withoutPositionEmptyHint: String,
+    /**
+     * В списке рядом с картой нет ни одной кассы.
+     *
+     * Список держит все кассы компании, а не только непоставленные,
+     * и пустым он бывает лишь у владельца без единой кассы. Прежняя
+     * надпись «Все кассы на карте» стояла рядом со счётчиком «Касс · 0».
+     */
+    val kkmListEmpty: String,
+    val kkmListEmptyHint: String,
     val reasonNoAddress: String,
     val reasonNoCabinetPoint: String,
     val reasonNoKkmPoint: String,

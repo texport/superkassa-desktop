@@ -62,7 +62,7 @@ internal fun MapArea(
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
         // Нажатие по карте ставит место точки: за этим окно и открыто.
-        MapView(state, tiles, Modifier.fillMaxSize(), onTap = state::mark)
+        MapView(state, tiles, texts.map, Modifier.fillMaxSize(), onTap = state::mark)
         MapControls(state, texts, preferences, Modifier.align(Alignment.TopEnd).padding(Spacing.snug))
     }
 }
@@ -93,8 +93,10 @@ internal fun MapFooter(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            // Под координатами сказано, что синий кружок — не выбранная
-            // точка, а город: иначе владелец принял бы его за выбор.
+            // Под координатами сказано, что кружок в ореоле — не выбранная
+            // точка, а город: иначе владелец принял бы его за выбор. Цвет
+            // в надписи не назван: выбранная точка красится главной ролью
+            // схемы, а своё место — третичной, и «синий» указывал на первую.
             if (state.located) {
                 Text(
                     text = if (state.locationPrecise) {

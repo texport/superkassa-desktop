@@ -215,17 +215,19 @@ internal val cabinetTextsEn = CabinetTexts(
     stageSending = "Sending to the cabinet",
     applicationFailed = "The application was not sent",
     addressPickAgain = "Pick another address",
-    addressNotFound = "Nothing found — refine the beginning of the name",
+    addressNotFound = "The registry returned nothing for this step — refine the query or retry later",
     placeSearch = "Search: place, register, reg. no.",
     placeNotFound = "Nothing found",
     map = MapTexts(
         pickOnMapHint = "Click the map where the place stands; drag the map with the mouse",
         pickPoint = "Take these coordinates",
+        noTiles = "No map imagery: the tile service did not answer. The place is still set by clicking",
+        showDegrees = "Find on the map",
         zoomIn = "Zoom in",
         zoomOut = "Zoom out",
         myLocation = "Show my city",
-        myLocationShown = "The blue dot is your city by connection address",
-        myLocationPrecise = "The blue dot is where you are, by this machine location service",
+        myLocationShown = "The haloed dot is your city by connection address",
+        myLocationPrecise = "The haloed dot is where you are, by this machine location service",
         findHouse = "Street address",
         locationAsk = "Detect the location?",
         locationAskHint = "The application will ask an external service which city your " +
@@ -245,7 +247,7 @@ internal val cabinetTextsEn = CabinetTexts(
         chooseRegister = "The company registers are on the left: choose one and its card opens here",
         documentsEmpty = "Whatever the BFD accepted from this register appears here",
         actionsEmpty = "Every application leaves a trace here: when it was filed and how it ended",
-        pickRegisterFirst = "Choose a register above: documents are shown one register at a time",
+        pickRegisterFirst = "Places and their registers are on the left: pick one and it opens here",
         technicalUnknown = "The state appears after the register first contacts the BFD",
         token = "The key the register signs its requests with. Copy it into the register settings: it is not shown here twice",
         internalName = "A note to yourself: it is not sent to the BFD",
@@ -264,7 +266,7 @@ internal val cabinetTextsEn = CabinetTexts(
             "Қабанбай батыр, not Кабанбай",
         okedManual = "The cabinet does not serve the classifier: " +
             "enter the code and the name exactly as written in the OKED classifier",
-        placeNotFound = "Change the query or clear the search.",
+        placeNotFound = "Change the query or clear the search",
         registers = "Every cash register created in the cabinet, not only the ones " +
             "running on this machine. A register is created here first, then filed for the " +
             "record, and the KGD assigns it a registration number",

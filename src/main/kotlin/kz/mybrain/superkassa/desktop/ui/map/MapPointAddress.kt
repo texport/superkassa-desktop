@@ -63,7 +63,7 @@ internal fun PointAddress(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        PickRow(notices.byPoint, state.marked && !busy, pointNotice(busy, match, notices)) {
+        PickRow(notices.byPoint, state.marked && !busy, pointNotice(state.marked, busy, match, notices)) {
             scope.launch {
                 busy = true
                 match = placeUnder(cabinet, state, reverse)
@@ -156,9 +156,21 @@ private suspend fun resolved(cabinet: CabinetSession, house: AddressSuggestion):
     return cabinet.guard { cabinet.client.resolveAddress(token, rka) }
 }
 
-/** Что сказать владельцу о ходе подбора; `null` — сказать пока нечего. */
-private fun pointNotice(busy: Boolean, match: PointMatch?, notices: MapAddressTexts): String? = when {
+/**
+ * Что сказать владельцу о ходе подбора; `null` — сказать пока нечего.
+ *
+ * Пока метки нет, кнопка погашена, и молчать при этом нельзя: погашенная
+ * кнопка без причины читается как неработающая. Сказано ровно то, чего
+ * не хватает, — метки на карте.
+ */
+private fun pointNotice(
+    marked: Boolean,
+    busy: Boolean,
+    match: PointMatch?,
+    notices: MapAddressTexts
+): String? = when {
     busy -> notices.byPointSearching
+    !marked -> notices.markFirst
     match is PointMatch.Houses -> notices.byPointHouses
     match is PointMatch.Missing -> when (match.step) {
         PointStep.Place -> notices.byPointNoPlace

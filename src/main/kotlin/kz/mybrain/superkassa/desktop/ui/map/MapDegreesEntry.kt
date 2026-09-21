@@ -45,7 +45,7 @@ internal fun DegreesEntry(state: MapState, texts: CabinetTexts) {
         val point = degreesOf(latitude, MAX_LATITUDE)?.let { north ->
             degreesOf(longitude, MAX_LONGITUDE)?.let { east -> north to east }
         }
-        FieldButton(text = texts.map.pickPoint, enabled = point != null) {
+        FieldButton(text = texts.map.showDegrees, enabled = point != null) {
             point?.let { (north, east) -> state.show(north.toDouble(), east.toDouble(), HOUSE_ZOOM) }
         }
     }

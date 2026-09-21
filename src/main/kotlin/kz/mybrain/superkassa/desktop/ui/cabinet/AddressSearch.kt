@@ -39,6 +39,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * @param owner чей адрес подбирается; смена владельца (другая точка) сбрасывает
  *   начатый путь — иначе выбранные для одной точки шаги показывались у другой.
+ * @param title название подраздела; у переезда своё — рядом с ним уже стоит
+ *   строка с нынешним адресом точки, и два «Адреса» читались как один.
  * @param query подпись выбранного адреса; хранится снаружи, потому что
  *   после выбора поле заполняется адресом.
  * @param onChoose выбранный адрес; шаги после этого сворачиваются.
@@ -51,6 +53,7 @@ fun AddressSearch(
     query: String,
     onQuery: (String) -> Unit,
     owner: Any? = null,
+    title: String = texts.placeAddress,
     onChoose: (RegisterAddress) -> Unit
 ) {
     val path = remember(owner) { AddressPath() }
@@ -84,7 +87,7 @@ fun AddressSearch(
             TextButton(onClick = { onQuery("") }) { Text(texts.addressPickAgain) }
             return@Column
         }
-        SubsectionTitle(texts.placeAddress, texts.hints.addressStep)
+        SubsectionTitle(title, texts.hints.addressStep)
         path.chosen.forEachIndexed { at, level ->
             ChosenLevel(label = path.labelAt(at, texts), name = level.name) { path.dropFrom(at) }
         }

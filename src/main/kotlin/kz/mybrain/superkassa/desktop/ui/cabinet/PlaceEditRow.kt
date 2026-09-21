@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -79,9 +79,12 @@ private fun PlaceRename(
 ) {
     val scope = rememberCoroutineScope()
     var name by remember(place.id) { mutableStateOf(place.name) }
-    Row(
+    // Ряд переносится, а не сжимается: в узком окне поле заданной ширины
+    // выдавливало кнопку, и «Переименовать» выходило как «Пере / имен».
+    FlowRow(
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.Top
+        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        itemVerticalAlignment = Alignment.Top
     ) {
         OutlinedTextField(
             value = name,
@@ -134,7 +137,12 @@ private fun PlaceMove(
         chosen = address
         query = addressIn(session.language, address.address, address.addressKz)
     }
-    AddressSearch(session, cabinet, texts, query, onQuery, owner = place.id, onChoose = onAddress)
+    // Своё название у подраздела: над карточкой уже стоит строка «Адрес»
+    // с нынешним адресом точки, и второй «Адрес» под ней читался как он же.
+    AddressSearch(
+        session, cabinet, texts, query, onQuery,
+        owner = place.id, title = texts.changeAddress, onChoose = onAddress
+    )
     if (chosen != null) {
         Chip(texts.addressChosen, StatusColors.delivered)
     }

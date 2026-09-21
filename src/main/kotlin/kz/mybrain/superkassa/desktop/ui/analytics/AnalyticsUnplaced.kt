@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,6 +26,10 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * владельца, и увидеть её он должен ровно там, где ищет свои кассы.
  * У каждой сказано, почему её не поставить: причины разные, и чинятся
  * они по-разному.
+ *
+ * @param sieved задан ли отбор. Пустой список значит разное: без отбора
+ *   у владельца нет ни одной кассы, с отбором — ни одна не подошла,
+ *   и одна надпись на два случая говорила бы о хозяйстве неправду.
  */
 @Composable
 fun AnalyticsKkmList(
@@ -36,7 +39,8 @@ fun AnalyticsKkmList(
     source: PositionSource,
     texts: AnalyticsTexts,
     onChoose: (PlacedKkm) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    sieved: Boolean = false
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -45,9 +49,9 @@ fun AnalyticsKkmList(
         SectionTitle("${texts.kkmCount} · ${placed.size + unplaced.size}")
         if (placed.isEmpty() && unplaced.isEmpty()) {
             EmptyState(
-                icon = AppIcons.place,
-                title = texts.withoutPositionEmpty,
-                hint = texts.withoutPositionEmptyHint,
+                icon = if (sieved) AppIcons.find else AppIcons.place,
+                title = if (sieved) texts.sieveEmpty else texts.kkmListEmpty,
+                hint = if (sieved) texts.sieveEmptyHint else texts.kkmListEmptyHint,
                 dense = true
             )
             return@Column
@@ -65,12 +69,16 @@ fun AnalyticsKkmList(
                     onClick = { onChoose(row) }
                 )
             }
-            items(unplaced, key = { "unplaced-${it.kkm.cashRegisterId}" }) { row ->
+            // Чередование продолжается через обе половины: считанное
+            // от нуля заново сбивало зебру на стыке, и на месте перехода
+            // две строки подряд оказывались незатенёнными.
+            itemsIndexed(unplaced, key = { _, row -> "unplaced-${row.kkm.cashRegisterId}" }) { at, row ->
                 // Непоставленная строка не нажимается: вести карту некуда,
                 // и вместо перехода у неё стоит причина — её чинят.
                 RecordRow(
                     title = kkmTitle(row.kkm),
                     subtitle = row.kkm.retailPlaceName,
+                    striped = (placed.size + at) % 2 == 1,
                     support = { TroubleNote(row, source, texts) }
                 )
             }

@@ -5,6 +5,11 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,6 +17,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
@@ -25,8 +31,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import kz.mybrain.superkassa.desktop.ui.strings.MapTexts
 import kz.mybrain.superkassa.desktop.ui.theme.MapColors
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
+import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.roundToInt
 
 /**
@@ -40,14 +49,16 @@ import kotlin.math.roundToInt
  * без промежуточных состояний. Карта здесь — способ указать точку, а не
  * навигатор, и вращения с наклоном ей ни к чему.
  *
- * Если плитки не пришли — сети нет или служба недоступна, — остаётся
- * пустое поле, и точка на нём всё равно ставится: широта и долгота
- * считаются из проекции, а не из картинки.
+ * Если плитки не пришли — сети нет или служба недоступна, — поле остаётся
+ * пустым, и об этом сказано строкой поверх него: серый прямоугольник
+ * без объяснения читается как сломанный экран. Точка на нём всё равно
+ * ставится: широта и долгота считаются из проекции, а не из картинки.
  */
 @Composable
 fun MapView(
     state: MapState,
     tiles: MapTiles,
+    texts: MapTexts,
     modifier: Modifier = Modifier,
     // Что значит нажатие по карте, решает вызывающий: в окне выбора места
     // оно ставит метку, на карте касс — снимает выбор ярлычка.
@@ -59,6 +70,9 @@ fun MapView(
 ) {
     var canvas by remember { mutableStateOf(IntSize.Zero) }
     var revision by remember { mutableIntStateOf(0) }
+    // Ни одной плитки не доехало: объяснение поверх пустого поля.
+    // До первой попытки поле не объясняется — жаловаться ещё не на что.
+    var blank by remember { mutableStateOf(false) }
 
     // Плитки берутся сразу несколькими, а не по одной вслед за другой.
     // Прежде они запрашивались подряд, и прокрутка открывала десяток
@@ -69,16 +83,23 @@ fun MapView(
     // Одновременных запросов немного намеренно: плитки отданы сообществом
     // OpenStreetMap, и их правила запрещают массовую выкачку.
     LaunchedEffect(state.zoom, state.centerLatitude, state.centerLongitude, canvas) {
+        val wanted = visibleTiles(state, canvas)
+        if (wanted.isEmpty()) return@LaunchedEffect
         val gate = Semaphore(TILES_AT_ONCE)
+        val arrived = AtomicInteger()
         coroutineScope {
-            visibleTiles(state, canvas).forEach { tile ->
+            wanted.forEach { tile ->
                 launch {
                     gate.withPermit {
-                        if (tiles.fetch(state.zoom, tile.x, tile.y)) revision += 1
+                        if (tiles.fetch(state.zoom, tile.x, tile.y)) {
+                            arrived.incrementAndGet()
+                            revision += 1
+                        }
                     }
                 }
             }
         }
+        blank = arrived.get() == 0
     }
 
     val paint = MapPaint(
@@ -103,7 +124,32 @@ fun MapView(
             }
     ) {
         MapCanvas(state, tiles, canvas, revision, paint)
+        if (blank) BlankNotice(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.snug))
         overlay(canvas)
+    }
+}
+
+/**
+ * Почему поле карты пустое.
+ *
+ * Стоит в нижнем углу, а не в середине: середину занимает метка, и ради
+ * объяснения закрывать её нельзя. Заливка поверхности с тенью — иначе
+ * надпись теряется на подложке там, где плитки всё-таки доехали.
+ */
+@Composable
+private fun BlankNotice(notice: String, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(Sizes.corner),
+        color = MaterialTheme.colorScheme.surface,
+        shadowElevation = Sizes.mapMarkLift
+    ) {
+        Text(
+            text = notice,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = Spacing.snug, vertical = Spacing.tight)
+        )
     }
 }
 
@@ -150,7 +196,7 @@ private fun DrawScope.drawTiles(state: MapState, tiles: MapTiles, canvas: IntSiz
 }
 
 /**
- * Где мы — синим кружком в ореоле, как это принято в картах.
+ * Где мы — кружком в ореоле, как это принято в картах.
  *
  * Знак другой, чем у выбранной точки, и намеренно: место определено
  * по адресу подключения и указывает на город, а не на дом. Ореол

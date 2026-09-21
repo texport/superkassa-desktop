@@ -10,6 +10,18 @@ package kz.mybrain.superkassa.desktop.ui.strings
 data class MapTexts(
     val pickOnMapHint: String,
     val pickPoint: String,
+
+    /** Поле карты пустое: плитки не доехали, но место всё равно ставится. */
+    val noTiles: String,
+
+    /**
+     * Кнопка у набранных градусов.
+     *
+     * Своё название, а не то же, что у кнопки выбора в подвале: два
+     * «Взять эти координаты» на одном окне делали разное — одна ведёт
+     * карту к набранному, другая отдаёт выбранное форме точки.
+     */
+    val showDegrees: String,
     val zoomIn: String,
     val zoomOut: String,
     val myLocation: String,
@@ -31,6 +43,9 @@ data class MapTexts(
  */
 data class MapAddressTexts(
     val pickAddressFirst: String,
+
+    /** Метки нет, и подбирать адрес нечем: кнопка погашена не молча. */
+    val markFirst: String,
     val searching: String,
     val notOnMap: String,
     val byPoint: String,
@@ -48,6 +63,7 @@ fun mapAddressTexts(language: Language): MapAddressTexts = when (language) {
     Language.Ru -> MapAddressTexts(
         pickAddressFirst = "Выберите адрес в регистре — карта найдёт дом; " +
             "или поставьте метку и подберите адрес по ней",
+        markFirst = "Сначала нажмите на карте, где стоит точка",
         searching = "Ищем этот адрес на карте",
         notOnMap = "Карта не нашла этот адрес — поставьте метку нажатием сами",
         byPoint = "Адрес по метке",
@@ -62,6 +78,7 @@ fun mapAddressTexts(language: Language): MapAddressTexts = when (language) {
     Language.Kk -> MapAddressTexts(
         pickAddressFirst = "Тіркелімнен мекенжайды таңдаңыз — карта үйді табады; " +
             "немесе белгі қойып, мекенжайды сол бойынша таңдаңыз",
+        markFirst = "Алдымен нүкте тұрған жерді картадан басыңыз",
         searching = "Осы мекенжайды картадан іздеп жатырмыз",
         notOnMap = "Карта бұл мекенжайды таппады — белгіні картаны басып өзіңіз қойыңыз",
         byPoint = "Белгі бойынша мекенжай",
@@ -76,6 +93,7 @@ fun mapAddressTexts(language: Language): MapAddressTexts = when (language) {
     Language.En -> MapAddressTexts(
         pickAddressFirst = "Pick the address in the registry — the map will find the building; " +
             "or place a marker and look the address up by it",
+        markFirst = "First click the map where the place stands",
         searching = "Looking for this address on the map",
         notOnMap = "The map did not find this address — place the marker yourself by clicking",
         byPoint = "Address by marker",

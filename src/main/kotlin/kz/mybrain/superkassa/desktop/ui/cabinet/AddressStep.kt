@@ -100,7 +100,10 @@ internal fun AddressStep(cabinet: CabinetSession, texts: CabinetTexts, path: Add
             }
         }
     }
-    if (searched && found.isEmpty() && needle.isNotEmpty()) {
+    // Пустой ответ говорится и на пустом запросе: с него шаг и начинается,
+    // и молчащий регистр было не отличить от полного — поле просто стояло
+    // пустым, а раскрытый список не показывал ничего.
+    if (searched && found.isEmpty()) {
         Text(
             text = texts.addressNotFound,
             style = MaterialTheme.typography.bodySmall,

@@ -26,7 +26,6 @@ import kz.mybrain.superkassa.desktop.ui.map.MapServices
 import kz.mybrain.superkassa.desktop.ui.map.MapView
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
-import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -119,7 +118,8 @@ private fun MapBody(
             source = model.source,
             texts = texts,
             onChoose = { row -> model.show(row, groups) },
-            modifier = Modifier.width(Sizes.unplacedColumn).fillMaxHeight()
+            modifier = Modifier.width(Sizes.unplacedColumn).fillMaxHeight(),
+            sieved = model.sieve.set
         )
     }
 }
@@ -142,10 +142,11 @@ private fun MapWindow(
     modifier: Modifier = Modifier
 ) {
     if (placement.placed.isEmpty()) {
+        val reason = emptyMapReason(placement, model.sieve.set, texts)
         EmptyState(
-            icon = AppIcons.place,
-            title = if (model.sieve.set) texts.sieveEmpty else texts.mapEmpty,
-            hint = if (model.sieve.set) texts.sieveEmptyHint else texts.mapEmptyHint,
+            icon = reason.icon,
+            title = reason.title,
+            hint = reason.hint,
             modifier = modifier,
             centered = true
         )
@@ -155,6 +156,7 @@ private fun MapWindow(
         MapView(
             state = model.map,
             tiles = services.tiles,
+            texts = cabinetTexts.map,
             modifier = Modifier.fillMaxSize(),
             // Нажатие мимо ярлычка снимает выбор: раскрытое место
             // закрывается тем же способом, каким открылось.
