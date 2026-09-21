@@ -84,11 +84,20 @@ private fun DraftFields(
     onChange: (PositionDraft) -> Unit
 ) {
     val texts = LocalStrings.current
+    val extra = LocalSaleTexts.current
+    // Начатая форма: кассир уже что-то набрал. Пустая форма молчит —
+    // при открытии смены она не должна выглядеть списком недоделок.
+    val started = draft.price.isNotBlank() || draft.discount.isNotBlank()
+    val nameProblem = draft.problem(DraftField.Name)?.takeIf { started }
     OutlinedTextField(
         value = draft.name,
         onValueChange = { onChange(draft.copy(name = it)) },
         label = { Text(texts.sale.name) },
         singleLine = true,
+        // Про нехватку наименования сказано у самого поля. Строка под
+        // кнопкой на кассовой колонке уезжает за сгиб, и кассир, набравший
+        // цену без названия, видел лишь серую кнопку «Добавить».
+        supportingText = nameProblem?.let { { Text(it.text(extra)) } },
         modifier = Modifier.fillMaxWidth()
     )
     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.snug)) {
