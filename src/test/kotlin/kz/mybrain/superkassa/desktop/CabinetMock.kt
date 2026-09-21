@@ -1,0 +1,51 @@
+package kz.mybrain.superkassa.desktop
+
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.runBlocking
+import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
+import kotlin.test.assertTrue
+
+/**
+ * Кабинет, отвечающий заданным, — для снимков отказных состояний.
+ *
+ * Отказные состояния собираются только настоящим сеансом с доступом:
+ * без него экраны не спрашивают кабинет вовсе и остаются в ожидании,
+ * а проверять нужно как раз ответ. Вход идёт отметкой разработчика —
+ * одним запросом, — а дальше все ручки отвечают одинаково.
+ *
+ * @param body тело ответа на любой запрос, кроме входа.
+ * @param status состояние ответа: `404` означает невыложенный раздел,
+ *   прочие отказы — отказ кабинета по существу.
+ */
+internal fun mockCabinet(body: String, status: HttpStatusCode = HttpStatusCode.OK): CabinetSession {
+    val engine = MockEngine { request ->
+        val entering = request.url.encodedPath.endsWith("/me")
+        respond(
+            content = if (entering) WHO else body,
+            status = if (entering) HttpStatusCode.OK else status,
+            headers = headersOf(HttpHeaders.ContentType, "application/json")
+        )
+    }
+    val http = HttpClient(engine) {
+        expectSuccess = false
+        install(ContentNegotiation) { json(CabinetClient.lenientJson) }
+    }
+    val cabinet = CabinetSession(CabinetClient(http = http))
+    assertTrue(runBlocking { cabinet.signInAsDeveloper(IIN, BIN) }, "владелец не вошёл")
+    return cabinet
+}
+
+/** ИИН владельца и БИН его компании: подставные, но казахстанского вида. */
+private const val IIN = "870101300123"
+private const val BIN = "180140000123"
+
+private val WHO = """{"user":{"id":"u-1","iin":"$IIN","fullName":"Иванов Сергей"},
+    "company":{"id":"c-1","bin":"$BIN","name":"ТОО «Пример»"}}"""

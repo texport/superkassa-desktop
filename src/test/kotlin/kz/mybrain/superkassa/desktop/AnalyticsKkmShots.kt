@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop
 
+import io.ktor.http.HttpStatusCode
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsKkmDialog
 import kz.mybrain.superkassa.desktop.ui.analytics.sieved
@@ -34,19 +35,37 @@ class AnalyticsKkmShots {
     }
 
     /**
-     * Окно сводки одной кассы.
+     * Окно сводки одной кассы до первого ответа.
      *
-     * Кабинет не спрашивается: сеанс без доступа, и окно показывает
-     * ожидание — ровно то, что владелец увидит до первого ответа.
+     * Сеанс без доступа: кабинет не спрашивается вовсе, и на месте
+     * сводки стоит ожидание — ровно то, что владелец увидит, открыв окно.
      */
     @Test
-    fun `окно сводки одной кассы`() {
+    fun `окно сводки ждёт ответа`() {
+        dialog("an-kkm-dialog-waiting", CabinetSession())
+    }
+
+    /** Пустой срок: за него ничего не продано, и об этом сказано словами. */
+    @Test
+    fun `окно сводки за пустой срок`() = dialog("an-kkm-dialog-empty", mockCabinet(NOTHING))
+
+    /** Раздел сводки ещё не выложен: кабинет отвечает `404`. */
+    @Test
+    fun `окно сводки до выкладки кабинета`() =
+        dialog("an-kkm-dialog-not-deployed", mockCabinet(NOT_FOUND, HttpStatusCode.NotFound))
+
+    /** Кабинет отказал по существу: отказ показывается его же словами. */
+    @Test
+    fun `окно сводки при отказе кабинета`() =
+        dialog("an-kkm-dialog-refused", mockCabinet(REFUSAL, HttpStatusCode.Forbidden))
+
+    private fun dialog(name: String, cabinet: CabinetSession) {
         val session = Look.session()
         RenderProbe(WIDE, HIGH) {
-            AnalyticsKkmDialog(session, CabinetSession(), Look.kkm(1), Look.texts, Look.cabinet) {}
+            AnalyticsKkmDialog(session, cabinet, Look.kkm(1), Look.texts, Look.cabinet) {}
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }
-            Look.shot("an-kkm-dialog", probe.frame())
+            Look.shot(name, probe.frame())
         }
     }
 
@@ -69,6 +88,13 @@ class AnalyticsKkmShots {
     private companion object {
         const val HERE = "г. Алматы, пр. Абая, 10"
         const val TEN = 10
+
+        /** Кабинет посчитал срок и вернул нули: документов за него нет. */
+        const val NOTHING = "{}"
+
+        const val NOT_FOUND = """{"code":"NOT_FOUND","message":"No handler"}"""
+        const val REFUSAL = """{"code":"FORBIDDEN","message":"Сводка выдана не этой компании"}"""
+
         const val SETTLE = 24
         const val WIDE = 1180
         const val HIGH = 820
