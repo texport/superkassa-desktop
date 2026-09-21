@@ -50,7 +50,7 @@ fun PrintFormCard(session: Session) {
         }
     }
 
-    SectionCard(title = texts.settings.printForm) {
+    SectionCard(title = texts.settings.printForm, info = texts.settings.printFormHint) {
         Text(texts.settings.receiptLanguage, style = MaterialTheme.typography.bodyMedium)
         ChoiceSegments(
             options = ReceiptLanguageChoice.entries,

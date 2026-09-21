@@ -33,7 +33,7 @@ fun ReceiptCard(receipt: CabinetReceiptDetails, texts: CabinetTexts, onClose: ()
             documentTitle(receipt.operationType, texts),
             receipt.receiptNumber
         ).joinToString(Glyphs.SEPARATOR),
-        info = texts.receiptCardHint,
+        info = texts.hints.receiptCard,
         trailing = { ReceiptTail(receipt, texts, onClose) }
     ) {
         DetailLine(texts.receiptMoment, cabinetMoment(receipt.createdAt))

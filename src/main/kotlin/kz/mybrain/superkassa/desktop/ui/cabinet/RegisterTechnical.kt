@@ -53,7 +53,7 @@ fun RegisterTechnical(state: RegisterState?, texts: CabinetTexts, answers: List<
  */
 @Composable
 fun TechnicalHeader(texts: CabinetTexts, work: StateAnswer, disagree: Boolean) {
-    InfoTip(texts.technicalStateHint)
+    InfoTip(texts.hints.technicalState)
     if (disagree) {
         Chip(texts.stateDisagree, toneColor(StatusTone.Bad))
     } else {
@@ -120,12 +120,23 @@ private fun DisagreeNote(answer: StateAnswer, texts: CabinetTexts) {
     )
 }
 
-/** Цвет показания: расходящееся — чинить, молчание — ожидание. */
+/**
+ * Цвет показания.
+ *
+ * Расходящееся — чинить, молчание — ожидание, а «об этом не высказываюсь
+ * вовсе» — покой: кабинет смену не ведёт по устройству, и жёлтым владелец
+ * читал это как ответ, которого ещё ждут.
+ */
 private fun claimTone(claim: StateClaim, answer: StateAnswer): StatusTone = when {
     claim.source in answer.disagreeing -> StatusTone.Bad
+    silent(claim, answer.question) -> StatusTone.Idle
     answer.question.verdictOf(claim) == Verdict.Unknown -> StatusTone.Waiting
     else -> headlineTone(answer.headline)
 }
+
+/** Источник, которому этот вопрос не задают: у кабинета нет смен. */
+private fun silent(claim: StateClaim, question: StateQuestion): Boolean =
+    claim.source == StateSource.Cabinet && question == StateQuestion.Shift
 
 /** Помехи, из-за которых документы перестают доезжать до БФД. */
 @Composable

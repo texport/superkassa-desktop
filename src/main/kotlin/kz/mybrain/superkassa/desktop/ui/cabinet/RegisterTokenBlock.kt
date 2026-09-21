@@ -39,7 +39,7 @@ fun RegisterTokenBlock(cabinet: CabinetSession, texts: CabinetTexts, register: C
     var issued by remember(register.id) { mutableStateOf<Long?>(null) }
 
     val allowed = tokenAllowed(register)
-    SubsectionTitle(texts.token, texts.tokenHint)
+    SubsectionTitle(texts.token, texts.hints.token)
     // Почему кнопка погасла — строкой: это состояние кассы, а не объяснение
     // раздела, и владелец должен видеть его не открывая подсказку.
     if (!allowed) {

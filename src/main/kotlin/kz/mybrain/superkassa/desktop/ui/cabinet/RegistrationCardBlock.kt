@@ -61,7 +61,7 @@ fun RegistrationCardBlock(cabinet: CabinetSession, texts: CabinetTexts, register
     val state = when {
         issued != null -> ScreenState.Ready
         register.registrationCardAvailable -> ScreenState.Working
-        else -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.cardMissingHint)
+        else -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.hints.cardMissing)
     }
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
         ScreenSlot(state, dense = true) {

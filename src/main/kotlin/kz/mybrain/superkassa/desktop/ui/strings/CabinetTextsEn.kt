@@ -4,7 +4,6 @@ package kz.mybrain.superkassa.desktop.ui.strings
 internal val cabinetTextsEn = CabinetTexts(
     title = "BFD cabinet",
     signIn = "Sign in with a certificate",
-    signInHint = "NCALayer asks for the signature: certificate and password are entered in its own window",
     signing = "Waiting for the signature in NCALayer",
     signOut = "Sign out",
     noNcaLayer = "NCALayer does not answer. Start it and sign in again",
@@ -13,7 +12,6 @@ internal val cabinetTextsEn = CabinetTexts(
     sessionExpired = "Access expired — sign in again",
     unreachable = "The cabinet does not answer at the configured address",
     address = "Cabinet address",
-    addressHint = "The cabinet is a separate service with its own address",
     company = "Company",
     bin = "BIN",
     okeds = "Activity codes",
@@ -54,7 +52,6 @@ internal val cabinetTextsEn = CabinetTexts(
     savePdf = "Save PDF",
     cardVersions = "Card versions",
     cardVersionsEmpty = "No earlier card versions",
-    cardVersionsEmptyHint = "A version appears on re-registration and on deregistration",
     cardVersion = "Version",
     cardCurrentVersion = "Current",
     cardChanged = "Changed",
@@ -113,30 +110,20 @@ internal val cabinetTextsEn = CabinetTexts(
     companyFromEds = "The company here is the one whose digital signature you signed " +
         "in with: the name and the details are issued by the KGD and are not editable. " +
         "Retail places, registers and applications all belong to it",
-    placesEmptyHint = "A place is the address where a register stands. Until there is one, no register can be added",
-    registersEmptyHint = "Create a register, then file a KGD application to put it on record",
-    okedsEmptyHint = "The primary activity code goes into the registration application — set at least one",
-    chooseRegisterHint = "The company registers are on the left: choose one and its card opens here",
-    documentsEmptyHint = "Whatever the BFD accepted from this register appears here",
-    actionsEmptyHint = "Every application leaves a trace here: when it was filed and how it ended",
     pickRegisterFirst = "No register chosen",
-    pickRegisterFirstHint = "Choose a register above: documents are shown one register at a time",
     technicalUnknown = "The BFD has not seen this register yet",
-    technicalUnknownHint = "The state appears after the register first contacts the BFD",
     trafficSuspended = "Document reception is suspended",
     bfdDisconnected = "The link to the BFD is broken",
     passport = "Register passport",
     applications = "KGD applications",
     actionsJournal = "Action journal",
     token = "Token",
-    tokenHint = "The key the register signs its requests with. Copy it into the register settings: it is not shown here twice",
     submitApplication = "File the application",
     applicationSent = "Application sent",
     registerStatus = "Register status",
     applicationWait = "The KGD answers later — the journal below refreshes itself",
     required = "Required",
     optional = "Optional",
-    internalNameHint = "A note to yourself: it is not sent to the BFD",
     foundAddresses = "Addresses found",
     addressChosen = "Address chosen",
     addOked = "Add an activity code",
@@ -156,9 +143,7 @@ internal val cabinetTextsEn = CabinetTexts(
     paymentCredit = "On credit",
     paymentTare = "Returnable packaging",
     taxVat = "VAT",
-    receiptsHint = "Click a row to open the receipt contents",
     deliveryRefused = "Not delivered",
-    cardMissingHint = "The card appears once the register is put on record",
     factoryLocked = "Recorded in the registration card — changed only by re-registration",
     factoryIssued = "Assigned by the register when issued — not editable",
     tokenOnlyRegistered = "A token is issued to a register on record, and only when no application is filed for it",
@@ -173,7 +158,6 @@ internal val cabinetTextsEn = CabinetTexts(
     allShown = "The whole period is shown",
     shownOf = "Shown %1\$s of %2\$s",
     okedSearch = "Search the OKED classifier",
-    okedSearchHint = "A code or part of a name; an empty line shows the start of the classifier",
     okedNotFound = "Nothing found. The classifier knows only its own wording: a pharmacy there is trade in pharmaceutical goods",
     shiftOpenTitle = "The shift is open",
     shiftOpenAsk = "A register can be taken off record only with the shift closed. Close the shift on this register and file the application?",
@@ -183,9 +167,6 @@ internal val cabinetTextsEn = CabinetTexts(
     stateDisagree = "They disagree",
     stateDisagreeNote = "They disagree: %s. Most likely the state went stale somewhere — reread the register " +
         "card; if the disagreement stays, work out who is right",
-    technicalStateHint = "Three parties speak about the register: the node on this machine, the KGD cabinet and " +
-        "the BFD — the fiscal data base. The answer comes first, and below it who exactly said so. They " +
-        "disagree when the state went stale somewhere.",
     sourceNode = "Node",
     sourceCabinet = "Cabinet",
     sourceBfd = "BFD",
@@ -208,7 +189,6 @@ internal val cabinetTextsEn = CabinetTexts(
     shiftNumberTitle = "Shift number",
     shiftNumberNone = "there have been no shifts yet",
     lastContactNever = "the register has never made contact",
-    bfdNoAnswerHint = "The state was not received — reread the register card",
     okedNarrowSearch = "The classifier is longer than shown: “Show more” at the end of the list, or narrow the search",
     pickOnMap = "Place on the map",
     pointNotChosen = "No point chosen",
@@ -224,20 +204,12 @@ internal val cabinetTextsEn = CabinetTexts(
     documentMoment = "Accepted by BFD",
     documentNumber = "Document number",
     developerSignIn = "Sign in without a digital signature",
-    developerSignInHint = "Cabinet development mode: the owner and company are set by IIN and BIN, " +
-        "the signature is not checked at sign-in. Applications are still signed with the digital signature, " +
-        "and the IIN must match the certificate; for a sole proprietor the BIN equals the IIN",
     addressRegion = "Region",
     addressLocality = "Locality or district",
     addressStreet = "Street",
     addressBuilding = "Building number",
-    addressStepHint = "The address is chosen step by step: region, locality, street, building. " +
-        "Pick from the list or type the beginning of a name as the registry spells it: " +
-        "Қабанбай батыр, not Кабанбай",
     okedCode = "OKED code",
     okedName = "Activity name",
-    okedManualHint = "The cabinet does not serve the classifier: " +
-        "enter the code and the name exactly as written in the OKED classifier",
     stagePreparing = "Preparing the application",
     stageSigning = "Waiting for the signature in NCALayer",
     stageSending = "Sending to the cabinet",
@@ -246,42 +218,6 @@ internal val cabinetTextsEn = CabinetTexts(
     addressNotFound = "Nothing found — refine the beginning of the name",
     placeSearch = "Search: place, register, reg. no.",
     placeNotFound = "Nothing found",
-    placeNotFoundHint = "Change the query or clear the search.",
-    registersHint = "Every cash register created in the cabinet, not only the ones " +
-        "running on this machine. A register is created here first, then filed for the " +
-        "record, and the KGD assigns it a registration number",
-    placesHint = "A retail place is the address where a register stands: it goes into the " +
-        "KGD application and is printed on the receipt. The coordinates are for the map — " +
-        "they show where the place is and where its registers connect from",
-    placesTreeHint = "The retail places of the company on the left, each with its " +
-        "registers under it: a register lives in a place, and without a place it cannot " +
-        "be created. The search covers the place name, the register name and its number",
-    okedsHint = "The activity types are what the company does, taken from the OKED " +
-        "classifier (NC RK 03-2019); the cabinet holds the classifier, so a type is " +
-        "picked from the list rather than typed in your own words. There is exactly one " +
-        "primary type: it goes into the application, and without it the KGD will not put " +
-        "a register on record",
-    passportHint = "The passport is how the register is recorded at the KGD: registration " +
-        "number, factory number, model and retail place. It also shows whether this " +
-        "register runs on this machine, and lets you edit what can still be edited",
-    onThisMachineHint = "The registers in the cabinet and the registers on this computer " +
-        "are different lists: a register can be on record and still run in another shop. " +
-        "This says whether a cashier can stand behind it here and now",
-    receiptCardHint = "The receipt in full: items, payment, taxes and who rang it up. The " +
-        "KGD mark is what the receipt is opened for: it means the receipt reached the BFD " +
-        "and was accepted",
-    reportCardHint = "The register report for a shift: revenue, refunds and the cash in " +
-        "the drawer. The numbers must match the tape the cashier holds — a mismatch means " +
-        "not everything reached the BFD",
-    shiftCardHint = "A shift is one register's working day, from opening to the Z report. " +
-        "The totals appear after it closes: an open shift has none yet, and the empty " +
-        "lines here are not a fault",
-    cashMovementHint = "A deposit or a withdrawal is money the cashier put into the " +
-        "drawer or took out of it without selling anything. It is not revenue, but it " +
-        "changes the cash in the register, and without it the drawer will not reconcile",
-    factoryNumberHint = "The number the manufacturer stamped on the register: it goes " +
-        "into the application and stands in the registration card. While the register " +
-        "is not on record it can be fixed here",
     map = MapTexts(
         pickOnMapHint = "Click the map where the place stands; drag the map with the mouse",
         pickPoint = "Take these coordinates",
@@ -298,5 +234,71 @@ internal val cabinetTextsEn = CabinetTexts(
             "a building: place the point itself by clicking the map.",
         locationAllow = "Allow",
         locationDeny = "Do not allow"
+    ),
+    hints = CabinetHints(
+        signIn = "NCALayer asks for the signature: certificate and password are entered in its own window",
+        address = "The cabinet is a separate service with its own address",
+        cardVersionsEmpty = "A version appears on re-registration and on deregistration",
+        placesEmpty = "A place is the address where a register stands. Until there is one, no register can be added",
+        registersEmpty = "Create a register, then file a KGD application to put it on record",
+        okedsEmpty = "The primary activity code goes into the registration application — set at least one",
+        chooseRegister = "The company registers are on the left: choose one and its card opens here",
+        documentsEmpty = "Whatever the BFD accepted from this register appears here",
+        actionsEmpty = "Every application leaves a trace here: when it was filed and how it ended",
+        pickRegisterFirst = "Choose a register above: documents are shown one register at a time",
+        technicalUnknown = "The state appears after the register first contacts the BFD",
+        token = "The key the register signs its requests with. Copy it into the register settings: it is not shown here twice",
+        internalName = "A note to yourself: it is not sent to the BFD",
+        receipts = "Click a row to open the receipt contents",
+        cardMissing = "The card appears once the register is put on record",
+        okedSearch = "A code or part of a name; an empty line shows the start of the classifier",
+        technicalState = "Three parties speak about the register: the node on this machine, the KGD cabinet and " +
+            "the BFD — the fiscal data base. The answer comes first, and below it who exactly said so. They " +
+            "disagree when the state went stale somewhere.",
+        bfdNoAnswer = "The state was not received — reread the register card",
+        developerSignIn = "Cabinet development mode: the owner and company are set by IIN and BIN, " +
+            "the signature is not checked at sign-in. Applications are still signed with the digital signature, " +
+            "and the IIN must match the certificate; for a sole proprietor the BIN equals the IIN",
+        addressStep = "The address is chosen step by step: region, locality, street, building. " +
+            "Pick from the list or type the beginning of a name as the registry spells it: " +
+            "Қабанбай батыр, not Кабанбай",
+        okedManual = "The cabinet does not serve the classifier: " +
+            "enter the code and the name exactly as written in the OKED classifier",
+        placeNotFound = "Change the query or clear the search.",
+        registers = "Every cash register created in the cabinet, not only the ones " +
+            "running on this machine. A register is created here first, then filed for the " +
+            "record, and the KGD assigns it a registration number",
+        places = "A retail place is the address where a register stands: it goes into the " +
+            "KGD application and is printed on the receipt. The coordinates are for the map — " +
+            "they show where the place is and where its registers connect from",
+        placesTree = "The retail places of the company on the left, each with its " +
+            "registers under it: a register lives in a place, and without a place it cannot " +
+            "be created. The search covers the place name, the register name and its number",
+        okeds = "The activity types are what the company does, taken from the OKED " +
+            "classifier (NC RK 03-2019); the cabinet holds the classifier, so a type is " +
+            "picked from the list rather than typed in your own words. There is exactly one " +
+            "primary type: it goes into the application, and without it the KGD will not put " +
+            "a register on record",
+        passport = "The passport is how the register is recorded at the KGD: registration " +
+            "number, factory number, model and retail place. It also shows whether this " +
+            "register runs on this machine, and lets you edit what can still be edited",
+        onThisMachine = "The registers in the cabinet and the registers on this computer " +
+            "are different lists: a register can be on record and still run in another shop. " +
+            "This says whether a cashier can stand behind it here and now",
+        receiptCard = "The receipt in full: items, payment, taxes and who rang it up. The " +
+            "KGD mark is what the receipt is opened for: it means the receipt reached the BFD " +
+            "and was accepted",
+        reportCard = "The register report for a shift: revenue, refunds and the cash in " +
+            "the drawer. The numbers must match the tape the cashier holds — a mismatch means " +
+            "not everything reached the BFD",
+        shiftCard = "A shift is one register's working day, from opening to the Z report. " +
+            "The totals appear after it closes: an open shift has none yet, and the empty " +
+            "lines here are not a fault",
+        cashMovement = "A deposit or a withdrawal is money the cashier put into the " +
+            "drawer or took out of it without selling anything. It is not revenue, but it " +
+            "changes the cash in the register, and without it the drawer will not reconcile",
+        factoryNumber = "The number the manufacturer stamped on the register: it goes " +
+            "into the application and stands in the registration card. While the register " +
+            "is not on record it can be fixed here"
     )
 )

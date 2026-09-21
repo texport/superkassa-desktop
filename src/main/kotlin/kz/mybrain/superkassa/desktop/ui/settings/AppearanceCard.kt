@@ -19,7 +19,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Appearance
 @Composable
 fun AppearanceCard(session: Session) {
     val texts = LocalStrings.current
-    SectionCard(title = texts.settings.appearance) {
+    SectionCard(title = texts.settings.appearance, info = texts.settings.appearanceHint) {
         ChoiceSegments(
             options = Appearance.entries,
             selected = session.appearance,

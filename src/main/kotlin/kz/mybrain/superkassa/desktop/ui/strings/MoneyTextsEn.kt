@@ -20,12 +20,16 @@ internal val moneyTextsEn = MoneyTexts(
         cancel = "Cancel",
         working = "Processing…",
         recent = "Recent pay-ins and payouts",
+        recentHint = "The latest cash put in and taken out during this shift. They are not revenue, but they change what is in " +
+            "the drawer — the closing reconciliation rests on them",
         recentEmpty = "No pay-ins or payouts in the last day",
         recentEmptyHint = "Cash paid in and taken out appears here as soon as it goes through."
     ),
     cashiers = CashierTexts(
         addTitle = "New cashier",
         listTitle = "Cashiers of this register",
+        listHint = "The cashiers of this cash register: who may stand at it and what they are allowed to do. A cashier PIN " +
+            "is their signature on a receipt, and only they should know it",
         pinLength = "4–8 digits",
         pinUnique = "The node will not give two cashiers of one register the same PIN: it tells them apart by PIN.",
         roles = "An administrator adds cashiers and changes settings, a cashier issues receipts.",

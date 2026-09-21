@@ -45,7 +45,7 @@ internal fun RecentCash(session: Session, money: DrawerTexts, recent: List<Docum
         loading -> ScreenState.Working
         else -> ScreenState.Empty(AppIcons.cash, money.recentEmpty, money.recentEmptyHint)
     }
-    SectionCard(title = money.recent) {
+    SectionCard(title = money.recent, info = money.recentHint) {
         ScreenSlot(state, dense = true) {
             recent.forEachIndexed { index, document ->
                 if (index > 0) {

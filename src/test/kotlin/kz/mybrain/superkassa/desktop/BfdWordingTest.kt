@@ -32,7 +32,6 @@ class BfdWordingTest {
     fun `ни одной надписи с прежним именем приёмной базы`() {
         Language.entries.forEach { language ->
             sets(language).flatMap { strings(it) }
-                .filter { (name, _) -> name.substringAfter('.') !in technicalState }
                 .forEach { (name, value) ->
                     forbidden.forEach { word ->
                         assertFalse(value.contains(word), "$language: «$word» в надписи $name: $value")
@@ -41,17 +40,29 @@ class BfdWordingTest {
         }
     }
 
-    /** Аббревиатура расшифрована, и ровно в одном месте. */
+    /**
+     * Аббревиатура расшифрована — и только в объяснениях.
+     *
+     * Расшифровка нужна там, где владелец спрашивает «что это такое»:
+     * под значком подсказки. В обычной надписи — на кнопке, в подписи
+     * поля, в плашке состояния — она лишняя: экран читают каждый день,
+     * а расшифровку один раз. Мест с объяснением больше одного намеренно:
+     * подсказку карточки сверки и подсказку технического состояния читают
+     * на разных экранах, и отсылать со второго на первый было бы издёвкой.
+     */
     @Test
-    fun `расшифровка стоит один раз на приложение`() {
+    fun `расшифровка стоит только в объяснениях`() {
         assertTrue(
             moneyTexts(Language.Ru).kkm.bfdMeaning.contains("база фискальных данных"),
             "подсказка обязана расшифровывать аббревиатуру"
         )
-        val decoded = Language.entries.sumOf { language ->
-            sets(language).flatMap { strings(it) }.count { (_, value) -> value.contains("база фискальных данных") }
+        Language.entries.forEach { language ->
+            sets(language).flatMap { strings(it) }
+                .filter { (_, value) -> value.contains("база фискальных данных") }
+                .forEach { (name, value) ->
+                    assertTrue(explaining(name), "$language: расшифровка в обычной надписи $name: $value")
+                }
         }
-        assertTrue(decoded == 1, "расшифровка повторяется в надписях $decoded раз")
     }
 
     private fun strings(value: Any, seen: MutableSet<Any> = mutableSetOf()): List<Pair<String, String>> {
@@ -82,14 +93,16 @@ class BfdWordingTest {
         debugTexts(language)
     )
 
+    /**
+     * Объясняющая ли это надпись.
+     *
+     * Объяснения живут либо в группе подсказок кабинета, либо в поле,
+     * названном подсказкой: и то и другое выходит на экран под значком
+     * у заголовка, а не строкой, которую читают каждый день.
+     */
+    private fun explaining(name: String): Boolean =
+        name.contains("Hints.") || name.contains("Hint") || name.contains("Meaning")
+
     /** Слова, которых на экране быть не должно ни на одном языке. */
     private val forbidden = listOf("ОФД", "OFD")
-
-    /**
-     * Надписи сверки состояний остаются на прежнем имени.
-     *
-     * Там названы три службы, которые говорят о кассе порознь, и это
-     * ведётся отдельно от переименования интерфейса.
-     */
-    private val technicalState = setOf("sourceOfd", "technicalUnknownHint", "ofdDisconnected")
 }

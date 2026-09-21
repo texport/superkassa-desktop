@@ -33,12 +33,13 @@ fun CabinetTexts.headlineWords(headline: Headline): String = when (headline) {
  * Роль цвета ответа.
  *
  * Отказ красит то, с чем владельцу нужно что-то сделать; незнание —
- * ожидание, а не отказ; закрытая смена — тоже ожидание: это обычное
- * состояние кассы до начала дня.
+ * ожидание, а не отказ; закрытая смена — покой: так касса стоит до начала
+ * дня и после Z-отчёта, и жёлтым владелец читал её как незаконченное дело.
  */
 fun headlineTone(headline: Headline): StatusTone = when (headline) {
     Headline.Working, Headline.ShiftOpen -> StatusTone.Good
     Headline.Blocked, Headline.OffRecord -> StatusTone.Bad
+    Headline.ShiftClosed -> StatusTone.Idle
     else -> StatusTone.Waiting
 }
 
@@ -65,7 +66,7 @@ fun CabinetTexts.bfdSilenceTitle(technical: TechnicalState?): String =
     if (technical == null) sourceBfd else technicalUnknown
 
 fun CabinetTexts.bfdSilenceHint(technical: TechnicalState?): String =
-    if (technical == null) bfdNoAnswerHint else technicalUnknownHint
+    if (technical == null) hints.bfdNoAnswer else hints.technicalUnknown
 
 /**
  * Работает ли касса.

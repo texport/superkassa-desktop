@@ -132,10 +132,10 @@ fun OkedPicker(
         }
         Hint(
             when {
-                !searched -> texts.okedSearchHint
+                !searched -> texts.hints.okedSearch
                 found.isEmpty() && needle.isNotEmpty() -> texts.okedNotFound
                 !ended -> texts.okedNarrowSearch
-                else -> texts.okedSearchHint
+                else -> texts.hints.okedSearch
             }
         )
     }

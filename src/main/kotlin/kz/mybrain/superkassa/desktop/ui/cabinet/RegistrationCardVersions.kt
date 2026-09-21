@@ -89,7 +89,7 @@ fun RegistrationCardVersions(cabinet: CabinetSession, texts: CabinetTexts, regis
 private fun versionsState(asked: Boolean, rows: List<RegistrationCardVersion>, texts: CabinetTexts): ScreenState =
     when {
         !asked -> ScreenState.Working
-        rows.isEmpty() -> ScreenState.Empty(AppIcons.print, texts.cardVersionsEmpty, texts.cardVersionsEmptyHint)
+        rows.isEmpty() -> ScreenState.Empty(AppIcons.print, texts.cardVersionsEmpty, texts.hints.cardVersionsEmpty)
         else -> ScreenState.Ready
     }
 
@@ -146,7 +146,7 @@ private fun VersionCard(cabinet: CabinetSession, texts: CabinetTexts, register: 
     val shown = card
     val state = when {
         !asked -> ScreenState.Working
-        shown == null -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.cardMissingHint)
+        shown == null -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.hints.cardMissing)
         else -> ScreenState.Ready
     }
     ScreenSlot(state, dense = true) {

@@ -40,6 +40,8 @@ internal val englishSettings = SettingStrings(
     environment = "Environment",
     language = "Language",
     appearance = "Appearance",
+    appearanceHint = "The theme and language of this workplace. Kept on this machine: receipts, other cash registers and the " +
+        "cabinet stay as they are",
     ofdToken = "BFD token",
     newToken = "New token",
     saveToken = "Save token",
@@ -47,6 +49,8 @@ internal val englishSettings = SettingStrings(
     tokenHint = "The BFD issues the token. On an \"invalid token\" answer the register stops " +
         "and works again only after a new one is entered.",
     printForm = "Printed receipt",
+    printFormHint = "How the printed receipt looks: language, paper width and what exactly to print. The form must match what " +
+        "went to the BFD — it is the same document",
     programmingRequired = "Register settings change in programming mode.",
     printFormSaved = "Receipt settings saved",
     receiptLanguage = "Receipt language",
@@ -63,12 +67,17 @@ internal val englishSettings = SettingStrings(
     printCopies = "Copies when printing",
     panelBehaviour = "Till column sections",
     taxSettings = "Register taxes",
+    taxSettingsHint = "The tax regime and VAT rate of this cash register: the tax of every receipt is computed from them. Set them " +
+        "from the KGD records — a mismatch sends receipts out with the wrong tax",
     taxRegime = "Tax regime",
     defaultVatGroup = "Default VAT rate",
     autoCloseShift = "Close the shift automatically",
-    autoCloseShiftHint = "A shift lasts a day. The node closes it on its own if the cashier did not — the Z report is still taken on time.",
+    autoCloseShiftHint = "A shift lasts a day. The node closes it on its own if the cashier did not — the Z report is still taken on " +
+        "time.",
     settingsSaved = "Register settings saved",
     node = "Node",
+    nodeHint = "The node is the service on this machine that talks to the BFD: the cash register hands it a command, it " +
+        "signs and sends. Here you see whether it answers, which build it is and where its database lives",
     nodeVersion = "Version",
     nodeCoreVersion = "Core version",
     nodeMode = "Mode",

@@ -54,7 +54,7 @@ fun RegisterEditCard(
     EditRow(
         label = texts.internalName,
         save = texts.save,
-        hint = texts.internalNameHint,
+        hint = texts.hints.internalName,
         initial = register.internalName.orEmpty(),
         key = register.id,
         enabled = true,
@@ -66,7 +66,7 @@ fun RegisterEditCard(
     EditRow(
         label = texts.factoryNumber,
         save = texts.save,
-        hint = if (draft) texts.factoryNumberHint else texts.factoryLocked,
+        hint = if (draft) texts.hints.factoryNumber else texts.factoryLocked,
         initial = register.factoryNumber.orEmpty(),
         key = register.id,
         enabled = draft,

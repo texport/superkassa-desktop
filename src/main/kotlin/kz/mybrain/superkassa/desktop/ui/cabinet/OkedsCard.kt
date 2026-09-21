@@ -42,9 +42,9 @@ fun OkedsCard(
     title: (Oked) -> String,
     onSave: () -> Unit
 ) {
-    SectionCard(title = texts.okeds, info = texts.okedsHint) {
+    SectionCard(title = texts.okeds, info = texts.hints.okeds) {
         if (okeds.isEmpty()) {
-            EmptyState(AppIcons.settings, texts.okedsEmpty, texts.okedsEmptyHint)
+            EmptyState(AppIcons.settings, texts.okedsEmpty, texts.hints.okedsEmpty)
         }
         okeds.toList().forEachIndexed { at, oked ->
             OkedRow(

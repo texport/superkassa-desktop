@@ -43,7 +43,7 @@ fun NodeFactsCard(session: Session) {
         health = session.guard(texts.node) { session.client.nodeHealth() }
     }
 
-    SectionCard(title = texts.node) {
+    SectionCard(title = texts.node, info = texts.nodeHint) {
         FactLines(texts.diagnostics, nodeLines(session, info, health), texts.nodeUnknown)
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
             OutlinedButton(

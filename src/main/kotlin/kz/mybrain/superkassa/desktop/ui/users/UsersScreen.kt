@@ -81,7 +81,7 @@ fun UsersScreen(session: Session) {
 
         AddCashier(session, money) { reload() }
 
-        SectionCard(title = money.cashiers.listTitle) {
+        SectionCard(title = money.cashiers.listTitle, info = money.cashiers.listHint) {
             val state = when {
                 loaded.isNotEmpty() -> ScreenState.Ready
                 !answered -> ScreenState.Working

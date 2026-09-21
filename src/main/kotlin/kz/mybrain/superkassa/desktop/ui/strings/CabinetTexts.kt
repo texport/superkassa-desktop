@@ -14,7 +14,6 @@ package kz.mybrain.superkassa.desktop.ui.strings
 data class CabinetTexts(
     val title: String,
     val signIn: String,
-    val signInHint: String,
     val signing: String,
     val signOut: String,
     val noNcaLayer: String,
@@ -23,7 +22,6 @@ data class CabinetTexts(
     val sessionExpired: String,
     val unreachable: String,
     val address: String,
-    val addressHint: String,
     val company: String,
     val bin: String,
     val okeds: String,
@@ -65,7 +63,6 @@ data class CabinetTexts(
     /** Версии регистрационной карты: прежние записи КГД о кассе. */
     val cardVersions: String,
     val cardVersionsEmpty: String,
-    val cardVersionsEmptyHint: String,
     val cardVersion: String,
     val cardCurrentVersion: String,
     val cardChanged: String,
@@ -122,30 +119,20 @@ data class CabinetTexts(
     val operator: String,
     val close: String,
     val companyFromEds: String,
-    val placesEmptyHint: String,
-    val registersEmptyHint: String,
-    val okedsEmptyHint: String,
-    val chooseRegisterHint: String,
-    val documentsEmptyHint: String,
-    val actionsEmptyHint: String,
     val pickRegisterFirst: String,
-    val pickRegisterFirstHint: String,
     val technicalUnknown: String,
-    val technicalUnknownHint: String,
     val trafficSuspended: String,
     val bfdDisconnected: String,
     val passport: String,
     val applications: String,
     val actionsJournal: String,
     val token: String,
-    val tokenHint: String,
     val submitApplication: String,
     val applicationSent: String,
     val registerStatus: String,
     val applicationWait: String,
     val required: String,
     val optional: String,
-    val internalNameHint: String,
     val foundAddresses: String,
     val addressChosen: String,
     val addOked: String,
@@ -166,9 +153,7 @@ data class CabinetTexts(
     val paymentCredit: String,
     val paymentTare: String,
     val taxVat: String,
-    val receiptsHint: String,
     val deliveryRefused: String,
-    val cardMissingHint: String,
     val factoryLocked: String,
     val factoryIssued: String,
     val tokenOnlyRegistered: String,
@@ -183,7 +168,6 @@ data class CabinetTexts(
     val allShown: String,
     val shownOf: String,
     val okedSearch: String,
-    val okedSearchHint: String,
     val okedNotFound: String,
 
     /** Кабинет отказал снять кассу: смена не закрыта. */
@@ -196,7 +180,6 @@ data class CabinetTexts(
     /** Сверка состояний: кто о кассе говорит и что именно. */
     val stateDisagree: String,
     val stateDisagreeNote: String,
-    val technicalStateHint: String,
     val sourceNode: String,
     val sourceCabinet: String,
     val sourceBfd: String,
@@ -231,7 +214,6 @@ data class CabinetTexts(
     val shiftNumberTitle: String,
     val shiftNumberNone: String,
     val lastContactNever: String,
-    val bfdNoAnswerHint: String,
 
     /** Выдача классификатора упёрлась в предел: дальше списка нет. */
     val okedNarrowSearch: String,
@@ -257,15 +239,12 @@ data class CabinetTexts(
      */
     val documentNumber: String,
     val developerSignIn: String,
-    val developerSignInHint: String,
     val addressRegion: String,
     val addressLocality: String,
     val addressStreet: String,
     val addressBuilding: String,
-    val addressStepHint: String,
     val okedCode: String,
     val okedName: String,
-    val okedManualHint: String,
     val stagePreparing: String,
     val stageSigning: String,
     val stageSending: String,
@@ -275,7 +254,6 @@ data class CabinetTexts(
     /** Поиск по колонке торговых точек: их бывают сотни. */
     val placeSearch: String,
     val placeNotFound: String,
-    val placeNotFoundHint: String,
     /**
      * Подсказки разделов кабинета: что это за раздел и зачем он владельцу.
      *
@@ -284,20 +262,57 @@ data class CabinetTexts(
      * потому что все выходят под значком у заголовка карточки и правятся
      * вместе — разойдясь по набору, они начали расходиться и по языку.
      */
-    val registersHint: String,
-    val placesHint: String,
-    val placesTreeHint: String,
-    val okedsHint: String,
-    val passportHint: String,
-    val onThisMachineHint: String,
-    val receiptCardHint: String,
-    val reportCardHint: String,
-    val shiftCardHint: String,
-    val cashMovementHint: String,
-    val factoryNumberHint: String,
 
     /** Надписи выбора точки на карте. */
-    val map: MapTexts
+    val map: MapTexts,
+    val hints: CabinetHints
+)
+
+/**
+ * Объяснения разделов кабинета — те, что живут под значком у заголовка.
+ *
+ * Отдельной группой, а не в общем наборе: их три десятка, и вместе
+ * с остальными надписями набор кабинета перевалил за предел JVM
+ * в 255 аргументов конструктора — класс перестал загружаться вовсе,
+ * и это не поймала ни сборка, ни один тест: `ClassFormatError` случается
+ * при загрузке. Группа заодно отвечает на вопрос «где подсказка этого
+ * раздела»: искать её в одном месте, а не среди двух с половиной сотен
+ * полей.
+ */
+data class CabinetHints(
+    val signIn: String,
+    val address: String,
+    val cardVersionsEmpty: String,
+    val placesEmpty: String,
+    val registersEmpty: String,
+    val okedsEmpty: String,
+    val chooseRegister: String,
+    val documentsEmpty: String,
+    val actionsEmpty: String,
+    val pickRegisterFirst: String,
+    val technicalUnknown: String,
+    val token: String,
+    val internalName: String,
+    val receipts: String,
+    val cardMissing: String,
+    val okedSearch: String,
+    val technicalState: String,
+    val bfdNoAnswer: String,
+    val developerSignIn: String,
+    val addressStep: String,
+    val okedManual: String,
+    val placeNotFound: String,
+    val registers: String,
+    val places: String,
+    val placesTree: String,
+    val okeds: String,
+    val passport: String,
+    val onThisMachine: String,
+    val receiptCard: String,
+    val reportCard: String,
+    val shiftCard: String,
+    val cashMovement: String,
+    val factoryNumber: String
 )
 
 /** Надписи области на выбранном языке. */

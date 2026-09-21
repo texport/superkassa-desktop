@@ -42,7 +42,7 @@ private fun signWords(detail: String, texts: CabinetTexts): String {
 /** Отказ кабинета словами владельца; `null` — такого кода приложение не знает. */
 private fun refusalWords(code: String, texts: CabinetTexts): String? = when (code) {
     "CASH_REGISTER_STATUS" -> texts.tokenOnlyRegistered
-    "STATE_UNKNOWN" -> texts.technicalUnknownHint
+    "STATE_UNKNOWN" -> texts.hints.technicalUnknown
     "KKM_NOT_ACTIVE" -> texts.kkmNotActive
     "DEFAULT_PIN_NOT_ALLOWED" -> texts.defaultPinNotAllowed
     else -> null

@@ -59,7 +59,7 @@ fun RegistersPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts
         val register = cabinet.registers.firstOrNull { it.id == chosen }
         val state = when {
             !answered -> ScreenState.Working
-            register == null -> ScreenState.Empty(AppIcons.kkm, texts.chooseRegister, texts.chooseRegisterHint)
+            register == null -> ScreenState.Empty(AppIcons.kkm, texts.chooseRegister, texts.hints.chooseRegister)
             else -> ScreenState.Ready
         }
         ScreenSlot(state, Modifier.weight(1f)) {
@@ -87,9 +87,9 @@ private fun RegisterList(
         // Строка о пустом списке стоит внутри прокрутки, а не над ней:
         // сверху она отрывалась от кнопки заведения на всю высоту окна.
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.tight, gutter = Spacing.screen) {
-            SectionCard(title = texts.registers, info = texts.registersHint) {
+            SectionCard(title = texts.registers, info = texts.hints.registers) {
                 if (cabinet.registers.isEmpty()) {
-                    EmptyState(AppIcons.kkm, texts.registersEmpty, texts.registersEmptyHint)
+                    EmptyState(AppIcons.kkm, texts.registersEmpty, texts.hints.registersEmpty)
                 }
                 cabinet.registers.forEach { register ->
                     RegisterRow(register, texts, register.id == chosen) { onChoose(register.id) }

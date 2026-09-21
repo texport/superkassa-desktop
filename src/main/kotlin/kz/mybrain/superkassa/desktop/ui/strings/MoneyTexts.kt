@@ -39,6 +39,7 @@ data class DrawerTexts(
     val cancel: String,
     val working: String,
     val recent: String,
+    val recentHint: String,
     val recentEmpty: String,
     val recentEmptyHint: String
 )
@@ -47,6 +48,7 @@ data class DrawerTexts(
 data class CashierTexts(
     val addTitle: String,
     val listTitle: String,
+    val listHint: String,
     val pinLength: String,
     val pinUnique: String,
     val roles: String,

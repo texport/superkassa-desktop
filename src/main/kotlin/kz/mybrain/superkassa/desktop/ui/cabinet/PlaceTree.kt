@@ -61,7 +61,7 @@ internal fun PlaceTree(
         modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn).fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        TreeToggle(collapsed, texts.placesTreeHint, onToggle)
+        TreeToggle(collapsed, texts.hints.placesTree, onToggle)
         if (collapsed) {
             PlaceRail(rows, place, register, onPlace, onRegister, Modifier.weight(1f))
             return@Column
@@ -129,7 +129,7 @@ private fun treeEmpty(texts: CabinetTexts, query: String): ScreenState.Empty {
     return ScreenState.Empty(
         icon = if (searching) AppIcons.find else AppIcons.newKkm,
         title = if (searching) texts.placeNotFound else texts.placesEmpty,
-        hint = if (searching) texts.placeNotFoundHint else texts.placesEmptyHint
+        hint = if (searching) texts.hints.placeNotFound else texts.hints.placesEmpty
     )
 }
 

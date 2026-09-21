@@ -84,7 +84,7 @@ fun AddressSearch(
             TextButton(onClick = { onQuery("") }) { Text(texts.addressPickAgain) }
             return@Column
         }
-        SubsectionTitle(texts.placeAddress, texts.addressStepHint)
+        SubsectionTitle(texts.placeAddress, texts.hints.addressStep)
         path.chosen.forEachIndexed { at, level ->
             ChosenLevel(label = path.labelAt(at, texts), name = level.name) { path.dropFrom(at) }
         }

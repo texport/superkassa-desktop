@@ -74,7 +74,7 @@ fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts
                     horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
                 ) {
                     Text(texts.title, style = MaterialTheme.typography.headlineSmall)
-                    InfoTip(texts.signInHint)
+                    InfoTip(texts.hints.signIn)
                 }
                 BusyButton(
                     text = if (cabinet.busy) texts.signing else texts.signIn,
@@ -122,7 +122,7 @@ private fun DeveloperSignIn(session: Session, cabinet: CabinetSession, texts: Ca
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
         Text(text = texts.developerSignIn, style = MaterialTheme.typography.titleSmall)
-        InfoTip(texts.developerSignInHint)
+        InfoTip(texts.hints.developerSignIn)
     }
     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
         OutlinedTextField(

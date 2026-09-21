@@ -21,7 +21,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 @Composable
 fun RegisterJournal(actions: List<RegistrationAction>, texts: CabinetTexts) {
     if (actions.isEmpty()) {
-        EmptyState(AppIcons.history, texts.actionsEmpty, texts.actionsEmptyHint)
+        EmptyState(AppIcons.history, texts.actionsEmpty, texts.hints.actionsEmpty)
         return
     }
     actions.forEachIndexed { at, action ->

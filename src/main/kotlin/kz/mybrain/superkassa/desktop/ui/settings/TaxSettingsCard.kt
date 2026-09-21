@@ -51,7 +51,7 @@ fun TaxSettingsCard(session: Session) {
     var regime by remember(kkm.taxRegime) { mutableStateOf(kkm.taxRegime) }
     var group by remember(kkm.defaultVatGroup) { mutableStateOf(kkm.defaultVatGroup) }
 
-    SectionCard(title = texts.settings.taxSettings) {
+    SectionCard(title = texts.settings.taxSettings, info = texts.settings.taxSettingsHint) {
         EntryPicker(session, texts.settings.taxRegime, regimes, Dictionary.TaxRegimes, regime) {
             regime = it
             if (it == NO_VAT_REGIME) group = NO_VAT

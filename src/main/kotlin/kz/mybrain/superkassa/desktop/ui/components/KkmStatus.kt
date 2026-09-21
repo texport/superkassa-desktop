@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -21,7 +22,26 @@ import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
  * плашек собирается без композиции, поэтому цвета в нём нет: на его
  * месте стоит роль, а в цвет её превращает [toneColor].
  */
-enum class StatusTone { Good, Waiting, Bad }
+enum class StatusTone {
+
+    /** Так и должно быть: касса работает, смена открыта, всё доехало. */
+    Good,
+
+    /** Ждём: идёт обращение, состояние ещё неизвестно. */
+    Waiting,
+
+    /** Надо что-то сделать: отказ, блокировка, расхождение. */
+    Bad,
+
+    /**
+     * Обычное состояние покоя: ни хорошо, ни плохо.
+     *
+     * Закрытая смена — не ожидание и не беда: так касса стоит до начала
+     * дня и после Z-отчёта. Жёлтым она читалась как незаконченное дело,
+     * и карточка кассы, у которой всё в порядке, выглядела тревожной.
+     */
+    Idle
+}
 
 /** Плашка шапки: слово и роль цвета. */
 data class KkmStatusChip(val text: String, val tone: StatusTone)
@@ -133,6 +153,7 @@ fun toneColor(tone: StatusTone): Color = when (tone) {
     StatusTone.Good -> StatusColors.delivered
     StatusTone.Waiting -> StatusColors.pending
     StatusTone.Bad -> StatusColors.refused
+    StatusTone.Idle -> MaterialTheme.colorScheme.onSurfaceVariant
 }
 
 /** Цвет состояния кассы: тот же в шапке окна и в карточке кассы кабинета. */

@@ -53,7 +53,7 @@ fun RegisterOnThisMachine(
     var adopting by remember(register.id) { mutableStateOf(false) }
     val machine = machineTexts(session.language)
 
-    SubsectionTitle(machine.title, texts.onThisMachineHint)
+    SubsectionTitle(machine.title, texts.hints.onThisMachine)
     when (val work = nodeWork(register, session.kkms)) {
         is NodeWork.Here -> WorksHere(session, machine, work.kkm)
         NodeWork.NotOnRecord -> Explanation(machine.onlyOnRecord)

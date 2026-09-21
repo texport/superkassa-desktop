@@ -17,7 +17,7 @@ class CabinetWordingTest {
     @Test
     fun `касса и точка создаются, а не заводятся`() {
         val texts = cabinetTexts(Language.Ru)
-        listOf(texts.addRegister, texts.addPlace, texts.registersEmptyHint).forEach { line ->
+        listOf(texts.addRegister, texts.addPlace, texts.hints.registersEmpty).forEach { line ->
             spoken.forEach { word ->
                 assertFalse(line.contains(word, ignoreCase = true), "разговорное «$word» в строке: $line")
             }

@@ -108,7 +108,7 @@ private fun RowScope.Detail(
         else -> EmptyState(
             icon = AppIcons.newKkm,
             title = texts.pickRegisterFirst,
-            hint = texts.pickRegisterFirstHint,
+            hint = texts.hints.pickRegisterFirst,
             modifier = pane
         )
     }

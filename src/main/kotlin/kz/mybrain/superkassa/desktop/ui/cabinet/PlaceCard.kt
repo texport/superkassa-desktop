@@ -42,7 +42,7 @@ fun PlaceCard(
     ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.snug) {
         SectionCard(
             title = texts.places,
-            info = texts.placesHint,
+            info = texts.hints.places,
             trailing = { PlaceRemoval(cabinet, texts, place, onChanged) }
         ) {
             Text(

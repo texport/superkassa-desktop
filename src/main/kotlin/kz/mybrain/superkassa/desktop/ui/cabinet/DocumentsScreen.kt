@@ -173,7 +173,7 @@ private fun ColumnScope.DocumentsJournal(
         query = query.presentIn(entries),
         loading = list.loading,
         more = list.hasMore,
-        empty = JournalEmpty(texts.documentsEmpty, texts.documentsEmptyHint),
+        empty = JournalEmpty(texts.documentsEmpty, texts.hints.documentsEmpty),
         onQuery = onQuery,
         onMore = onMore,
         onOpen = { entry -> onOpen(list.targetOf(entry.key)) },

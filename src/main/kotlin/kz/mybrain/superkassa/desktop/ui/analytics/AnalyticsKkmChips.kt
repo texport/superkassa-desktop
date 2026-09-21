@@ -2,12 +2,13 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.desktop.ui.cabinet.statusTitle
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.StatusTone
+import kz.mybrain.superkassa.desktop.ui.components.toneColor
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -34,11 +35,8 @@ internal fun KkmChips(kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: Cabinet
             // Ожиданием красится только открытая смена: закрытая — обычное
             // состояние кассы, и жёлтым владелец читал её как незаконченное
             // дело, которое надо доделать.
-            val open = KkmMark.ShiftOpen.holds(kkm)
-            Chip(
-                text = shiftWords(shift, kkm.shiftNumber, cabinet),
-                color = if (open) StatusColors.pending else MaterialTheme.colorScheme.outline
-            )
+            val tone = if (KkmMark.ShiftOpen.holds(kkm)) StatusTone.Waiting else StatusTone.Idle
+            Chip(text = shiftWords(shift, kkm.shiftNumber, cabinet), color = toneColor(tone))
         }
     }
 }

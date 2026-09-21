@@ -32,7 +32,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun CabinetAddressCard(session: Session) {
     val texts = cabinetTexts(session.language)
     var address by remember { mutableStateOf(session.preferences.cabinetUrl) }
-    SectionCard(title = texts.address, info = texts.addressHint) {
+    SectionCard(title = texts.address, info = texts.hints.address) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
             verticalAlignment = Alignment.CenterVertically
