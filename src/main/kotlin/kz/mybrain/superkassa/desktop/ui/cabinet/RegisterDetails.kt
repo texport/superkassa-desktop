@@ -20,12 +20,10 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RegistrationAction
 import kz.mybrain.superkassa.desktop.server.cabinet.register
 import kz.mybrain.superkassa.desktop.server.cabinet.registerState
 import kz.mybrain.superkassa.desktop.server.cabinet.registrationActions
-import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.CollapsibleCard
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
  * Выбранная касса: чем она является, как себя чувствует и что с ней делали.
@@ -121,21 +119,16 @@ private fun RegisterLiveBlocks(
         technical = state?.technicalState,
         shift = session.shiftState
     )
-    val disagreeing = disagreeing(claims)
+    val answers = stateAnswers(claims)
+    val work = answers.first { it.question == StateQuestion.Usable }
     RegisterBlockCard(
         block = RegisterBlock.Technical,
         open = open,
         onToggle = onToggle,
         title = texts.technicalState,
-        trailing = {
-            if (disagreeing.isEmpty()) {
-                CabinetStatusChip(state?.technicalState?.status, texts)
-            } else {
-                Chip(texts.stateDisagree, StatusColors.refused)
-            }
-        }
+        trailing = { TechnicalHeader(texts, work, disagreeing(claims).isNotEmpty()) }
     ) {
-        RegisterTechnical(state, texts, claims, disagreeing)
+        RegisterTechnical(state, texts, answers)
     }
     RegisterBlockCard(RegisterBlock.Applications, open, onToggle, texts.applications) {
         RegistrationActionsBlock(session, cabinet, texts, register, onDone)

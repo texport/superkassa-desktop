@@ -133,7 +133,7 @@ data class CabinetTexts(
     val technicalUnknown: String,
     val technicalUnknownHint: String,
     val trafficSuspended: String,
-    val ofdDisconnected: String,
+    val bfdDisconnected: String,
     val passport: String,
     val applications: String,
     val actionsJournal: String,
@@ -195,13 +195,43 @@ data class CabinetTexts(
 
     /** Сверка состояний: кто о кассе говорит и что именно. */
     val stateDisagree: String,
+    val stateDisagreeNote: String,
+    val technicalStateHint: String,
     val sourceNode: String,
     val sourceCabinet: String,
-    val sourceOfd: String,
-    val inWork: String,
-    val verdictYes: String,
-    val verdictNo: String,
-    val verdictUnknown: String,
+    val sourceBfd: String,
+
+    /** Ответ по существу: то, что владелец читает первой строкой. */
+    val stateWorking: String,
+    val stateBlocked: String,
+    val stateOffRecord: String,
+    val stateWorkUnknown: String,
+    val stateShiftUnknown: String,
+
+    /**
+     * Показание одного источника.
+     *
+     * Плашка читается отдельно от всего: не «Нет», а «касса снята
+     * с учёта» — под общим «Нет» владелец не понимал ни того, о чём речь,
+     * ни того, что ему делать.
+     */
+    val claimWorking: String,
+    val claimBlocked: String,
+    val claimOnRecord: String,
+    val claimOffRecord: String,
+    val claimRecordUnread: String,
+    val claimNodeNoKkm: String,
+    val claimBfdNoKkm: String,
+    val claimBfdNoAnswer: String,
+    val claimShiftOpen: String,
+    val claimShiftClosed: String,
+    val claimShiftNotKept: String,
+
+    /** Снимок БФД: номер смены, связь и отсутствие того и другого. */
+    val shiftNumberTitle: String,
+    val shiftNumberNone: String,
+    val lastContactNever: String,
+    val bfdNoAnswerHint: String,
 
     /** Выдача классификатора упёрлась в предел: дальше списка нет. */
     val okedNarrowSearch: String,

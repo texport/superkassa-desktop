@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -12,114 +13,154 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RegisterState
 import kz.mybrain.superkassa.desktop.server.cabinet.TechnicalState
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
-import kz.mybrain.superkassa.desktop.ui.components.EmptyState
+import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.StatusTone
+import kz.mybrain.superkassa.desktop.ui.components.toneColor
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
-import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
- * Техническое состояние: что о кассе знают все, кто о ней знает.
+ * Техническое состояние: ответ по существу, а под ним — кто его дал.
  *
- * Прежде здесь стоял только снимок ОФД. Но о кассе говорят трое, и каждый
- * со своего места: узел — из своей базы, кабинет — из учёта КГД, ОФД —
- * из своего снимка. Сверки между ними не было ни в одном экране,
- * и расхождения выяснялись случайно: снятая с учёта касса встречала
- * кассира надписью «Активна».
+ * Прежде карточка показывала показания трёх источников вперемешку
+ * и одними «Да» и «Нет»: владелец видел «Смена · ОФД · Нет» и спрашивал,
+ * что именно «нет» — закрыта смена или её не видно. Ответа на экране
+ * не было вовсе, был набор голосований.
  *
- * Показания стоят здесь же, плашками: отдельная карточка со своей
- * таблицей повторяла бы то, что эта уже показывает. Расходящееся
- * покрашено ролью отказа — видно не «где-то что-то не так», а кто именно
- * с кем не согласен. Источник, который о кассе не знает, плашки
- * не получает: незнание — не отрицание.
+ * Теперь сверху стоит один ответ словами — касса в работе, заблокирована
+ * или не на учёте; смена открыта или закрыта, — а показания источников
+ * идут под ним вторым планом: владельцу они нужны только при
+ * расхождении. Расхождение названо строкой, а не одним цветом.
  *
- * Когда кассы у ОФД нет, это не «документов нет» — прежде здесь стояла
- * именно эта надпись, и владелец шёл искать пропавшие чеки. Касса просто
- * ещё ни разу не обращалась к ОФД, и так и сказано. Показания остальных
- * при этом всё равно видны: сверка нужнее всего тогда, когда ОФД молчит.
+ * Сведение и слова живут отдельно: `StateCheck` считает ответ,
+ * `StateWords` называет его словами, здесь — только разметка.
  */
 @Composable
-fun RegisterTechnical(
-    state: RegisterState?,
-    texts: CabinetTexts,
-    claims: List<StateClaim>,
-    disagreeing: Set<StateSource>
-) {
-    ClaimChips(texts.inWork, claims, disagreeing, texts) { it.usable }
-    ClaimChips(texts.shift, claims, disagreeing, texts) { it.shift }
+fun RegisterTechnical(state: RegisterState?, texts: CabinetTexts, answers: List<StateAnswer>) {
     val technical = state?.technicalState
-    if (technical?.found != true) {
-        EmptyState(AppIcons.kkm, texts.technicalUnknown, texts.technicalUnknownHint, dense = true)
-        return
-    }
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
-        TroubleChips(technical, texts)
-    }
-    DetailLine(texts.shift, technical.shiftNumber?.toString())
-    DetailLine(texts.lastContact, cabinetMoment(technical.lastContactAt))
+    answers.forEach { AnswerBlock(it, texts, technical) }
+    TroubleRow(technical, texts)
+    TechnicalFacts(technical, texts)
 }
 
 /**
- * Показания источников по одному вопросу.
+ * Плашка в заголовке карточки и подсказка к ней.
  *
- * Строка не рисуется вовсе, когда о вопросе не знает никто: подпись
- * с пустотой под ней обещает сведения, которых нет.
+ * В заголовке стоит тот же ответ, что и внутри: прежде здесь был снимок
+ * БФД, и свёрнутая карточка обещала «Работает» кассе, о которой узел
+ * и кабинет говорили разное.
  */
 @Composable
-private fun ClaimChips(
-    question: String,
-    claims: List<StateClaim>,
-    disagreeing: Set<StateSource>,
-    texts: CabinetTexts,
-    answer: (StateClaim) -> Verdict
-) {
-    val spoken = claims.filter { answer(it) != Verdict.Unknown }
-    if (spoken.isEmpty()) return
+fun TechnicalHeader(texts: CabinetTexts, work: StateAnswer, disagree: Boolean) {
+    InfoTip(texts.technicalStateHint)
+    if (disagree) {
+        Chip(texts.stateDisagree, toneColor(StatusTone.Bad))
+    } else {
+        Chip(texts.headlineWords(work.headline), toneColor(headlineTone(work.headline)))
+    }
+}
+
+/** Ответ на один вопрос: сам ответ, под ним показания, под ними расхождение. */
+@Composable
+private fun AnswerBlock(answer: StateAnswer, texts: CabinetTexts, technical: TechnicalState?) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+    ) {
+        Text(
+            text = texts.headlineWords(answer.headline),
+            style = MaterialTheme.typography.titleMedium,
+            color = toneColor(headlineTone(answer.headline))
+        )
+        ClaimRow(answer, texts, technical)
+        DisagreeNote(answer, texts)
+    }
+}
+
+/**
+ * Показания источников — вторым планом.
+ *
+ * Молчащий источник стоит здесь же и говорит, что молчит: пропавшая
+ * плашка читалась как отказ, а строка из одного источника рядом
+ * со строкой из трёх — как дефект разметки.
+ */
+@Composable
+private fun ClaimRow(answer: StateAnswer, texts: CabinetTexts, technical: TechnicalState?) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        itemVerticalAlignment = Alignment.CenterVertically
     ) {
-        // Подпись вопроса стоит перед плашками, а не строкой выше:
-        // без неё «ОФД · Нет» читается как отказ ОФД, а не как
-        // закрытая смена.
-        Text(
-            text = question,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.align(Alignment.CenterVertically)
-        )
-        spoken.forEach { claim ->
+        answer.claims.forEach { claim ->
             Chip(
-                text = "${claim.source.title(texts)} · ${texts.word(answer(claim))}",
-                color = when {
-                    claim.source in disagreeing -> StatusColors.refused
-                    answer(claim) == Verdict.Yes -> StatusColors.delivered
-                    else -> StatusColors.pending
-                }
+                text = texts.claimWords(claim, answer.question, technical),
+                color = toneColor(claimTone(claim, answer))
             )
         }
     }
 }
 
-/** Ответ источника словами владельца. */
-private fun CabinetTexts.word(verdict: Verdict): String = when (verdict) {
-    Verdict.Yes -> verdictYes
-    Verdict.No -> verdictNo
-    Verdict.Unknown -> verdictUnknown
+/**
+ * Расхождение, названное словами.
+ *
+ * Прежде оно было видно только цветом плашек, и владелец читал красное
+ * как поломку кассы. Сказано, кто с кем не согласен и что с этим делать:
+ * почти всегда где-то состояние устарело.
+ */
+@Composable
+private fun DisagreeNote(answer: StateAnswer, texts: CabinetTexts) {
+    if (answer.disagreeing.isEmpty()) return
+    val names = answer.disagreeing.joinToString(Glyphs.SEPARATOR) { it.title(texts) }
+    Text(
+        text = texts.stateDisagreeNote.format(names),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.error
+    )
 }
 
-/** Помехи, из-за которых документы перестают доезжать до ОФД. */
+/** Цвет показания: расходящееся — чинить, молчание — ожидание. */
+private fun claimTone(claim: StateClaim, answer: StateAnswer): StatusTone = when {
+    claim.source in answer.disagreeing -> StatusTone.Bad
+    answer.question.verdictOf(claim) == Verdict.Unknown -> StatusTone.Waiting
+    else -> headlineTone(answer.headline)
+}
+
+/** Помехи, из-за которых документы перестают доезжать до БФД. */
 @Composable
-private fun TroubleChips(technical: TechnicalState, texts: CabinetTexts) {
-    if (technical.trafficSuspended == true) {
-        Chip(texts.trafficSuspended, StatusColors.refused)
-    }
-    if (technical.ofdDisconnected == true) {
-        Chip(texts.ofdDisconnected, StatusColors.pending)
+private fun TroubleRow(technical: TechnicalState?, texts: CabinetTexts) {
+    val troubles = listOfNotNull(
+        (texts.trafficSuspended to StatusTone.Bad).takeIf { technical?.trafficSuspended == true },
+        (texts.bfdDisconnected to StatusTone.Waiting).takeIf { technical?.ofdDisconnected == true }
+    )
+    if (troubles.isEmpty()) return
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+    ) {
+        troubles.forEach { (text, tone) -> Chip(text, toneColor(tone)) }
     }
 }
+
+/**
+ * Сведения снимка БФД.
+ *
+ * Прочерка вместо значения здесь нет: «Последняя связь · —» владелец
+ * читает как потерянные сведения и идёт искать поломку, а касса просто
+ * ни разу не выходила на связь — так и написано. То же с номером смены:
+ * его нет не потому, что сведения пропали, а потому, что смен не было.
+ */
+@Composable
+private fun TechnicalFacts(technical: TechnicalState?, texts: CabinetTexts) {
+    if (technical?.found != true) {
+        DetailLine(texts.bfdSilenceTitle(technical), texts.bfdSilenceHint(technical))
+        return
+    }
+    DetailLine(texts.shiftNumberTitle, technical.shiftNumber?.toString() ?: texts.shiftNumberNone)
+    DetailLine(texts.lastContact, lastContactWords(technical, texts))
+}
+
+private fun lastContactWords(technical: TechnicalState, texts: CabinetTexts): String =
+    technical.lastContactAt?.takeIf { it.isNotBlank() }?.let(::cabinetMoment) ?: texts.lastContactNever
