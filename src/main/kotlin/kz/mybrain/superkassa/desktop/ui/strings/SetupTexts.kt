@@ -38,8 +38,7 @@ data class SetupTexts(
 
 private val setupTextsRu = SetupTexts(
     title = "Подключение кассы",
-    explain = "Касса заводится в БФД и в узле подряд: номер отсюда уходит в кабинет, " +
-        "а идентификатор и токен возвращаются обратно. Мастер можно закрыть и продолжить позже.",
+    explain = "Шаги идут подряд; мастер можно закрыть и продолжить позже",
     startOver = "Начать заново",
     stepFactory = "Заводской номер",
     stepFactoryHint = "Номер выдаёт узел и запоминает: второй запрос дал бы другой",
@@ -68,8 +67,7 @@ private val setupTextsRu = SetupTexts(
 
 private val setupTextsKk = SetupTexts(
     title = "Кассаны қосу",
-    explain = "Касса БФД мен түйінде кезекпен тіркеледі: нөмір осы жерден кабинетке кетеді, " +
-        "идентификатор мен токен кері оралады. Шеберді жауып, кейін жалғастыруға болады.",
+    explain = "Қадамдар кезекпен жүреді; шеберді жауып, кейін жалғастыруға болады",
     startOver = "Қайтадан бастау",
     stepFactory = "Зауыттық нөмір",
     stepFactoryHint = "Нөмірді түйін береді және есте сақтайды: екінші сұрау басқасын берер еді",
@@ -98,8 +96,7 @@ private val setupTextsKk = SetupTexts(
 
 private val setupTextsEn = SetupTexts(
     title = "Connecting a cash register",
-    explain = "The register is created in the BFD and in the node one after another: the factory number " +
-        "goes from here to the cabinet, and the identifier and token come back. The wizard can be closed and resumed.",
+    explain = "The steps run in order; the wizard can be closed and resumed later",
     startOver = "Start over",
     stepFactory = "Factory number",
     stepFactoryHint = "The node issues the number and it is remembered: a second request would give another",
