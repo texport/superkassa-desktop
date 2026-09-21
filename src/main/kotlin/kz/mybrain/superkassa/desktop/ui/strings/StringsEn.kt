@@ -13,7 +13,7 @@ internal val EnglishStrings = AppStrings(
         nodeOffline = "Node unreachable",
         nodeUnavailable = "Register node is unreachable",
         refusalCode = "Refusal code",
-        deliveredToOfd = "delivered to the OFD",
+        deliveredToOfd = "delivered to the BFD",
         queuedNoLink = "no link — queued",
         deliveryState = "delivery state",
         collapse = "Collapse",
@@ -51,7 +51,7 @@ internal val EnglishStrings = AppStrings(
         users = "Cashiers",
         settings = "Settings",
         register = "New register",
-        cabinet = "OFD cabinet"
+        cabinet = "BFD cabinet"
     ),
     dashboard = DashboardStrings(
         state = "State",
@@ -61,8 +61,8 @@ internal val EnglishStrings = AppStrings(
         cashInDrawer = "Cash in drawer",
         documentsInShift = "Documents in shift",
         shiftDocuments = "Shift documents",
-        refused = "Refused by the OFD",
-        refusedHint = "The OFD did not accept these documents: they are not fiscal, they are outside the shift " +
+        refused = "Refused by the BFD",
+        refusedHint = "The BFD did not accept these documents: they are not fiscal, they are outside the shift " +
             "counters and they have no printed form. The refusal code and the cashier are for support.",
         openShift = "Open shift",
         xReport = "X report",
@@ -79,13 +79,13 @@ internal val EnglishStrings = AppStrings(
     ),
     autonomous = AutonomousStrings(
         title = "Autonomous mode",
-        explain = "There is no link to the OFD. Receipts are issued with an autonomous sign " +
-            "and go to the OFD by themselves once the link is back. You can keep working.",
+        explain = "There is no link to the BFD. Receipts are issued with an autonomous sign " +
+            "and go to the BFD by themselves once the link is back. You can keep working.",
         waiting = "Waiting to be sent",
         checkLink = "Check the link",
         sendQueued = "Send what piled up",
         sendQueuedRules = "Only an admin can flush the queue: the shift must be closed and the register in programming mode.",
-        linkBack = "The link to the OFD is back"
+        linkBack = "The link to the BFD is back"
     ),
     sale = SaleStrings(
         receipt = "Receipt",
@@ -111,7 +111,7 @@ internal val EnglishStrings = AppStrings(
         customerBin = "Customer IIN/BIN",
         taken = "Tendered",
         total = "Total",
-        domainHint = "Fill in the details of the chosen industry — the OFD rejects the receipt without them.",
+        domainHint = "Fill in the details of the chosen industry — the BFD rejects the receipt without them.",
         barcode = "Barcode",
         barcodeSearch = "Search by barcode",
         barcodeSearching = "Searching…",
@@ -125,7 +125,7 @@ internal val EnglishStrings = AppStrings(
         byOrder = "By order",
         parkingHours = "Parking hours",
         payment = "Payment type",
-        delivered = "receipt issued and delivered to the OFD",
+        delivered = "receipt issued and delivered to the BFD",
         queued = "receipt issued, no connection — queued",
         deliveryState = "delivery state"
     ),
@@ -155,7 +155,7 @@ internal val EnglishStrings = AppStrings(
     ),
     queue = QueueStrings(
         title = "Delivery queue",
-        empty = "Nothing is waiting — everything reached the OFD.",
+        empty = "Nothing is waiting — everything reached the BFD.",
         waiting = "Waiting to be sent",
         attempts = "Attempts",
         retryFailed = "Retry failed",

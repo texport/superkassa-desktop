@@ -4,19 +4,21 @@ import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 
 /**
- * Выбор ОФД и контура.
+ * Выбор контура БФД.
  *
- * Один и тот же набор полей в мастере подключения и в кабинете: где бы
- * владелец ни заводил кассу, куда она шлёт чеки — вопрос один и тот же.
+ * Одно и то же поле в мастере подключения и в кабинете: где бы владелец
+ * ни заводил кассу, куда она шлёт чеки — вопрос один и тот же.
+ *
+ * Поставщика здесь нет намеренно. Он один на весь продукт и подставлен
+ * в [OfdTarget]; поле выбора с единственной строкой требовало от владельца
+ * действия, у которого нет второго исхода.
  */
 @Composable
 fun OfdChoice(
     target: OfdTarget,
-    providers: List<DictionaryEntry>,
     environments: List<DictionaryEntry>,
     language: String,
     onChange: (OfdTarget) -> Unit
 ) {
-    ProviderPicker(providers, language, target.provider) { onChange(target.copy(provider = it)) }
     EnvironmentPicker(environments, language, target.environment) { onChange(target.copy(environment = it)) }
 }

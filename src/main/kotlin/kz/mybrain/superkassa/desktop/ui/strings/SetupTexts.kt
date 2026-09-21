@@ -38,13 +38,13 @@ data class SetupTexts(
 
 private val setupTextsRu = SetupTexts(
     title = "Подключение кассы",
-    explain = "Касса заводится в ОФД и в узле подряд: номер отсюда уходит в кабинет, " +
+    explain = "Касса заводится в БФД и в узле подряд: номер отсюда уходит в кабинет, " +
         "а идентификатор и токен возвращаются обратно. Мастер можно закрыть и продолжить позже.",
     startOver = "Начать заново",
     stepFactory = "Заводской номер",
     stepFactoryHint = "Номер выдаёт узел и запоминает: второй запрос дал бы другой",
     getFactory = "Получить номер",
-    stepCabinet = "Касса в кабинете ОФД",
+    stepCabinet = "Касса в кабинете БФД",
     stepCabinetHint = "Вход по ЭЦП владельца, затем касса заводится с этим заводским номером",
     signInFirst = "Сначала войдите в кабинет по ЭЦП",
     addToCabinet = "Завести кассу в кабинете",
@@ -62,19 +62,19 @@ private val setupTextsRu = SetupTexts(
     waiting = "ждёт предыдущего шага",
     viaCabinet = "Через кабинет",
     manually = "Вручную",
-    manuallyHint = "Когда кассу в ОФД завели без вас: идентификатор и токен уже на руках",
+    manuallyHint = "Когда кассу в БФД завели без вас: идентификатор и токен уже на руках",
     status = "Состояние кассы:"
 )
 
 private val setupTextsKk = SetupTexts(
     title = "Кассаны қосу",
-    explain = "Касса ОФД мен түйінде кезекпен тіркеледі: нөмір осы жерден кабинетке кетеді, " +
+    explain = "Касса БФД мен түйінде кезекпен тіркеледі: нөмір осы жерден кабинетке кетеді, " +
         "идентификатор мен токен кері оралады. Шеберді жауып, кейін жалғастыруға болады.",
     startOver = "Қайтадан бастау",
     stepFactory = "Зауыттық нөмір",
     stepFactoryHint = "Нөмірді түйін береді және есте сақтайды: екінші сұрау басқасын берер еді",
     getFactory = "Нөмір алу",
-    stepCabinet = "ОФД кабинетіндегі касса",
+    stepCabinet = "БФД кабинетіндегі касса",
     stepCabinetHint = "Иесінің ЭЦҚ-мен кіру, содан кейін касса осы зауыттық нөмірмен тіркеледі",
     signInFirst = "Алдымен кабинетке ЭЦҚ арқылы кіріңіз",
     addToCabinet = "Кабинетте касса қосу",
@@ -92,19 +92,19 @@ private val setupTextsKk = SetupTexts(
     waiting = "алдыңғы қадамды күтуде",
     viaCabinet = "Кабинет арқылы",
     manually = "Қолмен",
-    manuallyHint = "Кассаны ОФД-да сізсіз тіркеген жағдайда: идентификатор мен токен қолда бар",
+    manuallyHint = "Кассаны БФД-да сізсіз тіркеген жағдайда: идентификатор мен токен қолда бар",
     status = "Касса күйі:"
 )
 
 private val setupTextsEn = SetupTexts(
     title = "Connecting a cash register",
-    explain = "The register is created in the OFD and in the node one after another: the factory number " +
+    explain = "The register is created in the BFD and in the node one after another: the factory number " +
         "goes from here to the cabinet, and the identifier and token come back. The wizard can be closed and resumed.",
     startOver = "Start over",
     stepFactory = "Factory number",
     stepFactoryHint = "The node issues the number and it is remembered: a second request would give another",
     getFactory = "Get the number",
-    stepCabinet = "The register in the OFD cabinet",
+    stepCabinet = "The register in the BFD cabinet",
     stepCabinetHint = "Sign in with the owner's certificate, then create the register with this factory number",
     signInFirst = "Sign in to the cabinet first",
     addToCabinet = "Create in the cabinet",
@@ -122,7 +122,7 @@ private val setupTextsEn = SetupTexts(
     waiting = "waiting for the previous step",
     viaCabinet = "Through the cabinet",
     manually = "By hand",
-    manuallyHint = "When someone else created the register in the OFD: you already have the identifier and the token",
+    manuallyHint = "When someone else created the register in the BFD: you already have the identifier and the token",
     status = "Register status:"
 )
 

@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.strings
 
 /** Надписи кабинета по-английски. Состав полей задан в [CabinetTexts]. */
 internal val cabinetTextsEn = CabinetTexts(
-    title = "OFD cabinet",
+    title = "BFD cabinet",
     signIn = "Sign in with a certificate",
     signInHint = "NCALayer asks for the signature: certificate and password are entered in its own window",
     signing = "Waiting for the signature in NCALayer",
@@ -117,7 +117,7 @@ internal val cabinetTextsEn = CabinetTexts(
     registersEmptyHint = "Create a register, then file a KGD application to put it on record",
     okedsEmptyHint = "The primary activity code goes into the registration application — set at least one",
     chooseRegisterHint = "The company registers are on the left: choose one and its card opens here",
-    documentsEmptyHint = "Whatever the OFD accepted from this register appears here",
+    documentsEmptyHint = "Whatever the BFD accepted from this register appears here",
     actionsEmptyHint = "Every application leaves a trace here: when it was filed and how it ended",
     pickRegisterFirst = "No register chosen",
     pickRegisterFirstHint = "Choose a register above: documents are shown one register at a time",
@@ -136,7 +136,7 @@ internal val cabinetTextsEn = CabinetTexts(
     applicationWait = "The KGD answers later — the journal below refreshes itself",
     required = "Required",
     optional = "Optional",
-    internalNameHint = "A note to yourself: it is not sent to the OFD",
+    internalNameHint = "A note to yourself: it is not sent to the BFD",
     foundAddresses = "Addresses found",
     addressChosen = "Address chosen",
     addOked = "Add an activity code",
@@ -200,7 +200,7 @@ internal val cabinetTextsEn = CabinetTexts(
     sales = "Sales",
     returns = "Returns",
     autonomous = "Issued offline",
-    documentMoment = "Accepted by OFD",
+    documentMoment = "Accepted by BFD",
     documentNumber = "Document number",
     developerSignIn = "Sign in without a digital signature",
     developerSignInHint = "Cabinet development mode: the owner and company are set by IIN and BIN, " +

@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.ui.components.OfdTarget
+import kz.mybrain.superkassa.desktop.ui.components.environmentRaised
 
 /**
  * Ход заведения кассы на этой машине.
@@ -15,18 +16,13 @@ import kz.mybrain.superkassa.desktop.ui.components.OfdTarget
  * после неудачного заведения обесценил бы первый: касса осталась бы
  * с токеном, которого не знает ни одна машина.
  *
- * ОФД и контур запоминаются рабочим местом: на одной машине они не меняются,
- * и выбирать их заново при каждой кассе владельцу незачем.
+ * Контур запоминается рабочим местом: на одной машине он не меняется,
+ * и выбирать его заново при каждой кассе владельцу незачем.
  */
 class AdoptDraft(private val preferences: Preferences) {
 
-    /** Куда касса будет слать чеки: ОФД из справочника и контур. */
-    var target by mutableStateOf(
-        OfdTarget(
-            provider = preferences.setupValue(OFD).orEmpty(),
-            environment = preferences.setupValue(ENVIRONMENT).orEmpty()
-        )
-    )
+    /** Куда касса будет слать чеки: БФД и запомненный контур. */
+    var target by mutableStateOf(OfdTarget(environment = preferences.setupValue(ENVIRONMENT).orEmpty()))
 
     /** Пин будущего администратора кассы: набирает владелец, нигде не хранится. */
     var adminPin by mutableStateOf("")
@@ -57,17 +53,17 @@ class AdoptDraft(private val preferences: Preferences) {
         stranded = false
     }
 
-    /** Незаполненный выбор берёт прошлое значение, а в первый раз — первое из справочника. */
-    fun preset(providers: List<DictionaryEntry>, environments: List<DictionaryEntry>) {
+    /** Незаполненный контур берёт прошлое значение, а в первый раз — первый поднятый. */
+    fun preset(environments: List<DictionaryEntry>) {
         target = target.copy(
-            provider = target.provider.ifBlank { providers.firstOrNull()?.code.orEmpty() },
-            environment = target.environment.ifBlank { environments.firstOrNull()?.code.orEmpty() }
+            environment = target.environment.ifBlank {
+                environments.firstOrNull { it.environmentRaised() }?.code.orEmpty()
+            }
         )
     }
 
     /** Запоминает выбор владельца — но только после удавшегося заведения. */
     fun remember() {
-        preferences.setupValue(OFD, target.provider)
         preferences.setupValue(ENVIRONMENT, target.environment)
     }
 
@@ -76,7 +72,6 @@ class AdoptDraft(private val preferences: Preferences) {
         AdoptForm(target.complete, adminPin, handoverNeeded, handoverAccepted)
 
     private companion object {
-        const val OFD = "ofd"
         const val ENVIRONMENT = "environment"
     }
 }

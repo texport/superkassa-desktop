@@ -62,7 +62,7 @@ fun heardElsewhere(technical: TechnicalState?): Boolean =
 
 /** Заполненное владельцем в окне заведения. */
 data class AdoptForm(
-    /** ОФД и контур выбраны, а у своего адреса заданы хост и порт. */
+    /** Куда касса шлёт чеки, названо целиком: БФД подставлена, контур выбран. */
     val ofdComplete: Boolean,
     val adminPin: String,
     val handoverNeeded: Boolean,
@@ -77,7 +77,7 @@ data class AdoptLabels(val ofd: String, val adminPin: String, val handover: Stri
  *
  * Пустой список открывает действие. Отметка о последствии стоит в этом же
  * перечне наравне с полями: без неё действие недоступно так же, как без
- * пина, — касса, которую ОФД сейчас слышит, работает на другой машине,
+ * пина, — касса, которую БФД сейчас слышит, работает на другой машине,
  * и перевыпуск токена её остановит.
  */
 fun adoptMissing(form: AdoptForm, labels: AdoptLabels): List<String> = listOfNotNull(

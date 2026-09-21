@@ -95,12 +95,18 @@ class CabinetNodeWorkTest {
         assertEquals(listOf(labels.ofd), adoptMissing(form(ofdComplete = false), labels))
     }
 
-    /** Адрес ОФД знает узел: владельцу достаточно выбрать провайдера и контур. */
+    /**
+     * Адрес БФД знает узел: владельцу достаточно выбрать контур.
+     *
+     * Прежде проверка требовала ещё и выбранного поставщика. Поставщик
+     * теперь подставлен — он один на продукт, — и требование к выбору
+     * заперло бы окно на поле, которого на экране нет.
+     */
     @Test
-    fun `выбор ОФД полон с провайдером и контуром`() {
-        assertTrue(OfdTarget(provider = "BFD", environment = "DEV").complete)
-        assertTrue(!OfdTarget(provider = "BFD").complete)
-        assertTrue(!OfdTarget(environment = "DEV").complete)
+    fun `выбор полон с подставленным поставщиком и выбранным контуром`() {
+        assertTrue(OfdTarget(environment = "DEV").complete)
+        assertTrue(!OfdTarget().complete)
+        assertTrue(!OfdTarget(provider = "", environment = "DEV").complete)
     }
 
     @Test

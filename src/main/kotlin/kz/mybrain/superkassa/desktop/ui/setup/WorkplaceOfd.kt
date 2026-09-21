@@ -3,28 +3,24 @@ package kz.mybrain.superkassa.desktop.ui.setup
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.ui.components.OfdTarget
+import kz.mybrain.superkassa.desktop.ui.components.environmentRaised
 
 /**
- * ОФД и контур, с которыми работает это рабочее место.
+ * Контур БФД, с которым работает это рабочее место.
  *
- * Мастер подставлял первым значение справочника узла — чужого ОФД, — и
- * касса заводилась в него с первого же нажатия, если владелец не заметил
- * подмены. А ответ известен: рабочее место стоит в одной торговой точке
- * и шлёт чеки одному ОФД, и это записано у касс, уже заведённых на узле.
+ * Мастер подставлял первым значение справочника узла и попадал на контур,
+ * которого владелец не выбирал. А ответ известен: рабочее место стоит
+ * в одной торговой точке и шлёт чеки в один контур, и это записано
+ * у касс, уже заведённых на узле.
  *
- * Расходятся кассы во мнении — берётся тот, которым пользуется больше
- * касс: одна перенесённая с другого контура не должна перевешивать
- * остальные. Касс нет вовсе или их ОФД нет в справочнике — остаётся
- * первый из справочника: подставить нечего, и врать об этом незачем.
+ * Расходятся кассы во мнении — берётся тот контур, которым пользуется
+ * больше касс: одна перенесённая не должна перевешивать остальные.
+ * Касс нет вовсе или их контура нет в справочнике — остаётся первый
+ * поднятый: подставить нечего, а погашенный выбором не станет.
  */
-fun workplaceOfd(
-    kkms: List<Kkm>,
-    providers: List<DictionaryEntry>,
-    environments: List<DictionaryEntry>
-): OfdTarget = OfdTarget(
-    provider = mostUsed(kkms.map { it.ofdId }, providers) ?: providers.firstOrNull()?.code.orEmpty(),
+fun workplaceOfd(kkms: List<Kkm>, environments: List<DictionaryEntry>): OfdTarget = OfdTarget(
     environment = mostUsed(kkms.map { it.ofdEnvironment }, environments)
-        ?: environments.firstOrNull()?.code.orEmpty()
+        ?: environments.firstOrNull { it.environmentRaised() }?.code.orEmpty()
 )
 
 /**

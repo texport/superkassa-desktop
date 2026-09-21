@@ -12,10 +12,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 /**
  * Выбор значения из справочника узла.
  *
- * Названия ОФД, контуров и ролей приходят с узла сразу на трёх языках.
- * Свой список в приложении означал бы, что при добавлении нового ОФД
- * кассир его не увидит, а при переименовании старого прочтёт не то,
- * что напечатано в чеке.
+ * Названия контуров и ролей приходят с узла сразу на трёх языках. Свой
+ * список в приложении означал бы, что при переименовании значения кассир
+ * прочтёт не то, что напечатано в чеке.
+ *
+ * @param available принимает ли узел это значение сейчас; по умолчанию
+ * так, как сказал сам узел.
  */
 @Composable
 fun DictionaryPicker(
@@ -24,7 +26,8 @@ fun DictionaryPicker(
     language: String,
     selectedCode: String,
     onSelect: (String) -> Unit,
-    width: Dp
+    width: Dp,
+    available: (DictionaryEntry) -> Boolean = { it.supported }
 ) {
     LabelledPicker(
         label = label,
@@ -32,28 +35,19 @@ fun DictionaryPicker(
         selected = entries.firstOrNull { it.code == selectedCode },
         title = { entry -> entry?.title(language) ?: selectedCode },
         onSelect = { onSelect(it.code) },
-        available = { it.supported },
+        available = available,
         width = width
     )
 }
 
-/** Выбор ОФД. */
-@Composable
-fun ProviderPicker(
-    entries: List<DictionaryEntry>,
-    language: String,
-    selectedCode: String,
-    onSelect: (String) -> Unit
-) = DictionaryPicker(
-    label = LocalStrings.current.settings.ofd,
-    entries = entries,
-    language = language,
-    selectedCode = selectedCode,
-    onSelect = onSelect,
-    width = Sizes.fieldChoice
-)
-
-/** Выбор контура: стенд, тестовый или промышленный. */
+/**
+ * Выбор контура: стенд, тестовый или промышленный.
+ *
+ * Неподнятый контур гаснет по общему правилу выпадающего списка —
+ * признак готовности объявлен в [environmentRaised], а не здесь и не
+ * в вызовах: разойдись он по экранам, кабинет предлагал бы контур,
+ * которого мастеру нет.
+ */
 @Composable
 fun EnvironmentPicker(
     entries: List<DictionaryEntry>,
@@ -66,5 +60,6 @@ fun EnvironmentPicker(
     language = language,
     selectedCode = selectedCode,
     onSelect = onSelect,
-    width = Sizes.fieldChoice
+    width = Sizes.fieldChoice,
+    available = { it.environmentRaised() }
 )

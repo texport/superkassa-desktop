@@ -13,7 +13,7 @@ internal val RussianStrings = AppStrings(
         nodeOffline = "Узел недоступен",
         nodeUnavailable = "Узел кассы недоступен",
         refusalCode = "Код отказа",
-        deliveredToOfd = "доставлено в ОФД",
+        deliveredToOfd = "доставлено в БФД",
         queuedNoLink = "связи нет — поставлено в очередь",
         deliveryState = "состояние доставки",
         collapse = "Свернуть",
@@ -51,7 +51,7 @@ internal val RussianStrings = AppStrings(
         users = "Кассиры",
         settings = "Настройки",
         register = "Новая касса",
-        cabinet = "Кабинет ОФД"
+        cabinet = "Кабинет БФД"
     ),
     dashboard = DashboardStrings(
         state = "Состояние",
@@ -61,8 +61,8 @@ internal val RussianStrings = AppStrings(
         cashInDrawer = "Наличные в кассе",
         documentsInShift = "Документов за смену",
         shiftDocuments = "Документы смены",
-        refused = "Отклонено ОФД",
-        refusedHint = "Эти документы ОФД не принял: фискальными они не стали, в счётчики смены не вошли " +
+        refused = "Отклонено БФД",
+        refusedHint = "Эти документы БФД не приняла: фискальными они не стали, в счётчики смены не вошли " +
             "и печатной формы у них нет. Код отказа и кассир нужны обслуживанию.",
         openShift = "Открыть смену",
         xReport = "X-отчёт",
@@ -79,13 +79,13 @@ internal val RussianStrings = AppStrings(
     ),
     autonomous = AutonomousStrings(
         title = "Автономный режим",
-        explain = "Связи с ОФД нет. Чеки пробиваются и получают автономный признак, " +
-            "а в ОФД уходят сами, как только связь появится. Работать можно.",
+        explain = "Связи с БФД нет. Чеки пробиваются и получают автономный признак, " +
+            "а в БФД уходят сами, как только связь появится. Работать можно.",
         waiting = "Ждут отправки",
         checkLink = "Проверить связь",
         sendQueued = "Отправить накопленное",
         sendQueuedRules = "Досылку накопленного делает администратор: смена должна быть закрыта, а касса переведена в режим программирования.",
-        linkBack = "Связь с ОФД восстановлена"
+        linkBack = "Связь с БФД восстановлена"
     ),
     sale = SaleStrings(
         receipt = "Чек",
@@ -111,7 +111,7 @@ internal val RussianStrings = AppStrings(
         customerBin = "ИИН/БИН покупателя",
         taken = "Принято",
         total = "Итого",
-        domainHint = "Заполните реквизиты выбранного вида отрасли — без них ОФД чек отвергнет.",
+        domainHint = "Заполните реквизиты выбранного вида отрасли — без них БФД чек отвергнет.",
         barcode = "Штрихкод",
         barcodeSearch = "Поиск по штрихкоду",
         barcodeSearching = "Ищется…",
@@ -125,7 +125,7 @@ internal val RussianStrings = AppStrings(
         byOrder = "По заказу",
         parkingHours = "Часов стоянки",
         payment = "Вид оплаты",
-        delivered = "чек пробит и доставлен в ОФД",
+        delivered = "чек пробит и доставлен в БФД",
         queued = "чек пробит, связи нет — поставлен в очередь",
         deliveryState = "состояние доставки"
     ),
@@ -155,7 +155,7 @@ internal val RussianStrings = AppStrings(
     ),
     queue = QueueStrings(
         title = "Очередь отправки",
-        empty = "Ждущих документов нет — всё доставлено в ОФД.",
+        empty = "Ждущих документов нет — всё доставлено в БФД.",
         waiting = "Ждут отправки",
         attempts = "Попыток",
         retryFailed = "Повторить неудачные",

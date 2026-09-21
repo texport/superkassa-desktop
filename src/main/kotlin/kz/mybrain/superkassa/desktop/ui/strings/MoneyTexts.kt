@@ -63,7 +63,7 @@ data class CashierTexts(
     val emptyHint: String
 )
 
-/** Заведение кассы, сверка с ОФД и снятие с учёта. */
+/** Заведение кассы, сверка с БФД и снятие с учёта. */
 data class KkmSetupTexts(
     val stepOne: String,
     val stepTwo: String,
@@ -90,6 +90,8 @@ data class KkmSetupTexts(
     val nodeProtocol: String,
     val nodeTimeout: String,
     val nodeStorage: String,
+    /** Расшифровка аббревиатуры: подсказка у заголовка, один раз на приложение. */
+    val bfdMeaning: String,
     val syncTitle: String,
     val syncService: String,
     val syncServiceHint: String,

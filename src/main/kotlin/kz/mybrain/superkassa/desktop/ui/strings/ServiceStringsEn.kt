@@ -15,7 +15,7 @@ internal val englishSettings = SettingStrings(
     registerKkm = "Add a register",
     back = "Back",
     registerKkmHint = "The first register is added before signing in: the node issues a factory number, " +
-        "then the register is enrolled in the OFD cabinet and its id and token are entered here.",
+        "then the register is enrolled in the BFD cabinet and its id and token are entered here.",
     kkmIdentifier = "Register identifier",
     token = "Token",
     adminPin = "Administrator PIN",
@@ -26,25 +26,25 @@ internal val englishSettings = SettingStrings(
         "the node refuses the default one, and it can only be changed from inside. " +
         "Cashiers and their PINs are added later under “Cashiers and PINs”.",
     diagnostics = "Diagnostics",
-    ofdLink = "OFD link",
-    checkOfdLink = "Check the OFD link",
-    ofdAnswers = "OFD answers",
-    ofdSilent = "OFD is silent",
-    ofdInfo = "OFD information",
+    ofdLink = "BFD link",
+    checkOfdLink = "Check the BFD link",
+    ofdAnswers = "BFD answers",
+    ofdSilent = "BFD is silent",
+    ofdInfo = "BFD information",
     programmingMode = "Programming mode",
     enterProgramming = "Enter programming",
     exitProgramming = "Exit",
     enteredProgramming = "The register entered programming mode",
     exitedProgramming = "The register left programming mode",
-    ofd = "OFD",
+    ofd = "BFD",
     environment = "Environment",
     language = "Language",
     appearance = "Appearance",
-    ofdToken = "OFD token",
+    ofdToken = "BFD token",
     newToken = "New token",
     saveToken = "Save token",
     tokenSaved = "Token saved",
-    tokenHint = "The OFD issues the token. On an \"invalid token\" answer the register stops " +
+    tokenHint = "The BFD issues the token. On an \"invalid token\" answer the register stops " +
         "and works again only after a new one is entered.",
     printForm = "Printed receipt",
     programmingRequired = "Register settings change in programming mode.",
@@ -75,7 +75,7 @@ internal val englishSettings = SettingStrings(
     nodeProtocol = "Protocol version",
     nodeStorage = "Storage",
     nodeHealth = "Health",
-    ofdAuth = "OFD authorisation data",
+    ofdAuth = "BFD authorisation data",
     ofdNextReqNum = "Next request number",
     nodeUnknown = "The node did not answer",
     nodeAddress = "Node address",
@@ -101,10 +101,10 @@ internal val englishSettings = SettingStrings(
     layoutTape58 = "58 mm tape",
     layoutTape80 = "80 mm tape",
     layoutFullscreen = "Full page",
-    printOfdAds = "Print OFD advertising",
+    printOfdAds = "Print BFD advertising",
     printOfdAdsHint = "The lines arrive with the receipt response and print under the total.",
     receiptLines = "Your own receipt lines",
-    receiptLinesHint = "The operator's advertising comes from the OFD; these are the shop's own lines: " +
+    receiptLinesHint = "The operator's advertising comes from the BFD; these are the shop's own lines: " +
         "a greeting, return terms, a thank-you. An empty field is not printed.",
     saveReceiptLines = "Save lines",
     lineBeforeHeader = "Above the header",
@@ -124,12 +124,12 @@ internal val englishSettings = SettingStrings(
     factoryNumber = "Serial number",
     manufactureYear = "Year of manufacture",
     factoryHint = "The node issues the serial number by the manufacturer algorithm. " +
-        "Take it together with the year to the OFD: they register the machine " +
+        "Take it together with the year to the BFD: they register the machine " +
         "and issue an identifier and a token.",
-    ofdStep = "Step 2. Details from the OFD",
+    ofdStep = "Step 2. Details from the BFD",
     localName = "Register name",
     localNameHint = "The name is kept on the node: every workplace and the sign-in " +
-        "screen show it. Other register details come from the OFD and are not edited here.",
+        "screen show it. Other register details come from the BFD and are not edited here.",
     save = "Save"
 )
 

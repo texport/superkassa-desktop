@@ -13,7 +13,7 @@ internal val KazakhStrings = AppStrings(
         nodeOffline = "Түйін қолжетімсіз",
         nodeUnavailable = "Касса түйіні қолжетімсіз",
         refusalCode = "Бас тарту коды",
-        deliveredToOfd = "ОФД-ға жеткізілді",
+        deliveredToOfd = "БФД-ға жеткізілді",
         queuedNoLink = "байланыс жоқ — кезекке қойылды",
         deliveryState = "жеткізу күйі",
         collapse = "Жию",
@@ -51,7 +51,7 @@ internal val KazakhStrings = AppStrings(
         users = "Кассирлер",
         settings = "Баптаулар",
         register = "Жаңа касса",
-        cabinet = "ОФД кабинеті"
+        cabinet = "БФД кабинеті"
     ),
     dashboard = DashboardStrings(
         state = "Күйі",
@@ -61,8 +61,8 @@ internal val KazakhStrings = AppStrings(
         cashInDrawer = "Кассадағы қолма-қол ақша",
         documentsInShift = "Ауысымдағы құжаттар",
         shiftDocuments = "Ауысым құжаттары",
-        refused = "ОФД қабылдамады",
-        refusedHint = "Бұл құжаттарды ОФД қабылдамады: олар фискалдық болмады, ауысым есептеуішіне кірмеді " +
+        refused = "БФД қабылдамады",
+        refusedHint = "Бұл құжаттарды БФД қабылдамады: олар фискалдық болмады, ауысым есептеуішіне кірмеді " +
             "және баспа түрі жоқ. Бас тарту коды мен кассир қызмет көрсетуге қажет.",
         openShift = "Ауысымды ашу",
         xReport = "X-есеп",
@@ -79,13 +79,13 @@ internal val KazakhStrings = AppStrings(
     ),
     autonomous = AutonomousStrings(
         title = "Дербес режим",
-        explain = "ОФД-мен байланыс жоқ. Чектер басылып, дербес белгі алады, " +
-            "ал байланыс пайда болған бойда ОФД-ға өздері жіберіледі. Жұмысты жалғастыруға болады.",
+        explain = "БФД-мен байланыс жоқ. Чектер басылып, дербес белгі алады, " +
+            "ал байланыс пайда болған бойда БФД-ға өздері жіберіледі. Жұмысты жалғастыруға болады.",
         waiting = "Жіберуді күтуде",
         checkLink = "Байланысты тексеру",
         sendQueued = "Жиналғанды жіберу",
         sendQueuedRules = "Жинақталғанды әкімші жібереді: ауысым жабық болуы және касса бағдарламалау режимінде болуы керек.",
-        linkBack = "ОФД-мен байланыс қалпына келді"
+        linkBack = "БФД-мен байланыс қалпына келді"
     ),
     sale = SaleStrings(
         receipt = "Чек",
@@ -111,7 +111,7 @@ internal val KazakhStrings = AppStrings(
         customerBin = "Сатып алушының ЖСН/БСН",
         taken = "Қабылданды",
         total = "Барлығы",
-        domainHint = "Таңдалған сала деректемелерін толтырыңыз — оларсыз ОФД чекті қабылдамайды.",
+        domainHint = "Таңдалған сала деректемелерін толтырыңыз — оларсыз БФД чекті қабылдамайды.",
         barcode = "Штрих-код",
         barcodeSearch = "Штрих-код бойынша іздеу",
         barcodeSearching = "Ізделуде…",
@@ -125,7 +125,7 @@ internal val KazakhStrings = AppStrings(
         byOrder = "Тапсырыс бойынша",
         parkingHours = "Тұрақ сағаттары",
         payment = "Төлем түрі",
-        delivered = "чек басылды және ОФД-ға жеткізілді",
+        delivered = "чек басылды және БФД-ға жеткізілді",
         queued = "чек басылды, байланыс жоқ — кезекке қойылды",
         deliveryState = "жеткізу күйі"
     ),
@@ -155,7 +155,7 @@ internal val KazakhStrings = AppStrings(
     ),
     queue = QueueStrings(
         title = "Жіберу кезегі",
-        empty = "Күтіп тұрған құжат жоқ — бәрі ОФД-ға жеткізілді.",
+        empty = "Күтіп тұрған құжат жоқ — бәрі БФД-ға жеткізілді.",
         waiting = "Жіберуді күтуде",
         attempts = "Әрекеттер",
         retryFailed = "Сәтсіздерді қайталау",

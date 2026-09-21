@@ -39,12 +39,11 @@ internal fun AdoptFields(
     session: Session,
     texts: CabinetTexts,
     draft: AdoptDraft,
-    providers: List<DictionaryEntry>,
     environments: List<DictionaryEntry>,
     technical: TechnicalState?
 ) {
     val machine = machineTexts(session.language)
-    OfdChoice(draft.target, providers, environments, session.language.code) { draft.target = it }
+    OfdChoice(draft.target, environments, session.language.code) { draft.target = it }
     AdminPinField(session, draft)
     WarningRow(machine.tokenReissued)
     if (heardElsewhere(technical)) {
@@ -83,7 +82,7 @@ private fun AdminPinField(session: Session, draft: AdoptDraft) {
 /**
  * Отдельная отметка о том, что касса замолчит на другой машине.
  *
- * Здесь названо и когда именно ОФД её слышал: «недавно» владелец
+ * Здесь названо и когда именно БФД её слышала: «недавно» владелец
  * истолкует как угодно, а дата и час говорят сами за себя.
  */
 @Composable

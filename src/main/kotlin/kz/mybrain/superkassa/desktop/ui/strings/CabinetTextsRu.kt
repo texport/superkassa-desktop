@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.strings
 
 /** Надписи кабинета по-русски. Состав полей задан в [CabinetTexts]. */
 internal val cabinetTextsRu = CabinetTexts(
-    title = "Кабинет ОФД",
+    title = "Кабинет БФД",
     signIn = "Войти по ЭЦП",
     signInHint = "Подпись запросит NCALayer: сертификат и пароль вводятся в его окне",
     signing = "Ожидание подписи в NCALayer",
@@ -117,7 +117,7 @@ internal val cabinetTextsRu = CabinetTexts(
     registersEmptyHint = "Создайте кассу, а затем подайте заявление в КГД на постановку на учёт",
     okedsEmptyHint = "Основной вид деятельности уходит в регистрационное заявление — задайте хотя бы один",
     chooseRegisterHint = "Слева кассы компании: выберите кассу, и её карточка откроется здесь",
-    documentsEmptyHint = "Здесь появится то, что ОФД принял от этой кассы",
+    documentsEmptyHint = "Здесь появится то, что БФД приняла от этой кассы",
     actionsEmptyHint = "Здесь останется след каждого заявления: когда подано и чем закончилось",
     pickRegisterFirst = "Касса не выбрана",
     pickRegisterFirstHint = "Выберите кассу вверху: документы показываются по одной кассе",
@@ -136,7 +136,7 @@ internal val cabinetTextsRu = CabinetTexts(
     applicationWait = "Ответ КГД приходит не сразу — журнал ниже обновится сам",
     required = "Обязательно",
     optional = "Необязательно",
-    internalNameHint = "Заметка для себя: в ОФД не уходит",
+    internalNameHint = "Заметка для себя: в БФД не уходит",
     foundAddresses = "Найденные адреса",
     addressChosen = "Адрес выбран",
     addOked = "Добавить вид деятельности",
@@ -200,7 +200,7 @@ internal val cabinetTextsRu = CabinetTexts(
     sales = "Продажи",
     returns = "Возвраты",
     autonomous = "Оформлено автономно",
-    documentMoment = "Принят ОФД",
+    documentMoment = "Принят БФД",
     documentNumber = "Номер документа",
     developerSignIn = "Войти без ЭЦП",
     developerSignInHint = "Режим разработки кабинета: владелец и компания задаются ИИН и БИН, " +

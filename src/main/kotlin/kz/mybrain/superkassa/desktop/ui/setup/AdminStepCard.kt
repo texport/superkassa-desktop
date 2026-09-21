@@ -23,9 +23,10 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.KkmInitRequest
 import kz.mybrain.superkassa.desktop.server.cabinet.issueToken
 import kz.mybrain.superkassa.desktop.server.cabinet.register
+import kz.mybrain.superkassa.desktop.ui.components.BFD_PROVIDER
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.EnvironmentPicker
-import kz.mybrain.superkassa.desktop.ui.components.ProviderPicker
+import kz.mybrain.superkassa.desktop.ui.components.environmentRaised
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -53,18 +54,11 @@ fun AdminStepCard(
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
     var pin by remember { mutableStateOf("") }
-    val providers = session.dictionaries[Dictionary.OfdProviders].orEmpty()
     val environments = session.dictionaries[Dictionary.OfdEnvironments].orEmpty()
-    var provider by remember { mutableStateOf("") }
     var environment by remember { mutableStateOf("") }
-    // Касса заведена в кабинете БФД, значит и данные она шлёт БФД:
-    // первый из справочника подставлял чужого оператора, и владелец
-    // узнавал об этом отказом уже после нажатия.
-    val chosenProvider = provider.ifEmpty {
-        providers.firstOrNull { it.code == CABINET_PROVIDER }?.code
-            ?: providers.firstOrNull()?.code.orEmpty()
+    val chosenEnvironment = environment.ifEmpty {
+        environments.firstOrNull { it.environmentRaised() }?.code.orEmpty()
     }
-    val chosenEnvironment = environment.ifEmpty { environments.firstOrNull()?.code.orEmpty() }
     var onRecord by remember(draft.cabinetRegisterId) { mutableStateOf(false) }
 
     // Состояние перечитывается и когда касса встала на учёт: прежде шаг
@@ -91,12 +85,6 @@ fun AdminStepCard(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Spacing.tight)
         ) {
-            ProviderPicker(
-                entries = providers,
-                language = session.language.code,
-                selectedCode = chosenProvider,
-                onSelect = { provider = it }
-            )
             EnvironmentPicker(
                 entries = environments,
                 language = session.language.code,
@@ -118,7 +106,7 @@ fun AdminStepCard(
                 onClick = {
                     scope.launch {
                         val what = setup.stepAdmin
-                        if (connect(session, cabinet, draft, Registration(chosenProvider, chosenEnvironment, pin), what)) {
+                        if (connect(session, cabinet, draft, Registration(chosenEnvironment, pin), what)) {
                             draft.clear()
                             onDone()
                         }
@@ -134,7 +122,7 @@ fun AdminStepCard(
  *
  * Между выдачей токена и заведением кассы токен нигде не задерживается:
  * ни на экране, ни в настройках рабочего места. Само заведение — общий
- * ход [enrollKkm]: он же зовётся из настроек ОФД и из паспорта кассы.
+ * ход [enrollKkm]: он же зовётся из настроек БФД и из паспорта кассы.
  */
 private suspend fun connect(
     session: Session,
@@ -148,7 +136,7 @@ private suspend fun connect(
     val systemId = draft.systemId ?: return false
     val issued = cabinet.guard { cabinet.client.issueToken(cabinetToken, registerId) } ?: return false
     val request = KkmInitRequest(
-        ofdId = registration.provider,
+        ofdId = BFD_PROVIDER,
         ofdEnvironment = registration.environment,
         ofdSystemId = systemId,
         ofdToken = issued.token.toString(),
@@ -157,8 +145,5 @@ private suspend fun connect(
     return session.enrollKkm(request, what, draft.name) != null
 }
 
-/** Оператор, чей кабинет заводит кассы в этом рабочем месте. */
-private const val CABINET_PROVIDER = "BFD"
-
 /** Чем и от чьего имени касса заводится в узле. */
-private data class Registration(val provider: String, val environment: String, val adminPin: String)
+private data class Registration(val environment: String, val adminPin: String)

@@ -25,11 +25,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
  * Заведение кассы кабинета на этой машине — одним действием владельца.
  *
  * Ход: токен, заведение на узле, переход к кассе. Владельцу остаётся
- * выбрать ОФД с контуром и назначить пин администратора; идентификатор
- * кассы у ОФД берётся из карточки кабинета, а не переписывается руками.
+ * выбрать контур БФД и назначить пин администратора; идентификатор кассы
+ * у БФД берётся из карточки кабинета, а не переписывается руками.
  *
  * Предупреждение о перевыпуске токена стоит постоянной строкой, а не под
- * значком: это последствие действия, а не справка о нём. Если ОФД кассу
+ * значком: это последствие действия, а не справка о нём. Если БФД кассу
  * слышит, предупреждения мало — нужна отдельная отметка владельца.
  */
 @Composable
@@ -45,14 +45,13 @@ fun AdoptRegisterDialog(
     val machine = machineTexts(session.language)
     val scope = rememberCoroutineScope()
     val draft = remember(register.id) { AdoptDraft(session.preferences) }
-    val providers = session.dictionaries[Dictionary.OfdProviders].orEmpty()
     val environments = session.dictionaries[Dictionary.OfdEnvironments].orEmpty()
     val handoverNeeded = heardElsewhere(state?.technicalState)
     val labels = AdoptLabels(settings.ofd, settings.adminPin, machine.handoverUnderstood)
 
-    // Справочники приходят с узла позже первой отрисовки: подстановка
-    // делается эффектом, иначе окно осталось бы с пустым выбором ОФД.
-    LaunchedEffect(providers, environments) { draft.preset(providers, environments) }
+    // Справочник приходит с узла позже первой отрисовки: подстановка
+    // делается эффектом, иначе окно осталось бы с пустым выбором контура.
+    LaunchedEffect(environments) { draft.preset(environments) }
 
     FormDialog(
         title = machine.workHere,
@@ -64,7 +63,7 @@ fun AdoptRegisterDialog(
         onDismiss = onDismiss,
         onAction = { scope.launch { adopt(session, cabinet, machine, register, draft, onDismiss) } }
     ) {
-        AdoptFields(session, texts, draft, providers, environments, state?.technicalState)
+        AdoptFields(session, texts, draft, environments, state?.technicalState)
     }
 }
 

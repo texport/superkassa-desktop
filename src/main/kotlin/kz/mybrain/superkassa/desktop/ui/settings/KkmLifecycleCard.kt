@@ -22,12 +22,15 @@ import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
- * Сверка кассы с ОФД.
+ * Сверка кассы с БФД.
  *
- * Всё, что касса знает о себе, приходит от ОФД: организация, адрес,
+ * Всё, что касса знает о себе, приходит от БФД: организация, адрес,
  * регистрационные номера, счётчики и номер смены. Разойтись они могут
- * после автономной работы или замены сведений в кабинете ОФД — тогда
+ * после автономной работы или замены сведений в кабинете БФД — тогда
  * кассир сверяет их отсюда, а не переустанавливает кассу.
+ *
+ * Аббревиатура расшифрована в подсказке у заголовка — один раз
+ * на приложение, а не в каждой надписи, где БФД упомянута.
  *
  * Условие стоит под своей кнопкой, а не общим списком внизу: у сверки
  * сведений и сверки счётчиков требования разные, и общий список заставлял
@@ -40,7 +43,7 @@ fun OfdSyncCard(session: Session) {
     var busy by remember { mutableStateOf(false) }
     val ready = session.selected != null && !busy
 
-    SectionCard(title = money.syncTitle) {
+    SectionCard(title = money.syncTitle, info = money.bfdMeaning) {
         SyncAction(
             title = money.syncService,
             hint = money.syncServiceHint,

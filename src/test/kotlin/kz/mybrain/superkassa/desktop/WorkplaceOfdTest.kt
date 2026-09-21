@@ -7,52 +7,53 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Какой ОФД мастер подключения предлагает по умолчанию.
+ * Какой контур БФД мастер подключения предлагает по умолчанию.
  *
- * Предлагал первый из справочника узла — чужого, — и касса заводилась
- * в него с первого нажатия. Рабочее место шлёт чеки одному ОФД, и это
+ * Предлагал первый из справочника узла и попадал на контур, которого
+ * владелец не выбирал. Рабочее место шлёт чеки в один контур, и это
  * записано у касс, которые на нём уже заведены.
  */
 class WorkplaceOfdTest {
 
-    private val providers = listOf(entry("kazakhtelecom"), entry("bfd"), entry("transtelecom"))
-    private val environments = listOf(entry("PRODUCTION"), entry("TEST"))
+    private val environments = listOf(entry("DEV"), entry("TEST"), entry("PROD"))
 
     private fun entry(code: String) = DictionaryEntry(code = code, name = mapOf("ru" to code))
 
-    private fun kkm(ofd: String?, environment: String? = "PRODUCTION") =
-        Kkm(kkmId = "kkm-$ofd-$environment", ofdId = ofd, ofdEnvironment = environment)
+    private fun kkm(environment: String?) =
+        Kkm(kkmId = "kkm-$environment", ofdId = "BFD", ofdEnvironment = environment)
 
     @Test
-    fun `берётся ОФД заведённых касс, а не первый из справочника`() {
-        val own = workplaceOfd(listOf(kkm("bfd"), kkm("bfd")), providers, environments)
-        assertEquals("bfd", own.provider)
-        assertEquals("PRODUCTION", own.environment)
+    fun `берётся контур заведённых касс, а не первый из справочника`() {
+        val own = workplaceOfd(listOf(kkm("PROD"), kkm("PROD")), environments)
+        assertEquals("PROD", own.environment)
     }
 
     @Test
-    fun `при разных ОФД берётся тот, которым пользуется больше касс`() {
-        val kkms = listOf(kkm("bfd"), kkm("bfd"), kkm("transtelecom"))
-        assertEquals("bfd", workplaceOfd(kkms, providers, environments).provider)
+    fun `при разных контурах берётся тот, которым пользуется больше касс`() {
+        val kkms = listOf(kkm("TEST"), kkm("TEST"), kkm("PROD"))
+        assertEquals("TEST", workplaceOfd(kkms, environments).environment)
     }
 
     @Test
-    fun `контур берётся так же, как и ОФД`() {
-        val kkms = listOf(kkm("bfd", "TEST"), kkm("bfd", "TEST"), kkm("bfd", "PRODUCTION"))
-        assertEquals("TEST", workplaceOfd(kkms, providers, environments).environment)
+    fun `без касс остаётся первый поднятый контур`() {
+        assertEquals("DEV", workplaceOfd(emptyList(), environments).environment)
     }
 
+    /** Погашенный контур выбором не станет: подставить его значило бы запереть мастер. */
     @Test
-    fun `без касс остаётся первое значение справочника`() {
-        val own = workplaceOfd(emptyList(), providers, environments)
-        assertEquals("kazakhtelecom", own.provider)
-        assertEquals("PRODUCTION", own.environment)
+    fun `неподнятый контур в подстановку не попадает`() {
+        val unraised = listOf(entry("TEST"), entry("PROD"), entry("DEV"))
+        assertEquals("DEV", workplaceOfd(emptyList(), unraised).environment)
     }
 
     @Test
     fun `код, которого нет в справочнике, не подставляется`() {
-        val own = workplaceOfd(listOf(kkm("неизвестный", "НЕИЗВЕСТНЫЙ")), providers, environments)
-        assertEquals("kazakhtelecom", own.provider)
-        assertEquals("PRODUCTION", own.environment)
+        val own = workplaceOfd(listOf(kkm("НЕИЗВЕСТНЫЙ")), environments)
+        assertEquals("DEV", own.environment)
+    }
+
+    @Test
+    fun `поставщик подставлен всегда, справочника для него не нужно`() {
+        assertEquals("BFD", workplaceOfd(emptyList(), environments).provider)
     }
 }

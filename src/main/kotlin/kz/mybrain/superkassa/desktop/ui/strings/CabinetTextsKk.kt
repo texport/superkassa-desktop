@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.strings
 
 /** Надписи кабинета по-казахски. Состав полей задан в [CabinetTexts]. */
 internal val cabinetTextsKk = CabinetTexts(
-    title = "ОФД жеке кабинеті",
+    title = "БФД жеке кабинеті",
     signIn = "ЭЦҚ арқылы кіру",
     signInHint = "Қолтаңбаны NCALayer сұрайды: сертификат пен құпиясөз оның терезесінде енгізіледі",
     signing = "NCALayer-де қолтаңба күтілуде",
@@ -117,7 +117,7 @@ internal val cabinetTextsKk = CabinetTexts(
     registersEmptyHint = "Алдымен кассаны құрыңыз, содан соң МКК-ға есепке қою өтінішін беріңіз",
     okedsEmptyHint = "Негізгі қызмет түрі тіркеу өтінішіне енеді — кемінде біреуін көрсетіңіз",
     chooseRegisterHint = "Сол жақта компанияның кассалары: кассаны таңдаңыз, оның картасы осында ашылады",
-    documentsEmptyHint = "ОФД осы кассадан қабылдағаны осында көрінеді",
+    documentsEmptyHint = "БФД осы кассадан қабылдағаны осында көрінеді",
     actionsEmptyHint = "Әр өтініштің ізі осында қалады: қашан берілді және немен аяқталды",
     pickRegisterFirst = "Касса таңдалмаған",
     pickRegisterFirstHint = "Жоғарыдан кассаны таңдаңыз: құжаттар бір касса бойынша көрсетіледі",
@@ -136,7 +136,7 @@ internal val cabinetTextsKk = CabinetTexts(
     applicationWait = "МКК жауабы бірден келмейді — төмендегі журнал өзі жаңарады",
     required = "Міндетті",
     optional = "Міндетті емес",
-    internalNameHint = "Өзіңізге арналған белгі: ОФД-ға жіберілмейді",
+    internalNameHint = "Өзіңізге арналған белгі: БФД-ға жіберілмейді",
     foundAddresses = "Табылған мекенжайлар",
     addressChosen = "Мекенжай таңдалды",
     addOked = "Қызмет түрін қосу",
@@ -200,7 +200,7 @@ internal val cabinetTextsKk = CabinetTexts(
     sales = "Сатылымдар",
     returns = "Қайтарымдар",
     autonomous = "Автономды режимде ресімделген",
-    documentMoment = "ОФД қабылдады",
+    documentMoment = "БФД қабылдады",
     documentNumber = "Құжат нөмірі",
     developerSignIn = "ЭЦҚ-сыз кіру",
     developerSignInHint = "Кабинеттің әзірлеу режимі: иесі мен компания ЖСН және БСН бойынша " +

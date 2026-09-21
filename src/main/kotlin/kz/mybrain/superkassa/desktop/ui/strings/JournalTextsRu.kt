@@ -64,7 +64,7 @@ internal val journalTextsRu = JournalTexts(
         allStates = "Любое состояние",
         allShifts = "Все смены",
         registerDocuments = "Документы кассы",
-        registerDocumentsHint = "Чеки, смены, отчёты и движение денег по данным ОФД — " +
+        registerDocumentsHint = "Чеки, смены, отчёты и движение денег по данным БФД — " +
             "отдельным экраном с поиском, отбором и печатью.",
         openDocuments = "Открыть документы",
         backToRegister = "К карточке кассы"
@@ -99,6 +99,6 @@ internal val journalTextsRu = JournalTexts(
             "Остальные уходят сами, вмешательства не требуют.",
         nothingFailed = "Неудачных задач нет — повторять нечего.",
         nothingToRetryButRejected = "Повторять нечего: отвергнутые задачи узел не повторяет, их разбирает обслуживание.",
-        emptyHint = "Отправлять нечего: касса работает на связи с ОФД."
+        emptyHint = "Отправлять нечего: касса работает на связи с БФД."
     )
 )

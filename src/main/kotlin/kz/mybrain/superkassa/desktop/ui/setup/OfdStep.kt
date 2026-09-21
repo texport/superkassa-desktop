@@ -32,10 +32,10 @@ import kz.mybrain.superkassa.desktop.ui.users.UserRules
 import kz.mybrain.superkassa.desktop.ui.users.pinProblem
 
 /**
- * Идентификатор и токен, выданные ОФД.
+ * Идентификатор и токен, выданные БФД.
  *
- * Список ОФД и контуров приходит с узла: свой в приложении означал бы,
- * что нового ОФД владелец не увидит, пока не обновит программу.
+ * Список контуров приходит с узла: свой в приложении означал бы, что
+ * нового контура владелец не увидит, пока не обновит программу.
  *
  * Своей карточки шаг не рисует — её ставит мастер: прежде он рисовал
  * заголовок снаружи, и рядом с карточкой первого шага это выглядело
@@ -45,7 +45,6 @@ import kz.mybrain.superkassa.desktop.ui.users.pinProblem
 fun OfdStep(session: Session) {
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
-    val providers = session.dictionaries[Dictionary.OfdProviders].orEmpty()
     val environments = session.dictionaries[Dictionary.OfdEnvironments].orEmpty()
     var target by remember { mutableStateOf(OfdTarget()) }
     var systemId by remember { mutableStateOf("") }
@@ -53,14 +52,11 @@ fun OfdStep(session: Session) {
     var adminPin by remember { mutableStateOf("") }
     var busy by remember { mutableStateOf(false) }
 
-    // Пока владелец не выбрал сам, подставлен ОФД этого рабочего места —
-    // тот, с которым работают его кассы. Прежде здесь стояло первое
-    // значение справочника, то есть чужой ОФД.
-    val own = workplaceOfd(session.kkms, providers, environments)
-    val chosen = target.copy(
-        provider = target.provider.ifEmpty { own.provider },
-        environment = target.environment.ifEmpty { own.environment }
-    )
+    // Пока владелец не выбрал сам, подставлен контур этого рабочего
+    // места — тот, с которым работают его кассы. Прежде здесь стояло
+    // первое значение справочника, то есть случайный контур.
+    val own = workplaceOfd(session.kkms, environments)
+    val chosen = target.copy(environment = target.environment.ifEmpty { own.environment })
     val cashiers = moneyTexts(session.language).cashiers
     val pinTrouble = pinProblem(adminPin, cashiers, texts.users.forbiddenPin)
     val filled = systemId.isNotBlank() && token.isNotBlank() && chosen.complete &&
@@ -71,7 +67,7 @@ fun OfdStep(session: Session) {
         verticalArrangement = Arrangement.spacedBy(Spacing.tight),
         itemVerticalAlignment = Alignment.Top
     ) {
-        OfdChoice(chosen, providers, environments, session.language.code) { target = it }
+        OfdChoice(chosen, environments, session.language.code) { target = it }
         OutlinedTextField(
             value = systemId,
             onValueChange = { systemId = it.filter(Char::isDigit) },

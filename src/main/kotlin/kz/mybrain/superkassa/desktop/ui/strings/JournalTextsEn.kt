@@ -64,7 +64,7 @@ internal val journalTextsEn = JournalTexts(
         allStates = "Any state",
         allShifts = "All shifts",
         registerDocuments = "Cash register documents",
-        registerDocumentsHint = "Receipts, shifts, reports and cash movements as the OFD knows them — " +
+        registerDocumentsHint = "Receipts, shifts, reports and cash movements as the BFD knows them — " +
             "on a screen of their own, with search, filters and printing.",
         openDocuments = "Open the documents",
         backToRegister = "Back to the register card"
@@ -99,6 +99,6 @@ internal val journalTextsEn = JournalTexts(
             "own and need no intervention.",
         nothingFailed = "No failed tasks — nothing to retry.",
         nothingToRetryButRejected = "Nothing to retry: rejected tasks are never resent, service staff handle them.",
-        emptyHint = "Nothing to send: the cash register is online with the OFD."
+        emptyHint = "Nothing to send: the cash register is online with the BFD."
     )
 )

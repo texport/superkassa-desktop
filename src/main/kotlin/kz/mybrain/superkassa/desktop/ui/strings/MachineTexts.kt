@@ -39,7 +39,7 @@ private val machineTextsRu = MachineTexts(
     workHere = "Работать на этой машине",
     tokenReissued = "Токен будет выпущен заново: действующий кабинет показать не умеет. " +
         "Прежний токен перестанет действовать.",
-    heardByOfd = "ОФД принимал данные от этой кассы",
+    heardByOfd = "БФД принимала данные от этой кассы",
     handoverUnderstood = "Понимаю: на другой машине эта касса работать перестанет",
     done = "Касса заведена — кассир входит в неё по этому пину администратора",
     stranded = "Токен выпущен, а касса на этой машине не заведена. Повторите: уйдёт тот же " +
@@ -56,7 +56,7 @@ private val machineTextsKk = MachineTexts(
     workHere = "Осы машинада жұмыс істеу",
     tokenReissued = "Токен қайта шығарылады: қолданыстағысын кабинет көрсете алмайды. " +
         "Бұрынғы токен күшін жояды.",
-    heardByOfd = "ОФД осы кассадан дерек қабылдаған",
+    heardByOfd = "БФД осы кассадан дерек қабылдаған",
     handoverUnderstood = "Түсінемін: басқа машинада бұл касса жұмыс істемей қалады",
     done = "Касса тіркелді — кассир осы әкімші пінімен кіреді",
     stranded = "Токен шығарылды, ал касса осы машинада тіркелмеді. Қайталаңыз: сол токен " +
@@ -73,7 +73,7 @@ private val machineTextsEn = MachineTexts(
     workHere = "Work on this machine",
     tokenReissued = "The token will be issued anew: the cabinet cannot show the current one. " +
         "The previous token stops working.",
-    heardByOfd = "The OFD has received data from this register",
+    heardByOfd = "The BFD has received data from this register",
     handoverUnderstood = "I understand: on the other machine this register will stop working",
     done = "The register is set up — the cashier signs in with this administrator PIN",
     stranded = "The token was issued, but the register was not set up on this machine. Retry: " +
