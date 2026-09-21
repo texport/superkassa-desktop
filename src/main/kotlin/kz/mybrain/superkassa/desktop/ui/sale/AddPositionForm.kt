@@ -134,13 +134,20 @@ private fun RowScope.DraftAmountField(
     label: String,
     onChange: (String) -> Unit
 ) {
+    val extra = LocalSaleTexts.current
     val value = draft.valueOf(field)
+    val problem = draft.problem(field)?.takeIf { value.isNotBlank() }
     OutlinedTextField(
         value = value,
         onValueChange = onChange,
         label = { Text(label) },
         singleLine = true,
-        isError = value.isNotBlank() && draft.problem(field) != null,
+        isError = problem != null,
+        // Помеха стоит под своим полем, а не только строкой под кнопкой:
+        // на окне кассира форма позиции не влезает целиком, и строка под
+        // кнопкой оказывалась за сгибом — красное поле кассир видел,
+        // а причину нет и прокручивать её не догадывался.
+        supportingText = problem?.let { { Text(it.text(extra)) } },
         modifier = Modifier.weight(1f)
     )
 }
