@@ -67,6 +67,18 @@ data class FiscalResult(
     val isQueued: Boolean get() = deliveryStatus == "OFFLINE_QUEUED"
 }
 
+/**
+ * Виды документов, у которых своей суммы не бывает.
+ *
+ * Отчёт и открытие смены суммы не несут: узел держит у них ноль, а ноль
+ * в столбце «Сумма» читается как «не продано ничего». Итоги смены лежат
+ * внутри самого отчёта, и подменять их нулём нельзя.
+ */
+private val WITHOUT_AMOUNT = setOf("SHIFT_OPEN", "SHIFT_CLOSE", "X_REPORT", "Z_REPORT")
+
+/** Есть ли у документа своя сумма. */
+val Document.hasOwnAmount: Boolean get() = docType !in WITHOUT_AMOUNT
+
 /** Задача очереди отложенной отправки. */
 @Serializable
 data class QueueTask(

@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.PAGE
 import kz.mybrain.superkassa.desktop.server.documents
+import kz.mybrain.superkassa.desktop.server.hasOwnAmount
 import kz.mybrain.superkassa.desktop.ui.components.INTERNAL
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.SENT
@@ -29,8 +30,12 @@ fun journalEntriesOf(session: Session, texts: AppStrings, documents: List<Docume
             type = documentTypeTitle(session, texts, document.docType),
             number = document.docNo?.toString() ?: Glyphs.DASH,
             numberOrder = document.docNo,
-            amount = Money.formatTiyn(document.totalAmount),
-            amountOrder = document.totalAmount?.let { Money.tengeOf(it) },
+            // У отчёта и открытия смены своей суммы нет: узел держит
+            // у них ноль, и в журнале стояло «0,00 ₸» — читается как
+            // «не продано ничего». Итоги смены лежат в самом отчёте,
+            // а здесь на их месте прочерк.
+            amount = if (document.hasOwnAmount) Money.formatTiyn(document.totalAmount) else Glyphs.DASH,
+            amountOrder = document.totalAmount?.takeIf { document.hasOwnAmount }?.let { Money.tengeOf(it) },
             // Автономный признак показан наравне с фискальным: у документа,
             // пробитого без связи, фискального признака ещё нет, и пустая
             // клетка выглядела бы утратой документа.
