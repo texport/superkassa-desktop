@@ -8,6 +8,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,9 +38,13 @@ import java.math.BigDecimal
  * несёт. Такая позиция не встаёт в чек молча: цену и количество спрашивает
  * [PriceAskDialog]. Позиция с ценой добавляется сразу, как и прежде:
  * кассир сканирует и продолжает, не отвлекаясь.
+ *
+ * @param added сколько позиций уже встало в чек: любая добавленная
+ *              позиция очищает поле и снимает «нет такого штрихкода» —
+ *              товар заведён, и говорить о нём нечего.
  */
 @Composable
-fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
+fun BarcodeField(session: Session, added: Int, onFound: (Position) -> Unit) {
     val texts = LocalStrings.current
     val extra = LocalSaleTexts.current
     val scope = rememberCoroutineScope()
@@ -47,6 +52,13 @@ fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
     var searching by remember { mutableStateOf(false) }
     var notFound by remember { mutableStateOf(false) }
     var asking by remember { mutableStateOf<Position?>(null) }
+
+    LaunchedEffect(added) {
+        if (added > 0) {
+            barcode = ""
+            notFound = false
+        }
+    }
 
     val kkm = session.selected
     val rates = LocalVatRates.current

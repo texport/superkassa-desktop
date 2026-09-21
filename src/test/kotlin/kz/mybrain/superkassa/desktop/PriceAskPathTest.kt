@@ -96,7 +96,7 @@ class PriceAskPathTest {
             LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
             LocalUnits provides session.units
         ) {
-            Box(Modifier.padding(Spacing.screen)) { BarcodeField(session) { added.add(it) } }
+            Box(Modifier.padding(Spacing.screen)) { BarcodeField(session, added = 0) { added.add(it) } }
         }
     }
 
