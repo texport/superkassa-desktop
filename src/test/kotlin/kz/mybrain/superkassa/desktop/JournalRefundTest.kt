@@ -138,5 +138,12 @@ class JournalRefundTest {
         assertTrue(document.matches("0042"))
         assertTrue(!document.matches("77"))
         assertTrue(!Document(id = "d2").matches("1"))
+        // Номер на бумаге — тот, что присвоила касса: по нему кассир
+        // и ищет основание. По фискальному признаку тоже: он на чеке
+        // стоит рядом.
+        val printed = Document(id = "d3", docNo = 852804071, printedDocumentNumber = 5, fiscalSign = "852804071")
+        assertTrue(printed.matches("5"))
+        assertTrue(printed.matches("8528"))
+        assertTrue(!printed.matches("3"))
     }
 }

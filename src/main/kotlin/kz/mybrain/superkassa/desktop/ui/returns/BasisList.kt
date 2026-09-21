@@ -74,12 +74,14 @@ private fun BasisRow(
     onChoose: () -> Unit
 ) {
     val texts = LocalStrings.current
-    // Узел хранит фискальный признак и номером документа: писать
-    // одно и то же число дважды подряд незачем.
+    // Номер — тот, что стоит на бумажном чеке покупателя: его касса
+    // присваивает сама. Номер от ОФД совпадает с фискальным признаком,
+    // и по нему кассир бумагу с экраном не сверит.
+    val number = candidate.number
     val sign = (candidate.fiscalSign ?: candidate.autonomousSign)
-        ?.takeIf { it != candidate.docNo?.toString() }
+        ?.takeIf { it != number?.toString() }
     RecordRow(
-        title = "${texts.returns.receiptNo} ${candidate.docNo}",
+        title = "${texts.returns.receiptNo} $number",
         subtitle = sign?.let { "${journal.fiscalSign}: $it" },
         amount = Money.formatTiyn(candidate.totalAmount),
         selected = selected,

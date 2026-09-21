@@ -102,7 +102,7 @@ private fun DocumentRow(
         title = documentTitle,
         // Номер подписан: голая «1» под словом «Продажа» читалась как
         // количество, а не как номер документа.
-        subtitle = document.docNo?.let { "${texts.dashboard.documentNo} $it" } ?: Glyphs.DASH,
+        subtitle = document.number?.let { "${texts.dashboard.documentNo} $it" } ?: Glyphs.DASH,
         amount = Money.formatTiyn(document.totalAmount),
         trailing = {
             Row(

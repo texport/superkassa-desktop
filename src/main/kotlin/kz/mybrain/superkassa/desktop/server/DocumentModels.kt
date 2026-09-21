@@ -15,6 +15,15 @@ import java.math.BigDecimal
 data class Document(
     val id: String,
     val docNo: Long? = null,
+    /**
+     * Номер, которым чек назван на бумаге.
+     *
+     * Касса нумерует документы сама, и этот номер стоит на чеке
+     * покупателя. Номер `docNo` присваивает ОФД: он не последователен,
+     * а у отвергнутого чека его нет вовсе — сверять бумагу с экраном
+     * по нему кассир не может.
+     */
+    val printedDocumentNumber: Long? = null,
     val docType: String? = null,
     val ofdStatus: String? = null,
     val ofdErrorCode: Int? = null,
@@ -36,6 +45,16 @@ data class Document(
      * заблуждение. Автономный чек печатается — он фискальный, просто
      * ещё не доставлен; отказ ОФД — другое дело.
      */
+    /**
+     * Номер, которым документ назван кассиру и покупателю.
+     *
+     * Один на все экраны и на печатную форму: номер от ОФД не совпадает
+     * с бумажным, и разные экраны называли один документ разными
+     * числами.
+     */
+    val number: Long?
+        get() = printedDocumentNumber ?: docNo
+
     val printable: Boolean
         get() = ofdErrorCode == null && ofdStatus != REFUSED
 

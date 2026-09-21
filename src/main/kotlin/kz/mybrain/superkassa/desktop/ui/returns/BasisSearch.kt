@@ -53,8 +53,11 @@ internal fun BasisSearch(
  * Совпадение по вхождению, а не по началу: кассир набирает последние
  * цифры с чека, не переписывая номер целиком.
  */
-internal fun Document.matches(number: String): Boolean {
-    val wanted = number.trim()
+internal fun Document.matches(typed: String): Boolean {
+    val wanted = typed.trim()
     if (wanted.isEmpty()) return true
-    return docNo?.toString()?.contains(wanted) == true
+    // Искать можно и по номеру чека, и по фискальному признаку: на чеке
+    // покупателя стоят оба, и кассир набирает то, что видит.
+    return listOfNotNull(number?.toString(), fiscalSign, autonomousSign)
+        .any { it.contains(wanted) }
 }

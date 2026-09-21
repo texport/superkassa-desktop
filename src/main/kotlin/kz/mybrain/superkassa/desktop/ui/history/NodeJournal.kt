@@ -28,8 +28,8 @@ fun journalEntriesOf(session: Session, texts: AppStrings, documents: List<Docume
             moment = momentText(document.createdAt),
             typeCode = document.docType,
             type = documentTypeTitle(session, texts, document.docType),
-            number = document.docNo?.toString() ?: Glyphs.DASH,
-            numberOrder = document.docNo,
+            number = document.number?.toString() ?: Glyphs.DASH,
+            numberOrder = document.number,
             // У отчёта и открытия смены своей суммы нет: узел держит
             // у них ноль, и в журнале стояло «0,00 ₸» — читается как
             // «не продано ничего». Итоги смены лежат в самом отчёте,
