@@ -175,7 +175,7 @@ class JournalSourcesTest {
         val open = shiftRow(CabinetShift(shiftNumber = 9, state = "OPEN"), cabinet).entry
 
         assertNull(closed.delivery, "смена в ОФД не доставляется — она открыта или закрыта")
-        assertEquals(cabinet.shiftClosed, closed.state?.title)
+        assertEquals(cabinet.statuses.shiftClosed, closed.state?.title)
         assertTrue(closed.state?.done == true)
         assertTrue(open.state?.done == false)
         assertTrue(!open.printable, "выписки по незакрытой смене нет: её итоги ещё не сошлись")

@@ -24,6 +24,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * Прокрутка одна на весь столбец: ни один раздел внутри не прокручивается
  * сам, иначе колесо над таблицей двигало бы её, а не страницу.
+ *
+ * @param register касса, которой ограничен отбор; `null` — вся сеть.
+ *   Плитки сети отвечают на вопросы, которых у одной кассы нет.
  */
 @Composable
 fun AnalyticsSalesBody(
@@ -32,11 +35,12 @@ fun AnalyticsSalesBody(
     enums: EnumStrings,
     journal: HistoryJournalTexts,
     cabinet: CabinetTexts,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    register: String? = null
 ) {
     val sales = texts.sales
     ScrollableColumn(modifier = modifier, spacing = Spacing.snug) {
-        SalesTiles(view.summary, texts)
+        SalesTiles(view.summary, texts, register = register)
         if (view.summary.purchased) {
             SectionCard(cabinet.operationPurchase, info = sales.purchasesHint) {
                 SalesPurchaseTiles(view.summary, sales, cabinet)

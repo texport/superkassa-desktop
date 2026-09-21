@@ -73,7 +73,7 @@ fun CompanyPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) 
     ScreenSlot(state, Modifier.fillMaxWidth(), centered = true) {
         ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
             CompanyCard(cabinet, profile, texts)
-            OkedsCard(texts, okeds, cabinet.busy, title = titles) {
+            OkedsCard(texts, okeds, cabinet.busy, profile?.okeds.orEmpty(), title = titles) {
                 scope.launch {
                     val token = cabinet.token ?: return@launch
                     // Перечитывание только по удаче: guard снимает сообщение

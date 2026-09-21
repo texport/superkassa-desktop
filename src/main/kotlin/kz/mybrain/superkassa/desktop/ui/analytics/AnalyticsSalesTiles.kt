@@ -44,9 +44,20 @@ import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
  * обрезанным: «128 456 00…» вместо ста двадцати восьми миллионов тенге.
  * Больше трёх главных чисел в ряд не ставится: перенос по одной плитке
  * оставлял последнюю растянутой на всю ширину, и ряд читался кривым.
+ *
+ * @param register касса, которой ограничен отбор; `null` — вся сеть.
+ *   В окне одной кассы плитки «Кассы» нет: «1 Касс» внутри окна про одну
+ *   кассу отвечает на вопрос, которого владелец здесь не задавал. Смены,
+ *   автономное, очередь и неизвестное посчитаны по этой же кассе — они
+ *   к ней относятся и остаются.
  */
 @Composable
-fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier = Modifier) {
+fun SalesTiles(
+    summary: SalesSummary,
+    texts: AnalyticsTexts,
+    modifier: Modifier = Modifier,
+    register: String? = null
+) {
     val sales = texts.sales
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -68,7 +79,7 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
             horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
-            CounterTile(Money.count(summary.cashRegisterCount), texts.kkmCount)
+            if (register == null) CounterTile(Money.count(summary.cashRegisterCount), texts.kkmCount)
             CounterTile(Money.count(summary.openShiftCount), sales.openShifts)
             CounterTile(Money.count(summary.offlineCount), sales.offline)
             CounterTile(Money.count(summary.queuedCount), sales.queuedCount)

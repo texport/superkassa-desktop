@@ -24,7 +24,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * что часть смены кассир просто не увидит.
  *
  * Заведено один раз на всё приложение вместе с [ScrollableColumn]: полоса,
- * её ширина и отступ под неё одинаковы везде.
+ * её ширина и отступ под неё одинаковы везде. Клавиатура двигает список
+ * так же, как колесо, — см. [scrolledByKeys].
  */
 @Composable
 fun ScrollableList(
@@ -35,7 +36,10 @@ fun ScrollableList(
     Box(modifier = modifier) {
         LazyColumn(
             state = state,
-            modifier = Modifier.fillMaxWidth().padding(end = Spacing.normal),
+            modifier = Modifier
+                .fillMaxWidth()
+                .scrolledByKeys(state) { state.layoutInfo.viewportSize.height }
+                .padding(end = Spacing.normal),
             content = content
         )
         VerticalScrollbar(

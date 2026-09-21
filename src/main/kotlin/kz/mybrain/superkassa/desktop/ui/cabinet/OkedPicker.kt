@@ -3,14 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,8 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
@@ -29,10 +19,8 @@ import kz.mybrain.superkassa.desktop.server.cabinet.OKEDS
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.OkedEntry
 import kz.mybrain.superkassa.desktop.server.cabinet.okedSuggestions
-import kz.mybrain.superkassa.desktop.ui.components.onEscape
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Durations
-import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -111,7 +99,7 @@ fun OkedPicker(
         // общего числа не сообщает, оставляет ноль — тогда о продолжении
         // говорит сама полная страница.
         val rest = (total - taken).coerceAtLeast(0)
-        Suggestions(
+        OkedSuggestions(
             texts = texts,
             query = query,
             found = found,
@@ -130,82 +118,20 @@ fun OkedPicker(
             query = ""
             onAdd(Oked(code = entry.code, name = titleOf(session, entry)))
         }
-        Hint(
+        // «Классификатор длиннее показанного — уточните запрос» уместно
+        // только при запросе. Пустая строка отдаёт начало классификатора,
+        // и эта подсказка выходила сразу при раскрытии карточки, до единого
+        // набранного знака: уточнять было нечего. До запроса стоит обычная
+        // подсказка о том, чем искать.
+        OkedHint(
             when {
-                !searched -> texts.hints.okedSearch
-                found.isEmpty() && needle.isNotEmpty() -> texts.okedNotFound
+                !searched || needle.isEmpty() -> texts.hints.okedSearch
+                found.isEmpty() -> texts.okedNotFound
                 !ended -> texts.okedNarrowSearch
                 else -> texts.hints.okedSearch
             }
         )
     }
-}
-
-/** Поле поиска и найденное выпадающим списком: как в подборе адреса. */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Suggestions(
-    texts: CabinetTexts,
-    query: String,
-    found: List<OkedEntry>,
-    open: Boolean,
-    rest: Long?,
-    title: (OkedEntry) -> String,
-    onMore: () -> Unit,
-    onOpen: (Boolean) -> Unit,
-    onQuery: (String) -> Unit,
-    onPick: (OkedEntry) -> Unit
-) {
-    // Escape закрывает раскрытый список — тем же правилом, что и у всех
-    // выпадающих списков приложения: сам он нажатия не слышит.
-    val closing = Modifier.fillMaxWidth().onEscape {
-        if (open) onOpen(false)
-        open
-    }
-    ExposedDropdownMenuBox(expanded = open, onExpandedChange = onOpen, modifier = closing) {
-        OutlinedTextField(
-            value = query,
-            onValueChange = onQuery,
-            label = { Text(texts.okedSearch) },
-            singleLine = true,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onFocusChanged { state -> if (state.isFocused) onOpen(true) }
-                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
-        )
-        ExposedDropdownMenu(expanded = open, onDismissRequest = { onOpen(false) }) {
-            found.forEach { entry ->
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = "${entry.code}${Glyphs.SEPARATOR}${title(entry)}",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    onClick = { onPick(entry) }
-                )
-            }
-            // Классификатор больше страницы, и список раскрыт внутрь меню:
-            // по прокрутке догружать некуда, поэтому продолжение просят
-            // последней строкой списка.
-            if (rest != null) {
-                val label = if (rest > 0) "${texts.showMore}${Glyphs.SEPARATOR}$rest" else texts.showMore
-                DropdownMenuItem(text = { Text(label) }, onClick = onMore)
-            }
-        }
-    }
-}
-
-/** Подсказка под полем: одна строка на все состояния, чтобы поле не прыгало. */
-@Composable
-private fun Hint(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
 }
 
 /** Наименование на языке интерфейса: в заявление уходит то, что видит владелец. */

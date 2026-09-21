@@ -26,7 +26,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * без единого признака, что там что-то есть.
  *
  * Заведено один раз на всё приложение: полоса, её ширина и отступ под неё
- * должны быть одинаковыми в каждой панели.
+ * должны быть одинаковыми в каждой панели. Клавиатура двигает столбец
+ * так же, как колесо, — см. [scrolledByKeys].
  *
  * @param gutter поле под полосу прокрутки. Задаётся снаружи там, где
  *   от него зависит вёрстка соседей: у колонки касс это поле и есть
@@ -46,6 +47,7 @@ fun ScrollableColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scroll)
+                .scrolledByKeys(scroll) { scroll.viewportSize }
                 .padding(end = gutter),
             verticalArrangement = Arrangement.spacedBy(spacing),
             content = content

@@ -68,6 +68,10 @@ fun SectionCard(
  * Отличается от [SectionCard] только стрелкой в заголовке: длинная
  * карточка собирается из таких разделов, и свёрнутое остаётся на экране
  * строкой заголовка, а не исчезает без следа.
+ *
+ * Объяснение раздела задаётся тем же `info`, что и у [SectionCard]:
+ * свёрнутый раздел — это одна строка названия, и без объяснения владелец
+ * раскрывает его, чтобы узнать, что там.
  */
 @Composable
 fun CollapsibleCard(
@@ -75,6 +79,7 @@ fun CollapsibleCard(
     expanded: Boolean,
     onToggle: () -> Unit,
     modifier: Modifier = Modifier,
+    info: String? = null,
     trailing: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -84,6 +89,7 @@ fun CollapsibleCard(
                 title = title,
                 expanded = expanded,
                 onToggle = onToggle,
+                info = info,
                 trailing = trailing,
                 content = content
             )

@@ -133,7 +133,7 @@ private fun RegisterLiveBlocks(
     RegisterBlockCard(RegisterBlock.Applications, open, onToggle, texts.applications) {
         RegistrationActionsBlock(session, cabinet, texts, register, onDone)
     }
-    RegisterBlockCard(RegisterBlock.Card, open, onToggle, texts.card) {
+    RegisterBlockCard(RegisterBlock.Card, open, onToggle, texts.card, info = texts.hints.card) {
         RegistrationCardBlock(cabinet, texts, card)
     }
 }
@@ -151,19 +151,26 @@ private fun RegisterAdminBlocks(
         open = open,
         onToggle = onToggle,
         title = texts.actionsJournal,
+        info = texts.hints.actionsJournal,
         trailing = { ActionsCount(actions.size) }
     ) {
         RegisterJournal(actions, texts)
     }
 }
 
-/** Раздел карточки кассы: заголовок со стрелкой и содержимое под ним. */
+/**
+ * Раздел карточки кассы: заголовок со стрелкой, объяснение и содержимое.
+ *
+ * Свёрнутый раздел — одна строка названия, и «Регистрационную карту»
+ * раскрывали только затем, чтобы узнать, что там лежит.
+ */
 @Composable
 private fun RegisterBlockCard(
     block: RegisterBlock,
     open: Set<RegisterBlock>,
     onToggle: (RegisterBlock) -> Unit,
     title: String,
+    info: String? = null,
     trailing: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -171,6 +178,7 @@ private fun RegisterBlockCard(
         title = title,
         expanded = block in open,
         onToggle = { onToggle(block) },
+        info = info,
         trailing = trailing,
         content = content
     )

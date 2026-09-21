@@ -79,17 +79,21 @@ internal val cabinetTextsEn = CabinetTexts(
     changeAddress = "Change the address",
     deleteRegister = "Delete the register",
     deleteOnlyDraft = "Only a register that is not on record yet can be deleted",
-    statusDraft = "Draft",
-    statusRegistered = "On record",
-    statusDeregistered = "Deregistered",
-    statusActive = "Working",
-    statusInactive = "Stopped",
-    statusAccepted = "Accepted",
-    statusRejected = "Refused",
-    statusSent = "Sent",
-    statusInProcess = "The KGD is reviewing",
-    shiftOpen = "Shift is open",
-    shiftClosed = "Shift is closed",
+    statuses = CabinetStatusNames(
+        draft = "Draft",
+        registered = "On record",
+        deregistered = "Deregistered",
+        active = "Working",
+        inactive = "Stopped",
+        blocked = "Blocked",
+        accepted = "Accepted",
+        rejected = "Refused",
+        sent = "Sent",
+        inProcess = "The KGD is reviewing",
+        shiftOpen = "Shift is open",
+        shiftClosed = "Shift is closed",
+        unknown = "State is unknown"
+    ),
     operationSale = "Sale",
     operationReturn = "Sale return",
     operationPurchase = "Purchase",
@@ -203,7 +207,6 @@ internal val cabinetTextsEn = CabinetTexts(
     autonomous = "Issued offline",
     documentMoment = "Accepted by BFD",
     documentNumber = "Document number",
-    developerSignIn = "Sign in without a digital signature",
     addressRegion = "Region",
     addressLocality = "Locality or district",
     addressStreet = "Street",
@@ -216,7 +219,7 @@ internal val cabinetTextsEn = CabinetTexts(
     applicationFailed = "The application was not sent",
     addressPickAgain = "Pick another address",
     addressNotFound = "The registry returned nothing for this step — refine the query or retry later",
-    placeSearch = "Search: place, register, reg. no.",
+    placeSearch = "Search: place, register, KGD number",
     placeNotFound = "Nothing found",
     map = MapTexts(
         pickOnMapHint = "Click the map where the place stands; drag the map with the mouse",
@@ -262,9 +265,6 @@ internal val cabinetTextsEn = CabinetTexts(
             "the BFD — the fiscal data base. The answer comes first, and below it who exactly said so. They " +
             "disagree when the state went stale somewhere.",
         bfdNoAnswer = "The state was not received — reread the register card",
-        developerSignIn = "Cabinet development mode: the owner and company are set by IIN and BIN, " +
-            "the signature is not checked at sign-in. Applications are still signed with the digital signature, " +
-            "and the IIN must match the certificate; for a sole proprietor the BIN equals the IIN",
         addressStep = "The address is chosen step by step: region, locality, street, building. " +
             "Pick from the list or type the beginning of a name as the registry spells it: " +
             "Қабанбай батыр, not Кабанбай",
@@ -305,6 +305,14 @@ internal val cabinetTextsEn = CabinetTexts(
             "changes the cash in the register, and without it the drawer will not reconcile",
         factoryNumber = "The number the manufacturer stamped on the register: it goes " +
             "into the application and stands in the registration card. While the register " +
-            "is not on record it can be fixed here"
+            "is not on record it can be fixed here",
+        card = "The registration card is what the KGD recorded about the register: " +
+            "number, model, retail place and the date it went on record. A new card version " +
+            "appears with every re-registration, and the versions show what exactly changed",
+        actionsJournal = "The trail of every application to the KGD: which one was filed, " +
+            "when, and how it ended. This is where you look to see why the register is in " +
+            "its current state, or to prove that an application was filed",
+        newPlaceNotChosen = "Re-registration moves the register to another retail place — " +
+            "choose it in the list above, otherwise the cabinet will refuse the application"
     )
 )

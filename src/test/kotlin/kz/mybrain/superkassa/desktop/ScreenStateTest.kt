@@ -118,6 +118,7 @@ class ScreenStateTest {
         RenderProbe {
             PlaceTree(
                 texts = cabinet,
+                language = Language.Ru,
                 collapsed = false,
                 onToggle = {},
                 rows = emptyList(),

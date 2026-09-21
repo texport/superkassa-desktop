@@ -21,6 +21,7 @@ import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -38,6 +39,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * обозримый раздел, а колонку от карточки кассы и так отделяет черта.
  * Свёрнутая колонка не пустеет — она становится рельсом значков.
  *
+ * @param language на каком языке показывать адрес точки: регистр отдаёт
+ *   его и по-русски, и по-казахски.
  * @param rows готовые строки дерева: сузил ли их поиск, знает [placeRows].
  * @param loading ответа кабинета ещё не было: на месте строк ожидание.
  * @param footer кнопки создания под списком.
@@ -45,6 +48,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 internal fun PlaceTree(
     texts: CabinetTexts,
+    language: Language,
     collapsed: Boolean,
     onToggle: () -> Unit,
     rows: List<PlaceRow>,
@@ -78,7 +82,7 @@ internal fun PlaceTree(
             else -> ScreenState.Ready
         }
         ScreenSlot(state, Modifier.weight(1f)) {
-            TreeRows(texts, rows, place, register, onPlace, onRegister, Modifier.weight(1f))
+            TreeRows(texts, language, rows, place, register, onPlace, onRegister, Modifier.weight(1f))
         }
         footer()
     }
@@ -88,6 +92,7 @@ internal fun PlaceTree(
 @Composable
 private fun TreeRows(
     texts: CabinetTexts,
+    language: Language,
     rows: List<PlaceRow>,
     place: String?,
     register: String?,
@@ -100,7 +105,7 @@ private fun TreeRows(
             when (row) {
                 is PlaceRow.Point -> RecordRow(
                     title = row.place.name,
-                    subtitle = "${texts.registerCount}: ${row.place.cashRegisterCount}",
+                    support = { PointSupport(texts, language, row.place) },
                     selected = row.id == place && register == null,
                     onClick = { onPlace(row.id) }
                 )

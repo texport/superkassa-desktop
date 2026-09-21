@@ -15,6 +15,7 @@ import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceCreateButtons
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceTree
 import kz.mybrain.superkassa.desktop.ui.cabinet.placeRows
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
+import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
@@ -80,6 +81,7 @@ internal fun PlacesLook(
     Row(modifier = Modifier.fillMaxSize()) {
         PlaceTree(
             texts = Look.cabinet,
+            language = Language.Ru,
             collapsed = collapsed,
             onToggle = {},
             rows = placeRows(places, registers, open, query),

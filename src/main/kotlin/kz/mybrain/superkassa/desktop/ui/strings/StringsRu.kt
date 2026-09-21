@@ -34,7 +34,9 @@ internal val RussianStrings = AppStrings(
         noKkmChosen = "Касса не выбрана",
         pickHint = "Выберите кассу в списке",
         factory = "Заводской",
-        registrationNumber = "РНМ"
+        // Номер один, и имя у него одно: «РНМ» здесь и «Номер КГД»
+        // в таблицах кабинета читались как два разных номера.
+        registrationNumber = "Номер КГД"
     ),
     shell = ShellStrings(
         noKkm = "Касса не выбрана",

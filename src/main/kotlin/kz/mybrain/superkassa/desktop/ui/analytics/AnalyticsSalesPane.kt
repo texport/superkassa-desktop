@@ -85,7 +85,15 @@ fun AnalyticsSales(
         val state = salesState(model, texts) { scope.launch { model.load() } }
         ScreenSlot(state, Modifier.weight(1f)) {
             if (view != null) {
-                AnalyticsSalesBody(view, texts, enums, journal, cabinetTexts, Modifier.weight(1f))
+                AnalyticsSalesBody(
+                    view = view,
+                    texts = texts,
+                    enums = enums,
+                    journal = journal,
+                    cabinet = cabinetTexts,
+                    modifier = Modifier.weight(1f),
+                    register = model.register
+                )
             }
         }
     }

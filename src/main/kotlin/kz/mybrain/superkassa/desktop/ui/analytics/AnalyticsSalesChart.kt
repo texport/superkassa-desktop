@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.MaterialTheme
@@ -53,7 +54,10 @@ fun SalesChart(bars: List<SalesBar>, texts: AnalyticsSalesTexts, modifier: Modif
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        ChartReadout(hovered?.let { bars[it].caption }.orEmpty())
+        // Ряд из одного столбика подписан сразу, без наведения: искать
+        // глазами единственный столбик незачем, а сумма за этот день и есть
+        // то, ради чего график открыли. Прежде он стоял без значения вовсе.
+        ChartReadout(hovered?.let { bars[it].caption } ?: bars.singleOrNull()?.caption.orEmpty())
         ChartCanvas(bars, hovered) { hovered = it }
         ChartAxis(bars)
     }
@@ -122,6 +126,10 @@ private fun ChartAxis(bars: List<SalesBar>) {
                 }
             }
         }
+        // Пустые деления ряда короче недели: без них подпись единственного
+        // дня разъехалась бы с самим столбиком на всю ширину карточки.
+        val empty = chartSlots(bars.size) - bars.size
+        if (empty > 0) Spacer(modifier = Modifier.weight(empty.toFloat()))
     }
 }
 
@@ -143,7 +151,7 @@ private data class Chart(val top: BigDecimal, val chosen: Int?, val gap: Float, 
 
 /** Столбики и ось под ними. */
 private fun DrawScope.drawBars(bars: List<SalesBar>, chart: Chart, paint: BarPaint) {
-    val slot = size.width / bars.size
+    val slot = size.width / chartSlots(bars.size)
     val width = (slot - chart.gap).coerceAtLeast(1f)
     bars.forEachIndexed { at, bar ->
         val height = size.height * barShare(bar.value, chart.top)

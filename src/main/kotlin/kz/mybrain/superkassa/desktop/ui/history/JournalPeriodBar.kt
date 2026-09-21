@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -38,15 +38,21 @@ fun JournalPeriodBar(
     loading: Boolean,
     onPeriod: (JournalPeriod) -> Unit
 ) {
-    Row(
+    // Полоса переносится, а не сжимается: в окне сводки одной кассы ей
+    // не хватало ширины, и «Сегодня» вставало столбиком из отдельных букв —
+    // надпись, которую владелец не прочитал. Читаться она обязана при любой
+    // ширине окна, а перенос строки этому не мешает.
+    FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        itemVerticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = journal.period,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            softWrap = false
         )
         ChoiceSegments(
             options = JournalSpan.entries,
@@ -74,12 +80,14 @@ private fun PeriodShift(
     IconButton(enabled = !loading, onClick = { onPeriod(period.shiftedBy(-1)) }) {
         Icon(AppIcons.earlierDay, contentDescription = journal.earlierSpan)
     }
-    Text(period.text(journal), style = MaterialTheme.typography.titleMedium)
+    Text(period.text(journal), style = MaterialTheme.typography.titleMedium, softWrap = false)
     IconButton(enabled = !loading && later, onClick = { onPeriod(period.shiftedBy(1)) }) {
         Icon(AppIcons.laterDay, contentDescription = journal.laterSpan)
     }
     TextButton(enabled = !loading && later, onClick = { onPeriod(JournalPeriod.of(period.span)) }) {
         Icon(AppIcons.today, contentDescription = null)
-        Text(journal.today, modifier = Modifier.padding(start = Spacing.tight))
+        // Надпись не переносится по буквам ни при какой ширине: перенос
+        // ряда — дело полосы, а не отдельной кнопки внутри неё.
+        Text(journal.today, modifier = Modifier.padding(start = Spacing.tight), softWrap = false)
     }
 }

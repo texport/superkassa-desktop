@@ -24,19 +24,37 @@ fun CabinetStatusChip(status: String?, texts: CabinetTexts) {
     Chip(text = statusTitle(code, texts), color = statusColor(code))
 }
 
-/** Название состояния словами; незнакомый код доходит как есть. */
-fun statusTitle(code: String, texts: CabinetTexts): String = when (code) {
-    "DRAFT" -> texts.statusDraft
-    "REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS" -> texts.statusRegistered
-    "DEREGISTERED" -> texts.statusDeregistered
-    "KKM_ACTIVE" -> texts.statusActive
-    "KKM_INACTIVE" -> texts.statusInactive
-    "ACCEPTED" -> texts.statusAccepted
-    "REJECTED" -> texts.statusRejected
-    "SENT", "SIGNED" -> texts.statusSent
-    "OPEN" -> texts.shiftOpen
-    "CLOSED" -> texts.shiftClosed
-    else -> if (code.endsWith(IN_PROCESS)) texts.statusInProcess else code
+/**
+ * Название состояния словами.
+ *
+ * Код, которого в таблице нет, тоже называется словами, а не доходит
+ * до экрана собой: у кассы-черновика кабинет отдаёт `UNKNOWN`, и в списке
+ * касс места плашка смены так и стояла — «UNKNOWN».
+ */
+fun statusTitle(code: String, texts: CabinetTexts): String =
+    statusWords(code, texts) ?: texts.statuses.unknown
+
+/**
+ * То же название, но `null` у состояния, которого таблица не знает.
+ *
+ * Нужно там, где о неизвестном лучше молчать: плашка «состояние
+ * неизвестно» рядом с кассой не сообщает о ней ничего, а место в строке
+ * списка занимает.
+ */
+fun statusWords(code: String, texts: CabinetTexts): String? = when (code.uppercase()) {
+    "DRAFT" -> texts.statuses.draft
+    "REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS" -> texts.statuses.registered
+    "DEREGISTERED" -> texts.statuses.deregistered
+    "ACTIVE", "KKM_ACTIVE" -> texts.statuses.active
+    "INACTIVE", "KKM_INACTIVE" -> texts.statuses.inactive
+    "BLOCKED", "KKM_BLOCKED" -> texts.statuses.blocked
+    "ACCEPTED" -> texts.statuses.accepted
+    "REJECTED" -> texts.statuses.rejected
+    "SENT", "SIGNED" -> texts.statuses.sent
+    "PENDING", "IN_PROCESS" -> texts.statuses.inProcess
+    "OPEN" -> texts.statuses.shiftOpen
+    "CLOSED" -> texts.statuses.shiftClosed
+    else -> texts.statuses.inProcess.takeIf { code.endsWith(IN_PROCESS) }
 }
 
 /** Цвет состояния: сделано, ожидание или отказ. */

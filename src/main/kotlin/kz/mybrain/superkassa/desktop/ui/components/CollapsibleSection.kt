@@ -30,6 +30,10 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * @param title название раздела.
  * @param expanded развёрнут ли раздел сейчас.
  * @param onToggle переключение состояния.
+ * @param info объяснение раздела — тем же именем и смыслом, что
+ *   у `SectionCard(info = ...)`: значок у заголовка, под ним предмет
+ *   раздела. Свёрнутому разделу оно нужнее, чем развёрнутому: содержимого
+ *   не видно, и по одному названию не решить, стоит ли раскрывать.
  * @param trailing то, что видно и в свёрнутом виде справа от названия.
  * @param always то, что остаётся на экране и свёрнутым: главное в разделе.
  * @param content содержимое, которое прячется.
@@ -39,6 +43,7 @@ fun CollapsibleSection(
     title: String,
     expanded: Boolean,
     onToggle: () -> Unit,
+    info: String? = null,
     trailing: @Composable () -> Unit = {},
     always: @Composable ColumnScope.() -> Unit = {},
     content: @Composable ColumnScope.() -> Unit
@@ -47,7 +52,7 @@ fun CollapsibleSection(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        SectionHeader(title, expanded, onToggle, trailing)
+        SectionHeader(title, expanded, onToggle, info, trailing)
         always()
         Collapsible(expanded) {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug), content = content)
@@ -67,6 +72,7 @@ fun SectionHeader(
     title: String,
     expanded: Boolean,
     onToggle: () -> Unit,
+    info: String? = null,
     trailing: @Composable () -> Unit = {}
 ) {
     val texts = LocalStrings.current
@@ -75,7 +81,16 @@ fun SectionHeader(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        SectionTitle(title, Modifier.weight(1f))
+        // Название и значок объяснения идут вместе: значок, отданный
+        // правому краю, читался бы как подсказка к тому, что стоит справа.
+        Row(
+            modifier = Modifier.weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+        ) {
+            SectionTitle(title, Modifier.weight(1f, fill = false))
+            info?.let { InfoTip(it) }
+        }
         trailing()
         IconButton(onClick = onToggle) {
             Icon(

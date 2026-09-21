@@ -1,11 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,21 +9,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
-import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.closeShift
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
-import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
  * Заявления в ИСНА: постановка на учёт, перерегистрация, снятие с учёта.
@@ -57,6 +48,8 @@ fun RegistrationActionsBlock(
     var placeId by remember(register.id) { mutableStateOf("") }
     var outcome by remember(register.id) { mutableStateOf<ApplicationOutcome?>(null) }
     var stage by remember(register.id) { mutableStateOf<ApplicationStage?>(null) }
+    // Начатая подача: ею же владелец её и прерывает, пока NCALayer ждёт подпись.
+    var running by remember(register.id) { mutableStateOf<Job?>(null) }
     var closingShift by remember(register.id) { mutableStateOf(false) }
     val places = cabinet.places
 
@@ -90,23 +83,42 @@ fun RegistrationActionsBlock(
     // и два вызова подряд разошлись бы на первой правке.
     val submit: suspend () -> Unit = {
         outcome = null
-        outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
-        stage = null
+        try {
+            outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
+        } finally {
+            // Отсчёт снимается и с отменённой подачи: иначе он остался бы
+            // на экране, хотя ждать его уже некому.
+            stage = null
+        }
         onDone()
     }
     val shiftBlocks = outcome.blockedByShift()
     val closable = if (shiftBlocks) closableHere(register, session.kkms) else null
+    // Заявление, которого кабинет не примет, и не подаётся: перерегистрация
+    // без новой точки уходила в кабинет и возвращалась отказом, а поле
+    // выбора при этом выглядело заполненным.
+    val filled = kind != ActionKind.Reregistration || placeId.isNotBlank()
+    // Пока NCALayer ждёт подпись, на месте кнопки идёт отсчёт срока
+    // с отменой — тот же, что на двери входа. Прежде здесь стояла занятая
+    // кнопка: владелец до трёх минут смотрел в неподвижный экран.
+    if (stage == ApplicationStage.Signing) {
+        ApplicationSignWait(session.language, texts) { running?.cancel() }
+        ApplicationResult(outcome, texts)
+        return
+    }
     // Пока отказ по открытой смене стоит на экране, главным действием
     // становится то, которое его чинит: повторная подача кончится тем же
     // отказом, а две залитые кнопки подряд не говорят, какую нажимать.
     BusyButton(
         text = stage?.title(texts) ?: texts.submitApplication,
         busy = cabinet.busy,
-        enabled = kind in available,
+        enabled = kind in available && filled,
         kind = if (closable == null) FieldButtonKind.Filled else FieldButtonKind.Tonal
     ) {
-        scope.launch { submit() }
+        running = scope.launch { submit() }
     }
+    // Погашенная кнопка сама не говорит, чего ей не хватает.
+    if (!filled) Note(texts.hints.newPlaceNotChosen)
     ApplicationResult(outcome, texts)
 
     // Кабинет отказал из-за открытой смены — спрашиваем прямо здесь,
@@ -118,7 +130,9 @@ fun RegistrationActionsBlock(
     }
     if (closingShift && closable != null) {
         CloseShiftBeforeDeregister(texts, session.busy, onDismiss = { closingShift = false }) { pin ->
-            scope.launch {
+            // Подача отсюда — та же подача: её отсчёт прерывается той же
+            // отменой, и начатое запоминается там же.
+            running = scope.launch {
                 val closed = session.guard(texts.closeShiftAndDeregister) {
                     session.client.closeShift(closable.kkmId, pin)
                 }
@@ -151,65 +165,6 @@ private fun NoActions(register: CabinetRegister, texts: CabinetTexts) {
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-}
-
-/** Что нужно уточнить у выбранного вида заявления. */
-@Composable
-private fun ApplicationFields(
-    kind: ActionKind,
-    texts: CabinetTexts,
-    places: List<RetailPlace>,
-    placeId: String,
-    reason: DeregistrationReason,
-    comment: String,
-    onPlace: (String) -> Unit,
-    onReason: (DeregistrationReason) -> Unit,
-    onComment: (String) -> Unit
-) {
-    when (kind) {
-        // Постановке на учёт уточнять нечего: всё нужное уже в паспорте кассы.
-        ActionKind.Registration -> Unit
-        // Точка выбирается из списка компании: прежде здесь стоял ввод
-        // идентификатора, а взять его владельцу было неоткуда.
-        ActionKind.Reregistration -> LabelledPicker(
-            label = texts.newPlace,
-            options = places,
-            selected = places.firstOrNull { it.id == placeId },
-            title = { it?.name.orEmpty() },
-            onSelect = { onPlace(it.id) }
-        )
-        ActionKind.Deregistration -> DeregistrationFields(texts, reason, comment, onReason, onComment)
-    }
-}
-
-/** Причина и пояснение к снятию с учёта. */
-@Composable
-private fun DeregistrationFields(
-    texts: CabinetTexts,
-    reason: DeregistrationReason,
-    comment: String,
-    onReason: (DeregistrationReason) -> Unit,
-    onComment: (String) -> Unit
-) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
-        ChoiceSegments(
-            options = DeregistrationReason.entries,
-            selected = reason,
-            label = { it.title(texts) },
-            onSelect = onReason
-        )
-        OutlinedTextField(
-            value = comment,
-            onValueChange = onComment,
-            label = { Text(texts.comment) },
-            singleLine = true,
-            modifier = Modifier.width(Sizes.fieldName)
-        )
-    }
 }
 
 /**
