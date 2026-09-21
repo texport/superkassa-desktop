@@ -11,6 +11,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
@@ -184,6 +185,31 @@ class SessionTest {
 
         assertTrue(session.lastMessage is Message.NodeUnavailable)
         assertTrue(!session.nodeAvailable)
+    }
+
+    @Test
+    fun `неполученный ответ отличается от недоступного узла`() = runBlocking {
+        // Узел обращение принял и мог довести его до конца: чек при этом
+        // фискален и принят БФД. «Узел недоступен» отправляло кассира
+        // пробивать чек второй раз, а узел свой ответ уже записал.
+        val empty = """{"items":[],"total":0,"limit":500,"offset":0,"hasMore":false}"""
+        var waiting = false
+        val session = sessionWith(
+            MockEngine {
+                if (waiting) {
+                    throw HttpRequestTimeoutException("http://127.0.0.1:8080/kkm", 90_000L)
+                }
+                respond(empty, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
+            }
+        )
+        session.refreshKkms()
+        assertTrue(session.nodeAvailable, "узел не признан доступным после удачного обращения")
+
+        waiting = true
+        session.refreshKkms()
+
+        assertTrue(session.lastMessage is Message.NoAnswer, "сообщение: ${session.lastMessage}")
+        assertTrue(session.nodeAvailable, "узел объявлен недоступным по одному неполученному ответу")
     }
 
     @Test

@@ -3,6 +3,8 @@ package kz.mybrain.superkassa.desktop.app
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.ktor.client.plugins.HttpRequestTimeoutException
+import io.ktor.network.sockets.SocketTimeoutException
 import kotlinx.coroutines.CancellationException
 import kz.mybrain.superkassa.desktop.app.log.AppLog
 import kz.mybrain.superkassa.desktop.app.log.LogLevel
@@ -109,6 +111,15 @@ class NodeCalls(
             throw cancelled
         } catch (failure: Exception) {
             AppLog.record(LogSource.Node, LogLevel.Failure, "$what: узел не ответил — ${failure::class.simpleName}")
+            // Не дождались ответа — не то же, что узел не отвечает вовсе.
+            // Узел обращение принял и мог довести его до конца: чек
+            // фискализируется и уходит в БФД дольше, чем касса ждёт
+            // на медленной связи. «Узел недоступен» здесь отправляло
+            // кассира пробивать чек второй раз.
+            if (timedOut(failure)) {
+                last = Message.NoAnswer(what)
+                return null
+            }
             available = false
             // Кассиру — что узел не ответил и на чём именно; имя исключения
             // остаётся в журнале. Прежде на экране стояло «ConnectException»,
@@ -120,3 +131,14 @@ class NodeCalls(
         }
     }
 }
+
+/**
+ * Не дождались ли ответа.
+ *
+ * Обрыв соединения и отказ в соединении означают недоступный узел,
+ * а истекшее ожидание — что узел обращение принял и мог его выполнить.
+ * Различие видно кассиру: в первом случае касса ничего не пробила,
+ * во втором чек мог уже стать фискальным.
+ */
+private fun timedOut(failure: Throwable): Boolean =
+    failure is HttpRequestTimeoutException || failure is SocketTimeoutException

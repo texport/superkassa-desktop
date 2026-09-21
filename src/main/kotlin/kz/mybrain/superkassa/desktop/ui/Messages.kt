@@ -56,6 +56,7 @@ fun MessageEffect(
             is Message.Refusal ->
                 current.text.ifBlank { "${texts.common.refusalCode}: ${current.code}" }
             is Message.NodeUnavailable -> "${texts.common.nodeUnavailable}${Glyphs.SEPARATOR}${current.what}"
+            is Message.NoAnswer -> "${texts.common.nodeNoAnswer}${Glyphs.SEPARATOR}${current.what}"
         }
         val result = state.showSnackbar(
             message = text,

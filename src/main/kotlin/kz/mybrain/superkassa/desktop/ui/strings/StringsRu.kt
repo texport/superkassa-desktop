@@ -12,6 +12,7 @@ internal val RussianStrings = AppStrings(
         nodeOnline = "Узел на связи",
         nodeOffline = "Узел недоступен",
         nodeUnavailable = "Узел кассы недоступен",
+        nodeNoAnswer = "Ответ не получен — документ мог быть проведён, проверьте журнал; повтор не задвоит",
         refusalCode = "Код отказа",
         deliveredToOfd = "доставлено в БФД",
         queuedNoLink = "связи нет — поставлено в очередь",

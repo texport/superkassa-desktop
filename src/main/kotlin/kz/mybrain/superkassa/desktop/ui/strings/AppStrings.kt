@@ -53,6 +53,8 @@ data class CommonStrings(
     val nodeOnline: String,
     val nodeOffline: String,
     val nodeUnavailable: String,
+    /** Ответа не дождались, а операция могла состояться. */
+    val nodeNoAnswer: String,
     val refusalCode: String,
     val deliveredToOfd: String,
     val queuedNoLink: String,

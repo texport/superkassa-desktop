@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.server
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.request
 import io.ktor.client.request.setBody
@@ -137,9 +138,33 @@ class ServerClient(
             }
         }
 
+        /**
+         * Сколько касса ждёт соединения с узлом.
+         *
+         * Узел свой, на этой же машине: не ответил за секунды — значит
+         * не поднят, и ждать его дольше нечего.
+         */
+        private const val CONNECT_WAIT_MS = 5_000L
+
+        /**
+         * Сколько касса ждёт ответа на обращение.
+         *
+         * Больше, чем узел сам ждёт ответа БФД (тридцать секунд), плюс
+         * его собственная работа: запись документа, счётчики, печатная
+         * форма. По умолчанию Ktor обрывал ожидание раньше узла, и чек,
+         * который узел довёл до конца и БФД принял, касса объявляла
+         * неудачей.
+         */
+        private const val ANSWER_WAIT_MS = 90_000L
+
         fun defaultHttpClient(): HttpClient = HttpClient(CIO) {
             expectSuccess = false
             install(ContentNegotiation) { json(lenientJson) }
+            install(HttpTimeout) {
+                connectTimeoutMillis = CONNECT_WAIT_MS
+                requestTimeoutMillis = ANSWER_WAIT_MS
+                socketTimeoutMillis = ANSWER_WAIT_MS
+            }
         }
     }
 }

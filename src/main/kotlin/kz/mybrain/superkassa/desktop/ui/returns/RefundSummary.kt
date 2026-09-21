@@ -34,8 +34,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 internal fun RefundSummary(basis: Document, journal: ReturnJournalTexts, total: Long) {
     val texts = LocalStrings.current
+    // Номер — тот, что стоит на бумажном чеке покупателя: его касса
+    // присваивает сама. Здесь стоял номер от ОФД, то есть фискальный
+    // признак, и заголовок расходился со списком рядом и с бумагой.
     Text(
-        text = "${journal.basis}: ${texts.returns.receiptNo} ${basis.docNo}",
+        text = "${journal.basis}: ${texts.returns.receiptNo} ${basis.number ?: Glyphs.DASH}",
         style = MaterialTheme.typography.titleMedium
     )
     Text(

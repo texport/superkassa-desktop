@@ -12,11 +12,22 @@ sealed interface Message {
     data class Refusal(val text: String, val code: String) : Message
     data class NodeUnavailable(val what: String) : Message
 
+    /**
+     * Ответа не дождались, а операция могла состояться.
+     *
+     * Отличается от недоступного узла намеренно: узел принял обращение
+     * и мог довести его до конца — фискальный документ при этом уже
+     * записан и принят БФД. Сказать здесь «узел недоступен» значит
+     * отправить кассира пробивать чек второй раз.
+     */
+    data class NoAnswer(val what: String) : Message
+
     /** Одной строкой, для мест, где сообщение показывается не всплывающей строкой. */
     fun words(): String = when (this) {
         is Done -> text
         is Refusal -> text
         is NodeUnavailable -> what
+        is NoAnswer -> what
     }
 }
 

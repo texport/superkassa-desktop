@@ -12,6 +12,7 @@ internal val EnglishStrings = AppStrings(
         nodeOnline = "Node online",
         nodeOffline = "Node unreachable",
         nodeUnavailable = "Register node is unreachable",
+        nodeNoAnswer = "No answer received — the document may have gone through, check the journal; a repeat will not duplicate it",
         refusalCode = "Refusal code",
         deliveredToOfd = "delivered to the BFD",
         queuedNoLink = "no link — queued",

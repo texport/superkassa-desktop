@@ -12,6 +12,7 @@ internal val KazakhStrings = AppStrings(
         nodeOnline = "Түйін байланыста",
         nodeOffline = "Түйін қолжетімсіз",
         nodeUnavailable = "Касса түйіні қолжетімсіз",
+        nodeNoAnswer = "Жауап келмеді — құжат өтіп кетуі мүмкін, журналды тексеріңіз; қайталау қосарламайды",
         refusalCode = "Бас тарту коды",
         deliveredToOfd = "БФД-ға жеткізілді",
         queuedNoLink = "байланыс жоқ — кезекке қойылды",
