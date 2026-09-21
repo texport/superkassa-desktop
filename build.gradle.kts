@@ -1,3 +1,4 @@
+import java.util.concurrent.Callable
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -137,7 +138,10 @@ val nodeJar: Provider<RegularFile> = providers.gradleProperty("nodeJar")
 val bundleNode by tasks.registering(Copy::class) {
     description = "Кладёт узел в ресурсы приложения"
     onlyIf { nodeJar.isPresent }
-    from(nodeJar)
+    // Источник берётся отложенно: без узла провайдер пуст, и обращение
+    // к нему при построении графа задач ломало сборку целиком — раньше
+    // самой проверки `requireNode`, с невнятным «has no value available».
+    from(Callable { nodeJar.orNull ?: emptyList<Any>() })
     rename { "node.jar" }
     into(layout.buildDirectory.dir("appResources/common"))
 }
@@ -185,6 +189,29 @@ val nodeRuntime by tasks.registering(Exec::class) {
         "--output", output.path
     )
     doFirst { output.deleteRecursively() }
+}
+
+/**
+ * Не даёт собрать установщик без узла.
+ *
+ * Установщик без узла ставится и не работает: касса показывает «Узел
+ * не на связи», и понять причину можно только по журналу. В чистом клоне
+ * соседнего дерева узла нет, и молчаливый пропуск давал ровно такую сборку.
+ *
+ * Осознанная сборка без узла — `-PwithoutNode`.
+ */
+val requireNode by tasks.registering {
+    description = "Проверяет, что узел есть"
+    doLast {
+        require(nodeJar.isPresent || providers.gradleProperty("withoutNode").isPresent) {
+            "узла нет: соберите его в ../superkassa-server (./gradlew :server:bootJar), " +
+                "укажите -PnodeJar=<путь> или соберите без узла с -PwithoutNode"
+        }
+    }
+}
+
+tasks.matching { it.name == "createDistributable" || it.name.startsWith("package") }.configureEach {
+    dependsOn(requireNode)
 }
 
 tasks.matching { it.name.startsWith("prepareAppResources") }.configureEach {

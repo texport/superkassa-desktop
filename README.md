@@ -12,25 +12,58 @@
 Своего состояния приложение не хранит намеренно: закрытие окна посреди смены
 ничего не теряет, а два запущенных окна не разойдутся в счётчиках.
 
-## Запуск
+## Проверить кассу, ничего не собирая
 
-Сначала узел:
+Готовые установщики — на странице
+[выпусков](https://github.com/texport/superkassa-desktop/releases).
+Узел едет внутри: ставить Java и собирать что-либо не нужно, касса
+поднимает узел сама и гасит при выходе.
 
-```
-cd ../superkassa-server && ./gradlew :server:bootRun
-```
+Для работы нужна сеть до сервиса приёма и до кабинета ОФД: адреса
+приходят вместе с кассой при её заведении.
 
-Затем приложение:
+## Собрать самому
 
-```
-./gradlew run
-```
-
-Установочный образ для текущей системы:
+Приложению хватает открытых зависимостей:
 
 ```
-./gradlew packageDistributionForCurrentOS
+./gradlew check        # сборка и проверки
+./gradlew run          # запуск (нужен работающий узел)
 ```
+
+Узел собирается отдельно, и цепочка длиннее, чем кажется: части протокола
+и ядра нужных версий в Maven Central не выложены, поэтому собираются
+из исходников по порядку. Все репозитории — рядом, одним родителем:
+
+```
+git clone https://github.com/texport/ofd-kt-proto.git
+git clone https://github.com/texport/ofd-proto-codec.git
+git clone https://github.com/texport/superkassa-core.git
+git clone https://github.com/texport/superkassa-server.git
+
+(cd ofd-kt-proto     && ./gradlew publishToMavenLocal)
+(cd ofd-proto-codec  && ./gradlew publishToMavenLocal)
+(cd superkassa-core  && ./gradlew publishToMavenLocal)
+(cd superkassa-server && ./gradlew :server:bootRun)
+```
+
+Тот же порядок держит сборка установщиков —
+[`.github/workflows/installers.yml`](.github/workflows/installers.yml).
+
+## Установщик для текущей системы
+
+```
+cd ../superkassa-server && ./gradlew :server:bootJar
+cd ../superkassa-desktop && ./gradlew packageDistributionForCurrentOS
+```
+
+Узел берётся из соседнего дерева; другой путь — `-PnodeJar=<путь>`.
+Без узла сборка не пойдёт: установщик поставился бы и не работал.
+Осознанная сборка без узла — `-PwithoutNode`.
+
+Кросс-сборки нет ни у `jlink`, ни у `jpackage`: `.msi` собирается только
+на Windows, `.deb` — на Linux, `.dmg` — на macOS. Поэтому выпуски собирает
+матрица из трёх систем, а не одна машина.
 
 ## Разделы
 
