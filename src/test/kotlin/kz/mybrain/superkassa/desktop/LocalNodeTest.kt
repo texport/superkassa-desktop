@@ -95,6 +95,24 @@ class LocalNodeTest {
         assertTrue(File(home, "node-runtime/lib/jspawnhelper").isFile, "помощник запуска не снят")
     }
 
+    /**
+     * Узлу называют рабочее место явно. Одной рабочей папки процесса
+     * мало: узел, поднятый из другой папки, считал относительный путь
+     * к базе от неё и молча заводил пустую базу — кассы владельца
+     * выглядели исчезнувшими.
+     */
+    @Test
+    fun `узлу называют рабочее место`() {
+        val resources = runtimeIn(Files.createTempDirectory("resources").toFile())
+        val home = Files.createTempDirectory("home").toFile()
+        val node = LocalNode(ADDRESS, home, resources)
+
+        val command = node.command(node.javaBinary()!!, File(resources, "node.jar"))
+
+        assertTrue("-D${LocalNode.HOME_PROPERTY}=${home.path}" in command, command.toString())
+        assertEquals(listOf("-jar", File(resources, "node.jar").path), command.takeLast(2))
+    }
+
     @Test
     fun `без ресурсов узел не поднимается`() {
         val home = Files.createTempDirectory("home").toFile()
