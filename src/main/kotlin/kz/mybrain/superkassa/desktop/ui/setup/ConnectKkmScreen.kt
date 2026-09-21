@@ -10,15 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.cabinet.SignInAction
 import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
-import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -53,7 +51,6 @@ fun ConnectKkmScreen(
     val texts = LocalStrings.current
     val setup = setupTexts(session.language)
     val draft = remember { KkmSetupDraft(session.preferences) }
-    val scope = rememberCoroutineScope()
     var way by remember { mutableStateOf(SetupWay.ViaCabinet) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -85,11 +82,14 @@ fun ConnectKkmScreen(
                     // вместе с ним — мастер, продолженный назавтра, упирался
                     // в «ждёт предыдущего шага» без единой кнопки.
                     if (!cabinet.open) {
-                        val cabinetTexts = cabinetTexts(session.language)
-                        BusyButton(
-                            text = if (cabinet.busy) cabinetTexts.signing else cabinetTexts.signIn,
-                            busy = cabinet.busy,
-                            onClick = { scope.launch { cabinet.signIn() } }
+                        // Та же кнопка, что на двери кабинета: со сроком
+                        // ожидания и отменой. Своя занятая кнопка молчала
+                        // о том, сколько ждать и чем прервать.
+                        SignInAction(
+                            cabinet = cabinet,
+                            language = session.language,
+                            texts = cabinetTexts(session.language),
+                            modifier = Modifier
                         )
                     }
                     FactoryStepCard(session, setup, draft)

@@ -101,9 +101,19 @@ fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts
  * Ожидание встаёт туда же, где стояла кнопка: владелец прерывает его тем
  * же местом, где начал. Занятая кнопка вместо этого не говорила ни сколько
  * ждать, ни чем прервать.
+ *
+ * Вход по ЭЦП мастер подключения просит той же кнопкой: своя занятая
+ * кнопка там показывала неподвижное «Ожидание подписи в NCALayer» без
+ * срока и без отмены — на том же экране, где постановка на учёт уже
+ * отсчитывала время вслух.
  */
 @Composable
-private fun SignInAction(cabinet: CabinetSession, language: Language, texts: CabinetTexts) {
+fun SignInAction(
+    cabinet: CabinetSession,
+    language: Language,
+    texts: CabinetTexts,
+    modifier: Modifier = Modifier.fillMaxWidth()
+) {
     val scope = rememberCoroutineScope()
     var waiting by remember { mutableStateOf<Waiting?>(null) }
     val started = waiting
@@ -111,7 +121,7 @@ private fun SignInAction(cabinet: CabinetSession, language: Language, texts: Cab
         BusyButton(
             text = if (cabinet.busy) texts.signing else texts.signIn,
             busy = cabinet.busy,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier,
             onClick = { waiting = signIn(scope, cabinet) { waiting = null } }
         )
     } else {

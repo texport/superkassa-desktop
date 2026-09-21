@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
@@ -18,7 +19,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 import kz.mybrain.superkassa.desktop.ui.cabinet.AddPlaceCard
 import kz.mybrain.superkassa.desktop.ui.cabinet.AddRegisterDialog
 import kz.mybrain.superkassa.desktop.ui.cabinet.FactoryStamp
-import kz.mybrain.superkassa.desktop.ui.components.BusyButton
+import kz.mybrain.superkassa.desktop.ui.cabinet.SignInAction
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
@@ -63,10 +64,11 @@ fun CabinetStepCard(
         if (draft.cabinetRegisterId != null) return@SetupStepCard
         if (!cabinet.open) {
             Text(setup.signInFirst)
-            BusyButton(
-                text = if (cabinet.busy) texts.signing else texts.signIn,
-                busy = cabinet.busy,
-                onClick = { scope.launch { cabinet.signIn() } }
+            SignInAction(
+                cabinet = cabinet,
+                language = session.language,
+                texts = texts,
+                modifier = Modifier
             )
             return@SetupStepCard
         }
