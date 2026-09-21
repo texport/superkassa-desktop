@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.ShiftState
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
@@ -26,6 +27,7 @@ import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
+import kz.mybrain.superkassa.desktop.ui.strings.DashboardStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
@@ -51,8 +53,10 @@ fun ShiftDocuments(session: Session) {
             session.busy -> ScreenState.Working
             else -> ScreenState.Empty(
                 icon = AppIcons.history,
-                title = texts.dashboard.shiftDocuments,
-                hint = if (session.shiftOpen) texts.sale.receipt else texts.dashboard.openShiftHint
+                // Своё название, а не повтор заголовка над списком: два
+                // одинаковых «Документы смены» подряд ничего не добавляли.
+                title = texts.dashboard.shiftEmpty,
+                hint = emptyHint(session, texts.dashboard)
             )
         }
         ScreenSlot(state, dense = true) {
@@ -72,6 +76,20 @@ fun ShiftDocuments(session: Session) {
     }
 }
 
+/**
+ * Чем объясняется пустой список.
+ *
+ * Состояний смены три, и подсказка у каждого своя. Прежде их было две:
+ * состояние, которого узел не назвал, объявлялось закрытой сменой —
+ * при плитке «Смена: Неизвестна» прямо над списком, — а открытой смене
+ * подсказкой доставалось одно слово «Чек».
+ */
+private fun emptyHint(session: Session, texts: DashboardStrings): String = when (session.shiftState) {
+    ShiftState.Open -> texts.shiftEmptyHint
+    ShiftState.Closed -> texts.openShiftHint
+    ShiftState.Unknown -> texts.shiftUnknownHint
+}
+
 @Composable
 private fun DocumentRow(
     document: Document,
@@ -82,7 +100,9 @@ private fun DocumentRow(
     val texts = LocalStrings.current
     RecordRow(
         title = documentTitle,
-        subtitle = document.docNo?.toString() ?: Glyphs.DASH,
+        // Номер подписан: голая «1» под словом «Продажа» читалась как
+        // количество, а не как номер документа.
+        subtitle = document.docNo?.let { "${texts.dashboard.documentNo} $it" } ?: Glyphs.DASH,
         amount = Money.formatTiyn(document.totalAmount),
         trailing = {
             Row(

@@ -16,8 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
-import kz.mybrain.superkassa.desktop.app.titleOf
-import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.KkmUser
 import kz.mybrain.superkassa.desktop.server.changeUserPin
 import kz.mybrain.superkassa.desktop.server.removeUser
@@ -49,6 +47,9 @@ fun UsersScreen(session: Session) {
     // Узел отдаёт кассиров отдельным обращением: до ответа список пуст,
     // и «кассиров нет» про кассу с пятью кассирами — неправда.
     var answered by remember(session.selected?.kkmId) { mutableStateOf(false) }
+    // Отказ узла запоминается: без него список навсегда оставался
+    // в ожидании и показывал владельцу пустую рамку без единого слова.
+    var unreadable by remember(session.selected?.kkmId) { mutableStateOf(false) }
 
     /**
      * Перечитывает список кассиров.
@@ -65,7 +66,11 @@ fun UsersScreen(session: Session) {
                 session.guard(texts.users.title) { session.client.users(kkm.kkmId, fresh) }
                     ?.also { session.adoptPin(fresh) }
             }
-            ?: return
+        if (list == null) {
+            unreadable = true
+            return
+        }
+        unreadable = false
         loaded.clear()
         loaded.addAll(list)
         answered = true
@@ -84,6 +89,15 @@ fun UsersScreen(session: Session) {
         SectionCard(title = money.cashiers.listTitle, info = money.cashiers.listHint) {
             val state = when {
                 loaded.isNotEmpty() -> ScreenState.Ready
+                // Отказ узла назван словами и с повтором: пустая касса
+                // и касса, о кассирах которой не спросить, — разные беды,
+                // и вторая до этого выглядела пустой рамкой навсегда.
+                unreadable -> ScreenState.Trouble(
+                    title = money.cashiers.unreadable,
+                    hint = money.cashiers.unreadableHint,
+                    onRetry = { scope.launch { reload() } }
+                )
+
                 !answered -> ScreenState.Working
                 else -> ScreenState.Empty(AppIcons.cashiers, money.cashiers.empty, money.cashiers.emptyHint)
             }
@@ -94,7 +108,7 @@ fun UsersScreen(session: Session) {
                     }
                     UserRow(
                         money = money,
-                        roleTitle = session.titleOf(Dictionary.UserRoles, user.role),
+                        roleTitle = roleTitle(session, texts.users, user.role),
                         user = user,
                         deletable = !UserRules.lastOfRole(loaded, user),
                         onChangePin = { newPin ->

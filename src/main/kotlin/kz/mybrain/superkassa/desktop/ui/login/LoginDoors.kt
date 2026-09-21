@@ -72,7 +72,10 @@ internal fun EmptyKkms(
     ) {
         EmptyState(
             icon = AppIcons.kkm,
-            title = texts.login.noKkmChosen,
+            // Название о том, чего нет, а не о невыбранной кассе: выбирать
+            // здесь не из чего, и «Касса не выбрана» над объяснением
+            // «узел не отдал ни одной кассы» называло другую беду.
+            title = texts.login.noKkmsTitle,
             hint = texts.login.noKkms
         )
         // Завести кассу — главное действие пустого экрана: без кассы

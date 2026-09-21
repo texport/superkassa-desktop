@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
+import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.server.KkmUserRequest
 import kz.mybrain.superkassa.desktop.server.addUser
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
@@ -27,6 +28,7 @@ import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
+import kz.mybrain.superkassa.desktop.ui.strings.UserStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -72,7 +74,7 @@ internal fun AddCashier(session: Session, money: MoneyTexts, onCreated: suspend 
                 modifier = Modifier.fieldWidth(texts.users.name, Sizes.fieldForm)
             )
             RolePicker(
-                entries = session.dictionaries[Dictionary.UserRoles].orEmpty(),
+                entries = roleEntries(session, texts.users),
                 language = session.language.code,
                 selectedCode = role,
                 onSelect = { role = it }
@@ -105,7 +107,7 @@ internal fun AddCashier(session: Session, money: MoneyTexts, onCreated: suspend 
                         // Итог согласован с названием роли, а не с именем:
                         // «заведён» рядом с женским именем звучит ошибкой,
                         // и род человека тут вообще ни при чём.
-                        val who = session.titleOf(Dictionary.UserRoles, role)
+                        val who = roleTitle(session, texts.users, role)
                         session.report("$who ${texts.users.created}: $created")
                     }
                 }
@@ -138,5 +140,44 @@ private suspend fun create(
     return true
 }
 
+/**
+ * Роли для выбора: от узла, а своими названиями — пока он молчит.
+ *
+ * Без запасного набора в поле стоял протокольный код «CASHIER» латиницей:
+ * справочник ролей приходит отдельным обращением, и при недоступном узле
+ * владелец читал в поле не слово, а код.
+ */
+private fun roleEntries(session: Session, texts: UserStrings): List<DictionaryEntry> {
+    val language = session.language.code
+    return session.dictionaries[Dictionary.UserRoles].orEmpty().ifEmpty {
+        ROLES.map { code -> DictionaryEntry(code, mapOf(language to (ownTitle(code, texts) ?: code))) }
+    }
+}
+
+/**
+ * Название роли на языке кассира.
+ *
+ * Сначала справочник узла, потом своё слово: справочник приходит отдельным
+ * обращением, и до ответа в строке кассира стояло «ADMIN» латиницей.
+ */
+internal fun roleTitle(session: Session, texts: UserStrings, code: String?): String {
+    val fromNode = session.titleOf(Dictionary.UserRoles, code)
+    if (code == null || fromNode != code) return fromNode
+    return ownTitle(code, texts) ?: code
+}
+
+/** Своё название известной роли; чужую роль назвать нечем. */
+private fun ownTitle(code: String, texts: UserStrings): String? = when (code) {
+    ADMIN_ROLE -> texts.admin
+    DEFAULT_ROLE -> texts.cashier
+    else -> null
+}
+
+/** Роли, которые касса знает сама: узел называет их теми же кодами. */
+private val ROLES = listOf(ADMIN_ROLE, DEFAULT_ROLE)
+
 /** Роль по умолчанию для нового пользователя. */
 const val DEFAULT_ROLE = "CASHIER"
+
+/** Роль администратора, как её называет узел. */
+private const val ADMIN_ROLE = "ADMIN"

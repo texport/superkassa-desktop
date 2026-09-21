@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -56,7 +57,8 @@ internal fun CashForm(
     val deposit = CashRules.check(amount, CashMove.Deposit, drawer, session.shiftOpen, blocked)
     val withdraw = CashRules.check(amount, CashMove.Withdraw, drawer, session.shiftOpen, blocked)
     val ready = session.selected != null && !busy
-    val advice = adviceOn(deposit, withdraw, money.drawer, drawer)
+    val advice = adviceOn(deposit, withdraw, money.drawer, drawer, session.shiftOpen, blocked)
+    val holdup = advice as? CashAdvice.Holdup
 
     fun ask(move: CashMove, decision: CashDecision) {
         val value = (decision as? CashDecision.Ready)?.amount ?: return
@@ -84,15 +86,11 @@ internal fun CashForm(
                     onValueChange = { amount = it },
                     label = { Text(texts.common.amount) },
                     singleLine = true,
-                    isError = advice.error,
-                    // Совет под полем — только когда он о помехе: строка «сумма
-                    // в тенге» под каждым внесением занимает место постоянно.
-                    supportingText = if (advice.error) {
-                        { Text(advice.text) }
-                    } else {
-                        null
-                    },
-                    placeholder = { Text(advice.text) },
+                    isError = holdup?.mistake == true,
+                    // Правило ввода — подсказкой в самом поле: постоянную
+                    // строку «сумма в тенге» под каждым внесением читать
+                    // незачем.
+                    placeholder = (advice as? CashAdvice.Hint)?.let { { Text(it.text) } },
                     modifier = Modifier.fieldWidth(texts.common.amount, Sizes.fieldAmount)
                 )
                 FieldButton(
@@ -105,6 +103,11 @@ internal fun CashForm(
                     enabled = ready && withdraw is CashDecision.Ready
                 ) { ask(CashMove.Withdraw, withdraw) }
             }
+            // Помеха — строкой во всю ширину карточки, а не подписью поля:
+            // в ширину поля «Смена закрыта. Вносить и изымать деньги можно
+            // только при открытой смене» ложилось четырьмя обрывками,
+            // хотя справа стоит пустая половина экрана.
+            holdup?.let { Holdup(it) }
         }
     }
 
@@ -131,4 +134,25 @@ internal fun CashForm(
             }
         )
     }
+}
+
+/**
+ * Что мешает провести деньги.
+ *
+ * Ошибка в набранном окрашена ролью отказа, состояние кассы — приглушённой
+ * ролью поверхности: красное «Смена закрыта» кассир читает как поломку,
+ * а смену просто ещё не открыли.
+ */
+@Composable
+private fun Holdup(holdup: CashAdvice.Holdup) {
+    Text(
+        text = holdup.text,
+        style = MaterialTheme.typography.bodySmall,
+        color = if (holdup.mistake) {
+            MaterialTheme.colorScheme.error
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        },
+        modifier = Modifier.fillMaxWidth()
+    )
 }

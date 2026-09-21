@@ -24,6 +24,7 @@ internal val EnglishStrings = AppStrings(
     login = LoginStrings(
         title = "Sign in to the register",
         search = "Search: number, name, company",
+        noKkmsTitle = "No registers on this node",
         noKkms = "The node returned no registers. Add one in settings or check the connection.",
         yourKkm = "Your register",
         pick = "Choose",
@@ -74,7 +75,11 @@ internal val EnglishStrings = AppStrings(
         xReportDone = "X report produced",
         printForm = "Print form",
         shiftUnknown = "Unknown",
-        blockedNoActions = "The register is blocked — the node accepts no shift actions. A deregistered register stays readable: journal, shifts and reports."
+        blockedNoActions = "The register is blocked — the node accepts no shift actions. A deregistered register stays readable: journal, shifts and reports.",
+        shiftEmpty = "No documents yet",
+        shiftEmptyHint = "The shift is open: the first receipt shows up here right after it goes through.",
+        shiftUnknownHint = "The node did not report the shift state — check the link to it in settings.",
+        documentNo = "No."
 
     ),
     autonomous = AutonomousStrings(

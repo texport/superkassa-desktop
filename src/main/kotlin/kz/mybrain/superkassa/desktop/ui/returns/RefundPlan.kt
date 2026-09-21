@@ -8,6 +8,7 @@ import kz.mybrain.superkassa.desktop.server.ReceiptRequest
 import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.sale.QUANTITY_SCALE
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.ZoneOffset
@@ -38,17 +39,16 @@ fun refundAmountOf(entered: String, basisTiyn: Long): RefundAmount {
     return RefundAmount.Ready(tiyn)
 }
 
-/** Сумма из журнала в том виде, в каком её принимает поле ввода. */
-fun tengeText(tiyn: Long): String =
-    BigDecimal.valueOf(tiyn, Money.TIYN_SCALE).toPlainString().replace('.', DECIMAL_SEPARATOR)
-
 /**
- * Запятая, а не точка.
+ * Сумма из журнала в том виде, в каком её принимает поле ввода.
  *
- * Кассир видит сумму чека как «500,00 ₸» и должен видеть в поле ровно её,
- * а не другую запись того же числа. Разбор поля запятую понимает.
+ * Дробь отделена запятой — тем же знаком, каким её показывают деньги
+ * и количество: кассир видит сумму чека как «500,00 ₸» и должен видеть
+ * в поле ровно её, а не другую запись того же числа. Разбор поля запятую
+ * понимает. Свой знак здесь был объявлен второй раз под другим именем.
  */
-private const val DECIMAL_SEPARATOR = ','
+fun tengeText(tiyn: Long): String =
+    BigDecimal.valueOf(tiyn, Money.TIYN_SCALE).toPlainString().replace('.', Glyphs.DECIMAL)
 
 /**
  * Собирает чек возврата от чека-основания.

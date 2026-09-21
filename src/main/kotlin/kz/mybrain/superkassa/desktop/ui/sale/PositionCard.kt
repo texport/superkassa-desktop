@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -111,7 +112,9 @@ private fun positionDetail(position: Position): String {
     // Единица стоит при количестве: «1,5 × 2 500» и «1,5 кг × 2 500» —
     // разные строки чека, и кассир обязан видеть которая перед ним.
     val unit = unitTitle(LocalUnits.current, position.measureUnitCode)
-    val counted = listOf(position.quantity.toPlainString(), unit).filter { it.isNotBlank() }
+    // Количество отделяет дробь тем же знаком, что и деньги: строка
+    // «1.450 кг × 3 450,00 ₸» разводила в одном месте две записи числа.
+    val counted = listOf(quantityText(position.quantity), unit).filter { it.isNotBlank() }
     // Ставка в строке стоит, только когда касса её выделяет: у
     // неплательщика НДС «Без НДС» в каждой строке чека — шум, а не
     // сведения, и раньше на этом месте стояла ставка, до ОФД не дошедшая.
@@ -124,5 +127,11 @@ private fun positionDetail(position: Position): String {
         "$head · ${extra.lineDiscount} ${Money.format(position.discount)}"
     }
     if (position.exciseStamps.isEmpty()) return discounted
-    return "$discounted · ${position.exciseStamps.size} ${extra.exciseCount}"
+    // Число после слова, а не перед ним: «1 марок» — согласование, которое
+    // по-русски верно только при пяти и больше, а марка бывает и одна.
+    return "$discounted · ${extra.exciseCount}: ${position.exciseStamps.size}"
 }
+
+/** Количество товара словами кассира: дробь через запятую, как и в суммах. */
+internal fun quantityText(quantity: BigDecimal): String =
+    quantity.toPlainString().replace('.', Glyphs.DECIMAL)

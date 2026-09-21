@@ -43,7 +43,9 @@ internal val moneyTextsEn = MoneyTexts(
         changePinFor = "New PIN for %s",
         onlyInRole = "Only one in the role",
         empty = "No cashiers have been added to this register",
-        emptyHint = "Add the first one — they will appear in this list."
+        emptyHint = "Add the first one — they will appear in this list.",
+        unreadable = "The node did not return the cashier list",
+        unreadableHint = "Check the link to the node in settings and try again."
     ),
     kkm = KkmSetupTexts(
         stepOne = "Step 1. Factory number and year of manufacture",

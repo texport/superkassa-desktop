@@ -47,8 +47,28 @@ internal fun ConfirmCash(
     )
 }
 
-/** Строка под полем суммы: что мешает провести деньги либо как их вводить. */
-internal data class CashAdvice(val text: String, val error: Boolean)
+/**
+ * Что сказано о сумме: как её вводить либо что мешает провести деньги.
+ *
+ * Разделено намеренно: правило ввода стоит подсказкой в самом поле и
+ * уходит, как только кассир начал набирать, а помеха стоит строкой под
+ * полем и видна, пока не исправлена. Прежде и то, и другое было одной
+ * записью с признаком «ошибка», и помеха, не бывшая ошибкой ввода —
+ * закрытая смена, — не показывалась вовсе.
+ */
+internal sealed interface CashAdvice {
+
+    /** Как вводить сумму. */
+    data class Hint(val text: String) : CashAdvice
+
+    /**
+     * Что мешает провести деньги.
+     *
+     * @param mistake ошибка в набранном — тогда поле красное. Состояние
+     * кассы поле красным не красит: введено верно.
+     */
+    data class Holdup(val text: String, val mistake: Boolean) : CashAdvice
+}
 
 /**
  * Что сказать под полем ввода.
@@ -56,27 +76,41 @@ internal data class CashAdvice(val text: String, val error: Boolean)
  * Строка под полем одна: три предупреждения столбиком читаются как три
  * разные беды. Закрытая смена и нехватка денег в ящике поле красным не
  * красят — введено верно, мешает состояние кассы, а не набранные цифры.
+ *
+ * Состояние кассы названо раньше набранного и независимо от него: при
+ * пустом поле правило отвечает «ещё ничего не введено», и экран закрытой
+ * смены выходил неотличимым от обычного — две погашенные кнопки и ни
+ * слова о том, почему они погасли.
+ *
+ * @param shiftOpen открыта ли смена: закрытой узел движений не проводит.
+ * @param kkmBlocked заблокирована ли касса — в том числе снята с учёта.
  */
 internal fun adviceOn(
     deposit: CashDecision,
     withdraw: CashDecision,
     money: DrawerTexts,
-    drawer: Long?
+    drawer: Long?,
+    shiftOpen: Boolean = true,
+    kkmBlocked: Boolean = false
 ): CashAdvice {
+    // Блокировка и закрытая смена — состояние кассы, а не ошибка ввода:
+    // снятой с учёта кассе узел движений наличных не проводит.
+    if (kkmBlocked) return CashAdvice.Holdup(money.kkmBlocked, mistake = false)
+    if (!shiftOpen) return CashAdvice.Holdup(money.shiftClosed, mistake = false)
     val shortage = (withdraw as? CashDecision.Refused)?.reason == CashRefusal.NotEnough
     val refused = deposit as? CashDecision.Refused
         ?: return when {
-            shortage -> CashAdvice(money.notEnough.format(Money.formatTiyn(drawer)), error = false)
-            else -> CashAdvice(money.amountHint, error = false)
+            shortage -> CashAdvice.Holdup(money.notEnough.format(Money.formatTiyn(drawer)), mistake = false)
+            else -> CashAdvice.Hint(money.amountHint)
         }
     return when (refused.reason) {
-        CashRefusal.NotANumber -> CashAdvice(money.notANumber, error = true)
-        CashRefusal.NotPositive -> CashAdvice(money.notPositive, error = true)
-        CashRefusal.TooLarge -> CashAdvice(money.tooLarge, error = true)
-        CashRefusal.NotEnough -> CashAdvice(money.notEnough.format(Money.formatTiyn(drawer)), error = true)
-        CashRefusal.ShiftClosed -> CashAdvice(money.shiftClosed, error = false)
-        // Блокировка — состояние кассы, а не ошибка ввода: снятой
-        // с учёта кассе узел движений наличных не проводит.
-        CashRefusal.KkmBlocked -> CashAdvice(money.kkmBlocked, error = false)
+        CashRefusal.NotANumber -> CashAdvice.Holdup(money.notANumber, mistake = true)
+        CashRefusal.NotPositive -> CashAdvice.Holdup(money.notPositive, mistake = true)
+        CashRefusal.TooLarge -> CashAdvice.Holdup(money.tooLarge, mistake = true)
+        CashRefusal.NotEnough ->
+            CashAdvice.Holdup(money.notEnough.format(Money.formatTiyn(drawer)), mistake = true)
+
+        CashRefusal.ShiftClosed -> CashAdvice.Holdup(money.shiftClosed, mistake = false)
+        CashRefusal.KkmBlocked -> CashAdvice.Holdup(money.kkmBlocked, mistake = false)
     }
 }

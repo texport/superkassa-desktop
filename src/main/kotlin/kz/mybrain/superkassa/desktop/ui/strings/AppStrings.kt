@@ -67,6 +67,13 @@ data class CommonStrings(
 data class LoginStrings(
     val title: String,
     val search: String,
+    /**
+     * Списка касс нет вовсе.
+     *
+     * Своё название, а не «Касса не выбрана»: выбирать не из чего, и та
+     * надпись называла кассиру другую беду, чем объяснение под ней.
+     */
+    val noKkmsTitle: String,
     val noKkms: String,
     val yourKkm: String,
     val pick: String,

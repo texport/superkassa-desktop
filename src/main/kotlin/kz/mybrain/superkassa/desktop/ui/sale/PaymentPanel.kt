@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentLines
-import kz.mybrain.superkassa.desktop.ui.payment.unsupportedPayments
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -24,13 +23,16 @@ import java.math.BigDecimal
  *
  * Принятые деньги вводятся в денежном блоке, рядом с итогом и сдачей:
  * кассир набирает их, глядя на сумму к оплате.
+ *
+ * Помехи здесь не называются: причина, по которой чек пробить нельзя,
+ * стоит под кнопкой и всегда одна. Прежде та же красная строка стояла
+ * ещё и здесь, и «Принято меньше итога» кассир читал на одном экране
+ * дважды — а при непринимаемом виде оплаты трижды, считая серое
+ * пояснение о погасших видах.
  */
 @Composable
 fun PaymentPanel(session: Session, form: SaleForm, total: BigDecimal) {
     val extra = LocalSaleTexts.current
-    val short = form.split.cashSum(total).let { cash ->
-        cash.signum() > 0 && amount(form.taken).value?.let { it < cash } == true
-    }
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
@@ -41,13 +43,8 @@ fun PaymentPanel(session: Session, form: SaleForm, total: BigDecimal) {
             total = total,
             unsupportedNote = extra.paymentUnsupported
         )
-        Hint(
-            problem = when {
-                form.split.types.any { it in unsupportedPayments(session) } -> extra.blockPaymentUnsupported
-                short -> extra.blockTakenTooSmall
-                else -> null
-            },
-            hint = if (form.split.hasCash) null else extra.takenOnlyCash
-        )
+        // Остаётся только правило: принятые деньги и сдачу спрашивают
+        // при наличных, и об этом сказано до того, как кассир их искал.
+        Hint(problem = null, hint = if (form.split.hasCash) null else extra.takenOnlyCash)
     }
 }

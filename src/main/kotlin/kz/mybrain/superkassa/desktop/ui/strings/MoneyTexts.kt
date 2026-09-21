@@ -62,7 +62,16 @@ data class CashierTexts(
     val changePinFor: String,
     val onlyInRole: String,
     val empty: String,
-    val emptyHint: String
+    val emptyHint: String,
+    /**
+     * Узел список кассиров не отдал.
+     *
+     * Отдельно от пустого списка: касса без кассиров и касса, о кассирах
+     * которой не спросить, — разные беды. Прежде во втором случае на месте
+     * списка стояла пустая рамка, и стояла она там до перезапуска.
+     */
+    val unreadable: String,
+    val unreadableHint: String
 )
 
 /** Заведение кассы, сверка с БФД и снятие с учёта. */
