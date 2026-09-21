@@ -38,9 +38,17 @@ fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Message = when
  * Своё объяснение приложение даёт кодом — его и переводим. Всё прочее
  * пришло от NCALayer, и доходит как есть: это сообщение для поддержки,
  * и подменять его выдумкой хуже, чем показать чужими словами.
+ *
+ * Молчание NCALayer называется молчанием. Прежде оно приходило сюда
+ * недоступностью, и владелец, подписавший в окне NCALayer, читал спустя
+ * три минуты «Запустите его» про работающий NCALayer.
  */
 private fun signWords(detail: String, texts: CabinetTexts): String {
-    val reason = if (detail == NcaLayer.WINDOW_CLOSED) texts.signWindowClosed else detail
+    val reason = when (detail) {
+        NcaLayer.WINDOW_CLOSED -> texts.signWindowClosed
+        NcaLayer.NO_ANSWER -> texts.hints.signNoAnswer
+        else -> detail
+    }
     return listOf(texts.signDeclined, reason).filter { it.isNotBlank() }.joinToString(Glyphs.SEPARATOR)
 }
 

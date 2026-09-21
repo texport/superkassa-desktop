@@ -243,6 +243,10 @@ internal val cabinetTextsEn = CabinetTexts(
     ),
     hints = CabinetHints(
         signIn = "NCALayer asks for the signature: certificate and password are entered in its own window",
+        signWait = "NCALayer opens the signing window. It may have appeared behind the main window — " +
+            "look for it among the windows. If there is none, stop waiting and sign in again",
+        signNoAnswer = "NCALayer accepted the request but returned no signature: it is busy or never showed " +
+            "the signing window. Check the NCALayer windows and sign in again",
         address = "The cabinet is a separate service with its own address",
         cardVersionsEmpty = "A version appears on re-registration and on deregistration",
         placesEmpty = "A place is the address where a register stands. Until there is one, no register can be added",

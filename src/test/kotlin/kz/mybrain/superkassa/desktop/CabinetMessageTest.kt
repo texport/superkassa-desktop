@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.app.CabinetProblem
 import kz.mybrain.superkassa.desktop.app.Message
+import kz.mybrain.superkassa.desktop.eds.NcaLayer
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMessage
 import kz.mybrain.superkassa.desktop.ui.cabinet.tokenAllowed
@@ -35,6 +36,35 @@ class CabinetMessageTest {
         val refusal = assertIs<Message.Refusal>(message)
         assertEquals(texts.tokenOnlyRegistered, refusal.text)
         assertEquals("CASH_REGISTER_STATUS", refusal.code)
+    }
+
+    /**
+     * Молчание NCALayer и его отсутствие — разные строки.
+     *
+     * «NCALayer не отвечает, запустите его» при работающем NCALayer —
+     * ложь: владелец подписал в его окне, а приложение через три минуты
+     * предложило его запустить. Молчание называется молчанием и говорит,
+     * где искать окно подписи.
+     */
+    @Test
+    fun `молчание NCALayer не предлагает его запустить`() {
+        val silent = cabinetMessage(CabinetProblem.SignDeclined(NcaLayer.NO_ANSWER), texts)
+        val absent = cabinetMessage(CabinetProblem.NoNcaLayer, texts)
+
+        val words = assertIs<Message.Refusal>(silent).text
+        assertTrue(words.contains(texts.hints.signNoAnswer), words)
+        assertFalse(words.contains(texts.noNcaLayer), "молчание выдано за отсутствие: $words")
+        assertEquals(texts.noNcaLayer, assertIs<Message.Refusal>(absent).text)
+    }
+
+    /** Закрытое окно подписи названо своими словами, а не кодом. */
+    @Test
+    fun `закрытое окно подписи названо словами владельца`() {
+        val message = cabinetMessage(CabinetProblem.SignDeclined(NcaLayer.WINDOW_CLOSED), texts)
+        val words = assertIs<Message.Refusal>(message).text
+
+        assertTrue(words.contains(texts.signWindowClosed), words)
+        assertFalse(words.contains("WINDOW_CLOSED"), "код вместо слов: $words")
     }
 
     @Test

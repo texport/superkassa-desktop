@@ -303,6 +303,25 @@ data class CabinetStatusNames(
  */
 data class CabinetHints(
     val signIn: String,
+
+    /**
+     * Что идёт, пока владелец ждёт подписи, и что делать, если окна
+     * NCALayer на экране нет.
+     *
+     * Окно подписи открывает не приложение, а NCALayer, и встать оно
+     * может за главным окном: владелец смотрел на ожидание, считая,
+     * что подписывать ещё нечего.
+     */
+    val signWait: String,
+
+    /**
+     * Запрос NCALayer принял, а подписи не вернул.
+     *
+     * Своё объяснение, а не «Запустите NCALayer»: он запущен и на связи.
+     * Ровно эту строку про работающий NCALayer владелец и читал спустя
+     * три минуты ожидания.
+     */
+    val signNoAnswer: String,
     val address: String,
     val cardVersionsEmpty: String,
     val placesEmpty: String,

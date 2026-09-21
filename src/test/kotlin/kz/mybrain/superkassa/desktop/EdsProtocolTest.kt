@@ -5,11 +5,14 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kz.mybrain.superkassa.desktop.eds.EdsProblem
 import kz.mybrain.superkassa.desktop.eds.EdsRefusal
+import kz.mybrain.superkassa.desktop.eds.NcaLayer
 import kz.mybrain.superkassa.desktop.eds.ncaUnreachable
 import kz.mybrain.superkassa.desktop.eds.ncaIsGreeting
 import kz.mybrain.superkassa.desktop.eds.ncaLegacySignatureOf
 import kz.mybrain.superkassa.desktop.eds.ncaSignRequest
 import kz.mybrain.superkassa.desktop.eds.ncaSignatureOf
+import kz.mybrain.superkassa.desktop.eds.ncaSilent
+import kz.mybrain.superkassa.desktop.eds.ncaWindowClosed
 import java.net.SocketTimeoutException
 import javax.net.ssl.SSLException
 import kotlin.test.Test
@@ -30,32 +33,47 @@ class EdsProtocolTest {
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
-     * Первое подключение к NCALayer на Linux срывается, второе проходит.
-     * Повторять можно только пока запрос не ушёл: NCALayer его не видел
-     * и окна подписи не открывал. После отправки повтор открыл бы окно
-     * второй раз.
+     * Молчание нового модуля ведёт к прежнему, а закрытое окно — никуда.
+     *
+     * Старые выпуски NCALayer модуля `basics` не знают и на запрос к нему
+     * молчат: запасной путь заведён ровно для этого, а срабатывал только
+     * на явный отказ. Закрытое владельцем окно повторять, наоборот,
+     * нельзя — повтор откроет его второй раз подряд.
      */
     @Test
-    fun `сорванное подключение можно повторить, а сорванный обмен нельзя`() {
-        val onConnect = ncaUnreachable(SSLException("handshake_failure"), sent = false)
-        val onExchange = ncaUnreachable(SSLException("handshake_failure"), sent = true)
-
-        assertTrue(onConnect.beforeRequest)
-        assertFalse(onExchange.beforeRequest)
+    fun `молчание ведёт к прежнему модулю, а закрытое окно нет`() {
+        assertTrue(ncaSilent().askPreviousModule)
+        assertFalse(ncaWindowClosed().askPreviousModule)
+        assertFalse(ncaUnreachable().askPreviousModule)
     }
 
     /**
-     * У отказов защищённого соединения сообщение бывает пустым, и в журнале
-     * оставалось «подпись не получена: Unreachable». Разбирают такое
-     * по журналу с чужой машины, и имя исключения там единственная зацепка.
+     * Молчание после отправки — не недоступность NCALayer.
+     *
+     * Под именем недоступности оно доходило до экрана строкой «Запустите
+     * NCALayer» про работающий NCALayer: соединение поднялось, и запрос
+     * он принял.
      */
     @Test
-    fun `в подробностях отказа стоит имя исключения`() {
-        assertEquals("SSLException", ncaUnreachable(SSLException(null as String?), sent = false).detail)
-        assertEquals(
-            "SocketTimeoutException: connect timed out",
-            ncaUnreachable(SocketTimeoutException("connect timed out"), sent = false).detail
-        )
+    fun `молчание и недоступность названы по-разному`() {
+        assertEquals(EdsProblem.Unreachable, ncaUnreachable(SSLException("handshake_failure")).problem)
+        assertEquals(EdsProblem.Declined, ncaSilent(SocketTimeoutException("read timed out")).problem)
+    }
+
+    /**
+     * Имя исключения на экран не идёт, а при разборе остаётся.
+     *
+     * Владельцу нужно «запустите NCALayer», а не `SSLException`; поддержке
+     * с чужой машины наоборот — у отказов защищённого соединения сообщение
+     * бывает пустым, и класс там единственная зацепка.
+     */
+    @Test
+    fun `подробности отказа отделены от причины`() {
+        val broken = SSLException(null as String?)
+        val refusal = ncaUnreachable(broken)
+
+        assertEquals(NcaLayer.NO_HANDSHAKE, refusal.detail)
+        assertEquals(broken, refusal.cause)
     }
 
     @Test
