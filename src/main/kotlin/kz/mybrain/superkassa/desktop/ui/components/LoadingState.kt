@@ -38,12 +38,18 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * вместе с самим элементом: сняли с экрана — и отсчёт отменился, вечно
  * крутиться нечему.
  *
+ * Место ожидание занимает с самого начала, даже пока кружка ещё нет:
+ * пустой элемент отдавал свою высоту соседям, и кнопки под списком
+ * подскакивали вверх, а через четверть секунды падали назад. Четверть
+ * секунды прыжка на каждом открытии раздела человек читает как сбой
+ * разметки, а не как ожидание.
+ *
  * @param dense плотный вид для списка внутри карточки.
  */
 @Composable
 fun LoadingState(modifier: Modifier = Modifier, dense: Boolean = false) {
-    if (!waitedLongEnough(true)) return
     val texts = LocalStrings.current
+    val shown = waitedLongEnough(true)
     Column(
         modifier = modifier.fillMaxWidth().padding(Spacing.roomy),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -52,6 +58,7 @@ fun LoadingState(modifier: Modifier = Modifier, dense: Boolean = false) {
             Alignment.CenterVertically
         )
     ) {
+        if (!shown) return@Column
         CircularProgressIndicator(
             modifier = Modifier.size(if (dense) Sizes.waitCircleDense else Sizes.waitCircle)
         )

@@ -60,6 +60,16 @@ object Money {
         return "$sign${groupThousands(whole)},$tiyn${Glyphs.NBSP}$CURRENCY"
     }
 
+    /**
+     * Счёт штук — теми же разрядами, что и деньги, но без валюты.
+     *
+     * Чеков и касс бывает пять цифр, и рядом с «128 456 000,00 ₸» число
+     * «12845» читалось как другой порядок величины. Правило разбивки одно
+     * на деньги и на счёт: своя копия в аналитике разошлась бы с этой
+     * на первой правке.
+     */
+    fun count(value: Number): String = groupThousands(value.toLong().toString())
+
     /** Разряды разделяются неразрывным пробелом, чтобы сумма не рвалась переносом. */
     private fun groupThousands(digits: String): String =
         digits.reversed()

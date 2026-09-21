@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import kz.mybrain.superkassa.desktop.ui.components.MenuChip
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -63,10 +65,15 @@ fun AnalyticsSieveBar(model: AnalyticsMapModel, places: List<SievePlace>, texts:
 private fun Marks(model: AnalyticsMapModel, texts: AnalyticsTexts) {
     val chosen = model.sieve.marks
     KkmMark.entries.forEach { mark ->
+        val on = mark in chosen
         FilterChip(
-            selected = mark in chosen,
+            selected = on,
             onClick = { model.sieve = model.sieve.copy(marks = toggled(chosen, mark)) },
-            label = { Text(mark.title(texts)) }
+            label = { Text(mark.title(texts)) },
+            // Галочка у нажатой плашки — то же правило, что у сегментов
+            // в ряду выше: без неё нажатое отличалось только заливкой,
+            // и в одном ряду выходило два разных языка выбора.
+            leadingIcon = { if (on) Icon(AppIcons.chosen, contentDescription = null) }
         )
     }
 }

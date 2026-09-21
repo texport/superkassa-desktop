@@ -18,6 +18,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.SalesDelivery
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesSummary
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetSum
 import kz.mybrain.superkassa.desktop.ui.components.CounterTile
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsSalesTexts
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
@@ -58,7 +59,7 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
             maxItemsInEachRow = HERO_IN_ROW
         ) {
             HeroTile(cabinetSum(summary.revenue), sales.revenue, Modifier.weight(1f))
-            HeroTile(summary.receiptCount.toString(), sales.receipts, Modifier.weight(1f))
+            HeroTile(Money.count(summary.receiptCount), sales.receipts, Modifier.weight(1f))
             HeroTile(cabinetSum(summary.average), sales.average, Modifier.weight(1f))
             HeroTile(cabinetSum(summary.refunds), sales.refunds, Modifier.weight(1f))
             HeroTile(cabinetSum(summary.tax), sales.tax, Modifier.weight(1f))
@@ -67,11 +68,11 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
             horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
-            CounterTile(summary.cashRegisterCount.toString(), texts.kkmCount)
-            CounterTile(summary.openShiftCount.toString(), sales.openShifts)
-            CounterTile(summary.offlineCount.toString(), sales.offline)
-            CounterTile(summary.queuedCount.toString(), sales.queuedCount)
-            CounterTile(summary.unknownCount.toString(), sales.unknownCount)
+            CounterTile(Money.count(summary.cashRegisterCount), texts.kkmCount)
+            CounterTile(Money.count(summary.openShiftCount), sales.openShifts)
+            CounterTile(Money.count(summary.offlineCount), sales.offline)
+            CounterTile(Money.count(summary.queuedCount), sales.queuedCount)
+            CounterTile(Money.count(summary.unknownCount), sales.unknownCount)
         }
     }
 }
@@ -100,7 +101,7 @@ fun SalesPurchaseTiles(
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        MinorTile(summary.purchaseCount.toString(), texts.receipts, Modifier.weight(1f))
+        MinorTile(Money.count(summary.purchaseCount), texts.receipts, Modifier.weight(1f))
         MinorTile(cabinetSum(summary.purchases), texts.paidOut, Modifier.weight(1f))
         MinorTile(cabinetSum(summary.purchaseRefunds), cabinet.operationPurchaseReturn, Modifier.weight(1f))
     }

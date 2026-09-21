@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.CounterTile
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -48,8 +49,8 @@ fun AnalyticsSourceBar(
             onSelect = { model.choose(it) }
         )
         InfoTip(sourceHint(model.source, texts))
-        CounterTile(placement.placed.size.toString(), texts.placed)
-        CounterTile(placement.unplaced.size.toString(), texts.withoutPosition)
+        CounterTile(Money.count(placement.placed.size), texts.placed)
+        CounterTile(Money.count(placement.unplaced.size), texts.withoutPosition)
         IconButton(onClick = onRefresh, enabled = !model.loading) {
             Icon(AppIcons.refresh, contentDescription = texts.refresh)
         }

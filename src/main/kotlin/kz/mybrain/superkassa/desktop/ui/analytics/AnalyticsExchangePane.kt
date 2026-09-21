@@ -23,6 +23,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.ExchangeAddress
 import kz.mybrain.superkassa.desktop.ui.components.CounterTile
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.MenuChip
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.SectionTitle
@@ -69,8 +70,8 @@ private fun ExchangeHead(model: AnalyticsExchangeModel, texts: AnalyticsTexts, o
         SectionTitle(texts.exchangeTitle)
         InfoTip(texts.exchangeHint)
         Spacer(Modifier.weight(1f))
-        CounterTile((model.view?.cashRegisterCount ?: 0).toString(), texts.kkmCount)
-        CounterTile((model.view?.addressCount ?: 0).toString(), texts.addressCount)
+        CounterTile(Money.count((model.view?.cashRegisterCount ?: 0)), texts.kkmCount)
+        CounterTile(Money.count((model.view?.addressCount ?: 0)), texts.addressCount)
         IconButton(onClick = onRefresh, enabled = !model.loading) {
             Icon(AppIcons.refresh, contentDescription = texts.refresh)
         }
