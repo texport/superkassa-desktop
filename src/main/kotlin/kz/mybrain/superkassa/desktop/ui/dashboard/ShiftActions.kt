@@ -24,8 +24,13 @@ import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.closeShift
 import kz.mybrain.superkassa.desktop.server.openShift
 import kz.mybrain.superkassa.desktop.server.xReport
+import kz.mybrain.superkassa.desktop.ui.components.ConfirmActionDialog
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.CommonStrings
+import kz.mybrain.superkassa.desktop.ui.strings.DashboardStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -39,6 +44,7 @@ internal fun ShiftActions(session: Session) {
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
+    var asking by remember { mutableStateOf(false) }
     val programming = session.selected?.isProgramming == true
     // Заблокированная касса — и снятая с учёта в том числе — фискальных
     // команд не принимает: узел отвечает KKM_BLOCKED. Кнопки ей не
@@ -62,15 +68,9 @@ internal fun ShiftActions(session: Session) {
             // закрытую открывают, открытую закрывают. Остальное — тональное.
             val offer = !blocked && known
             if (offer && session.shiftOpen) {
-                Button(enabled = enabled, onClick = {
-                    busy = true
-                    scope.launch {
-                        run(session, texts.dashboard.closeShift, texts.dashboard.shiftClosedDone, texts.common) {
-                            session.client.closeShift(it.kkmId, session.pin)
-                        }
-                        busy = false
-                    }
-                }) { Text(texts.dashboard.closeShift) }
+                // Z-отчёт не отменяется, и до вопроса он снимался с одного
+                // нажатия — тогда как внесение денег в ящик спрашивало.
+                Button(enabled = enabled, onClick = { asking = true }) { Text(texts.dashboard.closeShift) }
 
                 FilledTonalButton(enabled = enabled, onClick = {
                     busy = true
@@ -117,6 +117,42 @@ internal fun ShiftActions(session: Session) {
             )
         }
     }
+
+    if (asking) {
+        ConfirmActionDialog(
+            icon = AppIcons.shiftClose,
+            what = texts.dashboard.closeShiftAsk,
+            explain = closeShiftExplain(session, texts.dashboard),
+            action = texts.dashboard.closeShift,
+            cancel = moneyTexts(session.language).drawer.cancel,
+            busy = busy,
+            onCancel = { asking = false }
+        ) {
+            busy = true
+            scope.launch {
+                run(session, texts.dashboard.closeShift, texts.dashboard.shiftClosedDone, texts.common) {
+                    session.client.closeShift(it.kkmId, session.pin)
+                }
+                busy = false
+                asking = false
+            }
+        }
+    }
+}
+
+/**
+ * Что кассир прочитает перед Z-отчётом.
+ *
+ * Число документов и остаток в ящике — то же, что в плитках над кнопкой:
+ * решение принимают по ним. Судьба остатка названа отдельно, потому что
+ * зависит от настройки кассы, а не от того, что кассир видит на экране.
+ */
+private fun closeShiftExplain(session: Session, texts: DashboardStrings): String {
+    val cash = if (session.selected?.autoCashout == true) texts.closeShiftCashout else texts.closeShiftKeepsCash
+    return texts.closeShiftExplain.format(
+        session.documents.size.toString(),
+        Money.formatTiyn(session.cashInDrawer)
+    ) + " " + cash
 }
 
 /**

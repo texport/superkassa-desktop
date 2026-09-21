@@ -31,6 +31,14 @@ data class DashboardStrings(
     val openShift: String,
     val xReport: String,
     val closeShift: String,
+    /** Вопрос перед Z-отчётом: он не отменяется. */
+    val closeShiftAsk: String,
+    /** Что станет с итогами: подставляются число документов и остаток в ящике. */
+    val closeShiftExplain: String,
+    /** Остаток наличных уйдёт изъятием вместе с Z-отчётом. */
+    val closeShiftCashout: String,
+    /** Остаток наличных перейдёт в новую смену. */
+    val closeShiftKeepsCash: String,
     val openShiftHint: String,
     val openShiftAdmin: String,
     val shiftOpened: String,

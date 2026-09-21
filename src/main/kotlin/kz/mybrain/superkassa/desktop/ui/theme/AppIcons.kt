@@ -42,6 +42,7 @@ import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.EventAvailable
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Password
@@ -172,6 +173,9 @@ object AppIcons {
     val drawer: ImageVector = Icons.Outlined.AccountBalanceWallet
 
     /** Деньги внесены в ящик. */
+    /** Закрытие смены: итог дня, а не удаление. */
+    val shiftClose: ImageVector = Icons.Outlined.EventAvailable
+
     val paidIn: ImageVector = Icons.Outlined.ArrowDownward
 
     /** Деньги изъяты из ящика. */

@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 
 /**
@@ -52,5 +53,37 @@ fun ConfirmDangerDialog(
             ) { Text(action) }
         },
         dismissButton = { TextButton(onClick = onCancel) { Text(cancel) } }
+    )
+}
+
+/**
+ * Вопрос перед необратимым, которое не разрушает.
+ *
+ * Z-отчёт смену не удаляет, но и не отменяется: спрашивается так же,
+ * как внесение денег, — что произойдёт и что станет с итогами. Красной
+ * кнопки здесь нет: красный отличает уничтожение от обычной работы,
+ * а закрытие смены — обычная работа конца дня.
+ *
+ * @param what что произойдёт — заголовок с тем, чего касается вопрос.
+ * @param explain последствие числами: их читают один раз и решают.
+ */
+@Composable
+fun ConfirmActionDialog(
+    icon: ImageVector,
+    what: String,
+    explain: String,
+    action: String,
+    cancel: String,
+    busy: Boolean = false,
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { if (!busy) onCancel() },
+        icon = { Icon(imageVector = icon, contentDescription = null) },
+        title = { Text(what) },
+        text = { Text(explain, style = MaterialTheme.typography.bodyMedium) },
+        confirmButton = { Button(enabled = !busy, onClick = onConfirm) { Text(action) } },
+        dismissButton = { TextButton(enabled = !busy, onClick = onCancel) { Text(cancel) } }
     )
 }
