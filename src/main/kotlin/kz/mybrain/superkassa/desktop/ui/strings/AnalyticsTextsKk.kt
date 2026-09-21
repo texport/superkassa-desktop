@@ -77,6 +77,18 @@ internal val analyticsTextsKk = AnalyticsTexts(
     pickPin = "Картадан кассаны таңдаңыз",
     pickPinHint = "Нүктені басыңыз — оның картасы осында шығады",
 
+    searchKkm = "Атауы, МКД нөмірі немесе мекенжайы",
+    allPlaces = "Барлық сауда нүктелері",
+    markShiftOpen = "Ауысым ашық",
+    markBlocked = "Бұғатталған",
+    markOffRecord = "Есепте жоқ",
+    sieveEmpty = "Сүзгіге бірде-бір касса сәйкес келмеді",
+    sieveEmptyHint = "Сүзгі тақтайшаларының бір бөлігін алып тастаңыз немесе іздеу жолын өзгертіңіз",
+    sieveClear = "Сүзгіні тастау",
+    kkmsHere = "Осы жердегі кассалар",
+    openKkmSales = "Касса аналитикасы",
+    kkmSalesTitle = "Касса немен сауда жасайды",
+
     withoutPositionEmpty = "Барлық касса картада",
     withoutPositionEmptyHint = "Орналасудың осы көзінде әр кассаның орны белгілі",
     reasonNoAddress = "Сауда нүктесінің мекенжайы таңдалмаған",

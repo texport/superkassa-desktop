@@ -132,7 +132,7 @@ class AnalyticsSalesTest {
     @Test
     fun `перелистнутый срок уходит в кабинет своими датами`() {
         val earlier = JournalPeriod.of(JournalSpan.Week, today).shiftedBy(-1)
-        val filter = salesFilter(earlier, today)
+        val filter = salesFilter(earlier, today = today)
         assertEquals(LocalDate.parse("2026-09-07"), filter.from)
         assertEquals(LocalDate.parse("2026-09-13"), filter.to)
         assertTrue(filter.query().startsWith("?from=2026-09-07&to=2026-09-13"), filter.query())

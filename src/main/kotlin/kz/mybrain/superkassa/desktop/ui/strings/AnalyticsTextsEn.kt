@@ -77,6 +77,18 @@ internal val analyticsTextsEn = AnalyticsTexts(
     pickPin = "Pick a cash register on the map",
     pickPinHint = "Click a point — its card appears here",
 
+    searchKkm = "A name, a KGD number or an address",
+    allPlaces = "All retail places",
+    markShiftOpen = "Shift open",
+    markBlocked = "Blocked",
+    markOffRecord = "Off the record",
+    sieveEmpty = "No cash register matches the filter",
+    sieveEmptyHint = "Clear some of the filter chips or change the search line",
+    sieveClear = "Clear the filter",
+    kkmsHere = "Cash registers here",
+    openKkmSales = "Cash register analytics",
+    kkmSalesTitle = "What this cash register sells",
+
     withoutPositionEmpty = "Every register is on the map",
     withoutPositionEmptyHint = "With this position source the place of every register is known",
     reasonNoAddress = "The retail place has no address chosen",

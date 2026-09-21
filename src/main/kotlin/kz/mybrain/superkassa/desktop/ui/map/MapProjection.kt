@@ -50,6 +50,20 @@ object MapProjection {
         return HALF_TURN / PI * atan(sinh(n))
     }
 
+    /**
+     * Клетка сетки, в которую попадает место.
+     *
+     * Нужна, чтобы сводить близкие кассы в один ярлычок: соседние
+     * машины в одном доме на карте города — одна точка, и рисовать их
+     * порознь значит рисовать кашу. Клетка меряется точками полотна,
+     * поэтому с приближением она мельчает сама: на увеличении квартала
+     * дома расходятся, и ярлычки расходятся с ними.
+     *
+     * @param side сторона клетки в точках полотна.
+     */
+    fun cell(latitude: Double, longitude: Double, zoom: Int, side: Double): MapCell =
+        MapCell(floor(xOf(longitude, zoom) / side).toInt(), floor(yOf(latitude, zoom) / side).toInt())
+
     /** Номер плитки, в которую попадает точка полотна. */
     fun tileOf(pixel: Double): Int = floor(pixel / TILE).toInt()
 
@@ -101,3 +115,6 @@ object MapProjection {
  * и x с y — самая частая ошибка в этих пересчётах.
  */
 data class MapPixel(val x: Double, val y: Double)
+
+/** Клетка сетки полотна: по ней близкие места сводятся в одно. */
+data class MapCell(val x: Int, val y: Int)

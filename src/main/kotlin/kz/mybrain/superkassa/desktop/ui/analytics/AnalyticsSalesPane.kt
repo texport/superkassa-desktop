@@ -51,14 +51,33 @@ fun AnalyticsSalesPane(
     texts: AnalyticsTexts,
     cabinetTexts: CabinetTexts
 ) {
+    val model = remember(cabinet) { AnalyticsSalesModel(cabinet) }
+    AnalyticsSales(session, model, texts, cabinetTexts, Modifier.fillMaxSize())
+}
+
+/**
+ * Та же сводка, но для любого отбора.
+ *
+ * Отдельно от показа раздела потому, что сводка нужна и по одной кассе:
+ * владелец заходит в кассу с карты и ждёт увидеть о ней то же, что видит
+ * о сети. Считает её тот же [AnalyticsSalesModel] с отбором по кассе,
+ * и второго экрана для неё нет.
+ */
+@Composable
+fun AnalyticsSales(
+    session: Session,
+    model: AnalyticsSalesModel,
+    texts: AnalyticsTexts,
+    cabinetTexts: CabinetTexts,
+    modifier: Modifier = Modifier
+) {
     val journal = remember(session.language) { journalTexts(session.language).history }
     val enums = remember(session.language) { stringsOf(session.language).enums }
-    val model = remember(cabinet) { AnalyticsSalesModel(cabinet) }
     val scope = rememberCoroutineScope()
-    LaunchedEffect(cabinet.token, model.period) { model.load() }
+    LaunchedEffect(model, model.period) { model.load() }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
         SalesHead(model, texts, journal) { scope.launch { model.load() } }

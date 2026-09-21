@@ -21,6 +21,37 @@ fun interface AddressLookup {
 /** Касса, поставленная на карту. */
 data class PlacedKkm(val kkm: AnalyticsKkm, val latitude: Double, val longitude: Double)
 
+/**
+ * Кассы одного места — одним ярлычком.
+ *
+ * Карта показывала каждую кассу своей булавкой, и в торговой точке
+ * с тремя кассами булавки садились одна на другую: владелец видел одну
+ * и не мог добраться до остальных. Так же устроены карты объявлений:
+ * в ярлычке стоит число, по нажатию открывается список того, что в этом
+ * доме, и только оттуда заходят в одно.
+ *
+ * Место считается клеткой полотна на текущем увеличении, а не адресом
+ * и не торговой точкой: адреса у соседних касс бывают записаны по-разному,
+ * а сойтись на карте они всё равно сойдутся. С приближением клетка
+ * мельчает, и ярлычок распадается на свои кассы сам.
+ */
+data class KkmGroup(val latitude: Double, val longitude: Double, val kkms: List<PlacedKkm>) {
+
+    /** Имя ярлычка: по нему показ помнит, какой из них раскрыт. */
+    val id: String get() = kkms.first().kkm.cashRegisterId
+
+    val size: Int get() = kkms.size
+
+    /** Торговая точка места, если все кассы ярлычка стоят в одной. */
+    val place: String? get() = kkms.mapNotNull { it.kkm.retailPlaceName }.distinct().singleOrNull()
+
+    /** Адрес места: у касс одной клетки он один и тот же. */
+    val address: String? get() = kkms.firstNotNullOfOrNull { it.kkm.address?.takeIf(String::isNotBlank) }
+
+    /** Держит ли ярлычок эту кассу. */
+    fun holds(cashRegisterId: String?): Boolean = kkms.any { it.kkm.cashRegisterId == cashRegisterId }
+}
+
 /** Касса, которую поставить не удалось, и почему. */
 data class UnplacedKkm(val kkm: AnalyticsKkm, val reason: PlacementTrouble)
 

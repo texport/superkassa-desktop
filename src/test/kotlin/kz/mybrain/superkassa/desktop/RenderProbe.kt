@@ -64,6 +64,19 @@ class RenderProbe(
         frame()
     }
 
+    /**
+     * Нажатие мышью.
+     *
+     * Ярлычок места на карте выбирают именно им, и проверить выбор иначе
+     * нельзя: обработчик нажатия живёт в самом ярлычке.
+     */
+    fun click(at: Offset) {
+        scene.sendPointerEvent(PointerEventType.Move, at)
+        scene.sendPointerEvent(PointerEventType.Press, at)
+        scene.sendPointerEvent(PointerEventType.Release, at)
+        repeat(SETTLE) { frame() }
+    }
+
     /** Колесо мыши над списком; кадры после него доводят прокрутку до конца хода. */
     fun wheel(at: Offset, ticks: Float) {
         scene.sendPointerEvent(PointerEventType.Move, at)

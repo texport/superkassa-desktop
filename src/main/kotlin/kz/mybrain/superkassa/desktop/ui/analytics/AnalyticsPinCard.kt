@@ -3,12 +3,16 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
@@ -41,7 +45,10 @@ fun AnalyticsPinCard(
     source: PositionSource,
     texts: AnalyticsTexts,
     cabinet: CabinetTexts,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    neighbours: Int = 0,
+    onNeighbours: () -> Unit = {},
+    onSales: (AnalyticsKkm) -> Unit = {}
 ) {
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
         if (kkm == null) {
@@ -60,6 +67,7 @@ fun AnalyticsPinCard(
         ) {
             CardHead(kkm, texts, cabinet)
             CardFacts(kkm, source, texts, cabinet)
+            CardActions(kkm, texts, neighbours, onNeighbours, onSales)
         }
     }
 }
@@ -78,6 +86,34 @@ private fun CardHead(kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetT
         if (kkm.blocked) Chip(text = texts.blocked, color = StatusColors.refused)
         kkm.shiftStatus?.takeIf { it.isNotBlank() }?.let { shift ->
             Chip(text = shiftWords(shift, kkm.shiftNumber, cabinet), color = StatusColors.pending)
+        }
+    }
+}
+
+/**
+ * Что можно сделать с выбранной кассой.
+ *
+ * Главное действие одно — открыть её аналитику: карточка отвечает
+ * на «что это за касса», а на «как она торгует» отвечает окно сводки.
+ * Рядом с ним — возврат к соседям по месту, и только когда соседи есть:
+ * у одиночной кассы возвращаться некуда.
+ */
+@Composable
+private fun CardActions(
+    kkm: AnalyticsKkm,
+    texts: AnalyticsTexts,
+    neighbours: Int,
+    onNeighbours: () -> Unit,
+    onSales: (AnalyticsKkm) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(onClick = { onSales(kkm) }) { Text(texts.openKkmSales) }
+        if (neighbours > 1) {
+            TextButton(onClick = onNeighbours) { Text("${texts.kkmsHere} · $neighbours") }
         }
     }
 }

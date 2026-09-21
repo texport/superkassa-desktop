@@ -61,7 +61,8 @@ internal fun MapArea(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
-        MapView(state, tiles, Modifier.fillMaxSize())
+        // Нажатие по карте ставит место точки: за этим окно и открыто.
+        MapView(state, tiles, Modifier.fillMaxSize(), onTap = state::mark)
         MapControls(state, texts, preferences, Modifier.align(Alignment.TopEnd).padding(Spacing.snug))
     }
 }

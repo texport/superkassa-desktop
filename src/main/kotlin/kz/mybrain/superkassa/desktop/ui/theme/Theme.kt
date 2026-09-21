@@ -89,16 +89,6 @@ object MapColors {
     /** Подложка там, где плитка не пришла. */
     val empty: Color
         @Composable get() = MaterialTheme.colorScheme.surfaceContainerHighest
-
-    /**
-     * Касса на карте аналитики.
-     *
-     * Вторичная роль, а не главная: главной покрашена та касса, карточку
-     * которой сейчас читают, и сотня равно ярких знаков не дала бы её
-     * разглядеть.
-     */
-    val pin: Color
-        @Composable get() = MaterialTheme.colorScheme.secondary
 }
 
 /**

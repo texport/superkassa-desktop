@@ -34,8 +34,13 @@ import java.time.LocalDate
  *
  * Срок по умолчанию — неделя: владелец открывает раздел, чтобы посмотреть,
  * как торговали на этой неделе, а не за один сегодняшний день.
+ *
+ * @param register касса, которой ограничен отбор; `null` — вся сеть.
+ *   Тот же расчёт и те же ручки: сводка по одной кассе отличается
+ *   от сводки по сети только этим отбором, и второго счёта для неё
+ *   заводить незачем.
  */
-class AnalyticsSalesModel(private val cabinet: CabinetSession) {
+class AnalyticsSalesModel(private val cabinet: CabinetSession, private val register: String? = null) {
 
     /** Срок сводки; выбирается той же полосой, что и срок журнала кассы. */
     var period: JournalPeriod by mutableStateOf(JournalPeriod.of(JournalSpan.Week))
@@ -54,7 +59,7 @@ class AnalyticsSalesModel(private val cabinet: CabinetSession) {
         val token = cabinet.token ?: return
         loading = true
         trouble = null
-        askedCabinet { ask(token, salesFilter(period)) }
+        askedCabinet { ask(token, salesFilter(period, register)) }
             .onSuccess { view = it }
             .onFailure {
                 view = null
@@ -135,8 +140,12 @@ fun salesRange(period: JournalPeriod, today: LocalDate = LocalDate.now()): Journ
     period.range ?: JournalRange(today.minusYears(1).plusDays(1), today)
 
 /** Отбор кабинета по выбранному сроку. */
-fun salesFilter(period: JournalPeriod, today: LocalDate = LocalDate.now()): SalesFilter =
-    salesRange(period, today).let { SalesFilter(from = it.from, to = it.to) }
+fun salesFilter(
+    period: JournalPeriod,
+    register: String? = null,
+    today: LocalDate = LocalDate.now()
+): SalesFilter = salesRange(period, today)
+    .let { SalesFilter(from = it.from, to = it.to, cashRegisterId = register) }
 
 /** Срок сводки словами: всегда датами, в том числе и у «всего времени». */
 fun salesRangeText(period: JournalPeriod, today: LocalDate = LocalDate.now()): String =

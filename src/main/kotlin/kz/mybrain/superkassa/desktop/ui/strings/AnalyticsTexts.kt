@@ -42,6 +42,18 @@ data class AnalyticsTexts(
     val pickPin: String,
     val pickPinHint: String,
 
+    val searchKkm: String,
+    val allPlaces: String,
+    val markShiftOpen: String,
+    val markBlocked: String,
+    val markOffRecord: String,
+    val sieveEmpty: String,
+    val sieveEmptyHint: String,
+    val sieveClear: String,
+    val kkmsHere: String,
+    val openKkmSales: String,
+    val kkmSalesTitle: String,
+
     val withoutPositionEmpty: String,
     val withoutPositionEmptyHint: String,
     val reasonNoAddress: String,

@@ -185,6 +185,26 @@ data class CabinetTexts(
     val okedSearch: String,
     val okedSearchHint: String,
     val okedNotFound: String,
+
+    /** Кабинет отказал снять кассу: смена не закрыта. */
+    val shiftOpenTitle: String,
+    val shiftOpenAsk: String,
+    val shiftOpenElsewhere: String,
+    val closeShiftAndDeregister: String,
+    val adminPin: String,
+
+    /** Сверка состояний: кто о кассе говорит и что именно. */
+    val stateDisagree: String,
+    val sourceNode: String,
+    val sourceCabinet: String,
+    val sourceOfd: String,
+    val inWork: String,
+    val verdictYes: String,
+    val verdictNo: String,
+    val verdictUnknown: String,
+
+    /** Выдача классификатора упёрлась в предел: дальше списка нет. */
+    val okedNarrowSearch: String,
     val pickOnMap: String,
     val pointNotChosen: String,
     val noApplications: String,

@@ -110,6 +110,18 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
         zoom = toZoom.coerceIn(MIN_ZOOM, MAX_ZOOM)
     }
 
+    /**
+     * Ведёт карту к кассе, не трогая метку.
+     *
+     * Метка — выбор места при заведении точки, а здесь переход по списку
+     * касс: ставить её значило бы обещать правку адреса там, где её нет.
+     */
+    fun centreOn(latitude: Double, longitude: Double, toZoom: Int? = null) {
+        centerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
+        centerLongitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
+        toZoom?.let { zoom = it.coerceIn(MIN_ZOOM, MAX_ZOOM) }
+    }
+
     /** Знаем ли, где мы. */
     val located: Boolean get() = locationLatitude != null && locationLongitude != null
 

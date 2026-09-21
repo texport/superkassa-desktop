@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.server.cabinet.KkmMapView
 import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
 import kz.mybrain.superkassa.desktop.server.cabinet.cashRegisterMap
@@ -36,6 +37,21 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
     /** Касса, карточку которой сейчас читают. */
     var chosen: String? by mutableStateOf(null)
 
+    /**
+     * Раскрытое место: ярлычок, список касс которого стоит под картой.
+     *
+     * Отдельно от выбранной кассы, а не вместо неё: из списка места
+     * заходят в кассу, и вернуться к соседям по месту владелец должен
+     * без нового поиска по карте.
+     */
+    var spot: String? by mutableStateOf(null)
+
+    /** Касса, аналитику которой открыли отдельным окном. */
+    var opened: AnalyticsKkm? by mutableStateOf(null)
+
+    /** Отбор касс: он сужает и карту, и список рядом с ней. */
+    var sieve: MapSieve by mutableStateOf(MapSieve())
+
     /** Где стоит карта. Пересоздаётся, когда набор касс сменился целиком. */
     var map: MapState by mutableStateOf(MapState())
         private set
@@ -49,7 +65,7 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
     fun choose(value: PositionSource) {
         if (value == source) return
         source = value
-        chosen = null
+        forget()
     }
 
     /** Спрашивает кабинет о кассах при выбранном источнике положения. */
@@ -61,13 +77,50 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
         askedCabinet { cabinet.client.cashRegisterMap(token, source) }
             .onSuccess {
                 view = it
-                chosen = null
+                forget()
             }
             .onFailure {
                 view = null
                 trouble = analyticsTrouble(it)
             }
         loading = false
+    }
+
+    /**
+     * Забывает выбранное.
+     *
+     * Нужно и при новом запросе — прежней кассы в ответе может не быть, —
+     * и при нажатии мимо ярлычка: раскрытое место закрывается тем же
+     * способом, каким открылось.
+     */
+    fun forget() {
+        chosen = null
+        spot = null
+    }
+
+    /**
+     * Раскрывает место, нажатое на карте.
+     *
+     * Место с одной кассой сразу открывает её карточку: заставлять
+     * владельца нажать дважды там, где выбор один, незачем.
+     */
+    fun open(group: KkmGroup) {
+        spot = group.id
+        chosen = group.kkms.singleOrNull()?.kkm?.cashRegisterId
+        map.centreOn(group.latitude, group.longitude)
+    }
+
+    /**
+     * Ведёт карту к кассе, выбранной в списке рядом.
+     *
+     * Вместе с кассой раскрывается и её место: касса могла оказаться
+     * в ярлычке с соседями, и вернуться к ним владелец должен без
+     * нового поиска по карте.
+     */
+    fun show(row: PlacedKkm, groups: List<KkmGroup>) {
+        chosen = row.kkm.cashRegisterId
+        spot = groups.firstOrNull { it.holds(row.kkm.cashRegisterId) }?.id
+        map.centreOn(row.latitude, row.longitude)
     }
 
     /** Ищет на карте адреса тех касс, координат которых кабинет не дал. */

@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.theme
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Длительности интерфейса.
@@ -32,4 +33,14 @@ object Durations {
      * замечает между набором и появлением подсказки.
      */
     val afterTyping: Duration = 300.milliseconds
+
+    /**
+     * Как часто перечитывать то, за чем сейчас смотрят.
+     *
+     * Касса торгует, пока владелец смотрит на её сводку, и снятые
+     * при открытии числа к концу разговора о ней уже неверны. Чаще —
+     * и кабинет считал бы выручку сети по кругу без нужды: чек проходит
+     * реже, чем за эти секунды.
+     */
+    val whileWatching: Duration = 20.seconds
 }

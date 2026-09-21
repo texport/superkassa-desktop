@@ -21,6 +21,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kz.mybrain.superkassa.desktop.ui.theme.MapColors
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kotlin.math.roundToInt
@@ -45,19 +49,35 @@ fun MapView(
     state: MapState,
     tiles: MapTiles,
     modifier: Modifier = Modifier,
-    // Знаки касс: карта выбора точки их не знает и работает как прежде.
-    // Пока обработчик задан, нажатие выбирает знак, а не ставит точку.
-    pins: List<MapPin> = emptyList(),
-    onPin: ((MapPin?) -> Unit)? = null
+    // Что значит нажатие по карте, решает вызывающий: в окне выбора места
+    // оно ставит метку, на карте касс — снимает выбор ярлычка.
+    onTap: ((Double, Double) -> Unit)? = null,
+    // Ярлычки поверх карты. Стоят внутри её окна, а не рядом: место
+    // каждого считается от размера этого окна, и знать его должен тот,
+    // кто им владеет.
+    overlay: @Composable (IntSize) -> Unit = {}
 ) {
     var canvas by remember { mutableStateOf(IntSize.Zero) }
     var revision by remember { mutableIntStateOf(0) }
 
-    // Плитки приходят по одной и каждая обновляет показ: рисовать всё
-    // разом значило бы держать пустое поле, пока грузится последняя.
+    // Плитки берутся сразу несколькими, а не по одной вслед за другой.
+    // Прежде они запрашивались подряд, и прокрутка открывала десяток
+    // новых плиток одна за другой: пока приходила последняя, владелец
+    // смотрел на серое поле секунды. Каждая пришедшая обновляет показ
+    // отдельно — ждать всю сетку незачем.
+    //
+    // Одновременных запросов немного намеренно: плитки отданы сообществом
+    // OpenStreetMap, и их правила запрещают массовую выкачку.
     LaunchedEffect(state.zoom, state.centerLatitude, state.centerLongitude, canvas) {
-        visibleTiles(state, canvas).forEach { tile ->
-            if (tiles.fetch(state.zoom, tile.x, tile.y)) revision += 1
+        val gate = Semaphore(TILES_AT_ONCE)
+        coroutineScope {
+            visibleTiles(state, canvas).forEach { tile ->
+                launch {
+                    gate.withPermit {
+                        if (tiles.fetch(state.zoom, tile.x, tile.y)) revision += 1
+                    }
+                }
+            }
         }
     }
 
@@ -65,8 +85,7 @@ fun MapView(
         chosen = MapColors.chosen,
         located = MapColors.located,
         edge = MapColors.edge,
-        halo = MapColors.halo,
-        pins = MapPinPaint(chosen = MapColors.chosen, other = MapColors.pin, edge = MapColors.edge)
+        halo = MapColors.halo
     )
     Box(
         modifier = modifier
@@ -79,30 +98,28 @@ fun MapView(
             .pointerInput(state.zoom) {
                 detectDragGestures { _, dragged -> state.pan(dragged.x, dragged.y) }
             }
-            .pointerInput(state.zoom, canvas, pins, onPin) {
-                val reach = Sizes.mapPinReach.toPx()
-                detectTapGestures { at -> state.tapped(canvas, at, pins, onPin, reach) }
+            .pointerInput(state.zoom, canvas, onTap) {
+                detectTapGestures { at -> onTap?.let { state.tapped(canvas, at, it) } }
             }
     ) {
-        MapCanvas(state, tiles, canvas, revision, paint, pins)
+        MapCanvas(state, tiles, canvas, revision, paint)
+        overlay(canvas)
     }
 }
 
-/** Само полотно: плитки, сетка на месте недошедших, знаки касс и метка. */
+/** Само полотно: плитки, своё место и метка выбранной точки. */
 @Composable
 private fun MapCanvas(
     state: MapState,
     tiles: MapTiles,
     canvas: IntSize,
     revision: Int,
-    paint: MapPaint,
-    pins: List<MapPin>
+    paint: MapPaint
 ) {
     androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
         @Suppress("UNUSED_EXPRESSION")
         revision
         drawTiles(state, tiles, canvas)
-        drawPins(pins, state.zoom, topLeft(state, canvas), paint.pins)
         drawLocation(state, canvas, paint)
         drawMarker(state, canvas, paint)
     }
@@ -118,8 +135,7 @@ private data class MapPaint(
     val chosen: Color,
     val located: Color,
     val edge: Color,
-    val halo: Color,
-    val pins: MapPinPaint
+    val halo: Color
 )
 
 /** Рисует плитки, попадающие в окно. */
@@ -190,3 +206,11 @@ private fun visibleTiles(state: MapState, canvas: IntSize): List<TileIndex> {
 
 /** Номер плитки в сетке мира. */
 private data class TileIndex(val x: Int, val y: Int)
+
+/**
+ * Сколько плиток запрашивать одновременно.
+ *
+ * Больше — быстрее открывается новая область, но плитки отданы
+ * сообществом OpenStreetMap, и наваливаться на их службу нельзя.
+ */
+private const val TILES_AT_ONCE = 6

@@ -77,6 +77,18 @@ internal val analyticsTextsRu = AnalyticsTexts(
     pickPin = "Выберите кассу на карте",
     pickPinHint = "Нажмите точку — здесь появится её карточка",
 
+    searchKkm = "Название, номер КГД или адрес",
+    allPlaces = "Все торговые точки",
+    markShiftOpen = "Смена открыта",
+    markBlocked = "Заблокированные",
+    markOffRecord = "Не на учёте",
+    sieveEmpty = "Под отбор не подошла ни одна касса",
+    sieveEmptyHint = "Снимите часть плашек отбора или измените строку поиска",
+    sieveClear = "Сбросить отбор",
+    kkmsHere = "Кассы в этом месте",
+    openKkmSales = "Аналитика кассы",
+    kkmSalesTitle = "Чем торгует касса",
+
     withoutPositionEmpty = "Все кассы на карте",
     withoutPositionEmptyHint = "При этом источнике положения известно место каждой кассы",
     reasonNoAddress = "У торговой точки не выбран адрес",

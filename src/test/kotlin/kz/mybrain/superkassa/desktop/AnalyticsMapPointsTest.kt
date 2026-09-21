@@ -9,10 +9,7 @@ import kz.mybrain.superkassa.desktop.ui.analytics.PlacementTrouble
 import kz.mybrain.superkassa.desktop.ui.analytics.addressesToFind
 import kz.mybrain.superkassa.desktop.ui.analytics.fitting
 import kz.mybrain.superkassa.desktop.ui.analytics.placement
-import kz.mybrain.superkassa.desktop.ui.map.MapPin
-import kz.mybrain.superkassa.desktop.ui.map.MapPixel
 import kz.mybrain.superkassa.desktop.ui.map.MapProjection
-import kz.mybrain.superkassa.desktop.ui.map.pinAt
 import java.math.BigDecimal
 import kotlin.math.abs
 import kotlin.test.Test
@@ -24,9 +21,8 @@ import kotlin.test.assertTrue
  * Десятичные градусы — в точку окна карты и обратно.
  *
  * Это тот пересчёт, ошибка в котором не видна в коде и видна на экране:
- * кассы Алматы становятся в Караганду, а нажатие выбирает соседнюю.
- * Поэтому проверяются и сам перевод, и то, что нажатие попадает
- * в ближний знак, и то, как раскладываются кассы без координат.
+ * кассы Алматы становятся в Караганду. Поэтому проверяются и сам
+ * перевод, и то, как раскладываются кассы без координат.
  */
 class AnalyticsMapPointsTest {
 
@@ -62,17 +58,6 @@ class AnalyticsMapPointsTest {
         val longitude = MapProjection.longitudeOf(back.x + at.x, zoom)
         assertTrue(abs(latitude - almatyLatitude) < DEGREE_TOLERANCE, "широта $latitude")
         assertTrue(abs(longitude - almatyLongitude) < DEGREE_TOLERANCE, "долгота $longitude")
-    }
-
-    @Test
-    fun `нажатие выбирает ближний знак, а промах — ни одного`() {
-        val pins = listOf(
-            MapPin("рядом", almatyLatitude, almatyLongitude),
-            MapPin("далеко", almatyLatitude + STEP, almatyLongitude + STEP)
-        )
-        val middle = MapPixel(width / 2.0, height / 2.0)
-        assertEquals("рядом", pinAt(pins, middle, zoom, corner(), REACH)?.id)
-        assertNull(pinAt(pins, MapPixel(0.0, 0.0), zoom, corner(), REACH))
     }
 
     @Test
@@ -150,6 +135,5 @@ class AnalyticsMapPointsTest {
         const val TOLERANCE = 0.001
         const val DEGREE_TOLERANCE = 0.000001
         const val STEP = 0.05
-        const val REACH = 14.0
     }
 }
