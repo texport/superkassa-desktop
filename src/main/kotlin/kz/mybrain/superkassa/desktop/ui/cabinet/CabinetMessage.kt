@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import kz.mybrain.superkassa.desktop.app.CabinetProblem
 import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.eds.NcaLayer
+import kz.mybrain.superkassa.desktop.eds.cancelledBySigner
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
@@ -44,9 +45,13 @@ fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Message = when
  * три минуты «Запустите его» про работающий NCALayer.
  */
 private fun signWords(detail: String, texts: CabinetTexts): String {
-    val reason = when (detail) {
-        NcaLayer.WINDOW_CLOSED -> texts.signWindowClosed
-        NcaLayer.NO_ANSWER -> texts.hints.signNoAnswer
+    val reason = when {
+        detail == NcaLayer.WINDOW_CLOSED -> texts.signWindowClosed
+        detail == NcaLayer.NO_ANSWER -> texts.hints.signNoAnswer
+        // Отказ владельца NCALayer называет по-своему — «500 - action.canceled».
+        // Это ответ службы, а не объяснение: подписывать отказался сам
+        // владелец, и сказать об этом нужно его словами.
+        cancelledBySigner(detail) -> texts.signCancelled
         else -> detail
     }
     return listOf(texts.signDeclined, reason).filter { it.isNotBlank() }.joinToString(Glyphs.SEPARATOR)

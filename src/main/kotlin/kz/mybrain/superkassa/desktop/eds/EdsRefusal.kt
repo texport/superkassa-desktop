@@ -36,12 +36,19 @@ class EdsRefusal(
      * и повторять нечего ни тем модулем, ни другим.
      */
     val cancelled: Boolean
-        get() = CANCEL_WORDS.any { detail.contains(it, ignoreCase = true) }
-
-    private companion object {
-        val CANCEL_WORDS = listOf("cancel", "отмен", "abort")
-    }
+        get() = cancelledBySigner(detail)
 }
+
+/**
+ * Отказ владельца — по словам самого NCALayer.
+ *
+ * Слова здесь одни на приложение: по ним отказ отличают и в разборе
+ * помехи, и в сообщении владельцу, и разойтись они не должны.
+ */
+internal fun cancelledBySigner(detail: String): Boolean =
+    CANCEL_WORDS.any { detail.contains(it, ignoreCase = true) }
+
+private val CANCEL_WORDS = listOf("cancel", "отмен", "abort")
 
 /**
  * NCALayer не отвечает: рукопожатия нет или соединение не поднялось.

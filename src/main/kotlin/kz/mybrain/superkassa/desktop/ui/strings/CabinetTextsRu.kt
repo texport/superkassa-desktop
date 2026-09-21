@@ -9,6 +9,7 @@ internal val cabinetTextsRu = CabinetTexts(
     noNcaLayer = "NCALayer не отвечает. Запустите его и повторите вход",
     signDeclined = "Подпись не получена",
     signWindowClosed = "Окно подписи закрыто",
+    signCancelled = "Подпись отменена в NCALayer",
     sessionExpired = "Доступ истёк — войдите заново",
     unreachable = "Кабинет не отвечает по заданному адресу",
     address = "Адрес кабинета",

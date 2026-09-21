@@ -9,6 +9,7 @@ internal val cabinetTextsEn = CabinetTexts(
     noNcaLayer = "NCALayer does not answer. Start it and sign in again",
     signDeclined = "No signature received",
     signWindowClosed = "The signing window was closed",
+    signCancelled = "Signing was cancelled in NCALayer",
     sessionExpired = "Access expired — sign in again",
     unreachable = "The cabinet does not answer at the configured address",
     address = "Cabinet address",
