@@ -31,7 +31,10 @@ data class DebugTexts(
     val sourceCabinet: String,
     val sourceMachine: String,
     val sourceSignature: String,
-    val sourceApp: String
+    val sourceApp: String,
+
+    /** Вывод самого узла, дочитанный из его файла. */
+    val sourceNodeSelf: String
 )
 
 /** Надписи журнала на выбранном языке. */
@@ -56,6 +59,7 @@ fun DebugTexts.name(source: LogSource): String = when (source) {
     LogSource.Machine -> sourceMachine
     LogSource.Signature -> sourceSignature
     LogSource.App -> sourceApp
+    LogSource.NodeSelf -> sourceNodeSelf
 }
 
 private val debugTextsRu = DebugTexts(
@@ -82,7 +86,8 @@ private val debugTextsRu = DebugTexts(
     sourceCabinet = "Кабинет",
     sourceMachine = "Касса",
     sourceSignature = "ЭЦП",
-    sourceApp = "Приложение"
+    sourceApp = "Приложение",
+    sourceNodeSelf = "Узел изнутри"
 )
 
 private val debugTextsKk = DebugTexts(
@@ -109,7 +114,8 @@ private val debugTextsKk = DebugTexts(
     sourceCabinet = "Кабинет",
     sourceMachine = "Касса",
     sourceSignature = "ЭЦҚ",
-    sourceApp = "Бағдарлама"
+    sourceApp = "Бағдарлама",
+    sourceNodeSelf = "Түйін ішінен"
 )
 
 private val debugTextsEn = DebugTexts(
@@ -136,5 +142,6 @@ private val debugTextsEn = DebugTexts(
     sourceCabinet = "Cabinet",
     sourceMachine = "Till",
     sourceSignature = "Signature",
-    sourceApp = "Application"
+    sourceApp = "Application",
+    sourceNodeSelf = "Node internals"
 )

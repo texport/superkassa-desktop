@@ -99,6 +99,12 @@ class LocalNode(
      * Рантайм самой кассы не годится: jpackage кладёт его без запускающего
      * файла. Рядом с узлом лежит собранный для него `jlink`-рантайм —
      * им и запускаем.
+     *
+     * Право на запуск нужно не только самой Java. Узел собирает печатную
+     * форму браузером, а `ProcessBuilder` запускает чужие программы через
+     * `lib/jspawnhelper`: без права у него любая печатная форма отвечала
+     * «внутренняя ошибка сервера», и в журнале стояло `posix_spawn failed`
+     * с подсказкой про несовпадение версий JDK, которого не было.
      */
     fun javaBinary(): File? =
         runnable(resources?.resolve(RUNTIME_NAME)) ?: runnable(ownRuntime())
@@ -113,10 +119,11 @@ class LocalNode(
      */
     @Suppress("ReturnCount")
     private fun runnable(runtime: File?): File? {
-        val binaries = File(runtime ?: return null, "bin")
-        val java = sequenceOf("java.exe", "java").map { File(binaries, it) }.firstOrNull { it.isFile }
+        val home = runtime ?: return null
+        val java = sequenceOf("java.exe", "java").map { File(home, "bin/$it") }.firstOrNull { it.isFile }
             ?: return null
-        return java.takeIf(allowRun)
+        val needed = listOf(java) + HELPERS.map { File(home, it) }.filter { it.isFile }
+        return java.takeIf { needed.all(allowRun) }
     }
 
     /**
@@ -136,7 +143,7 @@ class LocalNode(
         return own
     }
 
-    private companion object {
+    companion object {
 
         /** Имя узла среди ресурсов приложения. */
         const val JAR_NAME = "node.jar"
@@ -144,8 +151,19 @@ class LocalNode(
         /** Имя рантайма узла среди ресурсов приложения. */
         const val RUNTIME_NAME = "node-runtime"
 
+        /**
+         * Что в рантайме запускается, кроме самой Java.
+         *
+         * `jspawnhelper` — через него `ProcessBuilder` запускает чужие
+         * программы; узлу он нужен для печатной формы.
+         */
+        val HELPERS = listOf("lib/jspawnhelper")
+
         /** Куда уходит вывод узла: имя рядом с настройками рабочего места. */
-        const val LOG_NAME = "node.log"
+        private const val LOG_NAME = "node.log"
+
+        /** Файл, в который узел пишет свой вывод. */
+        fun output(home: File = defaultHome()): File = File(home, LOG_NAME)
 
         /**
          * Где установщик разложил ресурсы приложения.

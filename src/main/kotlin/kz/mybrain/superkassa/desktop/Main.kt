@@ -15,6 +15,7 @@ import kz.mybrain.superkassa.desktop.app.LocalNode
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.log.AppLog
+import kz.mybrain.superkassa.desktop.app.log.NodeOutput
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.Shell
 import kz.mybrain.superkassa.desktop.ui.debug.LogWindow
@@ -63,6 +64,12 @@ private fun ApplicationScope.SuperkassaApplication() {
             ?.let { (width, height) -> DpSize(width.dp, height.dp) }
             ?: DpSize(Sizes.windowWidth, Sizes.windowHeight)
     )
+    // В режиме отладки вывод узла дочитывается в тот же журнал: иначе
+    // цепочка обрывается на границе с ним, а обмен с ОФД идёт там.
+    LaunchedEffect(AppLog.debugMode) {
+        if (!AppLog.debugMode) return@LaunchedEffect
+        NodeOutput(LocalNode.output(), AppLog.journal).follow()
+    }
     LaunchedEffect(windowState.size) {
         val width = windowState.size.width.value.toInt()
         val height = windowState.size.height.value.toInt()

@@ -21,9 +21,11 @@ import kotlin.test.assertTrue
 class LocalNodeTest {
 
     private fun runtimeIn(directory: File): File {
-        val binaries = File(directory, "node-runtime/bin")
-        binaries.mkdirs()
-        File(binaries, "java").writeText("#!/bin/sh\n")
+        val runtime = File(directory, "node-runtime")
+        File(runtime, "bin").mkdirs()
+        File(runtime, "lib").mkdirs()
+        File(runtime, "bin/java").writeText("#!/bin/sh\n")
+        File(runtime, "lib/jspawnhelper").writeText("двоичный")
         File(directory, "node.jar").writeText("узел")
         return directory
     }
@@ -56,6 +58,41 @@ class LocalNodeTest {
         assertNotNull(java)
         assertEquals(File(home, "node-runtime/bin/java"), java)
         assertTrue(File(home, "node.jar").exists().not())
+    }
+
+    /**
+     * Узел собирает печатную форму браузером, а запускает чужие программы
+     * через `lib/jspawnhelper`. Без права на запуск у него печатная форма
+     * отвечала «внутренняя ошибка сервера», и в журнале стояло
+     * `posix_spawn failed` с подсказкой про версии JDK, которой там не было.
+     * Проверялось же только право у самой Java.
+     */
+    @Test
+    fun `право на запуск нужно и помощнику запуска`() {
+        val resources = runtimeIn(Files.createTempDirectory("resources").toFile())
+        val home = Files.createTempDirectory("home").toFile()
+        val helper = File(resources, "node-runtime/lib/jspawnhelper")
+
+        val java = LocalNode(ADDRESS, home, resources).javaBinary()
+
+        assertNotNull(java)
+        assertTrue(helper.canExecute(), "помощник запуска остался без права на запуск")
+    }
+
+    /**
+     * Java запускается, а помощник запуска нет — этого уже достаточно,
+     * чтобы снять рантайм к себе: печатная форма без него не собирается.
+     */
+    @Test
+    fun `рантайм снимается к себе и из-за помощника запуска`() {
+        val resources = runtimeIn(Files.createTempDirectory("resources").toFile())
+        val home = Files.createTempDirectory("home").toFile()
+        val theirs = File(resources, "node-runtime/lib/jspawnhelper")
+
+        val java = LocalNode(ADDRESS, home, resources, allowRun = { it != theirs }).javaBinary()
+
+        assertEquals(File(home, "node-runtime/bin/java"), java)
+        assertTrue(File(home, "node-runtime/lib/jspawnhelper").isFile, "помощник запуска не снят")
     }
 
     @Test

@@ -9,10 +9,10 @@ import io.ktor.http.HttpMethod
  * публикации, поэтому приложение ждёт ответа и не считает молчание успехом.
  */
 suspend fun ServerClient.openShift(kkmId: String, pin: String): FiscalResult =
-    request(HttpMethod.Post, "/kkm/$kkmId/shift/open", pin = pin)
+    request<FiscalResult>(HttpMethod.Post, "/kkm/$kkmId/shift/open", pin = pin).logged("открытие смены")
 
 suspend fun ServerClient.closeShift(kkmId: String, pin: String): FiscalResult =
-    request(HttpMethod.Post, "/kkm/$kkmId/shift/close", pin = pin)
+    request<FiscalResult>(HttpMethod.Post, "/kkm/$kkmId/shift/close", pin = pin).logged("закрытие смены")
 
 suspend fun ServerClient.xReport(kkmId: String, pin: String): FiscalResult =
-    request(HttpMethod.Post, "/kkm/$kkmId/report", pin = pin)
+    request<FiscalResult>(HttpMethod.Post, "/kkm/$kkmId/report", pin = pin).logged("X-отчёт")
