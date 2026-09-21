@@ -54,9 +54,19 @@ suspend fun CabinetClient.resolveAddress(token: String, rka: String): RegisterAd
  * подробные уровни впереди разделов — владелец ищет свой вид деятельности,
  * а не раздел, в который тот входит. Пустой запрос отдаёт начало
  * классификатора, поэтому параметр не передаётся вовсе.
+ *
+ * @param from смещение в выдаче: страница за страницей, а не первые
+ *   пятьдесят. Всего подходящих кабинет сообщает в `total`.
  */
-suspend fun CabinetClient.okedSuggestions(token: String, query: String): OkedSuggestions =
-    request(HttpMethod.Get, "/api/reference/okeds?${query.asQuery()}limit=$SUGGESTIONS", token = token)
+suspend fun CabinetClient.okedSuggestions(
+    token: String,
+    query: String,
+    from: Int = 0
+): OkedSuggestions = request(
+    HttpMethod.Get,
+    "/api/reference/okeds?${query.asQuery()}limit=$OKEDS&offset=$from",
+    token = token
+)
 
 /** Одна позиция классификатора по коду: подтверждение выбранного кода. */
 suspend fun CabinetClient.okedByCode(token: String, code: String): OkedEntry =
@@ -67,6 +77,16 @@ suspend fun CabinetClient.kkmModels(token: String): CabinetPage<KkmModel> =
 
 /** Сколько подсказок просить у адресного регистра на одном шаге; предел регистра — 50. */
 private const val SUGGESTIONS = 20
+
+/**
+ * Размер страницы классификатора видов деятельности.
+ *
+ * Классификатор — 2107 позиций, и просить их все нельзя: кабинет
+ * ограничивает страницу пятьюдесятью. Прежде здесь стояло то же число,
+ * что и для шагов адресного регистра, — двадцать, — и страниц не было
+ * вовсе: доскроллить до своего вида не получалось ни при каком запросе.
+ */
+internal const val OKEDS = 50
 
 /** Для вопроса «есть ли вложенные» хватает одной записи. */
 private const val NESTED_PROBE = 1

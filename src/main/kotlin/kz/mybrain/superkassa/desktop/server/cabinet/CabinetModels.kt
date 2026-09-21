@@ -83,7 +83,17 @@ data class OkedEntry(
 
 /** Ответ классификатора: обёртка списка той же формы, что у адресных подсказок. */
 @Serializable
-data class OkedSuggestions(val items: List<OkedEntry> = emptyList())
+data class OkedSuggestions(
+    val items: List<OkedEntry> = emptyList(),
+    /**
+     * Сколько позиций подходит под запрос целиком.
+     *
+     * Классификатор — 2107 позиций, за раз кабинет отдаёт не больше
+     * пятидесяти. Без общего числа список из пятидесяти выглядел
+     * оборванным, и владелец решал, что его вида деятельности нет.
+     */
+    val total: Long = 0
+)
 
 /** Замена набора видов деятельности целиком. */
 @Serializable

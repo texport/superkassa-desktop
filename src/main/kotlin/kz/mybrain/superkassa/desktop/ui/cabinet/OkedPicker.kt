@@ -16,13 +16,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.server.cabinet.OKEDS
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.OkedEntry
 import kz.mybrain.superkassa.desktop.server.cabinet.okedSuggestions
@@ -55,22 +58,47 @@ fun OkedPicker(
 ) {
     var query by remember { mutableStateOf("") }
     var found by remember { mutableStateOf<List<OkedEntry>>(emptyList()) }
+    var total by remember { mutableStateOf(0L) }
+    var taken by remember { mutableStateOf(0) }
+    var ended by remember { mutableStateOf(false) }
     var searched by remember { mutableStateOf(false) }
     var open by remember { mutableStateOf(false) }
     var touched by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     val needle = query.trim()
     // Однобуквенный запрос кабинет отвергает, как и в адресном регистре:
     // ищем либо с пустой строки — она отдаёт начало классификатора, —
     // либо от двух знаков.
     val askable = askableQuery(needle)
+
+    /**
+     * Просит у кабинета страницу и складывает её к показанному.
+     *
+     * Смещение считается по числу полученных, а не показанных: уже
+     * добавленные владельцем виды из показа убраны, и считай мы
+     * по показанному — страницы разъехались бы и часть классификатора
+     * оказалась бы пропущена.
+     *
+     * Кабинет на стенде может смещения не понимать — тогда он отдаёт
+     * то же начало списка, ничего нового в странице нет и продолжение
+     * больше не предлагается: обещать страницы, которых нет, нельзя.
+     */
+    suspend fun page(from: Int) {
+        val token = cabinet.token ?: return
+        val got = cabinet.guard { cabinet.client.okedSuggestions(token, needle, from) } ?: return
+        val shown = if (from == 0) emptySet() else found.map { it.code }.toSet()
+        val fresh = got.items.filterNot { it.code in known || it.code in shown }
+        found = if (from == 0) fresh else found + fresh
+        taken = from + got.items.size
+        total = got.total
+        ended = got.items.size < OKEDS || (from > 0 && fresh.isEmpty())
+    }
+
     LaunchedEffect(needle) {
         if (!askable) return@LaunchedEffect
-        val token = cabinet.token ?: return@LaunchedEffect
         if (needle.isNotEmpty()) delay(Durations.afterTyping)
-        found = cabinet.guard { cabinet.client.okedSuggestions(token, needle).items }
-            .orEmpty()
-            .filterNot { it.code in known }
+        page(from = 0)
         searched = true
         open = touched && found.isNotEmpty()
     }
@@ -79,12 +107,18 @@ fun OkedPicker(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
+        // Сколько классификатор держит сверх полученного. Кабинет, который
+        // общего числа не сообщает, оставляет ноль — тогда о продолжении
+        // говорит сама полная страница.
+        val rest = (total - taken).coerceAtLeast(0)
         Suggestions(
             texts = texts,
             query = query,
             found = found,
             open = open && found.isNotEmpty(),
+            rest = rest.takeIf { !ended && (it > 0 || total == 0L) },
             title = { entry -> titleOf(session, entry) },
+            onMore = { scope.launch { page(from = taken) } },
             onOpen = { open = it },
             onQuery = {
                 query = it
@@ -96,8 +130,14 @@ fun OkedPicker(
             query = ""
             onAdd(Oked(code = entry.code, name = titleOf(session, entry)))
         }
-        val nothing = searched && found.isEmpty() && needle.isNotEmpty()
-        Hint(if (nothing) texts.okedNotFound else texts.okedSearchHint)
+        Hint(
+            when {
+                !searched -> texts.okedSearchHint
+                found.isEmpty() && needle.isNotEmpty() -> texts.okedNotFound
+                !ended -> texts.okedNarrowSearch
+                else -> texts.okedSearchHint
+            }
+        )
     }
 }
 
@@ -109,7 +149,9 @@ private fun Suggestions(
     query: String,
     found: List<OkedEntry>,
     open: Boolean,
+    rest: Long?,
     title: (OkedEntry) -> String,
+    onMore: () -> Unit,
     onOpen: (Boolean) -> Unit,
     onQuery: (String) -> Unit,
     onPick: (OkedEntry) -> Unit
@@ -144,6 +186,13 @@ private fun Suggestions(
                     },
                     onClick = { onPick(entry) }
                 )
+            }
+            // Классификатор больше страницы, и список раскрыт внутрь меню:
+            // по прокрутке догружать некуда, поэтому продолжение просят
+            // последней строкой списка.
+            if (rest != null) {
+                val label = if (rest > 0) "${texts.showMore}${Glyphs.SEPARATOR}$rest" else texts.showMore
+                DropdownMenuItem(text = { Text(label) }, onClick = onMore)
             }
         }
     }

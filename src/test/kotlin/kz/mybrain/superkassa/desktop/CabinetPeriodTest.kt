@@ -13,11 +13,13 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.server.cabinet.DocumentPeriod
+import kz.mybrain.superkassa.desktop.server.cabinet.OKEDS
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.ReceiptSearch
 import kz.mybrain.superkassa.desktop.server.cabinet.cashMovements
 import kz.mybrain.superkassa.desktop.server.cabinet.receipts
 import kz.mybrain.superkassa.desktop.server.cabinet.reports
+import kz.mybrain.superkassa.desktop.server.cabinet.okedSuggestions
 import kz.mybrain.superkassa.desktop.server.cabinet.saveOkeds
 import kz.mybrain.superkassa.desktop.ui.cabinet.DocumentKind
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetPeriodOf
@@ -149,6 +151,25 @@ class CabinetPeriodTest {
         }
         val body = (sent.single().body as TextContent).text
         assertTrue(body.contains("\"primary\":false"), body)
+    }
+
+    /**
+     * Классификатор ОКЭД просится страницами.
+     *
+     * Прежде запрашивались первые пятьдесят и только они: доскроллить
+     * до своего вида деятельности владелец не мог ни при каком запросе,
+     * а сколько их всего — не знал никто, в том числе и приложение.
+     */
+    @Test
+    fun `виды деятельности просятся со смещением и общим числом`() {
+        val sent = mutableListOf<HttpRequestData>()
+        val client = capturing(sent, """{"items":[{"code":"47111","name":"Торговля"}],"total":2107}""")
+        val answer = runBlocking { client.okedSuggestions("token", "торг", from = 50) }
+
+        val url = sent.single().url.toString()
+        assertTrue(url.contains("offset=50"), url)
+        assertTrue(url.contains("limit=$OKEDS"), url)
+        assertEquals(2107, answer.total)
     }
 
     private fun capturing(sent: MutableList<HttpRequestData>, body: String): CabinetClient {
