@@ -61,18 +61,6 @@ class Preferences(private val file: File = defaultFile()) {
             cabinet.url = value
         }
 
-    var cabinetDeveloperIin: String
-        get() = cabinet.developerIin
-        set(value) {
-            cabinet.developerIin = value
-        }
-
-    var cabinetDeveloperBin: String
-        get() = cabinet.developerBin
-        set(value) {
-            cabinet.developerBin = value
-        }
-
     var language: String?
         get() = view.language
         set(value) {

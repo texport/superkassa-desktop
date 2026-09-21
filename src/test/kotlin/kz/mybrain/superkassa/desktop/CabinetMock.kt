@@ -8,10 +8,11 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
-import kotlin.test.assertTrue
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetCompany
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetLogin
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetUser
 
 /**
  * Кабинет, отвечающий заданным, — для снимков отказных состояний.
@@ -39,9 +40,18 @@ internal fun mockCabinet(body: String, status: HttpStatusCode = HttpStatusCode.O
         install(ContentNegotiation) { json(CabinetClient.lenientJson) }
     }
     val cabinet = CabinetSession(CabinetClient(http = http))
-    assertTrue(runBlocking { cabinet.signInAsDeveloper(IIN, BIN) }, "владелец не вошёл")
+    // Вход по ЭЦП требует NCALayer, которого в проверке нет: сеанс ставится
+    // тем же доступом, каким его поставил бы ответ кабинета на вход.
+    cabinet.access.enter(entered())
     return cabinet
 }
+
+/** Доступ и вошедший — то, что кабинет отдаёт на успешный вход по ЭЦП. */
+private fun entered() = CabinetLogin(
+    accessToken = "test-access",
+    user = CabinetUser(id = "u-1", iin = IIN, fullName = "Иванов Сергей"),
+    company = CabinetCompany(id = "c-1", bin = BIN, name = "ТОО «Пример»")
+)
 
 /** ИИН владельца и БИН его компании: подставные, но казахстанского вида. */
 private const val IIN = "870101300123"
