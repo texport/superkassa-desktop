@@ -1,5 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.strings
 
+import java.util.Locale
+
 /**
  * Язык интерфейса.
  *
@@ -13,7 +15,18 @@ enum class Language(val code: String, val title: String) {
     En("en", "English");
 
     companion object {
-        fun byCode(code: String?): Language = entries.firstOrNull { it.code == code } ?: Kk
+        /**
+         * Язык рабочего места: выбранный владельцем, иначе язык системы.
+         *
+         * Язык не выбран только на свежем рабочем месте, и показывать там
+         * государственный язык машине, настроенной по-русски, значит
+         * встречать владельца мастером на языке, которого он не просил.
+         * Система чужого языка — тот же случай: остаётся государственный.
+         */
+        fun byCode(code: String?, system: String? = Locale.getDefault().language): Language =
+            entries.firstOrNull { it.code == code }
+                ?: entries.firstOrNull { it.code == system }
+                ?: Kk
     }
 }
 
