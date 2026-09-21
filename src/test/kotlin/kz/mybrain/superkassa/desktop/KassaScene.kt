@@ -24,6 +24,8 @@ import kz.mybrain.superkassa.desktop.server.DocumentDetails
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.KkmUser
 import kz.mybrain.superkassa.desktop.server.NodeVatRate
+import kz.mybrain.superkassa.desktop.server.NomenclatureItem
+import kz.mybrain.superkassa.desktop.server.NomenclatureLookup
 import kz.mybrain.superkassa.desktop.server.OrgInfo
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.server.SoldItem
@@ -84,9 +86,11 @@ internal object KassaScene {
         refusal: NodeRefusal? = null,
         journal: List<Document> = emptyList(),
         sold: List<SoldItem> = emptyList(),
-        cashiers: List<KkmUser>? = null
+        cashiers: List<KkmUser>? = null,
+        /** Что отдаёт каталог на поиск по штрихкоду; `null` — ничего не нашёл. */
+        catalogue: NomenclatureItem? = null
     ): Session {
-        val session = Session(client(admin, refusal, journal, sold, cashiers), preferences(folder))
+        val session = Session(client(admin, refusal, journal, sold, cashiers, catalogue), preferences(folder))
         // Язык сеанса тот же, каким сцена рисует надписи: иначе отказ узла
         // приходил по-казахски на русский экран — не дефект приложения,
         // а расхождение оснастки с ним.
@@ -153,7 +157,8 @@ internal object KassaScene {
         refusal: NodeRefusal?,
         journal: List<Document>,
         sold: List<SoldItem>,
-        cashiers: List<KkmUser>?
+        cashiers: List<KkmUser>?,
+        catalogue: NomenclatureItem?
     ): ServerClient {
         val body = """{"userId":"u-1","name":"Айгүл Сәрсенова","role":"${if (admin) "ADMIN" else "CASHIER"}"}"""
         val engine = MockEngine { request ->
@@ -162,6 +167,13 @@ internal object KassaScene {
                 path.endsWith("/users/me") -> answer(body)
                 path.endsWith("/users") && cashiers != null ->
                     answer(encoded(ListSerializer(KkmUser.serializer()), cashiers))
+
+                path.endsWith("/nomenclature/lookup") -> answer(
+                    encoded(
+                        NomenclatureLookup.serializer(),
+                        NomenclatureLookup(found = catalogue != null, item = catalogue)
+                    )
+                )
 
                 path.endsWith("/documents") -> answer(encoded(ListSerializer(Document.serializer()), journal))
                 path.contains("/documents/") -> answer(details(journal, sold, path.substringAfterLast('/')))

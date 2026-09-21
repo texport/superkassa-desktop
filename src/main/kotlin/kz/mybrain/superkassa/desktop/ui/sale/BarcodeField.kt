@@ -32,6 +32,11 @@ import java.math.BigDecimal
  * повод для претензии покупателя. Сканер сам дописывает Enter, поэтому
  * поиск начинается по Enter, а кнопка поиска живёт значком в самом поле:
  * отдельная кнопка рядом занимала бы место, которого в кассовой колонке нет.
+ *
+ * Цены в справочнике может не быть вовсе — национальный каталог её не
+ * несёт. Такая позиция не встаёт в чек молча: цену и количество спрашивает
+ * [PriceAskDialog]. Позиция с ценой добавляется сразу, как и прежде:
+ * кассир сканирует и продолжает, не отвлекаясь.
  */
 @Composable
 fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
@@ -41,6 +46,7 @@ fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
     var barcode by remember { mutableStateOf("") }
     var searching by remember { mutableStateOf(false) }
     var notFound by remember { mutableStateOf(false) }
+    var asking by remember { mutableStateOf<Position?>(null) }
 
     val kkm = session.selected
     val rates = LocalVatRates.current
@@ -53,10 +59,15 @@ fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
                     session.client.lookupBarcode(kkm.kkmId, barcode, session.pin)
                 }
                 val position = found?.let { positionOf(it, rates, defaultVatOf(session, rates)) }
-                if (position != null) {
-                    onFound(position)
-                    barcode = ""
+                // Позиция без цены уходит в окно, а не в чек: нулевую
+                // строку кассир обязан заполнить прежде, чем она станет
+                // частью фискального документа.
+                when {
+                    position == null -> Unit
+                    priceMissing(position) -> asking = position
+                    else -> onFound(position)
                 }
+                if (position != null) barcode = ""
                 // Отсутствие в справочнике и молчание узла — разные беды:
                 // о второй кассиру говорит полоса сообщений, и повторять
                 // её здесь «нет такого штрихкода» значит соврать.
@@ -98,11 +109,28 @@ fun BarcodeField(session: Session, onFound: (Position) -> Unit) {
             hint = if (searching) texts.sale.barcodeSearching else null
         )
     }
+    asking?.let { found ->
+        PriceAskDialog(
+            found = found,
+            units = session.units,
+            onAdd = {
+                onFound(it)
+                asking = null
+            },
+            onDismiss = { asking = null }
+        )
+    }
 }
 
-/** Найденное в справочнике — сразу позиция: одна штука по цене справочника. */
-private fun positionOf(item: NomenclatureItem, rates: List<VatRate>, fallbackVat: String): Position? {
-    val price = item.sellPrice ?: return null
+/**
+ * Найденное в справочнике — сразу позиция: одна штука по цене справочника.
+ *
+ * Отсутствующая цена не делает находку ненайденной: каталог НКТ цен
+ * не несёт вовсе, и «нет такого штрихкода» на такой товар было бы
+ * неправдой. Цена остаётся нулевой, и её спрашивают у кассира.
+ */
+private fun positionOf(item: NomenclatureItem, rates: List<VatRate>, fallbackVat: String): Position {
+    val price = item.sellPrice ?: BigDecimal.ZERO
     return Position(
         name = item.title,
         price = price,
