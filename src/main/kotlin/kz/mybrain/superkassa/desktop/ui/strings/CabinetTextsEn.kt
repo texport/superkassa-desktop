@@ -207,7 +207,6 @@ internal val cabinetTextsEn = CabinetTexts(
     autonomous = "Issued offline",
     documentMoment = "Accepted by BFD",
     documentNumber = "Document number",
-    developerSignIn = "Sign in without a digital signature",
     addressRegion = "Region",
     addressLocality = "Locality or district",
     addressStreet = "Street",
@@ -266,9 +265,6 @@ internal val cabinetTextsEn = CabinetTexts(
             "the BFD — the fiscal data base. The answer comes first, and below it who exactly said so. They " +
             "disagree when the state went stale somewhere.",
         bfdNoAnswer = "The state was not received — reread the register card",
-        developerSignIn = "Cabinet development mode: the owner and company are set by IIN and BIN, " +
-            "the signature is not checked at sign-in. Applications are still signed with the digital signature, " +
-            "and the IIN must match the certificate; for a sole proprietor the BIN equals the IIN",
         addressStep = "The address is chosen step by step: region, locality, street, building. " +
             "Pick from the list or type the beginning of a name as the registry spells it: " +
             "Қабанбай батыр, not Кабанбай",

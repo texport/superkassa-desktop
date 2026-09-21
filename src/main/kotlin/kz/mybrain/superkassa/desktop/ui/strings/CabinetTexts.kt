@@ -228,7 +228,6 @@ data class CabinetTexts(
      * он читался как РНМ.
      */
     val documentNumber: String,
-    val developerSignIn: String,
     val addressRegion: String,
     val addressLocality: String,
     val addressStreet: String,
@@ -339,7 +338,6 @@ data class CabinetHints(
     val okedSearch: String,
     val technicalState: String,
     val bfdNoAnswer: String,
-    val developerSignIn: String,
     val addressStep: String,
     val okedManual: String,
     val placeNotFound: String,
