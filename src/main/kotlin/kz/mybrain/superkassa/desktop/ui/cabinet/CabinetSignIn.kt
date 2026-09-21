@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.log.AppLog
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
@@ -43,6 +44,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Пока NCALayer ждёт пароль, кнопка занята и подписана ожиданием:
  * подпись занимает столько, сколько владелец ищет свой ключ, и молчащая
  * кнопка выглядела бы зависшей.
+ *
+ * Способ входа один — по ЭЦП. Вход по набранным ИИН и БИН стоял тут же
+ * и предлагал ввести любые двенадцать цифр: на экране входа это выглядит
+ * как вторая, неохраняемая дверь. Он остался средством отладки и виден
+ * только при включённом режиме отладки — там же, где журнал обмена.
  */
 @Composable
 fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
@@ -82,7 +88,7 @@ fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts
                         }
                     }
                 )
-                DeveloperSignIn(session, cabinet, texts)
+                if (AppLog.debugMode) DeveloperSignIn(session, cabinet, texts)
                 Text(
                     text = "${texts.address}: ${session.preferences.cabinetUrl}",
                     style = MaterialTheme.typography.labelMedium,
@@ -94,10 +100,15 @@ fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts
 }
 
 /**
- * Вход без ЭЦП — на период MVP кабинет пускает по ИИН и БИН из заголовков.
+ * Вход без ЭЦП — средство отладки: кабинет пускает по ИИН и БИН
+ * из заголовков.
  *
- * Поля помнятся между запусками: на показе кабинет открывается не один раз,
- * и набирать двенадцать цифр дважды перед каждым разом незачем.
+ * Показывается только при включённом режиме отладки. Кассиру и владельцу
+ * этот вход не нужен вовсе, а на экране входа он выглядит как вторая
+ * дверь, в которую пускают по любым двенадцати цифрам.
+ *
+ * Поля помнятся между запусками: при отладке кабинет открывается не один
+ * раз, и набирать двенадцать цифр перед каждым разом незачем.
  */
 @Composable
 private fun DeveloperSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
