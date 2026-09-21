@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
@@ -23,9 +24,11 @@ import kz.mybrain.superkassa.desktop.server.cabinet.SignRequest
 import kz.mybrain.superkassa.desktop.server.cabinet.prepareRegistration
 import kz.mybrain.superkassa.desktop.server.cabinet.register
 import kz.mybrain.superkassa.desktop.server.cabinet.signRegistration
+import kz.mybrain.superkassa.desktop.ui.cabinet.statusTitle
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Durations
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -35,7 +38,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Заявление готовит кабинет, подписывает владелец ключом ЭЦП, отправляет
  * снова кабинет. Ответ ИСНА приходит не в ту же минуту, поэтому шаг
  * не притворяется завершённым: он показывает состояние кассы в кабинете
- * и даёт перечитать его, когда владелец вернётся.
+ * и перечитывает его сам, пока номера ещё нет. «Обновить» остаётся — им
+ * спрашивают, не дожидаясь очередного круга.
  */
 @Composable
 fun ApplicationStepCard(
@@ -57,9 +61,18 @@ fun ApplicationStepCard(
     LaunchedEffect(draft.cabinetRegisterId, cabinet.token) { reload() }
 
     val onRecord = card?.registrationNumber?.isNotBlank() == true
-    // Следующий шаг узнаёт о постановке на учёт отсюда, а не перечитыванием
-    // по таймеру: ответ ИСНА приходит когда придёт.
     LaunchedEffect(onRecord) { if (onRecord) onRegistered() }
+    // Пока номера нет, состояние перечитывается само: ответ КГД приходит
+    // через десятки секунд, и владелец сидел над шагом, нажимая «Обновить»,
+    // чтобы узнать, рассмотрено ли заявление. Отсчёт живёт вместе с шагом:
+    // закрытый мастер опроса не продолжает, а полученный номер его кончает.
+    LaunchedEffect(onRecord, draft.cabinetRegisterId, cabinet.token) {
+        if (onRecord || draft.cabinetRegisterId == null) return@LaunchedEffect
+        while (true) {
+            delay(Durations.whileWatching)
+            reload()
+        }
+    }
     SetupStepCard(
         title = setup.stepApplication,
         hint = setup.stepApplicationHint,
@@ -71,8 +84,10 @@ fun ApplicationStepCard(
         if (onRecord) return@SetupStepCard
         Text(
             // Состояние кассы — это ещё не состояние заявления: пока
-            // заявления нет, «ждём ответа ИСНА» над «DRAFT» просто врёт.
-            text = card?.status?.let { "${setup.status} $it" } ?: setup.stepApplicationHint,
+            // заявления нет, «ждём ответа КГД» над черновиком просто врёт.
+            // Называется оно словами: здесь стояло «Состояние кассы: DRAFT».
+            text = card?.status?.let { "${setup.status} ${statusTitle(it, cabinetTexts(session.language))}" }
+                ?: setup.stepApplicationHint,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

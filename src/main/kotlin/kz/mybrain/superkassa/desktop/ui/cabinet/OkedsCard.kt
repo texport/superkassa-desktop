@@ -33,12 +33,17 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Основной ОКЭД ровно один — он уходит в заявление; выбор основного
  * снимает пометку с прежнего, а не даёт поставить вторую. Пустой список
  * тоже допустим: у только что заведённой компании их ещё нет.
+ *
+ * @param saved виды деятельности, как их отдал кабинет. Сохранять нечего,
+ *   пока список ими и остаётся: залитая кнопка на нетронутой карточке
+ *   обещает работу, которой нет, и отправляла в кабинет то же самое.
  */
 @Composable
 fun OkedsCard(
     texts: CabinetTexts,
     okeds: MutableList<Oked>,
     busy: Boolean,
+    saved: List<Oked>,
     title: (Oked) -> String,
     onSave: () -> Unit
 ) {
@@ -61,7 +66,16 @@ fun OkedsCard(
         // основной вид и пустой набор отвергает. Прежде главным действием
         // пустой карточки стояло сохранение того, чего нет, а отказ
         // приходил английской строкой сервера.
-        BusyButton(text = texts.saveOkeds, busy = busy, enabled = okeds.isNotEmpty(), onClick = onSave)
+        //
+        // Гаснет она и на нетронутом списке: сохранять то же, что пришло
+        // от кабинета, незачем.
+        val changed = okeds.toList() != saved
+        BusyButton(
+            text = texts.saveOkeds,
+            busy = busy,
+            enabled = okeds.isNotEmpty() && changed,
+            onClick = onSave
+        )
     }
 }
 

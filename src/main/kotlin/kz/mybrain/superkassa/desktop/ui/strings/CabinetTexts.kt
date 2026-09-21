@@ -90,17 +90,7 @@ data class CabinetTexts(
     val changeAddress: String,
     val deleteRegister: String,
     val deleteOnlyDraft: String,
-    val statusDraft: String,
-    val statusRegistered: String,
-    val statusDeregistered: String,
-    val statusActive: String,
-    val statusInactive: String,
-    val statusAccepted: String,
-    val statusRejected: String,
-    val statusSent: String,
-    val statusInProcess: String,
-    val shiftOpen: String,
-    val shiftClosed: String,
+    val statuses: CabinetStatusNames,
     val operationSale: String,
     val operationReturn: String,
     val operationPurchase: String,
@@ -269,6 +259,38 @@ data class CabinetTexts(
 )
 
 /**
+ * Названия состояний кассы, заявления и смены.
+ *
+ * Запасная таблица приложения: состояния приходят от кабинета протокольными
+ * кодами — `DRAFT`, `KKM_ACTIVE`, `REREGISTRATION_IN_ISNA_PROCESS`, — и пока
+ * кода нет в таблице, на экране стоял он сам. Владельцу «DRAFT» не говорит
+ * ничего, и по правилам приложения кодов на экране быть не должно: их место
+ * в журнале поддержки.
+ *
+ * Отдельной группой, а не в общем наборе: таблицу правят целиком, когда
+ * кабинет заводит новое состояние, и искать её среди двух с половиной сотен
+ * полей набора не нужно.
+ *
+ * @param unknown состояние, которого в таблице нет: названо словами, чтобы
+ *   незнакомый код не доходил до экрана.
+ */
+data class CabinetStatusNames(
+    val draft: String,
+    val registered: String,
+    val deregistered: String,
+    val active: String,
+    val inactive: String,
+    val blocked: String,
+    val accepted: String,
+    val rejected: String,
+    val sent: String,
+    val inProcess: String,
+    val shiftOpen: String,
+    val shiftClosed: String,
+    val unknown: String
+)
+
+/**
  * Объяснения разделов кабинета — те, что живут под значком у заголовка.
  *
  * Отдельной группой, а не в общем наборе: их три десятка, и вместе
@@ -312,7 +334,10 @@ data class CabinetHints(
     val reportCard: String,
     val shiftCard: String,
     val cashMovement: String,
-    val factoryNumber: String
+    val factoryNumber: String,
+    val card: String,
+    val actionsJournal: String,
+    val newPlaceNotChosen: String
 )
 
 /** Надписи области на выбранном языке. */

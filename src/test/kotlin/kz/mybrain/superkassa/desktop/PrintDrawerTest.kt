@@ -16,6 +16,8 @@ import kz.mybrain.superkassa.desktop.app.log.LogLevel
 import kz.mybrain.superkassa.desktop.app.log.LogSource
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.ServerClient
+import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDateTime
@@ -24,6 +26,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 /**
  * Кто рисует печатную форму, когда кассир не входил.
@@ -80,6 +83,20 @@ class PrintDrawerTest {
 
         assertNull(session.printDesk.drawer.kkm(), "рисовать нечем")
         assertNotNull(session.lastMessage, "молчание здесь — тот же дефект, что и пустой экран")
+    }
+
+    /**
+     * Отказ называет связь, а не только следствие.
+     *
+     * Владелец смотрит документ кабинета и не знает, что печатную форму
+     * по нему рисует касса на его же машине: «узел не отдал ни одной кассы»
+     * читалось как нелогичность — при чём здесь узел.
+     */
+    @Test
+    fun `отказ предпросмотра называет и кабинет, и кассу`() {
+        val words = stringsOf(Language.Ru).preview.noDrawer
+        assertTrue(words.contains("кабинет", ignoreCase = true), "не назван кабинет: $words")
+        assertTrue(words.contains("касса", ignoreCase = true), "не названа касса: $words")
     }
 
     @Test

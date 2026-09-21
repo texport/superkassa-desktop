@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetStatusChip
-import kz.mybrain.superkassa.desktop.ui.cabinet.statusTitle
+import kz.mybrain.superkassa.desktop.ui.cabinet.statusWords
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.StatusTone
 import kz.mybrain.superkassa.desktop.ui.components.toneColor
@@ -31,16 +31,21 @@ internal fun KkmChips(kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: Cabinet
     ) {
         CabinetStatusChip(kkm.status, cabinet)
         if (kkm.blocked) Chip(text = texts.blocked, color = StatusColors.refused)
-        kkm.shiftStatus?.takeIf { it.isNotBlank() }?.let { shift ->
+        // Плашки нет вовсе, пока о смене ничего не известно: у кассы-черновика
+        // кабинет отдаёт `UNKNOWN`, и это слово так и стояло на экране. Смены
+        // у такой кассы не было ни одной, и сказать о ней нечего.
+        shiftPlate(kkm.shiftStatus, kkm.shiftNumber, cabinet)?.let { shift ->
             // Ожиданием красится только открытая смена: закрытая — обычное
             // состояние кассы, и жёлтым владелец читал её как незаконченное
             // дело, которое надо доделать.
             val tone = if (KkmMark.ShiftOpen.holds(kkm)) StatusTone.Waiting else StatusTone.Idle
-            Chip(text = shiftWords(shift, kkm.shiftNumber, cabinet), color = toneColor(tone))
+            Chip(text = shift, color = toneColor(tone))
         }
     }
 }
 
-/** Смена: её состояние и номер одной плашкой. */
-private fun shiftWords(status: String, number: Long?, cabinet: CabinetTexts): String =
-    listOfNotNull(statusTitle(status, cabinet), number?.let { "№ $it" }).joinToString(" · ")
+/** Смена: её состояние и номер одной плашкой; `null` — состояние неизвестно. */
+internal fun shiftPlate(status: String?, number: Long?, cabinet: CabinetTexts): String? {
+    val words = status?.takeIf { it.isNotBlank() }?.let { statusWords(it, cabinet) } ?: return null
+    return listOfNotNull(words, number?.let { "№ $it" }).joinToString(" · ")
+}

@@ -67,6 +67,7 @@ class BigListRenderTest {
         val all = places(count)
         PlaceTree(
             texts = texts,
+            language = Language.Ru,
             collapsed = collapsed,
             onToggle = {},
             rows = placeRows(all, registers(all), open = open, query = query),

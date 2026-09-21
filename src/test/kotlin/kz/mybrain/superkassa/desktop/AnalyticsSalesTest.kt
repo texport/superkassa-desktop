@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.desktop.ui.analytics.SalesView
 import kz.mybrain.superkassa.desktop.ui.analytics.axisStep
 import kz.mybrain.superkassa.desktop.ui.analytics.barAt
 import kz.mybrain.superkassa.desktop.ui.analytics.barShare
+import kz.mybrain.superkassa.desktop.ui.analytics.chartSlots
 import kz.mybrain.superkassa.desktop.ui.analytics.dayBars
 import kz.mybrain.superkassa.desktop.ui.analytics.hourBars
 import kz.mybrain.superkassa.desktop.ui.analytics.SalesColumn
@@ -241,6 +242,17 @@ class AnalyticsSalesTest {
         assertNull(barAt(x = -1f, width = 100, count = 10))
         assertNull(barAt(x = 101f, width = 100, count = 10))
         assertNull(barAt(x = 10f, width = 100, count = 0))
+    }
+
+    @Test
+    fun `ряд короче недели держит деления, а пустое деление столбика не называет`() {
+        // Один день занимает седьмую часть полотна, а не всё полотно:
+        // заливка от края до края читается не как столбик, а как поломка.
+        assertEquals(7, chartSlots(1))
+        assertEquals(7, chartSlots(7))
+        assertEquals(30, chartSlots(30))
+        assertEquals(0, barAt(x = 10f, width = 700, count = 1))
+        assertNull(barAt(x = 300f, width = 700, count = 1))
     }
 
     @Test

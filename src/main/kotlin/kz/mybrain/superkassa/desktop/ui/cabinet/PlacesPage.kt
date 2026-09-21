@@ -62,6 +62,7 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     Row(modifier = Modifier.fillMaxSize()) {
         PlaceTree(
             texts = texts,
+            language = session.language,
             collapsed = session.placesCollapsed,
             onToggle = { session.togglePlaces() },
             rows = placeRows(places, cabinet.registers, place, query),

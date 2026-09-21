@@ -79,17 +79,21 @@ internal val cabinetTextsRu = CabinetTexts(
     changeAddress = "Сменить адрес",
     deleteRegister = "Удалить кассу",
     deleteOnlyDraft = "Удалить можно только кассу, ещё не поставленную на учёт",
-    statusDraft = "Черновик",
-    statusRegistered = "На учёте",
-    statusDeregistered = "Снята с учёта",
-    statusActive = "Работает",
-    statusInactive = "Остановлена",
-    statusAccepted = "Принято",
-    statusRejected = "Отказано",
-    statusSent = "Отправлено",
-    statusInProcess = "На рассмотрении в КГД",
-    shiftOpen = "Смена открыта",
-    shiftClosed = "Смена закрыта",
+    statuses = CabinetStatusNames(
+        draft = "Черновик",
+        registered = "На учёте",
+        deregistered = "Снята с учёта",
+        active = "Работает",
+        inactive = "Остановлена",
+        blocked = "Заблокирована",
+        accepted = "Принято",
+        rejected = "Отказано",
+        sent = "Отправлено",
+        inProcess = "На рассмотрении в КГД",
+        shiftOpen = "Смена открыта",
+        shiftClosed = "Смена закрыта",
+        unknown = "Состояние неизвестно"
+    ),
     operationSale = "Продажа",
     operationReturn = "Возврат продажи",
     operationPurchase = "Покупка",
@@ -216,7 +220,7 @@ internal val cabinetTextsRu = CabinetTexts(
     applicationFailed = "Заявление не отправлено",
     addressPickAgain = "Выбрать другой адрес",
     addressNotFound = "Регистр ничего не отдал на этом шаге — уточните запрос или повторите позже",
-    placeSearch = "Поиск: точка, касса, РНМ",
+    placeSearch = "Поиск: точка, касса, номер КГД",
     placeNotFound = "Ничего не нашлось",
     map = MapTexts(
         pickOnMapHint = "Нажмите на карте, где стоит точка; карту можно тянуть мышью",
@@ -298,6 +302,14 @@ internal val cabinetTextsRu = CabinetTexts(
             "меняют, и без них сверка ящика не сойдётся",
         factoryNumber = "Номер, которым касса помечена изготовителем: он уходит " +
             "в заявление и стоит в регистрационной карте. Пока касса не на учёте, его " +
-            "можно исправить здесь"
+            "можно исправить здесь",
+        card = "Регистрационная карта — то, что КГД записал о кассе: номер, модель, " +
+            "торговая точка и дата постановки на учёт. Версия карты появляется при каждой " +
+            "перерегистрации, и по версиям видно, что именно менялось",
+        actionsJournal = "След каждого заявления в КГД: какое подано, когда и чем " +
+            "закончилось. Сюда смотрят, когда нужно понять, почему касса в нынешнем " +
+            "состоянии, или доказать, что заявление подавали",
+        newPlaceNotChosen = "Перерегистрация переносит кассу в другую торговую точку — " +
+            "выберите её в списке выше, иначе кабинет заявление отклонит"
     )
 )

@@ -24,8 +24,8 @@ fun CabinetTexts.headlineWords(headline: Headline): String = when (headline) {
     Headline.Blocked -> stateBlocked
     Headline.OffRecord -> stateOffRecord
     Headline.WorkUnknown -> stateWorkUnknown
-    Headline.ShiftOpen -> shiftOpen
-    Headline.ShiftClosed -> shiftClosed
+    Headline.ShiftOpen -> statuses.shiftOpen
+    Headline.ShiftClosed -> statuses.shiftClosed
     Headline.ShiftUnknown -> stateShiftUnknown
 }
 

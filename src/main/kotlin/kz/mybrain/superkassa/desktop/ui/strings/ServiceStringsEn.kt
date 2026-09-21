@@ -160,7 +160,8 @@ internal val englishPreview = PreviewStrings(
     drawPinHint = "The print form is drawn by the cash register, and the node admits it by PIN. " +
         "The PIN stays in memory only and does not open the register sections.",
     draw = "Show the form",
-    noDrawer = "The node returned no cash register, so there is nothing to draw the print form with."
+    noDrawer = "The document came from the cabinet, but its print form is drawn by a cash " +
+        "register on this machine. The node returned none, so there is nothing to draw with."
 )
 
 internal val englishStatus = StatusStrings(

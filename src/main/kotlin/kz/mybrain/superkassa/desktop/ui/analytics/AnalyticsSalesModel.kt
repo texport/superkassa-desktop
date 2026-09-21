@@ -38,9 +38,10 @@ import java.time.LocalDate
  * @param register касса, которой ограничен отбор; `null` — вся сеть.
  *   Тот же расчёт и те же ручки: сводка по одной кассе отличается
  *   от сводки по сети только этим отбором, и второго счёта для неё
- *   заводить незачем.
+ *   заводить незачем. Отбор виден и показу: плитки сети отвечают
+ *   на вопросы, которых у одной кассы нет.
  */
-class AnalyticsSalesModel(private val cabinet: CabinetSession, private val register: String? = null) {
+class AnalyticsSalesModel(private val cabinet: CabinetSession, val register: String? = null) {
 
     /** Срок сводки; выбирается той же полосой, что и срок журнала кассы. */
     var period: JournalPeriod by mutableStateOf(JournalPeriod.of(JournalSpan.Week))
