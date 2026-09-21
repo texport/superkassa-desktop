@@ -5,13 +5,17 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kz.mybrain.superkassa.desktop.eds.EdsProblem
 import kz.mybrain.superkassa.desktop.eds.EdsRefusal
+import kz.mybrain.superkassa.desktop.eds.ncaUnreachable
 import kz.mybrain.superkassa.desktop.eds.ncaIsGreeting
 import kz.mybrain.superkassa.desktop.eds.ncaLegacySignatureOf
 import kz.mybrain.superkassa.desktop.eds.ncaSignRequest
 import kz.mybrain.superkassa.desktop.eds.ncaSignatureOf
+import java.net.SocketTimeoutException
+import javax.net.ssl.SSLException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
@@ -24,6 +28,35 @@ import kotlin.test.assertTrue
 class EdsProtocolTest {
 
     private val json = Json { ignoreUnknownKeys = true }
+
+    /**
+     * Первое подключение к NCALayer на Linux срывается, второе проходит.
+     * Повторять можно только пока запрос не ушёл: NCALayer его не видел
+     * и окна подписи не открывал. После отправки повтор открыл бы окно
+     * второй раз.
+     */
+    @Test
+    fun `сорванное подключение можно повторить, а сорванный обмен нельзя`() {
+        val onConnect = ncaUnreachable(SSLException("handshake_failure"), sent = false)
+        val onExchange = ncaUnreachable(SSLException("handshake_failure"), sent = true)
+
+        assertTrue(onConnect.beforeRequest)
+        assertFalse(onExchange.beforeRequest)
+    }
+
+    /**
+     * У отказов защищённого соединения сообщение бывает пустым, и в журнале
+     * оставалось «подпись не получена: Unreachable». Разбирают такое
+     * по журналу с чужой машины, и имя исключения там единственная зацепка.
+     */
+    @Test
+    fun `в подробностях отказа стоит имя исключения`() {
+        assertEquals("SSLException", ncaUnreachable(SSLException(null as String?), sent = false).detail)
+        assertEquals(
+            "SocketTimeoutException: connect timed out",
+            ncaUnreachable(SocketTimeoutException("connect timed out"), sent = false).detail
+        )
+    }
 
     @Test
     fun `на подпись уходит содержимое от кабинета, а не его пересказ`() {

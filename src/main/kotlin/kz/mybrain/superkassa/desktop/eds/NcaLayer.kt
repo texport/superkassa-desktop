@@ -12,6 +12,8 @@ import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
+import kz.mybrain.superkassa.desktop.app.log.AppLog
+import kz.mybrain.superkassa.desktop.app.log.LogSource
 import java.io.IOException
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
@@ -51,11 +53,6 @@ class NcaLayer(private val address: String = DEFAULT_ADDRESS) {
         return ncaLegacySignatureOf(ask(ncaLegacyRequest(base64Content)))
     }
 
-    /** Отвечает ли NCALayer на этой машине. */
-    suspend fun available(): Boolean = runCatching {
-        withTimeout(PROBE_TIMEOUT_MS) { client().use { it.webSocket(address) { } } }
-    }.isSuccess
-
     /**
      * Запрос и ответ на него.
      *
@@ -70,12 +67,46 @@ class NcaLayer(private val address: String = DEFAULT_ADDRESS) {
      * на середине.
      */
     private suspend fun ask(request: JsonObject): JsonObject {
+        awaitReady()
+        return exchange(request)
+    }
+
+    /**
+     * Убеждается, что NCALayer отвечает, прежде чем ждать подписи.
+     *
+     * Ожидание подписи длинное намеренно: NCALayer держит соединение,
+     * пока владелец выбирает сертификат и вводит пароль. Но если NCALayer
+     * не отвечает вовсе, ждать эти три минуты незачем — владелец смотрел
+     * в неподвижный экран, а в журнале оставалось «Timed out waiting
+     * for 180000 ms». Короткое рукопожатие отделяет «его нет» от «человек
+     * ещё думает».
+     *
+     * Рукопожатие делается дважды: первое к NCALayer часто срывается —
+     * он поднимает защищённое соединение на петле, и на это ему нужно
+     * время. Владелец видел отказ и повторял вручную.
+     */
+    private suspend fun awaitReady() {
+        if (handshake()) return
+        AppLog.warn(LogSource.Signature, "NCALayer не ответил на первое рукопожатие, повтор")
+        if (handshake()) return
+        throw EdsRefusal(EdsProblem.Unreachable, NO_HANDSHAKE)
+    }
+
+    /** Отвечает ли NCALayer: подключились и разошлись. */
+    private suspend fun handshake(): Boolean = runCatching {
+        withTimeout(HANDSHAKE_TIMEOUT_MS) { client().use { it.webSocket(address) { } } }
+    }.isSuccess
+
+    /** Один обмен: подключение, запрос и ответ по делу. */
+    private suspend fun exchange(request: JsonObject): JsonObject {
+        var sent = false
         val answer = try {
             client().use { http ->
                 var received: JsonObject? = null
                 withTimeout(SIGN_TIMEOUT_MS) {
                     http.webSocket(address) {
                         send(Frame.Text(request.toString()))
+                        sent = true
                         while (received == null) {
                             val text = (incoming.receive() as? Frame.Text)?.readText() ?: continue
                             received = parsed(text)?.takeUnless { it.isGreeting() }
@@ -90,9 +121,9 @@ class NcaLayer(private val address: String = DEFAULT_ADDRESS) {
             // видел «Кабинет не отвечает» там, где сам и закрыл окно.
             throw EdsRefusal(EdsProblem.Declined, WINDOW_CLOSED, failure)
         } catch (failure: IOException) {
-            throw EdsRefusal(EdsProblem.Unreachable, failure.message.orEmpty(), failure)
+            throw ncaUnreachable(failure, sent)
         } catch (failure: TimeoutCancellationException) {
-            throw EdsRefusal(EdsProblem.Unreachable, failure.message.orEmpty(), failure)
+            throw ncaUnreachable(failure, sent)
         }
         return answer ?: throw EdsRefusal(EdsProblem.Unreachable, "")
     }
@@ -124,8 +155,24 @@ class NcaLayer(private val address: String = DEFAULT_ADDRESS) {
          */
         const val WINDOW_CLOSED: String = "WINDOW_CLOSED"
 
+        /** NCALayer не ответил на рукопожатие: его нет или он не работает. */
+        const val NO_HANDSHAKE: String = "NO_HANDSHAKE"
+
+        /**
+         * Сколько ждать подписи после того, как NCALayer ответил.
+         *
+         * Длинное намеренно: столько владелец выбирает сертификат
+         * и вводит пароль.
+         */
         private const val SIGN_TIMEOUT_MS = 180_000L
-        private const val PROBE_TIMEOUT_MS = 2_000L
+
+        /**
+         * Сколько ждать рукопожатия с NCALayer.
+         *
+         * Столько занимает поднять защищённое соединение на петле —
+         * человек в этом не участвует, и ждать дольше нечего.
+         */
+        private const val HANDSHAKE_TIMEOUT_MS = 5_000L
 
         private val json = Json {
             ignoreUnknownKeys = true
