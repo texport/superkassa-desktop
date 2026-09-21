@@ -15,10 +15,10 @@ import kotlinx.serialization.Serializable
 data class TaxSettings(val taxRegime: String, val defaultVatGroup: String)
 
 @Serializable
-data class AutoCloseShift(val autoCloseShift: Boolean)
+data class AutoCashout(val autoCashout: Boolean)
 
 suspend fun ServerClient.updateTaxSettings(kkmId: String, settings: TaxSettings, pin: String): Kkm =
     request(HttpMethod.Put, "/kkm/$kkmId/settings/tax", settings, pin)
 
-suspend fun ServerClient.updateAutoCloseShift(kkmId: String, value: Boolean, pin: String): Kkm =
-    request(HttpMethod.Put, "/kkm/$kkmId/settings/autocloseshift", AutoCloseShift(value), pin)
+suspend fun ServerClient.updateAutoCashout(kkmId: String, value: Boolean, pin: String): Kkm =
+    request(HttpMethod.Put, "/kkm/$kkmId/settings/autocashout", AutoCashout(value), pin)

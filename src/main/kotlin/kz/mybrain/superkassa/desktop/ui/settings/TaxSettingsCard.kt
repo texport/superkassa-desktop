@@ -21,7 +21,7 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.TaxSettings
-import kz.mybrain.superkassa.desktop.server.updateAutoCloseShift
+import kz.mybrain.superkassa.desktop.server.updateAutoCashout
 import kz.mybrain.superkassa.desktop.server.updateTaxSettings
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
@@ -64,7 +64,7 @@ fun TaxSettingsCard(session: Session) {
                 group = it
             }
         }
-        AutoCloseRow(session, kkm)
+        AutoCashoutRow(session, kkm)
         SaveTax(session, kkm, regime, group)
     }
 }
@@ -89,13 +89,18 @@ private fun EntryPicker(
 }
 
 /**
- * Автозакрытие смены.
+ * Автоизъятие наличных при закрытии смены.
  *
- * Смена по правилам КГД живёт сутки; узел умеет закрывать её сам. Отдельной
- * кнопки у переключателя нет: он и есть действие, и уходит на узел сразу.
+ * На этом месте стоял переключатель автозакрытия смены. Его настройку
+ * не читал никто: смену закрывает кассир, а сверх суток касса перестаёт
+ * оформлять операции — так требуют требования к ККМ. Зато автоизъятие
+ * узел выполняет по-настоящему, и задать его было нечем.
+ *
+ * Отдельной кнопки у переключателя нет: он и есть действие, и уходит
+ * на узел сразу.
  */
 @Composable
-private fun AutoCloseRow(session: Session, kkm: Kkm) {
+private fun AutoCashoutRow(session: Session, kkm: Kkm) {
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
     Row(
@@ -103,20 +108,20 @@ private fun AutoCloseRow(session: Session, kkm: Kkm) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Switch(
-            checked = kkm.autoCloseShift,
+            checked = kkm.autoCashout,
             enabled = !session.busy && kkm.isProgramming,
             onCheckedChange = { wanted ->
                 scope.launch {
-                    session.guard(texts.settings.autoCloseShift) {
-                        session.client.updateAutoCloseShift(kkm.kkmId, wanted, session.pin)
+                    session.guard(texts.settings.autoCashout) {
+                        session.client.updateAutoCashout(kkm.kkmId, wanted, session.pin)
                     } ?: return@launch
                     session.refreshKkms()
                     session.report(texts.settings.settingsSaved)
                 }
             }
         )
-        Text(texts.settings.autoCloseShift, style = MaterialTheme.typography.bodyMedium)
-        InfoTip(texts.settings.autoCloseShiftHint)
+        Text(texts.settings.autoCashout, style = MaterialTheme.typography.bodyMedium)
+        InfoTip(texts.settings.autoCashoutHint)
     }
 }
 

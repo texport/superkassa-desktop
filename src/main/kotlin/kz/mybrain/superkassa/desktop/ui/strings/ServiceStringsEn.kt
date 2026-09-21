@@ -71,9 +71,9 @@ internal val englishSettings = SettingStrings(
         "from the KGD records — a mismatch sends receipts out with the wrong tax",
     taxRegime = "Tax regime",
     defaultVatGroup = "Default VAT rate",
-    autoCloseShift = "Close the shift automatically",
-    autoCloseShiftHint = "A shift lasts a day. The node closes it on its own if the cashier did not — the Z report is still taken on " +
-        "time.",
+    autoCashout = "Cash out when the shift closes",
+    autoCashoutHint = "The register issues the cash withdrawal together with the Z report. Without it the money in the " +
+        "drawer carries over into the next shift and the register total stops matching the drawer.",
     settingsSaved = "Register settings saved",
     node = "Node",
     nodeHint = "The node is the service on this machine that talks to the BFD: the cash register hands it a command, it " +

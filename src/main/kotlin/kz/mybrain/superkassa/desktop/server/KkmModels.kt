@@ -38,7 +38,8 @@ data class Kkm(
      * значением по умолчанию: иначе отсутствие поля читалось бы как
      * включённое автозакрытие.
      */
-    val autoCloseShift: Boolean = false,
+    /** Изымать ли наличные при закрытии смены: узел делает это сам. */
+    val autoCashout: Boolean = false,
     val ofdServiceInfo: OrgInfo? = null,
     val branding: Branding? = null
 ) {
