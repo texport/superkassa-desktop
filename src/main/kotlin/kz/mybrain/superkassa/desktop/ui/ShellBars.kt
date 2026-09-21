@@ -12,11 +12,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshKkms
 import kz.mybrain.superkassa.desktop.app.refreshSelected
@@ -105,10 +108,23 @@ internal fun KkmTopBar(session: Session, onSignOut: () -> Unit, onRefresh: () ->
 @Composable
 internal fun CabinetMessageEffect(session: Session, cabinet: CabinetSession) {
     val texts = cabinetTexts(session.language)
+    // Что каркас показал со слов кабинета. Снимать можно только своё:
+    // отказ узла кассиру никто не отменял, и гасить его ответом кабинета
+    // значит терять сказанное о чеке.
+    var mine by remember { mutableStateOf<Message?>(null) }
     LaunchedEffect(cabinet.problem) {
         val problem = cabinet.problem ?: return@LaunchedEffect
-        session.lastMessage = cabinetMessage(problem, texts)
+        val message = cabinetMessage(problem, texts)
+        session.lastMessage = message
+        mine = message
         cabinet.clearProblem()
+    }
+    // Кабинет ответил — значит прежний отказ уже неправда.
+    LaunchedEffect(cabinet.answered) {
+        if (mine != null && session.lastMessage === mine) {
+            session.lastMessage = null
+            mine = null
+        }
     }
 }
 

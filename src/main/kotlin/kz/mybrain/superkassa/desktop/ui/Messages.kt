@@ -46,7 +46,14 @@ fun MessageEffect(
     val texts = LocalStrings.current
     val shown = remember(message) { message }
     LaunchedEffect(shown) {
-        val current = shown ?: return@LaunchedEffect
+        // Сообщения нет — значит причина устранена, и висящей строке
+        // на экране больше не место. Прежде снекбар оставался стоять:
+        // отказ показывается до тех пор, пока его не закроют, и владелец
+        // читал «Кабинет не отвечает» под четвёртым успешным шагом мастера.
+        val current = shown ?: run {
+            state.currentSnackbarData?.dismiss()
+            return@LaunchedEffect
+        }
         val text = when (current) {
             is Message.Done -> current.text
             // Код отказа на экране кассиру ничего не даёт: узел отвечает

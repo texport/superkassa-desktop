@@ -84,6 +84,18 @@ class CabinetSession(
         problem = null
     }
 
+    /**
+     * Сколько раз кабинет ответил по существу.
+     *
+     * Счётчик, а не флаг: каркасу нужно знать не «отвечает ли кабинет
+     * сейчас», а «ответил ли он после того, как я показал отказ». Отказ
+     * висит на экране, пока его не закроют, и без этой отметки владелец
+     * читал «Кабинет не отвечает» над четвёртым успешно пройденным шагом
+     * мастера.
+     */
+    var answered: Int by mutableStateOf(0)
+        private set
+
     /** Идёт обращение к кабинету или ожидание подписи. */
     var busy: Boolean by mutableStateOf(false)
         private set
@@ -146,7 +158,7 @@ class CabinetSession(
         problem = null
         busy = true
         return try {
-            block()
+            block().also { answered += 1 }
         } catch (refusal: CabinetRefusal) {
             problem = if (refusal.endsSession(entered = token != null)) endSession() else refusal.asProblem()
             null
