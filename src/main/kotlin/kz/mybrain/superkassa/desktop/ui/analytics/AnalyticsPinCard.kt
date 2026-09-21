@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,17 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
-import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMoment
-import kz.mybrain.superkassa.desktop.ui.cabinet.statusTitle
-import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
  * Касса, выбранная на карте.
@@ -81,13 +76,7 @@ private fun CardHead(kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetT
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
     )
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-        CabinetStatusChip(kkm.status, cabinet)
-        if (kkm.blocked) Chip(text = texts.blocked, color = StatusColors.refused)
-        kkm.shiftStatus?.takeIf { it.isNotBlank() }?.let { shift ->
-            Chip(text = shiftWords(shift, kkm.shiftNumber, cabinet), color = StatusColors.pending)
-        }
-    }
+    KkmChips(kkm, texts, cabinet)
 }
 
 /**
@@ -128,7 +117,3 @@ private fun CardFacts(kkm: AnalyticsKkm, source: PositionSource, texts: Analytic
     DetailLine(texts.positionFrom, positionWords(source, texts))
     DetailLine(texts.geoSource, kkm.position?.geoSource)
 }
-
-/** Смена: её состояние и номер одной плашкой. */
-private fun shiftWords(status: String, number: Long?, cabinet: CabinetTexts): String =
-    listOfNotNull(statusTitle(status, cabinet), number?.let { "№ $it" }).joinToString(" · ")

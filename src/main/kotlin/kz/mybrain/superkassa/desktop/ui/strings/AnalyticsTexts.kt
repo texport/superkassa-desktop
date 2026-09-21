@@ -43,6 +43,7 @@ data class AnalyticsTexts(
     val pickPinHint: String,
 
     val searchKkm: String,
+    val searchKkmLabel: String,
     val allPlaces: String,
     val markShiftOpen: String,
     val markBlocked: String,

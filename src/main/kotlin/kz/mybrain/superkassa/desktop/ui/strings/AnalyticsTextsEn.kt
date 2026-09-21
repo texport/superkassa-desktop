@@ -78,6 +78,7 @@ internal val analyticsTextsEn = AnalyticsTexts(
     pickPinHint = "Click a point — its card appears here",
 
     searchKkm = "A name, a KGD number or an address",
+    searchKkmLabel = "Find a cash register",
     allPlaces = "All retail places",
     markShiftOpen = "Shift open",
     markBlocked = "Blocked",

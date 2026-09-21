@@ -126,7 +126,7 @@ class AnalyticsRenderTest {
     @Test
     fun `список касс места рисуется`() {
         val group = kkmGroups((1..3).map { at -> PlacedKkm(kkm(at), LATITUDE, LONGITUDE) }, CITY_ZOOM).single()
-        RenderProbe { AnalyticsSpotCard(group, texts, onChoose = {}) }
+        RenderProbe { AnalyticsSpotCard(group, texts, cabinet, onChoose = {}) }
             .use { assertTrue(it.frame().isNotEmpty()) }
     }
 

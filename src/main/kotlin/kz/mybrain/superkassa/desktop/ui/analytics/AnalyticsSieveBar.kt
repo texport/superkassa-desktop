@@ -39,11 +39,15 @@ fun AnalyticsSieveBar(model: AnalyticsMapModel, places: List<SievePlace>, texts:
         // над её подписью: ряд читается как один, а не как два уровня.
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
+        // Подпись поля короткая, а чем искать — примером внутри него:
+        // длинная подпись переносилась на вторую строку, поле становилось
+        // выше плашек, и ряд читался как два разных.
         SearchField(
             value = sieve.needle,
-            label = texts.searchKkm,
+            label = texts.searchKkmLabel,
             onChange = { model.sieve = sieve.copy(needle = it) },
-            modifier = Modifier.fieldWidth(texts.searchKkm, Sizes.fieldSearch),
+            modifier = Modifier.fieldWidth(texts.searchKkmLabel, Sizes.fieldSearch),
+            hint = texts.searchKkm,
             clearLabel = texts.sieveClear
         )
         Marks(model, texts)

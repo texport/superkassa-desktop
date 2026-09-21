@@ -78,6 +78,7 @@ internal val analyticsTextsRu = AnalyticsTexts(
     pickPinHint = "Нажмите точку — здесь появится её карточка",
 
     searchKkm = "Название, номер КГД или адрес",
+    searchKkmLabel = "Поиск кассы",
     allPlaces = "Все торговые точки",
     markShiftOpen = "Смена открыта",
     markBlocked = "Заблокированные",

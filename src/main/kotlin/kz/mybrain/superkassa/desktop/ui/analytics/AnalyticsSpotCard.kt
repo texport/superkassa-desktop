@@ -15,6 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
+import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -33,6 +34,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun AnalyticsSpotCard(
     group: KkmGroup,
     texts: AnalyticsTexts,
+    cabinet: CabinetTexts,
     onChoose: (PlacedKkm) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -46,7 +48,10 @@ fun AnalyticsSpotCard(
                 itemsIndexed(group.kkms, key = { _, row -> "spot-${row.kkm.cashRegisterId}" }) { at, row ->
                     RecordRow(
                         title = kkmTitle(row.kkm),
-                        subtitle = row.kkm.retailPlaceName,
+                        // Торговая точка у всех строк места одна и та же —
+                        // она сказана в шапке. Под названием стоит то, чем
+                        // кассы места и различаются: состояние и смена.
+                        support = { KkmChips(row.kkm, texts, cabinet) },
                         striped = at % 2 == 1,
                         onClick = { onChoose(row) }
                     )

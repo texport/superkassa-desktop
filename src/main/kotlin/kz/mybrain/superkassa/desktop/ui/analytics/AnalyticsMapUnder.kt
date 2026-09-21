@@ -41,7 +41,7 @@ internal fun UnderMap(
     val spot = groups.firstOrNull { it.id == model.spot }
     val chosen = placement.placed.firstOrNull { it.kkm.cashRegisterId == model.chosen }?.kkm
     if (chosen == null && spot != null && spot.size > 1) {
-        AnalyticsSpotCard(spot, texts, onChoose = { row -> model.chosen = row.kkm.cashRegisterId })
+        AnalyticsSpotCard(spot, texts, cabinetTexts, onChoose = { row -> model.chosen = row.kkm.cashRegisterId })
         return
     }
     // Высота карточки не задана: её содержимое разное, и при заданной
