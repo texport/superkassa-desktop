@@ -107,17 +107,17 @@ internal fun RefundHints(
 }
 
 /**
- * Отметки в чек не уйдут: сумма возврата набрана другая.
+ * Строка о том, чем обернётся набранное, — приглушённой ролью.
  *
- * Сказано до отправки и приглушённой ролью: это не ошибка ввода, а то,
- * чем обернётся набранная сумма. Прежде экран показывал отмеченные
- * позиции, а в ОФД уходила одна строка — и кассир об этом не знал.
+ * Это не ошибка ввода: набрано верно, но чек уйдёт не таким, каким его
+ * читает экран, или денег в ящике меньше, чем отдают покупателю. Красным
+ * такие строки не красят — красное кассир читает как поломку.
  */
 @Composable
-internal fun RefundItemsNote(journal: ReturnJournalTexts, shown: Boolean) {
-    if (!shown) return
+internal fun RefundNote(text: String?) {
+    if (text == null) return
     Text(
-        text = journal.itemsIgnored,
+        text = text,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

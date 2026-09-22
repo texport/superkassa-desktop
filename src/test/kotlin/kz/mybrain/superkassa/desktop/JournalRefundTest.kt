@@ -7,6 +7,7 @@ import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.ui.returns.RefundAmount
 import kz.mybrain.superkassa.desktop.ui.returns.RefundProblem
 import kz.mybrain.superkassa.desktop.ui.returns.ReturnKind
+import kz.mybrain.superkassa.desktop.ui.returns.drawerShortage
 import kz.mybrain.superkassa.desktop.ui.returns.matches
 import kz.mybrain.superkassa.desktop.ui.returns.refundAmountOf
 import kz.mybrain.superkassa.desktop.ui.returns.refundLineName
@@ -192,6 +193,34 @@ class JournalRefundTest {
         assertTrue(
             ReturnKind.Sell.basisIn(documents).isEmpty(),
             "без номера и суммы чек-основание не собрать, а кнопка молчала бы"
+        )
+    }
+
+    /**
+     * Наличных в ящике меньше, чем отдают покупателю.
+     *
+     * Возврат продажи берёт деньги из того же ящика, из которого их
+     * изымают: изъятие сверх остатка касса не проводила, а возврат той же
+     * суммы отправляла молча — кассир называл покупателю сумму, которой
+     * в ящике нет.
+     */
+    @Test
+    fun `нехватка наличных на возврат названа до отправки`() {
+        val drawer = 100_000L
+
+        assertEquals(
+            drawer,
+            drawerShortage(ReturnKind.Sell, drawer, BigDecimal("1000.01")),
+            "возврат продажи деньги из ящика отдаёт, и нехватку надо назвать"
+        )
+        assertNull(drawerShortage(ReturnKind.Sell, drawer, BigDecimal("1000.00")), "ровно остаток — хватает")
+        assertNull(
+            drawerShortage(ReturnKind.Buy, drawer, BigDecimal("5000.00")),
+            "возврат покупки деньги принимает: ящику хватает всегда"
+        )
+        assertNull(
+            drawerShortage(ReturnKind.Sell, null, BigDecimal("5000.00")),
+            "неизвестный остаток о нехватке не свидетельствует"
         )
     }
 

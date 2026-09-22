@@ -123,7 +123,8 @@ private fun RefundForm(
             }
             // Отметки описывают чек возврата только тогда, когда сумма
             // осталась их суммой: поправленное поле отправит одну строку.
-            RefundItemsNote(journal, chosen.isNotEmpty() && chosenTiyn(items, chosen) != readyTiyn(checked))
+            val byTicks = chosen.isNotEmpty() && chosenTiyn(items, chosen) == readyTiyn(checked)
+            RefundNote(journal.itemsIgnored.takeIf { chosen.isNotEmpty() && !byTicks })
             RefundAmountRow(journal, entered, checked is RefundAmount.Rejected, { entered = it }) {
                 chosen = emptySet()
                 entered = tengeText(total)
@@ -132,6 +133,13 @@ private fun RefundForm(
             // часть из ящика. Сумма разбивается от суммы возврата, а не от
             // итога чека-основания.
             PaymentLines(session, split, refundSum)
+            // Деньги покупателю отдают из того же ящика, из которого их
+            // изымают: о нехватке говорится под видами оплаты и до выдачи,
+            // а не отказом узла после.
+            RefundNote(
+                drawerShortage(kind, session.cashInDrawer, split.cashSum(refundSum))
+                    ?.let { journal.drawerShort.format(Money.formatTiyn(it)) }
+            )
             RefundHints(journal, checked, split.issue(refundSum), paymentTexts(session.language))
         }
         Button(

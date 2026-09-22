@@ -42,6 +42,22 @@ fun refundAmountOf(entered: String, basisTiyn: Long): RefundAmount {
 fun tengeText(tiyn: Long): String = Money.entered(Money.tengeOf(tiyn))
 
 /**
+ * Наличных в ящике меньше, чем возвращают деньгами.
+ *
+ * Возврат продажи отдаёт деньги из того же ящика, из которого их изымают,
+ * и о нехватке кассир должен узнать до того, как назовёт сумму покупателю.
+ * Возврат покупки деньги принимает — ему хватает всегда. Неизвестный
+ * остаток молчит: утверждать нехватку по неизвестному числу нельзя.
+ *
+ * @return остаток ящика, когда его не хватает, иначе `null`.
+ */
+fun drawerShortage(kind: ReturnKind, drawerTiyn: Long?, cashRefund: BigDecimal): Long? {
+    if (kind != ReturnKind.Sell) return null
+    val drawer = drawerTiyn ?: return null
+    return drawer.takeIf { Money.tiynOf(cashRefund) > it }
+}
+
+/**
  * Сумма перечисленных позиций в тиынах.
  *
  * Одна на весь возврат: ею заполняется поле суммы при отметке позиций,

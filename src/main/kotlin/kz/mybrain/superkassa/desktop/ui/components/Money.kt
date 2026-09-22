@@ -47,6 +47,14 @@ object Money {
     fun tengeOf(tiyn: Long): BigDecimal = BigDecimal.valueOf(tiyn, TIYN_SCALE)
 
     /**
+     * Тенге в тиыны: в них узел держит остаток ящика и суммы чеков.
+     *
+     * Обратная сторона [tengeOf] и живёт рядом с ней: счёт тиынов вели
+     * денежный ящик и возврат порознь, а правило деления денег одно.
+     */
+    fun tiynOf(amount: BigDecimal): Long = amount.movePointRight(TIYN_SCALE).toLong()
+
+    /**
      * Сумма со знаком: минус берётся из общего набора знаков.
      *
      * Знак вычитания и дефис переноса на экране разной ширины, и столбец
