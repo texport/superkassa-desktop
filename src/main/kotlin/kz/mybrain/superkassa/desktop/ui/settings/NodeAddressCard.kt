@@ -8,10 +8,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
@@ -31,7 +27,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 fun NodeAddressCard(session: Session) {
     val texts = LocalStrings.current.settings
-    var address by remember { mutableStateOf(session.preferences.nodeUrl) }
+    // Набранное переживает уход в другой раздел: экран настроек уходит
+    // из состава вместе с ним, и поле забывало набранное молча.
+    val address = SettingsDrafts.of(SettingsDrafts.Field.NODE_ADDRESS, session.preferences.nodeUrl)
     SectionCard(title = texts.nodeAddress, info = texts.nodeAddressHint) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
@@ -39,7 +37,7 @@ fun NodeAddressCard(session: Session) {
         ) {
             OutlinedTextField(
                 value = address,
-                onValueChange = { address = it },
+                onValueChange = { SettingsDrafts.type(SettingsDrafts.Field.NODE_ADDRESS, it) },
                 label = { Text(texts.nodeAddress) },
                 singleLine = true,
                 modifier = Modifier.width(Sizes.fieldName)
@@ -49,7 +47,10 @@ fun NodeAddressCard(session: Session) {
                 enabled = address.isNotBlank() && address.trim() != session.preferences.nodeUrl,
                 // Пробел по краям адреса приходит из буфера обмена вместе
                 // со скопированной строкой, а узел по такому адресу не ищется.
-                onClick = { session.preferences.nodeUrl = address.trim() }
+                onClick = {
+                    session.preferences.nodeUrl = address.trim()
+                    SettingsDrafts.forget(SettingsDrafts.Field.NODE_ADDRESS)
+                }
             ) { Text(texts.save) }
         }
     }

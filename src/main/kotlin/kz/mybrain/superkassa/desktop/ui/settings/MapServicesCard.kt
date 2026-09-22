@@ -9,10 +9,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
@@ -38,31 +34,39 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun MapServicesCard(session: Session) {
     val texts = LocalStrings.current.settings
     val preferences = session.preferences
-    var tiles by remember { mutableStateOf(preferences.maps.tiles.orEmpty()) }
-    var search by remember { mutableStateOf(preferences.maps.search.orEmpty()) }
-    var reverse by remember { mutableStateOf(preferences.maps.reverse.orEmpty()) }
-    var location by remember { mutableStateOf(preferences.maps.location.orEmpty()) }
+    // Набранное переживает уход в другой раздел: экран настроек уходит
+    // из состава вместе с ним, и поля забывали набранное молча.
+    val tiles = SettingsDrafts.of(SettingsDrafts.Field.MAP_TILES, preferences.maps.tiles.orEmpty())
+    val search = SettingsDrafts.of(SettingsDrafts.Field.MAP_SEARCH, preferences.maps.search.orEmpty())
+    val reverse = SettingsDrafts.of(SettingsDrafts.Field.MAP_REVERSE, preferences.maps.reverse.orEmpty())
+    val location = SettingsDrafts.of(SettingsDrafts.Field.MAP_LOCATION, preferences.maps.location.orEmpty())
 
     fun save() {
         preferences.maps.tiles = tiles.trim().ifBlank { null }
         preferences.maps.search = search.trim().ifBlank { null }
         preferences.maps.reverse = reverse.trim().ifBlank { null }
         preferences.maps.location = location.trim().ifBlank { null }
+        MAP_FIELDS.forEach(SettingsDrafts::forget)
     }
 
     fun toDefaults() {
-        tiles = ""
-        search = ""
-        reverse = ""
-        location = ""
+        MAP_FIELDS.forEach { SettingsDrafts.type(it, "") }
         save()
     }
 
     SectionCard(title = texts.mapServices, info = texts.mapServicesHint) {
-        ServiceField(texts.mapTiles, tiles, MapService.TILES) { tiles = it }
-        ServiceField(texts.mapSearch, search, MapService.SEARCH) { search = it }
-        ServiceField(texts.mapReverse, reverse, MapService.REVERSE) { reverse = it }
-        ServiceField(texts.mapLocation, location, MapService.LOCATION) { location = it }
+        ServiceField(texts.mapTiles, tiles, MapService.TILES) {
+            SettingsDrafts.type(SettingsDrafts.Field.MAP_TILES, it)
+        }
+        ServiceField(texts.mapSearch, search, MapService.SEARCH) {
+            SettingsDrafts.type(SettingsDrafts.Field.MAP_SEARCH, it)
+        }
+        ServiceField(texts.mapReverse, reverse, MapService.REVERSE) {
+            SettingsDrafts.type(SettingsDrafts.Field.MAP_REVERSE, it)
+        }
+        ServiceField(texts.mapLocation, location, MapService.LOCATION) {
+            SettingsDrafts.type(SettingsDrafts.Field.MAP_LOCATION, it)
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
             FilledTonalButton(
                 enabled = changed(preferences, ServiceUrls(tiles, search, reverse, location)),
@@ -75,6 +79,14 @@ fun MapServicesCard(session: Session) {
         }
     }
 }
+
+/** Поля адресов карты: их четыре, и сохраняются они вместе. */
+private val MAP_FIELDS = listOf(
+    SettingsDrafts.Field.MAP_TILES,
+    SettingsDrafts.Field.MAP_SEARCH,
+    SettingsDrafts.Field.MAP_REVERSE,
+    SettingsDrafts.Field.MAP_LOCATION
+)
 
 /** Набранные в карточке адреса служб — одним значением: их четыре, и ходят они вместе. */
 private data class ServiceUrls(val tiles: String, val search: String, val reverse: String, val location: String)
