@@ -2,12 +2,11 @@ package kz.mybrain.superkassa.desktop.ui.sale
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -16,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.CollapsibleSection
+import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -25,20 +25,24 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Направление — сегментами: их ровно два, оба видны сразу, и выбранное
  * читается без открывания списка. Очистка — второстепенное действие
  * и потому текстовой кнопкой; появляется только когда есть что очищать.
+ *
+ * Ряд переносится, а не сжимается. Ширина сегментов задана их подписями,
+ * и в окне шириной в тысячу точек листу чека остаётся четверть ширины:
+ * прежде заголовок отдавал её сегментам и рассыпался столбиком по одной
+ * букве. Теперь при нехватке места направление и очистка уходят на
+ * вторую строку, а название остаётся названием — общим заголовком экрана,
+ * который сам сокращается многоточием, если места нет и под него.
  */
 @Composable
 fun SaleHeader(form: SaleForm, basket: Basket) {
     val texts = LocalStrings.current
-    Row(
+    FlowRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
+        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        itemVerticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = texts.sale.receipt,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.weight(1f)
-        )
+        ScreenTitle(texts.sale.receipt, Modifier.weight(1f, fill = false))
         OperationChoice(form)
         if (basket.positions.isNotEmpty()) {
             TextButton(onClick = { basket.clear() }) { Text(texts.sale.clearBasket) }
