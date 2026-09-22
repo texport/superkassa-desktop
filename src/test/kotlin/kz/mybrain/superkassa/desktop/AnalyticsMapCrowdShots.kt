@@ -80,7 +80,7 @@ class AnalyticsMapCrowdShots {
      */
     @Test
     fun `сеть почти из одних черновиков`() {
-        val laid = Placement(asKgdSees(crowd()), emptyList())
+        val laid = Placement(asKgdSees(crowd(SHOW_FLEET)), emptyList())
         val model = Look.model()
         model.centre(laid.placed)
         shoot("an-map-crowd-drafts", model, laid)
@@ -163,6 +163,9 @@ class AnalyticsMapCrowdShots {
 
         /** Сколько касс встало на карту с первого найденного адреса. */
         const val FIRST_YARD = 6
+
+        /** Столько касс в кабинете показа: на них и меряется кадр. */
+        const val SHOW_FLEET = 3294
 
         const val ALMATY_LATITUDE = 43.238949
         const val ALMATY_LONGITUDE = 76.889709
