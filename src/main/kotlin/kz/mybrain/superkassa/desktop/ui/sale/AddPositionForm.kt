@@ -77,9 +77,14 @@ fun AddPositionForm(session: Session, onAdd: (Position) -> Unit) {
     }
 }
 
-/** Поля позиции сверху вниз: что, почём, сколько, по какой ставке. */
+/**
+ * Поля позиции сверху вниз: что, почём, сколько, по какой ставке.
+ *
+ * Открыто пакету ради снимков: черновик формы живёт внутри неё, и набрать
+ * в него цену со скидкой снимку иначе нечем.
+ */
 @Composable
-private fun DraftFields(
+internal fun DraftFields(
     draft: PositionDraft,
     units: List<UnitOfMeasurement>,
     onChange: (PositionDraft) -> Unit
@@ -108,10 +113,17 @@ private fun DraftFields(
             onChange(draft.copy(quantity = it))
         }
     }
-    // Единица и скидка делят строку: с ценой единица в кассовую колонку
-    // не влезает, а отдельной строкой она отодвигала «Добавить» под сгиб —
-    // на окне ниже тысячи точек до кнопки приходилось прокручивать трижды,
-    // и так на каждую позицию чека.
+    // Скидка занимает строку целиком: внутри поля стоит выбор тенге или
+    // доли, и на половине строки число прижималось к переключателю, а
+    // подпись под полем переносилась на вторую строку.
+    DraftDiscountField(draft, onChange)
+    // Два списка делят строку: выбирают они из готового, а не набирают,
+    // и каждому хватает половины кассовой колонки. Порознь они отодвигали
+    // «Добавить» под сгиб — на окне ниже тысячи точек до кнопки
+    // приходилось прокручивать, и так на каждую позицию чека.
+    //
+    // Ставка есть только у плательщика НДС: у кассы без НДС выбирать
+    // нечего, и тогда единица занимает строку целиком сама.
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalAlignment = Alignment.CenterVertically
@@ -121,13 +133,32 @@ private fun DraftFields(
             units = units,
             modifier = Modifier.weight(1f)
         ) { onChange(draft.copy(measureUnitCode = it)) }
-        DraftAmountField(draft, DraftField.Discount, texts.sale.discount) {
-            onChange(draft.copy(discount = it))
-        }
+        VatPicker(draft.vatGroup, Modifier.weight(1f)) { onChange(draft.copy(vatGroup = it)) }
     }
-    // Ставка — своей строкой и только у плательщика НДС: у кассы без НДС
-    // выбирать нечего, и строка не занимает высоту зря.
-    VatPicker(draft.vatGroup, Modifier.fillMaxWidth()) { onChange(draft.copy(vatGroup = it)) }
+}
+
+/**
+ * Скидка на позицию: тенге или доля — тем же полем, что и скидка на чек.
+ *
+ * Под полем стоит либо помеха, либо то же число другим способом: набравший
+ * долю видит тенге, которые уйдут в узел, и не пересчитывает их в уме
+ * перед покупателем.
+ */
+@Composable
+private fun DraftDiscountField(draft: PositionDraft, onChange: (PositionDraft) -> Unit) {
+    val texts = LocalStrings.current
+    val extra = LocalSaleTexts.current
+    val problem = draft.problem(DraftField.Discount)?.takeIf { draft.discount.text.isNotBlank() }
+    AdjustmentField(
+        label = texts.sale.discount,
+        change = draft.discount,
+        modifier = Modifier.fillMaxWidth(),
+        isError = problem != null,
+        supportingText = problem?.text(extra)
+            ?: sameOtherwise(draft.discount, draft.lineCost, extra.lineChangeAsPercent),
+        onEnter = { onChange(draft.copy(discount = draft.discount.copy(text = it))) },
+        onSwitch = { onChange(draft.copy(discount = draft.discount.copy(unit = it))) }
+    )
 }
 
 /**

@@ -15,6 +15,7 @@ internal val saleTextsKk = SaleTexts(
     itemDiscountsGiven = "Позициялар бойынша жеңілдік",
     changeAsSum = "Бұл %s",
     changeAsPercent = "Бұл позициялар сомасының %s мөлшері",
+    lineChangeAsPercent = "Бұл позиция құнының %s мөлшері",
     paymentAndTotal = "Төлем және қорытынды",
     lineDiscount = "жеңілдік",
     addByEnter = "Enter позицияны қосады",

@@ -15,6 +15,7 @@ internal val saleTextsEn = SaleTexts(
     itemDiscountsGiven = "Given as line discounts",
     changeAsSum = "That is %s",
     changeAsPercent = "That is %s of the items sum",
+    lineChangeAsPercent = "That is %s of the line total",
     paymentAndTotal = "Payment and total",
     lineDiscount = "discount",
     addByEnter = "Enter adds the item",
