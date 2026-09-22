@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
@@ -25,6 +26,7 @@ import kz.mybrain.superkassa.desktop.ui.sale.LocalSaleTexts
 import kz.mybrain.superkassa.desktop.ui.sale.LocalUnits
 import kz.mybrain.superkassa.desktop.ui.sale.LocalVatRates
 import kz.mybrain.superkassa.desktop.ui.sale.Position
+import kz.mybrain.superkassa.desktop.ui.sale.PositionEntryCard
 import kz.mybrain.superkassa.desktop.ui.sale.ReceiptChangesCard
 import kz.mybrain.superkassa.desktop.ui.sale.ReceiptTotals
 import kz.mybrain.superkassa.desktop.ui.sale.SaleForm
@@ -33,10 +35,15 @@ import kz.mybrain.superkassa.desktop.ui.sale.totalOf
 import kz.mybrain.superkassa.desktop.ui.sale.vatRatesOf
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Accent
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.theme.schemeOf
+import java.io.ByteArrayInputStream
 import java.math.BigDecimal
+import javax.imageio.ImageIO
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -220,7 +227,61 @@ class KassaSaleLookTest {
         assertTrue(frames.map { it.toList() }.distinct().size == frames.size, "состояния чека неотличимы")
     }
 
+    /**
+     * Нетронутая форма позиции молчит.
+     *
+     * При открытии смены, до первого товара, под погашенной кнопкой
+     * «Добавить» стояло красное «Введите наименование товара»: касса
+     * упрекала кассира за работу, которую он ещё не начинал, тогда как
+     * сами поля формы в этот момент молчали. Ищется не надпись, а цвет:
+     * красного в нетронутой форме быть не должно вовсе.
+     */
+    @Test
+    fun `нетронутая форма позиции не краснеет`() {
+        val session = KassaScene.session("sale-entry-quiet", shift = KassaScene.openShift())
+        val fresh = KassaScene.shot("audit-sale-entry-fresh", width = ENTRY_WIDE, height = ENTRY_TALL) {
+            Entry(session)
+        }
+
+        assertEquals(0, redPixels(fresh), "нетронутая форма позиции показывает упрёк красным")
+    }
+
+    /** Карточка ввода позиции — та же, что стоит в кассовой колонке. */
+    @Composable
+    private fun Entry(session: Session) {
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
+            }
+        }
+    }
+
+    /** Сколько в кадре точек цвета отказа: им набран любой упрёк экрана. */
+    private fun redPixels(png: ByteArray): Int {
+        val image = ImageIO.read(ByteArrayInputStream(png))
+        val error = schemeOf(Accent.Indigo, dark = false).error
+        var found = 0
+        for (y in 0 until image.height) {
+            for (x in 0 until image.width) {
+                val pixel = Color(image.getRGB(x, y))
+                if (LookColors.distance(pixel, error) < RED_APART) found++
+            }
+        }
+        return found
+    }
+
     private companion object {
+        /** Кадр одной кассовой колонки: в него целиком входит форма позиции. */
+        const val ENTRY_WIDE = 460
+        const val ENTRY_TALL = 700
+
+        /** Насколько точка должна сойтись с цветом отказа, чтобы счесться красной. */
+        const val RED_APART = 12f
+
         /**
          * Высота кадра набранного чека.
          *

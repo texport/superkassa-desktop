@@ -73,7 +73,7 @@ fun AddPositionForm(session: Session, onAdd: (Position) -> Unit) {
                 modifier = Modifier.weight(1f)
             ) { Text(texts.sale.add, style = MaterialTheme.typography.titleSmall) }
         }
-        Hint(draft.problems.firstOrNull()?.text(extra), extra.addByEnter)
+        Hint(draft.hint?.text(extra), extra.addByEnter)
     }
 }
 
@@ -88,8 +88,7 @@ private fun DraftFields(
     val extra = LocalSaleTexts.current
     // Начатая форма: кассир уже что-то набрал. Пустая форма молчит —
     // при открытии смены она не должна выглядеть списком недоделок.
-    val started = draft.price.isNotBlank() || draft.discount.isNotBlank()
-    val nameProblem = draft.problem(DraftField.Name)?.takeIf { started }
+    val nameProblem = draft.problem(DraftField.Name)?.takeIf { draft.started }
     OutlinedTextField(
         value = draft.name,
         onValueChange = { onChange(draft.copy(name = it)) },
