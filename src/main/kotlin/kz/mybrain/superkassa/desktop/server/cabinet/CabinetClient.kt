@@ -217,9 +217,17 @@ data class CabinetError(
     val title: String? = null,
     val errors: List<CabinetFieldError> = emptyList()
 ) {
+    /**
+     * Что сказать владельцу.
+     *
+     * Сказанное о полях идёт первым: на неверный ввод кабинет отвечает
+     * общим `detail` — «Validation failure», — а по существу говорит
+     * в `errors`, по-русски и про то поле, которое надо исправить.
+     * Владелец читал английское слово, не сообщавшее ему ничего.
+     */
     fun text(): String? {
         val fields = errors.mapNotNull { it.message }.joinToString("; ").takeIf { it.isNotBlank() }
-        return listOfNotNull(message, detail, fields, title).firstOrNull { it.isNotBlank() }
+        return listOfNotNull(fields, message, detail, title).firstOrNull { it.isNotBlank() }
     }
 }
 
