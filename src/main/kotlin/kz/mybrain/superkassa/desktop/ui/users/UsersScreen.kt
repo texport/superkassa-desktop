@@ -114,7 +114,7 @@ fun UsersScreen(session: Session) {
                         roleTitle = roleTitle(session, texts.users, user.role),
                         user = user,
                         own = own,
-                        deletable = !UserRules.lastOfRole(loaded, user),
+                        deletable = !UserRules.lastAdmin(loaded, user),
                         onChangePin = { newPin ->
                             changePin(session, texts, user, newPin) {
                                 reload(changedPin = newPin.takeIf { own })

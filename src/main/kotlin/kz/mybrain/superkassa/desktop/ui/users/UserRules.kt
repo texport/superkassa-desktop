@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.users
 
+import kz.mybrain.superkassa.desktop.app.ADMIN_ROLE
 import kz.mybrain.superkassa.desktop.server.KkmUser
 
 /** Чем узел не устроит пин. */
@@ -74,11 +75,18 @@ object UserRules {
         user.identifier.isNotEmpty() && who?.identifier == user.identifier
 
     /**
-     * Единственный носитель своей роли.
+     * Единственный администратор кассы.
      *
-     * Узел удалить такого не даст: касса осталась бы без администратора,
-     * а значит и без права заводить кассиров и менять настройки.
+     * Удалить такого нельзя: касса осталась бы без права заводить кассиров
+     * и менять настройки, а войти в неё было бы некем.
+     *
+     * Правило про администратора и только про него. Прежде оно запрещало
+     * удалять последнего носителя **любой** роли, и администратор,
+     * расставшийся с единственным кассиром, читал под его именем совет
+     * завести второго кассира — чтобы потом удалить обоих. Касса без
+     * кассиров — обычное дело: ровно такой она и выходит из мастера
+     * подключения, где заводится один администратор.
      */
-    fun lastOfRole(users: List<KkmUser>, user: KkmUser): Boolean =
-        users.count { it.role == user.role } <= 1
+    fun lastAdmin(users: List<KkmUser>, user: KkmUser): Boolean =
+        user.role == ADMIN_ROLE && users.count { it.role == ADMIN_ROLE } <= 1
 }

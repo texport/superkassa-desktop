@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.desktop.app.ADMIN_ROLE
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
@@ -178,6 +179,3 @@ private val ROLES = listOf(ADMIN_ROLE, DEFAULT_ROLE)
 
 /** Роль по умолчанию для нового пользователя. */
 const val DEFAULT_ROLE = "CASHIER"
-
-/** Роль администратора, как её называет узел. */
-private const val ADMIN_ROLE = "ADMIN"
