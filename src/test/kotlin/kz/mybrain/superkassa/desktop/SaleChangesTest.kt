@@ -10,6 +10,8 @@ import kz.mybrain.superkassa.desktop.ui.sale.SaleState
 import kz.mybrain.superkassa.desktop.ui.sale.blockOf
 import kz.mybrain.superkassa.desktop.ui.sale.changeBlockOf
 import kz.mybrain.superkassa.desktop.ui.sale.changesOf
+import kz.mybrain.superkassa.desktop.ui.sale.discountWrong
+import kz.mybrain.superkassa.desktop.ui.sale.markupWrong
 import kz.mybrain.superkassa.desktop.ui.sale.formatPercent
 import kz.mybrain.superkassa.desktop.ui.sale.percentOfTenge
 import kz.mybrain.superkassa.desktop.ui.sale.tengeOfPercent
@@ -17,6 +19,7 @@ import kz.mybrain.superkassa.desktop.ui.sale.totalOf
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -125,6 +128,31 @@ class SaleChangesTest {
         assertEquals(SaleBlock.PercentOverHundred, blockOf(SaleState(markup = over, itemsSum = items)))
         val hundred = Adjustment("100", AdjustmentUnit.Percent)
         assertEquals(SaleBlock.TotalNotPositive, blockOf(SaleState(discount = hundred, itemsSum = items, total = BigDecimal.ZERO)))
+    }
+
+    /**
+     * Чек из одних сторно: сумма позиций ниже нуля.
+     *
+     * Ненабранная скидка считалась нулём, а ноль «больше» отрицательной
+     * суммы позиций — и касса краснила оба пустых поля и требовала
+     * уменьшить скидку, которой кассир не набирал. Настоящая помеха
+     * у такого чека одна: итог не положителен.
+     */
+    @Test
+    fun `чек из одних сторно не винит в этом скидку`() {
+        val basket = Basket().apply {
+            add(Position(name = "Товар", price = BigDecimal("100"), quantity = BigDecimal.ONE, vatGroup = "VAT_16"))
+            stornoAt(0)
+        }
+        val state = changesOf(basket, SaleForm())
+
+        assertNull(changeBlockOf(state), "пустые поля скидки и наценки помехой не являются")
+        assertFalse(state.discountWrong(), "поле скидки не краснеет")
+        assertFalse(state.markupWrong(), "поле наценки не краснеет")
+        assertEquals(
+            SaleBlock.TotalNotPositive,
+            blockOf(state.copy(positions = 1, total = BigDecimal.ZERO))
+        )
     }
 
     @Test

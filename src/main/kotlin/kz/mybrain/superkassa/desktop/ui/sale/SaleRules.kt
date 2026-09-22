@@ -169,7 +169,11 @@ fun changeBlockOf(state: SaleState): SaleBlock? {
     if (state.hasItemDiscount && discount > BigDecimal.ZERO) return SaleBlock.DiscountScopes
     if (negative(state.discount) || negative(state.markup)) return SaleBlock.DiscountNegative
     if (overHundred(state.discount) || overHundred(state.markup)) return SaleBlock.PercentOverHundred
-    if (discount > state.itemsSum) return SaleBlock.DiscountOverItems
+    // Сравнение только при набранной скидке: у чека из одних сторно
+    // сумма позиций уходит ниже нуля, и ненабранная скидка оказывалась
+    // «больше» её. Кассир читал «уменьшите скидку» над двумя пустыми
+    // полями, а настоящая помеха — неположительный итог — молчала.
+    if (discount.signum() > 0 && discount > state.itemsSum) return SaleBlock.DiscountOverItems
     return null
 }
 
