@@ -36,7 +36,6 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Today
-import androidx.compose.material.icons.filled.Upgrade
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
@@ -48,6 +47,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.EventAvailable
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.NewReleases
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.ReceiptLong
@@ -211,5 +211,5 @@ object AppIcons {
     val darkTheme: ImageVector = Icons.Outlined.DarkMode
 
     /** Вышла новая версия кассы. */
-    val update: ImageVector = Icons.Filled.Upgrade
+    val update: ImageVector = Icons.Outlined.NewReleases
 }
