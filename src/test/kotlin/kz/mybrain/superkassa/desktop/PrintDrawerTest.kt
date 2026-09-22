@@ -8,6 +8,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
+import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.adoptKkms
@@ -129,12 +130,13 @@ class PrintDrawerTest {
     }
 
     @Test
-    fun `отказ узла спрашивает пин заново, а не повторяет неверный`() {
+    fun `отказ по пину спрашивает его заново, а не повторяет неверный`() {
         val session = session()
         session.adoptKkms(listOf(kkm("a1", "Касса у входа")))
         val drawer = session.printDesk.drawer
         drawer.resolve { }
         drawer.adopt("0000")
+        session.lastMessage = Message.Refusal("Пользователь не найден", "USER_NOT_FOUND")
 
         drawer.refused { }
         val again = assertNotNull(drawer.request, "владельцу дают ввести пин ещё раз")
@@ -143,6 +145,45 @@ class PrintDrawerTest {
         // окно открывалось с пустой первой строкой.
         assertEquals("Касса у входа", again.kkmTitle, "повторный вопрос не называет кассу")
         assertNull(drawer.resolve { }, "неверный пин забыт")
+    }
+
+    /**
+     * Браузера для образов на машине нет — пин тут ни при чём.
+     *
+     * Узел отказывает по печатной форме и по другим поводам: рисовать
+     * нечем, документа не нашлось, узел молчит. Окно ввода пина поверх
+     * такого отказа выдавало причину за неверный пин, а верный пин
+     * стирало — следующая попытка начиналась с того же вопроса.
+     */
+    @Test
+    fun `отказ не по пину оставляет введённый пин при себе`() {
+        val session = session()
+        session.adoptKkms(listOf(kkm("a1", "Касса у входа")))
+        val drawer = session.printDesk.drawer
+        drawer.resolve { }
+        drawer.adopt("4827")
+        session.lastMessage = Message.Refusal("Нужен браузер Chrome на этой машине", "RENDERER_MISSING")
+
+        drawer.refused { }
+
+        assertNull(drawer.request, "окно пина поверх настоящей причины")
+        assertEquals("4827", drawer.resolve { }?.second, "верный пин стёрт чужим отказом")
+    }
+
+    /** Узел не ответил вовсе — отказа по пину не было, и спрашивать его незачем. */
+    @Test
+    fun `молчание узла не превращается в вопрос о пине`() {
+        val session = session()
+        session.adoptKkms(listOf(kkm("a1", "Касса у входа")))
+        val drawer = session.printDesk.drawer
+        drawer.resolve { }
+        drawer.adopt("4827")
+        session.lastMessage = Message.NodeUnavailable("Печатная форма")
+
+        drawer.refused { }
+
+        assertNull(drawer.request, "молчание узла пином не лечится")
+        assertEquals("4827", drawer.resolve { }?.second)
     }
 
     @Test
