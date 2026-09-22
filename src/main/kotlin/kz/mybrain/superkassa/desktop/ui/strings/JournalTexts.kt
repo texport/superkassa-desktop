@@ -126,6 +126,7 @@ data class QueueJournalTexts(
     val nextAttempt: String,
     val lastFailure: String,
     val retryHint: String,
+    val retryNeedsProgramming: String,
     val nothingFailed: String,
     /** Повторять нечего, но отвергнутое на экране есть: строка обязана это признать. */
     val nothingToRetryButRejected: String,

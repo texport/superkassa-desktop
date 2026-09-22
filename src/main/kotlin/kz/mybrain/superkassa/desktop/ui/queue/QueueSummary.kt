@@ -41,6 +41,7 @@ internal fun QueueSummary(
 ) {
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
+    val programming = session.selected?.isProgramming == true
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
@@ -60,6 +61,10 @@ internal fun QueueSummary(
                 // отправлен» противоречит самой себе: отвергнутое повтор
                 // не берёт, но оно на экране есть, и строка это признаёт.
                 text = when {
+                    // Повтор узел принимает только в режиме программирования.
+                    // Прежде кнопка нажималась всегда и отвечала протокольным
+                    // «ККМ должна быть в режиме PROGRAMMING».
+                    hasFailed && !programming -> journal.retryNeedsProgramming
                     hasFailed -> journal.retryHint
                     hasRejected -> journal.nothingToRetryButRejected
                     else -> journal.nothingFailed
@@ -69,7 +74,7 @@ internal fun QueueSummary(
                 modifier = Modifier.weight(1f)
             )
             FilledTonalButton(
-                enabled = session.selected != null && hasFailed,
+                enabled = programming && hasFailed,
                 onClick = { scope.launch { retryQueue(session, texts) } }
             ) { Text(texts.queue.retryFailed) }
             IconButton(onClick = { scope.launch { session.refreshSelected() } }) {

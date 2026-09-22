@@ -97,6 +97,7 @@ internal val journalTextsEn = JournalTexts(
         lastFailure = "Reason of the last failure",
         retryHint = "“Retry failed” re-queues only the tasks whose sending failed. The rest go out on their " +
             "own and need no intervention.",
+        retryNeedsProgramming = "Retrying is only queued in programming mode: enter it in the register settings",
         nothingFailed = "No failed tasks — nothing to retry.",
         nothingToRetryButRejected = "Nothing to retry: rejected tasks are never resent, service staff handle them.",
         emptyHint = "Nothing to send: the cash register is online with the BFD."
