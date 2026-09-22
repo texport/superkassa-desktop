@@ -115,6 +115,8 @@ internal val journalTextsEn = JournalTexts(
         nothingFailed = "No failed tasks — nothing to retry.",
         nothingToRetryButRejected = "Nothing to retry: rejected tasks are never resent, service staff handle them.",
         emptyHint = "Nothing to send: the cash register is online with the BFD.",
+        unread = "The queue could not be read: the node did not answer.",
+        unreadHint = "Read it again. While the node stays silent, nothing is known about waiting documents.",
         emptyBlockedHint = "Nothing to send: the cash register is blocked and issues no new documents."
     )
 )

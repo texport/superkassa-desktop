@@ -17,8 +17,13 @@ class KassaQueueLookTest {
 
     @Test
     fun `в очереди нет кодов узла, а отвергнутое стоит отдельно от отправленного`() {
-        val empty = KassaScene.shot("queue-empty", width = NARROW, height = SHORT) {
-            QueueScreen(KassaScene.session("queue-empty", shift = KassaScene.openShift()))
+        // Пустая очередь — это очередь, о которой узел ответил: без ответа
+        // экран обязан говорить «прочитать не удалось», а не «всё доставлено».
+        val answered = KassaScene.session("queue-empty", shift = KassaScene.openShift())
+        answered.adoptQueue(emptyList())
+        val empty = KassaScene.shot("queue-empty", width = NARROW, height = SHORT) { QueueScreen(answered) }
+        val unread = KassaScene.shot("queue-unread", width = NARROW, height = SHORT) {
+            QueueScreen(KassaScene.session("queue-unread", shift = KassaScene.openShift()))
         }
         val filled = KassaScene.shot("queue-sections", width = NARROW, height = SHORT) {
             val session = KassaScene.session("queue-filled", shift = KassaScene.openShift())
@@ -26,8 +31,12 @@ class KassaQueueLookTest {
             QueueScreen(session)
         }
 
-        assertTrue(empty.isNotEmpty() && filled.isNotEmpty())
+        assertTrue(empty.isNotEmpty() && filled.isNotEmpty() && unread.isNotEmpty())
         assertTrue(!empty.contentEquals(filled), "пустая очередь неотличима от заполненной")
+        assertTrue(
+            !empty.contentEquals(unread),
+            "«всё доставлено» и «очередь прочитать не удалось» на экране неразличимы"
+        )
     }
 
     private companion object {
