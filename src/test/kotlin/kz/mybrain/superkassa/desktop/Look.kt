@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -25,6 +26,7 @@ import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapModel
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSieveBar
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSourceBar
 import kz.mybrain.superkassa.desktop.ui.analytics.KkmGroup
+import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapCard
 import kz.mybrain.superkassa.desktop.ui.analytics.Placement
 import kz.mybrain.superkassa.desktop.ui.analytics.UnderMap
 import kz.mybrain.superkassa.desktop.ui.analytics.emptyMapReason
@@ -104,6 +106,9 @@ internal object Look {
 
     fun model(): AnalyticsMapModel = AnalyticsMapModel(CabinetSession(), MapGeocoder())
 
+    /** Карточка под картой развёрнута, как у нового рабочего места; своё хранилище — чужие настройки не трогать. */
+    fun panel(): AnalyticsMapCard = AnalyticsMapCard(Preferences(File(Files.createTempDirectory("an").toFile(), "kkm")))
+
     /** Касса аналитики: одна и та же во всех наборах снимков. */
     fun kkm(
         at: Int,
@@ -159,7 +164,7 @@ internal fun MapLook(
                 verticalArrangement = Arrangement.spacedBy(Spacing.snug)
             ) {
                 MapOrReason(model, laid, groups, Modifier.weight(1f))
-                UnderMap(model, laid, groups, Look.texts, Look.cabinet)
+                UnderMap(model, laid, groups, Look.texts, Look.cabinet, remember { Look.panel() })
             }
             AnalyticsKkmList(
                 placed = laid.placed,

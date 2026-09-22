@@ -94,6 +94,8 @@ internal val analyticsTextsEn = AnalyticsTexts(
         "points appear as the lookup goes",
     pickPin = "Pick a cash register on the map",
     pickPinHint = "Click a point — its card appears here",
+    mapFullscreen = "Full screen",
+    mapFullscreenExit = "Exit full screen",
 
     searchKkm = "A name, a KGD number or an address",
     searchKkmLabel = "Find a cash register",

@@ -47,6 +47,10 @@ data class AnalyticsTexts(
     val pickPin: String,
     val pickPinHint: String,
 
+    /** Карта во всё окно и возврат из него: подписи кнопки на самой карте. */
+    val mapFullscreen: String,
+    val mapFullscreenExit: String,
+
     val searchKkm: String,
     val searchKkmLabel: String,
     val allPlaces: String,

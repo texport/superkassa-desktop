@@ -52,6 +52,9 @@ private fun searchingAll(placement: Placement): Boolean =
  *
  * Пока на карте нет ни одной точки, карточки нет вовсе: приглашение
  * «нажмите точку» стояло под объяснением о том, что точек нет.
+ *
+ * Карточка сворачивается до заголовка — см. [AnalyticsMapCard]: высоту
+ * под ней забирает карта.
  */
 @Composable
 internal fun UnderMap(
@@ -59,13 +62,21 @@ internal fun UnderMap(
     placement: Placement,
     groups: List<KkmGroup>,
     texts: AnalyticsTexts,
-    cabinetTexts: CabinetTexts
+    cabinetTexts: CabinetTexts,
+    panel: AnalyticsMapCard
 ) {
     if (placement.placed.isEmpty()) return
     val spot = groups.firstOrNull { it.id == model.spot }
     val chosen = placement.placed.firstOrNull { it.kkm.cashRegisterId == model.chosen }?.kkm
     if (chosen == null && spot != null && spot.size > 1) {
-        AnalyticsSpotCard(spot, texts, cabinetTexts, onChoose = { row -> model.chosen = row.kkm.cashRegisterId })
+        AnalyticsSpotCard(
+            group = spot,
+            texts = texts,
+            cabinet = cabinetTexts,
+            onChoose = { row -> model.chosen = row.kkm.cashRegisterId },
+            expanded = panel.expanded,
+            onToggle = panel::toggle
+        )
         return
     }
     // Высота карточки не задана: её содержимое разное, и при заданной
@@ -77,6 +88,8 @@ internal fun UnderMap(
         cabinet = cabinetTexts,
         neighbours = spot?.size ?: 0,
         onNeighbours = { model.chosen = null },
-        onSales = { model.opened = it }
+        onSales = { model.opened = it },
+        expanded = panel.expanded,
+        onToggle = panel::toggle
     )
 }

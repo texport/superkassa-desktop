@@ -95,6 +95,8 @@ internal val analyticsTextsKk = AnalyticsTexts(
         "нүктелер іздеу барысында пайда болады",
     pickPin = "Картадан кассаны таңдаңыз",
     pickPinHint = "Нүктені басыңыз — оның картасы осында шығады",
+    mapFullscreen = "Толық экранға",
+    mapFullscreenExit = "Картаны жинау",
 
     searchKkm = "Атауы, МКК нөмірі немесе мекенжайы",
     searchKkmLabel = "Касса іздеу",

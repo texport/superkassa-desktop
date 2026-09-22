@@ -29,6 +29,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * Список ограничен по высоте: место с двумя кассами не должно съедать
  * карту, а место с десятком — распирать экран.
+ *
+ * @param expanded развёрнута ли карточка; свёрнутая остаётся заголовком.
+ * @param onToggle сворачивание; без него стрелки у заголовка нет.
  */
 @Composable
 fun AnalyticsSpotCard(
@@ -36,46 +39,52 @@ fun AnalyticsSpotCard(
     texts: AnalyticsTexts,
     cabinet: CabinetTexts,
     onChoose: (PlacedKkm) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    expanded: Boolean = true,
+    onToggle: (() -> Unit)? = null
 ) {
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
             verticalArrangement = Arrangement.spacedBy(Spacing.tight)
         ) {
-            SpotHead(group, texts)
-            ScrollableList(modifier = Modifier.heightIn(max = Sizes.spotList)) {
-                itemsIndexed(group.kkms, key = { _, row -> "spot-${row.kkm.cashRegisterId}" }) { at, row ->
-                    RecordRow(
-                        title = kkmTitle(row.kkm),
-                        // Торговая точка у всех строк места одна и та же —
-                        // она сказана в шапке. Под названием стоит то, чем
-                        // кассы места и различаются: состояние и смена.
-                        support = { KkmChips(row.kkm, texts, cabinet) },
-                        striped = at % 2 == 1,
-                        onClick = { onChoose(row) }
-                    )
-                }
+            MapCardTitle("${texts.kkmsHere} · ${group.size}", expanded, onToggle)
+            MapCardBody(expanded) {
+                SpotAbout(group)
+                SpotRows(group, texts, cabinet, onChoose)
             }
         }
     }
 }
 
-/** Чем названо место: сколько здесь касс, чья точка и по какому адресу. */
+/** Чьё это место: торговая точка и адрес. Ничего не известно — строки нет. */
 @Composable
-private fun SpotHead(group: KkmGroup, texts: AnalyticsTexts) {
-    Text(
-        text = "${texts.kkmsHere} · ${group.size}",
-        style = MaterialTheme.typography.titleMedium
-    )
+private fun SpotAbout(group: KkmGroup) {
     val about = listOfNotNull(group.place, group.address).joinToString(" · ")
-    if (about.isNotBlank()) {
-        Text(
-            text = about,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
+    if (about.isBlank()) return
+    Text(
+        text = about,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+/** Кассы места строками; выбранная открывает свою карточку. */
+@Composable
+private fun SpotRows(group: KkmGroup, texts: AnalyticsTexts, cabinet: CabinetTexts, onChoose: (PlacedKkm) -> Unit) {
+    ScrollableList(modifier = Modifier.heightIn(max = Sizes.spotList)) {
+        itemsIndexed(group.kkms, key = { _, row -> "spot-${row.kkm.cashRegisterId}" }) { at, row ->
+            RecordRow(
+                title = kkmTitle(row.kkm),
+                // Торговая точка у всех строк места одна и та же —
+                // она сказана в шапке. Под названием стоит то, чем
+                // кассы места и различаются: состояние и смена.
+                support = { KkmChips(row.kkm, texts, cabinet) },
+                striped = at % 2 == 1,
+                onClick = { onChoose(row) }
+            )
+        }
     }
 }

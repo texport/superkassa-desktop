@@ -74,6 +74,17 @@ class ViewPreferences(private val directory: File?) {
         get() = readSetting(placesFile) == COLLAPSED
         set(value) = writeSetting(placesFile, if (value) COLLAPSED else null)
 
+    /**
+     * Свёрнута ли карточка кассы под картой касс.
+     *
+     * Карте нужна высота, а карточка нужна не всегда: владелец, который
+     * ищет кассы глазами, сворачивает её и не должен сворачивать снова
+     * при каждом открытии раздела.
+     */
+    var mapCardCollapsed: Boolean
+        get() = readSetting(mapCardFile) == COLLAPSED
+        set(value) = writeSetting(mapCardFile, if (value) COLLAPSED else null)
+
     private val languageFile = File(directory, "language")
 
     private val appearanceFile = File(directory, "appearance")
@@ -85,6 +96,8 @@ class ViewPreferences(private val directory: File?) {
     private val railFile = File(directory, "rail")
 
     private val placesFile = File(directory, "places")
+
+    private val mapCardFile = File(directory, "map-card")
 
     companion object {
         /** Ширина и высота разделены крестиком: строка читаема глазами. */
