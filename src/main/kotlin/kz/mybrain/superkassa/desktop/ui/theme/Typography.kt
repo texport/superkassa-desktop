@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -14,6 +16,10 @@ import androidx.compose.ui.unit.sp
  * итог не с двадцати сантиметров, а с метра, поэтому крупные роли
  * чуть плотнее по начертанию, а мелкие — не мельче четырнадцати точек,
  * иначе состав чека на ленте не разобрать.
+ *
+ * Это базовая шкала: шрифт и размер, выбранные кассиром, накладываются
+ * на неё функцией [typographyOf], а не второй шкалой с переписанными
+ * числами.
  */
 internal val AppTypography = Typography(
     displayLarge = TextStyle(fontSize = 57.sp, lineHeight = 64.sp, fontWeight = FontWeight.Normal),
@@ -38,16 +44,71 @@ internal val AppTypography = Typography(
 )
 
 /**
+ * Шкала кассы под выбранный шрифт и размер.
+ *
+ * Каждая роль берётся из базовой и получает семейство и множитель:
+ * так шкала остаётся одной, а выбор кассира — двумя числами поверх неё.
+ * Высота строки растёт вместе с кеглем, иначе крупный текст слипается.
+ */
+internal fun typographyOf(typeface: Typeface, scale: TextScale): Typography = with(AppTypography) {
+    Typography(
+        displayLarge = displayLarge.styled(typeface, scale),
+        displayMedium = displayMedium.styled(typeface, scale),
+        displaySmall = displaySmall.styled(typeface, scale),
+        headlineLarge = headlineLarge.styled(typeface, scale),
+        headlineMedium = headlineMedium.styled(typeface, scale),
+        headlineSmall = headlineSmall.styled(typeface, scale),
+        titleLarge = titleLarge.styled(typeface, scale),
+        titleMedium = titleMedium.styled(typeface, scale),
+        titleSmall = titleSmall.styled(typeface, scale),
+        bodyLarge = bodyLarge.styled(typeface, scale),
+        bodyMedium = bodyMedium.styled(typeface, scale),
+        bodySmall = bodySmall.styled(typeface, scale),
+        labelLarge = labelLarge.styled(typeface, scale),
+        labelMedium = labelMedium.styled(typeface, scale),
+        labelSmall = labelSmall.styled(typeface, scale)
+    )
+}
+
+private fun TextStyle.styled(typeface: Typeface, scale: TextScale): TextStyle =
+    scaled(scale).copy(fontFamily = typeface.family)
+
+/** Тот же стиль крупнее или мельче: кегль и высота строки в один множитель. */
+internal fun TextStyle.scaled(scale: TextScale): TextStyle =
+    copy(fontSize = fontSize * scale.factor, lineHeight = lineHeight * scale.factor)
+
+/**
+ * Выбранный размер шрифта — для начертаний вне шкалы Material.
+ *
+ * Суммы задают шрифт сами и в шкалу не входят, но расти вместе с ней
+ * обязаны: кассир, выбравший крупный шрифт, выбирал его ради итога чека.
+ */
+val LocalTextScale = staticCompositionLocalOf { TextScale.Normal }
+
+/**
  * Начертание денежных сумм.
  *
  * Цифры моноширинные и выровнены по правому краю: столбец сумм читается
  * сверху вниз одним движением глаза, а не выискивается по разной ширине
  * знаков. Это единственное место, где касса задаёт шрифт сама.
+ *
+ * Размер следует за выбранным размером шрифта кассы, см. [LocalTextScale].
  */
 object MoneyStyle {
 
     /** Итог чека и остаток ящика — главное число экрана. */
-    val hero: TextStyle = TextStyle(
+    val hero: TextStyle
+        @Composable get() = heroBase.scaled(LocalTextScale.current)
+
+    /** Сумма строки в списке. */
+    val row: TextStyle
+        @Composable get() = rowBase.scaled(LocalTextScale.current)
+
+    /** Сумма в подписи: цена за единицу, сдача, оборот. */
+    val caption: TextStyle
+        @Composable get() = captionBase.scaled(LocalTextScale.current)
+
+    private val heroBase = TextStyle(
         fontFamily = FontFamily.Monospace,
         fontSize = 34.sp,
         lineHeight = 40.sp,
@@ -55,16 +116,14 @@ object MoneyStyle {
         textAlign = TextAlign.End
     )
 
-    /** Сумма строки в списке. */
-    val row: TextStyle = TextStyle(
+    private val rowBase = TextStyle(
         fontFamily = FontFamily.Monospace,
         fontSize = 16.sp,
         lineHeight = 22.sp,
         textAlign = TextAlign.End
     )
 
-    /** Сумма в подписи: цена за единицу, сдача, оборот. */
-    val caption: TextStyle = TextStyle(
+    private val captionBase = TextStyle(
         fontFamily = FontFamily.Monospace,
         fontSize = 14.sp,
         lineHeight = 20.sp,
@@ -79,6 +138,8 @@ object MoneyStyle {
  * уровнем. Пропорциональный шрифт сдвигает их на каждой строке, и найти
  * нужный обмен среди сотни записей становится работой. Шрифт задаётся
  * здесь, а не в окне журнала, — как и начертание сумм.
+ *
+ * Размеру кассы журнал не следует: это окно отладчика, а не кассира.
  */
 object LogStyle {
 

@@ -19,7 +19,11 @@ import kz.mybrain.superkassa.desktop.server.currentUser
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
+import kz.mybrain.superkassa.desktop.ui.theme.Accent
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
+import kz.mybrain.superkassa.desktop.ui.theme.Look
+import kz.mybrain.superkassa.desktop.ui.theme.TextScale
+import kz.mybrain.superkassa.desktop.ui.theme.Typeface
 
 /**
  * Рабочее состояние кассира: выбранная касса, пин и всё, что показано на экранах.
@@ -93,12 +97,16 @@ class Session(
 
     val language: Language get() = settings.language
     val appearance: Appearance get() = settings.appearance
+    val look: Look get() = settings.look
     val railCollapsed: Boolean get() = settings.railCollapsed
     val placesCollapsed: Boolean get() = settings.placesCollapsed
     val rememberedWindowSize: Pair<Int, Int>? get() = settings.windowSize
 
     fun switchLanguage(chosen: Language) = settings.switchLanguage(chosen)
     fun switchAppearance(chosen: Appearance) = settings.switchAppearance(chosen)
+    fun chooseAccent(chosen: Accent) = settings.chooseAccent(chosen)
+    fun chooseTypeface(chosen: Typeface) = settings.chooseTypeface(chosen)
+    fun chooseTextScale(chosen: TextScale) = settings.chooseTextScale(chosen)
     fun toggleRail() = settings.toggleRail()
     fun togglePlaces() = settings.togglePlaces()
     fun rememberWindowSize(width: Int, height: Int) = settings.rememberWindowSize(width, height)

@@ -6,7 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.theme.Accent
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
+import kz.mybrain.superkassa.desktop.ui.theme.Look
+import kz.mybrain.superkassa.desktop.ui.theme.TextScale
+import kz.mybrain.superkassa.desktop.ui.theme.Typeface
 
 /**
  * Что помнит это рабочее место: язык, вид, рельс, колонку точек, окно
@@ -31,6 +35,16 @@ class WorkplaceSettings(private val preferences: Preferences) {
     var appearance: Appearance by mutableStateOf(Appearance.byCode(preferences.appearance))
         private set
 
+    /** Тон, шрифт и размер: тоже выбор этого рабочего места. */
+    var look: Look by mutableStateOf(
+        Look(
+            accent = Accent.byCode(preferences.accent),
+            typeface = Typeface.byCode(preferences.typeface),
+            textScale = TextScale.byCode(preferences.textScale)
+        )
+    )
+        private set
+
     /** Свёрнут ли рельс разделов: подписи спрятаны, значки остались. */
     var railCollapsed: Boolean by mutableStateOf(preferences.railCollapsed)
         private set
@@ -50,6 +64,21 @@ class WorkplaceSettings(private val preferences: Preferences) {
     fun switchAppearance(chosen: Appearance) {
         appearance = chosen
         preferences.appearance = chosen.code
+    }
+
+    fun chooseAccent(chosen: Accent) {
+        look = look.copy(accent = chosen)
+        preferences.accent = chosen.code
+    }
+
+    fun chooseTypeface(chosen: Typeface) {
+        look = look.copy(typeface = chosen)
+        preferences.typeface = chosen.code
+    }
+
+    fun chooseTextScale(chosen: TextScale) {
+        look = look.copy(textScale = chosen)
+        preferences.textScale = chosen.code
     }
 
     fun toggleRail() {

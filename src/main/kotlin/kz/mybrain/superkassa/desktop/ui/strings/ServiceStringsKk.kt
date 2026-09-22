@@ -42,6 +42,7 @@ internal val kazakhSettings = SettingStrings(
     appearance = "Безендіру",
     appearanceHint = "Осы жұмыс орнының тақырыбы мен тілі. Осы машинада сақталады: чектерде, басқа кассаларда және кабинетте " +
         "ештеңе өзгермейді",
+    look = kazakhLook,
     ofdToken = "БФД токені",
     newToken = "Жаңа токен",
     saveToken = "Токенді сақтау",

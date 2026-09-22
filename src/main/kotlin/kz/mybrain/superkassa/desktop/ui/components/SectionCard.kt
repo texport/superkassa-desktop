@@ -7,13 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -95,35 +92,4 @@ fun CollapsibleCard(
             )
         }
     }
-}
-
-/**
- * Название части раздела и объяснение к ней.
- *
- * Внутри карточки бывает своя часть со своим заголовком: токен, адрес
- * по шагам, работа этой кассы на этой машине. Строка «название и значок
- * подсказки» набиралась в каждой из них заново — здесь она объявлена
- * один раз, и подсказка везде встаёт на одно место.
- */
-@Composable
-fun SubsectionTitle(title: String, info: String? = null) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
-        Text(text = title, style = MaterialTheme.typography.titleSmall)
-        info?.let { InfoTip(it) }
-    }
-}
-
-/** Название раздела — одной строкой во всех карточках приложения. */
-@Composable
-fun SectionTitle(title: String, modifier: Modifier = Modifier) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = modifier
-    )
 }

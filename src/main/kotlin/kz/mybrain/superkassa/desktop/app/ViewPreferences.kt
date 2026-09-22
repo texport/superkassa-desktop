@@ -22,6 +22,21 @@ class ViewPreferences(private val directory: File?) {
         get() = readSetting(appearanceFile)
         set(value) = writeSetting(appearanceFile, value)
 
+    /** Основной тон кассы, выбранный кассиром. */
+    var accent: String?
+        get() = readSetting(accentFile)
+        set(value) = writeSetting(accentFile, value)
+
+    /** Шрифт кассы, выбранный кассиром. */
+    var typeface: String?
+        get() = readSetting(typefaceFile)
+        set(value) = writeSetting(typefaceFile, value)
+
+    /** Размер шрифта кассы, выбранный кассиром. */
+    var textScale: String?
+        get() = readSetting(textScaleFile)
+        set(value) = writeSetting(textScaleFile, value)
+
     /**
      * Размер окна кассы.
      *
@@ -88,6 +103,12 @@ class ViewPreferences(private val directory: File?) {
     private val languageFile = File(directory, "language")
 
     private val appearanceFile = File(directory, "appearance")
+
+    private val accentFile = File(directory, "accent")
+
+    private val typefaceFile = File(directory, "typeface")
+
+    private val textScaleFile = File(directory, "textscale")
 
     private val windowFile = File(directory, "window")
 

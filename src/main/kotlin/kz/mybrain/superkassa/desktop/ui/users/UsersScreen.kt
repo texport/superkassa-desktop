@@ -3,8 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.users
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +20,7 @@ import kz.mybrain.superkassa.desktop.server.removeUser
 import kz.mybrain.superkassa.desktop.server.users
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
+import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
@@ -82,7 +81,7 @@ fun UsersScreen(session: Session) {
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         spacing = Spacing.normal
     ) {
-        Text(texts.users.title, style = MaterialTheme.typography.headlineSmall)
+        ScreenTitle(texts.users.title)
 
         AddCashier(session, money) { reload() }
 

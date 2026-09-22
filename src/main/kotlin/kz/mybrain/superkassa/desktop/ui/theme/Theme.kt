@@ -15,9 +15,10 @@ import androidx.compose.ui.graphics.Color
 /**
  * Оформление кассы.
  *
- * Схема, шрифты и формы заданы целиком по Material 3 и живут в трёх
- * соседних файлах: `Palette`, `Typography`, здесь — формы и сборка.
- * Экраны берут только роли схемы; своих цветов у них нет.
+ * Схема, шрифты и формы заданы целиком по Material 3 и живут в соседних
+ * файлах: `Palette` и `TonalScheme` — цвета, `Typography` — шкала,
+ * `Look` — выбор кассира, здесь — формы и сборка. Экраны берут только
+ * роли схемы; своих цветов у них нет.
  */
 private val AppShapes = Shapes(
     extraSmall = RoundedCornerShape(Sizes.chipCorner),
@@ -158,16 +159,27 @@ private fun scrollbar(): ScrollbarStyle = defaultScrollbarStyle().copy(
     hoverColor = MaterialTheme.colorScheme.outline
 )
 
+/**
+ * @param appearance светлая или тёмная касса.
+ * @param look тон, шрифт и размер, выбранные кассиром; без выбора — индиго
+ *   и системный шрифт обычного размера, то есть касса как была.
+ */
 @Composable
-fun SuperkassaTheme(appearance: Appearance = Appearance.System, content: @Composable () -> Unit) {
+fun SuperkassaTheme(
+    appearance: Appearance = Appearance.System,
+    look: Look = Look(),
+    content: @Composable () -> Unit
+) {
+    val dark = darkChosen(appearance)
     MaterialTheme(
-        colorScheme = if (darkChosen(appearance)) DarkScheme else LightScheme,
-        typography = AppTypography,
+        colorScheme = schemeOf(look.accent, dark),
+        typography = typographyOf(look.typeface, look.textScale),
         shapes = AppShapes
     ) {
         CompositionLocalProvider(
             LocalScrollbarStyle provides scrollbar(),
-            LocalDarkTheme provides darkChosen(appearance),
+            LocalDarkTheme provides dark,
+            LocalTextScale provides look.textScale,
             content = content
         )
     }

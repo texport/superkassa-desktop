@@ -25,6 +25,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.DebugTexts
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.debugTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
+import kz.mybrain.superkassa.desktop.ui.theme.Look
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
@@ -41,11 +42,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
  * не открылось бы после перезапуска.
  */
 @Composable
-fun LogWindow(language: Language, appearance: Appearance, onClose: () -> Unit) {
+fun LogWindow(language: Language, appearance: Appearance, look: Look, onClose: () -> Unit) {
     val texts = debugTexts(language)
     val state = rememberWindowState(size = DpSize(Sizes.logWindowWidth, Sizes.logWindowHeight))
     Window(onCloseRequest = onClose, title = texts.title, state = state) {
-        SuperkassaTheme(appearance) {
+        SuperkassaTheme(appearance, look) {
             Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
                 LogBody(texts)
             }

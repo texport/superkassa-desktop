@@ -28,6 +28,7 @@ import kz.mybrain.superkassa.desktop.server.cashIn
 import kz.mybrain.superkassa.desktop.server.cashOut
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.DrawerTexts
@@ -65,7 +66,7 @@ fun CashScreen(session: Session) {
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         spacing = Spacing.normal
     ) {
-        Text(texts.cash.title, style = MaterialTheme.typography.headlineSmall)
+        ScreenTitle(texts.cash.title)
         DrawerCard(session, money.drawer)
         CashForm(session, money) { move, amount, key ->
             perform(session, texts, money, move, amount, key, recent)

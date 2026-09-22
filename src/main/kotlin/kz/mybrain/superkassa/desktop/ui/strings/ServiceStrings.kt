@@ -62,6 +62,7 @@ data class SettingStrings(
     val language: String,
     val appearance: String,
     val appearanceHint: String,
+    val look: LookStrings,
     val ofdToken: String,
     val newToken: String,
     val saveToken: String,

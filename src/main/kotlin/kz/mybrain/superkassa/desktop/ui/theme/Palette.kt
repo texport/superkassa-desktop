@@ -3,16 +3,49 @@ package kz.mybrain.superkassa.desktop.ui.theme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 /**
- * Тональная схема кассы по Material 3.
+ * Схема кассы для выбранного тона.
+ *
+ * Индиго — эталон: он выписан ролями руками и остаётся таким, каким
+ * касса была до выбора тона. Остальные тона выводятся из своего оттенка
+ * теми же правилами тональных палитр, по которым построен и индиго,
+ * см. `tonalScheme`. Схемы считаются один раз: их восемь на две темы,
+ * и считать пятьдесят цветов на каждый кадр незачем.
+ */
+internal fun schemeOf(accent: Accent, dark: Boolean): ColorScheme = Schemes.getOrPut(accent to dark) {
+    when {
+        accent == Accent.Indigo && dark -> DarkScheme
+        accent == Accent.Indigo -> LightScheme
+        else -> tonalScheme(accent.hue, dark)
+    }
+}
+
+private val Schemes = mutableMapOf<Pair<Accent, Boolean>, ColorScheme>()
+
+/**
+ * Кружок цвета в выборе: заливка и отметка на ней.
+ *
+ * Отметка — не белая и не чёрная, а надпись на этой роли из той же
+ * схемы: так она читается на любом тоне, потому что схема для того
+ * и построена.
+ */
+class Swatch(val fill: Color, val mark: Color)
+
+/** Каким тон показан в выборе: его главная роль в нынешней теме. */
+val Accent.swatch: Swatch
+    @Composable get() = schemeOf(this, LocalDarkTheme.current).let { Swatch(it.primary, it.onPrimary) }
+
+/**
+ * Тональная схема индиго по Material 3.
  *
  * Схема выписана ролями целиком, а не тремя цветами поверх стандартной:
  * Material красит поверхности, контейнеры и обводки производными от них,
- * и половинчатая схема даёт серые карточки с чужими оттенками. Основной
- * тон — индиго: он спокойный, читается и на светлом, и на тёмном, и не
- * спорит с зелёным «доставлено» и красным «отказ».
+ * и половинчатая схема даёт серые карточки с чужими оттенками. Индиго
+ * спокойный, читается и на светлом, и на тёмном, и не спорит с зелёным
+ * «доставлено» и красным «отказ».
  *
  * Роли распределены по смыслу кассы:
  * - `primary` — действие, ради которого открыт экран (пробить чек);
@@ -44,10 +77,10 @@ internal val LightScheme: ColorScheme = lightColorScheme(
     tertiaryContainer = Color(0xFFFFD8EE),
     onTertiaryContainer = Color(0xFF2D1226),
 
-    error = Color(0xFFB3261E),
-    onError = Color(0xFFFFFFFF),
-    errorContainer = Color(0xFFF9DEDC),
-    onErrorContainer = Color(0xFF410E0B),
+    error = ErrorLight.error,
+    onError = ErrorLight.onError,
+    errorContainer = ErrorLight.container,
+    onErrorContainer = ErrorLight.onContainer,
 
     background = Color(0xFFFBF8FF),
     onBackground = Color(0xFF1B1B21),
@@ -84,10 +117,10 @@ internal val DarkScheme: ColorScheme = darkColorScheme(
     tertiaryContainer = Color(0xFF5D3A52),
     onTertiaryContainer = Color(0xFFFFD8EE),
 
-    error = Color(0xFFF2B8B5),
-    onError = Color(0xFF601410),
-    errorContainer = Color(0xFF8C1D18),
-    onErrorContainer = Color(0xFFF9DEDC),
+    error = ErrorDark.error,
+    onError = ErrorDark.onError,
+    errorContainer = ErrorDark.container,
+    onErrorContainer = ErrorDark.onContainer,
 
     background = Color(0xFF131318),
     onBackground = Color(0xFFE4E1E9),
