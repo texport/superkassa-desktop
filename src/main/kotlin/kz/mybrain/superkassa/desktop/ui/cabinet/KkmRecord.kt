@@ -30,13 +30,19 @@ enum class KkmRecord { Entered, Applied, OnRecord, Refused, Deregistered }
  * кабинет о состоянии не сказал вовсе, и поднимать из-за этого тревогу
  * не за что. Такая касса считается заведённой — это самое малое, что
  * о ней известно наверняка, и заявления оно ей не приписывает.
+ *
+ * `UNKNOWN` — это и есть отсутствие кода, написанное словом: тем же
+ * словом кабинет отвечает о смене кассы, которой он не знает. Прежде
+ * оно считалось отказом, и касса без сведений об учёте вставала
+ * в список отказов КГД с советом разобрать причину и подать заявление
+ * заново — отказа, которого не было. На карте её место при этом краснело.
  */
 fun kkmRecord(status: String?): KkmRecord = when (status?.trim()?.uppercase().orEmpty()) {
     "REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS" -> KkmRecord.OnRecord
     "REGISTRATION_IN_ISNA_PROCESS",
     "REREGISTRATION_IN_ISNA_PROCESS",
     "DEREGISTRATION_IN_ISNA_PROCESS" -> KkmRecord.Applied
-    "DRAFT", "" -> KkmRecord.Entered
+    "DRAFT", "", "UNKNOWN" -> KkmRecord.Entered
     "DEREGISTERED" -> KkmRecord.Deregistered
     else -> KkmRecord.Refused
 }
