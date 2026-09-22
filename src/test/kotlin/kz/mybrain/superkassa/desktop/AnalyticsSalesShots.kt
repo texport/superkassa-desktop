@@ -73,6 +73,10 @@ class AnalyticsSalesShots {
     @Test
     fun `выручка нулевая`() = body("an-sales-zero", SalesLook.nothingSold())
 
+    /** Сеть показа: полтора месяца, 81 чек и нулевой НДС на три тысячи касс. */
+    @Test
+    fun `сеть показа`() = body("audit-analytics-sales-show", SalesLook.show())
+
     /** Единственный вид расчёта: доля обязана быть целой. */
     @Test
     fun `единственный вид расчётов`() = body("an-sales-one-payment", SalesLook.onlyCash())

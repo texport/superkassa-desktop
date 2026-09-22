@@ -14,7 +14,7 @@ private val analyticsSalesTextsEn = AnalyticsSalesTexts(
     versusPrevious = "vs the previous period",
     percentPoints = "pp",
     online = "Registers in contact",
-    silent = "Silent for the period",
+    silent = "No receipts in the period",
 
     revenue = "Revenue",
     receipts = "Receipts",
@@ -70,7 +70,8 @@ private val analyticsSalesTextsEn = AnalyticsSalesTexts(
         "types. They show whether the terminal agrees with the register and how much money " +
         "settled in the drawer",
     registersHint = "How much each register sells: the rows show which one works and which " +
-        "one is silent. A silent register is either a closed place or a lost connection",
+        "one does not. A register without receipts may be a closed place, a lost connection " +
+        "or one the KGD has not put on record yet: the summary does not tell the reason",
     placesHint = "The same by retail place: a place's revenue is collected from all of its " +
         "registers. Places are compared with each other — the total revenue is fully here",
     deliveryHint = "Whether the documents reached the BFD. The rejected ones and the ones " +

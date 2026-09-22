@@ -71,6 +71,101 @@ internal object SalesLook {
         )
     }
 
+    /**
+     * Сеть показа так, как её отдаёт кабинет.
+     *
+     * Полтора месяца по всей сети: 81 чек и 61 820 ₸ на одной точке
+     * из тысячи, НДС нулевой — касса работает без НДС, — и три тысячи
+     * касс в парке против пяти, приславших за срок хоть один чек.
+     * Числа взяты из ответов кабинета показа, а не придуманы: экран,
+     * который на них выглядит сломанным, сломанным его и увидят.
+     */
+    fun show(): SalesView {
+        val from = LocalDate.parse("2026-08-01")
+        val to = LocalDate.parse("2026-09-22")
+        val places = (1..SHOW_PLACES).map { at ->
+            SalesUnit(id = "p$at", name = "Точка $at", retailPlaceName = "Точка $at")
+        }
+        val sellingPlace = SalesUnit(
+            id = "p0",
+            name = "Магазин на Достык",
+            retailPlaceName = "Магазин на Достык",
+            receiptCount = SHOW_RECEIPTS,
+            revenue = money("61820.00"),
+            difference = money("54616.00"),
+            lastContactAt = "2026-09-22T06:46:53Z"
+        )
+        return SalesView(
+            range = JournalRange(from, to),
+            summary = showSummary(),
+            days = showDays(),
+            hours = showHours(),
+            registers = showRegisters(),
+            places = listOf(sellingPlace) + places,
+            delivery = SalesDelivery(
+                receipts = SalesDeliveryCounts(total = 111, unknown = 111),
+                reports = SalesDeliveryCounts(total = 25, unknown = 25),
+                offlineCount = 1
+            )
+        )
+    }
+
+    private fun showSummary() = SalesSummary(
+        receiptCount = SHOW_RECEIPTS,
+        revenue = money("61820.00"),
+        refunds = money("7204.00"),
+        difference = money("54616.00"),
+        averageReceipt = money("763.21"),
+        tax = money("0.00"),
+        payments = SalesPayments(
+            cash = money("54143.00"),
+            card = money("6877.00"),
+            electronic = money("0.00"),
+            mobile = money("800.00")
+        ),
+        offlineCount = 1,
+        queuedCount = 0,
+        unknownCount = 111,
+        cashRegisterCount = SHOW_FLEET,
+        openShiftCount = 1,
+        purchaseCount = 11,
+        purchases = money("8420.00"),
+        purchaseRefunds = money("5420.00")
+    )
+
+    /** Кабинет присылает только те сутки, в которые торговали: их пять из пятидесяти трёх. */
+    private fun showDays() = listOf(
+        SalesDay("2026-09-18", 32, money("31599.00"), money("404.00")),
+        SalesDay("2026-09-19", 5, money("1450.00"), money("500.00")),
+        SalesDay("2026-09-20", 24, money("10670.00"), money("3500.00")),
+        SalesDay("2026-09-21", 4, money("2901.00"), money("2500.00")),
+        SalesDay("2026-09-22", 16, money("15200.00"), money("300.00"))
+    )
+
+    private fun showHours() = listOf(
+        SalesHour(21, 24, money("27293.00")),
+        SalesHour(22, 9, money("6006.00")),
+        SalesHour(11, 3, money("7550.00")),
+        SalesHour(10, 6, money("3850.00"))
+    )
+
+    /** Пять касс с чеками и весь остальной парк молча: так отвечает кабинет. */
+    private fun showRegisters(): List<SalesUnit> {
+        val selling = listOf(31599 to 32, 12120 to 29, 10670 to 4, 4530 to 9, 2901 to 7)
+            .mapIndexed { at, (sum, receipts) ->
+                unit(at + 1).copy(
+                    receiptCount = receipts,
+                    revenue = money("$sum.00"),
+                    difference = money("$sum.00"),
+                    retailPlaceName = "Магазин на Достык"
+                )
+            }
+        val silent = (selling.size + 1..SHOW_FLEET).map { at ->
+            unit(at).copy(receiptCount = 0, revenue = money("0.00"), difference = money("0.00"), lastContactAt = null)
+        }
+        return selling + silent
+    }
+
     /** Единственный вид расчёта: доля обязана быть целой, а не долькой. */
     fun onlyCash(): SalesView = view().let {
         it.copy(summary = it.summary.copy(payments = SalesPayments(cash = it.summary.revenue)))
@@ -174,6 +269,11 @@ internal object SalesLook {
 
     /** Которая по счёту точка снимка молчит: на ней видно, что молчащие в счёт не идут. */
     private const val SILENT = 3
+
+    /** Парк, точки и чеки кабинета показа. */
+    const val SHOW_FLEET = 3294
+    const val SHOW_PLACES = 1001
+    const val SHOW_RECEIPTS = 81
 
     const val WEEK = 7
     const val MONTH = 30
