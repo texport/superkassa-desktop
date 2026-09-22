@@ -2,10 +2,12 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kz.mybrain.superkassa.desktop.eds.NcaLayer
@@ -36,7 +38,7 @@ import kotlin.time.TimeSource
 @Composable
 fun ApplicationSignWait(language: Language, texts: CabinetTexts, onCancel: () -> Unit) {
     SignWait(
-        left = signWaitLeft(),
+        left = signWaitLeft(LocalSignTick.current),
         window = NcaLayer.SIGN_WINDOW,
         texts = texts,
         eds = edsTexts(language),
@@ -45,19 +47,30 @@ fun ApplicationSignWait(language: Language, texts: CabinetTexts, onCancel: () ->
 }
 
 /**
+ * Как часто пересчитывается остаток.
+ *
+ * Владельцу хватает раза в секунду. Проверке нужен шаг мельче: движение
+ * отсчёта она ловит ожиданием по стенным часам, и под нагрузкой соседних
+ * прогонов секунда не укладывалась в отведённое ей время — проверка падала
+ * на исправном коде.
+ */
+val LocalSignTick: ProvidableCompositionLocal<Duration> =
+    staticCompositionLocalOf { Durations.everySecond }
+
+/**
  * Сколько ожидания осталось.
  *
  * Срок берётся у самого [NcaLayer]: считать его здесь своим значением
  * значит однажды показать владельцу время, которого у него нет.
  */
 @Composable
-private fun signWaitLeft(): Duration {
+private fun signWaitLeft(tick: Duration): Duration {
     var left by remember { mutableStateOf(NcaLayer.SIGN_WINDOW) }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(tick) {
         val since = TimeSource.Monotonic.markNow()
         while (isActive) {
             left = (NcaLayer.SIGN_WINDOW - since.elapsedNow()).coerceAtLeast(Duration.ZERO)
-            delay(Durations.everySecond)
+            delay(tick)
         }
     }
     return left

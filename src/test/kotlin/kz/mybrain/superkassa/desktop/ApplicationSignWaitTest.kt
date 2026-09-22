@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetUser
 import kz.mybrain.superkassa.desktop.ui.cabinet.ActionKind
 import kz.mybrain.superkassa.desktop.ui.cabinet.DeregistrationReason
+import kz.mybrain.superkassa.desktop.ui.cabinet.LocalSignTick
 import kz.mybrain.superkassa.desktop.ui.cabinet.RegistrationActionsBlock
 import kz.mybrain.superkassa.desktop.ui.cabinet.submitApplication
 import kz.mybrain.superkassa.desktop.ui.setup.ApplicationStepCard
@@ -72,8 +74,10 @@ class ApplicationSignWaitTest {
         NcaFake { NcaReply.Silence }.use { fake ->
             val cabinet = cabinet(fake)
             RenderProbe(CARD, TALL) {
-                Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
-                    RegistrationActionsBlock(session(), cabinet, texts, draft()) {}
+                CompositionLocalProvider(LocalSignTick provides TICK) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+                        RegistrationActionsBlock(session(), cabinet, texts, draft()) {}
+                    }
                 }
             }.use { probe ->
                 val before = probe.frame()
@@ -82,7 +86,7 @@ class ApplicationSignWaitTest {
                 File("/tmp/fix-15-cabinet-wait.png").writeBytes(waiting)
 
                 assertFalse(waiting.contentEquals(before), "ожидание подписи на экране не показано")
-                Thread.sleep(TICK.inWholeMilliseconds)
+                Thread.sleep(MOVED.inWholeMilliseconds)
                 assertTrue(probe.changedFrom(waiting), "отсчёт не двигается")
 
                 // Отмена возвращает кнопку подачи: оставленный отсчёт значил бы,
@@ -101,7 +105,9 @@ class ApplicationSignWaitTest {
     fun `мастер показывает то же ожидание подписи`() {
         NcaFake { NcaReply.Silence }.use { fake ->
             val cabinet = cabinet(fake)
-            RenderProbe(CARD, TALL) { Step(cabinet) }.use { probe ->
+            RenderProbe(CARD, TALL) {
+                CompositionLocalProvider(LocalSignTick provides TICK) { Step(cabinet) }
+            }.use { probe ->
                 repeat(SETTLE) { probe.frame() }
                 val before = probe.frame()
                 probe.click(STEP_SUBMIT)
@@ -109,7 +115,7 @@ class ApplicationSignWaitTest {
                 File("/tmp/fix-15-setup-wait.png").writeBytes(waiting)
 
                 assertFalse(waiting.contentEquals(before), "ожидание подписи в мастере не показано")
-                Thread.sleep(TICK.inWholeMilliseconds)
+                Thread.sleep(MOVED.inWholeMilliseconds)
                 assertTrue(probe.changedFrom(waiting), "отсчёт в мастере не двигается")
             }
         }
@@ -192,7 +198,11 @@ class ApplicationSignWaitTest {
         const val CARD = 720
         const val TALL = 420
         const val SETTLE = 30
-        val TICK = 1200.milliseconds
+        /** Шаг отсчёта в проверке: секунда не ловится под нагрузкой соседних прогонов. */
+        val TICK = 50.milliseconds
+
+        /** Сколько проверка ждёт движения отсчёта: несколько его шагов с запасом. */
+        val MOVED = 400.milliseconds
         val WAIT = 10.seconds
         val STEP = 20.milliseconds
     }
