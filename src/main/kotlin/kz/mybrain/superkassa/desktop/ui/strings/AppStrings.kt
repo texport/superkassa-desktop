@@ -76,7 +76,14 @@ data class CommonStrings(
     val explain: String,
     val expand: String,
     /** Повторить то, что не удалось: одна надпись на все отказы приложения. */
-    val retry: String
+    val retry: String,
+    /**
+     * В списке выбора нет ни одного значения.
+     *
+     * Раскрытая пустая рамка читается как сбой приложения, а не как
+     * «справочник пуст»: узел мог не отдать его вовсе.
+     */
+    val nothingToPick: String
 )
 
 data class LoginStrings(

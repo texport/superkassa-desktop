@@ -20,7 +20,8 @@ internal val KazakhStrings = AppStrings(
         collapse = "Жию",
         explain = "Түсіндірме",
         expand = "Жаю",
-        retry = "Қайталау"
+        retry = "Қайталау",
+        nothingToPick = "Таңдайтын ештеңе жоқ"
     ),
     login = LoginStrings(
         title = "Кассаға кіру",
