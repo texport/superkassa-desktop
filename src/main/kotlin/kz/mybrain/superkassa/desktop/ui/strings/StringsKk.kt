@@ -126,6 +126,7 @@ internal val KazakhStrings = AppStrings(
         barcodeSearching = "Ізделуде…",
         barcodeFind = "Табу",
         barcodeMissing = "Анықтамалықта мұндай штрих-код жоқ — позицияны қолмен қосыңыз.",
+        barcodeUnavailable = "Анықтамалық қазір қолжетімсіз — позицияны қолмен қосыңыз.",
         domainKind = "Сала түрі",
         accountNumber = "Шот нөмірі",
         cardNumber = "Карта нөмірі",

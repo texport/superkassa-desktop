@@ -1,9 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.analytics
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,7 +18,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesUnit
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
@@ -128,17 +125,6 @@ private fun SalesRow(columns: List<SalesColumn>, kind: SalesRows, row: SalesUnit
             }
         }
     }
-}
-
-/** Строка таблицы: та же раскладка у заголовка и у значений. */
-@Composable
-private fun TableRow(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically,
-        content = content
-    )
 }
 
 /**

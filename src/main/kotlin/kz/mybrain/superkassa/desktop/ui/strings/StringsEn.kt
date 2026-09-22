@@ -126,6 +126,7 @@ internal val EnglishStrings = AppStrings(
         barcodeSearching = "Searching…",
         barcodeFind = "Find",
         barcodeMissing = "No such barcode in the catalogue — add the item by hand.",
+        barcodeUnavailable = "The catalogue is unavailable right now — add the item by hand.",
         domainKind = "Industry",
         accountNumber = "Account number",
         cardNumber = "Card number",

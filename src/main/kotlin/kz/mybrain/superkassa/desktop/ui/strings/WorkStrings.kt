@@ -99,6 +99,15 @@ data class SaleStrings(
     val barcodeSearching: String,
     val barcodeFind: String,
     val barcodeMissing: String,
+
+    /**
+     * Справочник не ответил: спросить о товаре сейчас нельзя.
+     *
+     * Отдельная строка, а не [barcodeMissing]: товар в справочнике
+     * есть, и «такого штрихкода нет» отправляло кассира искать беду
+     * с товаром вместо настоящей — потерянной связи.
+     */
+    val barcodeUnavailable: String,
     val domainKind: String,
     val accountNumber: String,
     val cardNumber: String,

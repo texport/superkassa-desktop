@@ -68,9 +68,9 @@ private fun place(
     byName: Map<String, RetailPlace>
 ): RetailPlace? = row.id?.let(byId::get) ?: row.name?.let(byName::get)
 
-/** Название региона из адреса точки; адреса нет — так и сказано словами. */
+/** Название региона точки; сам разбор адреса — общий на раздел, см. [regionOf]. */
 private fun regionTitle(place: RetailPlace?, unknown: String): String =
-    place?.address?.substringBefore(',')?.trim()?.takeIf { it.isNotBlank() } ?: unknown
+    regionOf(place?.address, unknown)
 
 /** Одна строка свода: точки региона, сложенные вместе. */
 private fun region(title: String, rows: List<SalesUnit>, registers: Int, total: BigDecimal): SalesRegion {
