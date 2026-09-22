@@ -59,7 +59,7 @@ fun NodeFactsCard(session: Session) {
                 }
             ) { Text(texts.ofdAuth) }
         }
-        auth?.let { FactLines(texts.ofdAuth, authLines(texts.ofdNextReqNum, texts.ofdToken, it), texts.nodeUnknown) }
+        auth?.let { FactLines(texts.ofdAuth, authLines(texts.ofdNextReqNum, it), texts.nodeUnknown) }
     }
 }
 
@@ -89,9 +89,14 @@ private fun nodeLines(
     )
 }
 
-/** Номер следующего запроса и токен, как их отдал узел. */
-private fun authLines(reqNum: String, token: String, auth: OfdAuthInfo): List<Pair<String, String>> =
-    listOfNotNull(
-        auth.nextReqNum?.let { reqNum to it.toString() },
-        auth.token?.takeIf { it.isNotBlank() }?.let { token to it }
-    )
+/**
+ * Номер следующего запроса — и только он.
+ *
+ * Рядом стоял токен кассы, как его отдал узел. По нему отправляют
+ * фискальные команды от её имени, а экран настроек показывают и
+ * снимают: строка с токеном уезжала в чужой снимок вместе со всем,
+ * что рядом. Разошедшийся номер запроса объясняет отказы ОФД и сам
+ * по себе прав ни на что не даёт.
+ */
+internal fun authLines(reqNum: String, auth: OfdAuthInfo): List<Pair<String, String>> =
+    listOfNotNull(auth.nextReqNum?.let { reqNum to it.toString() })
