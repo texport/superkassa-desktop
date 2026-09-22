@@ -153,15 +153,15 @@ private fun ChangeSummary(form: SaleForm, basket: Basket) {
     val discount = form.discount.sumOf(basket.total)
     val markup = form.markup.sumOf(basket.total)
     val given = basket.itemDiscounts
-    MinorSumLine(extra.changesBefore, formatSigned(basket.total + given))
-    if (given.signum() != 0) MinorSumLine(extra.itemDiscountsGiven, formatSigned(given.negate()))
+    MinorSumLine(extra.changesBefore, Money.format(basket.total + given))
+    if (given.signum() != 0) MinorSumLine(extra.itemDiscountsGiven, Money.format(given.negate()))
     if (discount != null && discount.signum() > 0) {
-        MinorSumLine(changeTitle(texts.sale.receiptDiscount, form.discount), formatSigned(discount.negate()))
+        MinorSumLine(changeTitle(texts.sale.receiptDiscount, form.discount), Money.format(discount.negate()))
     }
     if (markup != null && markup.signum() > 0) {
-        MinorSumLine(changeTitle(texts.sale.receiptMarkup, form.markup), formatSigned(markup))
+        MinorSumLine(changeTitle(texts.sale.receiptMarkup, form.markup), Money.format(markup))
     }
-    NamedSumRow(name = extra.changesAfter, amount = formatSigned(basket.totalWith(discount, markup)))
+    NamedSumRow(name = extra.changesAfter, amount = Money.format(basket.totalWith(discount, markup)))
 }
 
 /**
