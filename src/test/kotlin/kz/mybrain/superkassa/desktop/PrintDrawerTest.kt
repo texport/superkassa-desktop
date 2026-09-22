@@ -137,7 +137,11 @@ class PrintDrawerTest {
         drawer.adopt("0000")
 
         drawer.refused { }
-        assertNotNull(drawer.request, "владельцу дают ввести пин ещё раз")
+        val again = assertNotNull(drawer.request, "владельцу дают ввести пин ещё раз")
+        // Пин у касс разный, и на повторном вопросе владелец должен видеть,
+        // к какой именно его спрашивают, — первый раз это видно, второй раз
+        // окно открывалось с пустой первой строкой.
+        assertEquals("Касса у входа", again.kkmTitle, "повторный вопрос не называет кассу")
         assertNull(drawer.resolve { }, "неверный пин забыт")
     }
 

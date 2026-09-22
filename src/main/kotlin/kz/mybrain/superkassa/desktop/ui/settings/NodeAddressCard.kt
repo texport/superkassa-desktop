@@ -47,7 +47,9 @@ fun NodeAddressCard(session: Session) {
             FilledTonalButton(
                 modifier = Modifier.height(Sizes.fieldHeight),
                 enabled = address.isNotBlank() && address.trim() != session.preferences.nodeUrl,
-                onClick = { session.preferences.nodeUrl = address }
+                // Пробел по краям адреса приходит из буфера обмена вместе
+                // со скопированной строкой, а узел по такому адресу не ищется.
+                onClick = { session.preferences.nodeUrl = address.trim() }
             ) { Text(texts.save) }
         }
     }

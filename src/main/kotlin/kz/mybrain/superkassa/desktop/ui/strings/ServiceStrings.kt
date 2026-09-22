@@ -81,6 +81,8 @@ data class SettingStrings(
     val printer: String,
     val printerHint: String,
     val printerSystem: String,
+    /** На машине нет ни одного принтера: печатать чек некуда. */
+    val printerNone: String,
     val printKind: String,
     val printCopies: String,
     val panelBehaviour: String,
@@ -116,7 +118,12 @@ data class SettingStrings(
     val mapLocation: String,
     val mapDefault: String,
     val groupAppearance: String,
+    /** Настройки самой кассы: их принимает узел и только в режиме программирования. */
     val groupService: String,
+    /** Адреса служб, с которыми говорит рабочее место: узел, кабинет, карта. */
+    val groupServices: String,
+    /** Сама программа на этой машине: журнал, версия, сведения об узле. */
+    val groupProgram: String,
     val groupIrreversible: String,
     val panelBehaviourHint: String,
     val panelPositionEntry: String,

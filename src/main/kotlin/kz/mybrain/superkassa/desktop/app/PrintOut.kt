@@ -20,6 +20,13 @@ import kz.mybrain.superkassa.desktop.server.Kkm
  */
 internal suspend fun sendToPrinter(session: Session, kkm: Kkm, image: ByteArray) {
     val texts = session.texts.preview
+    // Принтера может не быть вовсе: рабочее место за прилавком ставят
+    // раньше, чем подключают чековый. «Принтер не принял задание» в этом
+    // случае неправда — принимать было некому.
+    if (Printing.printers().isEmpty()) {
+        session.report(texts.printerMissing)
+        return
+    }
     val sent = runCatching {
         withContext(Dispatchers.IO) {
             Printing.print(

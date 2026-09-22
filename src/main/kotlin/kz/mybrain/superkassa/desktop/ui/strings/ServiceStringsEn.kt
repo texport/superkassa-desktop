@@ -64,6 +64,8 @@ internal val englishSettings = SettingStrings(
     printerHint = "The printer belongs to the register: one computer may hold two, " +
         "each with its own receipt tape. Until one is chosen, jobs go to the system default.",
     printerSystem = "System default",
+    printerNone = "This machine has no printer at all: there is nowhere to print a receipt. " +
+        "Connect a printer and open the settings again",
     printKind = "File kind when saving",
     printCopies = "Copies when printing",
     panelBehaviour = "Till column sections",
@@ -101,7 +103,9 @@ internal val englishSettings = SettingStrings(
     mapLocation = "Location lookup",
     mapDefault = "Back to community",
     groupAppearance = "Appearance and printing",
-    groupService = "Service",
+    groupService = "Register settings",
+    groupServices = "Service addresses",
+    groupProgram = "Application on this machine",
     groupIrreversible = "Irreversible",
     panelBehaviourHint = "What is chosen here is what the cashier sees when the sale screen opens. " +
         "They can still collapse or expand a section with the arrow on the screen itself.",
@@ -154,6 +158,7 @@ internal val englishPreview = PreviewStrings(
     print = "Print",
     printSent = "Sent to the printer",
     printFailed = "The printer refused the job",
+    printerMissing = "This machine has no printer at all: there is nowhere to print",
     save = "Save to a file",
     saved = "Saved",
     zoomIn = "Zoom in",

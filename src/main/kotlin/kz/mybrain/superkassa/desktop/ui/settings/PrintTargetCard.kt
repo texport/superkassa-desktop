@@ -28,17 +28,30 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
  *
  * Вид файла — то, чем сохраняют форму: PDF уходит покупателю, HTML —
  * в бухгалтерию, картинка повторяет экран.
+ *
+ * @param printers принтеры этой машины. Задаются снаружи только проверкой:
+ *   спросить их у машины, на которой идёт проверка, значит увидеть её
+ *   принтеры, а не пустой список, ради которого карточку и смотрят.
  */
 @Composable
-internal fun PrintTargetCard(session: Session) {
+internal fun PrintTargetCard(session: Session, printers: List<String> = remember { Printing.printers() }) {
     val texts = LocalStrings.current
     val kkm = session.selected ?: return
-    val printers = remember { Printing.printers() }
     var printer by remember(kkm.kkmId) { mutableStateOf(session.preferences.printer(kkm.kkmId)) }
     var kind by remember { mutableStateOf(session.preferences.printKind()) }
     var copies by remember { mutableStateOf(session.preferences.printCopies) }
 
     SectionCard(title = texts.settings.printer, info = texts.settings.printerHint) {
+        // Принтеров на машине может не быть вовсе — за прилавком это
+        // обычное дело до подключения чекового. Молчание здесь кончалось
+        // отказом печати на первом же чеке, при покупателе.
+        if (printers.isEmpty()) {
+            Text(
+                text = texts.settings.printerNone,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
         DictionaryPicker(
             label = texts.settings.printer,
             entries = printerEntries(printers, texts.settings.printerSystem),

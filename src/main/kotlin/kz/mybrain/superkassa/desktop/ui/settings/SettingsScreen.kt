@@ -59,14 +59,31 @@ fun SettingsCards(session: Session) {
     }
 }
 
-/** Группы настроек в порядке от повседневного к необратимому. */
+/**
+ * Группы настроек в порядке от повседневного к необратимому.
+ *
+ * Прежде служебное лежало одной кучей: налоговый режим кассы, адрес
+ * кабинета и режим отладки стояли подряд без всякого признака, что это
+ * три разных предмета. Группа называет, чьё это хозяйство — кассы,
+ * сторонних служб или самой программы, — и по ней видно, что́ изменится
+ * на узле, а что останется на этой машине.
+ */
 private enum class SettingsGroup(val title: (SettingStrings) -> String?) {
 
     /** Касса, с которой работает это рабочее место: без заголовка, она одна. */
     Current({ null }),
 
     Appearance({ it.groupAppearance }),
-    Service({ it.groupService }),
+
+    /** Настройки самой кассы: их принимает узел, и только в программировании. */
+    Kkm({ it.groupService }),
+
+    /** Адреса служб, с которыми говорит рабочее место. */
+    Services({ it.groupServices }),
+
+    /** Программа на этой машине: сведения об узле, выпуски, журнал. */
+    Program({ it.groupProgram }),
+
     Irreversible({ it.groupIrreversible })
 }
 
@@ -78,8 +95,9 @@ private enum class SettingsGroup(val title: (SettingStrings) -> String?) {
  */
 internal enum class Setting {
     CurrentKkm, Appearance, PrintForm, PrintTarget, PanelBehaviour,
-    Tax, OfdSync, NodeAddress, CabinetAddress, MapServices, OfdToken,
-    Diagnostics, Debug, NodeFacts, Updates, Decommission
+    Tax, OfdSync, OfdToken, Diagnostics,
+    NodeAddress, CabinetAddress, MapServices,
+    NodeFacts, Updates, Debug, Decommission
 }
 
 /**
@@ -118,22 +136,25 @@ private val settingsCards = listOf(
     SettingsCard(Setting.PrintTarget, SettingsGroup.Appearance, needsRegister = true) { PrintTargetCard(it) },
     SettingsCard(Setting.PanelBehaviour, SettingsGroup.Appearance) { PanelBehaviourCard(it) },
 
-    SettingsCard(Setting.Tax, SettingsGroup.Service, needsRegister = true, adminOnly = true) { TaxSettingsCard(it) },
-    SettingsCard(Setting.OfdSync, SettingsGroup.Service, needsRegister = true, adminOnly = true) { OfdSyncCard(it) },
+    SettingsCard(Setting.Tax, SettingsGroup.Kkm, needsRegister = true, adminOnly = true) { TaxSettingsCard(it) },
+    SettingsCard(Setting.OfdSync, SettingsGroup.Kkm, needsRegister = true, adminOnly = true) { OfdSyncCard(it) },
+    SettingsCard(Setting.OfdToken, SettingsGroup.Kkm, needsRegister = true, adminOnly = true) { OfdTokenCard(it) },
+    SettingsCard(Setting.Diagnostics, SettingsGroup.Kkm, needsRegister = true) { DiagnosticsCard(it) },
+
     // Адреса узла и кабинета задают раньше, чем куда-либо входят: кассе
     // без адреса узла войти некуда.
-    SettingsCard(Setting.NodeAddress, SettingsGroup.Service) { NodeAddressCard(it) },
-    SettingsCard(Setting.CabinetAddress, SettingsGroup.Service) { CabinetAddressCard(it) },
-    SettingsCard(Setting.MapServices, SettingsGroup.Service) { MapServicesCard(it) },
-    SettingsCard(Setting.OfdToken, SettingsGroup.Service, needsRegister = true, adminOnly = true) { OfdTokenCard(it) },
-    SettingsCard(Setting.Diagnostics, SettingsGroup.Service, needsRegister = true) { DiagnosticsCard(it) },
-    // Отладка нужна ровно тогда, когда войти нельзя: узел не отвечает,
-    // список касс пуст. Условий у неё нет намеренно.
-    SettingsCard(Setting.Debug, SettingsGroup.Service) { DebugCard(it) },
-    SettingsCard(Setting.NodeFacts, SettingsGroup.Service) { NodeFactsCard(it) },
+    SettingsCard(Setting.NodeAddress, SettingsGroup.Services) { NodeAddressCard(it) },
+    SettingsCard(Setting.CabinetAddress, SettingsGroup.Services) { CabinetAddressCard(it) },
+    SettingsCard(Setting.MapServices, SettingsGroup.Services) { MapServicesCard(it) },
+
+    SettingsCard(Setting.NodeFacts, SettingsGroup.Program) { NodeFactsCard(it) },
     // Версия кассы и выпуски не зависят ни от кассы, ни от прав: узнать,
     // что стоит и что вышло, можно с экрана входа.
-    SettingsCard(Setting.Updates, SettingsGroup.Service) { UpdatesCard(it) },
+    SettingsCard(Setting.Updates, SettingsGroup.Program) { UpdatesCard(it) },
+    // Отладка стоит последней в программе и нужна ровно тогда, когда войти
+    // нельзя: узел не отвечает, список касс пуст. Условий у неё нет
+    // намеренно, а место — за тем, что кассир читает каждый день.
+    SettingsCard(Setting.Debug, SettingsGroup.Program) { DebugCard(it) },
 
     SettingsCard(
         Setting.Decommission,

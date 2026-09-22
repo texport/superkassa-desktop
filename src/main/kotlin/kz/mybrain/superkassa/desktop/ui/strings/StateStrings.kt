@@ -16,6 +16,8 @@ data class PreviewStrings(
     val print: String,
     val printSent: String,
     val printFailed: String,
+    /** Печатать некуда: на машине нет ни одного принтера. */
+    val printerMissing: String,
     val save: String,
     val saved: String,
     val zoomIn: String,

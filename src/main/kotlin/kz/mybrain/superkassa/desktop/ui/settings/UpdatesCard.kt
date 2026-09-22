@@ -46,7 +46,7 @@ internal fun UpdatesCard(session: Session) {
     var outcome by remember { mutableStateOf<UpdateOutcome?>(null) }
     SectionCard(title = texts.title, info = texts.hint) {
         AutomaticSwitch(updates, texts.automatic)
-        FactLines(texts.installed, factLines(updates, texts), texts.neverChecked)
+        FactLines(texts.appName, factLines(updates, texts), texts.neverChecked)
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
             verticalAlignment = Alignment.CenterVertically

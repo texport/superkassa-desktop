@@ -46,8 +46,10 @@ fun CabinetAddressCard(session: Session) {
             )
             FilledTonalButton(
                 modifier = Modifier.height(Sizes.fieldHeight),
-                enabled = address.isNotBlank() && address != session.preferences.cabinetUrl,
-                onClick = { session.preferences.cabinetUrl = address }
+                enabled = address.isNotBlank() && address.trim() != session.preferences.cabinetUrl,
+                // Пробел по краям адреса приходит из буфера обмена вместе
+                // со скопированной строкой, а кабинет по такому адресу не ищется.
+                onClick = { session.preferences.cabinetUrl = address.trim() }
             ) { Text(texts.save) }
         }
     }
