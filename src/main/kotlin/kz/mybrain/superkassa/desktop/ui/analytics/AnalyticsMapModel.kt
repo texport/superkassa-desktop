@@ -21,8 +21,22 @@ import kz.mybrain.superkassa.desktop.ui.map.MapState
  */
 class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocoder) {
 
-    /** Откуда брать положение касс. */
-    var source: PositionSource by mutableStateOf(PositionSource.RetailPlaceAddress)
+    /**
+     * Откуда брать положение касс.
+     *
+     * Раздел открывается на координатах кабинета: их кабинет отдаёт
+     * готовыми на всю сеть, и карта заполняется сразу. Адрес торговой
+     * точки приходит без координат вовсе — дом по нему ищет открытая
+     * служба карт, по одному адресу в секунду с обязательной паузой,
+     * и сеть из тысячи разных адресов собиралась бы на карте
+     * четверть часа. Вдобавок найденное службой — догадка по строке
+     * адреса, а координаты кабинета — то, что о точке записано.
+     *
+     * Сам источник никуда не делся: он рядом, в переключателе над картой,
+     * и отвечает на свой вопрос — где касса должна стоять по учётным
+     * сведениям.
+     */
+    var source: PositionSource by mutableStateOf(PositionSource.CabinetCoordinates)
         private set
 
     var view: KkmMapView? by mutableStateOf(null)
