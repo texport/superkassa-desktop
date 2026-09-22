@@ -127,6 +127,7 @@ data class SettingStrings(
     val groupIrreversible: String,
     val panelBehaviourHint: String,
     val panelPositionEntry: String,
+    val panelReceiptChanges: String,
     val panelReceiptDetails: String,
     val panelMoney: String,
     val printLayoutHint: String,

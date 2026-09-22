@@ -51,7 +51,7 @@ fun SaleScreen(session: Session) {
     val basket = remember { Basket() }
     val form = remember { SaleForm() }
     val panels = remember { SalePanels(session.preferences) }
-    val total = basket.totalWith(amount(form.discount).value, amount(form.markup).value)
+    val total = totalOf(basket, form)
     val texts = LocalStrings.current
     CompositionLocalProvider(
         LocalSaleTexts provides saleTexts(session.language),
@@ -137,9 +137,14 @@ private fun TillColumn(
                 expanded = panels.expanded(SalePanel.PositionEntry),
                 onToggle = { panels.toggle(SalePanel.PositionEntry) }
             ) { basket.add(it) }
-            ReceiptDetailsCard(
+            ReceiptChangesCard(
                 form = form,
                 basket = basket,
+                expanded = panels.expanded(SalePanel.ReceiptChanges),
+                onToggle = { panels.toggle(SalePanel.ReceiptChanges) }
+            )
+            ReceiptDetailsCard(
+                form = form,
                 expanded = panels.expanded(SalePanel.ReceiptDetails),
                 onToggle = { panels.toggle(SalePanel.ReceiptDetails) }
             )
@@ -148,7 +153,6 @@ private fun TillColumn(
         // чеке, и уезжать под сгиб они не имеют права.
         ReceiptTotals(
             session = session,
-            basket = basket,
             form = form,
             total = total,
             expanded = panels.expanded(SalePanel.Money),

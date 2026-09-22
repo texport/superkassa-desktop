@@ -110,6 +110,7 @@ internal val russianSettings = SettingStrings(
     panelBehaviourHint = "Выбранное здесь — то, что кассир увидит при открытии продажи. " +
         "Свернуть или развернуть раздел он всё равно может стрелкой на самом экране.",
     panelPositionEntry = "Новая позиция",
+    panelReceiptChanges = "Скидки и наценки",
     panelReceiptDetails = "Реквизиты чека",
     panelMoney = "Оплата и итог",
     printLayoutHint = "Лента 58 и 80 мм — для чековых принтеров, страница — для печати на обычном листе " +

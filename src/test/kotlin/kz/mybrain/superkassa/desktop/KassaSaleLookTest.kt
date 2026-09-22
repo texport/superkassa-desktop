@@ -24,10 +24,11 @@ import kz.mybrain.superkassa.desktop.ui.sale.LocalSaleTexts
 import kz.mybrain.superkassa.desktop.ui.sale.LocalUnits
 import kz.mybrain.superkassa.desktop.ui.sale.LocalVatRates
 import kz.mybrain.superkassa.desktop.ui.sale.Position
+import kz.mybrain.superkassa.desktop.ui.sale.ReceiptChangesCard
 import kz.mybrain.superkassa.desktop.ui.sale.ReceiptTotals
 import kz.mybrain.superkassa.desktop.ui.sale.SaleForm
 import kz.mybrain.superkassa.desktop.ui.sale.SaleScreen
-import kz.mybrain.superkassa.desktop.ui.sale.amount
+import kz.mybrain.superkassa.desktop.ui.sale.totalOf
 import kz.mybrain.superkassa.desktop.ui.sale.vatRatesOf
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
@@ -100,7 +101,7 @@ class KassaSaleLookTest {
      */
     @Composable
     private fun Receipt(session: Session, basket: Basket, form: SaleForm) {
-        val total = basket.totalWith(amount(form.discount).value, amount(form.markup).value)
+        val total = totalOf(basket, form)
         CompositionLocalProvider(
             LocalSaleTexts provides saleTexts(session.language),
             LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
@@ -112,9 +113,58 @@ class KassaSaleLookTest {
             ) {
                 BasketCard(basket, Modifier.weight(1f), {}, {}, {})
                 Column(modifier = Modifier.width(TILL), verticalArrangement = Arrangement.spacedBy(Spacing.normal)) {
-                    ReceiptTotals(session, basket, form, total, expanded = true, onToggle = {})
+                    ReceiptChangesCard(form, basket, expanded = true, onToggle = {})
+                    ReceiptTotals(session, form, total, expanded = true, onToggle = {})
                     IssueRow(session, basket, form)
                 }
+            }
+        }
+    }
+
+    /**
+     * Блок скидок и наценок: набранное и его последствие.
+     *
+     * Снимок смотрят глазами ради одного: видно ли из блока, во что
+     * обошлась скидка. Поэтому состояния различаются не полями, а теми
+     * строками «было — стало», которые кассир называет покупателю.
+     */
+    @Test
+    fun `блок скидок показывает было и стало`() {
+        val session = KassaScene.session("sale-changes", shift = KassaScene.openShift())
+        val basket = Basket().apply { POSITIONS.forEach { add(it) } }
+        val discounted = Basket().apply {
+            POSITIONS.forEach { add(it) }
+            positions[0] = positions[0].copy(discount = BigDecimal("500.00"))
+        }
+
+        val plain = KassaScene.shot("sale-changes-plain") { Changes(session, basket, SaleForm()) }
+        val discount = KassaScene.shot("sale-changes-discount") {
+            Changes(session, basket, SaleForm().apply { enterDiscount("1500") })
+        }
+        val markup = KassaScene.shot("sale-changes-markup") {
+            Changes(session, basket, SaleForm().apply { enterMarkup("1500") })
+        }
+        // Скидка по позициям названа в блоке строкой, и скидка на чек
+        // рядом с ней краснеет: вместе их узел не принимает.
+        val byLine = KassaScene.shot("sale-changes-by-line") {
+            Changes(session, discounted, SaleForm().apply { enterDiscount("1500") })
+        }
+
+        val frames = listOf(plain, discount, markup, byLine)
+        frames.forEach { assertTrue(it.isNotEmpty()) }
+        assertTrue(frames.map { it.toList() }.distinct().size == frames.size, "состояния блока скидок неотличимы")
+    }
+
+    /** Один блок скидок в кассовой колонке — тот же, что стоит в окне. */
+    @Composable
+    private fun Changes(session: Session, basket: Basket, form: SaleForm) {
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                ReceiptChangesCard(form, basket, expanded = true, onToggle = {})
             }
         }
     }

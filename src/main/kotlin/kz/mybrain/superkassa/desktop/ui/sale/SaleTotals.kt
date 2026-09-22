@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.Collapsible
 import kz.mybrain.superkassa.desktop.ui.components.HeroSumLine
-import kz.mybrain.superkassa.desktop.ui.components.MinorSumLine
 import kz.mybrain.superkassa.desktop.ui.components.SectionHeader
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
@@ -39,7 +38,6 @@ import java.math.BigDecimal
 @Composable
 fun ReceiptTotals(
     session: Session,
-    basket: Basket,
     form: SaleForm,
     total: BigDecimal,
     expanded: Boolean,
@@ -47,8 +45,6 @@ fun ReceiptTotals(
 ) {
     val texts = LocalStrings.current
     val extra = LocalSaleTexts.current
-    val discount = amount(form.discount).value
-    val markup = amount(form.markup).value
     val taken = amount(form.taken).value
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -56,25 +52,11 @@ fun ReceiptTotals(
             verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
         ) {
             SectionHeader(extra.paymentAndTotal, expanded, onToggle)
-            // Скидка и наценка на чек показываются только когда заданы:
-            // без них сумма позиций — то же число, что итог, а разделитель
-            // над пустотой давал на экране две черты подряд.
-            val changed = (discount ?: BigDecimal.ZERO) > BigDecimal.ZERO ||
-                (markup ?: BigDecimal.ZERO) > BigDecimal.ZERO
+            // Слагаемые итога стоят в блоке скидок и наценок: здесь
+            // повторённые, они назывались вторым «было — стало» рядом
+            // с первым, и кассир сличал два столбца вместо одного.
             Collapsible(expanded) {
-                Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
-                    PaymentPanel(session, form, total)
-                    if (changed) {
-                        HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.tight))
-                        MinorSumLine(extra.itemsSum, formatSigned(basket.total))
-                        if (discount != null && discount > BigDecimal.ZERO) {
-                            MinorSumLine(texts.sale.receiptDiscount, formatSigned(discount.negate()))
-                        }
-                        if (markup != null && markup > BigDecimal.ZERO) {
-                            MinorSumLine(texts.sale.receiptMarkup, formatSigned(markup))
-                        }
-                    }
-                }
+                PaymentPanel(session, form, total)
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.tight))
             HeroSumLine(texts.sale.total, formatSigned(total), MaterialTheme.colorScheme.onSurface)

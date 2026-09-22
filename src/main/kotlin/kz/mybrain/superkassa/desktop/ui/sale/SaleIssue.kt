@@ -79,7 +79,7 @@ private suspend fun issue(
     extra: SaleTexts
 ) {
     form.issuing = true
-    val total = basket.totalWith(amount(form.discount).value, amount(form.markup).value)
+    val total = totalOf(basket, form)
     val issued = issueReceipt(session, basket, form.input(total), texts, extra) {
         session.titleOf(Dictionary.DeliveryStatuses, it)
     }
@@ -88,12 +88,8 @@ private suspend fun issue(
 }
 
 /** Снимок состояния экрана для правил: чистые данные, без Compose. */
-fun saleStateOf(session: Session, basket: Basket, form: SaleForm): SaleState = saleStateOf(
-    session,
-    basket,
-    form,
-    basket.totalWith(amount(form.discount).value, amount(form.markup).value)
-)
+fun saleStateOf(session: Session, basket: Basket, form: SaleForm): SaleState =
+    saleStateOf(session, basket, form, totalOf(basket, form))
 
 /** То же, когда итог уже посчитан экраном: считать его дважды незачем. */
 fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDecimal): SaleState = SaleState(

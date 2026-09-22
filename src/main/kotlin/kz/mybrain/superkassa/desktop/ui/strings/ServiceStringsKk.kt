@@ -110,6 +110,7 @@ internal val kazakhSettings = SettingStrings(
     panelBehaviourHint = "Мұнда таңдалғанды кассир сатуды ашқанда көреді. " +
         "Бөлімді экранның өзінде де көрсеткішпен жинауға немесе жаюға болады.",
     panelPositionEntry = "Жаңа позиция",
+    panelReceiptChanges = "Жеңілдіктер мен үстемелер",
     panelReceiptDetails = "Чек деректемелері",
     panelMoney = "Төлем және қорытынды",
     printLayoutHint = "58 және 80 мм таспа — чек принтерлеріне, бет — кәдімгі параққа басып шығаруға " +

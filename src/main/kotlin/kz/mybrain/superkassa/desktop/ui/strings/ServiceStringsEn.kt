@@ -110,6 +110,7 @@ internal val englishSettings = SettingStrings(
     panelBehaviourHint = "What is chosen here is what the cashier sees when the sale screen opens. " +
         "They can still collapse or expand a section with the arrow on the screen itself.",
     panelPositionEntry = "New item",
+    panelReceiptChanges = "Discounts and markups",
     panelReceiptDetails = "Receipt details",
     panelMoney = "Payment and total",
     printLayoutHint = "58 and 80 mm tape are for receipt printers; the page is for plain paper " +

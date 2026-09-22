@@ -21,6 +21,16 @@ data class SaleTexts(
     val changeNone: String,
     val positionEntry: String,
     val receiptDetails: String,
+
+    /** Заголовок блока, где скидка и наценка на чек стоят вместе с их итогом. */
+    val receiptChanges: String,
+
+    /** Стоимость набранного до скидок и то, что вышло после них. */
+    val changesBefore: String,
+    val changesAfter: String,
+
+    /** Сколько чек уже потерял скидками по строкам: вместе со скидкой на чек они запрещены. */
+    val itemDiscountsGiven: String,
     val paymentAndTotal: String,
     val lineDiscount: String,
     val addByEnter: String,

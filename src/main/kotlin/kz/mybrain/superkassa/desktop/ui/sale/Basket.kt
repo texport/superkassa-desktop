@@ -69,6 +69,18 @@ class Basket {
         get() = positions.any { it.discount > BigDecimal.ZERO }
 
     /**
+     * Сколько уже дано скидкой по строкам чека.
+     *
+     * Сторнированная строка забирает свою скидку обратно тем же знаком,
+     * каким забирает стоимость: иначе «было» и «стало» в денежном блоке
+     * на отменённой строке не сошлись бы.
+     */
+    val itemDiscounts: BigDecimal
+        get() = positions.fold(BigDecimal.ZERO) { sum, position ->
+            sum + if (position.storno) position.discount.negate() else position.discount
+        }
+
+    /**
      * Есть ли в чеке позиция с нулевой ценой.
      *
      * Национальный каталог цен не несёт, и найденная в нём позиция
