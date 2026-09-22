@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.components
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -27,8 +28,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 fun Modifier.fieldWidth(label: String, width: Dp): Modifier {
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.bodySmall
-    val measured = with(LocalDensity.current) {
-        measurer.measure(label, style).size.width.toDp()
+    val density = LocalDensity.current
+    // Подпись меряется один раз: при растягивании окна разметка
+    // пересчитывается десятки раз в секунду, а подпись от ширины окна
+    // не зависит.
+    val measured = remember(label, style, density) {
+        with(density) { measurer.measure(label, style).size.width.toDp() }
     }
     return this.width(maxOf(width, measured + Sizes.fieldTextInset))
 }
