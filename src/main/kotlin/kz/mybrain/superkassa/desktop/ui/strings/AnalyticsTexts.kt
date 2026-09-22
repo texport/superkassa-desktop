@@ -122,6 +122,28 @@ data class AnalyticsSalesTexts(
     val tab: String,
     val forPeriod: String,
 
+    /** Карточка, с которой начинается вкладка: главные числа сети за срок. */
+    val overview: String,
+    val overviewHint: String,
+
+    /** Налог на добавленную стоимость: то самое число, ради которого смотрят сводку. */
+    val vat: String,
+
+    /** Какая часть расчётов прошла картой, электронными деньгами и мобильным платежом. */
+    val cashless: String,
+
+    /** Чем мерится изменение: прошлым сроком такой же длины. */
+    val versusPrevious: String,
+
+    /** Процентные пункты: ими меряется изменение доли, а не процентами от процента. */
+    val percentPoints: String,
+
+    /** Касс, от которых за срок пришёл хоть один чек. */
+    val online: String,
+
+    /** Касс, не пробивших за срок ни одного чека. */
+    val silent: String,
+
     val revenue: String,
     val receipts: String,
     val average: String,
@@ -164,6 +186,15 @@ data class AnalyticsSalesTexts(
     val allRegistersShown: String,
     val allPlacesShown: String,
     val colName: String,
+
+    /** Свод точек по регионам: столбцы и то, чем назван регион без адреса. */
+    val regions: String,
+    val regionsHint: String,
+    val region: String,
+    val placeCount: String,
+    val activeRegisters: String,
+    val networkShare: String,
+    val noAddress: String,
 
     val delivery: String,
     val delivered: String,

@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop
 
+import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesDay
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesDelivery
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesDeliveryCounts
@@ -87,6 +88,92 @@ internal object SalesLook {
         cashRegisterCount = rows,
         openShiftCount = 4
     )
+
+
+    /**
+     * Тот же срок, под которым лежит прошлый: сеть выросла.
+     *
+     * Прошлый срок отличается от нынешнего всеми числами сразу — выручкой,
+     * чеками, налогом и видами расчётов: на снимке смотрят, что стрелки
+     * и цвета у всех пяти чисел разошлись правильно, а не совпали случайно.
+     */
+    fun growing(): SalesView = view().let {
+        it.copy(
+            previous = it.summary.copy(
+                receiptCount = 11_230,
+                revenue = money("104000000.00"),
+                tax = money("11142857.14"),
+                payments = SalesPayments(cash = money("46000000.00"), card = money("58000000.00"))
+            ),
+            retailPlaces = catalogue(REGIONS)
+        )
+    }
+
+    /** Тот же срок, но прошлый был лучше: числа идут под уклон. */
+    fun falling(): SalesView = view().let {
+        it.copy(
+            previous = it.summary.copy(
+                receiptCount = 15_900,
+                revenue = money("162000000.00"),
+                tax = money("17357142.86"),
+                payments = SalesPayments(cash = money("48000000.00"), card = money("114000000.00"))
+            ),
+            retailPlaces = catalogue(REGIONS)
+        )
+    }
+
+    /**
+     * Сеть, разложенная по регионам.
+     *
+     * По две точки на регион и по кассе на точку: на снимке смотрят и свод
+     * точек, и счёт работавших машин. Выручка убывает от региона к региону,
+     * чтобы на картинке было видно, что порядок строк — по выручке.
+     */
+    fun regioned(count: Int = REGIONS): SalesView {
+        val places = catalogue(count)
+        val rows = places.mapIndexed { at, place ->
+            val weight = count * 2 - at
+            unit(at + 1).copy(
+                id = place.id,
+                name = place.name,
+                receiptCount = weight * RECEIPTS,
+                revenue = money("${weight * DAY_REVENUE}.00")
+            )
+        }
+        val registers = places.mapIndexed { at, place ->
+            unit(at + 1).copy(retailPlaceName = place.name, receiptCount = if (at == SILENT) 0 else at * RECEIPTS + 1)
+        }
+        return view().copy(places = rows, registers = registers, retailPlaces = places)
+    }
+
+    /** Справочник точек: по две на регион, с адресом кабинета «Регион, Район, Улица, Дом». */
+    private fun catalogue(count: Int): List<RetailPlace> =
+        REGION_NAMES.take(count).flatMapIndexed { at, region ->
+            listOf("Центральный" to "Абая", "Северный" to "Сейфуллина").mapIndexed { which, (area, street) ->
+                RetailPlace(
+                    id = "p$at$which",
+                    name = "$region, $area",
+                    address = "$region, $area район, $street, ${at * 2 + which + 1}"
+                )
+            }
+        }
+
+    /** Регионы Казахстана, в которых стоит сеть снимка. */
+    private val REGION_NAMES = listOf(
+        "Алматы",
+        "Астана",
+        "Шымкент",
+        "Карагандинская область",
+        "Актюбинская область",
+        "Восточно-Казахстанская область",
+        "Мангистауская область"
+    )
+
+    /** Сколько регионов в сети снимка. */
+    const val REGIONS = 7
+
+    /** Которая по счёту точка снимка молчит: на ней видно, что молчащие в счёт не идут. */
+    private const val SILENT = 3
 
     const val WEEK = 7
     const val MONTH = 30
