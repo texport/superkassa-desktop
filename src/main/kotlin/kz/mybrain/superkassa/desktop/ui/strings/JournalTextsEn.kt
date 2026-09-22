@@ -7,6 +7,7 @@ internal val journalTextsEn = JournalTexts(
         basisHint = "The original receipt is found by day and number: a customer may return goods later. " +
             "A refund of a refund is not allowed, so such receipts are not listed.",
         basisColumn = "Receipts of the day",
+        allBasesShown = "All receipts of the day are shown",
         chooseBasis = "Pick a receipt in the list",
         chooseBasisHint = "The receipt total and the fiscal sign will appear here.",
         noBasisHint = "Turn to another day, type the receipt number, or check the link to the node.",

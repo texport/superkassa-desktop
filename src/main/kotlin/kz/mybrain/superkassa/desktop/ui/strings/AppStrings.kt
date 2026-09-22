@@ -47,7 +47,6 @@ data class AppStrings(
     val sale: SaleStrings,
     val returns: ReturnStrings,
     val cash: CashStrings,
-    val history: HistoryStrings,
     val queue: QueueStrings,
     val users: UserStrings,
     val settings: SettingStrings,

@@ -46,17 +46,22 @@ object Money {
      */
     fun tengeOf(tiyn: Long): BigDecimal = BigDecimal.valueOf(tiyn, TIYN_SCALE)
 
+    /**
+     * Сумма со знаком: минус берётся из общего набора знаков.
+     *
+     * Знак вычитания и дефис переноса на экране разной ширины, и столбец
+     * сумм, где сторно набрано дефисом, а возврат — минусом, стоит рваным.
+     * Знак ставится у всей суммы, а не у целой части: у «−0,50» целых
+     * нулей, и минус пропадал вместе с ними — сторно на полтиына
+     * выглядело обычной продажей.
+     */
     fun format(amount: BigDecimal): String {
         val scaled = amount.setScale(TIYN_SCALE, RoundingMode.DOWN)
-        // Знак берётся у всей суммы, а не у целой части: у «−0,50» целых
-        // нулей, и минус пропадал вместе с ними — сторно на полтиына
-        // выглядело обычной продажей.
-        val negative = scaled.signum() < 0
         val whole = scaled.abs().toBigInteger().toString()
         val fraction = scaled.remainder(BigDecimal.ONE).abs().movePointRight(TIYN_SCALE).toBigInteger()
         val tiyn = fraction.toString().padStart(TIYN_SCALE, '0')
-        val sign = if (negative) "-" else ""
-        return "$sign${groupThousands(whole)},$tiyn${Glyphs.NBSP}${Glyphs.TENGE}"
+        val sign = if (scaled.signum() < 0) Glyphs.MINUS else ""
+        return "$sign${groupThousands(whole)}${Glyphs.DECIMAL}$tiyn${Glyphs.NBSP}${Glyphs.TENGE}"
     }
 
     /**
@@ -75,6 +80,36 @@ object Money {
             .chunked(GROUP_SIZE)
             .joinToString(Glyphs.NBSP.toString())
             .reversed()
+
+    /**
+     * Сумма в том виде, в каком её набирают в поле.
+     *
+     * Дробь отделена запятой — тем же знаком, каким её показывают деньги
+     * и количество: подставленная касса сумма должна выглядеть так же,
+     * как набранная кассиром, а не другой записью того же числа. Разряды
+     * разделяет само поле, и в набранную строку они не попадают.
+     */
+    fun entered(amount: BigDecimal): String =
+        amount.setScale(TIYN_SCALE, RoundingMode.DOWN).toPlainString().replace('.', Glyphs.DECIMAL)
+
+    /**
+     * Введённая сумма в том виде, в каком её показывает поле ввода.
+     *
+     * Разряды разбиваются тем же неразрывным пробелом, каким они разбиты
+     * в подписи рядом: в поле стояло «11372,50», а под ним — «13 860,00 ₸»,
+     * и кассир сверял два по-разному набранных числа. Разбивается только
+     * целая часть, остальное остаётся как набрано: сумма набирается слева
+     * направо, и «1 200,» на полпути к «1 200,50» должна оставаться
+     * тем, что кассир видит.
+     *
+     * Набранное не число возвращается как есть: об этом говорит отказ
+     * поля, а не молчаливая подмена введённого.
+     */
+    fun grouped(entered: String): String {
+        val whole = entered.takeWhile { it.isDigit() }
+        if (whole.isEmpty()) return entered
+        return groupThousands(whole) + entered.drop(whole.length)
+    }
 
     /**
      * Разбор суммы, введённой кассиром.

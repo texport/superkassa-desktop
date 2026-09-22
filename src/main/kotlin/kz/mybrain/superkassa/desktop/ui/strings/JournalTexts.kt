@@ -25,6 +25,15 @@ data class ReturnJournalTexts(
     val basis: String,
     val basisHint: String,
     val basisColumn: String,
+
+    /**
+     * Весь день показан: чеков-оснований больше нет.
+     *
+     * Своя строка, а не журнальная «Показан весь срок»: журнал листают
+     * сроком, а основание ищут за один день, и о сроке под списком чеков
+     * дня говорить нечего.
+     */
+    val allBasesShown: String,
     val chooseBasis: String,
     val chooseBasisHint: String,
     val noBasisHint: String,

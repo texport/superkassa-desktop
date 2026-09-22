@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.Tip
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.StatusStrings
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
@@ -48,11 +49,21 @@ fun JournalDelivery.color(): Color = when (this) {
     JournalDelivery.Internal -> MaterialTheme.colorScheme.outline
 }
 
-/** Плашка состояния доставки; у записи без состояния её нет вовсе. */
+/**
+ * Плашка состояния доставки; у записи без состояния её нет вовсе.
+ *
+ * У отказа под плашкой лежит причина: в строке журнала кассир видел одно
+ * красное слово «Отклонён», а ни просмотра, ни печати у такого документа
+ * нет — узнать, что произошло, было негде. Слова причины приходят от
+ * источника, и подсказки нет у того, кто её не даёт.
+ *
+ * @param reason почему документ отвергнут: слова кассира и код отказа.
+ */
 @Composable
-fun JournalDeliveryChip(delivery: JournalDelivery?) {
+fun JournalDeliveryChip(delivery: JournalDelivery?, reason: String? = null) {
     val state = delivery ?: return
-    Chip(text = state.title(LocalStrings.current.status), color = state.color())
+    val chip = @Composable { Chip(text = state.title(LocalStrings.current.status), color = state.color()) }
+    if (reason.isNullOrBlank()) chip() else Tip(reason) { chip() }
 }
 
 /** Плашка состояния записи: те же два цвета, что и у доставки. */

@@ -104,7 +104,11 @@ fun JournalRow(
         Box(modifier = Modifier.weight(STATE)) {
             // О доставке говорит не всякая запись: у смены состояние своё —
             // открыта она или закрыта.
-            if (entry.delivery != null) JournalDeliveryChip(entry.delivery) else JournalStateChip(entry.state)
+            if (entry.delivery != null) {
+                JournalDeliveryChip(entry.delivery, entry.refusal)
+            } else {
+                JournalStateChip(entry.state)
+            }
         }
         Box(modifier = Modifier.weight(PRINT), contentAlignment = Alignment.CenterEnd) {
             RowActions(entry, onPreview, onPrint)

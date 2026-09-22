@@ -6,6 +6,7 @@ import kz.mybrain.superkassa.desktop.server.listKkms
 import kz.mybrain.superkassa.desktop.server.queue
 import kz.mybrain.superkassa.desktop.server.shiftDocuments
 import kz.mybrain.superkassa.desktop.ui.history.lastShift
+import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 
 /**
  * Перечитывает список касс. Отсутствие узла — не ошибка кассира.
@@ -113,6 +114,6 @@ private suspend fun Session.readQueue(kkmId: String): Message? {
 
 /** Счётчики кассы: из них берутся наличные в ящике. */
 private suspend fun Session.readCounters(kkmId: String): Message? {
-    guard<Unit>(texts.dashboard.cashInDrawer) { adoptCounters(client.counters(kkmId, pin)) }
+    guard<Unit>(moneyTexts(language).drawer.inDrawer) { adoptCounters(client.counters(kkmId, pin)) }
     return lastMessage
 }

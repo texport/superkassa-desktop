@@ -29,7 +29,7 @@ class MoneyTest {
 
     @Test
     fun `отрицательная сумма сохраняет знак`() {
-        assertEquals("-1\u00A0500,00\u00A0₸", Money.format(BigDecimal("-1500")))
+        assertEquals("\u22121\u00A0500,00\u00A0₸", Money.format(BigDecimal("-1500")))
     }
 
     /**
@@ -38,8 +38,8 @@ class MoneyTest {
      */
     @Test
     fun `минус сохраняется у суммы меньше тенге`() {
-        assertEquals("-0,50\u00A0₸", Money.format(BigDecimal("-0.50")))
-        assertEquals("-0,01\u00A0₸", Money.formatTiyn(-1L))
+        assertEquals("\u22120,50\u00A0₸", Money.format(BigDecimal("-0.50")))
+        assertEquals("\u22120,01\u00A0₸", Money.formatTiyn(-1L))
     }
 
     @Test
@@ -75,5 +75,26 @@ class MoneyTest {
     fun `пустой ввод суммой не считается`() {
         assertNull(Money.parse("   "))
         assertNull(Money.parse("не число"))
+    }
+
+    /**
+     * Поле суммы показывало «11372,50» рядом с подписью «13 860,00 ₸»:
+     * одно и то же число было набрано на экране двумя способами.
+     */
+    @Test
+    fun `набранная сумма разбита теми же разрядами, что и показанная`() {
+        assertEquals("11\u00A0372,50", Money.grouped("11372,50"))
+        assertEquals("13\u00A0860,00\u00A0₸", Money.format(BigDecimal("13860")))
+    }
+
+    @Test
+    fun `недобранная сумма остаётся такой, какой её набирают`() {
+        assertEquals("1\u00A0200,", Money.grouped("1200,"))
+        assertEquals("не число", Money.grouped("не число"))
+    }
+
+    @Test
+    fun `разбитую по разрядам сумму поле же и принимает`() {
+        assertEquals(BigDecimal("11372.50"), Money.parse(Money.grouped("11372,50")))
     }
 }

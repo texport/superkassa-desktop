@@ -61,7 +61,6 @@ internal val EnglishStrings = AppStrings(
         shift = "Shift",
         shiftOpenNo = "No. %s open",
         shiftClosed = "Closed",
-        cashInDrawer = "Cash in drawer",
         documentsInShift = "Documents in shift",
         shiftDocuments = "Shift documents",
         refused = "Refused by the BFD",
@@ -152,17 +151,10 @@ internal val EnglishStrings = AppStrings(
         done = "issued, state"
     ),
     cash = CashStrings(
-        title = "Cash in the register",
-        inDrawer = "In drawer",
         deposit = "Deposit",
         withdraw = "Withdraw",
         deposited = "Deposited",
         withdrawn = "Withdrawn"
-    ),
-    history = HistoryStrings(
-        title = "Last 24 hours",
-        load = "Load",
-        loading = "Loading…"
     ),
     queue = QueueStrings(
         title = "Delivery queue",

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.UnitOfMeasurement
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.onEnter
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -146,17 +147,16 @@ private fun RowScope.DraftAmountField(
     val extra = LocalSaleTexts.current
     val value = draft.valueOf(field)
     val problem = draft.problem(field)?.takeIf { value.isNotBlank() }
-    OutlinedTextField(
+    MoneyField(
         value = value,
-        onValueChange = onChange,
-        label = { Text(label) },
-        singleLine = true,
+        label = label,
+        modifier = Modifier.weight(1f),
         isError = problem != null,
         // Помеха стоит под своим полем, а не только строкой под кнопкой:
         // на окне кассира форма позиции не влезает целиком, и строка под
         // кнопкой оказывалась за сгибом — красное поле кассир видел,
         // а причину нет и прокручивать её не догадывался.
-        supportingText = problem?.let { { Text(it.text(extra)) } },
-        modifier = Modifier.weight(1f)
+        supportingText = problem?.text(extra),
+        onValueChange = onChange
     )
 }

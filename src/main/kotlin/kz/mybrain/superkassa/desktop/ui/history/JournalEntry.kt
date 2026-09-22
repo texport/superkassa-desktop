@@ -25,6 +25,11 @@ import java.math.BigDecimal
  * @param sign фискальный признак или то, что источник знает вместо него.
  * @param about остальное, по чему ищут строку: наименования позиций,
  *   кассир, отметка КГД. В столбцах этого нет — искать по нему нужно.
+ * @param refusal почему документ отвергнут — словами кассира и кодом
+ *   отказа; `null`, если отказа нет или источник причины не отдаёт.
+ *   В столбец она не помещается и стоит подсказкой у плашки, но искать
+ *   по ней нужно: «все отказы из-за одного и того же» — обычный вопрос
+ *   обслуживанию.
  * @param printable есть ли у документа печатная форма.
  */
 data class JournalEntry(
@@ -42,6 +47,7 @@ data class JournalEntry(
     val shiftNo: Long?,
     val state: JournalState? = null,
     val about: String = "",
+    val refusal: String? = null,
     val printable: Boolean = true
 ) {
 
@@ -61,7 +67,8 @@ data class JournalEntry(
             type,
             moment,
             shiftNo?.toString().orEmpty(),
-            about
+            about,
+            refusal.orEmpty()
         ).joinToString(" ").lowercase()
 }
 

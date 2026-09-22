@@ -14,7 +14,7 @@ import java.math.BigDecimal
  * расчёт в магазине, а не редкий случай. Протокол принимает список оплат,
  * и разбиение живёт здесь — одинаково для продажи и для возврата.
  *
- * Последняя оплата всегда берёт остаток и вводу не поддаётся. Так суммы
+ * Одна оплата остаётся без ввода и берёт остаток чека. Так суммы
  * складываются в итог по построению: кассиру нечего сводить в уме, а узлу
  * не приходит чек, в котором заплачено не столько, сколько пробито.
  */
@@ -47,14 +47,30 @@ class PaymentSplit(first: String = CASH_PAYMENT) {
     }
 
     /**
+     * Оплата, которая забирает остаток чека и ввода не требует.
+     *
+     * Это наличные, когда ими платят: смешанный расчёт затевают, когда
+     * карты не хватает, и остальное покупатель добирает деньгами. Спросить
+     * наличную часть значило бы просить кассира вычесть итог из карты
+     * в уме — и принять его ошибку, если он вычтет не так. Без наличных
+     * остаток забирает последняя оплата.
+     *
+     * Набранное кассиром пересчёт не трогает: остаточная строка своего
+     * числа не хранит вовсе.
+     */
+    fun rest(): PaymentLine = lines.firstOrNull { it.type == CASH_PAYMENT } ?: lines.last()
+
+    /** Эта ли оплата берёт остаток: её сумму касса считает сама. */
+    fun takesRest(line: PaymentLine): Boolean = line === rest()
+
+    /**
      * Сумма оплаты в строке.
      *
      * Единственная оплата — весь итог: спрашивать сумму, когда она и так
-     * известна, значит требовать ввод ради ввода. Последняя из нескольких
-     * забирает остаток.
+     * известна, значит требовать ввод ради ввода.
      */
     fun sumOf(line: PaymentLine, total: BigDecimal): BigDecimal =
-        if (line === lines.last()) total - assigned() else line.value ?: BigDecimal.ZERO
+        if (takesRest(line)) total - assigned() else line.value ?: BigDecimal.ZERO
 
     /** Оплаты для узла. */
     fun toPayments(total: BigDecimal): List<ReceiptPayment> =
@@ -69,15 +85,18 @@ class PaymentSplit(first: String = CASH_PAYMENT) {
 
     /** Что уже расписано по видам, кроме остатка. */
     fun assigned(): BigDecimal =
-        lines.dropLast(1).fold(BigDecimal.ZERO) { sum, line -> sum + (line.value ?: BigDecimal.ZERO) }
+        entered().fold(BigDecimal.ZERO) { sum, line -> sum + (line.value ?: BigDecimal.ZERO) }
 
     /** Почему такое разбиение принять нельзя, или `null`. */
     fun issue(total: BigDecimal): SplitIssue? = when {
         !mixed -> null
-        lines.dropLast(1).any { it.value == null || it.value!!.signum() <= 0 } -> SplitIssue.Empty
+        entered().any { it.value == null || it.value!!.signum() <= 0 } -> SplitIssue.Empty
         assigned() >= total -> SplitIssue.Excess
         else -> null
     }
+
+    /** Оплаты, суммы которых набирает кассир. */
+    private fun entered(): List<PaymentLine> = lines.filterNot { takesRest(it) }
 
     /** Возвращает разбиение к одной оплате: следующий чек начинается с чистого. */
     fun reset() {

@@ -61,7 +61,6 @@ internal val KazakhStrings = AppStrings(
         shift = "Ауысым",
         shiftOpenNo = "№ %s ашық",
         shiftClosed = "Жабық",
-        cashInDrawer = "Кассадағы қолма-қол ақша",
         documentsInShift = "Ауысымдағы құжаттар",
         shiftDocuments = "Ауысым құжаттары",
         refused = "БФД қабылдамады",
@@ -152,17 +151,10 @@ internal val KazakhStrings = AppStrings(
         done = "ресімделді, күйі"
     ),
     cash = CashStrings(
-        title = "Кассадағы ақша",
-        inDrawer = "Жәшікте",
         deposit = "Салу",
         withdraw = "Алу",
         deposited = "Салынды",
         withdrawn = "Алынды"
-    ),
-    history = HistoryStrings(
-        title = "Тәулік тарихы",
-        load = "Жүктеу",
-        loading = "Оқылуда…"
     ),
     queue = QueueStrings(
         title = "Жіберу кезегі",

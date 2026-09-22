@@ -7,16 +7,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.Collapsible
 import kz.mybrain.superkassa.desktop.ui.components.HeroSumLine
+import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.SectionHeader
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -59,7 +59,7 @@ fun ReceiptTotals(
                 PaymentPanel(session, form, total)
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.tight))
-            HeroSumLine(texts.sale.total, formatSigned(total), MaterialTheme.colorScheme.onSurface)
+            HeroSumLine(texts.sale.total, Money.format(total), MaterialTheme.colorScheme.onSurface)
             // Принятые деньги и сдача — часть денежного итога, а не оплаты:
             // кассир вводит их, глядя на сумму к оплате, и обе цифры должны
             // стоять рядом.
@@ -79,14 +79,12 @@ fun ReceiptTotals(
 private fun TakenField(form: SaleForm, short: Boolean) {
     val texts = LocalStrings.current
     val taken = amount(form.taken)
-    OutlinedTextField(
+    MoneyField(
         value = form.taken,
-        onValueChange = { form.taken = it },
-        label = { Text(texts.sale.taken) },
-        singleLine = true,
-        textStyle = MoneyStyle.row,
+        label = texts.sale.taken,
+        modifier = Modifier.fillMaxWidth(),
         isError = form.taken.isNotBlank() && (taken.value == null || short),
-        modifier = Modifier.fillMaxWidth()
+        onValueChange = { form.taken = it }
     )
 }
 
@@ -107,6 +105,6 @@ private fun ChangeLine(taken: BigDecimal, cashSum: BigDecimal) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else {
-        HeroSumLine(extra.change, formatSigned(change), MaterialTheme.colorScheme.primary)
+        HeroSumLine(extra.change, Money.format(change), MaterialTheme.colorScheme.primary)
     }
 }

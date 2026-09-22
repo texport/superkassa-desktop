@@ -23,7 +23,6 @@ data class DashboardStrings(
     val shift: String,
     val shiftOpenNo: String,
     val shiftClosed: String,
-    val cashInDrawer: String,
     val documentsInShift: String,
     val shiftDocuments: String,
     val refused: String,
@@ -135,16 +134,8 @@ data class ReturnStrings(
 )
 
 data class CashStrings(
-    val title: String,
-    val inDrawer: String,
     val deposit: String,
     val withdraw: String,
     val deposited: String,
     val withdrawn: String
-)
-
-data class HistoryStrings(
-    val title: String,
-    val load: String,
-    val loading: String
 )

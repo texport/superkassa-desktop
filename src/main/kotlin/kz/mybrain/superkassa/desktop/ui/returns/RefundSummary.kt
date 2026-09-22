@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,6 +14,7 @@ import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.payment.SplitIssue
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -67,14 +67,12 @@ internal fun RefundAmountRow(
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalAlignment = Alignment.Top
     ) {
-        OutlinedTextField(
+        MoneyField(
             value = entered,
-            onValueChange = onEnter,
-            label = { Text(journal.amount) },
-            singleLine = true,
+            label = journal.amount,
+            modifier = Modifier.fieldWidth(journal.amount, Sizes.fieldAmount),
             isError = rejected,
-            textStyle = MoneyStyle.row,
-            modifier = Modifier.fieldWidth(journal.amount, Sizes.fieldAmount)
+            onValueChange = onEnter
         )
         FieldButton(journal.wholeReceipt, FieldButtonKind.Text, onClick = onWholeReceipt)
     }
