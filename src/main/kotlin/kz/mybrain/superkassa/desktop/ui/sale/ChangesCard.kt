@@ -72,7 +72,7 @@ fun ReceiptChangesCard(
                 )
                 Hint(
                     problem = changeBlockOf(state)
-                        ?.reason(texts.sale, extra, paymentTexts(session.language)),
+                        ?.reason(extra, paymentTexts(session.language)),
                     hint = texts.sale.discountOrMarkup
                 )
                 HorizontalDivider()

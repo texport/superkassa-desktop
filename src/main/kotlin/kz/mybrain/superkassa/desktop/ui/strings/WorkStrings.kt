@@ -105,7 +105,6 @@ data class SaleStrings(
     val customerBin: String,
     val taken: String,
     val total: String,
-    val domainHint: String,
     val barcode: String,
     val barcodeSearch: String,
     val barcodeSearching: String,
@@ -120,13 +119,6 @@ data class SaleStrings(
      * с товаром вместо настоящей — потерянной связи.
      */
     val barcodeUnavailable: String,
-    val domainKind: String,
-    val accountNumber: String,
-    val cardNumber: String,
-    val carNumber: String,
-    val fee: String,
-    val byOrder: String,
-    val parkingHours: String,
     val payment: String,
     val delivered: String,
     val queued: String,

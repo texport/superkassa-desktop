@@ -46,7 +46,6 @@ data class ReceiptInput(
     val discount: BigDecimal?,
     val markup: BigDecimal?,
     val customerBin: String,
-    val domain: DomainInput,
     val idempotencyKey: String
 ) {
     /**
@@ -81,7 +80,6 @@ suspend fun issueReceipt(
         markupSum = input.markup,
         taken = input.cashTaken,
         customerBin = input.customerBin.takeIf { it.isNotBlank() },
-        domain = input.domain.toDomain(),
         defaultVatGroup = kkm.defaultVatGroup
     )
     val title = input.operation.title(texts.sale)

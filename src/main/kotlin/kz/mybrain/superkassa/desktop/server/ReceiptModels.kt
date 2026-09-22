@@ -67,7 +67,7 @@ data class ReceiptRequest(
     val taken: BigDecimal? = null,
     val customerBin: String? = null,
     val parentTicket: ParentTicket? = null,
-    val domain: ReceiptDomain? = null,
+    val domain: ReceiptDomain = ReceiptDomain(),
     /**
      * Ставка НДС чека по умолчанию.
      *
@@ -79,45 +79,17 @@ data class ReceiptRequest(
 )
 
 /**
- * Отраслевые реквизиты чека.
+ * Вид отрасли чека.
  *
- * Вид отрасли определяет, какой подблок обязателен: услуги требуют номер
- * счёта, такси — номер машины, стоянка — время въезда и выезда. Присылать
- * два подблока разом нельзя: ОФД такой чек отвергнет.
+ * Протокол требует его у каждого чека, и касса всегда торгует: отраслевые
+ * реквизиты — лицевой счёт, номер машины, время стоянки — кассир магазина
+ * не заполняет, и спрашивать их с него незачем.
  */
 @Serializable
-data class ReceiptDomain(
-    val type: String,
-    val services: DomainServices? = null,
-    val gasOil: DomainGasOil? = null,
-    val taxi: DomainTaxi? = null,
-    val parking: DomainParking? = null
-)
+data class ReceiptDomain(val type: String = TRADING_DOMAIN)
 
-@Serializable
-data class DomainServices(val accountNumber: String)
-
-@Serializable
-data class DomainGasOil(
-    val cardNumber: String? = null,
-    val correctionNumber: String? = null,
-    @Contextual
-    val correctionSum: BigDecimal? = null
-)
-
-@Serializable
-data class DomainTaxi(
-    val carNumber: String,
-    val isOrder: Boolean,
-    @Contextual
-    val currentFee: BigDecimal
-)
-
-@Serializable
-data class DomainParking(
-    val beginTimeMillis: Long,
-    val endTimeMillis: Long
-)
+/** Торговля: вид отрасли обычного чека. */
+const val TRADING_DOMAIN: String = "DOMAIN_TRADING"
 
 /** Запрос на внесение или изъятие наличных. */
 @Serializable

@@ -62,14 +62,10 @@ private fun OperationChoice(form: SaleForm) {
 }
 
 /**
- * Данные покупателя: его ИИН или БИН и реквизиты выбранной отрасли.
+ * Данные покупателя: его ИИН или БИН.
  *
  * Стоят внизу кассовой колонки намеренно и свёрнуты по умолчанию:
  * заполняются они редко, а штрихкод, оплата и итог нужны в каждом чеке.
- *
- * Отраслевые поля стоят здесь же: номер счёта, номер карты и номер машины
- * принадлежат тому, кому выписан чек, и спрашивают их у того же человека,
- * что и ИИН.
  */
 @Composable
 fun CustomerDataCard(form: SaleForm, expanded: Boolean, onToggle: () -> Unit) {
@@ -85,7 +81,6 @@ fun CustomerDataCard(form: SaleForm, expanded: Boolean, onToggle: () -> Unit) {
                 onToggle = onToggle
             ) {
                 CustomerBinField(form)
-                DomainPanel(form.domain) { form.domain = it }
             }
         }
     }

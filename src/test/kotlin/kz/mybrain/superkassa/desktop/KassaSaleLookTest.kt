@@ -21,6 +21,7 @@ import kz.mybrain.superkassa.desktop.ui.MessageHost
 import kz.mybrain.superkassa.desktop.ui.sale.AdjustmentUnit
 import kz.mybrain.superkassa.desktop.ui.sale.Basket
 import kz.mybrain.superkassa.desktop.ui.sale.BasketCard
+import kz.mybrain.superkassa.desktop.ui.sale.CustomerDataCard
 import kz.mybrain.superkassa.desktop.ui.sale.IssueRow
 import kz.mybrain.superkassa.desktop.ui.sale.LocalSaleTexts
 import kz.mybrain.superkassa.desktop.ui.sale.LocalUnits
@@ -256,6 +257,36 @@ class KassaSaleLookTest {
         ) {
             Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
                 PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
+            }
+        }
+    }
+
+    /**
+     * В данных покупателя стоит только он сам.
+     *
+     * Отраслевые поля — вид отрасли, лицевой счёт, номер машины, часы
+     * стоянки — с экрана убраны, и блок обязан остаться тем, чем назван:
+     * ИИН или БИН того, кому выписан чек.
+     */
+    @Test
+    fun `в данных покупателя остаётся только ИИН или БИН`() {
+        val session = KassaScene.session("sale-customer", shift = KassaScene.openShift())
+        val frame = KassaScene.shot("sale-trim-customer-data", width = ENTRY_WIDE, height = ENTRY_TALL) {
+            Customer(session)
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /** Блок данных покупателя — тот же, что стоит в кассовой колонке. */
+    @Composable
+    private fun Customer(session: Session) {
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                CustomerDataCard(SaleForm(), expanded = true, onToggle = {})
             }
         }
     }

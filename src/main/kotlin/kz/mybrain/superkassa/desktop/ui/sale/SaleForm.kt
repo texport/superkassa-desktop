@@ -21,13 +21,12 @@ class SaleForm {
     var markup: Adjustment by mutableStateOf(Adjustment())
         private set
     var customerBin: String by mutableStateOf("")
-    var domain: DomainInput by mutableStateOf(DomainInput())
     var issuing: Boolean by mutableStateOf(false)
     var attemptKey: String by mutableStateOf(newAttemptKey())
         private set
 
     /**
-     * Скидка и наценка на весь чек — взаимоисключающие: ОФД такой чек
+     * Скидка и наценка на весь чек — взаимоисключающие: БФД такой чек
      * отвергает, и кодек не даёт его даже собрать.
      */
     fun enterDiscount(text: String) {
@@ -76,7 +75,6 @@ class SaleForm {
             discount = discountSum,
             markup = markupSum,
             customerBin = customerBin,
-            domain = domain,
             idempotencyKey = attemptKey
         )
     }
@@ -91,10 +89,6 @@ class SaleForm {
         discount = discount.cleared()
         markup = markup.cleared()
         customerBin = ""
-        // Вид отрасли на рабочем месте не меняется, а счёт, машина и карта
-        // принадлежат покупателю: перенести их в следующий чек значило бы
-        // выписать его на чужие реквизиты.
-        domain = DomainInput(kind = domain.kind)
         split.reset()
         attemptKey = newAttemptKey()
     }

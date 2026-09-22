@@ -37,7 +37,7 @@ fun IssueRow(session: Session, basket: Basket, form: SaleForm) {
         verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
     ) {
         IssueButton(session, basket, form, enabled = block == null)
-        BlockReason(session, block, form.domain.missing)
+        BlockReason(session, block)
     }
 }
 
@@ -57,14 +57,13 @@ private fun IssueButton(session: Session, basket: Basket, form: SaleForm, enable
 
 /** Почему пробить нельзя. Место под строкой занято всегда: иначе кнопка прыгает. */
 @Composable
-private fun BlockReason(session: Session, block: SaleBlock?, missingField: DomainField?) {
-    val texts = LocalStrings.current
+private fun BlockReason(session: Session, block: SaleBlock?) {
     val extra = LocalSaleTexts.current
     // Одна причина без вступления: кнопка рядом и так погашена, а «Чек
     // пробить нельзя: В чеке нет ни одной позиции» — два раза об одном
     // и с заглавной буквы посреди фразы.
     Text(
-        text = block?.reason(texts.sale, extra, paymentTexts(session.language), missingField).orEmpty(),
+        text = block?.reason(extra, paymentTexts(session.language)).orEmpty(),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.error
     )
@@ -109,6 +108,5 @@ fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDeci
     unsupportedPayments = unsupportedPayments(session),
     taken = amount(form.taken).value,
     cashSum = form.split.cashSum(total),
-    customerBin = form.customerBin,
-    missingDomainField = form.domain.missing
+    customerBin = form.customerBin
 )
