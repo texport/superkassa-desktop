@@ -176,5 +176,6 @@ internal val analyticsTextsRu = AnalyticsTexts(
     firstSeen = "Впервые",
     lastSeen = "В последний раз",
 
-    sales = analyticsSalesTextsRu
+    sales = analyticsSalesTextsRu,
+    record = analyticsRecordTextsRu
 )

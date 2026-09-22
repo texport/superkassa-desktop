@@ -24,13 +24,14 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 /**
  * Аналитика по кассам компании.
  *
- * Три взгляда на одно хозяйство: где кассы стоят, откуда они выходят
- * на связь и чем торгуют. Разведены вкладками, потому что смотрят
- * на них порознь — карту открывают, чтобы найти кассу глазами, адреса
- * обмена, чтобы разобраться, почему касса отвечает не оттуда, где
- * числится, а торговлю — чтобы увидеть выручку за срок. Вместе
- * на одном экране они боролись бы за высоту: карте нужна вся, списку
- * адресов и сводке — тоже.
+ * Четыре взгляда на одно хозяйство: где кассы стоят, откуда они выходят
+ * на связь, чем торгуют и как ведётся их учёт. Разведены вкладками,
+ * потому что смотрят на них порознь — карту открывают, чтобы найти
+ * кассу глазами, адреса обмена, чтобы разобраться, почему касса
+ * отвечает не оттуда, где числится, торговлю — чтобы увидеть выручку
+ * за срок, а учёт — чтобы увидеть, какая часть парка вправе торговать.
+ * Вместе на одном экране они боролись бы за высоту: карте нужна вся,
+ * списку адресов и сводке — тоже.
  *
  * Вкладки здесь второго уровня: первого уровня заняты разделами
  * кабинета, и одинаковые полосы вкладок одна под другой не читались бы
@@ -49,6 +50,7 @@ fun AnalyticsPage(session: Session, cabinet: CabinetSession, cabinetTexts: Cabin
             AnalyticsTab.Map -> AnalyticsMapPane(session, cabinet, texts, cabinetTexts)
             AnalyticsTab.Exchange -> AnalyticsExchangePane(cabinet, texts)
             AnalyticsTab.Sales -> AnalyticsSalesPane(session, cabinet, texts, cabinetTexts)
+            AnalyticsTab.Record -> AnalyticsRecordPane(cabinet, texts)
         }
     }
 }
@@ -71,5 +73,6 @@ private fun AnalyticsTabs(page: AnalyticsTab, texts: AnalyticsTexts, onSelect: (
 enum class AnalyticsTab(val title: (AnalyticsTexts) -> String) {
     Map({ it.mapTab }),
     Exchange({ it.exchangeTab }),
-    Sales({ it.sales.tab })
+    Sales({ it.sales.tab }),
+    Record({ it.record.tab })
 }
