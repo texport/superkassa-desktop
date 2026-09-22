@@ -1,13 +1,18 @@
 package kz.mybrain.superkassa.desktop
 
+import androidx.compose.runtime.CompositionLocalProvider
 import kz.mybrain.superkassa.desktop.server.UnitOfMeasurement
+import kz.mybrain.superkassa.desktop.ui.sale.LocalVatRates
 import kz.mybrain.superkassa.desktop.ui.sale.PositionDraft
+import kz.mybrain.superkassa.desktop.ui.sale.UnitPicker
+import kz.mybrain.superkassa.desktop.ui.sale.VatPicker
 import kz.mybrain.superkassa.desktop.ui.sale.VatRate
 import kz.mybrain.superkassa.desktop.ui.sale.unitTitle
 import kz.mybrain.superkassa.desktop.ui.sale.vatTitle
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
 /**
@@ -78,5 +83,41 @@ class SaleReferenceTest {
         assertEquals("Нулевая ставка 0%", vatTitle(rates, "VAT_0"))
         assertEquals("Без НДС", vatTitle(rates, "NO_VAT"))
         assertEquals("VAT_12", vatTitle(rates, "VAT_12"))
+    }
+
+    /**
+     * Ставка и единица, которых нет в справочнике узла.
+     *
+     * Поле показывало на такой код пустоту, и «Без НДС» кассы, названное
+     * узлом другим кодом, выглядело незаполненной ставкой — притом что
+     * в чек этот код уходил. Кадры сравниваются с полем, где не выбрано
+     * ничего: пустое и незнакомое обязаны выглядеть по-разному.
+     */
+    @Test
+    fun `незнакомый код показан в поле, а не стёрт из него`() {
+        val known = shot { VatPicker(selected = "VAT_99", onSelect = {}) }
+        val nothing = shot { VatPicker(selected = "", onSelect = {}) }
+        assertNotEquals(nothing.toList(), known.toList(), "незнакомая ставка неотличима от невыбранной")
+
+        val unit = shot { UnitPicker(selected = "5114", units = units, onSelect = {}) }
+        val noUnit = shot { UnitPicker(selected = "", units = units, onSelect = {}) }
+        assertNotEquals(noUnit.toList(), unit.toList(), "незнакомая единица неотличима от невыбранной")
+    }
+
+    /** Поле выбора в кадре: перечень ставок тот же, что у экрана продажи. */
+    private fun shot(content: @androidx.compose.runtime.Composable () -> Unit): ByteArray =
+        RenderProbe(PICKER_WIDTH, PICKER_HEIGHT) {
+            CompositionLocalProvider(LocalVatRates provides RATES) { content() }
+        }.use { probe ->
+            repeat(FRAMES) { probe.frame() }
+            probe.frame()
+        }
+
+    private companion object {
+        const val PICKER_WIDTH = 320
+        const val PICKER_HEIGHT = 120
+        const val FRAMES = 8
+
+        val RATES = listOf(VatRate("NO_VAT", "Без НДС"), VatRate("VAT_16", "НДС 16%", 16))
     }
 }

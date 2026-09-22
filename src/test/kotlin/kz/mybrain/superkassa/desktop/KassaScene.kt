@@ -240,7 +240,7 @@ internal object KassaScene {
     )
 
     private val VAT_RATES = listOf(
-        NodeVatRate(code = "VAT_NO", percent = 0, name = Trilingual(ru = "Без НДС", kk = "ҚҚС-сыз", en = "No VAT")),
+        NodeVatRate(code = "NO_VAT", percent = 0, name = Trilingual(ru = "Без НДС", kk = "ҚҚС-сыз", en = "No VAT")),
         NodeVatRate(code = "VAT_16", percent = 16, name = Trilingual(ru = "НДС 16%", kk = "ҚҚС 16%", en = "VAT 16%"))
     )
 
