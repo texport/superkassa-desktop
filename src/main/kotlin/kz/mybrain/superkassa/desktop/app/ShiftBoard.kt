@@ -51,6 +51,18 @@ class ShiftBoard {
 
     val documents = mutableStateListOf<Document>()
 
+    /**
+     * Читал ли узел документы этой смены.
+     *
+     * Пустой список и непрочитанный список — разные вещи, как и у очереди:
+     * у кассы, снятой с учёта, узел отвечает KKM_BLOCKED, и плитка
+     * «Документов за смену» писала над открытой сменой ноль. Ноль здесь
+     * читается как «за смену не пробито ничего» — кассир решал по нему,
+     * можно ли снимать Z-отчёт.
+     */
+    var documentsRead: Boolean by mutableStateOf(false)
+        private set
+
     val queueTasks = mutableStateListOf<QueueTask>()
 
     /**
@@ -80,6 +92,7 @@ class ShiftBoard {
     fun adoptShift(shift: Shift?) {
         state = if (shift?.status == OPEN_STATUS) ShiftState.Open else ShiftState.Closed
         number = shift?.shiftNo
+        documentsRead = false
         if (state != ShiftState.Open) documents.clear()
     }
 
@@ -88,11 +101,13 @@ class ShiftBoard {
         state = ShiftState.Unknown
         number = null
         documents.clear()
+        documentsRead = false
     }
 
     fun adoptDocuments(loaded: List<Document>) {
         documents.clear()
         documents.addAll(loaded)
+        documentsRead = true
     }
 
     fun adoptQueue(loaded: List<QueueTask>) {
@@ -110,6 +125,7 @@ class ShiftBoard {
     fun closed() {
         state = ShiftState.Closed
         documents.clear()
+        documentsRead = false
     }
 
     /** Забывает всё: за машиной будет другая касса или другой кассир. */

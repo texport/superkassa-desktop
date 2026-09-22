@@ -56,6 +56,16 @@ data class DashboardStrings(
      */
     val shiftEmpty: String,
     val shiftEmptyHint: String,
+
+    /**
+     * Документы открытой смены узел не отдал.
+     *
+     * Отдельно от пустого списка: у кассы, снятой с учёта, узел отвечает
+     * KKM_BLOCKED, и «Документов пока нет» обещало пустую смену там, где
+     * список просто не прочитан.
+     */
+    val documentsUnread: String,
+    val documentsUnreadHint: String,
     /**
      * Узел о смене не ответил, и документов поэтому не видно.
      *

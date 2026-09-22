@@ -13,11 +13,14 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.ShiftState
+import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
@@ -45,20 +48,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun ShiftDocuments(session: Session) {
     val texts = LocalStrings.current
 
+    val scope = rememberCoroutineScope()
+
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
         Text(texts.dashboard.shiftDocuments, style = MaterialTheme.typography.titleMedium)
-        // Список приходит вместе с состоянием смены: до ответа узла пустота
-        // читалась как «за смену не пробито ничего».
-        val state = when {
-            session.documents.isNotEmpty() -> ScreenState.Ready
-            session.busy -> ScreenState.Working
-            else -> ScreenState.Empty(
-                icon = AppIcons.history,
-                // Своё название, а не повтор заголовка над списком: два
-                // одинаковых «Документы смены» подряд ничего не добавляли.
-                title = texts.dashboard.shiftEmpty,
-                hint = emptyHint(session, texts.dashboard)
-            )
+        val state = documentsState(session, texts.dashboard) {
+            scope.launch { session.refreshSelected() }
         }
         ScreenSlot(state, dense = true) {
             OutlinedCard(modifier = Modifier.fillMaxWidth()) {
@@ -75,6 +70,31 @@ fun ShiftDocuments(session: Session) {
             }
         }
     }
+}
+
+/**
+ * Что стоит на месте списка документов.
+ *
+ * Пустой список и непрочитанный список — разные вещи: у кассы, снятой
+ * с учёта, узел отвечает на документы открытой смены KKM_BLOCKED, и на
+ * этом месте стояло «Документов пока нет» с обещанием, что первый чек
+ * вот-вот появится. Кассир читал это как пустую смену.
+ */
+private fun documentsState(session: Session, texts: DashboardStrings, onRetry: () -> Unit): ScreenState = when {
+    session.documents.isNotEmpty() -> ScreenState.Ready
+    // Список приходит вместе с состоянием смены: до ответа узла пустота
+    // читалась как «за смену не пробито ничего».
+    session.busy -> ScreenState.Working
+    session.shiftState == ShiftState.Open && !session.documentsRead ->
+        ScreenState.Trouble(texts.documentsUnread, texts.documentsUnreadHint, onRetry)
+
+    else -> ScreenState.Empty(
+        icon = AppIcons.history,
+        // Своё название, а не повтор заголовка над списком: два
+        // одинаковых «Документы смены» подряд ничего не добавляли.
+        title = texts.shiftEmpty,
+        hint = emptyHint(session, texts)
+    )
 }
 
 /**

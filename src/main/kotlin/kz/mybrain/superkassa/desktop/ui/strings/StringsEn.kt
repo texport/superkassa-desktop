@@ -85,6 +85,8 @@ internal val EnglishStrings = AppStrings(
         shiftUnknown = "Unknown",
         shiftEmpty = "No documents yet",
         shiftEmptyHint = "The shift is open: the first receipt shows up here right after it goes through.",
+        documentsUnread = "The shift documents could not be read",
+        documentsUnreadHint = "The node keeps the shift open but did not hand over its documents: how many there are is unknown.",
         shiftUnknownHint = "The node did not report the shift state — check the link to it in settings.",
         documentNo = "No."
 

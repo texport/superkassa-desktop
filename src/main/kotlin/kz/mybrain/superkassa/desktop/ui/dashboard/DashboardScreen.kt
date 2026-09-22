@@ -62,7 +62,14 @@ fun DashboardScreen(session: Session) {
                 value = Money.formatTiyn(session.cashInDrawer),
                 modifier = Modifier.weight(1f)
             )
-            StatCard(texts.dashboard.documentsInShift, session.documents.size.toString(), Modifier.weight(1f))
+            // Число документов — только там, где узел их назвал. Непрочитанный
+            // список показывался нулём, и «за смену не пробито ничего»
+            // стояло над сменой, документы которой узел отдать отказался.
+            StatCard(
+                caption = texts.dashboard.documentsInShift,
+                value = if (session.documentsRead) session.documents.size.toString() else Glyphs.DASH,
+                modifier = Modifier.weight(1f)
+            )
         }
 
         AutonomousCard(session)

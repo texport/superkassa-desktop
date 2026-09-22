@@ -85,6 +85,8 @@ internal val KazakhStrings = AppStrings(
         shiftUnknown = "Белгісіз",
         shiftEmpty = "Әзірге құжат жоқ",
         shiftEmptyHint = "Ауысым ашық: бірінші чек өткізілген бойда осында шығады.",
+        documentsUnread = "Ауысым құжаттарын оқу мүмкін болмады",
+        documentsUnreadHint = "Түйінде ауысым ашық, бірақ оның құжаттарын берген жоқ: саны белгісіз.",
         shiftUnknownHint = "Түйін ауысым күйін айтпады — баптауларда онымен байланысты тексеріңіз.",
         documentNo = "№"
 

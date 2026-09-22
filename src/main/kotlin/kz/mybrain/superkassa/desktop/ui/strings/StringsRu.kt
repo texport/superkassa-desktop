@@ -87,6 +87,8 @@ internal val RussianStrings = AppStrings(
         shiftUnknown = "Неизвестна",
         shiftEmpty = "Документов пока нет",
         shiftEmptyHint = "Смена открыта: первый чек появится здесь сразу после проведения.",
+        documentsUnread = "Документы смены прочитать не удалось",
+        documentsUnreadHint = "Смена на узле открыта, а её документы он не отдал: сколько их, неизвестно.",
         shiftUnknownHint = "Узел не назвал состояние смены — проверьте связь с ним в настройках.",
         documentNo = "№"
 
