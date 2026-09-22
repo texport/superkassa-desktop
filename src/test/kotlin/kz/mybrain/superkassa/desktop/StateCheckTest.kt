@@ -177,6 +177,40 @@ class StateCheckTest {
     }
 
     /**
+     * Кабинет говорит о кассе то, что у него записано.
+     *
+     * У него не «да и нет», а учёт КГД с пятью состояниями, и все, кроме
+     * учтённого, сводились к одному «касса снята с учёта». Так карточка
+     * говорила о черновике, который владелец завёл час назад и никуда
+     * ещё не подавал, — а черновиков у сети показа три тысячи из трёх
+     * тысяч трёхсот. Снятие с учёта владелец затевает сам и знает о нём;
+     * прочесть о нём там, где его не было, — повод бежать разбираться.
+     */
+    @Test
+    fun `кабинет не объявляет снятым с учёта то, что на учёт не ставилось`() {
+        val said = listOf("DRAFT", "REGISTRATION_IN_ISNA_PROCESS", "REGISTRATION_IN_ISNA_ERROR").map { status ->
+            val claims = stateClaims(null, register(status), null, ShiftState.Unknown)
+            val cabinet = claims.first { it.source == StateSource.Cabinet }
+            status to texts.claimWords(cabinet, StateQuestion.Usable, null).substringAfter(Glyphs.SEPARATOR)
+        }
+
+        said.forEach { (status, words) ->
+            assertFalse(words == texts.claimOffRecord, "о состоянии $status сказано «$words»")
+        }
+        assertEquals(said.map { it.second }.distinct().size, said.size, "три разных состояния названы одинаково")
+        val deregistered = stateClaims(null, register("DEREGISTERED"), null, ShiftState.Unknown)
+        assertEquals(
+            texts.claimOffRecord,
+            texts.claimWords(
+                deregistered.first { it.source == StateSource.Cabinet },
+                StateQuestion.Usable,
+                null
+            ).substringAfter(Glyphs.SEPARATOR),
+            "снятая с учёта перестала называться снятой"
+        )
+    }
+
+    /**
      * Молчание тоже сказано словами, и у каждого оно своё: БФД не ответил
      * вовсе — перечитать карточку; БФД кассу ещё не видел — ждать её
      * первого обращения; кабинет смену не ведёт по устройству, и ответа

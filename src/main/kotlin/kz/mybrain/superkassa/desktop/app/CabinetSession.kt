@@ -157,7 +157,9 @@ class CabinetSession(
      */
     suspend fun refreshRegisters() {
         val current = token ?: return
-        val all = guard { client.allRegisters(current) { part, _ -> if (part.size >= registers.size) registers = part } }
+        val all = guard {
+            client.allRegisters(current) { part, _ -> if (part.size >= registers.size) registers = part }
+        }
         if (all != null) registers = all
         onRegisterNames?.invoke(registers)
     }

@@ -37,8 +37,20 @@ enum class StateSource(val title: (CabinetTexts) -> String) {
 /** Общий ответ на вопрос, который каждый источник понимает по-своему. */
 enum class Verdict { Yes, No, Unknown }
 
-/** Что говорит один источник. */
-data class StateClaim(val source: StateSource, val usable: Verdict, val shift: Verdict)
+/**
+ * Что говорит один источник.
+ *
+ * @param record что записано в учёте КГД; заполняет его только кабинет.
+ *   У него не «да и нет», а пять состояний, и все, кроме учтённого,
+ *   сводились к одному «касса снята с учёта» — включая черновик,
+ *   который на учёт никто не подавал.
+ */
+data class StateClaim(
+    val source: StateSource,
+    val usable: Verdict,
+    val shift: Verdict,
+    val record: KkmRecord? = null
+)
 
 /** Вопрос карточки и то поле показания, которым источник на него отвечает. */
 enum class StateQuestion(val verdictOf: (StateClaim) -> Verdict) {
@@ -166,7 +178,8 @@ private fun cabinetClaim(register: CabinetRegister): StateClaim = StateClaim(
         onRecord(register.status) -> Verdict.Yes
         else -> Verdict.No
     },
-    shift = Verdict.Unknown
+    shift = Verdict.Unknown,
+    record = register.status.takeIf { it.isNotBlank() }?.let(::kkmRecord)
 )
 
 /** БФД: свой снимок кассы, которой он может и не знать вовсе. */
