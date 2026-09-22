@@ -4,7 +4,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentSplit
-import java.math.BigDecimal
 import java.util.UUID
 
 /**
@@ -17,8 +16,10 @@ class SaleForm {
     var operation: SaleOperation by mutableStateOf(SaleOperation.Sell)
     val split: PaymentSplit = PaymentSplit()
     var taken: String by mutableStateOf("")
-    var discount: String by mutableStateOf("")
-    var markup: String by mutableStateOf("")
+    var discount: Adjustment by mutableStateOf(Adjustment())
+        private set
+    var markup: Adjustment by mutableStateOf(Adjustment())
+        private set
     var customerBin: String by mutableStateOf("")
     var domain: DomainInput by mutableStateOf(DomainInput())
     var issuing: Boolean by mutableStateOf(false)
@@ -30,27 +31,55 @@ class SaleForm {
      * отвергает, и кодек не даёт его даже собрать.
      */
     fun enterDiscount(text: String) {
-        discount = text
-        if (text.isNotEmpty()) markup = ""
+        discount = discount.copy(text = text)
+        if (text.isNotEmpty()) markup = markup.cleared()
     }
 
     fun enterMarkup(text: String) {
-        markup = text
-        if (text.isNotEmpty()) discount = ""
+        markup = markup.copy(text = text)
+        if (text.isNotEmpty()) discount = discount.cleared()
     }
 
-    /** Что уходит в узел вместе с корзиной. */
-    fun input(total: BigDecimal): ReceiptInput = ReceiptInput(
-        operation = operation,
-        payments = split.toPayments(total),
-        cashSum = split.cashSum(total),
-        taken = amount(taken).value,
-        discount = amount(discount).value,
-        markup = amount(markup).value,
-        customerBin = customerBin,
-        domain = domain,
-        idempotencyKey = attemptKey
-    )
+    /**
+     * Смена способа ввода не стирает набранное.
+     *
+     * Кассир, набравший «500» и переключившийся на проценты, видит рядом
+     * с полем, во что обратилось его число, и правит его сам. Стереть
+     * набранное за него значило бы заставить набирать заново того, кто
+     * просто промахнулся по знаку.
+     */
+    fun switchDiscount(unit: AdjustmentUnit) {
+        discount = discount.copy(unit = unit)
+    }
+
+    fun switchMarkup(unit: AdjustmentUnit) {
+        markup = markup.copy(unit = unit)
+    }
+
+    /**
+     * Что уходит в узел вместе с корзиной.
+     *
+     * Скидка и наценка уходят суммой в тенге, даже когда кассир набрал
+     * их процентом: процент узел принимает и сам, но посчитал бы его
+     * своим порядком округления, и «Итого» на экране разошлось бы
+     * с фискальным чеком на тиын.
+     */
+    fun input(basket: Basket): ReceiptInput {
+        val discountSum = discount.sumOf(basket.total)
+        val markupSum = markup.sumOf(basket.total)
+        val total = basket.totalWith(discountSum, markupSum)
+        return ReceiptInput(
+            operation = operation,
+            payments = split.toPayments(total),
+            cashSum = split.cashSum(total),
+            taken = amount(taken).value,
+            discount = discountSum,
+            markup = markupSum,
+            customerBin = customerBin,
+            domain = domain,
+            idempotencyKey = attemptKey
+        )
+    }
 
     /**
      * После принятого чека всё введённое поверх корзины забывается, и новый
@@ -59,8 +88,8 @@ class SaleForm {
      */
     fun startNextReceipt() {
         taken = ""
-        discount = ""
-        markup = ""
+        discount = discount.cleared()
+        markup = markup.cleared()
         customerBin = ""
         // Вид отрасли на рабочем месте не меняется, а счёт, машина и карта
         // принадлежат покупателю: перенести их в следующий чек значило бы

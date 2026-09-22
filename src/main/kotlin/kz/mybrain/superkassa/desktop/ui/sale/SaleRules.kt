@@ -24,9 +24,12 @@ data class SaleState(
     val hasItemDiscount: Boolean = false,
     /** Стоит ли в чеке позиция, цену которой так и не задали. */
     val hasZeroPrice: Boolean = false,
-    val receiptDiscount: BigDecimal? = null,
-    /** Наценка на чек: проверяется на знак так же, как скидка. */
-    val receiptMarkup: BigDecimal? = null,
+    /** Скидка на весь чек, как её набрал кассир: суммой или процентом. */
+    val discount: Adjustment = Adjustment(),
+    /** Наценка на чек: проверяется теми же правилами, что и скидка. */
+    val markup: Adjustment = Adjustment(),
+    /** Сумма позиций: от неё считается процент и ею же ограничена скидка. */
+    val itemsSum: BigDecimal = BigDecimal.ZERO,
     val total: BigDecimal = BigDecimal.ONE,
     val paymentCodes: List<String> = listOf(CASH_PAYMENT),
     /** Чем разбиение оплаты не годится, если оплат несколько. */
@@ -65,6 +68,8 @@ enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
     PaymentSplitExcess({ _, payment -> payment.splitExcess }),
     DiscountScopes({ sale, _ -> sale.blockDiscountScopes }),
     DiscountNegative({ sale, _ -> sale.blockDiscountNegative }),
+    PercentOverHundred({ sale, _ -> sale.blockPercentRange }),
+    DiscountOverItems({ sale, _ -> sale.blockDiscountOverItems }),
     TotalNotPositive({ sale, _ -> sale.blockTotalNotPositive }),
     CustomerBin({ sale, _ -> sale.blockBin }),
     TakenTooSmall({ sale, _ -> sale.blockTakenTooSmall });
@@ -118,13 +123,7 @@ fun blockOf(state: SaleState): SaleBlock? {
         SplitIssue.Excess -> return SaleBlock.PaymentSplitExcess
         null -> Unit
     }
-    if (state.hasItemDiscount && (state.receiptDiscount ?: BigDecimal.ZERO) > BigDecimal.ZERO) {
-        return SaleBlock.DiscountScopes
-    }
-    // Скидка со знаком минус прибавляла к итогу, наценка со знаком минус
-    // вычитала: «Итого» расходилось с набранным, и ни одна строка экрана
-    // этого не объясняла.
-    if (negative(state.receiptDiscount) || negative(state.receiptMarkup)) return SaleBlock.DiscountNegative
+    changeBlockOf(state)?.let { return it }
     if (state.total <= BigDecimal.ZERO) return SaleBlock.TotalNotPositive
     if (!binAccepted(state.customerBin)) return SaleBlock.CustomerBin
     if (takenTooSmall(state)) return SaleBlock.TakenTooSmall
@@ -153,7 +152,36 @@ fun changeOf(taken: BigDecimal?, cashSum: BigDecimal): BigDecimal? =
 fun binAccepted(bin: String): Boolean =
     bin.isEmpty() || (bin.length == BIN_LENGTH && bin.all(Char::isDigit))
 
-private fun negative(value: BigDecimal?): Boolean = value != null && value < BigDecimal.ZERO
+/**
+ * Чем негодна скидка или наценка на весь чек.
+ *
+ * Знак, граница процента и размер скидки проверяются вместе: набрано одно
+ * число, и кассиру называется одна причина, а не та, что ближе к началу
+ * списка. Порядок внутри — от смысла к величине: минус меняет скидку
+ * на наценку, и говорить про «больше суммы позиций» о нём бессмысленно.
+ *
+ * Скидка со знаком минус прибавляла к итогу, наценка со знаком минус
+ * вычитала: «Итого» расходилось с набранным, и ни одна строка экрана
+ * этого не объясняла.
+ */
+fun changeBlockOf(state: SaleState): SaleBlock? {
+    val discount = state.discount.sumOf(state.itemsSum) ?: BigDecimal.ZERO
+    if (state.hasItemDiscount && discount > BigDecimal.ZERO) return SaleBlock.DiscountScopes
+    if (negative(state.discount) || negative(state.markup)) return SaleBlock.DiscountNegative
+    if (overHundred(state.discount) || overHundred(state.markup)) return SaleBlock.PercentOverHundred
+    if (discount > state.itemsSum) return SaleBlock.DiscountOverItems
+    return null
+}
+
+/** Набрано ли число меньше нуля: пустое и недобранное — не минус. */
+private fun negative(change: Adjustment): Boolean {
+    val entered = change.entered ?: return false
+    return entered < BigDecimal.ZERO
+}
+
+/** Набран ли процент больше ста: у суммы такой границы нет, у доли есть. */
+private fun overHundred(change: Adjustment): Boolean =
+    change.unit == AdjustmentUnit.Percent && (change.entered ?: BigDecimal.ZERO) > HUNDRED_PERCENT
 
 private fun takenTooSmall(state: SaleState): Boolean {
     val cash = state.cashSum ?: state.total

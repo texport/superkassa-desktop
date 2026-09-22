@@ -79,8 +79,8 @@ private suspend fun issue(
     extra: SaleTexts
 ) {
     form.issuing = true
-    val total = basket.totalWith(amount(form.discount).value, amount(form.markup).value)
-    val issued = issueReceipt(session, basket, form.input(total), texts, extra) {
+    val total = totalOf(basket, form)
+    val issued = issueReceipt(session, basket, form.input(basket), texts, extra) {
         session.titleOf(Dictionary.DeliveryStatuses, it)
     }
     if (issued) form.startNextReceipt()
@@ -88,12 +88,8 @@ private suspend fun issue(
 }
 
 /** Снимок состояния экрана для правил: чистые данные, без Compose. */
-fun saleStateOf(session: Session, basket: Basket, form: SaleForm): SaleState = saleStateOf(
-    session,
-    basket,
-    form,
-    basket.totalWith(amount(form.discount).value, amount(form.markup).value)
-)
+fun saleStateOf(session: Session, basket: Basket, form: SaleForm): SaleState =
+    saleStateOf(session, basket, form, totalOf(basket, form))
 
 /** То же, когда итог уже посчитан экраном: считать его дважды незачем. */
 fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDecimal): SaleState = SaleState(
@@ -104,8 +100,9 @@ fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDeci
     positions = basket.positions.size,
     hasItemDiscount = basket.hasItemDiscount,
     hasZeroPrice = basket.hasZeroPrice,
-    receiptDiscount = amount(form.discount).value,
-    receiptMarkup = amount(form.markup).value,
+    discount = form.discount,
+    markup = form.markup,
+    itemsSum = basket.total,
     total = total,
     paymentCodes = form.split.types,
     splitIssue = form.split.issue(total),

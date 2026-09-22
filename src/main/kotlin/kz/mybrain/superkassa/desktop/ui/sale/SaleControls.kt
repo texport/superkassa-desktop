@@ -18,7 +18,6 @@ import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.CollapsibleSection
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import java.math.BigDecimal
 
 /**
  * Заголовок чека: направление операции и очистка набранного.
@@ -59,61 +58,28 @@ private fun OperationChoice(form: SaleForm) {
 }
 
 /**
- * Реквизиты чека: скидка и наценка на весь чек, покупатель и отрасль.
+ * Данные покупателя: его ИИН или БИН и реквизиты выбранной отрасли.
  *
  * Стоят внизу кассовой колонки намеренно и свёрнуты по умолчанию:
  * заполняются они редко, а штрихкод, оплата и итог нужны в каждом чеке.
  *
- * Скидка на чек краснеет, когда в корзине уже есть скидка на позицию:
- * узел отвечает на такой чек RECEIPT_DISCOUNT_SCOPES_CONFLICT, и узнать
- * об этом кассир должен здесь, а не после нажатия.
+ * Отраслевые поля стоят здесь же: номер счёта, номер карты и номер машины
+ * принадлежат тому, кому выписан чек, и спрашивают их у того же человека,
+ * что и ИИН.
  */
 @Composable
-fun ReceiptDetailsCard(form: SaleForm, basket: Basket, expanded: Boolean, onToggle: () -> Unit) {
-    val texts = LocalStrings.current
+fun CustomerDataCard(form: SaleForm, expanded: Boolean, onToggle: () -> Unit) {
     val extra = LocalSaleTexts.current
-    val conflict = basket.hasItemDiscount &&
-        (amount(form.discount).value ?: BigDecimal.ZERO) > BigDecimal.ZERO
-    // Минус в скидке и в наценке меняет их смысл на обратный: поле
-    // краснеет у того, где он набран, а причина стоит строкой под обоими.
-    val discountBelowZero = below(form.discount)
-    val markupBelowZero = below(form.markup)
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
             CollapsibleSection(
-                title = extra.receiptDetails,
+                title = extra.customerData,
                 expanded = expanded,
                 onToggle = onToggle
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-                    OutlinedTextField(
-                        value = form.discount,
-                        onValueChange = form::enterDiscount,
-                        label = { Text(texts.sale.receiptDiscount) },
-                        singleLine = true,
-                        isError = conflict || discountBelowZero,
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = form.markup,
-                        onValueChange = form::enterMarkup,
-                        label = { Text(texts.sale.receiptMarkup) },
-                        singleLine = true,
-                        isError = markupBelowZero,
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-                Hint(
-                    problem = when {
-                        discountBelowZero || markupBelowZero -> extra.blockDiscountNegative
-                        conflict -> extra.blockDiscountScopes
-                        else -> null
-                    },
-                    hint = texts.sale.discountOrMarkup
-                )
                 CustomerBinField(form)
                 DomainPanel(form.domain) { form.domain = it }
             }
@@ -143,10 +109,4 @@ private fun CustomerBinField(form: SaleForm) {
         },
         modifier = Modifier.fillMaxWidth()
     )
-}
-
-/** Набрано ли в поле число меньше нуля: пустое и недобранное — не минус. */
-private fun below(text: String): Boolean {
-    val value = amount(text).value ?: return false
-    return value < BigDecimal.ZERO
 }
