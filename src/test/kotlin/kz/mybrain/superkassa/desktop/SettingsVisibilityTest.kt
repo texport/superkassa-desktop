@@ -62,18 +62,31 @@ class SettingsVisibilityTest {
     }
 
     /**
-     * Снятие с учёта и выдача токена — то, на что узел отвечает только
-     * администратору. Кассиру их не показываем: нажатие вернуло бы отказ
-     * по правам, и это худший способ узнать, что тебе нельзя.
+     * То, на что узел отвечает только администратору, кассиру не видно.
+     *
+     * Список перечислен целиком, а не выборкой: выборка молчала о том,
+     * чего в ней нет, и режим программирования с печатной формой стояли
+     * у кассира живой кнопкой и мёртвой карточкой — узел отвечает по ним
+     * только администратору, а войти в режим кассир не может вовсе.
      */
     @Test
     fun `служебное кассиру не показывается`() {
-        val shown = visibleSettings(hasRegister = true, admin = false)
-
-        listOf(Setting.Decommission, Setting.OfdToken, Setting.Tax, Setting.OfdSync)
-            .forEach { assertTrue(it !in shown, "$it показана кассиру") }
-        assertTrue(Setting.Diagnostics in shown)
-        assertTrue(Setting.PrintTarget in shown)
+        assertEquals(
+            listOf(
+                Setting.Appearance,
+                Setting.PanelBehaviour,
+                Setting.NodeAddress,
+                Setting.CabinetAddress,
+                Setting.MapServices,
+                Setting.NodeFacts,
+                Setting.Updates,
+                Setting.Debug,
+                Setting.CurrentKkm,
+                Setting.PrintTarget,
+                Setting.Diagnostics
+            ),
+            visibleSettings(hasRegister = true, admin = false)
+        )
     }
 
     @Test

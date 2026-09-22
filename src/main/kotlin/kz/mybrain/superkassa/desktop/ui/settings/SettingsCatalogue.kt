@@ -133,9 +133,22 @@ internal val settingsCards = listOf(
     // Режим программирования стоит сразу под кассой, которой он
     // принадлежит: вход и выход в одном месте, и состояние видно оттуда,
     // откуда его меняют.
-    SettingsCard(Setting.Programming, SettingsGroup.Current, needsRegister = true) { ProgrammingCard(it) },
+    SettingsCard(
+        Setting.Programming,
+        SettingsGroup.Current,
+        needsRegister = true,
+        adminOnly = true
+    ) { ProgrammingCard(it) },
 
-    SettingsCard(Setting.PrintForm, SettingsGroup.Printing, needsRegister = true) { PrintFormCard(it) },
+    // Печатная форма — настройка узла, и меняет её только администратор
+    // в режиме программирования. Кассиру она показывалась карточкой,
+    // в которой мертво всё: войти в режим он тоже не может.
+    SettingsCard(
+        Setting.PrintForm,
+        SettingsGroup.Printing,
+        needsRegister = true,
+        adminOnly = true
+    ) { PrintFormCard(it) },
     SettingsCard(Setting.PrintTarget, SettingsGroup.Printing, needsRegister = true) { PrintTargetCard(it) },
 
     SettingsCard(Setting.Tax, SettingsGroup.Service, needsRegister = true, adminOnly = true) { TaxSettingsCard(it) },
