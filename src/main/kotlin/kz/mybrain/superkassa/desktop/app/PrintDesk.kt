@@ -164,13 +164,21 @@ class PrintDesk(private val session: Session) {
         session.client.printDocument(kkm.kkmId, documentId, pin, PrintKind.Png)
     }
 
-    /** Спрашивает форму у узла и сразу отправляет её на принтер. */
+    /**
+     * Спрашивает форму у узла и сразу отправляет её на принтер.
+     *
+     * Поля страницы срезаются в потоке ввода-вывода, как и в просмотре:
+     * у ленты Z-отчёта это проход по двум десяткам миллионов точек,
+     * около секунды работы. В потоке экрана касса на всё это время
+     * переставала отзываться — кассир жал «Печать» и получал застывший
+     * экран, а потом жал ещё раз.
+     */
     private fun send(again: () -> Unit, ask: suspend (Kkm, String) -> ByteArray) {
         val (kkm, pin) = drawer.resolve(again) ?: return
         scope.launch {
             val image = session.guard(session.texts.preview.print) { ask(kkm, pin) }
                 ?: return@launch drawer.refused(again)
-            sendToPrinter(session, kkm, Printing.trim(image))
+            sendToPrinter(session, kkm, withContext(Dispatchers.IO) { Printing.trim(image) })
         }
     }
 
