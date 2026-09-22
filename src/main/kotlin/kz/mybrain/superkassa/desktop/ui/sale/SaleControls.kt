@@ -58,13 +58,17 @@ private fun OperationChoice(form: SaleForm) {
 }
 
 /**
- * Реквизиты чека: покупатель и отрасль.
+ * Данные покупателя: его ИИН или БИН и реквизиты выбранной отрасли.
  *
  * Стоят внизу кассовой колонки намеренно и свёрнуты по умолчанию:
  * заполняются они редко, а штрихкод, оплата и итог нужны в каждом чеке.
+ *
+ * Отраслевые поля стоят здесь же: номер счёта, номер карты и номер машины
+ * принадлежат тому, кому выписан чек, и спрашивают их у того же человека,
+ * что и ИИН.
  */
 @Composable
-fun ReceiptDetailsCard(form: SaleForm, expanded: Boolean, onToggle: () -> Unit) {
+fun CustomerDataCard(form: SaleForm, expanded: Boolean, onToggle: () -> Unit) {
     val extra = LocalSaleTexts.current
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -72,7 +76,7 @@ fun ReceiptDetailsCard(form: SaleForm, expanded: Boolean, onToggle: () -> Unit) 
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
             CollapsibleSection(
-                title = extra.receiptDetails,
+                title = extra.customerData,
                 expanded = expanded,
                 onToggle = onToggle
             ) {

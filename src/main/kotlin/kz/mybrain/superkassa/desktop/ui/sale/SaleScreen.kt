@@ -144,10 +144,10 @@ private fun TillColumn(
                 expanded = panels.expanded(SalePanel.ReceiptChanges),
                 onToggle = { panels.toggle(SalePanel.ReceiptChanges) }
             )
-            ReceiptDetailsCard(
+            CustomerDataCard(
                 form = form,
-                expanded = panels.expanded(SalePanel.ReceiptDetails),
-                onToggle = { panels.toggle(SalePanel.ReceiptDetails) }
+                expanded = panels.expanded(SalePanel.CustomerData),
+                onToggle = { panels.toggle(SalePanel.CustomerData) }
             )
         }
         // Оплата и итог прибиты к низу вместе с кнопкой: их видят в каждом

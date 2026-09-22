@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.SettingStrings
 enum class SalePanel(val title: (SettingStrings) -> String) {
     PositionEntry({ it.panelPositionEntry }),
     ReceiptChanges({ it.panelReceiptChanges }),
-    ReceiptDetails({ it.panelReceiptDetails }),
+    CustomerData({ it.panelCustomerData }),
     Money({ it.panelMoney })
 }
 

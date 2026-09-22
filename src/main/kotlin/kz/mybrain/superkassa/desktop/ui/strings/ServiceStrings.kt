@@ -128,7 +128,7 @@ data class SettingStrings(
     val panelBehaviourHint: String,
     val panelPositionEntry: String,
     val panelReceiptChanges: String,
-    val panelReceiptDetails: String,
+    val panelCustomerData: String,
     val panelMoney: String,
     val printLayoutHint: String,
     val layoutTape58: String,

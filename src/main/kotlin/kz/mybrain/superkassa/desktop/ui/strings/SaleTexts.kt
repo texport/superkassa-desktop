@@ -20,7 +20,14 @@ data class SaleTexts(
     val change: String,
     val changeNone: String,
     val positionEntry: String,
-    val receiptDetails: String,
+    /**
+     * Блок покупателя: его ИИН или БИН и отраслевые реквизиты чека.
+     *
+     * Назван по тому, что в нём заполняют: «реквизиты чека» кассиру
+     * не говорили, чьи это реквизиты, и скидка на чек попадала туда же
+     * просто потому, что была реквизитом.
+     */
+    val customerData: String,
 
     /** Заголовок блока, где скидка и наценка на чек стоят вместе с их итогом. */
     val receiptChanges: String,
