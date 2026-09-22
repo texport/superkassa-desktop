@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -45,14 +46,27 @@ internal fun PositionCard(
     OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
         ListItem(
             colors = positionColors(position.storno),
+            // Ни наименование, ни состав строки не растут больше чем
+            // на две строки: у товара с каталожным именем в шесть слов
+            // карточка вырастала до шести строк, и в лист чека помещалось
+            // четыре позиции. Целиком имя, количество, цену и ставку
+            // показывает окно подробностей — оно открывается нажатием
+            // по самой карточке.
             headlineContent = {
                 Text(
                     text = position.label(texts.sale.storno),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = NAME_LINES,
+                    overflow = TextOverflow.Ellipsis
                 )
             },
             supportingContent = {
-                Text(positionDetail(position), style = MaterialTheme.typography.bodyMedium)
+                Text(
+                    text = positionDetail(position),
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = DETAIL_LINES,
+                    overflow = TextOverflow.Ellipsis
+                )
             },
             trailingContent = { PositionSum(position, onStorno, onExcise, onRemove) }
         )
@@ -140,3 +154,9 @@ private fun positionDetail(position: Position): String {
 /** Количество товара словами кассира: дробь через запятую, как и в суммах. */
 internal fun quantityText(quantity: BigDecimal): String =
     quantity.toPlainString().replace('.', Glyphs.DECIMAL)
+
+/** Сколько строк отдаётся наименованию в листе чека. */
+private const val NAME_LINES = 2
+
+/** Столько же — строке о количестве, цене и ставке. */
+private const val DETAIL_LINES = 2
