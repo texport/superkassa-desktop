@@ -14,13 +14,12 @@ import java.math.RoundingMode
  * отдельным переключателем сбоку: на экране их два, и общий переключатель
  * молча менял бы смысл соседнего поля.
  *
- * Знаки набраны здесь, а не взяты из общего набора: тенге объявлен внутри
- * показа денег, а процента в наборе знаков нет. Оба просятся в общее место
- * и переедут туда вместе.
+ * Знаки берутся из общего набора: своя копия тенге однажды уже разошлась
+ * с той, которой подписаны суммы.
  */
 enum class AdjustmentUnit(val sign: String) {
-    Tenge(TENGE_SIGN),
-    Percent(PERCENT_SIGN)
+    Tenge(Glyphs.TENGE),
+    Percent(Glyphs.PERCENT)
 }
 
 /**
@@ -81,7 +80,7 @@ fun percentOfTenge(itemsSum: BigDecimal, sum: BigDecimal): BigDecimal? =
  */
 fun formatPercent(value: BigDecimal): String {
     val plain = value.stripTrailingZeros().toPlainString().replace('.', Glyphs.DECIMAL)
-    return "$plain${Glyphs.NBSP}$PERCENT_SIGN"
+    return "$plain${Glyphs.NBSP}${Glyphs.PERCENT}"
 }
 
 /**
@@ -128,7 +127,3 @@ val HUNDRED_PERCENT: BigDecimal = BigDecimal(100)
 
 /** Доля показывается до сотой процента: мельче кассир её не набирает. */
 private const val PERCENT_SCALE: Int = 2
-
-private const val TENGE_SIGN: String = "₸"
-
-private const val PERCENT_SIGN: String = "%"
