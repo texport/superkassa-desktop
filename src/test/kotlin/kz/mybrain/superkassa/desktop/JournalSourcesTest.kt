@@ -25,7 +25,9 @@ import kz.mybrain.superkassa.desktop.ui.history.journalTypesIn
 import kz.mybrain.superkassa.desktop.ui.history.select
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.ofdRefusalWords
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.io.File
 import java.math.BigDecimal
 import java.nio.file.Files
@@ -105,6 +107,42 @@ class JournalSourcesTest {
     fun `отклонённый документ не печатается`() {
         val refused = Document(id = "r", ofdStatus = "FAILED")
         assertTrue(!journalEntriesOf(session(), texts, listOf(refused)).single().printable)
+    }
+
+    /**
+     * У отклонённого документа в журнале нет ни просмотра, ни печати,
+     * и кассир видел одну красную плашку. Причина у узла есть — она
+     * доходит до строки и до поиска по ней.
+     */
+    @Test
+    fun `отклонённый документ узла называет причину отказа словами кассира`() {
+        val refused = Document(id = "r", ofdStatus = "FAILED", ofdErrorCode = 17, ofdErrorText = "Same taxpayer")
+
+        val entry = journalEntriesOf(session(), texts, listOf(refused)).single()
+
+        assertEquals(
+            ofdRefusalWords(17, Language.Ru) + Glyphs.SEPARATOR + "${texts.common.refusalCode} 17",
+            entry.refusal
+        )
+        assertTrue(entry.searchable.contains("17"), "по причине отказа строка обязана находиться")
+    }
+
+    @Test
+    fun `незнакомый код отказа доходит пояснением БФД, а знакомого текста хватает своего`() {
+        val strange = Document(id = "s", ofdStatus = "FAILED", ofdErrorCode = 777, ofdErrorText = "Odd refusal")
+        val quiet = Document(id = "q", ofdStatus = "SENT")
+
+        val entries = journalEntriesOf(session(), texts, listOf(strange, quiet)).associateBy { it.key }
+
+        assertEquals("Odd refusal${Glyphs.SEPARATOR}${texts.common.refusalCode} 777", entries["s"]?.refusal)
+        assertNull(entries["q"]?.refusal, "у принятого документа причины отказа нет")
+    }
+
+    @Test
+    fun `кабинет причины отказа не отдаёт, и придумывать её строка не станет`() {
+        val receipt = CabinetReceipt(transactionId = "t-2", deliveryStatus = "DELIVERY_ERROR")
+
+        assertNull(receiptRow(receipt, cabinet).entry.refusal)
     }
 
     @Test

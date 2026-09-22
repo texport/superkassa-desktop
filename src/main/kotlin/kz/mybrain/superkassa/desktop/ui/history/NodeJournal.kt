@@ -10,6 +10,8 @@ import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.SENT
 import kz.mybrain.superkassa.desktop.ui.components.SHIFT_OPEN
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
+import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.strings.ofdRefusalWords
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.time.LocalDate
 
@@ -42,9 +44,27 @@ fun journalEntriesOf(session: Session, texts: AppStrings, documents: List<Docume
             sign = document.fiscalSign ?: document.autonomousSign ?: Glyphs.DASH,
             delivery = deliveryOf(document),
             shiftNo = document.shiftNo?.toLong(),
+            refusal = refusalOf(document, texts, session.language),
             printable = document.printable
         )
     }
+
+/**
+ * Почему документ отвергнут — одной строкой для подсказки и поиска.
+ *
+ * Слова по коду отказа — те же, что на главном экране: кассир стоит перед
+ * покупателем, и «Same customer and taxpayer IIN» ему не помогает. Для
+ * незнакомого кода остаётся пояснение БФД: молчать об отказе хуже, чем
+ * сказать о нём чужими словами. Код идёт следом — с ним идут
+ * в обслуживание.
+ */
+private fun refusalOf(document: Document, texts: AppStrings, language: Language): String? {
+    val words = ofdRefusalWords(document.refusalCode, language)
+        ?: document.ofdErrorText?.takeIf { it.isNotBlank() }
+    val code = document.refusalCode?.let { "${texts.common.refusalCode} $it" }
+    val reason = listOfNotNull(words, code)
+    return reason.takeIf { it.isNotEmpty() }?.joinToString(Glyphs.SEPARATOR)
+}
 
 /**
  * Состояние доставки документа узла.
