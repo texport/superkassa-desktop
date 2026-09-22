@@ -9,17 +9,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.PaymentPicker
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
@@ -111,14 +111,12 @@ private fun AmountField(
 ) {
     val last = line === split.entries.last()
     val rest = total - split.assigned()
-    OutlinedTextField(
-        value = if (last) rest.toPlainString() else line.amount,
-        onValueChange = { if (!last) line.amount = it },
-        label = { Text(if (last) restLabel else amountLabel) },
-        readOnly = last,
-        singleLine = true,
-        textStyle = MoneyStyle.row,
+    MoneyField(
+        value = if (last) Money.entered(rest) else line.amount,
+        label = if (last) restLabel else amountLabel,
+        modifier = Modifier.width(Sizes.fieldPrice),
         isError = if (last) rest.signum() <= 0 else line.amount.isNotBlank() && line.value == null,
-        modifier = Modifier.width(Sizes.fieldPrice)
+        readOnly = last,
+        onValueChange = { if (!last) line.amount = it }
     )
 }

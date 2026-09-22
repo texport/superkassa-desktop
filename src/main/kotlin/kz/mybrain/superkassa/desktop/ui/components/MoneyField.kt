@@ -6,19 +6,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 
 /**
- * Поле, в которое кассир набирает сумму.
+ * Поле, в которое кассир набирает число: сумму, количество, долю.
  *
- * Одно на все суммы кассы: принятые деньги, возврат, внесение и изъятие
- * набираются в разных разделах, но одинаково — моноширинным начертанием
- * денег и с разбивкой разрядов прямо по ходу набора. Без разбивки кассир
- * считал цифры глазами, чтобы отличить полторы тысячи от полутора
- * миллионов, а рядом стояла подпись с той же суммой, набранной разрядами.
+ * Одно на всю кассу: принятые деньги, возврат, внесение и изъятие, цена
+ * и количество позиции, скидка и наценка набираются в разных разделах,
+ * но одинаково — моноширинным начертанием денег и с разбивкой разрядов
+ * прямо по ходу набора. Без разбивки кассир считал цифры глазами, чтобы
+ * отличить полторы тысячи от полутора миллионов.
  *
  * Разряды разделяются показом, а не правкой набранного: сама строка
  * остаётся такой, какой её набрали, и курсор не прыгает в конец, когда
@@ -26,6 +27,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
  *
  * @param label подпись поля; по ней же считается наименьшая ширина.
  * @param placeholder правило ввода, пока поле пусто.
+ * @param supportingText строка под полем: помеха или то же число иначе.
+ * @param trailing то, что стоит внутри поля справа, — выбор знака.
+ * @param readOnly поле только показывает число: его считает касса.
  */
 @Composable
 fun MoneyField(
@@ -34,6 +38,9 @@ fun MoneyField(
     modifier: Modifier,
     isError: Boolean = false,
     placeholder: String? = null,
+    supportingText: String? = null,
+    trailing: (@Composable () -> Unit)? = null,
+    readOnly: Boolean = false,
     onValueChange: (String) -> Unit
 ) {
     OutlinedTextField(
@@ -43,9 +50,41 @@ fun MoneyField(
         onValueChange = { entered -> onValueChange(entered.filterNot { it.isSeparator() }) },
         label = { Text(label) },
         singleLine = true,
+        readOnly = readOnly,
         textStyle = MoneyStyle.row,
         isError = isError,
         placeholder = placeholder?.let { { Text(it) } },
+        supportingText = supportingText?.let { { Text(it) } },
+        trailingIcon = trailing,
+        visualTransformation = GroupedAmount,
+        modifier = modifier
+    )
+}
+
+/**
+ * То же поле там, где нужен не только набранный текст, но и выделение.
+ *
+ * Подставленную цену кассир перенабирает целиком, и она выделяется
+ * при переходе в поле: сделать это можно только через [TextFieldValue].
+ * Вид и разбивка разрядов у поля те же — второго поля суммы в кассе нет.
+ */
+@Composable
+fun MoneyField(
+    value: TextFieldValue,
+    label: String,
+    modifier: Modifier,
+    isError: Boolean = false,
+    supportingText: String? = null,
+    onValueChange: (TextFieldValue) -> Unit
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        singleLine = true,
+        textStyle = MoneyStyle.row,
+        isError = isError,
+        supportingText = supportingText?.let { { Text(it) } },
         visualTransformation = GroupedAmount,
         modifier = modifier
     )
@@ -54,7 +93,7 @@ fun MoneyField(
 private fun Char.isSeparator(): Boolean = this == ' ' || this == Glyphs.NBSP
 
 /**
- * Показ набранной суммы разрядами.
+ * Показ набранного числа разрядами.
  *
  * Сама разбивка берётся у денег [Money.grouped] — того же правила, по
  * которому разряды разделены в показанной сумме. Здесь остаётся только

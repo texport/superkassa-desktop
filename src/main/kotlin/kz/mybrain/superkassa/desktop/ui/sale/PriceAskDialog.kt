@@ -5,8 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +20,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import kz.mybrain.superkassa.desktop.server.UnitOfMeasurement
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
 import kz.mybrain.superkassa.desktop.ui.components.FormDialog
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.onEnter
 import kz.mybrain.superkassa.desktop.ui.components.onEscape
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -153,15 +152,14 @@ private fun RowScope.AskedField(
 ) {
     val extra = LocalSaleTexts.current
     val problem = ask.problem(field)?.takeIf { value.text.isNotBlank() }
-    OutlinedTextField(
+    MoneyField(
         value = value,
-        onValueChange = onChange,
-        label = { Text(label) },
-        supportingText = if (problem == null) null else ({ Text(problem.text(extra)) }),
-        isError = problem != null,
-        singleLine = true,
+        label = label,
         modifier = modifier.weight(1f).onFocusChanged { state ->
             if (state.isFocused) onChange(value.copy(selection = TextRange(0, value.text.length)))
-        }
+        },
+        isError = problem != null,
+        supportingText = problem?.text(extra),
+        onValueChange = onChange
     )
 }

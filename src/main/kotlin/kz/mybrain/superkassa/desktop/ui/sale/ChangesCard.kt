@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
@@ -16,11 +14,11 @@ import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.CollapsibleSection
 import kz.mybrain.superkassa.desktop.ui.components.MinorSumLine
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.NamedSumRow
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -101,16 +99,14 @@ private fun ChangeField(
     onEnter: (String) -> Unit,
     onSwitch: (AdjustmentUnit) -> Unit
 ) {
-    OutlinedTextField(
+    MoneyField(
         value = change.text,
-        onValueChange = onEnter,
-        label = { Text(label) },
-        singleLine = true,
-        textStyle = MoneyStyle.row,
+        label = label,
+        modifier = Modifier.fillMaxWidth(),
         isError = wrong,
-        trailingIcon = { UnitChoice(change.unit, onSwitch) },
-        supportingText = { Text(sameOtherwise(change, itemsSum)) },
-        modifier = Modifier.fillMaxWidth()
+        supportingText = sameOtherwise(change, itemsSum),
+        trailing = { UnitChoice(change.unit, onSwitch) },
+        onValueChange = onEnter
     )
 }
 
