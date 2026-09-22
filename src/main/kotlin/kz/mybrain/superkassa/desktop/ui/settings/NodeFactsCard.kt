@@ -76,6 +76,7 @@ private fun nodeLines(
         info?.mode?.let { texts.nodeMode to it },
         info?.ofdProtocolVersion?.let { texts.nodeProtocol to it },
         info?.storage?.engine?.let { texts.nodeStorage to it },
+        info?.let { texts.nodeRenderer to (it.documentRenderer ?: texts.nodeRendererMissing) },
         health?.status?.let { texts.nodeHealth to listOfNotNull(it, health.storage).joinToString(Glyphs.SEPARATOR) },
         (texts.nodeHealth to LocalStrings.current.common.nodeOffline).takeIf { !session.nodeAvailable }
     )

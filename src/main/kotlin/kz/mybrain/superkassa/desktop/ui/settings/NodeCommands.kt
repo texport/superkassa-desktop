@@ -90,7 +90,16 @@ internal data class NodeInfo(
     val ofdProtocolVersion: String? = null,
     /** Версия ядра внутри узла: узел выпускается своим темпом, ядро своим. */
     val coreVersion: String? = null,
-    val storage: NodeStorage? = null
+    val storage: NodeStorage? = null,
+    /**
+     * Чем узел рисует образы документов.
+     *
+     * Просмотр и печать держатся на браузере семейства Chromium, которого
+     * установщик не несёт. Пустое значение означает, что браузера на машине
+     * нет: узел едет в одном установщике с приложением и поле сообщает
+     * всегда.
+     */
+    val documentRenderer: String? = null
 )
 
 @Serializable

@@ -65,8 +65,15 @@ class PrintDesk(private val session: Session) {
         previewDocument(document.id)
     }
 
-    /** То же по идентификатору: у Z-отчёта смены самого документа под рукой нет. */
-    fun previewDocument(documentId: String?) {
+    /**
+     * То же по идентификатору: у Z-отчёта смены самого документа под рукой нет.
+     *
+     * @param file как назвать файл, если форму сохранят. Без него имя
+     *   файла было бы внутренним идентификатором документа: журнал
+     *   и прошлые смены открывают форму по нему, и сохранённый чек звался
+     *   `aae019ac-…pdf` — покупателю такое имя ни о чём не говорит.
+     */
+    fun previewDocument(documentId: String?, file: String? = null) {
         val id = documentId
         if (id == null) {
             // Молчание здесь — тот же дефект, что и пустой экран: владелец
@@ -75,8 +82,9 @@ class PrintDesk(private val session: Session) {
             return
         }
         shown = id
+        shownFile = file
         shownPacket = null
-        draw({ previewDocument(id) }) { kkm, pin ->
+        draw({ previewDocument(id, file) }) { kkm, pin ->
             session.client.printDocument(kkm.kkmId, id, pin, PrintKind.Png)
         }
     }

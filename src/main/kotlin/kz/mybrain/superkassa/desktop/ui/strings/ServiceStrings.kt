@@ -98,6 +98,8 @@ data class SettingStrings(
     val nodeMode: String,
     val nodeProtocol: String,
     val nodeStorage: String,
+    val nodeRenderer: String,
+    val nodeRendererMissing: String,
     val nodeHealth: String,
     val ofdAuth: String,
     val ofdNextReqNum: String,

@@ -13,6 +13,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.desktop.app.PrintFileName
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
@@ -82,7 +83,12 @@ fun DayJournal(session: Session) {
                     loading = false
                 }
             },
-            onPreview = { entry -> session.printDesk.previewDocument(entry.key) },
+            onPreview = { entry ->
+                session.printDesk.previewDocument(
+                    entry.key,
+                    PrintFileName.of(entry.typeCode, entry.number, entry.shiftNo)
+                )
+            },
             onPrint = { entry -> loaded.firstOrNull { it.id == entry.key }?.let(session.printDesk::print) }
         )
     }

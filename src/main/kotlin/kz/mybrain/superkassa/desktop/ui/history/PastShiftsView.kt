@@ -17,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.desktop.app.PrintFileName
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
@@ -88,7 +89,10 @@ fun PastShiftsView(session: Session) {
                 },
                 onOpen = { openId = it.id }
             ) { shift ->
-                session.printDesk.previewDocument(shift.zReportId)
+                session.printDesk.previewDocument(
+                    shift.zReportId,
+                    PrintFileName.of(Z_REPORT, number = null, shiftNo = shift.shiftNo)
+                )
             }
         } else {
             ShiftDocuments(session, journal, opened, documents, opening, onBack = { openId = null }) { document ->
@@ -137,3 +141,6 @@ private suspend fun loadShifts(session: Session, what: String, into: MutableList
     into.addAll(loaded)
     return loaded.size == SHIFT_PAGE
 }
+
+/** Вид документа закрытия смены, как его называет узел. */
+private const val Z_REPORT = "SHIFT_CLOSE"
