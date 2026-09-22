@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop
 
+import kz.mybrain.superkassa.desktop.ui.sale.Adjustment
 import kz.mybrain.superkassa.desktop.ui.sale.DomainField
 import kz.mybrain.superkassa.desktop.ui.sale.SaleBlock
 import kz.mybrain.superkassa.desktop.ui.sale.SaleState
@@ -60,20 +61,32 @@ class SaleRulesTest {
         // «Итого» расходилось с набранным, и кнопка при этом была нажимаема.
         assertEquals(
             SaleBlock.DiscountNegative,
-            blockOf(SaleState(receiptDiscount = BigDecimal("-100")))
+            blockOf(SaleState(discount = Adjustment("-100"), itemsSum = BigDecimal("100")))
         )
         assertEquals(
             SaleBlock.DiscountNegative,
-            blockOf(SaleState(receiptMarkup = BigDecimal("-100")))
+            blockOf(SaleState(markup = Adjustment("-100"), itemsSum = BigDecimal("100")))
         )
-        assertNull(blockOf(SaleState(receiptDiscount = BigDecimal("10"), total = BigDecimal("90"))))
+        assertNull(
+            blockOf(
+                SaleState(
+                    discount = Adjustment("10"),
+                    itemsSum = BigDecimal("100"),
+                    total = BigDecimal("90")
+                )
+            )
+        )
     }
 
     @Test
     fun `скидка на позицию и скидка на чек вместе запрещены`() {
-        val both = SaleState(hasItemDiscount = true, receiptDiscount = BigDecimal("5"))
+        val both = SaleState(
+            hasItemDiscount = true,
+            discount = Adjustment("5"),
+            itemsSum = BigDecimal("100")
+        )
         assertEquals(SaleBlock.DiscountScopes, blockOf(both))
-        assertNull(blockOf(both.copy(receiptDiscount = null)))
+        assertNull(blockOf(both.copy(discount = Adjustment())))
         assertNull(blockOf(both.copy(hasItemDiscount = false)))
     }
 

@@ -31,6 +31,10 @@ data class SaleTexts(
 
     /** Сколько чек уже потерял скидками по строкам: вместе со скидкой на чек они запрещены. */
     val itemDiscountsGiven: String,
+
+    /** Набранный процент — в тенге, и набранные тенге — долей: рядом с полем. */
+    val changeAsSum: String,
+    val changeAsPercent: String,
     val paymentAndTotal: String,
     val lineDiscount: String,
     val addByEnter: String,
@@ -71,6 +75,17 @@ data class SaleTexts(
      * назвал, и объяснения этому на экране не было.
      */
     val blockDiscountNegative: String,
+
+    /**
+     * Процент скидки или наценки вне ста.
+     *
+     * Больше ста процентов узел не принимает ни у скидки, ни у наценки,
+     * и узнать об этом кассир должен до нажатия.
+     */
+    val blockPercentRange: String,
+
+    /** Скидка больше стоимости набранного: платить после неё было бы нечем. */
+    val blockDiscountOverItems: String,
     val blockTotalNotPositive: String,
     val blockTakenTooSmall: String,
     val blockBin: String,

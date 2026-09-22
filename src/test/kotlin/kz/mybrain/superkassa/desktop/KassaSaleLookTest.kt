@@ -17,6 +17,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.ui.MessageEffect
 import kz.mybrain.superkassa.desktop.ui.MessageHost
+import kz.mybrain.superkassa.desktop.ui.sale.AdjustmentUnit
 import kz.mybrain.superkassa.desktop.ui.sale.Basket
 import kz.mybrain.superkassa.desktop.ui.sale.BasketCard
 import kz.mybrain.superkassa.desktop.ui.sale.IssueRow
@@ -113,7 +114,7 @@ class KassaSaleLookTest {
             ) {
                 BasketCard(basket, Modifier.weight(1f), {}, {}, {})
                 Column(modifier = Modifier.width(TILL), verticalArrangement = Arrangement.spacedBy(Spacing.normal)) {
-                    ReceiptChangesCard(form, basket, expanded = true, onToggle = {})
+                    ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
                     ReceiptTotals(session, form, total, expanded = true, onToggle = {})
                     IssueRow(session, basket, form)
                 }
@@ -150,7 +151,16 @@ class KassaSaleLookTest {
             Changes(session, discounted, SaleForm().apply { enterDiscount("1500") })
         }
 
-        val frames = listOf(plain, discount, markup, byLine)
+        val byPercent = KassaScene.shot("sale-changes-percent") {
+            Changes(session, basket, SaleForm().apply { switchDiscount(AdjustmentUnit.Percent); enterDiscount("10") })
+        }
+        // Процент сверх ста узел не принимает: поле краснеет, а причина
+        // названа под ним — до нажатия, а не после отказа.
+        val overPercent = KassaScene.shot("sale-changes-percent-over") {
+            Changes(session, basket, SaleForm().apply { switchMarkup(AdjustmentUnit.Percent); enterMarkup("150") })
+        }
+
+        val frames = listOf(plain, discount, markup, byLine, byPercent, overPercent)
         frames.forEach { assertTrue(it.isNotEmpty()) }
         assertTrue(frames.map { it.toList() }.distinct().size == frames.size, "состояния блока скидок неотличимы")
     }
@@ -164,7 +174,7 @@ class KassaSaleLookTest {
             LocalUnits provides session.units
         ) {
             Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
-                ReceiptChangesCard(form, basket, expanded = true, onToggle = {})
+                ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
             }
         }
     }
@@ -174,31 +184,31 @@ class KassaSaleLookTest {
         val session = KassaScene.session("sale-basket", shift = KassaScene.openShift())
         val basket = Basket().apply { POSITIONS.forEach { add(it) } }
 
-        val plain = KassaScene.shot("sale-basket") { Receipt(session, basket, SaleForm()) }
-        val storno = KassaScene.shot("sale-basket-storno") {
+        val plain = KassaScene.shot("sale-basket", height = RECEIPT_TALL) { Receipt(session, basket, SaleForm()) }
+        val storno = KassaScene.shot("sale-basket-storno", height = RECEIPT_TALL) {
             Receipt(session, Basket().apply { POSITIONS.forEach { add(it) }; stornoAt(1) }, SaleForm())
         }
-        val overDiscount = KassaScene.shot("sale-discount-over-total") {
+        val overDiscount = KassaScene.shot("sale-discount-over-total", height = RECEIPT_TALL) {
             Receipt(session, basket, SaleForm().apply { enterDiscount("999999") })
         }
-        val shortTaken = KassaScene.shot("sale-taken-too-small") {
+        val shortTaken = KassaScene.shot("sale-taken-too-small", height = RECEIPT_TALL) {
             Receipt(session, basket, SaleForm().apply { taken = "100" })
         }
-        val change = KassaScene.shot("sale-change") {
+        val change = KassaScene.shot("sale-change", height = RECEIPT_TALL) {
             Receipt(session, basket, SaleForm().apply { taken = "20000" })
         }
-        val badBin = KassaScene.shot("sale-bin-too-short") {
+        val badBin = KassaScene.shot("sale-bin-too-short", height = RECEIPT_TALL) {
             Receipt(session, basket, SaleForm().apply { customerBin = "1234" })
         }
         // Вид оплаты, которого узел не принимает: он выбран, а не просто
         // погашен в списке — иначе на экране не видно ровно ничего.
-        val unsupported = KassaScene.shot("sale-payment-unsupported") {
+        val unsupported = KassaScene.shot("sale-payment-unsupported", height = RECEIPT_TALL) {
             val picky = KassaScene.session("sale-payment", shift = KassaScene.openShift(), payments = PAYMENTS)
             val form = SaleForm()
             form.split.retype(form.split.entries.first(), "CARD")
             Receipt(picky, basket, form)
         }
-        val mixed = KassaScene.shot("sale-payment-mixed") {
+        val mixed = KassaScene.shot("sale-payment-mixed", height = RECEIPT_TALL) {
             val form = SaleForm()
             form.split.add("CARD")
             form.split.entries.first().amount = "5000"
@@ -211,6 +221,15 @@ class KassaSaleLookTest {
     }
 
     private companion object {
+        /**
+         * Высота кадра набранного чека.
+         *
+         * Выше обычного кадра: в колонке стоят блок скидок, деньги и кнопка,
+         * и на обычной высоте причина под кнопкой уезжала за край кадра —
+         * отказные состояния выходили неотличимыми друг от друга.
+         */
+        const val RECEIPT_TALL = 1000
+
         /** Ширина кассовой колонки на снимке: та же, что в окне кассира. */
         val TILL = Sizes.fieldForm + Sizes.fieldPrice + Sizes.fieldQuantity
 

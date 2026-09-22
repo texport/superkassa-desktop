@@ -80,7 +80,7 @@ private suspend fun issue(
 ) {
     form.issuing = true
     val total = totalOf(basket, form)
-    val issued = issueReceipt(session, basket, form.input(total), texts, extra) {
+    val issued = issueReceipt(session, basket, form.input(basket), texts, extra) {
         session.titleOf(Dictionary.DeliveryStatuses, it)
     }
     if (issued) form.startNextReceipt()
@@ -100,8 +100,9 @@ fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDeci
     positions = basket.positions.size,
     hasItemDiscount = basket.hasItemDiscount,
     hasZeroPrice = basket.hasZeroPrice,
-    receiptDiscount = amount(form.discount).value,
-    receiptMarkup = amount(form.markup).value,
+    discount = form.discount,
+    markup = form.markup,
+    itemsSum = basket.total,
     total = total,
     paymentCodes = form.split.types,
     splitIssue = form.split.issue(total),

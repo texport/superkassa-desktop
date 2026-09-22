@@ -138,6 +138,7 @@ private fun TillColumn(
                 onToggle = { panels.toggle(SalePanel.PositionEntry) }
             ) { basket.add(it) }
             ReceiptChangesCard(
+                session = session,
                 form = form,
                 basket = basket,
                 expanded = panels.expanded(SalePanel.ReceiptChanges),
