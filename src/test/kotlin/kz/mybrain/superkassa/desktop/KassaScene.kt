@@ -85,12 +85,17 @@ internal object KassaScene {
         payments: List<DictionaryEntry>? = null,
         refusal: NodeRefusal? = null,
         journal: List<Document> = emptyList(),
+        /** Отвечает ли узел на список документов; `false` — не отвечает вовсе. */
+        journalAnswered: Boolean = true,
+        /** Что отдаёт узел на список прошлых смен; `null` — не отвечает вовсе. */
+        pastShifts: List<Shift>? = null,
         sold: List<SoldItem> = emptyList(),
         cashiers: List<KkmUser>? = null,
         /** Что отдаёт каталог на поиск по штрихкоду; `null` — ничего не нашёл. */
         catalogue: NomenclatureItem? = null
     ): Session {
-        val session = Session(client(admin, refusal, journal, sold, cashiers, catalogue), preferences(folder))
+        val node = NodeAnswers(journal, journalAnswered, pastShifts, sold, cashiers, catalogue)
+        val session = Session(client(admin, refusal, node), preferences(folder))
         // Язык сеанса тот же, каким сцена рисует надписи: иначе отказ узла
         // приходил по-казахски на русский экран — не дефект приложения,
         // а расхождение оснастки с ним.
@@ -152,31 +157,32 @@ internal object KassaScene {
      * `respondError` на экране оказывалось английское «Not Found»,
      * то есть не то, что кассир увидит на самом деле.
      */
-    private fun client(
-        admin: Boolean,
-        refusal: NodeRefusal?,
-        journal: List<Document>,
-        sold: List<SoldItem>,
-        cashiers: List<KkmUser>?,
-        catalogue: NomenclatureItem?
-    ): ServerClient {
+    private fun client(admin: Boolean, refusal: NodeRefusal?, node: NodeAnswers): ServerClient {
         val body = """{"userId":"u-1","name":"Айгүл Сәрсенова","role":"${if (admin) "ADMIN" else "CASHIER"}"}"""
         val engine = MockEngine { request ->
             val path = request.url.encodedPath
             when {
                 path.endsWith("/users/me") -> answer(body)
-                path.endsWith("/users") && cashiers != null ->
-                    answer(encoded(ListSerializer(KkmUser.serializer()), cashiers))
+                path.endsWith("/users") && node.cashiers != null ->
+                    answer(encoded(ListSerializer(KkmUser.serializer()), node.cashiers))
 
                 path.endsWith("/nomenclature/lookup") -> answer(
                     encoded(
                         NomenclatureLookup.serializer(),
-                        NomenclatureLookup(found = catalogue != null, item = catalogue)
+                        NomenclatureLookup(found = node.catalogue != null, item = node.catalogue)
                     )
                 )
 
-                path.endsWith("/documents") -> answer(encoded(ListSerializer(Document.serializer()), journal))
-                path.contains("/documents/") -> answer(details(journal, sold, path.substringAfterLast('/')))
+                // Список смен узел отдаёт только там, где снимок о них
+                // спрашивает: без ответа экран прошлых смен обязан говорить
+                // «прочитать не удалось», а не «смен нет».
+                path.endsWith("/shifts") && node.pastShifts != null ->
+                    answer(encoded(ListSerializer(Shift.serializer()), node.pastShifts))
+
+                path.endsWith("/documents") && node.journalAnswered ->
+                    answer(encoded(ListSerializer(Document.serializer()), node.journal))
+
+                path.contains("/documents/") -> answer(details(node.journal, node.sold, path.substringAfterLast('/')))
                 refusal != null -> respond(
                     """{"code":"${refusal.code}","message":"RU: ${refusal.ru} | KK: ${refusal.kk} | EN: ${refusal.en}"}""",
                     HttpStatusCode.BadRequest,
@@ -192,6 +198,16 @@ internal object KassaScene {
         }
         return ServerClient(http = http)
     }
+
+    /** Что узел отдаёт снимку: собрано в одно, чтобы не расписывать шестью доводами. */
+    private data class NodeAnswers(
+        val journal: List<Document>,
+        val journalAnswered: Boolean,
+        val pastShifts: List<Shift>?,
+        val sold: List<SoldItem>,
+        val cashiers: List<KkmUser>?,
+        val catalogue: NomenclatureItem?
+    )
 
     /** Ответ узла по существу: телом идёт готовый JSON. */
     private fun MockRequestHandleScope.answer(body: String) =

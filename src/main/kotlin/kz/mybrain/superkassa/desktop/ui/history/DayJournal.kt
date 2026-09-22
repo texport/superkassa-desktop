@@ -40,19 +40,26 @@ fun DayJournal(session: Session) {
     val journal = journalTexts(session.language).history
     var period by remember { mutableStateOf(JournalPeriod.of(JournalSpan.Day)) }
     var query by remember { mutableStateOf(JournalQuery()) }
-    var loading by remember { mutableStateOf(false) }
+    // Чтение начинается вместе с экраном, поэтому ожидание стоит с первого
+    // кадра: иначе пустой список успевал мелькнуть объяснением пустоты.
+    var loading by remember { mutableStateOf(true) }
     val loaded = remember { mutableStateListOf<Document>() }
-    // Пришла ли последняя страница целиком: если да, за ней есть ещё.
-    // Прежде журнал брал первые двести документов и молчал об остальных —
-    // за оживлённый день он показывал часть дня, не сообщая, что это часть.
-    var more by remember { mutableStateOf(false) }
+    // Чем кончилось чтение: прочитан ли срок и пришла ли последняя страница
+    // целиком. Прежде журнал брал первые двести документов и молчал
+    // об остальных — за оживлённый день он показывал часть дня, не сообщая,
+    // что это часть, — а неудачу чтения выдавал за пустой срок.
+    var page by remember { mutableStateOf(PageOutcome.unread) }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(period, session.selected?.kkmId) {
+    suspend fun read() {
         loading = true
-        loaded.clear()
-        more = loadPeriod(session, texts.sections.history, period, loaded)
+        page = loadPeriod(session, texts.sections.history, period, loaded)
         loading = false
+    }
+
+    LaunchedEffect(period, session.selected?.kkmId) {
+        loaded.clear()
+        read()
     }
 
     val entries = journalEntriesOf(session, texts, loaded)
@@ -73,16 +80,12 @@ fun DayJournal(session: Session) {
             // выглядит утратой документов.
             query = query.presentIn(entries),
             loading = loading,
-            more = more,
+            more = page.more,
             empty = JournalEmpty(journal.emptyDay, journal.emptyDayHint),
+            unread = !page.read,
             onQuery = { query = it },
-            onMore = {
-                scope.launch {
-                    loading = true
-                    more = loadPeriod(session, texts.sections.history, period, loaded)
-                    loading = false
-                }
-            },
+            onMore = { scope.launch { read() } },
+            onRetry = { scope.launch { read() } },
             onPreview = { entry ->
                 session.printDesk.previewDocument(
                     entry.key,

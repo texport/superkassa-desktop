@@ -28,6 +28,16 @@ data class ReturnJournalTexts(
     val chooseBasis: String,
     val chooseBasisHint: String,
     val noBasisHint: String,
+
+    /**
+     * Чеки дня прочитать не удалось.
+     *
+     * Отдельно от «оснований нет»: узел отказал или не ответил, и о чеках
+     * покупателя он не сказал ничего. Кассир при покупателе с чеком в руках
+     * читал молчание узла как отказ в возврате.
+     */
+    val basisUnread: String,
+    val basisUnreadHint: String,
     val shiftClosedHint: String,
     val receiptTotal: String,
     val fiscalSign: String,
@@ -73,6 +83,10 @@ data class HistoryJournalTexts(
     val emptyDayHint: String,
     val emptyForFilter: String,
     val emptyForFilterHint: String,
+
+    /** Документы срока прочитать не удалось: узел отказал или не ответил. */
+    val unread: String,
+    val unreadHint: String,
     val colTime: String,
     val colType: String,
     val colNumber: String,
@@ -115,6 +129,10 @@ data class ShiftJournalTexts(
     val hint: String,
     val none: String,
     val noneHint: String,
+
+    /** Смены прочитать не удалось: узел отказал или не ответил. */
+    val unread: String,
+    val unreadHint: String,
     val number: String,
     val opened: String,
     val closed: String,
