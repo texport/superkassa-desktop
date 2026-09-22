@@ -3,11 +3,13 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.BusyLine
+import kz.mybrain.superkassa.desktop.ui.LocalSectionSwitch
 
 /**
  * Кабинет ОФД, открытый с экрана входа.
@@ -28,9 +30,16 @@ import kz.mybrain.superkassa.desktop.ui.BusyLine
 @Composable
 fun CabinetDoor(session: Session, cabinet: CabinetSession, onBack: () -> Unit) {
     val documents = remember { CabinetDocuments() }
-    Column(modifier = Modifier.fillMaxSize()) {
-        CabinetBar(session, cabinet, documents, onExit = onBack)
-        BusyLine(session.busy || cabinet.busy)
-        CabinetScreen(session, cabinet, documents)
+    // За дверью разделов кассы нет, и просьба показать раздел значит одно:
+    // выйти из кабинета на вход, где уже выбрана нужная касса. Прежде
+    // просьба уходила в пустоту, и «Перейти к кассе» с виду не делала
+    // ничего — ровно после переноса кассы на эту машину, когда владелец
+    // приходит в кабинет именно отсюда.
+    CompositionLocalProvider(LocalSectionSwitch provides { onBack() }) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            CabinetBar(session, cabinet, documents, onExit = onBack)
+            BusyLine(session.busy || cabinet.busy)
+            CabinetScreen(session, cabinet, documents)
+        }
     }
 }
