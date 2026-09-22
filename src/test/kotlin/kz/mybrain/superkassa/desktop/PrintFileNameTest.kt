@@ -1,54 +1,42 @@
 package kz.mybrain.superkassa.desktop
 
-import kz.mybrain.superkassa.desktop.app.PrintFileName
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import kz.mybrain.superkassa.desktop.app.Preferences
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.server.Kkm
+import kz.mybrain.superkassa.desktop.server.ServerClient
+import java.io.File
+import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 /**
- * Имя файла печатной формы.
+ * Сохранённая форма называется по документу, откуда бы её ни открыли.
  *
- * В окно сохранения подставлялся идентификатор документа — тридцать шесть
- * знаков с дефисами. Такой файл не найти через неделю и не показать
- * в КГД: имя обязано называть вид документа и его номер.
+ * Открытие по документу задавало имя файла, а открытие по идентификатору,
+ * которым оно пользуется внутри, тут же затирало его пустым — и чек
+ * из документов смены сохранялся под внутренним идентификатором.
  */
 class PrintFileNameTest {
 
     @Test
-    fun `чек продажи назван видом, сменой и фискальным признаком`() {
-        val name = PrintFileName.of(
-            Document(id = "069fa609-b2ba", docType = "SALE", shiftNo = 9, fiscalSign = "3286317477")
-        )
+    fun `открытая по документу форма сохраняется под именем документа`() {
+        val png = byteArrayOf(0x89.toByte(), 'P'.code.toByte(), 'N'.code.toByte(), 'G'.code.toByte())
+        val http = HttpClient(MockEngine { respond(png, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "image/png")) })
+        val directory = Files.createTempDirectory("print-name").toFile()
+        val session = Session(ServerClient(http = http), Preferences(File(directory, "kkm")))
+        session.select(Kkm(kkmId = "kkm-1"), remember = false)
+        session.adoptPin("1234")
+        val document = Document(id = "aae019ac-92e3", docType = "SALE", shiftNo = 1, fiscalSign = "4178697373")
 
-        assertEquals("receipt-sale-shift-9-3286317477", name)
-    }
+        session.printDesk.preview(document)
 
-    @Test
-    fun `автономный документ назван своим признаком`() {
-        val name = PrintFileName.of(
-            Document(id = "x", docType = "BUY_RETURN", shiftNo = 4, autonomousSign = "1789000000000")
-        )
-
-        assertEquals("receipt-buy-return-shift-4-1789000000000", name)
-    }
-
-    @Test
-    fun `отчёт без признака назван видом и сменой`() {
-        assertEquals("z-report-shift-7", PrintFileName.of(Document(id = "x", docType = "Z_REPORT", shiftNo = 7)))
-        assertEquals("x-report-shift-7", PrintFileName.of(Document(id = "x", docType = "X_REPORT", shiftNo = 7)))
-    }
-
-    @Test
-    fun `документ кабинета назван видом и номером из строки журнала`() {
-        assertEquals(
-            "receipt-buy-shift-9-3286317477",
-            PrintFileName.of(typeCode = "BUY", number = "3286317477", shiftNo = 9)
-        )
-    }
-
-    @Test
-    fun `незнакомый вид не роняет имя`() {
-        assertEquals("document", PrintFileName.of(Document(id = "x", docType = "ЧТО-ТО")))
-        assertEquals("document", PrintFileName.of(typeCode = null, number = null, shiftNo = null))
+        assertEquals("receipt-sale-shift-1-4178697373", session.printDesk.savingName)
     }
 }

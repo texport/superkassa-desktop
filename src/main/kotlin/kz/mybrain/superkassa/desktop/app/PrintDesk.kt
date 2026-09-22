@@ -50,6 +50,9 @@ class PrintDesk(private val session: Session) {
      */
     private var shownFile: String? = null
 
+    /** Как назовётся файл, если открытую форму сохранят: имя документа, иначе его идентификатор. */
+    internal val savingName: String? get() = shownFile ?: shown
+
     /**
      * Какой по счёту просмотр идёт сейчас.
      *
@@ -60,10 +63,7 @@ class PrintDesk(private val session: Session) {
     private var generation = 0
 
     /** Открывает печатную форму документа поверх любого раздела. */
-    fun preview(document: Document) {
-        shownFile = PrintFileName.of(document)
-        previewDocument(document.id)
-    }
+    fun preview(document: Document) = previewDocument(document.id, PrintFileName.of(document))
 
     /**
      * То же по идентификатору: у Z-отчёта смены самого документа под рукой нет.
@@ -193,7 +193,7 @@ class PrintDesk(private val session: Session) {
                     session.client.printDocument(kkm.kkmId, name, pin, kind)
                 }
             } ?: return@launch drawer.refused(::saveShown)
-            keepFile(session, bytes, "${shownFile ?: name}.${kind.extension}")
+            keepFile(session, bytes, "$savingName.${kind.extension}")
         }
     }
 }
