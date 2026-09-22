@@ -24,6 +24,7 @@ import kz.mybrain.superkassa.desktop.server.documentDetails
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.ofdRefusalWords
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -118,10 +119,13 @@ private fun RefusedRow(session: Session, document: Document, operator: String?) 
                 )
             }
         }
-        // Причина словами ОФД — то, по чему обслуживание находит, что
-        // именно в документе не так: один код отказа стоит и за снятой
-        // с учёта кассой, и за нехваткой реквизита в позиции.
-        document.ofdErrorText?.takeIf { it.isNotBlank() }?.let { reason ->
+        // Причина — словами кассира по коду отказа, а пояснение БФД
+        // приходит по-английски и остаётся для незнакомых кодов: кассир
+        // стоит перед покупателем и решает, что делать с чеком, а
+        // «Same customer and taxpayer IIN» ему в этом не помогает.
+        val words = ofdRefusalWords(document.refusalCode, session.language)
+            ?: document.ofdErrorText
+        words?.takeIf { it.isNotBlank() }?.let { reason ->
             Text(
                 text = reason,
                 style = MaterialTheme.typography.bodySmall,
