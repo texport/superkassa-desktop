@@ -33,9 +33,6 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * @param entries прочитанные строки как есть; отбор накладывается здесь.
  * @param types виды документов для отбора.
  * @param empty слова источника о том, что у него пусто.
- * @param unreadable слова о том, что прочитать не удалось; `null` — чтение
- *   прошло. Пустота после отказа — не пустота, и повторить её предлагается
- *   тем же чтением, каким берут следующую страницу.
  * @param onOpen что показать по нажатию на строку; `null` — строка
  *   не нажимается.
  * @param onPreview показ печатной формы; `null` — формы нет.
@@ -50,7 +47,6 @@ fun ColumnScope.JournalView(
     loading: Boolean,
     more: Boolean,
     empty: JournalEmpty,
-    unreadable: JournalEmpty? = null,
     onQuery: (JournalQuery) -> Unit,
     onMore: () -> Unit,
     onOpen: ((JournalEntry) -> Unit)? = null,
@@ -74,9 +70,6 @@ fun ColumnScope.JournalView(
     val shown = remember(entries, query) { entries.select(query) }
     val state = when {
         loading && entries.isEmpty() -> ScreenState.Working
-        unreadable != null && entries.isEmpty() ->
-            ScreenState.Trouble(unreadable.title, unreadable.hint, onRetry = onMore)
-
         entries.isEmpty() -> ScreenState.Empty(AppIcons.noDocuments, empty.title, empty.hint)
         shown.isEmpty() -> ScreenState.Empty(
             icon = AppIcons.noDocuments,

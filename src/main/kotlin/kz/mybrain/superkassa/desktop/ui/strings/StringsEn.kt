@@ -21,7 +21,6 @@ internal val EnglishStrings = AppStrings(
         explain = "Explanation",
         expand = "Expand",
         retry = "Try again",
-        unreadableHint = "The node did not answer or refused to read. Try again; if it repeats, call service.",
         nothingToPick = "Nothing to choose from"
     ),
     login = LoginStrings(

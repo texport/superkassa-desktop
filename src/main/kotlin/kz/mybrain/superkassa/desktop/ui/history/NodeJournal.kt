@@ -93,23 +93,22 @@ private fun deliveryOf(document: Document): JournalDelivery? = when {
  * запросом узел их не отдаёт. Срок без границ читается с начала записей
  * узла и до конца сегодняшнего дня.
  *
- * @return исход чтения: есть ли ещё страницы, всё ли прочитано или
- *   прочитать не удалось вовсе.
+ * @return есть ли за пришедшей страницей ещё документы.
  */
 internal suspend fun loadPeriod(
     session: Session,
     what: String,
     period: JournalPeriod,
     into: MutableList<Document>
-): JournalLoad {
-    val kkm = session.selected ?: return JournalLoad.Failed
+): Boolean {
+    val kkm = session.selected ?: return false
     val from = period.range?.fromMillis() ?: FIRST_RECORD
     val to = period.range?.toMillis() ?: dayRange(LocalDate.now()).toMillis
     val loaded = session.guard(what) {
         session.client.documents(kkm.kkmId, from, to, session.pin, into.size)
-    } ?: return JournalLoad.Failed
+    } ?: return false
     into.addAll(loaded)
-    return pageLoad(loaded.size, PAGE)
+    return loaded.size == PAGE
 }
 
 /** Ответ ОФД: документ отвергнут. */

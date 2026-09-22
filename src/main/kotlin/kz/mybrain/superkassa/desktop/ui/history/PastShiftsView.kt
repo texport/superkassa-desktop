@@ -25,7 +25,6 @@ import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.components.stripedAt
-import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ShiftJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -45,13 +44,13 @@ fun PastShiftsView(session: Session) {
     val documents = remember { mutableStateListOf<Document>() }
     var openId by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
-    var load by remember { mutableStateOf(JournalLoad.Whole) }
+    var more by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(session.selected?.kkmId) {
         shifts.clear()
         loading = true
-        load = loadShifts(session, journal.title, shifts)
+        more = loadShifts(session, journal.title, shifts)
         loading = false
     }
     // Документы смены узел отдаёт отдельным обращением: до ответа список
@@ -80,11 +79,11 @@ fun PastShiftsView(session: Session) {
                 journal = journal,
                 shifts = shifts,
                 loading = loading,
-                load = load,
+                more = more,
                 onMore = {
                     scope.launch {
                         loading = true
-                        load = loadShifts(session, journal.title, shifts)
+                        more = loadShifts(session, journal.title, shifts)
                         loading = false
                     }
                 },
@@ -108,19 +107,13 @@ private fun ColumnScope.ShiftList(
     journal: ShiftJournalTexts,
     shifts: List<Shift>,
     loading: Boolean,
-    load: JournalLoad,
+    more: Boolean,
     onMore: () -> Unit,
     onOpen: (Shift) -> Unit,
     onZReport: (Shift) -> Unit
 ) {
-    val texts = LocalStrings.current
     val state = when {
         loading -> ScreenState.Working
-        // Узел не ответил — это не касса без смен: Z-отчёт позавчерашней
-        // смены никуда не делся, и повторить чтение есть чем.
-        load.failed && shifts.isEmpty() ->
-            ScreenState.Trouble(journal.unreadable, texts.common.unreadableHint, onRetry = onMore)
-
         shifts.isEmpty() -> ScreenState.Empty(AppIcons.noDocuments, journal.none, journal.noneHint)
         else -> ScreenState.Ready
     }
@@ -132,21 +125,21 @@ private fun ColumnScope.ShiftList(
         }
         // Под списком видно, кончились ли смены: молчание внизу не отличает
         // «всё» от «оборвалось на двухсотой».
-        MoreRow(load.more, loading, journal.showMore, journal.allShown, onMore = onMore)
+        MoreRow(more, loading, journal.showMore, journal.allShown, onMore = onMore)
     }
 }
 
 /**
  * Дочитывает смены с того места, где остановились.
  *
- * @return исход чтения: пустой ответ узла и молчание узла — разные вещи.
+ * @return есть ли за пришедшей страницей ещё смены.
  */
-private suspend fun loadShifts(session: Session, what: String, into: MutableList<Shift>): JournalLoad {
-    val kkm = session.selected ?: return JournalLoad.Failed
+private suspend fun loadShifts(session: Session, what: String, into: MutableList<Shift>): Boolean {
+    val kkm = session.selected ?: return false
     val loaded = session.guard(what) { session.client.shifts(kkm.kkmId, session.pin, into.size) }
-        ?: return JournalLoad.Failed
+        ?: return false
     into.addAll(loaded)
-    return pageLoad(loaded.size, SHIFT_PAGE)
+    return loaded.size == SHIFT_PAGE
 }
 
 /** Вид документа закрытия смены, как его называет узел. */

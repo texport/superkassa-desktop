@@ -42,17 +42,16 @@ fun DayJournal(session: Session) {
     var query by remember { mutableStateOf(JournalQuery()) }
     var loading by remember { mutableStateOf(false) }
     val loaded = remember { mutableStateListOf<Document>() }
-    // Чем кончилось чтение: за полной страницей есть ещё, а отказ узла
-    // нельзя показывать пустым сроком. Прежде журнал брал первые двести
-    // документов и молчал об остальных — за оживлённый день он показывал
-    // часть дня, не сообщая, что это часть.
-    var load by remember { mutableStateOf(JournalLoad.Whole) }
+    // Пришла ли последняя страница целиком: если да, за ней есть ещё.
+    // Прежде журнал брал первые двести документов и молчал об остальных —
+    // за оживлённый день он показывал часть дня, не сообщая, что это часть.
+    var more by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(period, session.selected?.kkmId) {
         loading = true
         loaded.clear()
-        load = loadPeriod(session, texts.sections.history, period, loaded)
+        more = loadPeriod(session, texts.sections.history, period, loaded)
         loading = false
     }
 
@@ -74,14 +73,13 @@ fun DayJournal(session: Session) {
             // выглядит утратой документов.
             query = query.presentIn(entries),
             loading = loading,
-            more = load.more,
+            more = more,
             empty = JournalEmpty(journal.emptyDay, journal.emptyDayHint),
-            unreadable = if (load.failed) JournalEmpty(journal.unreadable, texts.common.unreadableHint) else null,
             onQuery = { query = it },
             onMore = {
                 scope.launch {
                     loading = true
-                    load = loadPeriod(session, texts.sections.history, period, loaded)
+                    more = loadPeriod(session, texts.sections.history, period, loaded)
                     loading = false
                 }
             },

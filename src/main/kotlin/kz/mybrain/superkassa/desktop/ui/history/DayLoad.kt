@@ -15,21 +15,20 @@ import java.time.LocalDate
  * приходит с чеком позавчерашнего дня, и искать его обе стороны обязаны
  * одинаково.
  *
- * Исход чтения различает пустой день и неудавшееся чтение: «за этот день
- * чеков нет» и «прочитать не удалось» — разные вещи, и кассир поступает
- * с ними по-разному.
+ * Возвращает `true`, когда страница пришла полной, — значит день читается
+ * дальше.
  */
 internal suspend fun loadDay(
     session: Session,
     what: String,
     day: LocalDate,
     into: MutableList<Document>
-): JournalLoad {
-    val kkm = session.selected ?: return JournalLoad.Failed
+): Boolean {
+    val kkm = session.selected ?: return false
     val range = dayRange(day)
     val loaded = session.guard(what) {
         session.client.documents(kkm.kkmId, range.fromMillis, range.toMillis, session.pin, into.size)
-    } ?: return JournalLoad.Failed
+    } ?: return false
     into.addAll(loaded)
-    return pageLoad(loaded.size, PAGE)
+    return loaded.size == PAGE
 }
