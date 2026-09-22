@@ -103,6 +103,7 @@ internal val journalTextsEn = JournalTexts(
         retryNeedsProgramming = "Retrying is only queued in programming mode: enter it in the register settings",
         nothingFailed = "No failed tasks — nothing to retry.",
         nothingToRetryButRejected = "Nothing to retry: rejected tasks are never resent, service staff handle them.",
-        emptyHint = "Nothing to send: the cash register is online with the BFD."
+        emptyHint = "Nothing to send: the cash register is online with the BFD.",
+        emptyBlockedHint = "Nothing to send: the cash register is blocked and issues no new documents."
     )
 )

@@ -47,7 +47,13 @@ fun QueueScreen(session: Session) {
         val state = when {
             session.queueTasks.isNotEmpty() -> ScreenState.Ready
             session.busy -> ScreenState.Working
-            else -> ScreenState.Empty(AppIcons.queueClear, texts.queue.empty, journal.emptyHint)
+            // Пустая очередь заблокированной кассы — не признак порядка:
+            // документы не ждут отправки потому, что их больше не пробить.
+            else -> ScreenState.Empty(
+                AppIcons.queueClear,
+                texts.queue.empty,
+                if (session.selected?.isBlocked == true) journal.emptyBlockedHint else journal.emptyHint
+            )
         }
         ScreenSlot(state, Modifier.weight(1f)) {
             QueueList(

@@ -150,7 +150,15 @@ data class QueueJournalTexts(
     val nothingFailed: String,
     /** Повторять нечего, но отвергнутое на экране есть: строка обязана это признать. */
     val nothingToRetryButRejected: String,
-    val emptyHint: String
+    val emptyHint: String,
+    /**
+     * Пустая очередь заблокированной кассы.
+     *
+     * «Касса работает на связи с БФД» над кассой, которая встала, —
+     * неправда в ту сторону, в какую ошибаться нельзя: кассир уходит
+     * с экрана уверенный, что всё в порядке.
+     */
+    val emptyBlockedHint: String
 )
 
 /** Надписи области на выбранном языке. */
