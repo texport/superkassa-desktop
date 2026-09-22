@@ -15,10 +15,10 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.desktop.app.AvailableUpdate
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.strings.updateTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -38,10 +38,13 @@ internal fun RailVersion(session: Session, onOpenUpdate: () -> Unit) {
     val texts = updateTexts(session.language)
     val updates = session.updates
     val available = updates.available
+    // В углу всегда стоит версия, которая работает сейчас: она нужна
+    // кассиру и поддержке. О новой говорят цвет, значок и подсказка —
+    // подпись с чужим номером читалась бы как своя.
     val tip = if (available == null) {
         "${texts.appName} ${updates.version}"
     } else {
-        "${texts.available} ${available.version}"
+        "${texts.appName} ${updates.version}${Glyphs.SEPARATOR}${texts.available} ${available.version}"
     }
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
@@ -56,14 +59,14 @@ internal fun RailVersion(session: Session, onOpenUpdate: () -> Unit) {
                 modifier = Modifier.padding(Spacing.snug)
             )
         } else {
-            UpdateMark(available, tip, onOpenUpdate)
+            UpdateMark(updates.version.label, tip, onOpenUpdate)
         }
     }
 }
 
 /** Подпись версии, ставшая кнопкой: новая версия ждёт. */
 @Composable
-private fun UpdateMark(available: AvailableUpdate, description: String, onOpen: () -> Unit) {
+private fun UpdateMark(current: String, description: String, onOpen: () -> Unit) {
     TextButton(onClick = onOpen) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -75,7 +78,7 @@ private fun UpdateMark(available: AvailableUpdate, description: String, onOpen: 
                 tint = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = available.version.label,
+                text = current,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary
             )
