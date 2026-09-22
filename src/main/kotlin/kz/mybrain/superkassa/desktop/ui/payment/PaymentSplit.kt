@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.server.ReceiptPayment
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import java.math.BigDecimal
 
 /**
@@ -116,8 +117,15 @@ class PaymentLine(type: String) {
     var type: String by mutableStateOf(type)
     var amount: String by mutableStateOf("")
 
-    /** Введённая сумма или `null`, если поле пустое либо не число. */
-    val value: BigDecimal? get() = amount.trim().replace(',', '.').toBigDecimalOrNull()
+    /**
+     * Введённая сумма или `null`, если поле пустое либо набрано не суммой.
+     *
+     * Разбор тот же, что у всякой суммы кассы: деньги делятся до тиына
+     * и не глубже. Свой разбор принимал и доли тиына, и запись вида
+     * «1E3» — такая оплата уходила в ОФД, а остаток второй строки
+     * считался от неё.
+     */
+    val value: BigDecimal? get() = Money.parse(amount)
 }
 
 /** Чем разбиение оплаты не годится. */
