@@ -98,8 +98,9 @@ fun PaymentLines(
 /**
  * Сумма одной оплаты.
  *
- * Последняя строка — остаток чека: поле только показывает его и краснеет,
- * когда по прочим видам расписано больше итога.
+ * Остаток чека берёт наличная строка, а без наличных — последняя: поле
+ * только показывает остаток и краснеет, когда по прочим видам расписано
+ * больше итога.
  */
 @Composable
 private fun AmountField(
@@ -109,14 +110,14 @@ private fun AmountField(
     amountLabel: String,
     restLabel: String
 ) {
-    val last = line === split.entries.last()
+    val takesRest = split.takesRest(line)
     val rest = total - split.assigned()
     MoneyField(
-        value = if (last) Money.entered(rest) else line.amount,
-        label = if (last) restLabel else amountLabel,
+        value = if (takesRest) Money.entered(rest) else line.amount,
+        label = if (takesRest) restLabel else amountLabel,
         modifier = Modifier.width(Sizes.fieldPrice),
-        isError = if (last) rest.signum() <= 0 else line.amount.isNotBlank() && line.value == null,
-        readOnly = last,
-        onValueChange = { if (!last) line.amount = it }
+        isError = if (takesRest) rest.signum() <= 0 else line.amount.isNotBlank() && line.value == null,
+        readOnly = takesRest,
+        onValueChange = { if (!takesRest) line.amount = it }
     )
 }

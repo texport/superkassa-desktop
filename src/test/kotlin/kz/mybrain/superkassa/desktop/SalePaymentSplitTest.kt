@@ -32,16 +32,33 @@ class SalePaymentSplitTest {
         assertEquals(total, payments.first().sum)
     }
 
+    /**
+     * Смешанный расчёт затевают, когда карты не хватает: набирают
+     * карту, а остальное покупатель добирает деньгами. Спросить наличную
+     * часть значило бы просить кассира вычесть итог из карты в уме.
+     */
     @Test
-    fun `последняя оплата забирает остаток`() {
+    fun `наличные забирают остаток, а набирается безналичная часть`() {
         val split = PaymentSplit()
         split.add("CARD")
-        split.entries.first().amount = "600.00"
+        split.entries.last().amount = "600.00"
         val payments = split.toPayments(total)
         assertEquals(listOf("CASH", "CARD"), payments.map { it.type })
+        assertEquals(BigDecimal("400.00"), payments.first().sum)
+        assertEquals(BigDecimal("600.00"), payments.last().sum)
+        assertEquals(total, payments.fold(BigDecimal.ZERO) { sum, payment -> sum + payment.sum })
+        assertTrue(split.takesRest(split.entries.first()), "остаток берут наличные, а не последняя строка")
+    }
+
+    @Test
+    fun `без наличных остаток берёт последняя оплата`() {
+        val split = PaymentSplit("CARD")
+        split.add("ELECTRONIC")
+        split.entries.first().amount = "600.00"
+        val payments = split.toPayments(total)
+
         assertEquals(BigDecimal("600.00"), payments.first().sum)
         assertEquals(BigDecimal("400.00"), payments.last().sum)
-        assertEquals(total, payments.fold(BigDecimal.ZERO) { sum, payment -> sum + payment.sum })
     }
 
     @Test
@@ -49,10 +66,21 @@ class SalePaymentSplitTest {
         val split = PaymentSplit()
         split.add("CARD")
         assertEquals(SplitIssue.Empty, split.issue(total))
-        split.entries.first().amount = "1000.00"
+        split.entries.last().amount = "1000.00"
         assertEquals(SplitIssue.Excess, split.issue(total))
-        split.entries.first().amount = "999.99"
+        split.entries.last().amount = "999.99"
         assertNull(split.issue(total))
+    }
+
+    /** Набранное кассиром пересчёт не затирает: остаток своего числа не хранит. */
+    @Test
+    fun `набранная карта остаётся набранной, когда наличные добавлены после неё`() {
+        val split = PaymentSplit("CARD")
+        split.entries.first().amount = "600.00"
+        split.add("CASH")
+
+        assertEquals("600.00", split.entries.first().amount)
+        assertEquals(BigDecimal("400.00"), split.cashSum(total))
     }
 
     @Test
@@ -105,7 +133,7 @@ class SalePaymentSplitTest {
     fun `новый чек начинается с одной оплаты`() {
         val split = PaymentSplit()
         split.add("CARD")
-        split.entries.first().amount = "600.00"
+        split.entries.last().amount = "600.00"
         split.reset()
         assertEquals(listOf("CASH"), split.types)
         assertEquals(total, split.toPayments(total).single().sum)
