@@ -111,6 +111,19 @@ internal fun journalState(
     else -> ScreenState.Ready
 }
 
+/**
+ * Сколько строк показано и из скольких.
+ *
+ * Второе число — не всё, что есть за срок, а всё, что прочитано до сих
+ * пор: узел отдаёт срок страницами. Пока за прочитанным есть ещё,
+ * строка называет это прямо — иначе «Показано: 200 / 200» над кнопкой
+ * «Показать ещё» читается как весь срок.
+ */
+internal fun shownNote(journal: HistoryJournalTexts, shown: Int, rows: Int, more: Boolean): String {
+    val title = if (more) journal.shownOfRead else journal.shown
+    return "$title: $shown / $rows"
+}
+
 /** Сколько показано из скольких, таблица и низ списка. */
 @Composable
 private fun ColumnScope.JournalRows(
@@ -125,7 +138,7 @@ private fun ColumnScope.JournalRows(
     onPrint: ((JournalEntry) -> Unit)?
 ) {
     Text(
-        text = "${journal.shown}: ${shown.size} / ${entries.size}",
+        text = shownNote(journal, shown.size, entries.size, more),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

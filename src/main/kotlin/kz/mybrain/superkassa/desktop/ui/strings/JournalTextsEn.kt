@@ -51,6 +51,7 @@ internal val journalTextsEn = JournalTexts(
         colFiscalSign = "Fiscal sign",
         colShift = "Shift",
         shown = "Shown",
+        shownOfRead = "Shown of what is read",
         showMore = "Show more",
         allShown = "The whole period is shown",
         search = "Search",

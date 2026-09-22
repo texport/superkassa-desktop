@@ -51,6 +51,7 @@ internal val journalTextsKk = JournalTexts(
         colFiscalSign = "Фискалдық белгі",
         colShift = "Ауысым",
         shown = "Көрсетілді",
+        shownOfRead = "Оқылғанның ішінен көрсетілді",
         showMore = "Тағы көрсету",
         allShown = "Мерзім толық көрсетілді",
         search = "Іздеу",

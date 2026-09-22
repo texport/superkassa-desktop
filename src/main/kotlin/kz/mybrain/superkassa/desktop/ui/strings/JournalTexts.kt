@@ -103,6 +103,16 @@ data class HistoryJournalTexts(
     val colFiscalSign: String,
     val colShift: String,
     val shown: String,
+
+    /**
+     * Сколько строк показано из прочитанного, когда срок прочитан не весь.
+     *
+     * «Показано: 200 / 200» под кнопкой «Показать ещё» читается как весь
+     * срок: владелец видел два одинаковых числа и уходил уверенный, что
+     * за день пробито двести чеков. Второе число — это прочитанное
+     * до сих пор, и строка обязана назвать его своим именем.
+     */
+    val shownOfRead: String,
     val showMore: String,
     val allShown: String,
     val search: String,
