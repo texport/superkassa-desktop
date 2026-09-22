@@ -83,7 +83,7 @@ private fun TypefaceChoice(session: Session, texts: LookStrings) {
 
 @Composable
 private fun TextScaleChoice(session: Session, texts: LookStrings) {
-    Choice(texts.textScale) {
+    Choice(texts.textScale, info = texts.textScaleHint) {
         ChoiceSegments(
             options = TextScale.entries,
             selected = session.look.textScale,
@@ -100,14 +100,20 @@ private fun Appearance.title(texts: SettingStrings): String = when (this) {
 }
 
 private fun Accent.title(texts: LookStrings): String = when (this) {
-    Accent.Indigo -> texts.accentIndigo
-    Accent.Blue -> texts.accentBlue
-    Accent.Teal -> texts.accentTeal
-    Accent.Green -> texts.accentGreen
-    Accent.Amber -> texts.accentAmber
-    Accent.Orange -> texts.accentOrange
     Accent.Red -> texts.accentRed
+    Accent.Orange -> texts.accentOrange
+    Accent.Amber -> texts.accentAmber
+    Accent.Olive -> texts.accentOlive
+    Accent.Lime -> texts.accentLime
+    Accent.Green -> texts.accentGreen
+    Accent.Emerald -> texts.accentEmerald
+    Accent.Teal -> texts.accentTeal
+    Accent.Azure -> texts.accentAzure
+    Accent.Blue -> texts.accentBlue
+    Accent.Indigo -> texts.accentIndigo
     Accent.Violet -> texts.accentViolet
+    Accent.Lilac -> texts.accentLilac
+    Accent.Pink -> texts.accentPink
 }
 
 private fun Typeface.title(texts: LookStrings): String = when (this) {
@@ -118,7 +124,9 @@ private fun Typeface.title(texts: LookStrings): String = when (this) {
 }
 
 private fun TextScale.title(texts: LookStrings): String = when (this) {
+    TextScale.Dense -> texts.textScaleDense
     TextScale.Compact -> texts.textScaleCompact
     TextScale.Normal -> texts.textScaleNormal
     TextScale.Large -> texts.textScaleLarge
+    TextScale.Larger -> texts.textScaleLarger
 }

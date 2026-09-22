@@ -179,9 +179,18 @@ class RenderProbe(
      * длинного списка доезжает не за фиксированное число кадров, и
      * сравнение сразу после действия давало то удачу, то неудачу
      * на одном и том же коде.
+     *
+     * Между кадрами проба ждёт: движение бывает не только от самой
+     * сцены, но и от корутины рядом — отсчёт срока подписи просыпается
+     * раз в секунду. Тридцать кадров подряд рисуются мгновенно и такого
+     * движения не застают вовсе, поэтому под нагрузкой полного прогона
+     * проверка отсчёта падала на исправном коде.
      */
     fun changedFrom(before: ByteArray): Boolean =
-        (1..LIMIT).any { !frame().contentEquals(before) }
+        (1..LIMIT).any {
+            if (it > 1) Thread.sleep(BETWEEN_FRAMES)
+            !frame().contentEquals(before)
+        }
 
     override fun close() {
         onScene { scene.close() }
@@ -198,6 +207,9 @@ class RenderProbe(
         const val SETTLE = 12
         const val DRAG_STEPS = 6
         const val LIMIT = 30
+
+        /** Сколько проба ждёт между кадрами, высматривая движение рядом со сценой. */
+        const val BETWEEN_FRAMES = 100L
     }
 }
 
