@@ -83,14 +83,15 @@ internal val moneyTextsEn = MoneyTexts(
         syncCounters = "Refresh counters",
         syncCountersHint = "The node pulls counters and the shift number from the BFD. The queue must be empty.",
         syncCountersDone = "Counters refreshed from the BFD",
-        decommission = "Deregister the cash register",
-        decommissionHint = "The node deletes the register together with its documents from this workplace. " +
+        decommission = "Remove the register from this workplace",
+        decommissionHint = "The node deletes the register together with its documents from this machine. " +
+            "The KGD record stays as it is: a register is deregistered only by an application from the cabinet. " +
             "This cannot be undone.",
         needProgramming = "The register is in programming mode",
         needShiftClosed = "The shift is closed",
         needQueueEmpty = "The delivery queue is empty",
         needOnline = "Autonomous mode is off",
-        decommissionConfirm = "Deregister the register %s?",
-        decommissionDone = "The cash register is deregistered"
+        decommissionConfirm = "Remove the register %s from this machine?",
+        decommissionDone = "The register has been removed from this workplace"
     )
 )
