@@ -71,9 +71,14 @@ private fun knownRates(session: Session, texts: EnumStrings): List<VatRate> {
  * Величина добавляется к названию, только когда её в названии ещё нет:
  * узел называет ставку «НДС 16%», и «НДС 16% · 16%» кассир читает как
  * две разные ставки подряд.
+ *
+ * «Без НДС» остаётся без величины, даже когда узел присылает при нём ноль:
+ * «Без НДС 0%» читается как нулевая ставка налога, а это другое обложение
+ * и другая строка чека, чем товар вне НДС.
  */
 fun vatTitle(rates: List<VatRate>, code: String): String {
     val rate = rates.firstOrNull { it.code == code } ?: return code
+    if (rate.code == NO_VAT) return rate.title
     val percent = rate.percent ?: return rate.title
     return if (rate.title.contains(percent.toString())) rate.title else "${rate.title} $percent${Glyphs.PERCENT}"
 }
