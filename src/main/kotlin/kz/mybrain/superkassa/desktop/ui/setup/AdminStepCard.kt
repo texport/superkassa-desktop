@@ -71,7 +71,11 @@ fun AdminStepCard(
             ?.registrationNumber?.isNotBlank() == true
     }
 
-    val already = session.kkms.any { it.ofdSystemId == draft.systemId }
+    // Сверка по идентификатору идёт только тогда, когда он есть: без
+    // черновика идентификатор пуст, и «пусто равно пусто» помечало шаг
+    // пройденным у любого, у кого на узле есть касса без сведений об ОФД.
+    // Нетронутый мастер встречал владельца готовым «Касса подключена».
+    val already = draft.systemId?.let { known -> session.kkms.any { it.ofdSystemId == known } } == true
     SetupStepCard(
         title = setup.stepAdmin,
         hint = setup.stepAdminHint,
