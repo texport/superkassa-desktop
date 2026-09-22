@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
@@ -13,6 +11,7 @@ import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.retryFailedQueue
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
+import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
@@ -38,7 +37,7 @@ fun QueueScreen(session: Session) {
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
-        Text(texts.queue.title, style = MaterialTheme.typography.headlineSmall)
+        ScreenTitle(texts.queue.title)
         QueueSummary(session, journal, waiting.size, failed.isNotEmpty(), rejectedTasks(session.queueTasks).isNotEmpty())
         val state = when {
             session.queueTasks.isNotEmpty() -> ScreenState.Ready

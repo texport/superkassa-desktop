@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +25,7 @@ import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
+import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
 import kz.mybrain.superkassa.desktop.ui.history.loadDay
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
@@ -141,7 +140,7 @@ private fun ColumnScope.ReturnHeader(
         horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(texts.returns.title, style = MaterialTheme.typography.headlineSmall)
+        ScreenTitle(texts.returns.title)
         // В сегменте стоит только направление: «Возврат» уже написано
         // заголовком слева.
         ChoiceSegments(
