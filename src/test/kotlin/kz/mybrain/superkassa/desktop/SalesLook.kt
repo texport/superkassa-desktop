@@ -86,6 +86,16 @@ internal object SalesLook {
         val places = (1..SHOW_PLACES).map { at ->
             SalesUnit(id = "p$at", name = "Точка $at", retailPlaceName = "Точка $at")
         }
+        // Справочник точек сводка читает сама: без него весь свод сходился
+        // в одну строку «Без адреса» со ста процентами сети.
+        val catalogue = (0..SHOW_PLACES).map { at ->
+            val region = SHOW_REGIONS[at % SHOW_REGIONS.size]
+            RetailPlace(
+                id = if (at == 0) "p0" else "p$at",
+                name = if (at == 0) "Магазин на Достык" else "Точка $at",
+                address = if (at == 0) "Алматы, Медеуский, Достык, 10" else "$region, Центральный, Абая, $at"
+            )
+        }
         val sellingPlace = SalesUnit(
             id = "p0",
             name = "Магазин на Достык",
@@ -102,6 +112,7 @@ internal object SalesLook {
             hours = showHours(),
             registers = showRegisters(),
             places = listOf(sellingPlace) + places,
+            retailPlaces = catalogue,
             delivery = SalesDelivery(
                 receipts = SalesDeliveryCounts(total = 111, unknown = 111),
                 reports = SalesDeliveryCounts(total = 25, unknown = 25),
@@ -252,6 +263,17 @@ internal object SalesLook {
                 )
             }
         }
+
+    /** Области кабинета показа — так, как их пишет адресный регистр. */
+    private val SHOW_REGIONS = listOf(
+        "Алматы",
+        "Астана",
+        "Шымкент",
+        "Мангистауская",
+        "Карагандинская",
+        "Ұлытау",
+        "Павлодарская"
+    )
 
     /** Регионы Казахстана, в которых стоит сеть снимка. */
     private val REGION_NAMES = listOf(
