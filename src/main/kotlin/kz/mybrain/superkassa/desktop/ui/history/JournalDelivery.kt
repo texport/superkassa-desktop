@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.history
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.Tip
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -62,7 +63,13 @@ fun JournalDelivery.color(): Color = when (this) {
 @Composable
 fun JournalDeliveryChip(delivery: JournalDelivery?, reason: String? = null) {
     val state = delivery ?: return
-    val chip = @Composable { Chip(text = state.title(LocalStrings.current.status), color = state.color()) }
+    val chip = @Composable {
+        Chip(
+            text = state.title(LocalStrings.current.status),
+            color = state.color(),
+            style = ROW_LABEL
+        )
+    }
     if (reason.isNullOrBlank()) chip() else Tip(reason) { chip() }
 }
 
@@ -72,6 +79,17 @@ fun JournalStateChip(state: JournalState?) {
     val shown = state ?: return
     Chip(
         text = shown.title,
-        color = if (shown.done) StatusColors.delivered else StatusColors.pending
+        color = if (shown.done) StatusColors.delivered else StatusColors.pending,
+        style = ROW_LABEL
     )
 }
+
+/**
+ * Ступень шрифта плашки в строке таблицы.
+ *
+ * Та же, что у подписей столбцов: плашка крупнее ряда на крупном шрифте
+ * разрывала слово «Доставлен» пополам, пока соседние столбцы стояли
+ * свободно.
+ */
+private val ROW_LABEL: TextStyle
+    @Composable get() = MaterialTheme.typography.labelSmall

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -44,12 +45,17 @@ fun DeliveryChip(status: String?, autonomous: Boolean = false, documentType: Str
  * такого случая предлагает `AssistChip`, но он рассчитан на нажатие
  * и тянет за собой обводку и высоту кнопки — здесь же надпись, которую
  * читают, а не нажимают.
+ *
+ * @param style ступень шрифта плашки. По умолчанию — та, что у записи
+ *   списка; в строке таблицы задаётся ступень её клеток, иначе плашка
+ *   оказывается крупнее всего ряда и на крупном шрифте рвёт слово
+ *   пополам, пока соседние столбцы стоят свободно.
  */
 @Composable
-fun Chip(text: String, color: Color) {
+fun Chip(text: String, color: Color, style: TextStyle = MaterialTheme.typography.labelMedium) {
     Text(
         text = text,
-        style = MaterialTheme.typography.labelMedium,
+        style = style,
         color = color,
         modifier = Modifier
             .clip(MaterialTheme.shapes.extraSmall)
