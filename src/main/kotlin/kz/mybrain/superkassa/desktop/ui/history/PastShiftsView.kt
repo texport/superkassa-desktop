@@ -193,7 +193,10 @@ internal suspend fun loadShifts(
     val kkm = session.selected ?: return PageOutcome.unreadAfter(previous)
     val loaded = session.guard(what) { session.client.shifts(kkm.kkmId, session.pin, into.size) }
         ?: return PageOutcome.unreadAfter(previous)
-    into.addAll(loaded)
+    // Смена, открытая между двумя обращениями, сдвигает счёт страниц,
+    // и в следующей приходит уже показанная смена.
+    val already = into.mapTo(mutableSetOf()) { it.id }
+    into.addAll(loaded.filterNot { it.id in already })
     return PageOutcome.page(loaded.size == SHIFT_PAGE)
 }
 

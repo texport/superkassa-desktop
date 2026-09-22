@@ -90,6 +90,24 @@ class JournalPagingTest {
         assertEquals(SHIFT_PAGE, into.size)
     }
 
+    /**
+     * Чек, пробитый между двумя обращениями, сдвигает счёт страниц узла,
+     * и в следующей странице приходит уже показанный документ. Строка
+     * журнала различается его же ключом, и повтор ронял список целиком.
+     */
+    @Test
+    fun `дочитывание не удваивает строку, пришедшую дважды`() = runBlocking {
+        val session = session(answers = 2, growing = true)
+        val into = mutableListOf<Document>()
+        val period = JournalPeriod.of(JournalSpan.Day)
+
+        val first = loadPeriod(session, WHAT, period, into)
+        loadPeriod(session, WHAT, period, into, first)
+
+        assertEquals(into.size, into.distinctBy { it.id }.size, "один и тот же чек стоит в журнале дважды")
+        assertEquals(PAGE * 2 - 1, into.size, "строки следующей страницы потерялись")
+    }
+
     /** Прочитанные смены остаются на экране, пока читается следующая страница. */
     @Test
     fun `дочитывание смен не убирает с экрана уже прочитанные`() {
@@ -106,7 +124,7 @@ class JournalPagingTest {
      * Рабочее место, узел которого отвечает полной страницей ровно
      * [answers] раз, а дальше молчит.
      */
-    private fun session(answers: Int): Session {
+    private fun session(answers: Int, growing: Boolean = false): Session {
         var answered = 0
         val engine = MockEngine { request ->
             val path = request.url.encodedPath
@@ -114,8 +132,12 @@ class JournalPagingTest {
                 path.endsWith("/users/me") -> answer(WHOAMI)
                 answered >= answers -> respondError(HttpStatusCode.ServiceUnavailable)
                 path.endsWith("/documents") -> {
+                    // У растущего списка каждый новый чек встаёт в начало
+                    // и сдвигает счёт страниц на одну строку назад.
+                    val offset = request.url.parameters["offset"]?.toInt() ?: 0
+                    val from = (if (growing) offset - answered else offset) + 1L
                     answered += 1
-                    answer(ServerClient.lenientJson.encodeToString(DOCUMENTS_PAGE, documents()))
+                    answer(ServerClient.lenientJson.encodeToString(DOCUMENTS_PAGE, documents(from)))
                 }
 
                 path.endsWith("/shifts") -> {
@@ -137,7 +159,8 @@ class JournalPagingTest {
         return session
     }
 
-    private fun documents(): List<Document> = (1L..PAGE).map { Document(id = "d-$it", docNo = it) }
+    private fun documents(from: Long = 1): List<Document> =
+        (from until from + PAGE).map { Document(id = "d-$it", docNo = it) }
 
     private fun shifts(): List<Shift> = (1L..SHIFT_PAGE).map { Shift(id = "s-$it", shiftNo = it) }
 

@@ -111,8 +111,21 @@ internal suspend fun loadPeriod(
     val loaded = session.guard(what) {
         session.client.documents(kkm.kkmId, from, to, session.pin, into.size)
     } ?: return PageOutcome.unreadAfter(previous)
-    into.addAll(loaded)
+    into.addAll(loaded.newTo(into))
     return PageOutcome.page(loaded.size == PAGE)
+}
+
+/**
+ * Документы страницы, которых на экране ещё нет.
+ *
+ * Страницы узел отрезает по счёту, а не по последней показанной строке:
+ * чек, пробитый между двумя обращениями, сдвигает счёт, и в следующей
+ * странице приходит документ, который уже показан. Строка журнала
+ * различается его же ключом, и такой повтор ронял список целиком.
+ */
+internal fun List<Document>.newTo(shown: List<Document>): List<Document> {
+    val already = shown.mapTo(mutableSetOf()) { it.id }
+    return filterNot { it.id in already }
 }
 
 /** Ответ ОФД: документ отвергнут. */
