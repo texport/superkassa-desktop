@@ -31,6 +31,16 @@ data class PageOutcome(
          */
         val unread = PageOutcome(read = false, more = false)
 
+        /**
+         * Дочитать не удалось.
+         *
+         * О том, есть ли за прочитанным ещё, узел не сказал ничего, и
+         * прежний ответ на этот вопрос остаётся в силе. Забыв его, список
+         * писал «показан весь срок» под сроком, оборванным на двухсотой
+         * строке, и убирал кнопку, которой это можно было исправить.
+         */
+        fun unreadAfter(previous: PageOutcome) = PageOutcome(read = false, more = previous.more)
+
         /** Страница прочитана; [more] — пришла ли она целиком. */
         fun page(more: Boolean) = PageOutcome(read = true, more = more)
     }

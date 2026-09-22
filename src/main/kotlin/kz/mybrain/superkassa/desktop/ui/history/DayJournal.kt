@@ -53,12 +53,16 @@ fun DayJournal(session: Session) {
 
     suspend fun read() {
         loading = true
-        page = loadPeriod(session, texts.sections.history, period, loaded)
+        page = loadPeriod(session, texts.sections.history, period, loaded, page)
         loading = false
     }
 
     LaunchedEffect(period, session.selected?.kkmId) {
         loaded.clear()
+        // Срок читается с начала, и прошлый его итог к новому отношения
+        // не имеет: иначе «есть ещё» от прежнего срока переживало бы
+        // переход на день, в котором документов нет вовсе.
+        page = PageOutcome.unread
         read()
     }
 

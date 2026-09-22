@@ -52,12 +52,13 @@ fun PastShiftsView(session: Session) {
 
     suspend fun read() {
         loading = true
-        page = loadShifts(session, journal.title, shifts)
+        page = loadShifts(session, journal.title, shifts, page)
         loading = false
     }
 
     LaunchedEffect(session.selected?.kkmId) {
         shifts.clear()
+        page = PageOutcome.unread
         read()
     }
     // Документы смены узел отдаёт отдельным обращением: до ответа список
@@ -100,7 +101,10 @@ fun PastShiftsView(session: Session) {
                 // Ожидание ставится вместе с открытием смены: иначе
                 // до первого кадра чтения экран успевал объяснить пустоту
                 // смены, которую ещё никто не спрашивал.
-                onOpen = { openId = it.id; opening = true }
+                onOpen = {
+                    openId = it.id
+                    opening = true
+                }
             ) { shift ->
                 session.printDesk.previewDocument(
                     shift.zReportId,
@@ -173,13 +177,20 @@ internal fun shiftsState(
 /**
  * Дочитывает смены с того места, где остановились.
  *
+ * @param previous чем кончилось прошлое чтение: неудача дочитывания
+ *   не отменяет того, что за прочитанными сменами есть ещё.
  * @return прочитаны ли смены и есть ли за пришедшей страницей ещё —
  *   два разных сведения, см. [PageOutcome].
  */
-private suspend fun loadShifts(session: Session, what: String, into: MutableList<Shift>): PageOutcome {
-    val kkm = session.selected ?: return PageOutcome.unread
+internal suspend fun loadShifts(
+    session: Session,
+    what: String,
+    into: MutableList<Shift>,
+    previous: PageOutcome = PageOutcome.unread
+): PageOutcome {
+    val kkm = session.selected ?: return PageOutcome.unreadAfter(previous)
     val loaded = session.guard(what) { session.client.shifts(kkm.kkmId, session.pin, into.size) }
-        ?: return PageOutcome.unread
+        ?: return PageOutcome.unreadAfter(previous)
     into.addAll(loaded)
     return PageOutcome.page(loaded.size == SHIFT_PAGE)
 }
