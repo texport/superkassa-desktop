@@ -8,6 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshSelected
+import kz.mybrain.superkassa.desktop.app.titleOf
+import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.retryFailedQueue
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
@@ -21,9 +23,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 /**
  * Очередь отложенной отправки.
  *
- * Разделены ждущие и уже отправленные: глубина очереди — это только ждущие,
- * и она вынесена наверх крупным числом, потому что это единственное, ради
- * чего кассир сюда заходит. Отправленные остаются перечнем как история.
+ * Разделены ждущие, отправленные и отвергнутые: глубина очереди — это
+ * только ждущие, и она вынесена наверх крупным числом, потому что это
+ * единственное, ради чего кассир сюда заходит. Отправленные остаются
+ * перечнем как история, а отвергнутые — своей частью: их не повторяют,
+ * и к отправленным они не относятся.
  */
 @Composable
 fun QueueScreen(session: Session) {
@@ -31,21 +35,30 @@ fun QueueScreen(session: Session) {
     val journal = journalTexts(session.language).queue
     val waiting = waitingTasks(session.queueTasks)
     val failed = failedTasks(session.queueTasks)
-    val done = session.queueTasks - waiting.toSet()
+    val rejected = rejectedTasks(session.queueTasks)
+    val sent = sentTasks(session.queueTasks)
 
     Column(
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
         ScreenTitle(texts.queue.title)
-        QueueSummary(session, journal, waiting.size, failed.isNotEmpty(), rejectedTasks(session.queueTasks).isNotEmpty())
+        QueueSummary(session, journal, waiting.size, failed.isNotEmpty(), rejected.isNotEmpty())
         val state = when {
             session.queueTasks.isNotEmpty() -> ScreenState.Ready
             session.busy -> ScreenState.Working
             else -> ScreenState.Empty(AppIcons.queueClear, texts.queue.empty, journal.emptyHint)
         }
         ScreenSlot(state, Modifier.weight(1f)) {
-            QueueList(waiting, done, journal, session.language.code, Modifier.weight(1f))
+            QueueList(
+                waiting = waiting,
+                sent = sent,
+                rejected = rejected,
+                journal = journal,
+                language = session.language.code,
+                taskTitle = { session.titleOf(Dictionary.DocumentTypes, it) },
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }

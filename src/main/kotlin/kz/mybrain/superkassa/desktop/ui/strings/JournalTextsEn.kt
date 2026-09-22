@@ -90,6 +90,7 @@ internal val journalTextsEn = JournalTexts(
     queue = QueueJournalTexts(
         task = "Task",
         sentSection = "Already sent",
+        rejectedSection = "Will not be sent",
         sending = "Sending",
         retrying = "Retrying",
         rejectedForGood = "Will not be sent",

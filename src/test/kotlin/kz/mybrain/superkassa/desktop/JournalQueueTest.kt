@@ -4,6 +4,8 @@ import kz.mybrain.superkassa.desktop.server.QueueTask
 import kz.mybrain.superkassa.desktop.ui.queue.QueueState
 import kz.mybrain.superkassa.desktop.ui.queue.failedTasks
 import kz.mybrain.superkassa.desktop.ui.queue.queueStateOf
+import kz.mybrain.superkassa.desktop.ui.queue.rejectedTasks
+import kz.mybrain.superkassa.desktop.ui.queue.sentTasks
 import kz.mybrain.superkassa.desktop.ui.queue.waitingTasks
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -44,6 +46,18 @@ class JournalQueueTest {
     fun `неизвестное состояние считается ждущим`() {
         assertTrue(waitingTasks(listOf(task("PAUSED"))).size == 1)
         assertTrue(queueStateOf("PAUSED").isWaiting)
+    }
+
+    @Test
+    fun `отвергнутое не считается отправленным`() {
+        // Отвергнутая задача стояла под заголовком «Уже отправлено»
+        // с плашкой «Не будет отправлен»: заголовок спорил со строкой
+        // под ним, а счёт отправленных включал то, что не ушло.
+        val tasks = listOf(task("PENDING"), task("SENT"), task("REJECTED"))
+
+        assertEquals(listOf("SENT"), sentTasks(tasks).map { it.status })
+        assertEquals(listOf("REJECTED"), rejectedTasks(tasks).map { it.status })
+        assertTrue(waitingTasks(tasks).none { it.status == "REJECTED" })
     }
 
     @Test

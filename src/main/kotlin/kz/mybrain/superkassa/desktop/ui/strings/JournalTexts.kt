@@ -120,6 +120,16 @@ data class ShiftJournalTexts(
 data class QueueJournalTexts(
     val task: String,
     val sentSection: String,
+
+    /**
+     * Задачи, отправки которых не будет.
+     *
+     * Своя строка, а не общая с отправленными: отвергнутая задача
+     * стояла под заголовком «Уже отправлено» с плашкой «Не будет
+     * отправлен» — заголовок спорил со строкой под ним, а счёт
+     * отправленных включал то, что не ушло.
+     */
+    val rejectedSection: String,
     val sending: String,
     val retrying: String,
     val rejectedForGood: String,

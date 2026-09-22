@@ -65,3 +65,13 @@ fun failedTasks(tasks: List<QueueTask>): List<QueueTask> =
 /** Задачи, отвергнутые окончательно: повтор их не берёт, а на экране они видны. */
 fun rejectedTasks(tasks: List<QueueTask>): List<QueueTask> =
     tasks.filter { queueStateOf(it.status) == QueueState.Rejected }
+
+/**
+ * Задачи, которые узел уже отправил.
+ *
+ * Отвергнутые сюда не попадают, хотя ждать их тоже нечего: они не ушли
+ * и не уйдут, и в счёте отправленных их быть не должно. Прежде они
+ * стояли под заголовком «Уже отправлено» с плашкой «Не будет отправлен».
+ */
+fun sentTasks(tasks: List<QueueTask>): List<QueueTask> =
+    tasks.filter { queueStateOf(it.status) == QueueState.Sent }

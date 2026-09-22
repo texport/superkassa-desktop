@@ -90,6 +90,7 @@ internal val journalTextsKk = JournalTexts(
     queue = QueueJournalTexts(
         task = "Тапсырма",
         sentSection = "Жіберілген",
+        rejectedSection = "Жіберілмейді",
         sending = "Жіберілуде",
         retrying = "Қайталау",
         rejectedForGood = "Жіберілмейді",

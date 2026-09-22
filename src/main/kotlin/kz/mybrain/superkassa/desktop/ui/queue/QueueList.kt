@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,30 +25,56 @@ import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
-/** Ждущие сверху, отправленные под разделителем: это история, а не работа. */
+/**
+ * Ждущие сверху, под ними — отправленные и отвергнутые: это история,
+ * а не работа.
+ *
+ * Отвергнутые стоят своей частью, а не среди отправленных: под заголовком
+ * «Уже отправлено» они несли плашку «Не будет отправлен», и заголовок
+ * спорил со строкой под ним, а счёт отправленных включал то, что не ушло.
+ *
+ * @param taskTitle как назвать вид задачи словами кассира: в строке стоял
+ *   код узла — «Задача: TICKET».
+ */
 @Composable
 internal fun QueueList(
     waiting: List<QueueTask>,
-    done: List<QueueTask>,
+    sent: List<QueueTask>,
+    rejected: List<QueueTask>,
     journal: QueueJournalTexts,
     language: String,
+    taskTitle: (String?) -> String,
     modifier: Modifier
 ) {
     val texts = LocalStrings.current
     ScrollableList(modifier = modifier.fillMaxWidth()) {
-        itemsIndexed(waiting) { at, task -> QueueRow(task, texts, journal, stripedAt(at), language) }
-        if (done.isNotEmpty()) {
-            item {
-                Text(
-                    text = "${journal.sentSection}: ${done.size}",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(horizontal = Spacing.normal, vertical = Spacing.snug)
-                )
-            }
+        itemsIndexed(waiting) { at, task ->
+            QueueRow(task, texts, journal, stripedAt(at), language, taskTitle)
         }
-        itemsIndexed(done) { at, task -> QueueRow(task, texts, journal, stripedAt(at), language) }
+        section(journal.rejectedSection, rejected, texts, journal, language, taskTitle)
+        section(journal.sentSection, sent, texts, journal, language, taskTitle)
     }
+}
+
+/** Часть списка со своим заголовком; пустая часть на экран не выходит. */
+private fun LazyListScope.section(
+    title: String,
+    tasks: List<QueueTask>,
+    texts: AppStrings,
+    journal: QueueJournalTexts,
+    language: String,
+    taskTitle: (String?) -> String
+) {
+    if (tasks.isEmpty()) return
+    item {
+        Text(
+            text = "$title: ${tasks.size}",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = Spacing.normal, vertical = Spacing.snug)
+        )
+    }
+    itemsIndexed(tasks) { at, task -> QueueRow(task, texts, journal, stripedAt(at), language, taskTitle) }
 }
 
 /**
@@ -64,11 +91,12 @@ private fun QueueRow(
     texts: AppStrings,
     journal: QueueJournalTexts,
     striped: Boolean,
-    language: String
+    language: String,
+    taskTitle: (String?) -> String
 ) {
     val state = queueStateOf(task.status)
     RecordRow(
-        title = "${journal.task}: ${task.type ?: Glyphs.DASH}",
+        title = "${journal.task}: ${taskTitle(task.type)}",
         support = { QueueSupport(task, state, texts, journal, language) },
         striped = striped,
         trailing = { Chip(stateTitle(state, task.status, texts, journal), stateColor(state)) }
