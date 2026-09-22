@@ -30,14 +30,21 @@ internal object PrintFileName {
             ?.let { append('-').append(it.filter(Char::isLetterOrDigit)) }
     }
 
-    /** Вид документа латиницей; незнакомый — словом «document». */
+    /**
+     * Вид документа латиницей; незнакомый — словом «document».
+     *
+     * Видов по нескольку имён, потому что источников два: узел называет
+     * их кодами протокола, кабинет — своими словами. Кабинетные
+     * `PURCHASE`, `DEPOSIT` и `WITHDRAWAL` имя файла прежде не знало,
+     * и покупка, внесение и изъятие сохранялись одинаковым «document».
+     */
     private fun kindOf(docType: String?): String = when (docType?.uppercase()) {
         "SALE", "SELL", "TICKET" -> "receipt-sale"
         "SALE_RETURN", "SELL_RETURN", "RETURN" -> "receipt-sale-return"
-        "BUY" -> "receipt-buy"
-        "BUY_RETURN" -> "receipt-buy-return"
-        "CASH_IN", "MONEY_PLACEMENT_DEPOSIT" -> "cash-in"
-        "CASH_OUT", "MONEY_PLACEMENT_WITHDRAWAL" -> "cash-out"
+        "BUY", "PURCHASE" -> "receipt-buy"
+        "BUY_RETURN", "PURCHASE_RETURN" -> "receipt-buy-return"
+        "CASH_IN", "DEPOSIT", "MONEY_PLACEMENT_DEPOSIT" -> "cash-in"
+        "CASH_OUT", "WITHDRAWAL", "MONEY_PLACEMENT_WITHDRAWAL" -> "cash-out"
         "X_REPORT", "REPORT_X", "X" -> "x-report"
         "Z_REPORT", "REPORT_Z", "Z", "SHIFT_CLOSE" -> "z-report"
         "SHIFT_OPEN" -> "shift-open"
