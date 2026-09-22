@@ -8,6 +8,7 @@ import kz.mybrain.superkassa.desktop.ui.returns.RefundProblem
 import kz.mybrain.superkassa.desktop.ui.returns.ReturnKind
 import kz.mybrain.superkassa.desktop.ui.returns.matches
 import kz.mybrain.superkassa.desktop.ui.returns.refundAmountOf
+import kz.mybrain.superkassa.desktop.ui.returns.refundLineName
 import kz.mybrain.superkassa.desktop.ui.returns.refundRequest
 import kz.mybrain.superkassa.desktop.ui.returns.tengeText
 import kotlin.test.Test
@@ -30,6 +31,16 @@ class JournalRefundTest {
         totalAmount = total,
         createdAt = 1_700_000_000_000
     )
+
+    @Test
+    fun `строка чека возврата названа номером с бумаги покупателя`() {
+        // Номер от БФД с бумажным не совпадает: по нему покупатель свой
+        // чек не опознает, а весь остальной экран возврата называет
+        // основание бумажным номером.
+        val basis = sale(number = 900_041).copy(printedDocumentNumber = 41)
+
+        assertEquals("Возврат по чеку № 41", refundLineName("Возврат по чеку №", basis))
+    }
 
     @Test
     fun `часть чека вернуть можно, а больше чека — нельзя`() {

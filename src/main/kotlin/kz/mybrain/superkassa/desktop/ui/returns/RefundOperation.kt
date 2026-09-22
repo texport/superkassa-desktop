@@ -37,7 +37,7 @@ internal suspend fun refund(
         kgdKkmId = kkm.kkmKgdId.orEmpty(),
         refundTiyn = refundTiyn,
         idempotencyKey = key,
-        lineName = "${texts.returns.refundFor} ${basis.docNo}",
+        lineName = refundLineName(texts.returns.refundFor, basis),
         payments = payments,
         returned = returned
     ) ?: return false
@@ -54,3 +54,14 @@ internal suspend fun refund(
     session.refreshSelected()
     return true
 }
+
+/**
+ * Как названа единственная строка чека возврата суммой.
+ *
+ * Номер берётся тот, что стоит на бумаге покупателя: номер от БФД
+ * с бумажным не совпадает, и по нему покупатель свой чек не опознает.
+ * Весь остальной экран возврата — список оснований, заголовок панели
+ * и поиск — называет основание именно бумажным номером.
+ */
+internal fun refundLineName(caption: String, basis: Document): String =
+    "$caption ${basis.number ?: Glyphs.DASH}"
