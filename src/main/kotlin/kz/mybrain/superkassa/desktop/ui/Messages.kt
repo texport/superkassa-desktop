@@ -20,8 +20,10 @@ import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
  * потому что разметка успевала уехать между взглядом и нажатием. Снекбар
  * по Material 3 лежит поверх и ничего не двигает.
  *
- * Удача гаснет сама, отказ остаётся до нажатия: «чек пробит» кассир видит
- * краем глаза, а причину отказа читает и решает, что делать.
+ * Удача гаснет быстро, отказ держится дольше: «чек пробит» кассир видит
+ * краем глаза, а причину отказа читает и решает, что делать. Гаснут оба:
+ * снекбар лежит поверх содержимого, и оставленный навсегда отказ закрывал
+ * нижний край экрана до тех пор, пока его не заметят и не нажмут «Скрыть».
  */
 @Composable
 fun MessageHost(state: SnackbarHostState) {
@@ -69,8 +71,21 @@ fun MessageEffect(
             message = text,
             actionLabel = texts.common.hide,
             withDismissAction = current !is Message.Done,
-            duration = if (current is Message.Done) SnackbarDuration.Short else SnackbarDuration.Indefinite
+            duration = durationOf(current)
         )
         if (result == SnackbarResult.ActionPerformed || result == SnackbarResult.Dismissed) onDismiss()
     }
 }
+
+/**
+ * Сколько сообщение стоит на экране.
+ *
+ * Отказ стоял, пока его не закроют. Кассир нажимает «Скрыть» не сразу
+ * и не всегда: снекбар лежит поверх содержимого, и оставшийся отказ
+ * закрывал нижний край экрана — кнопку оплаты, последнюю строку чека, —
+ * а через минуту говорил уже не о том, что кассир делает сейчас. Отказ
+ * гаснет сам, но заметно дольше удачи: причину надо успеть прочитать.
+ * «Скрыть» остаётся на месте для тех, кто прочитал раньше.
+ */
+internal fun durationOf(message: Message): SnackbarDuration =
+    if (message is Message.Done) SnackbarDuration.Short else SnackbarDuration.Long
