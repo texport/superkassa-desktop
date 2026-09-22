@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +20,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
@@ -81,17 +81,16 @@ internal fun CashForm(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
                 verticalAlignment = Alignment.Top
             ) {
-                OutlinedTextField(
+                MoneyField(
                     value = amount,
-                    onValueChange = { amount = it },
-                    label = { Text(texts.common.amount) },
-                    singleLine = true,
+                    label = texts.common.amount,
+                    modifier = Modifier.fieldWidth(texts.common.amount, Sizes.fieldAmount),
                     isError = holdup?.mistake == true,
                     // Правило ввода — подсказкой в самом поле: постоянную
                     // строку «сумма в тенге» под каждым внесением читать
                     // незачем.
-                    placeholder = (advice as? CashAdvice.Hint)?.let { { Text(it.text) } },
-                    modifier = Modifier.fieldWidth(texts.common.amount, Sizes.fieldAmount)
+                    placeholder = (advice as? CashAdvice.Hint)?.text,
+                    onValueChange = { amount = it }
                 )
                 FieldButton(
                     text = texts.cash.deposit,

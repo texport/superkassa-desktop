@@ -76,4 +76,25 @@ class MoneyTest {
         assertNull(Money.parse("   "))
         assertNull(Money.parse("не число"))
     }
+
+    /**
+     * Поле суммы показывало «11372,50» рядом с подписью «13 860,00 ₸»:
+     * одно и то же число было набрано на экране двумя способами.
+     */
+    @Test
+    fun `набранная сумма разбита теми же разрядами, что и показанная`() {
+        assertEquals("11\u00A0372,50", Money.grouped("11372,50"))
+        assertEquals("13\u00A0860,00\u00A0₸", Money.format(BigDecimal("13860")))
+    }
+
+    @Test
+    fun `недобранная сумма остаётся такой, какой её набирают`() {
+        assertEquals("1\u00A0200,", Money.grouped("1200,"))
+        assertEquals("не число", Money.grouped("не число"))
+    }
+
+    @Test
+    fun `разбитую по разрядам сумму поле же и принимает`() {
+        assertEquals(BigDecimal("11372.50"), Money.parse(Money.grouped("11372,50")))
+    }
 }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,9 +15,9 @@ import kz.mybrain.superkassa.desktop.ui.components.Collapsible
 import kz.mybrain.superkassa.desktop.ui.components.HeroSumLine
 import kz.mybrain.superkassa.desktop.ui.components.MinorSumLine
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.SectionHeader
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -98,14 +97,12 @@ fun ReceiptTotals(
 private fun TakenField(form: SaleForm, short: Boolean) {
     val texts = LocalStrings.current
     val taken = amount(form.taken)
-    OutlinedTextField(
+    MoneyField(
         value = form.taken,
-        onValueChange = { form.taken = it },
-        label = { Text(texts.sale.taken) },
-        singleLine = true,
-        textStyle = MoneyStyle.row,
+        label = texts.sale.taken,
+        modifier = Modifier.fillMaxWidth(),
         isError = form.taken.isNotBlank() && (taken.value == null || short),
-        modifier = Modifier.fillMaxWidth()
+        onValueChange = { form.taken = it }
     )
 }
 
