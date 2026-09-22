@@ -262,6 +262,44 @@ class KassaSaleLookTest {
     }
 
     /**
+     * Скидки и наценки рядом с соседними карточками.
+     *
+     * Один кадр на три карточки кассовой колонки: поля внутри каждой
+     * обязаны отстоять друг от друга на один и тот же шаг. Прежде поля
+     * скидки и наценки разносило шире остальных, и разнобой был виден
+     * с первого взгляда на колонку.
+     */
+    @Test
+    fun `шаг полей в карточке скидок тот же, что у соседних`() {
+        val session = KassaScene.session("sale-rhythm", shift = KassaScene.openShift())
+        val basket = Basket().apply { POSITIONS.forEach { add(it) } }
+        val frame = KassaScene.shot("sale-trim-changes-neighbours", width = ENTRY_WIDE, height = COLUMN_TALL) {
+            Neighbours(session, basket)
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /** Три соседние карточки колонки — те же, что стоят в окне. */
+    @Composable
+    private fun Neighbours(session: Session, basket: Basket) {
+        val form = SaleForm()
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(
+                modifier = Modifier.width(TILL).padding(Spacing.screen),
+                verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+            ) {
+                PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
+                ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
+                ReceiptTotals(session, form, totalOf(basket, form), expanded = true, onToggle = {})
+            }
+        }
+    }
+
+    /**
      * В данных покупателя стоит только он сам.
      *
      * Отраслевые поля — вид отрасли, лицевой счёт, номер машины, часы
@@ -321,6 +359,9 @@ class KassaSaleLookTest {
          * отказные состояния выходили неотличимыми друг от друга.
          */
         const val RECEIPT_TALL = 1000
+
+        /** Высота кадра всей кассовой колонки: три карточки одна под другой. */
+        const val COLUMN_TALL = 1250
 
         /** Ширина кассовой колонки на снимке: та же, что в окне кассира. */
         val TILL = Sizes.fieldForm + Sizes.fieldPrice + Sizes.fieldQuantity

@@ -122,15 +122,21 @@ private fun UnitChoice(selected: AdjustmentUnit, onSwitch: (AdjustmentUnit) -> U
     )
 }
 
-/** То же число другим способом; пока не набрано ничего — строка пуста. */
+/**
+ * То же число другим способом — или `null`, пока набирать нечего.
+ *
+ * Именно `null`, а не пустая строка: строка занимает место под полем
+ * всегда, и ненабранная скидка отодвигала наценку на полтора шага
+ * дальше, чем отстоят друг от друга поля соседних карточек.
+ */
 @Composable
-private fun sameOtherwise(change: Adjustment, itemsSum: BigDecimal): String {
+private fun sameOtherwise(change: Adjustment, itemsSum: BigDecimal): String? {
     val extra = LocalSaleTexts.current
-    val entered = change.entered ?: return ""
+    val entered = change.entered ?: return null
     return when (change.unit) {
         AdjustmentUnit.Percent -> extra.changeAsSum.format(Money.format(tengeOfPercent(itemsSum, entered)))
         AdjustmentUnit.Tenge ->
-            percentOfTenge(itemsSum, entered)?.let { extra.changeAsPercent.format(formatPercent(it)) }.orEmpty()
+            percentOfTenge(itemsSum, entered)?.let { extra.changeAsPercent.format(formatPercent(it)) }
     }
 }
 
