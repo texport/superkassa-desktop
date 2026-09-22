@@ -60,7 +60,10 @@ fun AnalyticsMapPane(
     // Карта ведётся к кассам по всему набору, а не по отобранному:
     // иначе она прыгала бы к остатку при каждой нажатой плашке.
     val whole = placement(model.view, model.points)
-    LaunchedEffect(whole.placed.size) { model.centre(whole.placed) }
+    // Наводится она и на новый ответ кабинета, и на каждое прибавление
+    // касс: при адресе торговой точки дома находятся по одному, и набор
+    // растёт от одного двора до сети по всей стране.
+    LaunchedEffect(model.view, whole.placed.size) { model.centre(whole.placed) }
     val placement = sieved(whole, model.sieve)
     // Места пересобираются только при смене набора или увеличения, а не
     // на каждом кадре: у сети в две тысячи касс раскладка по клеткам

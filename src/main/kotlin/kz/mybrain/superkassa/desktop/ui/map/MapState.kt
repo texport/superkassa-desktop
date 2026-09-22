@@ -70,6 +70,17 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
     var goal: MapGoal? by mutableStateOf(null)
         private set
 
+    /**
+     * Распоряжался ли картой сам владелец.
+     *
+     * Перетаскивание, колесо и кнопки увеличения — его рука; переход
+     * к выбранной кассе и наведение на набор — работа показа. Разница
+     * нужна тому, кто карту наводит: наводить её поверх руки нельзя,
+     * а до первого прикосновения — можно и нужно.
+     */
+    var steered: Boolean by mutableStateOf(false)
+        private set
+
     /** Выбрана ли точка. */
     val marked: Boolean get() = markerLatitude != null && markerLongitude != null
 
@@ -78,6 +89,7 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
         // Рука владельца отменяет начатый переход: иначе карта уезжала бы
         // из-под пальца обратно к кассе, выбранной секунду назад.
         goal = null
+        steered = true
         val x = MapProjection.xOf(centerLongitude, zoom) - dx
         val y = MapProjection.yOf(centerLatitude, zoom) - dy
         centerLongitude = MapProjection.longitudeOf(x, zoom)
@@ -86,6 +98,7 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
 
     /** Приближает или отдаляет, оставляя центр на месте. */
     fun zoomBy(steps: Int) {
+        steered = true
         zoom = (zoom + steps).coerceIn(MIN_ZOOM, MAX_ZOOM)
     }
 
@@ -106,6 +119,7 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
         if (toZoom == zoom) return
         // Колесо под рукой владельца отменяет начатый переход — как и перетаскивание.
         goal = null
+        steered = true
         zoom = toZoom
         val x = MapProjection.xOf(longitude, zoom) - dx
         val y = MapProjection.yOf(latitude, zoom) - dy

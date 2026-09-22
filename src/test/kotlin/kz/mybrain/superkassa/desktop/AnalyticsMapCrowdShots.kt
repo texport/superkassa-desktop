@@ -6,6 +6,8 @@ import kz.mybrain.superkassa.desktop.ui.analytics.KkmMark
 import kz.mybrain.superkassa.desktop.ui.analytics.MapSieve
 import kz.mybrain.superkassa.desktop.ui.analytics.PlacedKkm
 import kz.mybrain.superkassa.desktop.ui.analytics.Placement
+import kz.mybrain.superkassa.desktop.ui.analytics.PlacementTrouble
+import kz.mybrain.superkassa.desktop.ui.analytics.UnplacedKkm
 import kz.mybrain.superkassa.desktop.ui.analytics.kkmGroups
 import kz.mybrain.superkassa.desktop.ui.analytics.sieved
 import java.io.File
@@ -84,6 +86,28 @@ class AnalyticsMapCrowdShots {
         shoot("an-map-crowd-drafts", model, laid)
     }
 
+    /**
+     * Карта, пока дома ещё находятся: поставлено шесть касс из сети.
+     *
+     * При адресе торговой точки кабинет координат не даёт вовсе,
+     * и кассы встают на карту по одному адресу за раз. Наведённая
+     * на первый найденный адрес карта замирала на увеличении дома,
+     * и сеть собиралась за краем окна. Снимок показывает тот самый миг:
+     * поставлено шесть касс одного двора, а карта уже держит их вместе
+     * с теми, что прибудут.
+     */
+    @Test
+    fun `карта в разгар поиска домов`() {
+        val whole = Placement(asKgdSees(crowd()), emptyList())
+        val found = Placement(
+            placed = whole.placed.take(FIRST_YARD),
+            unplaced = whole.placed.drop(FIRST_YARD).map { UnplacedKkm(it.kkm, PlacementTrouble.Searching) }
+        )
+        val model = Look.model()
+        model.centre(found.placed)
+        shoot("audit-analytics-map-while-searching", model, found, whole)
+    }
+
     /** Те же кассы с состояниями учёта в той же пропорции, что в кабинете показа. */
     private fun asKgdSees(placed: List<PlacedKkm>): List<PlacedKkm> = placed.mapIndexed { at, row ->
         val status = when {
@@ -136,6 +160,9 @@ class AnalyticsMapCrowdShots {
         /** Сколько касс сети стоит на учёте и сколько снято — как в кабинете показа. */
         const val ON_RECORD = 4
         const val STRUCK = 2
+
+        /** Сколько касс встало на карту с первого найденного адреса. */
+        const val FIRST_YARD = 6
 
         const val ALMATY_LATITUDE = 43.238949
         const val ALMATY_LONGITUDE = 76.889709
