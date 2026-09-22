@@ -49,6 +49,17 @@ class ShellRailTest {
         }
     }
 
+    /** Свёрнутый рельс в том же низком окне: значки и версия под ними. */
+    @Test
+    fun `свёрнутый рельс держит те же разделы`() {
+        RenderProbe(width = WIDTH, height = lowWindow) { Rail(collapsed = true) }.use { probe ->
+            val before = probe.frame()
+            File(COLLAPSED_SHOT).writeBytes(before)
+            probe.wheel(at = Offset(40f, 400f), ticks = 6f)
+            assertTrue(probe.changedFrom(before), "свёрнутый рельс не прокручивается")
+        }
+    }
+
     /**
      * Версия стоит под разделами и прокруткой не уезжает: поддержка
      * спрашивает её первой, а кассир не должен для этого листать рельс.
@@ -68,6 +79,7 @@ class ShellRailTest {
         const val WIDTH = 1000
         const val VERSION = "1.0.0"
         const val SHOT = "/tmp/rail-low.png"
+        const val COLLAPSED_SHOT = "/tmp/rail-low-collapsed.png"
         const val SCROLLED_SHOT = "/tmp/rail-low-scrolled.png"
     }
 }
