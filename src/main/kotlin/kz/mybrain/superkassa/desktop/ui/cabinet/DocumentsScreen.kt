@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
@@ -35,16 +34,6 @@ import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-
-/**
- * Переход к документам кассы из её карточки.
- *
- * Экран документов стоит над кабинетом целиком, а кнопка перехода лежит
- * в карточке кассы — до неё от кабинета три вложения. Поэтому переход
- * отдаётся через окружение, как язык и словари, а не протягивается
- * обработчиком через каждый промежуточный экран.
- */
-val LocalRegisterDocuments = staticCompositionLocalOf<(CabinetRegister) -> Unit> { {} }
 
 /**
  * Документы кассы по данным ОФД — отдельным экраном.
@@ -121,6 +110,13 @@ fun CabinetDocumentsScreen(
             ScreenSlot(state, Modifier.weight(1f)) {
                 if (document != null) OpenedCard(document, texts) { opened = null }
             }
+            return@Column
+        }
+        // Отказ кабинета — не пустой список: о кассе, пробившей тысячу
+        // чеков, «документов нет» говорит владельцу, что чеки потеряны.
+        val trouble = list.trouble?.takeIf { list.rows.isEmpty() }
+        if (trouble != null) {
+            ScreenSlot(ScreenState.Trouble(trouble) { scope.launch { read() } }, Modifier.weight(1f)) {}
             return@Column
         }
         DocumentsJournal(
