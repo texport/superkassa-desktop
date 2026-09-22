@@ -55,8 +55,13 @@ fun RegistrationActionsBlock(
     var closingShift by remember(register.id) { mutableStateOf(false) }
     val places = cabinet.places
 
+    // Точки читает раздел, и лежат они в сеансе — заявление о
+    // перерегистрации выбирает точку из того же списка. Карточка
+    // спрашивала их заново при каждом открытии: у сети это двадцать
+    // страниц на каждое нажатие по строке, и за ними владелец ждёт
+    // карточку, ради которой нажал.
     LaunchedEffect(cabinet.token) {
-        cabinet.refreshPlaces()
+        if (cabinet.places.isEmpty()) cabinet.refreshPlaces()
     }
 
     // Выбранным остаётся только то, что по нынешнему состоянию кассы
