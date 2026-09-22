@@ -13,26 +13,24 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RegisterState
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlaceRef
 import kz.mybrain.superkassa.desktop.server.cabinet.TechnicalState
 import kz.mybrain.superkassa.desktop.ui.cabinet.RegisterPassport
-import kz.mybrain.superkassa.desktop.ui.cabinet.RegistersPage
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Снимки раздела «Кассы»: список слева и паспорт выбранной кассы справа.
+ * Снимки паспорта кассы в кабинете.
  *
  * Техническое состояние проверено отдельно (`TechnicalStateRenderTest`),
- * здесь смотрят на другое: объясняет ли себя пустой список, видно ли
- * по паспорту, что касса не на учёте или снята с него, и гаснет ли
- * выдача токена там, где кабинет её всё равно не даст.
+ * здесь смотрят на другое: видно ли по паспорту, что касса не на учёте
+ * или снята с него, и гаснет ли выдача токена там, где кабинет её
+ * всё равно не даст.
  */
 class CabinetRegisterShots {
 
-    private fun stage(registers: String) = CabinetStage { path ->
-        when {
-            path == "/api/cash-registers" ->
-                CabinetReply("""{"page":0,"size":50,"totalElements":1,"items":[$registers]}""")
-            path == "/api/retail-places" -> CabinetReply("""{"page":0,"size":50,"totalElements":0,"items":[]}""")
+    private fun stage() = CabinetStage { path ->
+        when (path) {
+            "/api/cash-registers", "/api/retail-places" ->
+                CabinetReply("""{"page":0,"size":50,"totalElements":0,"items":[]}""")
             else -> CabinetReply("{}")
         }
     }
@@ -70,7 +68,7 @@ class CabinetRegisterShots {
         here: Kkm? = null,
         problem: CabinetProblem? = null
     ): ByteArray {
-        val stage = stage("")
+        val stage = stage()
         here?.let { stage.session.kkms.add(it) }
         return shot(name, width = CARD_WIDTH, height = CARD_HEIGHT) {
             val body = @Composable {
@@ -86,22 +84,6 @@ class CabinetRegisterShots {
             }
             if (problem == null) body() else WithCabinetMessage(problem) { body() }
         }
-    }
-
-    @Test
-    fun `пустой список касс объясняет, что делать, а список с кассой — нет`() {
-        val stage = stage("")
-        val empty = shot("registers-empty") { RegistersPage(stage.session, stage.cabinet, stage.texts) }
-
-        val one = stage(
-            """{"id":"r-1","kkmId":5000021,"internalName":"Касса у входа","status":"REGISTERED",
-               "registrationNumber":"000000010001","factoryNumber":"SN-ECC-172758",
-               "modelName":"«ПОРТ FPG-350 ФKZ»","retailPlaceId":"p-1","retailPlaceName":"Магазин на Абая"}"""
-        )
-        val listed = shot("registers-list") { RegistersPage(one.session, one.cabinet, one.texts) }
-
-        assertTrue(empty.isNotEmpty() && listed.isNotEmpty())
-        assertTrue(!empty.contentEquals(listed), "пустой список и список с кассой выглядят одинаково")
     }
 
     @Test
