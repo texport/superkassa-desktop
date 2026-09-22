@@ -258,6 +258,18 @@ tasks.matching { it.name.startsWith("prepareAppResources") }.configureEach {
     dependsOn(bundleNode)
 }
 
+// Собранное приложение не замечало нового узла: задача, пакующая его,
+// считала прежний результат годным, и в `Superkassa.app` оставался
+// узел от предыдущей сборки. Локально это молча подсовывало старое
+// поведение там, где его уже исправили. Узел объявлен входом, и смена
+// его содержимого заново пакует приложение.
+tasks.matching { it.name.startsWith("createDistributable") || it.name.startsWith("package") }
+    .configureEach {
+        inputs.files(bundleNode)
+            .withPropertyName("node")
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+    }
+
 /** Самый свежий `server-*.jar` из соседнего дерева узла. */
 fun newestNodeJar(): String? = rootDir.resolveSibling("superkassa-server")
     .resolve("server/build/libs")
