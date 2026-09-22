@@ -71,7 +71,23 @@ data class SaleTexts(
     val priceAsk: String,
     val priceAskHint: String,
     val priceAskCode: String,
-    val priceAskCancel: String
+    val priceAskCancel: String,
+
+    /**
+     * Подробности строки чека.
+     *
+     * Строка корзины показывает то, что влезает в неё, — а кассир, которого
+     * спросили «а какой это НТИН?», обязан найти ответ, не открывая
+     * справочник. Подписи полей общие с формой ввода, здесь только те,
+     * которых у формы нет.
+     */
+    val positionDetails: String,
+    val positionNameKk: String,
+    val positionSum: String,
+    val positionNtin: String,
+    val positionSection: String,
+    val positionStornoMarked: String,
+    val positionClose: String
 )
 
 /** Надписи области на выбранном языке. */

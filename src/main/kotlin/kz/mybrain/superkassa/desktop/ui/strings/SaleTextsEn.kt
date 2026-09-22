@@ -50,5 +50,12 @@ internal val saleTextsEn = SaleTexts(
     priceAsk = "The item has no price",
     priceAskHint = "The catalogue carries no price — set the price per unit",
     priceAskCode = "Code",
-    priceAskCancel = "Do not add"
+    priceAskCancel = "Do not add",
+    positionDetails = "Receipt line",
+    positionNameKk = "Name in Kazakh",
+    positionSum = "Amount",
+    positionNtin = "NTIN",
+    positionSection = "Section",
+    positionStornoMarked = "The line is cancelled and lowers the receipt total",
+    positionClose = "Close"
 )

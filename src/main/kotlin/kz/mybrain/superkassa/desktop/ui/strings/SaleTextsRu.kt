@@ -50,5 +50,12 @@ internal val saleTextsRu = SaleTexts(
     priceAsk = "Цена товара не задана",
     priceAskHint = "В каталоге цены нет — задайте цену за единицу",
     priceAskCode = "Код",
-    priceAskCancel = "Не добавлять"
+    priceAskCancel = "Не добавлять",
+    positionDetails = "Позиция чека",
+    positionNameKk = "Наименование на казахском",
+    positionSum = "Сумма",
+    positionNtin = "НТИН",
+    positionSection = "Отдел",
+    positionStornoMarked = "Строка отменена и уменьшит итог чека",
+    positionClose = "Закрыть"
 )

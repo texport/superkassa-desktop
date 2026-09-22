@@ -101,6 +101,7 @@ class Basket {
             measureUnitCode = position.measureUnitCode,
             isStorno = position.storno.takeIf { it },
             ntin = position.ntin,
+            sectionCode = position.sectionCode,
             listExciseStamp = position.exciseStamps.takeIf { it.isNotEmpty() }
         )
     }
@@ -131,6 +132,16 @@ data class Position(
     val nameKk: String? = null,
     /** НТИН из справочника: узел передаёт его в ОФД полем `ntin`. */
     val ntin: String? = null,
+    /**
+     * Штрихкод, по которому товар нашли в справочнике.
+     *
+     * В ОФД не уходит — там позицию прослеживают НТИН и наименование, —
+     * но кассир, глядя в подробности строки, обязан видеть, что именно
+     * он отсканировал: два товара с похожими именами различаются кодом.
+     */
+    val barcode: String? = null,
+    /** Отдел торговой точки: уходит в ОФД полем `sectionCode`, если задан. */
+    val sectionCode: String? = null,
     /**
      * Акцизные марки, считанные с товара.
      *

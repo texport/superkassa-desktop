@@ -160,6 +160,7 @@ private fun positionOf(item: NomenclatureItem, rates: List<VatRate>, fallbackVat
         nameKk = item.nameKk?.takeIf { it.isNotBlank() },
         // НТИН приходит из справочника и уходит в ОФД: без него позиция
         // прослеживается только наименованием, набранным кассиром.
-        ntin = item.ntin?.takeIf { it.isNotBlank() }
+        ntin = item.ntin?.takeIf { it.isNotBlank() },
+        barcode = item.barcode?.takeIf { it.isNotBlank() }
     )
 }

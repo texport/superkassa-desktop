@@ -110,7 +110,7 @@ private fun RefundForm(
     ) {
         RefundSummary(basis, journal, total)
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        RefundItems(items, chosen, journal) { at ->
+        RefundItems(session, items, chosen, journal) { at ->
             chosen = if (at in chosen) chosen - at else chosen + at
             // Отметка позиции задаёт сумму: считать её руками кассир
             // не должен, а поправить поле по-прежнему может.

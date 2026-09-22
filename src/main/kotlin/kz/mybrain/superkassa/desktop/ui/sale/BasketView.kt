@@ -10,6 +10,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
@@ -23,6 +27,10 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Лист чека: шапка с числом позиций и суммой, под ней сам список. Список
  * ленивый и прокручивается сам — колонка чека больше не прокручивается
  * целиком, и длинный чек не уводит вниз ни итог, ни кнопку.
+ *
+ * Нажатие на строку открывает её подробности поверх листа. Действия
+ * из окна идут теми же обработчиками, что и значки на строке: сторно
+ * из окна и сторно со строки — одно и то же сторно.
  */
 @Composable
 fun BasketCard(
@@ -32,13 +40,37 @@ fun BasketCard(
     onExcise: (Int) -> Unit,
     onRemove: (Int) -> Unit
 ) {
+    var detailed by remember { mutableStateOf<Int?>(null) }
+    detailed?.let { at ->
+        // Строка читается из корзины на каждом кадре: сторно из окна меняет
+        // её, и окно обязано показать уже новое состояние, а не снимок.
+        val position = basket.positions.getOrNull(at)
+        if (position == null) {
+            detailed = null
+        } else {
+            PositionDetailsDialog(
+                details = position.details(),
+                texts = LocalSaleTexts.current,
+                units = LocalUnits.current,
+                rates = LocalVatRates.current,
+                onDismiss = { detailed = null },
+                onStorno = { onStorno(at) },
+                // Удалённой строки в корзине нет, а её место занимает
+                // следующая: без закрытия окно показало бы соседку.
+                onRemove = {
+                    onRemove(at)
+                    detailed = null
+                }
+            )
+        }
+    }
     Card(modifier = modifier.fillMaxWidth()) {
         BasketSummary(basket)
         HorizontalDivider()
         if (basket.positions.isEmpty()) {
             EmptyBasket(Modifier.weight(1f))
         } else {
-            PositionList(basket, Modifier.weight(1f), onStorno, onExcise, onRemove)
+            PositionList(basket, Modifier.weight(1f), { detailed = it }, onStorno, onExcise, onRemove)
         }
     }
 }
@@ -68,6 +100,7 @@ private fun BasketSummary(basket: Basket) {
 private fun PositionList(
     basket: Basket,
     modifier: Modifier,
+    onOpen: (Int) -> Unit,
     onStorno: (Int) -> Unit,
     onExcise: (Int) -> Unit,
     onRemove: (Int) -> Unit
@@ -76,6 +109,7 @@ private fun PositionList(
         itemsIndexed(basket.positions) { index, position ->
             PositionCard(
                 position = position,
+                onOpen = { onOpen(index) },
                 onStorno = { onStorno(index) },
                 onExcise = { onExcise(index) },
                 onRemove = { onRemove(index) }

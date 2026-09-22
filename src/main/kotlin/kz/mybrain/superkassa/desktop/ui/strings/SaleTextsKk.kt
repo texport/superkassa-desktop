@@ -50,5 +50,12 @@ internal val saleTextsKk = SaleTexts(
     priceAsk = "Тауар бағасы берілмеген",
     priceAskHint = "Каталогта баға жоқ — бір өлшемнің бағасын беріңіз",
     priceAskCode = "Коды",
-    priceAskCancel = "Қоспау"
+    priceAskCancel = "Қоспау",
+    positionDetails = "Чек позициясы",
+    positionNameKk = "Қазақша атауы",
+    positionSum = "Сомасы",
+    positionNtin = "НТИН коды",
+    positionSection = "Бөлім",
+    positionStornoMarked = "Жол жойылды және чек жиынын азайтады",
+    positionClose = "Жабу"
 )

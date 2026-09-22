@@ -28,16 +28,21 @@ import java.math.BigDecimal
  *
  * Сторно окрашено ролью ошибки целиком, а не помечено одним словом: строка,
  * уводящая итог вниз, обязана отличаться от продажи с одного взгляда.
+ *
+ * Нажатие на саму карточку открывает подробности строки; значки справа
+ * перехватывают своё нажатие и до карточки его не доносят, поэтому
+ * сторно и удаление работают как прежде.
  */
 @Composable
 internal fun PositionCard(
     position: Position,
+    onOpen: () -> Unit,
     onStorno: () -> Unit,
     onExcise: () -> Unit,
     onRemove: () -> Unit
 ) {
     val texts = LocalStrings.current
-    OutlinedCard(modifier = Modifier.fillMaxWidth()) {
+    OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
         ListItem(
             colors = positionColors(position.storno),
             headlineContent = {
