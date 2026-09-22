@@ -153,7 +153,13 @@ private suspend fun changePin(
     return done
 }
 
-/** Удаляет кассира. Имя запоминается до перечитывания списка. */
+/**
+ * Удаляет кассира. Имя запоминается до перечитывания списка.
+ *
+ * Удалившего себя рабочее место выводит из кассы: узел вместе с кассиром
+ * забыл и его пин, и дальше на любое действие приходил бы отказ, а экран
+ * всё это время показывал бы вошедшим того, кого на кассе уже нет.
+ */
 private suspend fun removeCashier(
     session: Session,
     texts: AppStrings,
@@ -165,6 +171,6 @@ private suspend fun removeCashier(
         session.client.removeUser(kkm.kkmId, user.identifier, session.pin)
     } ?: return
     val removed = user.name
-    reload()
+    if (UserRules.same(session.whoami, user)) session.signOut() else reload()
     session.report("$removed — ${texts.users.deleted}")
 }
