@@ -37,12 +37,24 @@ import java.time.format.DateTimeFormatter
  *
  * Заголовок вынесен над карточкой: так список читается как раздел экрана,
  * а не как ещё одна карточка с непонятно чем внутри.
+ *
+ * @param read ответил ли узел по существу. Пустой список и неотвеченный
+ *   запрос разведены: «внесений и изъятий не было» над молчащим узлом
+ *   отправляло кассира сводить ящик с выдуманной пустотой.
  */
 @Composable
-internal fun RecentCash(session: Session, money: DrawerTexts, recent: List<Document>, loading: Boolean) {
+internal fun RecentCash(
+    session: Session,
+    money: DrawerTexts,
+    recent: List<Document>,
+    loading: Boolean,
+    read: Boolean,
+    onRetry: () -> Unit
+) {
     val state = when {
         recent.isNotEmpty() -> ScreenState.Ready
         loading -> ScreenState.Working
+        !read -> ScreenState.Trouble(money.recentUnread, money.recentUnreadHint, onRetry)
         else -> ScreenState.Empty(AppIcons.cash, money.recentEmpty, money.recentEmptyHint)
     }
     SectionCard(title = money.recent, info = money.recentHint) {
@@ -95,15 +107,20 @@ private fun CashRow(session: Session, document: Document) {
  *
  * Вызывается и при входе на экран, и после проведения: кассир должен
  * увидеть только что внесённые деньги в списке, а не гадать, прошли ли они.
+ *
+ * @return ответил ли узел по существу. Прежде неудача чтения ничем не
+ *   отличалась от суток без движений, и экран писал «не было» о сутках,
+ *   про которые узел ничего не сказал.
  */
-internal suspend fun reloadRecent(session: Session, money: MoneyTexts, into: MutableList<Document>) {
-    val kkm = session.selected ?: return
+internal suspend fun reloadRecent(session: Session, money: MoneyTexts, into: MutableList<Document>): Boolean {
+    val kkm = session.selected ?: return false
     val now = System.currentTimeMillis()
     val loaded = session.guard(money.drawer.recent) {
         session.client.documents(kkm.kkmId, now - DAY_MILLIS, now, session.pin)
-    } ?: return
+    } ?: return false
     into.clear()
     into.addAll(loaded.filter { it.docType in CASH_TYPES }.take(RECENT_LIMIT))
+    return true
 }
 
 private fun moment(millis: Long?): String {

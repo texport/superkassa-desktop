@@ -15,9 +15,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.app.titleOf
@@ -53,14 +55,20 @@ fun CashScreen(session: Session) {
     val texts = LocalStrings.current
     val money = moneyTexts(session.language)
     val recent = remember { mutableStateListOf<Document>() }
+    val scope = rememberCoroutineScope()
     // Журнал за сутки читается у узла: до ответа «внесений и изъятий нет»
     // говорило бы о дне, про который ещё не спрашивали.
-    var answered by remember(session.selected?.kkmId) { mutableStateOf(false) }
+    var loading by remember(session.selected?.kkmId) { mutableStateOf(true) }
+    // Ответил ли узел по существу: молчание — не пустые сутки.
+    var read by remember(session.selected?.kkmId) { mutableStateOf(false) }
 
-    LaunchedEffect(session.selected?.kkmId, session.pin) {
-        reloadRecent(session, money, recent)
-        answered = true
+    suspend fun readRecent() {
+        loading = true
+        read = reloadRecent(session, money, recent)
+        loading = false
     }
+
+    LaunchedEffect(session.selected?.kkmId, session.pin) { readRecent() }
 
     ScrollableColumn(
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
@@ -71,7 +79,7 @@ fun CashScreen(session: Session) {
         CashForm(session, money) { move, amount, key ->
             perform(session, texts, money, move, amount, key, recent)
         }
-        RecentCash(session, money.drawer, recent, loading = !answered)
+        RecentCash(session, money.drawer, recent, loading, read) { scope.launch { readRecent() } }
     }
 }
 
