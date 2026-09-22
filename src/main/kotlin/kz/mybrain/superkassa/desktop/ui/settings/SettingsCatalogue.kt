@@ -5,7 +5,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.strings.SettingStrings
 
 /**
- * Три хозяйства настроек: чьё это и кто их хранит.
+ * Два хозяйства настроек: чьё это и кто их хранит.
  *
  * Прежде все настройки стояли одним столбцом, и в нём соседствовали вещи
  * разной природы: цвет приложения на этой машине, налоговый режим, который
@@ -14,12 +14,16 @@ import kz.mybrain.superkassa.desktop.ui.strings.SettingStrings
  * оказались в разных местах столбца — войти удавалось, а выйти уже нет.
  *
  * Хозяйство отвечает на вопрос «где это изменится»: [Workplace] —
- * на этой машине, [Kkm] — в кассе через узел, [Cabinet] — у БФД.
+ * на этой машине, [Kkm] — в кассе через узел.
+ *
+ * Третьим стояло хозяйство кабинета БФД, и в нём лежал один адрес.
+ * Адрес кабинета меняется здесь же, на этой машине, — у БФД от него
+ * не меняется ничего, — так что хозяйство называло владельца неверно,
+ * а вкладка открывалась карточкой в поле высотой в экран.
  */
 internal enum class SettingsHousehold(val title: (SettingStrings) -> String) {
     Workplace({ it.householdWorkplace }),
-    Kkm({ it.householdKkm }),
-    Cabinet({ it.householdCabinet })
+    Kkm({ it.householdKkm })
 }
 
 /**
@@ -41,7 +45,7 @@ internal enum class SettingsGroup(
      */
     Look(SettingsHousehold.Workplace, { null }),
 
-    /** Адреса служб, с которыми говорит рабочее место. */
+    /** Адреса служб, с которыми говорит рабочее место: узел, кабинет, карта. */
     Addresses(SettingsHousehold.Workplace, { it.groupServices }),
 
     /** Программа на этой машине: сведения об узле, выпуски, журнал. */
@@ -56,9 +60,7 @@ internal enum class SettingsGroup(
     /** То, что хранит узел и принимает только в режиме программирования. */
     Service(SettingsHousehold.Kkm, { it.groupService }),
 
-    Irreversible(SettingsHousehold.Kkm, { it.groupIrreversible }),
-
-    Cabinet(SettingsHousehold.Cabinet, { null })
+    Irreversible(SettingsHousehold.Kkm, { it.groupIrreversible })
 }
 
 /**
@@ -70,11 +72,10 @@ internal enum class SettingsGroup(
  */
 internal enum class Setting {
     Appearance, PanelBehaviour,
-    NodeAddress, MapServices,
+    NodeAddress, CabinetAddress, MapServices,
     NodeFacts, Updates, Debug,
     CurrentKkm, Programming, PrintForm, PrintTarget,
-    Tax, OfdSync, OfdToken, Diagnostics, Decommission,
-    CabinetAddress
+    Tax, OfdSync, OfdToken, Diagnostics, Decommission
 }
 
 /**
@@ -112,9 +113,11 @@ internal val settingsCards = listOf(
     SettingsCard(Setting.Appearance, SettingsGroup.Look) { AppearanceCard(it) },
     SettingsCard(Setting.PanelBehaviour, SettingsGroup.Look) { PanelBehaviourCard(it) },
 
-    // Адреса узла и карты задают раньше, чем куда-либо входят: кассе
-    // без адреса узла войти некуда.
+    // Адреса служб задают раньше, чем куда-либо входят: кассе без адреса
+    // узла войти некуда. Кабинет стоит рядом с узлом, а не своей вкладкой:
+    // его адрес тоже хранится на этой машине и ищется там же, где остальные.
     SettingsCard(Setting.NodeAddress, SettingsGroup.Addresses) { NodeAddressCard(it) },
+    SettingsCard(Setting.CabinetAddress, SettingsGroup.Addresses) { CabinetAddressCard(it) },
     SettingsCard(Setting.MapServices, SettingsGroup.Addresses) { MapServicesCard(it) },
 
     SettingsCard(Setting.NodeFacts, SettingsGroup.Program) { NodeFactsCard(it) },
@@ -130,9 +133,22 @@ internal val settingsCards = listOf(
     // Режим программирования стоит сразу под кассой, которой он
     // принадлежит: вход и выход в одном месте, и состояние видно оттуда,
     // откуда его меняют.
-    SettingsCard(Setting.Programming, SettingsGroup.Current, needsRegister = true) { ProgrammingCard(it) },
+    SettingsCard(
+        Setting.Programming,
+        SettingsGroup.Current,
+        needsRegister = true,
+        adminOnly = true
+    ) { ProgrammingCard(it) },
 
-    SettingsCard(Setting.PrintForm, SettingsGroup.Printing, needsRegister = true) { PrintFormCard(it) },
+    // Печатная форма — настройка узла, и меняет её только администратор
+    // в режиме программирования. Кассиру она показывалась карточкой,
+    // в которой мертво всё: войти в режим он тоже не может.
+    SettingsCard(
+        Setting.PrintForm,
+        SettingsGroup.Printing,
+        needsRegister = true,
+        adminOnly = true
+    ) { PrintFormCard(it) },
     SettingsCard(Setting.PrintTarget, SettingsGroup.Printing, needsRegister = true) { PrintTargetCard(it) },
 
     SettingsCard(Setting.Tax, SettingsGroup.Service, needsRegister = true, adminOnly = true) { TaxSettingsCard(it) },
@@ -145,7 +161,5 @@ internal val settingsCards = listOf(
         SettingsGroup.Irreversible,
         needsRegister = true,
         adminOnly = true
-    ) { DecommissionCard(it) },
-
-    SettingsCard(Setting.CabinetAddress, SettingsGroup.Cabinet) { CabinetAddressCard(it) }
+    ) { DecommissionCard(it) }
 )

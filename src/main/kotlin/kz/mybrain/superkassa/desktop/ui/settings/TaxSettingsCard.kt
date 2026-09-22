@@ -1,13 +1,10 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.loadMissingDictionaries
@@ -18,7 +15,6 @@ import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.TaxSettings
 import kz.mybrain.superkassa.desktop.server.updateTaxSettings
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
@@ -26,7 +22,8 @@ import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.sale.NO_VAT
 import kz.mybrain.superkassa.desktop.ui.sale.NO_VAT_REGIME
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
+import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
 
 /**
  * Налоговый режим кассы, её ставка по умолчанию и автозакрытие смены.
@@ -131,6 +128,11 @@ private fun EntryPicker(
 /**
  * Сохранение налоговых настроек: обе меняются одним обращением.
  *
+ * Требования узла названы над кнопкой и гасят её. Прежде проверялся
+ * только режим программирования, и при открытой смене кнопка звала узел
+ * заведомо впустую: он отвечал «сначала закройте смену» — после того,
+ * как владелец выбрал режим и нажал «Сохранить».
+ *
  * Черновик забывается только после согласия узла: отказ оставляет
  * набранное на месте, иначе владелец правил бы его заново.
  */
@@ -139,25 +141,30 @@ private fun SaveTax(session: Session, kkm: Kkm, regime: String?, group: String?,
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
     val changed = regime != kkm.taxRegime || group != kkm.defaultVatGroup
-    val ready = regime != null && group != null && changed && kkm.isProgramming
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        FilledTonalButton(
-            enabled = ready && !session.busy,
-            onClick = {
-                scope.launch {
-                    val settings = TaxSettings(regime.orEmpty(), group.orEmpty())
-                    session.guard(texts.settings.taxSettings) {
-                        session.client.updateTaxSettings(kkm.kkmId, settings, session.pin)
-                    } ?: return@launch
-                    onSaved()
-                    session.refreshKkms()
-                    session.report(texts.settings.settingsSaved)
-                }
+    val needs = KkmSettingRules.tax(
+        programming = kkm.isProgramming,
+        shiftOpen = session.shiftOpen,
+        queueWaiting = session.queueTasks.any { it.isWaiting }
+    )
+    val ready = regime != null && group != null && changed && KkmSettingRules.met(needs)
+    SettingRequirements(needs, moneyTexts(session.language).kkm)
+    FilledTonalButton(
+        enabled = ready && !session.busy,
+        onClick = {
+            scope.launch {
+                saveTax(session, kkm, TaxSettings(regime.orEmpty(), group.orEmpty()), onSaved)
             }
-        ) { Text(texts.settings.save) }
-        if (!kkm.isProgramming) InfoTip(texts.settings.programmingRequired)
-    }
+        }
+    ) { Text(texts.settings.save) }
+}
+
+/** Отправляет налоговые настройки узлу и объявляет итог. */
+private suspend fun saveTax(session: Session, kkm: Kkm, settings: TaxSettings, onSaved: () -> Unit) {
+    val texts = stringsOf(session.language).settings
+    session.guard(texts.taxSettings) {
+        session.client.updateTaxSettings(kkm.kkmId, settings, session.pin)
+    } ?: return
+    onSaved()
+    session.refreshKkms()
+    session.report(texts.settingsSaved)
 }

@@ -108,8 +108,16 @@ internal data class NodeStorage(val engine: String? = null)
 @Serializable
 internal data class NodeHealth(val status: String? = null, val storage: String? = null)
 
+/**
+ * Токена здесь нет намеренно.
+ *
+ * Узел отдаёт его тем же ответом, но токен даёт право на фискальные
+ * команды от имени кассы: показанный на экране настроек, он уезжает
+ * в чужой снимок экрана вместе со всем, что рядом. Приложению он не
+ * нужен ни для чего — неразобранное поле ответа отбрасывается разбором.
+ */
 @Serializable
-internal data class OfdAuthInfo(val nextReqNum: Long? = null, val token: String? = null)
+internal data class OfdAuthInfo(val nextReqNum: Long? = null)
 
 private suspend fun ServerClient.post(path: String, pin: String) {
     val response = call(HttpMethod.Post, path, null, pin)

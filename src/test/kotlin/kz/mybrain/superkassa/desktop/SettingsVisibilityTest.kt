@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.ui.settings.Setting
+import kz.mybrain.superkassa.desktop.ui.settings.SettingsHousehold
+import kz.mybrain.superkassa.desktop.ui.settings.settingsCards
 import kz.mybrain.superkassa.desktop.ui.settings.visibleSettings
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,11 +28,11 @@ class SettingsVisibilityTest {
                 Setting.Appearance,
                 Setting.PanelBehaviour,
                 Setting.NodeAddress,
+                Setting.CabinetAddress,
                 Setting.MapServices,
                 Setting.NodeFacts,
                 Setting.Updates,
-                Setting.Debug,
-                Setting.CabinetAddress
+                Setting.Debug
             ),
             shown
         )
@@ -60,18 +62,31 @@ class SettingsVisibilityTest {
     }
 
     /**
-     * Снятие с учёта и выдача токена — то, на что узел отвечает только
-     * администратору. Кассиру их не показываем: нажатие вернуло бы отказ
-     * по правам, и это худший способ узнать, что тебе нельзя.
+     * То, на что узел отвечает только администратору, кассиру не видно.
+     *
+     * Список перечислен целиком, а не выборкой: выборка молчала о том,
+     * чего в ней нет, и режим программирования с печатной формой стояли
+     * у кассира живой кнопкой и мёртвой карточкой — узел отвечает по ним
+     * только администратору, а войти в режим кассир не может вовсе.
      */
     @Test
     fun `служебное кассиру не показывается`() {
-        val shown = visibleSettings(hasRegister = true, admin = false)
-
-        listOf(Setting.Decommission, Setting.OfdToken, Setting.Tax, Setting.OfdSync)
-            .forEach { assertTrue(it !in shown, "$it показана кассиру") }
-        assertTrue(Setting.Diagnostics in shown)
-        assertTrue(Setting.PrintTarget in shown)
+        assertEquals(
+            listOf(
+                Setting.Appearance,
+                Setting.PanelBehaviour,
+                Setting.NodeAddress,
+                Setting.CabinetAddress,
+                Setting.MapServices,
+                Setting.NodeFacts,
+                Setting.Updates,
+                Setting.Debug,
+                Setting.CurrentKkm,
+                Setting.PrintTarget,
+                Setting.Diagnostics
+            ),
+            visibleSettings(hasRegister = true, admin = false)
+        )
     }
 
     @Test
@@ -124,6 +139,22 @@ class SettingsVisibilityTest {
             shown[shown.indexOf(Setting.Programming) - 1],
             "режим программирования оторван от кассы, которой принадлежит"
         )
+    }
+
+    /**
+     * Вкладка открывается разделом, а не карточкой в пустом окне.
+     *
+     * Хозяйство кабинета БФД держало один адрес: вкладка занимала треть
+     * шапки, а под ней стояла карточка и поле высотой в экран. Адрес
+     * кабинета хранится на этой же машине, как адрес узла и адреса карты,
+     * и стоит теперь рядом с ними.
+     */
+    @Test
+    fun `во вкладке не бывает одной карточки на пустом экране`() {
+        SettingsHousehold.entries.forEach { household ->
+            val cards = settingsCards.filter { it.group.household == household }
+            assertTrue(cards.size > 1, "$household открывается одной карточкой в пустом окне")
+        }
     }
 
     /** Настройки, которые принимает узел этой кассы. */

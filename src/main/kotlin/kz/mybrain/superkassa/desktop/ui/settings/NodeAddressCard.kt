@@ -30,25 +30,29 @@ fun NodeAddressCard(session: Session) {
     // Набранное переживает уход в другой раздел: экран настроек уходит
     // из состава вместе с ним, и поле забывало набранное молча.
     val address = SettingsDrafts.of(SettingsDrafts.Field.NODE_ADDRESS, session.preferences.nodeUrl)
+    // Негодный адрес назван до сохранения: по адресу без схемы обращения
+    // не будет вовсе, а на экране это выходило как «узел недоступен» —
+    // и владелец шёл искать сеть вместо своей опечатки.
+    val malformed = address.isNotBlank() && !ServiceAddress.valid(address)
     SectionCard(title = texts.nodeAddress, info = texts.nodeAddressHint) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Top
         ) {
             OutlinedTextField(
                 value = address,
                 onValueChange = { SettingsDrafts.type(SettingsDrafts.Field.NODE_ADDRESS, it) },
                 label = { Text(texts.nodeAddress) },
+                isError = malformed,
+                supportingText = if (malformed) ({ Text(texts.addressMalformed) }) else null,
                 singleLine = true,
                 modifier = Modifier.width(Sizes.fieldName)
             )
             FilledTonalButton(
                 modifier = Modifier.height(Sizes.fieldHeight),
-                enabled = address.isNotBlank() && address.trim() != session.preferences.nodeUrl,
-                // Пробел по краям адреса приходит из буфера обмена вместе
-                // со скопированной строкой, а узел по такому адресу не ищется.
+                enabled = ServiceAddress.changed(address, session.preferences.nodeUrl),
                 onClick = {
-                    session.preferences.nodeUrl = address.trim()
+                    session.preferences.nodeUrl = ServiceAddress.tidy(address)
                     SettingsDrafts.forget(SettingsDrafts.Field.NODE_ADDRESS)
                 }
             ) { Text(texts.save) }

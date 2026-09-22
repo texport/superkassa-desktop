@@ -114,6 +114,7 @@ data class SettingStrings(
     val nodeUnknown: String,
     val nodeAddress: String,
     val nodeAddressHint: String,
+    val addressMalformed: String,
     val workplace: String,
     val mapServices: String,
     val mapServicesHint: String,
@@ -125,7 +126,6 @@ data class SettingStrings(
     /** Хозяйства настроек: где именно изменится выбранное. */
     val householdWorkplace: String,
     val householdKkm: String,
-    val householdCabinet: String,
     /** Как печатает эта касса: форма на узле, принтер на этой машине. */
     val groupPrinting: String,
     /** Настройки самой кассы: их принимает узел и только в режиме программирования. */
