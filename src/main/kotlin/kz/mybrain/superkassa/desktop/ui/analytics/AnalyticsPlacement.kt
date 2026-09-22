@@ -59,7 +59,27 @@ data class UnplacedKkm(val kkm: AnalyticsKkm, val reason: PlacementTrouble)
 enum class PlacementTrouble { NoPosition, Searching, NotOnMap }
 
 /** Кассы, разложенные на поставленные и непоставленные. */
-data class Placement(val placed: List<PlacedKkm>, val unplaced: List<UnplacedKkm>)
+data class Placement(val placed: List<PlacedKkm>, val unplaced: List<UnplacedKkm>) {
+
+    /**
+     * Касс, чей дом карта ещё ищет.
+     *
+     * Считается отдельно от непоставленных, и считается здесь: счётчик
+     * над картой и любая другая надпись о них должны брать одно число.
+     */
+    val searching: Int get() = unplaced.count { it.reason == PlacementTrouble.Searching }
+
+    /**
+     * Касс, которые поставить некуда.
+     *
+     * Ищущиеся сюда не идут: адрес у них есть, и через минуту они встанут
+     * на карту сами. При адресе торговой точки кабинет координат не даёт
+     * вовсе, и все три тысячи касс сети по очереди проходят через поиск —
+     * сосчитанные без положения, они обещали бы владельцу три тысячи
+     * касс без адреса там, где адрес есть у каждой.
+     */
+    val nowhere: Int get() = unplaced.size - searching
+}
 
 /**
  * Раскладывает ответ кабинета по карте.

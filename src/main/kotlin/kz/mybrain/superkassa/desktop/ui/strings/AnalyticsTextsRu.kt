@@ -101,6 +101,7 @@ internal val analyticsTextsRu = AnalyticsTexts(
     refused = "Кабинет отказал",
 
     placed = "На карте",
+    searchingCount = "Ищем адрес",
     withoutPosition = "Без положения",
     kkmCount = "Касс",
     kkmColumn = "Касса",

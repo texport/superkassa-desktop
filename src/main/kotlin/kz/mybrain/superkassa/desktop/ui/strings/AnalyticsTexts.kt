@@ -32,6 +32,16 @@ data class AnalyticsTexts(
     val refused: String,
 
     val placed: String,
+
+    /**
+     * Касс, чей адрес карта ещё ищет.
+     *
+     * Счётчик свой, а не в числе оставшихся без положения: адрес у такой
+     * кассы есть, и через минуту она встанет на карту сама. Сведённые
+     * в одно число, они обещали бы владельцу три тысячи касс без адреса
+     * там, где адрес есть у всех.
+     */
+    val searchingCount: String,
     val withoutPosition: String,
     val kkmCount: String,
     val kkmColumn: String,

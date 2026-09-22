@@ -102,6 +102,7 @@ internal val analyticsTextsEn = AnalyticsTexts(
     refused = "The cabinet refused",
 
     placed = "On the map",
+    searchingCount = "Address pending",
     withoutPosition = "Without a position",
     kkmCount = "Registers",
     kkmColumn = "Register",
