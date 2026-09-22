@@ -81,8 +81,11 @@ class SaleDraftTest {
             DraftProblem.DiscountTooBig,
             filled.copy(discount = "300").problem(DraftField.Discount)
         )
+        // Отрицательная скидка названа своей причиной: она меньше
+        // стоимости позиции, и «скидка не может быть больше стоимости»
+        // кассиру, набравшему «-1», ничего не объясняло.
         assertEquals(
-            DraftProblem.DiscountTooBig,
+            DraftProblem.DiscountNegative,
             filled.copy(discount = "-1").problem(DraftField.Discount)
         )
     }

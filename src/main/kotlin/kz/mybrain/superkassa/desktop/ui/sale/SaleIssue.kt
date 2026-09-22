@@ -105,6 +105,7 @@ fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDeci
     hasItemDiscount = basket.hasItemDiscount,
     hasZeroPrice = basket.hasZeroPrice,
     receiptDiscount = amount(form.discount).value,
+    receiptMarkup = amount(form.markup).value,
     total = total,
     paymentCodes = form.split.types,
     splitIssue = form.split.issue(total),

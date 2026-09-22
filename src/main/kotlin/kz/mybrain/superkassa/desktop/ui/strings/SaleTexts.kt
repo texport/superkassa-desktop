@@ -34,6 +34,9 @@ data class SaleTexts(
     val needPrice: String,
     val needQuantity: String,
     val discountTooBig: String,
+
+    /** Скидка со знаком минус — не скидка: она увеличивает строку. */
+    val discountNegative: String,
     val barcodeHint: String,
     val paymentUnsupported: String,
     val takenOnlyCash: String,
@@ -49,6 +52,15 @@ data class SaleTexts(
     val blockZeroPrice: String,
     val blockPaymentUnsupported: String,
     val blockDiscountScopes: String,
+
+    /**
+     * Скидка или наценка на чек со знаком минус.
+     *
+     * Отрицательная скидка молча прибавляла к итогу, а отрицательная
+     * наценка — вычитала: кассир видел в «Итого» не ту сумму, которую
+     * назвал, и объяснения этому на экране не было.
+     */
+    val blockDiscountNegative: String,
     val blockTotalNotPositive: String,
     val blockTakenTooSmall: String,
     val blockBin: String,

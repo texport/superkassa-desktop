@@ -55,6 +55,21 @@ class SaleRulesTest {
     }
 
     @Test
+    fun `скидка и наценка на чек со знаком минус чек пробить не дают`() {
+        // Минус в скидке прибавлял к итогу, минус в наценке — вычитал:
+        // «Итого» расходилось с набранным, и кнопка при этом была нажимаема.
+        assertEquals(
+            SaleBlock.DiscountNegative,
+            blockOf(SaleState(receiptDiscount = BigDecimal("-100")))
+        )
+        assertEquals(
+            SaleBlock.DiscountNegative,
+            blockOf(SaleState(receiptMarkup = BigDecimal("-100")))
+        )
+        assertNull(blockOf(SaleState(receiptDiscount = BigDecimal("10"), total = BigDecimal("90"))))
+    }
+
+    @Test
     fun `скидка на позицию и скидка на чек вместе запрещены`() {
         val both = SaleState(hasItemDiscount = true, receiptDiscount = BigDecimal("5"))
         assertEquals(SaleBlock.DiscountScopes, blockOf(both))
