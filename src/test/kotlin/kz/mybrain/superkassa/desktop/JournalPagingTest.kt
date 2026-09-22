@@ -17,6 +17,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.PAGE
 import kz.mybrain.superkassa.desktop.server.ServerClient
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.history.JournalPeriod
 import kz.mybrain.superkassa.desktop.ui.history.JournalSpan
 import kz.mybrain.superkassa.desktop.ui.history.PageOutcome
@@ -24,6 +25,7 @@ import kz.mybrain.superkassa.desktop.ui.history.SHIFT_PAGE
 import kz.mybrain.superkassa.desktop.ui.history.Shift
 import kz.mybrain.superkassa.desktop.ui.history.loadPeriod
 import kz.mybrain.superkassa.desktop.ui.history.loadShifts
+import kz.mybrain.superkassa.desktop.ui.history.shiftsState
 import kz.mybrain.superkassa.desktop.ui.history.shownNote
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
@@ -86,6 +88,18 @@ class JournalPagingTest {
         assertEquals(PageOutcome.page(more = true), first)
         assertTrue(second.more, "«показаны все смены» после молчания узла — неправда")
         assertEquals(SHIFT_PAGE, into.size)
+    }
+
+    /** Прочитанные смены остаются на экране, пока читается следующая страница. */
+    @Test
+    fun `дочитывание смен не убирает с экрана уже прочитанные`() {
+        val journal = texts.shifts
+
+        val more = shiftsState(journal, shifts = SHIFT_PAGE, loading = true, page = PageOutcome.page(true)) {}
+        val first = shiftsState(journal, shifts = 0, loading = true, page = PageOutcome.unread) {}
+
+        assertEquals(ScreenState.Ready, more, "список смен пропадал на время дочитывания")
+        assertEquals(ScreenState.Working, first, "до первого ответа показывать нечего")
     }
 
     /**

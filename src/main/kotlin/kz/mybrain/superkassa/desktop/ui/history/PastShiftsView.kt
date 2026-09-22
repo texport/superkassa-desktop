@@ -166,7 +166,9 @@ internal fun shiftsState(
     page: PageOutcome,
     onRetry: () -> Unit
 ): ScreenState = when {
-    loading -> ScreenState.Working
+    // Ожидание встаёт на место списка только до первого ответа: прочитанные
+    // смены остаются на экране, пока читается следующая страница.
+    loading && shifts == 0 -> ScreenState.Working
     // Прочитанные прежде смены остаются на месте: неудача дочитывания
     // не повод убирать с экрана то, что кассир уже видит.
     !page.read && shifts == 0 -> ScreenState.Trouble(journal.unread, journal.unreadHint, onRetry)
