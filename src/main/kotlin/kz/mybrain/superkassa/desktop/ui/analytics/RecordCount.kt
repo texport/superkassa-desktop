@@ -8,8 +8,8 @@ import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
  * Парк касс в числах: сколько их, как они учтены и работают ли сейчас.
  *
  * Один и тот же счёт годится и на всю сеть, и на один регион — потому
- * он и объявлен типом, а не восемью числами, разложенными по вёрстке:
- * перепутанные местами «на учёте» и «учёт идёт» не заметил бы ни
+ * он и объявлен типом, а не девятью числами, разложенными по вёрстке:
+ * перепутанные местами «заведены» и «на учёте» не заметил бы ни
  * разработчик, ни проверка.
  *
  * Смыслы учёта берутся у [KkmRecord] и здесь не пересказываются: кабинет
@@ -17,14 +17,18 @@ import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
  * бы с первым на первом же новом коде.
  *
  * @param total касс всего — столько их заведено в кабинете.
+ * @param entered из них заведённых, по которым заявление не подавалось.
+ * @param applied тех, по которым заявление подано и ждёт ответа КГД.
  * @param places торговых точек, на которых эти кассы стоят.
- * @param trading касс с открытой сменой: столько сейчас торгует.
+ * @param trading касс с открытой сменой — и только из стоящих на учёте,
+ *   см. [recordCount].
  * @param blocked касс, которым фискальные операции закрыты.
  */
 data class RecordCount(
     val total: Int,
+    val entered: Int,
+    val applied: Int,
     val onRecord: Int,
-    val inProgress: Int,
     val refused: Int,
     val deregistered: Int,
     val places: Int,
@@ -39,17 +43,28 @@ data class RecordCount(
 fun recordKkms(view: KkmMapView?): List<AnalyticsKkm> =
     view?.placed.orEmpty() + view?.withoutPosition.orEmpty()
 
-/** Парк касс, сосчитанный по смыслам учёта и по работе прямо сейчас. */
+/**
+ * Парк касс, сосчитанный по смыслам учёта и по работе прямо сейчас.
+ *
+ * Торгующими считаются только кассы на учёте: смена бывает открыта
+ * и у кассы, которую КГД не учёл, но торговлей по закону это не является,
+ * и считать её работой сети значит обещать министру то, чего нет.
+ * Сколько их из скольких — вкладка говорит рядом с числом.
+ *
+ * Блокировки считаются по всему парку: блокирует не владелец, и касса
+ * вне учёта заблокированной тоже бывает.
+ */
 fun recordCount(kkms: List<AnalyticsKkm>): RecordCount {
     val byRecord = kkms.groupingBy { it.record }.eachCount()
     return RecordCount(
         total = kkms.size,
+        entered = byRecord[KkmRecord.Entered] ?: 0,
+        applied = byRecord[KkmRecord.Applied] ?: 0,
         onRecord = byRecord[KkmRecord.OnRecord] ?: 0,
-        inProgress = byRecord[KkmRecord.InProgress] ?: 0,
         refused = byRecord[KkmRecord.Refused] ?: 0,
         deregistered = byRecord[KkmRecord.Deregistered] ?: 0,
         places = kkms.mapNotNull(::placeKey).distinct().size,
-        trading = kkms.count(KkmMark.ShiftOpen.holds),
+        trading = kkms.count { it.record == KkmRecord.OnRecord && KkmMark.ShiftOpen.holds(it) },
         blocked = kkms.count(KkmMark.Blocked.holds)
     )
 }

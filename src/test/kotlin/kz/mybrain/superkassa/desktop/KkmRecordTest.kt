@@ -18,13 +18,16 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 /**
- * Одиннадцать состояний учёта — в четыре смысла, и цвет по ним.
+ * Одиннадцать состояний учёта — в пять смыслов, и цвет по ним.
  *
  * Приложение спрашивало у состояния одно: на учёте касса или нет, —
  * и черновик попадал в одну кучу с отказом КГД. В кабинете показа
  * из 3294 касс 3288 черновиков, четыре на учёте и две снятые: карта
  * страны от этого краснела целиком. Числа взяты запросом к кабинету
  * на боевых данных и повторены здесь, чтобы тот же счёт не вернулся.
+ *
+ * Заведённая касса отделена от поданного заявления: сложенные вместе,
+ * они говорили о трёх тысячах заявлений в КГД, которых никто не подавал.
  */
 class KkmRecordTest {
 
@@ -32,12 +35,12 @@ class KkmRecordTest {
     fun `состояния учёта разведены по смыслу`() {
         assertEquals(KkmRecord.OnRecord, kkmRecord("REGISTERED"))
         assertEquals(KkmRecord.OnRecord, kkmRecord("REGISTERED_REREGISTRATION_SUCCESS"))
+        assertEquals(KkmRecord.Entered, kkmRecord("DRAFT"), "по черновику заявление не подавалось")
         listOf(
-            "DRAFT",
             "REGISTRATION_IN_ISNA_PROCESS",
             "REREGISTRATION_IN_ISNA_PROCESS",
             "DEREGISTRATION_IN_ISNA_PROCESS"
-        ).forEach { assertEquals(KkmRecord.InProgress, kkmRecord(it), "«$it» — это ещё не беда") }
+        ).forEach { assertEquals(KkmRecord.Applied, kkmRecord(it), "«$it» — заявление подано") }
         listOf(
             "UNKNOWN",
             "REGISTRATION_IN_ISNA_ERROR",
@@ -47,11 +50,16 @@ class KkmRecordTest {
         assertEquals(KkmRecord.Deregistered, kkmRecord("DEREGISTERED"))
     }
 
-    /** Кабинет не назвал состояния вовсе: тревожиться не о чем, но и учёта нет. */
+    /**
+     * Кабинет не назвал состояния вовсе: тревожиться не о чем, но и учёта нет.
+     *
+     * Такая касса считается заведённой, а не поданной: заявления, о котором
+     * кабинет не сказал ни слова, у неё может и не быть.
+     */
     @Test
     fun `отсутствие кода не считается отказом`() {
-        assertEquals(KkmRecord.InProgress, kkmRecord(null))
-        assertEquals(KkmRecord.InProgress, kkmRecord("  "))
+        assertEquals(KkmRecord.Entered, kkmRecord(null))
+        assertEquals(KkmRecord.Entered, kkmRecord("  "))
     }
 
     /**

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.StatusTone
+import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsRecordTexts
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -49,7 +50,7 @@ fun RecordTiles(count: RecordCount, texts: AnalyticsTexts, modifier: Modifier = 
         }
         TileRow {
             RecordTile(count.places, record.places, StatusTone.Idle)
-            RecordTile(count.trading, record.trading, StatusTone.Good)
+            TradingTile(count, record)
             RecordTile(count.blocked, record.blocked, StatusTone.Bad)
         }
     }
@@ -69,23 +70,41 @@ private fun TileRow(content: @Composable FlowRowScope.() -> Unit) {
 /** Главное число вкладки: весь парк касс компании. */
 @Composable
 private fun MainTile(value: Int, label: String) {
-    Tile(value, label, MaterialTheme.typography.displaySmall, MaterialTheme.colorScheme.onSurface)
+    Tile(Money.count(value), label, MaterialTheme.typography.displaySmall, MaterialTheme.colorScheme.onSurface)
 }
 
 /** Число со смыслом: цвет берётся у общих состояний приложения, см. [recordPaint]. */
 @Composable
 private fun RecordTile(value: Int, label: String, tone: StatusTone) {
-    Tile(value, label, MaterialTheme.typography.headlineMedium, recordPaint(value, tone))
+    Tile(Money.count(value), label, MaterialTheme.typography.headlineMedium, recordPaint(value, tone))
+}
+
+/**
+ * Сколько касс торгует прямо сейчас — и из скольких стоящих на учёте.
+ *
+ * Одним числом эта плитка обманывала: «Сейчас торгуют 0» рядом с «Всего
+ * касс 3294» читается как остановившаяся сеть, хотя торговать вправе
+ * четыре кассы из этих трёх тысяч. Основание счёта стоит тут же, в самом
+ * числе, и спорить с ним нечему.
+ */
+@Composable
+private fun TradingTile(count: RecordCount, texts: AnalyticsRecordTexts) {
+    Tile(
+        value = texts.tradingOf.format(Money.count(count.trading), Money.count(count.onRecord)),
+        label = texts.trading,
+        style = MaterialTheme.typography.headlineMedium,
+        tone = recordPaint(count.trading, StatusTone.Good)
+    )
 }
 
 /** Одна плитка: число крупно, подпись под ним. */
 @Composable
-private fun Tile(value: Int, label: String, style: TextStyle, tone: Color) {
+private fun Tile(value: String, label: String, style: TextStyle, tone: Color) {
     Column(
         modifier = Modifier.widthIn(min = Sizes.counterTile),
         verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
     ) {
-        Text(text = Money.count(value), style = style, color = tone, maxLines = 1)
+        Text(text = value, style = style, color = tone, maxLines = 1)
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
