@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSieveBar
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSpotCard
 import kz.mybrain.superkassa.desktop.ui.analytics.PlacedKkm
 import kz.mybrain.superkassa.desktop.ui.analytics.kkmGroups
-import kz.mybrain.superkassa.desktop.ui.analytics.mark
+import kz.mybrain.superkassa.desktop.ui.analytics.kkmMarks
 import kz.mybrain.superkassa.desktop.ui.analytics.sievePlaces
 import kz.mybrain.superkassa.desktop.ui.map.MapGeocoder
 import kz.mybrain.superkassa.desktop.ui.map.MapMarks
@@ -80,7 +80,7 @@ class MapLookShots {
         model.spot = groups.first().id
         RenderProbe(WIDTH, HEIGHT) {
             Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainerHighest)) {
-                MapMarks(model.map, IntSize(WIDTH, HEIGHT), groups.map { it.mark(model) }) {}
+                MapMarks(model.map, IntSize(WIDTH, HEIGHT), kkmMarks(groups, model)) {}
             }
         }.use { shot("map-marks", it.frame()) }
     }

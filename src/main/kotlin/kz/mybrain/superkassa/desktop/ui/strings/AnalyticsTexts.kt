@@ -51,6 +51,25 @@ data class AnalyticsTexts(
     val mapFullscreen: String,
     val mapFullscreenExit: String,
 
+    /**
+     * Итог по видимому куску карты.
+     *
+     * Сеть в две тысячи касс не сосчитать глазами по кружкам, и владелец
+     * должен знать, всю ли её он сейчас видит. Вторая строка — про отбор,
+     * и без действующего отбора её нет.
+     */
+    val mapShown: String,
+    val mapShownOf: String,
+    val mapSievedOf: String,
+
+    /** Легенда карты: что значат цвет и размер кружка. */
+    val mapLegend: String,
+    val legendGood: String,
+    val legendSomeBlocked: String,
+    val legendTrouble: String,
+    val legendSize: String,
+    val legendChosen: String,
+
     val searchKkm: String,
     val searchKkmLabel: String,
     val allPlaces: String,

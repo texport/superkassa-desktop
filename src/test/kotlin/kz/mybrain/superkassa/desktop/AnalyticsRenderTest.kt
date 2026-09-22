@@ -109,8 +109,8 @@ class AnalyticsRenderTest {
         val state = MapState(LATITUDE, LONGITUDE, CITY_ZOOM)
         val canvas = IntSize(WIDTH, HEIGHT)
         val marks = listOf(
-            MapMark("place", LATITUDE, LONGITUDE, "3", Color.Red, chosen = false),
-            MapMark("away", LATITUDE + AWAY, LONGITUDE + AWAY, null, Color.Red, chosen = false)
+            MapMark("place", LATITUDE, LONGITUDE, 3, Color.Red, chosen = false),
+            MapMark("away", LATITUDE + AWAY, LONGITUDE + AWAY, 1, Color.Red, chosen = false)
         )
         var picked: String? = null
         RenderProbe(WIDTH, HEIGHT) {

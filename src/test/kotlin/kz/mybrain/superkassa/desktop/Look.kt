@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -27,11 +29,15 @@ import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSieveBar
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSourceBar
 import kz.mybrain.superkassa.desktop.ui.analytics.KkmGroup
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapCard
+import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapLegend
+import kz.mybrain.superkassa.desktop.ui.analytics.MapLegend
+import kz.mybrain.superkassa.desktop.ui.analytics.MapTally
 import kz.mybrain.superkassa.desktop.ui.analytics.Placement
 import kz.mybrain.superkassa.desktop.ui.analytics.UnderMap
 import kz.mybrain.superkassa.desktop.ui.analytics.emptyMapReason
 import kz.mybrain.superkassa.desktop.ui.analytics.kkmGroups
-import kz.mybrain.superkassa.desktop.ui.analytics.mark
+import kz.mybrain.superkassa.desktop.ui.analytics.kkmMarks
+import kz.mybrain.superkassa.desktop.ui.analytics.onScreen
 import kz.mybrain.superkassa.desktop.ui.analytics.placement
 import kz.mybrain.superkassa.desktop.ui.analytics.sievePlaces
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
@@ -109,6 +115,10 @@ internal object Look {
     /** Карточка под картой развёрнута, как у нового рабочего места; своё хранилище — чужие настройки не трогать. */
     fun panel(): AnalyticsMapCard = AnalyticsMapCard(Preferences(File(Files.createTempDirectory("an").toFile(), "kkm")))
 
+    /** Легенда карты — так же развёрнута и так же со своим хранилищем. */
+    fun legend(): AnalyticsMapLegend =
+        AnalyticsMapLegend(Preferences(File(Files.createTempDirectory("an").toFile(), "kkm")))
+
     /** Касса аналитики: одна и та же во всех наборах снимков. */
     fun kkm(
         at: Int,
@@ -153,7 +163,8 @@ internal fun MapLook(
     model: AnalyticsMapModel,
     laid: Placement,
     groups: List<KkmGroup>,
-    view: KkmMapView?
+    view: KkmMapView?,
+    whole: Int = laid.placed.size
 ) {
     Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
         AnalyticsSourceBar(model, laid, Look.texts) {}
@@ -163,7 +174,7 @@ internal fun MapLook(
                 modifier = Modifier.weight(1f).fillMaxHeight(),
                 verticalArrangement = Arrangement.spacedBy(Spacing.snug)
             ) {
-                MapOrReason(model, laid, groups, Modifier.weight(1f))
+                MapOrReason(model, laid, groups, whole, Modifier.weight(1f))
                 UnderMap(model, laid, groups, Look.texts, Look.cabinet, remember { Look.panel() })
             }
             AnalyticsKkmList(
@@ -186,6 +197,7 @@ private fun MapOrReason(
     model: AnalyticsMapModel,
     laid: Placement,
     groups: List<KkmGroup>,
+    whole: Int,
     modifier: Modifier
 ) {
     if (laid.placed.isEmpty()) {
@@ -193,12 +205,25 @@ private fun MapOrReason(
         EmptyState(reason.icon, reason.title, reason.hint, modifier, centered = true)
         return
     }
+    val legend = remember { Look.legend() }
     Box(modifier) {
         // Полотно называет свой размер само: ярлычки считают место
         // от окна карты, а не от окна приложения.
         MapView(model.map, Look.tiles(), Look.cabinet.map, Modifier.fillMaxSize(), onTap = { _, _ -> model.forget() }) { canvas ->
-            MapMarks(model.map, canvas, groups.map { it.mark(model) }) { picked ->
+            val shown = onScreen(groups, model.map, canvas)
+            MapMarks(model.map, canvas, kkmMarks(shown, model)) { picked ->
                 model.open(groups.first { it.id == picked.id })
+            }
+            Box(Modifier.fillMaxSize()) {
+                MapTally(
+                    shown = shown.sumOf { it.size },
+                    placed = laid.placed.size,
+                    whole = whole,
+                    sieved = model.sieve.set,
+                    texts = Look.texts,
+                    modifier = Modifier.align(Alignment.TopStart).padding(Spacing.snug)
+                )
+                MapLegend(legend, Look.texts, Modifier.align(Alignment.BottomEnd).padding(Spacing.snug))
             }
         }
     }

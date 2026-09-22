@@ -53,6 +53,7 @@ fun AnalyticsMapPane(
     val services = remember(session.preferences) { MapServices(session.preferences) }
     val model = remember(cabinet) { AnalyticsMapModel(cabinet, services.geocoder) }
     val panel = remember(session.preferences) { AnalyticsMapCard(session.preferences) }
+    val legend = remember(session.preferences) { AnalyticsMapLegend(session.preferences) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(cabinet.token, model.source) { model.load() }
     LaunchedEffect(model.view) { model.findAddresses() }
@@ -61,7 +62,10 @@ fun AnalyticsMapPane(
     val whole = placement(model.view, model.points)
     LaunchedEffect(whole.placed.size) { model.centre(whole.placed) }
     val placement = sieved(whole, model.sieve)
-    val groups = kkmGroups(placement.placed, model.map.zoom)
+    // Места пересобираются только при смене набора или увеличения, а не
+    // на каждом кадре: у сети в две тысячи касс раскладка по клеткам
+    // повторялась бы при каждом сдвиге карты, ничего не меняя.
+    val groups = remember(placement.placed, model.map.zoom) { kkmGroups(placement.placed, model.map.zoom) }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -76,7 +80,10 @@ fun AnalyticsMapPane(
             else -> ScreenState.Ready
         }
         ScreenSlot(state, Modifier.weight(1f)) {
-            val parts = MapParts(session, model, services, placement, groups, texts, cabinetTexts, panel)
+            val parts = MapParts(
+                session, model, services, placement, whole.placed.size,
+                groups, texts, cabinetTexts, panel, legend
+            )
             MapBody(parts, Modifier.weight(1f))
         }
     }
@@ -99,10 +106,13 @@ internal class MapParts(
     val model: AnalyticsMapModel,
     val services: MapServices,
     val placement: Placement,
+    /** Сколько касс встало на карту до отбора: с этим числом сверяется итог в углу. */
+    val whole: Int,
     val groups: List<KkmGroup>,
     val texts: AnalyticsTexts,
     val cabinetTexts: CabinetTexts,
-    val panel: AnalyticsMapCard
+    val panel: AnalyticsMapCard,
+    val legend: AnalyticsMapLegend
 )
 
 /**

@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -25,7 +27,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kotlin.math.roundToInt
 
 /**
- * Ярлычок на карте: место и сколько касс в нём.
+ * Ярлычок на карте: место и сколько точек в нём.
  *
  * Кассы рисовались булавками на полотне, и у полотна два недостатка,
  * которые здесь и решаются: на нём нельзя написать число — рисование
@@ -33,14 +35,14 @@ import kotlin.math.roundToInt
  * ловить расчётом расстояния до каждой булавки. Ярлычок же — обычная
  * поверхность Material: у неё своя надпись, своя тень и своё нажатие.
  *
- * @param label число касс места; пусто — касса одна, и вместо числа значок.
+ * @param count сколько точек сошлось в этом месте; одна — вместо числа значок.
  * @param tone цвет состояния места: по нему видно, куда надо подойти.
  */
 data class MapMark(
     val id: String,
     val latitude: Double,
     val longitude: Double,
-    val label: String?,
+    val count: Int,
     val tone: Color,
     val chosen: Boolean
 )
@@ -73,16 +75,16 @@ fun MapMarks(state: MapState, canvas: IntSize, marks: List<MapMark>, onPick: (Ma
 }
 
 /** Попадает ли место в окно карты — с запасом на сам ярлычок. */
-private fun inside(at: MapPixel, canvas: IntSize): Boolean =
-    at.x > -EDGE && at.y > -EDGE && at.x < canvas.width + EDGE && at.y < canvas.height + EDGE
+fun inside(at: MapPixel, canvas: IntSize): Boolean =
+    at.x > -MARK_EDGE && at.y > -MARK_EDGE && at.x < canvas.width + MARK_EDGE && at.y < canvas.height + MARK_EDGE
 
 /**
  * Сам ярлычок.
  *
  * Залит поверхностью, а не цветом состояния: цветом стоят обводка
  * и надпись, и на светлой улице ярлычок читается так же, как на тёмном
- * лесу. Раскрытый меняется ролями — заливка главным цветом, — и виден
- * среди соседей сразу.
+ * лесу. Выбранный меняется ролями — заливка главным цветом, толще
+ * обводка и выше тень, — и виден среди сотни соседей сразу.
  */
 @Composable
 private fun Mark(mark: MapMark, at: MapPixel, onPick: (MapMark) -> Unit) {
@@ -92,8 +94,8 @@ private fun Mark(mark: MapMark, at: MapPixel, onPick: (MapMark) -> Unit) {
         shape = CircleShape,
         color = if (filled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
         contentColor = if (filled) MaterialTheme.colorScheme.onPrimary else mark.tone,
-        border = BorderStroke(Sizes.mapMarkEdge, mark.tone),
-        shadowElevation = Sizes.mapMarkLift,
+        border = BorderStroke(if (filled) Sizes.mapMarkEdgeChosen else Sizes.mapMarkEdge, mark.tone),
+        shadowElevation = if (filled) Sizes.mapMarkLiftChosen else Sizes.mapMarkLift,
         modifier = Modifier
             .offset { IntOffset(at.x.roundToInt(), at.y.roundToInt()) }
             // Ярлычок стоит серединой на месте, а не углом: угол уводил
@@ -104,26 +106,55 @@ private fun Mark(mark: MapMark, at: MapPixel, onPick: (MapMark) -> Unit) {
             }
             .clip(CircleShape)
     ) {
-        MarkBody(mark.label)
+        MarkBody(mark.count)
     }
 }
 
-/** Содержимое ярлычка: число касс или значок места у одиночной. */
+/** Содержимое ярлычка: число точек или значок места у одиночного. */
 @Composable
-private fun MarkBody(label: String?) {
+private fun MarkBody(count: Int) {
+    val side = markSide(count)
     Box(
         modifier = Modifier
-            .defaultMinSize(minWidth = Sizes.mapMark, minHeight = Sizes.mapMark)
+            .defaultMinSize(minWidth = side, minHeight = side)
             .padding(horizontal = Spacing.tight),
         contentAlignment = Alignment.Center
     ) {
-        if (label == null) {
+        if (count <= 1) {
             Icon(AppIcons.place, contentDescription = null, modifier = Modifier.size(Sizes.chipIcon))
         } else {
-            Text(text = label, style = MaterialTheme.typography.labelLarge)
+            // Полужирное начертание, а не обычное: число стоит на кружке
+            // поверх пёстрых плиток, и тонкие цифры на нём размывались.
+            Text(text = count.toString(), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
         }
     }
 }
 
-/** Запас за краем окна, в пределах которого ярлычок ещё рисуется. */
-private const val EDGE = 48.0
+/**
+ * Поперечник ярлычка по числу точек в нём.
+ *
+ * Ступенями: кружок места, кружок города и кружок области видны один
+ * рядом с другим, а рост от самого числа дал бы полсотни почти
+ * одинаковых размеров и ничего бы не сказал.
+ */
+private fun markSide(count: Int): Dp = when {
+    count >= CROWD -> Sizes.mapMarkCrowd
+    count >= MANY -> Sizes.mapMarkMany
+    count > 1 -> Sizes.mapMarkFew
+    else -> Sizes.mapMark
+}
+
+/** С этого числа точек место считается городом, а не домом. */
+private const val MANY = 10
+
+/** С этого — областью: столько точек сходится в одну лишь на карте страны. */
+private const val CROWD = 50
+
+/**
+ * Запас за краем окна, в пределах которого ярлычок ещё рисуется.
+ *
+ * Открыт наружу вместе с [inside]: мест на карте страны тысячи, а в окно
+ * попадает десяток, и складывать ярлычок для каждого — работа впустую.
+ * Отсеивает лишние тот, кто местами владеет, и запас у него тот же.
+ */
+const val MARK_EDGE: Double = 48.0

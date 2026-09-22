@@ -88,7 +88,41 @@ class MapGestureTest {
         assertTrue(state.centerLongitude > before, "приближение к точке справа уводит центр на восток")
     }
 
+    /**
+     * Переход к кассе идёт кадрами, а не прыжком.
+     *
+     * Проверяется через сцену: ведёт карту показ, а состояние только
+     * называет цель. Первый кадр после выбора должен застать её в пути,
+     * а не на месте — иначе это тот же прыжок, от которого переход заведён.
+     */
+    @Test
+    fun `переход к кассе идёт кадрами, а не прыжком`() {
+        val state = MapState()
+        probe(state).use { probe ->
+            probe.frame()
+            state.glideTo(Look.LATITUDE, FAR_LONGITUDE)
+            // Несколько кадров, а не один: первый запускает переход,
+            // и карта на нём ещё стоит там, откуда поедет.
+            repeat(FRAMES_ON_WAY) { probe.frame() }
+            val onWay = state.centerLongitude
+            assertTrue(onWay > Look.LONGITUDE, "карта не тронулась с места")
+            assertTrue(onWay < FAR_LONGITUDE, "карта прыгнула к кассе за один кадр: $onWay")
+            repeat(FRAMES_TO_ARRIVE) { probe.frame() }
+            assertEquals(FAR_LONGITUDE, state.centerLongitude, 1e-6, "карта так и не доехала")
+        }
+        assertEquals(null, state.goal, "цель не снята по прибытии")
+    }
+
     private companion object {
+        /** Куда ведут карту в проверке перехода: заметно восточнее начала. */
+        const val FAR_LONGITUDE = 79.0
+
+        /** Кадров, на которых карта заведомо ещё в пути: переход длится десятки кадров. */
+        const val FRAMES_ON_WAY = 5
+
+        /** Кадров с запасом на весь переход: он длится меньше секунды. */
+        const val FRAMES_TO_ARRIVE = 60
+
         const val WIDTH = 800
         const val HEIGHT = 600
         const val MIDDLE_X = 400f

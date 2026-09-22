@@ -2,27 +2,9 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
-import kz.mybrain.superkassa.desktop.ui.components.toneColor
-import kz.mybrain.superkassa.desktop.ui.map.MapMark
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-
-/**
- * Место — ярлычком на карте.
- *
- * Число стоит только там, где касс больше одной: единица на ярлычке
- * не сообщает ничего, а превращает карту в поле единиц.
- */
-@Composable
-internal fun KkmGroup.mark(model: AnalyticsMapModel): MapMark = MapMark(
-    id = id,
-    latitude = latitude,
-    longitude = longitude,
-    label = size.takeIf { it > 1 }?.toString(),
-    tone = toneColor(groupTone(this)),
-    chosen = id == model.spot || holds(model.chosen)
-)
 
 /**
  * Почему на месте карты стоит объяснение, а не карта.

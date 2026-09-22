@@ -107,7 +107,7 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
     fun open(group: KkmGroup) {
         spot = group.id
         chosen = group.kkms.singleOrNull()?.kkm?.cashRegisterId
-        map.centreOn(group.latitude, group.longitude)
+        map.glideTo(group.latitude, group.longitude)
     }
 
     /**
@@ -120,7 +120,7 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
     fun show(row: PlacedKkm, groups: List<KkmGroup>) {
         chosen = row.kkm.cashRegisterId
         spot = groups.firstOrNull { it.holds(row.kkm.cashRegisterId) }?.id
-        map.centreOn(row.latitude, row.longitude)
+        map.glideTo(row.latitude, row.longitude)
     }
 
     /** Ищет на карте адреса тех касс, координат которых кабинет не дал. */

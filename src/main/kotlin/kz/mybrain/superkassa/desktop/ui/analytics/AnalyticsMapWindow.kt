@@ -8,6 +8,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.map.MapControls
 import kz.mybrain.superkassa.desktop.ui.map.MapMarks
@@ -37,7 +38,6 @@ internal fun MapWindow(
     modifier: Modifier = Modifier
 ) {
     val model = parts.model
-    val groups = parts.groups
     if (parts.placement.placed.isEmpty()) {
         val reason = emptyMapReason(parts.placement, model.sieve.set, parts.texts)
         EmptyState(
@@ -58,11 +58,7 @@ internal fun MapWindow(
             // Нажатие мимо ярлычка снимает выбор: раскрытое место
             // закрывается тем же способом, каким открылось.
             onTap = { _, _ -> model.forget() },
-            overlay = { canvas ->
-                MapMarks(model.map, canvas, groups.map { it.mark(model) }) { mark ->
-                    model.open(groups.first { it.id == mark.id })
-                }
-            }
+            overlay = { canvas -> MapOverlay(parts, canvas) }
         )
         MapControls(
             state = model.map,
@@ -77,5 +73,35 @@ internal fun MapWindow(
                 )
             }
         }
+    }
+}
+
+/**
+ * Что лежит поверх плиток: ярлычки мест, итог по видимому куску и легенда.
+ *
+ * Места отсеиваются по окну до того, как сложится хоть один ярлычок,
+ * и тем же отбором считается итог: на карте написано ровно то число,
+ * которое владелец сейчас видит кружками.
+ *
+ * Итог слева сверху, легенда слева снизу: справа стоит управление картой,
+ * а угол под ним занимает объяснение о неприехавших плитках.
+ */
+@Composable
+private fun MapOverlay(parts: MapParts, canvas: IntSize) {
+    val model = parts.model
+    val shown = onScreen(parts.groups, model.map, canvas)
+    MapMarks(model.map, canvas, kkmMarks(shown, model)) { mark ->
+        model.open(parts.groups.first { it.id == mark.id })
+    }
+    Box(Modifier.fillMaxSize()) {
+        MapTally(
+            shown = shown.sumOf { it.size },
+            placed = parts.placement.placed.size,
+            whole = parts.whole,
+            sieved = model.sieve.set,
+            texts = parts.texts,
+            modifier = Modifier.align(Alignment.TopStart).padding(Spacing.snug)
+        )
+        MapLegend(parts.legend, parts.texts, Modifier.align(Alignment.BottomEnd).padding(Spacing.snug))
     }
 }

@@ -49,6 +49,45 @@ class MapStateTest {
         assertTrue(state.marked)
     }
 
+    /**
+     * Переход к кассе объявляется целью, а не мгновенной перестановкой центра.
+     *
+     * Иначе карта прыгала бы от Уральска к Алматы за один кадр, и владелец
+     * терял бы, откуда она приехала.
+     */
+    @Test
+    fun `выбор кассы объявляет цель, а не переставляет карту`() {
+        val state = MapState()
+        val was = state.centerLatitude
+
+        state.glideTo(51.1801, 71.446)
+
+        assertEquals(51.1801, state.goal!!.latitude, 1e-6)
+        assertEquals(was, state.centerLatitude, 1e-9, "карта переставилась вместо перехода")
+    }
+
+    /** Рука владельца отменяет начатый переход: карта не уезжает из-под пальца. */
+    @Test
+    fun `перетаскивание отменяет начатый переход`() {
+        val state = MapState()
+        state.glideTo(51.1801, 71.446)
+
+        state.pan(10f, 10f)
+
+        assertEquals(null, state.goal)
+    }
+
+    /** Дойдя до цели, карта снимает её: переход не повторяется на следующем кадре. */
+    @Test
+    fun `по прибытии цель снимается`() {
+        val state = MapState()
+        state.glideTo(51.1801, 71.446)
+
+        state.arrived()
+
+        assertEquals(null, state.goal)
+    }
+
     @Test
     fun `своё место отмечается своим знаком, а не выбранной точкой`() {
         val state = MapState()
