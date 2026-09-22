@@ -36,6 +36,10 @@ import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
  * он сейчас или нет, а не выяснять это отказом. Переключатель один и назван
  * по тому, что произойдёт: два соседних «войти» и «выйти» заставляют читать
  * плашку, чтобы понять, какая из кнопок сейчас что-то изменит.
+ *
+ * Проверки гаснут, пока узел молчит: спрашивать о связи с БФД ту самую
+ * службу, которая не отвечает, незачем — кассир получал отказ после
+ * нажатия и узнавал из него ровно то, что и так видно по состоянию узла.
  */
 @Composable
 fun DiagnosticsCard(session: Session) {
@@ -53,7 +57,7 @@ fun DiagnosticsCard(session: Session) {
     }
 
     val programming = session.selected?.state == PROGRAMMING
-    val ready = session.selected != null && !busy
+    val ready = session.selected != null && !busy && session.nodeAvailable
 
     SectionCard(
         title = texts.settings.diagnostics,

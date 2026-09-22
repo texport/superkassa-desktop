@@ -35,19 +35,24 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Условие стоит под своей кнопкой, а не общим списком внизу: у сверки
  * сведений и сверки счётчиков требования разные, и общий список заставлял
  * бы вспоминать, какое из них к чему.
+ *
+ * Кнопка гаснет там, где узел заведомо откажет: пока он молчит, пока
+ * в очереди лежат неотправленные документы и — у сверки сведений —
+ * пока смена открыта. Условие написано под значком у той же кнопки,
+ * и отказ после нажатия не сообщал кассиру ничего нового.
  */
 @Composable
 fun OfdSyncCard(session: Session) {
     val money = moneyTexts(session.language).kkm
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
-    val ready = session.selected != null && !busy
+    val ready = session.selected != null && !busy && session.nodeAvailable && session.queueTasks.isEmpty()
 
     SectionCard(title = money.syncTitle, info = money.bfdMeaning) {
         SyncAction(
             title = money.syncService,
             hint = money.syncServiceHint,
-            enabled = ready,
+            enabled = ready && !session.shiftOpen,
             onClick = {
                 scope.launch {
                     busy = true
