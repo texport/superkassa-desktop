@@ -106,6 +106,23 @@ internal fun RefundHints(
     }
 }
 
+/**
+ * Строка о том, чем обернётся набранное, — приглушённой ролью.
+ *
+ * Это не ошибка ввода: набрано верно, но чек уйдёт не таким, каким его
+ * читает экран, или денег в ящике меньше, чем отдают покупателю. Красным
+ * такие строки не красят — красное кассир читает как поломку.
+ */
+@Composable
+internal fun RefundNote(text: String?) {
+    if (text == null) return
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
 private fun problemText(reason: RefundProblem, journal: ReturnJournalTexts): String = when (reason) {
     RefundProblem.Empty -> journal.amountEmpty
     RefundProblem.NotANumber -> journal.amountInvalid

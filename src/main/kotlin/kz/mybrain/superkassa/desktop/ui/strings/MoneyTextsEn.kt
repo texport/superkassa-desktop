@@ -20,10 +20,12 @@ internal val moneyTextsEn = MoneyTexts(
         cancel = "Cancel",
         working = "Processing…",
         recent = "Recent pay-ins and payouts",
-        recentHint = "The latest cash put in and taken out during this shift. They are not revenue, but they change what is in " +
+        recentHint = "Cash put in and taken out over the last day. They are not revenue, but they change what is in " +
             "the drawer — the closing reconciliation rests on them",
         recentEmpty = "No pay-ins or payouts in the last day",
-        recentEmptyHint = "Cash paid in and taken out appears here as soon as it goes through."
+        recentEmptyHint = "Cash paid in and taken out appears here as soon as it goes through.",
+        recentUnread = "The cash movements could not be read: the node did not answer.",
+        recentUnreadHint = "Read them again: while the node is silent, nothing is known about this day's pay-ins and payouts."
     ),
     cashiers = CashierTexts(
         addTitle = "New cashier",

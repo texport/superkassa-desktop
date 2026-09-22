@@ -3,9 +3,11 @@ package kz.mybrain.superkassa.desktop
 import java.math.BigDecimal
 import kz.mybrain.superkassa.desktop.server.ReceiptPayment
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.ui.returns.RefundAmount
 import kz.mybrain.superkassa.desktop.ui.returns.RefundProblem
 import kz.mybrain.superkassa.desktop.ui.returns.ReturnKind
+import kz.mybrain.superkassa.desktop.ui.returns.drawerShortage
 import kz.mybrain.superkassa.desktop.ui.returns.matches
 import kz.mybrain.superkassa.desktop.ui.returns.refundAmountOf
 import kz.mybrain.superkassa.desktop.ui.returns.refundLineName
@@ -93,6 +95,50 @@ class JournalRefundTest {
         assertNull(request?.items?.single()?.vatGroup, "ставку берёт касса: своя врала бы на кассе без НДС")
     }
 
+    /**
+     * Строки чека и оплата описывают одну и ту же сумму.
+     *
+     * Кассир отмечает позиции, поле заполняется их суммой — и поправить
+     * её он вправе. Прежде отмеченные позиции уходили в ОФД своими
+     * строками при любой набранной сумме: чек описывал строками десять
+     * тысяч, а оплатой пять, и принять такой чек ОФД не может.
+     */
+    @Test
+    fun `позиции уходят строками чека только вместе со своей суммой`() {
+        val basis = sale(number = 42, total = 150_000)
+        val returned = listOf(
+            SoldItem(name = "Баранина", price = BigDecimal("500.00"), quantityThousandths = 1_000, sum = BigDecimal("500.00")),
+            SoldItem(name = "Коньяк", price = BigDecimal("300.00"), quantityThousandths = 1_000, sum = BigDecimal("300.00"))
+        )
+
+        val matching = refundRequest(
+            basis = basis,
+            kgdKkmId = "123456789012",
+            refundTiyn = 80_000,
+            idempotencyKey = "key-1",
+            lineName = "Возврат по чеку № 42",
+            payments = listOf(ReceiptPayment("CASH", BigDecimal("800"))),
+            returned = returned
+        )
+        val edited = refundRequest(
+            basis = basis,
+            kgdKkmId = "123456789012",
+            refundTiyn = 50_000,
+            idempotencyKey = "key-2",
+            lineName = "Возврат по чеку № 42",
+            payments = listOf(ReceiptPayment("CASH", BigDecimal("500"))),
+            returned = returned
+        )
+
+        assertEquals(listOf("Баранина", "Коньяк"), matching?.items?.map { it.name })
+        assertEquals(
+            listOf("Возврат по чеку № 42"),
+            edited?.items?.map { it.name },
+            "поправленная сумма отправляла позиции на восемь тысяч с оплатой на пять"
+        )
+        assertEquals(0, BigDecimal("500").compareTo(edited?.items?.single()?.price))
+    }
+
     @Test
     fun `возврат по возврату не предлагается ни при каком условии`() {
         val documents = listOf(
@@ -117,6 +163,26 @@ class JournalRefundTest {
         assertTrue(ReturnKind.Buy.basisIn(documents).isEmpty())
     }
 
+    /**
+     * Отвергнутый ОФД чек фискальным не стал, и возврата по нему не будет.
+     *
+     * Такой чек стоял в списке оснований наравне с проведёнными, и кассир,
+     * выбрав его, отдавал деньги покупателю под чек возврата, который ОФД
+     * отвергнет следом за основанием.
+     */
+    @Test
+    fun `отвергнутый ОФД чек в основание не берётся`() {
+        val refusedByStatus = sale(number = 8).copy(ofdStatus = "FAILED")
+        val refusedByCode = sale(number = 9).copy(ofdErrorCode = 409)
+        val queued = sale(number = 10).copy(ofdStatus = "OFFLINE_QUEUED", isAutonomous = true)
+
+        assertEquals(
+            listOf(10L),
+            ReturnKind.Sell.basisIn(listOf(refusedByStatus, refusedByCode, queued)).map { it.docNo },
+            "автономный чек фискальный и в основание годится, а отвергнутого ОФД нет вовсе"
+        )
+    }
+
     @Test
     fun `чек без номера или без суммы в основание не годится`() {
         val documents = listOf(
@@ -127,6 +193,34 @@ class JournalRefundTest {
         assertTrue(
             ReturnKind.Sell.basisIn(documents).isEmpty(),
             "без номера и суммы чек-основание не собрать, а кнопка молчала бы"
+        )
+    }
+
+    /**
+     * Наличных в ящике меньше, чем отдают покупателю.
+     *
+     * Возврат продажи берёт деньги из того же ящика, из которого их
+     * изымают: изъятие сверх остатка касса не проводила, а возврат той же
+     * суммы отправляла молча — кассир называл покупателю сумму, которой
+     * в ящике нет.
+     */
+    @Test
+    fun `нехватка наличных на возврат названа до отправки`() {
+        val drawer = 100_000L
+
+        assertEquals(
+            drawer,
+            drawerShortage(ReturnKind.Sell, drawer, BigDecimal("1000.01")),
+            "возврат продажи деньги из ящика отдаёт, и нехватку надо назвать"
+        )
+        assertNull(drawerShortage(ReturnKind.Sell, drawer, BigDecimal("1000.00")), "ровно остаток — хватает")
+        assertNull(
+            drawerShortage(ReturnKind.Buy, drawer, BigDecimal("5000.00")),
+            "возврат покупки деньги принимает: ящику хватает всегда"
+        )
+        assertNull(
+            drawerShortage(ReturnKind.Sell, null, BigDecimal("5000.00")),
+            "неизвестный остаток о нехватке не свидетельствует"
         )
     }
 

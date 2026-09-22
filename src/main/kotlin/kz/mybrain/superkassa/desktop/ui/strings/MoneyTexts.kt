@@ -41,7 +41,17 @@ data class DrawerTexts(
     val recent: String,
     val recentHint: String,
     val recentEmpty: String,
-    val recentEmptyHint: String
+    val recentEmptyHint: String,
+
+    /**
+     * Движения наличных прочитать не удалось.
+     *
+     * Отдельно от «движений не было»: узел не ответил и о деньгах ящика
+     * не сказал ничего. Кассир, сводящий ящик при закрытии смены, читал
+     * молчание узла как утверждение, что денег никто не трогал.
+     */
+    val recentUnread: String,
+    val recentUnreadHint: String
 )
 
 /** Кассиры кассы и их пины. */

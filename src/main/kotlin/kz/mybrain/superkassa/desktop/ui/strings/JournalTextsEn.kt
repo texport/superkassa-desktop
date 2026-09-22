@@ -27,7 +27,10 @@ internal val journalTextsEn = JournalTexts(
         partialHint = "Part of a receipt can be refunded: enter an amount below the receipt total.",
         amountInvalid = "The amount is not a number — enter tenge and tiyn separated by a comma.",
         amountTooLarge = "Cannot refund more than the receipt total.",
-        amountEmpty = "Enter the refund amount."
+        amountEmpty = "Enter the refund amount.",
+        itemsIgnored = "The amount does not match the ticked lines: the refund goes as a single line for that amount.",
+        drawerShort = "The drawer holds only %s — that much cannot be refunded in cash. " +
+            "Pay cash in or refund part of it by another payment type."
     ),
     history = HistoryJournalTexts(
         byPeriod = "By period",

@@ -109,5 +109,5 @@ object CashRules {
     }
 
     /** Сумма в тиынах: остаток ящика узел хранит в них. */
-    fun tiynOf(amount: BigDecimal): Long = amount.movePointRight(Money.TIYN_SCALE).toLong()
+    fun tiynOf(amount: BigDecimal): Long = Money.tiynOf(amount)
 }

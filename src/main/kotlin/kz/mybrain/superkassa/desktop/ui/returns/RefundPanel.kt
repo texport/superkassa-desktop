@@ -34,6 +34,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
+import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -121,6 +122,10 @@ private fun RefundForm(
                 // не должен, а поправить поле по-прежнему может.
                 entered = tengeText(if (chosen.isEmpty()) total else chosenTiyn(items, chosen))
             }
+            // Отметки описывают чек возврата только тогда, когда сумма
+            // осталась их суммой: поправленное поле отправит одну строку.
+            val byTicks = chosen.isNotEmpty() && chosenTiyn(items, chosen) == readyTiyn(checked)
+            RefundNote(journal.itemsIgnored.takeIf { chosen.isNotEmpty() && !byTicks })
             RefundAmountRow(journal, entered, checked is RefundAmount.Rejected, { entered = it }) {
                 chosen = emptySet()
                 entered = tengeText(total)
@@ -128,7 +133,16 @@ private fun RefundForm(
             // Возврат отдают тем же набором, каким платили: часть на карту,
             // часть из ящика. Сумма разбивается от суммы возврата, а не от
             // итога чека-основания.
-            PaymentLines(session, split, refundSum)
+            // Почему вид оплаты в списке погас — теми же словами, что и на
+            // продаже: погасшая строка без объяснения читается как поломка.
+            PaymentLines(session, split, refundSum, saleTexts(session.language).paymentUnsupported)
+            // Деньги покупателю отдают из того же ящика, из которого их
+            // изымают: о нехватке говорится под видами оплаты и до выдачи,
+            // а не отказом узла после.
+            RefundNote(
+                drawerShortage(kind, session.cashInDrawer, split.cashSum(refundSum))
+                    ?.let { journal.drawerShort.format(Money.formatTiyn(it)) }
+            )
             RefundHints(journal, checked, split.issue(refundSum), paymentTexts(session.language))
         }
         Button(
@@ -155,6 +169,9 @@ private fun RefundForm(
 }
 
 private fun refundKey(): String = "desktop-return-${System.currentTimeMillis()}"
+
+/** Принятая сумма возврата в тиынах, а до её принятия — ноль. */
+private fun readyTiyn(checked: RefundAmount): Long = (checked as? RefundAmount.Ready)?.tiyn ?: 0L
 
 /** Вид оплаты возврата по умолчанию: чаще всего деньги отдают из ящика. */
 private const val CASH = "CASH"
