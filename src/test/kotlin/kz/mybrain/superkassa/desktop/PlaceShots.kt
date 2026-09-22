@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
+import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceSieve
 import kotlin.test.Test
 
 /**
@@ -79,7 +80,7 @@ class PlaceShots {
     @Test
     fun `поиск ничего не нашёл`() {
         val places = (1..TEN).map { PlaceLook.place(it) }
-        look("place-not-found", places, emptyList(), query = "ничего такого нет")
+        look("place-not-found", places, emptyList(), sieve = PlaceSieve(needle = "ничего такого нет"))
     }
 
     /** Свёрнутая колонка: рельс значков вместо пустоты. */
@@ -102,13 +103,13 @@ class PlaceShots {
         places: List<RetailPlace>,
         registers: List<CabinetRegister>,
         open: String? = null,
-        query: String = "",
+        sieve: PlaceSieve = PlaceSieve(),
         loading: Boolean = false,
         collapsed: Boolean = false,
         width: Int = WIDE,
         height: Int = HIGH
     ) {
-        RenderProbe(width, height) { PlacesLook(places, registers, open, query, loading, collapsed) }
+        RenderProbe(width, height) { PlacesLook(places, registers, open, sieve, loading, collapsed) }
             .use { probe ->
                 repeat(SETTLE) { probe.frame() }
                 Look.shot(name, probe.frame())

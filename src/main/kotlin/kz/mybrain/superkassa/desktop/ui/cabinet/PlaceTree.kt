@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,12 +41,14 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * @param language на каком языке показывать адрес точки: регистр отдаёт
  *   его и по-русски, и по-казахски.
- * @param rows готовые строки дерева: сузил ли их поиск, знает [placeRows].
+ * @param rows готовые строки дерева: что из них убрали поиск и отбор
+ *   и в каком они порядке, знает [placeRows].
  * @param total сколько точек у компании всего: по одному списку не видно,
  *   две их или две тысячи, а поиск без этого числа не отличает «нашлось
  *   три» от «их всего три».
  * @param loading ответа кабинета ещё не было: на месте строк ожидание.
  * @param trouble кабинет списка не отдал — его словами; `null` — отдал.
+ * @param locksKnown ответил ли кабинет, какие кассы заблокированы.
  * @param footer кнопки создания под списком.
  */
 @Composable
@@ -62,8 +62,9 @@ internal fun PlaceTree(
     loading: Boolean,
     trouble: String?,
     onRetry: () -> Unit,
-    query: String,
-    onQuery: (String) -> Unit,
+    sieve: PlaceSieve,
+    onSieve: (PlaceSieve) -> Unit,
+    locksKnown: Boolean,
     place: String?,
     register: String?,
     onPlace: (String) -> Unit,
@@ -80,11 +81,13 @@ internal fun PlaceTree(
             return@Column
         }
         SearchField(
-            value = query,
+            value = sieve.needle,
             label = texts.placeSearch,
-            onChange = onQuery,
-            modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen)
+            onChange = { onSieve(sieve.copy(needle = it)) },
+            modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen),
+            clearLabel = texts.sieve.clear
         )
+        PlaceSieveBar(texts, sieve, locksKnown, onSieve)
         val state = when {
             loading -> ScreenState.Working
             rows.isNotEmpty() -> ScreenState.Ready
@@ -92,7 +95,7 @@ internal fun PlaceTree(
             // дочитывание сороковой страницы, и прятать за ним первые
             // тридцать девять незачем.
             trouble != null -> ScreenState.Trouble(trouble, onRetry = onRetry)
-            else -> treeEmpty(texts, query)
+            else -> treeEmpty(texts, sieve)
         }
         // Счёт стоит над строками: без строк считать нечего, а над словами
         // отказа «Показано 0 из 1004» читается как потеря тысячи точек.
@@ -141,40 +144,6 @@ private fun TreeRows(
             }
         }
     }
-}
-
-/**
- * Сколько точек показано и сколько их всего.
- *
- * Пока поиск ничего не сузил, стоит одно число: владельцу сети важно
- * видеть, что кабинет отдал все две тысячи точек, а не первую страницу.
- * Как только поиск сузил список, рядом встаёт и общее число — иначе
- * «три точки» читается как всё хозяйство владельца.
- */
-@Composable
-private fun PlaceCount(texts: CabinetTexts, rows: List<PlaceRow>, total: Int) {
-    val shown = rows.count { it is PlaceRow.Point }
-    Text(
-        text = if (shown == total) "${texts.places}: $total" else texts.shownOf.format(shown, total),
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(start = Spacing.tight, end = Spacing.screen)
-    )
-}
-
-/**
- * Пусто по-разному: точек нет вовсе или их не нашёл поиск.
- *
- * Владельцу с пятьюстами точками «заведите первую точку» вместо ненайденного
- * говорит о его хозяйстве неправду.
- */
-private fun treeEmpty(texts: CabinetTexts, query: String): ScreenState.Empty {
-    val searching = query.isNotBlank()
-    return ScreenState.Empty(
-        icon = if (searching) AppIcons.find else AppIcons.newKkm,
-        title = if (searching) texts.placeNotFound else texts.placesEmpty,
-        hint = if (searching) texts.hints.placeNotFound else texts.hints.placesEmpty
-    )
 }
 
 /**

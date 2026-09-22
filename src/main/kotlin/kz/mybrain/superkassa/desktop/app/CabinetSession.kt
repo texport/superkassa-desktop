@@ -13,9 +13,11 @@ import kz.mybrain.superkassa.desktop.server.cabinet.CabinetCompany
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRefusal
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetUser
+import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.allRegisters
 import kz.mybrain.superkassa.desktop.server.cabinet.allRetailPlaces
+import kz.mybrain.superkassa.desktop.server.cabinet.cashRegisterMap
 import kz.mybrain.superkassa.desktop.server.cabinet.edsChallenge
 import kz.mybrain.superkassa.desktop.server.cabinet.edsLogin
 import kz.mybrain.superkassa.desktop.server.cabinet.logout
@@ -124,6 +126,7 @@ class CabinetSession(
         registers = emptyList()
         places = emptyList()
         placesTotal = 0
+        blockedRegisters = null
     }
 
     /**
@@ -162,6 +165,38 @@ class CabinetSession(
         }
         if (all != null) registers = all
         onRegisterNames?.invoke(registers)
+    }
+
+    /**
+     * Какие кассы кабинет считает заблокированными.
+     *
+     * `null` — не спрашивали или ответа не было. Отличать это от пустого
+     * набора обязательно: непрочитанное, выданное за «заблокированных
+     * нет», оставило бы владельца с пустым списком под нажатой плашкой.
+     */
+    var blockedRegisters: Set<String>? by mutableStateOf(null)
+        private set
+
+    /**
+     * Перечитывает блокировки касс.
+     *
+     * Отдельным обращением, потому что в списке касс блокировки нет
+     * вовсе: кабинет отдаёт её сводкой по всем кассам компании — той же,
+     * что рисует карту аналитики. Обращение одно на весь список, и стоит
+     * оно меньше, чем одна из сотни страниц самого списка.
+     *
+     * Молча: блокировок владелец не запрашивал, и отказ по ним не должен
+     * закрывать собой список точек, ради которого он сюда пришёл.
+     */
+    suspend fun refreshBlocked() {
+        val current = token ?: return
+        val view = quiet("cabinet blocked registers") {
+            client.cashRegisterMap(current, PositionSource.RetailPlaceAddress)
+        } ?: return
+        blockedRegisters = (view.placed + view.withoutPosition)
+            .filter { it.blocked }
+            .map { it.cashRegisterId }
+            .toSet()
     }
 
     /**

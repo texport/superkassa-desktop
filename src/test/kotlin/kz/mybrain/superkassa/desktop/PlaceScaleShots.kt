@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.ui.cabinet.ActionKind
 import kz.mybrain.superkassa.desktop.ui.cabinet.ApplicationFields
 import kz.mybrain.superkassa.desktop.ui.cabinet.DeregistrationReason
+import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceSieve
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -70,7 +71,7 @@ class PlaceScaleShots {
         shot("scale-places", WIDE, TALL) { PlacesLook(all, registers(all), open = "p3") }
         shot("scale-places-narrow", NARROW, SHORT) { PlacesLook(all, registers(all), open = "p3") }
         shot("scale-places-found", WIDE, TALL) {
-            PlacesLook(all, registers(all), open = "p3", query = "Абая 1999")
+            PlacesLook(all, registers(all), open = "p3", sieve = PlaceSieve(needle = "Абая 1999"))
         }
         val long = places(TWO_THOUSAND, long = true)
         shot("scale-places-long", WIDE, TALL) { PlacesLook(long, registers(long), open = "p3") }

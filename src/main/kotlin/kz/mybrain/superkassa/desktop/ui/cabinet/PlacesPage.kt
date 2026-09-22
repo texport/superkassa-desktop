@@ -39,7 +39,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * значков. Выбор помнится рабочим местом.
  *
  * Поиск сужает обе части списка сразу: у сети бывают сотни точек, и найти
- * среди них кассу глазами нельзя.
+ * среди них кассу глазами нельзя. Отбор и порядок — там же: пять тысяч
+ * касс, из которых на учёте единицы, поиском по названию не перебрать.
  */
 @Composable
 fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
@@ -47,7 +48,7 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     val places = cabinet.places
     var place by remember { mutableStateOf<String?>(null) }
     var register by remember { mutableStateOf<String?>(null) }
-    var query by remember { mutableStateOf("") }
+    var sieve by remember { mutableStateOf(PlaceSieve()) }
     // Первого ответа кабинета ещё не было: пустая колонка до него читалась
     // как «точек нет», хотя их просто ещё не спросили.
     var answered by remember(cabinet.token) { mutableStateOf(false) }
@@ -61,18 +62,28 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
         trouble = if (read) null else cabinet.problem?.let { cabinetMessage(it, texts).words() } ?: texts.unreachable
         cabinet.refreshRegisters()
         answered = true
+        // Блокировки — последними: список точек и касс уже на экране,
+        // а сводка по блокировкам нужна только плашке отбора.
+        cabinet.refreshBlocked()
     }
 
     LaunchedEffect(cabinet.token) { reload() }
 
     val refresh = { scope.launch { reload() } }
+    // Отбор и порядок считаются от прочитанного и от условий, а не на
+    // каждый кадр: две тысячи точек и пять тысяч касс пересобирались бы
+    // при каждом нажатии клавиши в любом поле экрана.
+    val locked = cabinet.blockedRegisters
+    val rows = remember(places, cabinet.registers, place, sieve, locked, session.language) {
+        placeRows(places, cabinet.registers, place, sieve, locked.orEmpty(), session.language)
+    }
     Row(modifier = Modifier.fillMaxSize()) {
         PlaceTree(
             texts = texts,
             language = session.language,
             collapsed = session.placesCollapsed,
             onToggle = { session.togglePlaces() },
-            rows = placeRows(places, cabinet.registers, place, query),
+            rows = rows,
             // Сколько точек у компании — по словам кабинета: пока список
             // дочитывается, прочитано меньше, и колонка об этом говорит.
             total = maxOf(places.size, cabinet.placesTotal),
@@ -83,8 +94,12 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
             // нет ни одной точки. Слова — те же, какими отказал кабинет.
             trouble = trouble,
             onRetry = { refresh() },
-            query = query,
-            onQuery = { query = it },
+            sieve = sieve,
+            onSieve = { sieve = it },
+            // Блокировку кабинет отдаёт не списком касс, а сводкой:
+            // до её ответа плашка блокировки погашена, а не обманывает
+            // пустым списком.
+            locksKnown = locked != null,
             place = place,
             register = register,
             onPlace = {
