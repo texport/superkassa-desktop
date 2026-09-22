@@ -129,6 +129,7 @@ internal val RussianStrings = AppStrings(
         barcodeSearching = "Ищется…",
         barcodeFind = "Найти",
         barcodeMissing = "В справочнике нет такого штрихкода — добавьте позицию вручную.",
+        barcodeUnavailable = "Справочник сейчас недоступен — добавьте позицию вручную.",
         domainKind = "Вид отрасли",
         accountNumber = "Номер счёта",
         cardNumber = "Номер карты",

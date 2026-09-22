@@ -39,9 +39,12 @@ import java.math.BigDecimal
  * [PriceAskDialog]. Позиция с ценой добавляется сразу, как и прежде:
  * кассир сканирует и продолжает, не отвлекаясь.
  *
+ * Ненайденный товар и неотвеченный справочник — разные беды, и говорят
+ * о них по-разному: см. [LookupProblem].
+ *
  * @param added сколько позиций уже встало в чек: любая добавленная
- *              позиция очищает поле и снимает «нет такого штрихкода» —
- *              товар заведён, и говорить о нём нечего.
+ *              позиция очищает поле и снимает надпись о беде — товар
+ *              заведён, и говорить о нём нечего.
  */
 @Composable
 fun BarcodeField(session: Session, added: Int, onFound: (Position) -> Unit) {
@@ -50,13 +53,13 @@ fun BarcodeField(session: Session, added: Int, onFound: (Position) -> Unit) {
     val scope = rememberCoroutineScope()
     var barcode by remember { mutableStateOf("") }
     var searching by remember { mutableStateOf(false) }
-    var notFound by remember { mutableStateOf(false) }
+    var problem by remember { mutableStateOf<LookupProblem?>(null) }
     var asking by remember { mutableStateOf<Position?>(null) }
 
     LaunchedEffect(added) {
         if (added > 0) {
             barcode = ""
-            notFound = false
+            problem = null
         }
     }
 
@@ -80,10 +83,7 @@ fun BarcodeField(session: Session, added: Int, onFound: (Position) -> Unit) {
                     else -> onFound(position)
                 }
                 if (position != null) barcode = ""
-                // Отсутствие в справочнике и молчание узла — разные беды:
-                // о второй кассиру говорит полоса сообщений, и повторять
-                // её здесь «нет такого штрихкода» значит соврать.
-                notFound = position == null && session.lastMessage == null
+                problem = if (position == null) lookupProblemOf(session) else null
                 searching = false
             }
         }
@@ -98,7 +98,7 @@ fun BarcodeField(session: Session, added: Int, onFound: (Position) -> Unit) {
             value = barcode,
             onValueChange = {
                 barcode = it.filter(Char::isDigit)
-                notFound = false
+                problem = null
             },
             label = { Text(texts.sale.barcode) },
             singleLine = true,
@@ -109,15 +109,17 @@ fun BarcodeField(session: Session, added: Int, onFound: (Position) -> Unit) {
             },
             modifier = Modifier.fillMaxWidth()
         )
+        val failed = problem
         Hint(
             problem = when {
                 kkm == null -> extra.blockNoKkm
-                notFound -> texts.sale.barcodeMissing
+                failed != null -> lookupProblemWords(failed, session, texts.sale)
                 else -> null
             },
             // Строка под полем говорит только о деле: идёт поиск, товар
-            // не найден, кассы нет. Про то, что сканер сам жмёт Enter,
-            // написано в подсказке заголовка — это правило, а не событие.
+            // не найден, справочник молчит, касса заблокирована, кассы нет.
+            // Про то, что сканер сам жмёт Enter, написано в подсказке
+            // заголовка — это правило, а не событие.
             hint = if (searching) texts.sale.barcodeSearching else null
         )
     }

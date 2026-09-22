@@ -9,10 +9,21 @@ import io.ktor.http.content.TextContent
  * Остальные обращения к узлу: номенклатура, печатные формы и повторная
  * отправка документов.
  */
+/**
+ * Позиция справочника по штрихкоду или `null`, если такой позиции в нём нет.
+ *
+ * `null` означает ровно одно: справочник ответил, и товара у него нет.
+ * Всё остальное — молчание узла, недоступный БФД, заблокированная касса —
+ * поднимается отказом. Прежде узел отвечал на эти беды тем же 404, и касса
+ * писала кассиру «нет такого штрихкода» о заведённом товаре.
+ */
 suspend fun ServerClient.lookupBarcode(kkmId: String, barcode: String, pin: String): NomenclatureItem? {
     val response = call(HttpMethod.Get, "/kkm/$kkmId/nomenclature/lookup?barcode=$barcode", null, pin)
-    if (response.status.value == NOT_FOUND) return null
-    if (response.status.value !in SUCCESS_RANGE) throw refusalOf(response)
+    if (response.status.value !in SUCCESS_RANGE) {
+        val refusal = refusalOf(response)
+        if (refusal.httpStatus == NOT_FOUND && refusal.code in ABSENT_CODES) return null
+        throw refusal
+    }
     val found = ServerClient.lenientJson.decodeFromString(
         NomenclatureLookup.serializer(),
         response.readRawBytes().decodeToString()
@@ -139,3 +150,13 @@ enum class PrintKind(val extension: String, val contentType: ContentType) {
 
 private const val NOT_FOUND = 404
 private val SUCCESS_RANGE = 200..299
+
+/**
+ * Чем узел называет отсутствие товара в справочнике.
+ *
+ * Два кода, потому что узел прежних выпусков отвечал общим `NOT_FOUND`:
+ * с ним касса продолжает работать, пока он не обновлён. Ненайденная касса
+ * отвечает своим кодом и сюда не попадает — иначе её отсутствие читалось бы
+ * как отсутствие товара.
+ */
+private val ABSENT_CODES = setOf("NOMENCLATURE_NOT_FOUND", "NOT_FOUND")
