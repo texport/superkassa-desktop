@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.ui.map.MapProjection
 import kz.mybrain.superkassa.desktop.ui.map.MapState
+import kz.mybrain.superkassa.desktop.ui.map.MapWheel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -85,5 +86,42 @@ class MapStateTest {
         state.pan(120f, -80f)
         assertEquals(43.238949, state.markerLatitude!!, 1e-9)
         assertEquals(76.889709, state.markerLongitude!!, 1e-9)
+    }
+
+    @Test
+    fun `приближение к указателю оставляет точку под ним на месте`() {
+        val state = MapState()
+        val dx = 150.0
+        val dy = -80.0
+        // Точка, стоявшая на 150 правее и 80 выше середины окна.
+        val pointX = MapProjection.xOf(state.centerLongitude, state.zoom) + dx
+        val pointY = MapProjection.yOf(state.centerLatitude, state.zoom) + dy
+        val latitude = MapProjection.latitudeOf(pointY, state.zoom)
+        val longitude = MapProjection.longitudeOf(pointX, state.zoom)
+        state.zoomAt(latitude, longitude, dx, dy, 2)
+        assertEquals(14, state.zoom)
+        val afterX = MapProjection.xOf(longitude, state.zoom) - MapProjection.xOf(state.centerLongitude, state.zoom)
+        val afterY = MapProjection.yOf(latitude, state.zoom) - MapProjection.yOf(state.centerLatitude, state.zoom)
+        assertEquals(dx, afterX, 1e-6, "точка уехала по горизонтали")
+        assertEquals(dy, afterY, 1e-6, "точка уехала по вертикали")
+    }
+
+    @Test
+    fun `приближение у предела не двигает карту`() {
+        val state = MapState()
+        repeat(10) { state.zoomBy(1) }
+        val longitude = state.centerLongitude
+        state.zoomAt(43.0, 77.0, 100.0, 100.0, 1)
+        assertEquals(18, state.zoom)
+        assertEquals(longitude, state.centerLongitude, 1e-9, "у предела шага нет — и сдвига быть не должно")
+    }
+
+    @Test
+    fun `доли хода колеса копятся до целого шага`() {
+        val wheel = MapWheel()
+        assertEquals(0, wheel.turn(-0.5f))
+        assertEquals(1, wheel.turn(-0.5f), "две доли по половине — один шаг приближения")
+        assertEquals(0, wheel.turn(-0.25f))
+        assertEquals(-2, wheel.turn(2.25f), "щелчок к себе отдаляет; остаток долей не пропадает")
     }
 }

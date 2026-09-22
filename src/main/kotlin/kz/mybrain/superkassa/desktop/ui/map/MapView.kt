@@ -23,6 +23,8 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
@@ -73,6 +75,7 @@ fun MapView(
     // Ни одной плитки не доехало: объяснение поверх пустого поля.
     // До первой попытки поле не объясняется — жаловаться ещё не на что.
     var blank by remember { mutableStateOf(false) }
+    val wheel = remember { MapWheel() }
 
     // Плитки берутся сразу несколькими, а не по одной вслед за другой.
     // Прежде они запрашивались подряд, и прокрутка открывала десяток
@@ -122,10 +125,31 @@ fun MapView(
             .pointerInput(state.zoom, canvas, onTap) {
                 detectTapGestures { at -> onTap?.let { state.tapped(canvas, at, it) } }
             }
+            .pointerInput(state, canvas) { zoomByWheel(state, canvas, wheel) }
     ) {
         MapCanvas(state, tiles, canvas, revision, paint)
         if (blank) BlankNotice(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.snug))
         overlay(canvas)
+    }
+}
+
+/**
+ * Колесо над картой приближает и отдаляет.
+ *
+ * Слушается само событие прокрутки, а не жест `scrollable`: у карты нет
+ * прокручиваемого содержимого, а есть увеличение, и «прокрутить» её
+ * значит приблизить. Событие съедается: над картой ему больше ничего
+ * двигать не нужно.
+ */
+private suspend fun PointerInputScope.zoomByWheel(state: MapState, canvas: IntSize, wheel: MapWheel) {
+    awaitPointerEventScope {
+        while (true) {
+            val event = awaitPointerEvent()
+            if (event.type != PointerEventType.Scroll) continue
+            val change = event.changes.first()
+            state.wheeled(canvas, change.position, wheel.turn(change.scrollDelta.y))
+            change.consume()
+        }
     }
 }
 

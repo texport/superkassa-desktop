@@ -73,6 +73,28 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
         zoom = (zoom + steps).coerceIn(MIN_ZOOM, MAX_ZOOM)
     }
 
+    /**
+     * Приближает или отдаляет к точке под указателем, а не к середине.
+     *
+     * Колесо крутят над домом, который хотят рассмотреть, и после шага
+     * он должен остаться под указателем: при приближении к середине дом
+     * уезжал за край, и владелец ловил его перетаскиванием.
+     *
+     * @param latitude широта под указателем.
+     * @param longitude долгота под указателем.
+     * @param dx на сколько точек указатель правее середины окна.
+     * @param dy на сколько точек указатель ниже середины окна.
+     */
+    fun zoomAt(latitude: Double, longitude: Double, dx: Double, dy: Double, steps: Int) {
+        val toZoom = (zoom + steps).coerceIn(MIN_ZOOM, MAX_ZOOM)
+        if (toZoom == zoom) return
+        zoom = toZoom
+        val x = MapProjection.xOf(longitude, zoom) - dx
+        val y = MapProjection.yOf(latitude, zoom) - dy
+        centerLongitude = MapProjection.longitudeOf(x, zoom)
+        centerLatitude = MapProjection.latitudeOf(y.coerceIn(0.0, MapProjection.world(zoom)), zoom)
+    }
+
     /** Ставит точку. Центр не двигается: карта под рукой владельца не должна прыгать. */
     fun mark(latitude: Double, longitude: Double) {
         markerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
