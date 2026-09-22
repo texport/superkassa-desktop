@@ -100,6 +100,14 @@ class JournalQueryTest {
     }
 
     @Test
+    fun `сумма находится и с тиынами, набранными через запятую`() {
+        // На экране и на чеке тиыны отделены запятой, а числом сумма
+        // хранится с точкой: «4500,00» не находилось ни тем, ни другим.
+        assertEquals(listOf("sale"), all.select(JournalQuery(search = "4500,00")).map { it.key })
+        assertEquals(listOf("sale"), all.select(JournalQuery(search = "4500.00")).map { it.key })
+    }
+
+    @Test
     fun `поиск идёт по фискальному признаку и по номеру`() {
         assertEquals(listOf("sale"), all.select(JournalQuery(search = "ab12")).map { it.key })
         assertEquals(listOf("refund"), all.select(JournalQuery(search = "13")).map { it.key })
