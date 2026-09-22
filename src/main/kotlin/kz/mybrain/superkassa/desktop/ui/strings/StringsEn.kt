@@ -76,6 +76,7 @@ internal val EnglishStrings = AppStrings(
         closeShiftExplain = "Documents in the shift: %s, %s in the drawer. The Z report goes to BFD and cannot be undone.",
         closeShiftCashout = "The remaining cash is withdrawn together with the report.",
         closeShiftKeepsCash = "The remaining cash stays in the drawer and carries over to the next shift.",
+        shiftTooLong = "The shift has been open for over a day: close it with a Z-report or the BFD blocks the register.",
         openShiftHint = "The shift is closed — open it to issue receipts",
         openShiftAdmin = "Only an administrator opens the shift — call them to start the day.",
         shiftOpened = "Shift opened",

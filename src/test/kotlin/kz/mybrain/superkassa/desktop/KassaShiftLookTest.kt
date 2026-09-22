@@ -37,10 +37,14 @@ class KassaShiftLookTest {
             shift = KassaScene.openShift(),
             documents = (1L..6L).map { sale(it, it * 120_000) }
         )
+        // Документы те же, что у обычной открытой смены: разниться эти два
+        // случая обязаны сроком смены, а не составом списка. С разными
+        // документами кадры отличались друг от друга и тогда, когда экран
+        // о вторых сутках смены не говорил ни слова.
         val dayLong = KassaScene.session(
             "shift-long",
             shift = KassaScene.openShift(openedAt = System.currentTimeMillis() - DAY - HOUR),
-            documents = (1L..3L).map { sale(it, it * 55_000) }
+            documents = (1L..6L).map { sale(it, it * 120_000) }
         )
         val blocked = KassaScene.session(
             "shift-blocked",

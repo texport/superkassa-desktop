@@ -38,6 +38,8 @@ data class DashboardStrings(
     val closeShiftCashout: String,
     /** Остаток наличных перейдёт в новую смену. */
     val closeShiftKeepsCash: String,
+    /** Смена идёт вторые сутки: по этому узел блокирует кассу. */
+    val shiftTooLong: String,
     val openShiftHint: String,
     val openShiftAdmin: String,
     val shiftOpened: String,

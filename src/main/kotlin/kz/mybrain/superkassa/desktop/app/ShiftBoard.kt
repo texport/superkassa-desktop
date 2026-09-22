@@ -46,6 +46,16 @@ class ShiftBoard {
     var number: Long? by mutableStateOf(null)
         private set
 
+    /**
+     * Когда смену открыли, по часам узла.
+     *
+     * Сутки открытой смены — причина, по которой узел блокирует кассу:
+     * кассир должен увидеть их подходящими, а не узнать о них из отказа
+     * на первом же чеке следующего утра.
+     */
+    var openedAt: Long? by mutableStateOf(null)
+        private set
+
     /** Открыта ли смена. Закрытая смена — обычное состояние кассы утром. */
     val open: Boolean get() = state == ShiftState.Open
 
@@ -92,6 +102,7 @@ class ShiftBoard {
     fun adoptShift(shift: Shift?) {
         state = if (shift?.status == OPEN_STATUS) ShiftState.Open else ShiftState.Closed
         number = shift?.shiftNo
+        openedAt = shift?.openedAt
         documentsRead = false
         if (state != ShiftState.Open) documents.clear()
     }
@@ -100,6 +111,7 @@ class ShiftBoard {
     fun forgetShift() {
         state = ShiftState.Unknown
         number = null
+        openedAt = null
         documents.clear()
         documentsRead = false
     }

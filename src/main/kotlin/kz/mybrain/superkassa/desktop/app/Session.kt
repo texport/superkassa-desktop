@@ -125,6 +125,9 @@ class Session(
 
     /** Номер смены, названный узлом. */
     val shiftNumber: Long? get() = board.number
+    /** Когда узел открыл смену; по суткам открытой смены он блокирует кассу. */
+    val shiftOpenedAt: Long? get() = board.openedAt
+
     val documents: List<Document> get() = board.documents
 
     /** Отвечал ли узел о документах смены: пустой список и молчание — разные вещи. */

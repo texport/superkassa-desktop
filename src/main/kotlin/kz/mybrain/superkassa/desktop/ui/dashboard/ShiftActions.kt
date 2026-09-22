@@ -96,6 +96,16 @@ internal fun ShiftActions(session: Session) {
                 }) { Text(texts.dashboard.openShift) }
             }
         }
+        // Сутки открытой смены — причина, по которой узел блокирует кассу.
+        // До правки об этом узнавали из отказа на первом чеке следующего
+        // утра: экран молчал о смене, идущей вторые сутки.
+        if (!blocked && shiftTooLong(session.shiftOpenedAt, System.currentTimeMillis())) {
+            Text(
+                texts.dashboard.shiftTooLong,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
         if (blocked) {
             // Причина блокировки — словами и с тем, что делать: одна фраза
             // на все случаи отправляла кассира с отозванным токеном
@@ -192,3 +202,16 @@ private suspend fun run(
     session.refreshKkms()
     session.refreshSelected()
 }
+
+/**
+ * Смена идёт дольше суток.
+ *
+ * Считается по часам узла, а не по сроку жизни экрана: смену открыли
+ * вчера и за машиной с тех пор сменился кассир. Ровно сутки — уже предел:
+ * по нему узел и блокирует кассу.
+ */
+internal fun shiftTooLong(openedAt: Long?, now: Long): Boolean =
+    openedAt != null && now - openedAt >= DAY
+
+/** Сутки в миллисекундах: столько узел держит смену открытой. */
+private const val DAY = 24L * 60 * 60 * 1000
