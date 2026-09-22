@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
@@ -17,18 +16,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshKkms
-import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.ConfirmDangerDialog
 import kz.mybrain.superkassa.desktop.ui.strings.KkmSetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
  * Снятие кассы с учёта.
@@ -48,13 +44,13 @@ fun DecommissionCard(session: Session) {
     val kkm = session.selected ?: return
     var asked by remember { mutableStateOf(false) }
 
-    val requirements = listOf(
-        money.needProgramming to (kkm.state == PROGRAMMING),
-        money.needShiftClosed to !session.shiftOpen,
-        money.needQueueEmpty to session.queueTasks.none { it.isWaiting },
-        money.needOnline to !kkm.isAutonomous
+    val needs = KkmSettingRules.decommission(
+        programming = kkm.state == PROGRAMMING,
+        shiftOpen = session.shiftOpen,
+        queueWaiting = session.queueTasks.any { it.isWaiting },
+        autonomous = kkm.isAutonomous
     )
-    val ready = requirements.all { it.second }
+    val ready = KkmSettingRules.met(needs)
 
     OutlinedCard(
         modifier = Modifier.fillMaxWidth(),
@@ -74,17 +70,7 @@ fun DecommissionCard(session: Session) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            // Требования переносятся, а не жмутся в строку: перенос
-            // оставляет на виду все четыре, в том числе невыполненное.
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-                verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
-                itemVerticalAlignment = Alignment.CenterVertically
-            ) {
-                requirements.forEach { (title, met) ->
-                    Chip(title, if (met) StatusColors.delivered else StatusColors.refused)
-                }
-            }
+            SettingRequirements(needs, money)
             OutlinedButton(
                 enabled = ready,
                 onClick = { asked = true },

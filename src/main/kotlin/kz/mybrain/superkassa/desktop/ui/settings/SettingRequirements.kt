@@ -33,11 +33,21 @@ internal fun SettingRequirements(needs: List<KkmNeed>, texts: KkmSetupTexts) {
     ) {
         needs.forEach { need ->
             Chip(
-                text = "${mark(need.met)}${Glyphs.NBSP}${need.demand.title(texts)}",
+                text = requirementLine(need, texts),
                 color = if (need.met) StatusColors.delivered else StatusColors.refused
             )
         }
     }
 }
 
-private fun mark(met: Boolean): String = if (met) Glyphs.MET else Glyphs.UNMET
+/**
+ * Надпись плашки: знак и требование.
+ *
+ * Собрана отдельно от рисования, чтобы проверять её без экрана: знак
+ * и есть то, чем выполненное требование отличается от невыполненного,
+ * когда цвет плашки совпал с основным тоном кассы.
+ */
+internal fun requirementLine(need: KkmNeed, texts: KkmSetupTexts): String {
+    val mark = if (need.met) Glyphs.MET else Glyphs.UNMET
+    return "$mark${Glyphs.NBSP}${need.demand.title(texts)}"
+}
