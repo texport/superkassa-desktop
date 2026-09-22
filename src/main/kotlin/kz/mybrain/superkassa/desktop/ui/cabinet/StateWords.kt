@@ -76,17 +76,28 @@ fun CabinetTexts.bfdSilenceHint(technical: TechnicalState?): String =
  * и владелец не видел, что кассу нужно возвращать заявлением.
  */
 private fun CabinetTexts.usableWords(claim: StateClaim, technical: TechnicalState?): String = when {
-    claim.source == StateSource.Cabinet -> recordWords(claim.usable)
+    claim.source == StateSource.Cabinet -> recordWords(claim.record)
     claim.usable == Verdict.Yes -> claimWorking
     claim.usable == Verdict.No -> claimBlocked
     claim.source == StateSource.Node -> claimNodeNoKkm
     else -> bfdSilenceWords(technical)
 }
 
-private fun CabinetTexts.recordWords(verdict: Verdict): String = when (verdict) {
-    Verdict.Yes -> claimOnRecord
-    Verdict.No -> claimOffRecord
-    Verdict.Unknown -> claimRecordUnread
+/**
+ * Что записано у КГД.
+ *
+ * Пять состояний учёта, а не «да и нет»: черновик, поданное заявление
+ * и отказ КГД сводились к одному «касса снята с учёта». О черновике,
+ * заведённом час назад, это неправда, а снятие с учёта владелец затевает
+ * сам — прочесть о нём там, где его не было, значит бежать разбираться.
+ */
+private fun CabinetTexts.recordWords(record: KkmRecord?): String = when (record) {
+    KkmRecord.OnRecord -> claimOnRecord
+    KkmRecord.Deregistered -> claimOffRecord
+    KkmRecord.Entered -> claimNotFiled
+    KkmRecord.Applied -> claimIsnaPending
+    KkmRecord.Refused -> claimIsnaRefused
+    null -> claimRecordUnread
 }
 
 /**

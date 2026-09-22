@@ -22,6 +22,14 @@ data class CabinetTexts(
     val signCancelled: String,
     val sessionExpired: String,
     val unreachable: String,
+
+    /**
+     * Кабинет ответил, но ответ не разобрался.
+     *
+     * Отдельно от молчания: под общими словами о недоступности разошедшийся
+     * договор выглядел обрывом связи, и искать его шли не там.
+     */
+    val unreadable: String,
     val address: String,
     val company: String,
     val bin: String,
@@ -209,6 +217,17 @@ data class CabinetTexts(
     val claimOnRecord: String,
     val claimOffRecord: String,
     val claimRecordUnread: String,
+
+    /**
+     * Что кабинет говорит о кассе, которой на учёте нет.
+     *
+     * Причин этому три, и владельцу они говорят разное: на учёт ещё
+     * не подавали, заявление рассматривают, в учёте отказано. Под общим
+     * «касса снята с учёта» они не различались вовсе.
+     */
+    val claimNotFiled: String,
+    val claimIsnaPending: String,
+    val claimIsnaRefused: String,
     val claimNodeNoKkm: String,
     val claimBfdNoKkm: String,
     val claimBfdNoAnswer: String,

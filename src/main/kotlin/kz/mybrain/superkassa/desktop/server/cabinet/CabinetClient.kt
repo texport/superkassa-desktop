@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.server.cabinet
 
 import io.ktor.client.HttpClient
+import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -18,6 +19,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
+import io.ktor.serialization.ContentConvertException
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -39,6 +41,16 @@ class CabinetRefusal(
     val text: String,
     val httpStatus: Int
 ) : Exception("$code: $text")
+
+/**
+ * Кабинет ответил, а прочитать ответ нечем.
+ *
+ * Так выглядит разошедшийся договор: поле сменило имя или тип, ответ
+ * пришёл успешным кодом и не разобрался. От недоступности службы это
+ * отличается всем, и сводить их к одному нельзя: владелец шёл проверять
+ * сеть и доступ к кабинету, который отвечает и работает.
+ */
+class CabinetUnreadable(path: String, cause: Throwable) : Exception("$path: ${cause.message}", cause)
 
 /**
  * Обмен с личным кабинетом ОФД.
@@ -75,7 +87,13 @@ class CabinetClient(
         if (!response.status.isSuccess()) {
             throw refusalOf(response)
         }
-        return response.body()
+        return try {
+            response.body()
+        } catch (mismatch: ContentConvertException) {
+            throw CabinetUnreadable(path, mismatch)
+        } catch (mismatch: NoTransformationFoundException) {
+            throw CabinetUnreadable(path, mismatch)
+        }
     }
 
     suspend fun call(
@@ -217,9 +235,17 @@ data class CabinetError(
     val title: String? = null,
     val errors: List<CabinetFieldError> = emptyList()
 ) {
+    /**
+     * Что сказать владельцу.
+     *
+     * Сказанное о полях идёт первым: на неверный ввод кабинет отвечает
+     * общим `detail` — «Validation failure», — а по существу говорит
+     * в `errors`, по-русски и про то поле, которое надо исправить.
+     * Владелец читал английское слово, не сообщавшее ему ничего.
+     */
     fun text(): String? {
         val fields = errors.mapNotNull { it.message }.joinToString("; ").takeIf { it.isNotBlank() }
-        return listOfNotNull(message, detail, fields, title).firstOrNull { it.isNotBlank() }
+        return listOfNotNull(fields, message, detail, title).firstOrNull { it.isNotBlank() }
     }
 }
 

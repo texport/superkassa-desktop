@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.ui.cabinet.ActionKind
 import kz.mybrain.superkassa.desktop.ui.cabinet.availableActions
+import kz.mybrain.superkassa.desktop.ui.cabinet.editableInCabinet
 import kz.mybrain.superkassa.desktop.ui.cabinet.noActionsReason
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
@@ -54,6 +55,33 @@ class CabinetRegistrationRulesTest {
     @Test
     fun `по снятой с учёта не подаётся ничего`() {
         assertEquals(emptySet(), availableActions(register("DEREGISTERED")))
+    }
+
+    /**
+     * Правка и удаление — пока в КГД по кассе ничего не ушло.
+     *
+     * Черновиком считалась любая касса без номера КГД. Номера нет и у той,
+     * чьё заявление КГД сейчас рассматривает: заводской номер у неё
+     * правился прямо в рассматриваемом заявлении, а кнопка удаления
+     * снимала кассу, о которой уже спрошено.
+     */
+    @Test
+    fun `касса с заявлением в работе не правится и не удаляется`() {
+        assertEquals(true, editableInCabinet(register("DRAFT")), "черновик перестал правиться")
+        assertEquals(
+            true,
+            editableInCabinet(register("REGISTRATION_IN_ISNA_ERROR")),
+            "после отказа КГД заводской номер не исправить"
+        )
+        listOf("REGISTRATION_IN_ISNA_PROCESS", "REREGISTRATION_IN_ISNA_PROCESS").forEach { status ->
+            assertEquals(false, editableInCabinet(register(status)), status)
+        }
+    }
+
+    @Test
+    fun `поставленная на учёт не правится`() {
+        val onRecord = CabinetRegister(id = "id", kkmId = 1, status = "REGISTERED", registrationNumber = "000000000001")
+        assertEquals(false, editableInCabinet(onRecord))
     }
 
     @Test

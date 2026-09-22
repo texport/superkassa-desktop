@@ -7,7 +7,6 @@ import kz.mybrain.superkassa.desktop.ui.components.StatusTone
 import kz.mybrain.superkassa.desktop.ui.components.toneColor
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.Language
-import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
  * Состояния кабинета словами и цветом.
@@ -65,13 +64,21 @@ fun statusWords(code: String, texts: CabinetTexts): String? = when (code.upperca
     else -> texts.statuses.inProcess.takeIf { code.endsWith(IN_PROCESS) }
 }
 
-/** Цвет состояния: сделано, законченное дело, отказ или ожидание. */
+/** Цвет состояния — по его роли, одной на всё приложение. */
 @Composable
-fun statusColor(code: String): Color = when {
-    code in DONE -> StatusColors.delivered
-    code in REFUSED -> StatusColors.refused
-    code in SETTLED -> toneColor(StatusTone.Idle)
-    else -> StatusColors.pending
+fun statusColor(code: String): Color = toneColor(statusTone(code))
+
+/**
+ * Роль состояния: сделано, законченное дело, отказ или ожидание.
+ *
+ * Отдельно от цвета, чтобы её можно было проверить: цвет берётся
+ * из схемы и живёт только внутри разметки.
+ */
+fun statusTone(code: String): StatusTone = when (code.uppercase()) {
+    in DONE -> StatusTone.Good
+    in REFUSED -> StatusTone.Bad
+    in SETTLED -> StatusTone.Idle
+    else -> StatusTone.Waiting
 }
 
 /** Действие названо словами, а не именем перечисления. */
@@ -116,13 +123,19 @@ private val REFUSED = setOf(
 )
 
 /**
- * Состояния законченного дела: не удача и не беда.
+ * Состояния покоя: не удача, не беда и не ожидание.
  *
  * Касса, снятая с учёта по заявлению самого владельца, стояла в списке
  * красной плашкой рядом с работающими — и выглядела сломанной. Снятие
  * с учёта владелец затеял сам и довёл до конца; чинить здесь нечего.
+ *
+ * Черновик — то же самое с другого конца жизни кассы: он никуда
+ * не подан, и ждать по нему нечего и некого. Жёлтым он читался как
+ * заявление в работе, а у сети показа черновиков три тысячи из трёх
+ * тысяч трёхсот — колонка стояла жёлтой сверху донизу рядом с тремя
+ * кассами, по которым КГД и правда думает.
  */
-private val SETTLED = setOf("DEREGISTERED")
+private val SETTLED = setOf("DEREGISTERED", "DRAFT")
 
 /** Хвост кодов, означающих ожидание ответа ИСНА. */
 private const val IN_PROCESS = "_IN_ISNA_PROCESS"

@@ -35,6 +35,16 @@ class DocumentListState {
     var loading: Boolean by mutableStateOf(false)
         private set
 
+    /**
+     * Кабинет страницы не отдал — его словами; `null` — отдал.
+     *
+     * Отказ держится здесь, а не берётся у сеанса: помеху сеанса каркас
+     * окна забирает во всплывающую строку и тут же гасит, а список
+     * обязан называть причину, пока строк на экране нет.
+     */
+    var trouble: String? by mutableStateOf(null)
+        private set
+
     /** Есть ли ещё непрочитанные строки. */
     val hasMore: Boolean get() = loaded.size < total
 
@@ -53,6 +63,7 @@ class DocumentListState {
         total = 0
         page = 0
         loading = false
+        trouble = null
     }
 
     /**
@@ -76,7 +87,11 @@ class DocumentListState {
         } finally {
             loading = false
         }
-        if (slice == null) return
+        if (slice == null) {
+            trouble = cabinet.problem?.let { cabinetMessage(it, texts).words() } ?: texts.unreachable
+            return
+        }
+        trouble = null
         loaded.addAll(slice.rows)
         total = slice.total
         page += 1

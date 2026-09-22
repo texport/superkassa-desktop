@@ -28,6 +28,7 @@ fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Message = when
     // только кабинет. Поэтому здесь стоят слова самого кабинета, а код
     // остаётся своим — поддержка по нему отличает молчание от отказа.
     is CabinetProblem.Unreachable -> Message.Refusal(texts.unreachable, UNREACHABLE)
+    CabinetProblem.Unreadable -> Message.Refusal(texts.unreadable, UNREADABLE)
     CabinetProblem.NoNcaLayer -> Message.Refusal(texts.noNcaLayer, NCALAYER)
     is CabinetProblem.SignDeclined -> Message.Refusal(signWords(problem.detail, texts), SIGN)
     CabinetProblem.SessionExpired -> Message.Refusal(texts.sessionExpired, EXPIRED)
@@ -75,3 +76,4 @@ private const val NCALAYER = "NCALAYER"
 private const val SIGN = "SIGN"
 private const val EXPIRED = "SESSION_EXPIRED"
 private const val UNREACHABLE = "CABINET_UNREACHABLE"
+private const val UNREADABLE = "CABINET_UNREADABLE"

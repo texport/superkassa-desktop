@@ -58,5 +58,18 @@ fun awaitingIsna(register: CabinetRegister): Boolean = register.status.endsWith(
  */
 fun tokenAllowed(register: CabinetRegister): Boolean = onRecord(register.status)
 
+/**
+ * Правится ли касса в кабинете: заводской номер и удаление.
+ *
+ * Правится та, по которой в КГД ещё ничего не ушло, — и та, которой
+ * КГД отказал: её заводской номер и надо исправить, чтобы подать
+ * заявление заново. Прежде здесь стояло одно условие — нет номера КГД, —
+ * а номера нет и у кассы, чьё заявление КГД сейчас рассматривает:
+ * заводской номер правился прямо в рассматриваемом заявлении, а кнопка
+ * удаления снимала кассу, о которой уже спрошено.
+ */
+fun editableInCabinet(register: CabinetRegister): Boolean =
+    !awaitingIsna(register) && register.registrationNumber.isNullOrBlank()
+
 /** Хвост состояний, означающих ожидание ответа ИСНА. */
 private const val IN_ISNA_PROCESS = "_IN_ISNA_PROCESS"

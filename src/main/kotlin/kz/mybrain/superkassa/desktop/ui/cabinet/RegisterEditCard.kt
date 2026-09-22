@@ -50,7 +50,7 @@ fun RegisterEditCard(
     onChanged: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val draft = register.registrationNumber.isNullOrBlank()
+    val draft = editableInCabinet(register)
 
     EditRow(
         label = texts.internalName,

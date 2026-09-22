@@ -6,6 +6,7 @@ import kz.mybrain.superkassa.desktop.app.log.LogSource
 import kz.mybrain.superkassa.desktop.eds.EdsProblem
 import kz.mybrain.superkassa.desktop.eds.EdsRefusal
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRefusal
+import kz.mybrain.superkassa.desktop.server.cabinet.CabinetUnreadable
 
 /**
  * Помеха в кабинете: что именно не получилось и как это узнаётся.
@@ -24,6 +25,15 @@ sealed interface CabinetProblem {
 
     /** Кабинет не отвечает по заданному адресу. */
     data class Unreachable(val reason: String) : CabinetProblem
+
+    /**
+     * Кабинет ответил, но прочитать ответ нечем.
+     *
+     * Так выглядит разошедшийся договор: поле сменило имя или тип. Это
+     * не молчание службы, и говорить о нём словами молчания нельзя —
+     * владелец идёт проверять сеть и доступ к службе, которая отвечает.
+     */
+    data object Unreadable : CabinetProblem
 
     /** NCALayer не запущен на этой машине. */
     data object NoNcaLayer : CabinetProblem
@@ -77,5 +87,8 @@ internal fun Exception.asCabinetProblem(): CabinetProblem {
         text = "кабинет: ${this::class.simpleName}",
         body = message
     )
+    // Неразобранный ответ — не молчание службы: она ответила, и искать
+    // надо расхождение договора, а не обрыв связи.
+    if (this is CabinetUnreadable) return CabinetProblem.Unreadable
     return CabinetProblem.Unreachable(this::class.simpleName.orEmpty().take(CabinetProblem.MAX_REASON))
 }

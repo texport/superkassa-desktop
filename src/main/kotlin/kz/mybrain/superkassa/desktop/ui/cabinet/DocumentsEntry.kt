@@ -5,6 +5,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
@@ -12,6 +13,16 @@ import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+
+/**
+ * Кому открывать документы кассы.
+ *
+ * Экран документов стоит над кабинетом целиком, а кнопка перехода лежит
+ * в карточке кассы — до неё от кабинета три вложения. Поэтому переход
+ * отдаётся через окружение, как язык и словари, а не протягивается
+ * обработчиком через каждый промежуточный экран.
+ */
+val LocalRegisterDocuments = staticCompositionLocalOf<(CabinetRegister) -> Unit> { {} }
 
 /**
  * Переход к документам кассы из её карточки.

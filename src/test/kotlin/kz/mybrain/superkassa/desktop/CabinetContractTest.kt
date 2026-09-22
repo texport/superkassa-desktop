@@ -166,6 +166,27 @@ class CabinetContractTest {
         assertTrue(!seenHeaders["Idempotency-Key"].isNullOrBlank())
     }
 
+    /**
+     * Отказ по полю: кабинет называет поле и говорит о нём по-русски,
+     * а в `detail` ставит общее «Validation failure».
+     *
+     * Так он отвечает на неверный ввод — длину, диапазон, формат номера, —
+     * и общее английское слово владельцу не говорит ничего: чинить нужно
+     * то поле, о котором сказано в `errors`.
+     */
+    @Test
+    fun `отказ по полю доходит словами о поле, а не общим Validation failure`() {
+        val client = clientReturning(
+            """{"detail":"Validation failure","instance":"/api/cash-registers","status":400,
+               "title":"Bad Request","errors":[{"field":"factoryNumber","message":"Заводской номер занят"}],
+               "code":"VALIDATION_ERROR","timestamp":"2026-09-17T12:27:57Z","traceId":"05ba"}""",
+            HttpStatusCode.BadRequest
+        )
+        val refusal = assertFailsWith<CabinetRefusal> { runBlocking { client.register("development", "x") } }
+        assertEquals("VALIDATION_ERROR", refusal.code)
+        assertEquals("Заводской номер занят", refusal.text)
+    }
+
     @Test
     fun `отказ кабинета читается из detail по RFC 9457`() {
         val client = clientReturning(
