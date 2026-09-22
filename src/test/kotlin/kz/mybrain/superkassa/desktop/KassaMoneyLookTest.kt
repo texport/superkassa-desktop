@@ -122,23 +122,22 @@ class KassaMoneyLookTest {
             },
             "node-silent" to KassaScene.shot("return-node-silent") {
                 ReturnsScreen(
-                    KassaScene.session("ret-silent", shift = KassaScene.openShift(), available = false)
+                    KassaScene.session(
+                        "ret-silent",
+                        shift = KassaScene.openShift(),
+                        available = false,
+                        journalAnswered = false
+                    )
                 )
             }
         )
 
         frames.forEach { (name, frame) -> assertTrue(frame.isNotEmpty(), "пустой кадр: $name") }
-        // Молчащий узел выглядит так же, как день без продаж: экран не знает,
-        // отказал узел или продаж в самом деле не было. Слова поэтому говорят
-        // только о том, что узел не отдал основания, и не обещают кассиру,
-        // что продаж в этот день не случилось.
+        // Молчащий узел входит в набор наравне с остальными: кассир при
+        // покупателе с чеком в руках читал «подходящих чеков-оснований нет»
+        // как отказ в возврате, а узел о чеках покупателя ничего не сказал.
         assertTrue(
-            listOf(
-                frames.getValue("shift-closed"),
-                frames.getValue("kkm-blocked"),
-                frames.getValue("no-basis"),
-                frames.getValue("basis-list")
-            ).map { it.toList() }.distinct().size == 4,
+            frames.values.map { it.toList() }.distinct().size == frames.size,
             "состояния возврата неотличимы друг от друга"
         )
     }

@@ -43,15 +43,22 @@ fun PastShiftsView(session: Session) {
     val shifts = remember { mutableStateListOf<Shift>() }
     val documents = remember { mutableStateListOf<Document>() }
     var openId by remember { mutableStateOf<String?>(null) }
-    var loading by remember { mutableStateOf(false) }
-    var more by remember { mutableStateOf(false) }
+    // Чтение начинается вместе с экраном, поэтому ожидание стоит с первого
+    // кадра: иначе пустой список успевал мелькнуть объяснением пустоты.
+    var loading by remember { mutableStateOf(true) }
+    // Чем кончилось чтение смен: прочитаны ли они и есть ли за страницей ещё.
+    var page by remember { mutableStateOf(PageOutcome.unread) }
     val scope = rememberCoroutineScope()
+
+    suspend fun read() {
+        loading = true
+        page = loadShifts(session, journal.title, shifts)
+        loading = false
+    }
 
     LaunchedEffect(session.selected?.kkmId) {
         shifts.clear()
-        loading = true
-        more = loadShifts(session, journal.title, shifts)
-        loading = false
+        read()
     }
     // Документы смены узел отдаёт отдельным обращением: до ответа список
     // пуст, и «документов нет» про смену с сотней чеков — неправда.
@@ -79,14 +86,9 @@ fun PastShiftsView(session: Session) {
                 journal = journal,
                 shifts = shifts,
                 loading = loading,
-                more = more,
-                onMore = {
-                    scope.launch {
-                        loading = true
-                        more = loadShifts(session, journal.title, shifts)
-                        loading = false
-                    }
-                },
+                page = page,
+                onMore = { scope.launch { read() } },
+                onRetry = { scope.launch { read() } },
                 onOpen = { openId = it.id }
             ) { shift ->
                 session.printDesk.previewDocument(
@@ -107,16 +109,13 @@ private fun ColumnScope.ShiftList(
     journal: ShiftJournalTexts,
     shifts: List<Shift>,
     loading: Boolean,
-    more: Boolean,
+    page: PageOutcome,
     onMore: () -> Unit,
+    onRetry: () -> Unit,
     onOpen: (Shift) -> Unit,
     onZReport: (Shift) -> Unit
 ) {
-    val state = when {
-        loading -> ScreenState.Working
-        shifts.isEmpty() -> ScreenState.Empty(AppIcons.noDocuments, journal.none, journal.noneHint)
-        else -> ScreenState.Ready
-    }
+    val state = shiftsState(journal, shifts.size, loading, page, onRetry)
     ScreenSlot(state, Modifier.weight(1f)) {
         ScrollableList(modifier = Modifier.weight(1f)) {
             itemsIndexed(shifts) { at, shift ->
@@ -125,21 +124,45 @@ private fun ColumnScope.ShiftList(
         }
         // Под списком видно, кончились ли смены: молчание внизу не отличает
         // «всё» от «оборвалось на двухсотой».
-        MoreRow(more, loading, journal.showMore, journal.allShown, onMore = onMore)
+        MoreRow(page.more, loading, journal.showMore, journal.allShown, onMore = onMore)
     }
+}
+
+/**
+ * Что стоит на месте списка смен.
+ *
+ * «Смен нет» — утверждение о кассе, и говорить его можно только вслед
+ * за ответом узла. Узел, который отказал или промолчал, о сменах ничего
+ * не сказал: кассир, пришедший за Z-отчётом позавчерашней смены, читал
+ * его молчание как утрату смены.
+ */
+internal fun shiftsState(
+    journal: ShiftJournalTexts,
+    shifts: Int,
+    loading: Boolean,
+    page: PageOutcome,
+    onRetry: () -> Unit
+): ScreenState = when {
+    loading -> ScreenState.Working
+    // Прочитанные прежде смены остаются на месте: неудача дочитывания
+    // не повод убирать с экрана то, что кассир уже видит.
+    !page.read && shifts == 0 -> ScreenState.Trouble(journal.unread, journal.unreadHint, onRetry)
+    shifts == 0 -> ScreenState.Empty(AppIcons.noDocuments, journal.none, journal.noneHint)
+    else -> ScreenState.Ready
 }
 
 /**
  * Дочитывает смены с того места, где остановились.
  *
- * @return есть ли за пришедшей страницей ещё смены.
+ * @return прочитаны ли смены и есть ли за пришедшей страницей ещё —
+ *   два разных сведения, см. [PageOutcome].
  */
-private suspend fun loadShifts(session: Session, what: String, into: MutableList<Shift>): Boolean {
-    val kkm = session.selected ?: return false
+private suspend fun loadShifts(session: Session, what: String, into: MutableList<Shift>): PageOutcome {
+    val kkm = session.selected ?: return PageOutcome.unread
     val loaded = session.guard(what) { session.client.shifts(kkm.kkmId, session.pin, into.size) }
-        ?: return false
+        ?: return PageOutcome.unread
     into.addAll(loaded)
-    return loaded.size == SHIFT_PAGE
+    return PageOutcome.page(loaded.size == SHIFT_PAGE)
 }
 
 /** Вид документа закрытия смены, как его называет узел. */

@@ -73,22 +73,23 @@ private fun deliveryOf(document: Document): JournalDelivery? = when {
  * запросом узел их не отдаёт. Срок без границ читается с начала записей
  * узла и до конца сегодняшнего дня.
  *
- * @return есть ли за пришедшей страницей ещё документы.
+ * @return прочитан ли срок и есть ли за пришедшей страницей ещё
+ *   документы — два разных сведения, см. [PageOutcome].
  */
 internal suspend fun loadPeriod(
     session: Session,
     what: String,
     period: JournalPeriod,
     into: MutableList<Document>
-): Boolean {
-    val kkm = session.selected ?: return false
+): PageOutcome {
+    val kkm = session.selected ?: return PageOutcome.unread
     val from = period.range?.fromMillis() ?: FIRST_RECORD
     val to = period.range?.toMillis() ?: dayRange(LocalDate.now()).toMillis
     val loaded = session.guard(what) {
         session.client.documents(kkm.kkmId, from, to, session.pin, into.size)
-    } ?: return false
+    } ?: return PageOutcome.unread
     into.addAll(loaded)
-    return loaded.size == PAGE
+    return PageOutcome.page(loaded.size == PAGE)
 }
 
 /** Ответ ОФД: документ отвергнут. */
