@@ -77,6 +77,7 @@ fun ReceiptPreview(
 ) {
     if (image == null && !drawing) return
     val texts = LocalStrings.current.preview
+    CloseOnEscape(onDismiss)
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)

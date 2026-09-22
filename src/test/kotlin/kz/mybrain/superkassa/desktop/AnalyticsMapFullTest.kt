@@ -1,14 +1,14 @@
 package kz.mybrain.superkassa.desktop
 
-import androidx.compose.ui.input.key.Key
 import kz.mybrain.superkassa.desktop.app.Preferences
+import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapCard
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapFullscreen
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsPinCard
 import kz.mybrain.superkassa.desktop.ui.analytics.MapParts
 import kz.mybrain.superkassa.desktop.ui.analytics.Placement
+import kz.mybrain.superkassa.desktop.ui.components.EscapeCloses
 import kz.mybrain.superkassa.desktop.ui.map.MapServices
-import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
@@ -87,8 +87,9 @@ class AnalyticsMapFullTest {
             panel.toggle()
             repeat(SETTLE) { probe.frame() }
             Look.shot("an-map-fullscreen-chosen", probe.frame())
-            // Ни одного нажатия мышью до Escape: фокус окно берёт само.
-            probe.key(Key.Escape)
+            // Escape слушает само окно, а не наложение: в сцене без окна
+            // нажатие приходит тем же путём — через учёт открытых наложений.
+            assertTrue(EscapeCloses.press(), "карта не записалась как открытое наложение")
         }
         assertEquals(1, closed, "Escape не закрыл карту во всё окно")
     }

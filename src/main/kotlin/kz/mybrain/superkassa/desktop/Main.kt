@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -22,6 +24,8 @@ import kz.mybrain.superkassa.desktop.app.rememberWindowSize
 import kz.mybrain.superkassa.desktop.app.rememberedWindowSize
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.Shell
+import kz.mybrain.superkassa.desktop.ui.components.EscapeCloses
+import kz.mybrain.superkassa.desktop.ui.components.escapePressed
 import kz.mybrain.superkassa.desktop.ui.debug.LogWindow
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -84,7 +88,10 @@ private fun ApplicationScope.SuperkassaApplication() {
     Window(
         onCloseRequest = ::exitApplication,
         title = APP_NAME,
-        state = windowState
+        state = windowState,
+        // Escape слушает само окно: наложения его не получали — фокус
+        // оставался в разделе под ними. Кто закрывается — в [EscapeCloses].
+        onPreviewKeyEvent = { event -> escapePressed(event.type, event.key) && EscapeCloses.press() }
     ) {
         SuperkassaTheme(session.appearance, session.look) {
             ProvideStrings(session.language) {

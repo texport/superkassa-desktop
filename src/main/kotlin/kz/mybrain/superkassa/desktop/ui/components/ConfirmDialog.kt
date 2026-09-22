@@ -32,6 +32,7 @@ fun ConfirmDangerDialog(
     onCancel: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    CloseOnEscape(onCancel)
     AlertDialog(
         onDismissRequest = onCancel,
         icon = {

@@ -43,6 +43,7 @@ fun FormDialog(
     onAction: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    CloseOnEscape { if (!busy) onDismiss() }
     AlertDialog(
         onDismissRequest = { if (!busy) onDismiss() },
         properties = DialogProperties(usePlatformDefaultWidth = false),
