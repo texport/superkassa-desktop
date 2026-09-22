@@ -56,11 +56,20 @@ class AnalyticsSalesModel(private val cabinet: CabinetSession, val register: Str
     var loading: Boolean by mutableStateOf(false)
         private set
 
-    /** Спрашивает кабинет обо всём сроке разом. */
+    /**
+     * Спрашивает кабинет обо всём сроке разом.
+     *
+     * Справочник торговых точек читается здесь же, и только если его
+     * ещё нет. Он нужен своду по регионам: регион стоит в адресе точки,
+     * а в строках сводки адреса нет. Читал его прежде только раздел
+     * торговых точек кабинета, и у владельца, открывшего аналитику
+     * первой, свод сходился в одну строку «Без адреса» на всю сеть.
+     */
     suspend fun load() {
         val token = cabinet.token ?: return
         loading = true
         trouble = null
+        if (cabinet.places.isEmpty()) cabinet.refreshPlaces()
         askedCabinet { ask(token, salesFilter(period, register)) }
             .onSuccess { view = it }
             .onFailure {
