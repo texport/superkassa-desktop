@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.ShiftState
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Kkm
@@ -52,6 +53,7 @@ data class KkmStatusWords(
     val autonomous: String,
     val shiftOpen: String,
     val shiftClosed: String,
+    val shiftUnknown: String,
     val nodeOnline: String,
     val nodeOffline: String
 )
@@ -70,23 +72,29 @@ data class KkmStatusWords(
  */
 fun kkmStatusChips(
     kkm: Kkm?,
-    shiftOpen: Boolean,
+    shift: ShiftState,
     nodeAvailable: Boolean,
     words: KkmStatusWords
 ): List<KkmStatusChip> = listOfNotNull(
     kkm?.let { KkmStatusChip(words.state, stateTone(it.isBlocked, it.isProgramming)) },
     kkm?.takeIf { it.isAutonomous }?.let { KkmStatusChip(words.autonomous, StatusTone.Waiting) },
-    kkm?.let { shiftChip(shiftOpen, words) },
+    kkm?.let { shiftChip(shift, words) },
     nodeChip(nodeAvailable, words)
 )
 
-/** Смена открыта или закрыта: закрытая — ожидание, а не отказ. */
-private fun shiftChip(open: Boolean, words: KkmStatusWords): KkmStatusChip =
-    if (open) {
-        KkmStatusChip(words.shiftOpen, StatusTone.Good)
-    } else {
-        KkmStatusChip(words.shiftClosed, StatusTone.Waiting)
-    }
+/**
+ * Состояние смены словами узла, и «неизвестно» — одно из них.
+ *
+ * Плашка знала два состояния из трёх и неизвестное называла закрытым:
+ * у кассы, о смене которой узел молчит, шапка писала «Смена закрыта»
+ * над сменой, которую узел держит открытой, — а рядом на главном экране
+ * та же смена стояла «Неизвестна». Закрытая смена — ожидание, а не отказ.
+ */
+private fun shiftChip(shift: ShiftState, words: KkmStatusWords): KkmStatusChip = when (shift) {
+    ShiftState.Open -> KkmStatusChip(words.shiftOpen, StatusTone.Good)
+    ShiftState.Closed -> KkmStatusChip(words.shiftClosed, StatusTone.Waiting)
+    ShiftState.Unknown -> KkmStatusChip(words.shiftUnknown, StatusTone.Waiting)
+}
 
 /** Связь с узлом: без неё касса не примет ни одной команды — это отказ. */
 private fun nodeChip(available: Boolean, words: KkmStatusWords): KkmStatusChip =
@@ -112,7 +120,7 @@ private fun nodeChip(available: Boolean, words: KkmStatusWords): KkmStatusChip =
 fun KkmStatusChips(session: Session) {
     val chips = kkmStatusChips(
         kkm = session.selected,
-        shiftOpen = session.shiftOpen,
+        shift = session.shiftState,
         nodeAvailable = session.nodeAvailable,
         words = statusWords(session)
     )
@@ -135,6 +143,7 @@ private fun statusWords(session: Session): KkmStatusWords {
         autonomous = texts.shell.autonomous,
         shiftOpen = core.shiftOpenShort,
         shiftClosed = core.shiftClosedShort,
+        shiftUnknown = core.shiftUnknownShort,
         nodeOnline = texts.common.nodeOnline,
         nodeOffline = texts.common.nodeOffline
     )

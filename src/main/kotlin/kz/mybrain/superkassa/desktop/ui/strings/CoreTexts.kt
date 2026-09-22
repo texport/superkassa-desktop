@@ -17,28 +17,40 @@ data class CoreTexts(
 
     /** Смена и её состояние в шапке. */
     val shiftOpenShort: String,
-    val shiftClosedShort: String
+    val shiftClosedShort: String,
+
+    /**
+     * Узел состояние смены не назвал.
+     *
+     * Третье слово здесь не лишнее: «Смена закрыта» на месте неизвестности
+     * толкает кассира открыть смену, которую узел, возможно, уже держит
+     * открытой, — и он получает отказ вместо начала дня.
+     */
+    val shiftUnknownShort: String
 )
 
 internal val coreTextsRu = CoreTexts(
     details = "Подробности",
     kgdNumber = "Регистрационный номер КГД",
     shiftOpenShort = "Смена открыта",
-    shiftClosedShort = "Смена закрыта"
+    shiftClosedShort = "Смена закрыта",
+    shiftUnknownShort = "Смена неизвестна"
 )
 
 internal val coreTextsKk = CoreTexts(
     details = "Толығырақ",
     kgdNumber = "МКК берген тіркеу нөмірі",
     shiftOpenShort = "Ауысым ашық",
-    shiftClosedShort = "Ауысым жабық"
+    shiftClosedShort = "Ауысым жабық",
+    shiftUnknownShort = "Ауысым белгісіз"
 )
 
 internal val coreTextsEn = CoreTexts(
     details = "Details",
     kgdNumber = "Registration number issued by the KGD",
     shiftOpenShort = "Shift is open",
-    shiftClosedShort = "Shift is closed"
+    shiftClosedShort = "Shift is closed",
+    shiftUnknownShort = "Shift state unknown"
 )
 
 /** Надписи области на выбранном языке. */
