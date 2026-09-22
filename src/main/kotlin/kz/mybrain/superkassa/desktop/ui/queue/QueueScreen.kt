@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.app.titleOf
@@ -16,6 +18,7 @@ import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.QueueJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -32,6 +35,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 fun QueueScreen(session: Session) {
     val texts = LocalStrings.current
+    val scope = rememberCoroutineScope()
     val journal = journalTexts(session.language).queue
     val waiting = waitingTasks(session.queueTasks)
     val failed = failedTasks(session.queueTasks)
@@ -43,18 +47,23 @@ fun QueueScreen(session: Session) {
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
         ScreenTitle(texts.queue.title)
-        QueueSummary(session, journal, waiting.size, failed.isNotEmpty(), rejected.isNotEmpty())
-        val state = when {
-            session.queueTasks.isNotEmpty() -> ScreenState.Ready
-            session.busy -> ScreenState.Working
-            // Пустая очередь заблокированной кассы — не признак порядка:
-            // документы не ждут отправки потому, что их больше не пробить.
-            else -> ScreenState.Empty(
-                AppIcons.queueClear,
-                texts.queue.empty,
-                if (session.selected?.isBlocked == true) journal.emptyBlockedHint else journal.emptyHint
-            )
-        }
+        QueueSummary(
+            session = session,
+            journal = journal,
+            waiting = waiting.size,
+            read = session.queueRead,
+            hasFailed = failed.isNotEmpty(),
+            hasRejected = rejected.isNotEmpty()
+        )
+        val state = queueState(
+            texts = texts,
+            journal = journal,
+            tasks = session.queueTasks.size,
+            busy = session.busy,
+            read = session.queueRead,
+            blocked = session.selected?.isBlocked == true,
+            onRetry = { scope.launch { session.refreshSelected() } }
+        )
         ScreenSlot(state, Modifier.weight(1f)) {
             QueueList(
                 waiting = waiting,
@@ -67,6 +76,36 @@ fun QueueScreen(session: Session) {
             )
         }
     }
+}
+
+/**
+ * Что стоит на месте списка задач.
+ *
+ * «Ждущих документов нет — всё доставлено» — утверждение о кассе, и делать
+ * его можно только вслед за ответом узла. Узел, который отказал или
+ * промолчал, об очереди не сказал ничего: владелец читал его молчание
+ * как порядок и уходил с экрана уверенный, что касса на связи.
+ *
+ * Пустая очередь заблокированной кассы — тоже не признак порядка:
+ * документы не ждут отправки потому, что их больше не пробить.
+ */
+internal fun queueState(
+    texts: AppStrings,
+    journal: QueueJournalTexts,
+    tasks: Int,
+    busy: Boolean,
+    read: Boolean,
+    blocked: Boolean,
+    onRetry: () -> Unit
+): ScreenState = when {
+    tasks > 0 -> ScreenState.Ready
+    busy -> ScreenState.Working
+    !read -> ScreenState.Trouble(journal.unread, journal.unreadHint, onRetry)
+    else -> ScreenState.Empty(
+        AppIcons.queueClear,
+        texts.queue.empty,
+        if (blocked) journal.emptyBlockedHint else journal.emptyHint
+    )
 }
 
 internal suspend fun retryQueue(session: Session, texts: AppStrings) {

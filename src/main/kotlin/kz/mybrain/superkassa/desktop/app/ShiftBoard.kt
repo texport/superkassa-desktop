@@ -53,6 +53,17 @@ class ShiftBoard {
 
     val queueTasks = mutableStateListOf<QueueTask>()
 
+    /**
+     * Отвечал ли узел об очереди.
+     *
+     * Пустая очередь и очередь, о которой узел ничего не сказал, — разные
+     * вещи: первая означает, что всё доставлено, вторая не означает ничего.
+     * Без этого признака экран очереди объявлял порядок, которого никто
+     * не подтверждал.
+     */
+    var queueRead: Boolean by mutableStateOf(false)
+        private set
+
     val counters = mutableStateListOf<CounterRecord>()
 
     /**
@@ -87,6 +98,7 @@ class ShiftBoard {
     fun adoptQueue(loaded: List<QueueTask>) {
         queueTasks.clear()
         queueTasks.addAll(loaded)
+        queueRead = true
     }
 
     fun adoptCounters(loaded: List<CounterRecord>) {
@@ -104,6 +116,7 @@ class ShiftBoard {
     fun forget() {
         forgetShift()
         queueTasks.clear()
+        queueRead = false
         counters.clear()
     }
 }

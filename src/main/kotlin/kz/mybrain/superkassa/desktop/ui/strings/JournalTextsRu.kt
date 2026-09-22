@@ -54,6 +54,7 @@ internal val journalTextsRu = JournalTexts(
         colFiscalSign = "Фискальный признак",
         colShift = "Смена",
         shown = "Показано",
+        shownOfRead = "Показано из прочитанного",
         showMore = "Показать ещё",
         allShown = "Показан весь срок",
         search = "Поиск",
@@ -98,6 +99,8 @@ internal val journalTextsRu = JournalTexts(
         documents = "Документы смены",
         emptyDocuments = "В этой смене документов нет.",
         emptyDocumentsHint = "Смена открывалась и закрывалась, но чеков в ней не пробито.",
+        documentsUnread = "Документы смены прочитать не удалось: узел не ответил.",
+        documentsUnreadHint = "Повторите чтение. Если документы не приходят и дальше, позовите обслуживание.",
         back = "К списку смен"
     ),
     queue = QueueJournalTexts(
@@ -115,6 +118,8 @@ internal val journalTextsRu = JournalTexts(
         nothingFailed = "Неудачных задач нет — повторять нечего.",
         nothingToRetryButRejected = "Повторять нечего: отвергнутые задачи узел не повторяет, их разбирает обслуживание.",
         emptyHint = "Отправлять нечего: касса работает на связи с БФД.",
+        unread = "Очередь прочитать не удалось: узел не ответил.",
+        unreadHint = "Повторите чтение. Пока узел молчит, о ждущих документах сказать нечего.",
         emptyBlockedHint = "Отправлять нечего: касса заблокирована и новых документов не пробивает."
     )
 )

@@ -54,6 +54,7 @@ internal val journalTextsKk = JournalTexts(
         colFiscalSign = "Фискалдық белгі",
         colShift = "Ауысым",
         shown = "Көрсетілді",
+        shownOfRead = "Оқылғанның ішінен көрсетілді",
         showMore = "Тағы көрсету",
         allShown = "Мерзім толық көрсетілді",
         search = "Іздеу",
@@ -98,6 +99,8 @@ internal val journalTextsKk = JournalTexts(
         documents = "Ауысым құжаттары",
         emptyDocuments = "Бұл ауысымда құжат жоқ.",
         emptyDocumentsHint = "Ауысым ашылып жабылған, бірақ онда чек бұзылмаған.",
+        documentsUnread = "Ауысым құжаттарын оқу мүмкін болмады: түйін жауап бермеді.",
+        documentsUnreadHint = "Оқуды қайталаңыз. Құжаттар әрі қарай да келмесе, қызмет көрсетуді шақырыңыз.",
         back = "Ауысымдар тізіміне"
     ),
     queue = QueueJournalTexts(
@@ -115,6 +118,8 @@ internal val journalTextsKk = JournalTexts(
         nothingFailed = "Сәтсіз тапсырма жоқ — қайталайтын ештеңе жоқ.",
         nothingToRetryButRejected = "Қайталайтын ештеңе жоқ: қабылданбаған тапсырмаларды түйін қайталамайды, оларды қызмет көрсету қарайды.",
         emptyHint = "Жіберетін ештеңе жоқ: касса БФД-мен байланыста жұмыс істеп тұр.",
+        unread = "Кезекті оқу мүмкін болмады: түйін жауап бермеді.",
+        unreadHint = "Оқуды қайталаңыз. Түйін үндемей тұрғанда күтіп тұрған құжаттар туралы айтары жоқ.",
         emptyBlockedHint = "Жіберетін ештеңе жоқ: касса бұғатталған және жаңа құжат шығармайды."
     )
 )

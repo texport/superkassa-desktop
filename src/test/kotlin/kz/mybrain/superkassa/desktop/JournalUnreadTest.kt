@@ -1,14 +1,18 @@
 package kz.mybrain.superkassa.desktop
 
+import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.runBlocking
+import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.PAGE
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
 import kz.mybrain.superkassa.desktop.ui.history.PageOutcome
 import kz.mybrain.superkassa.desktop.ui.history.PastShiftsView
+import kz.mybrain.superkassa.desktop.ui.history.Shift
 import kz.mybrain.superkassa.desktop.ui.history.journalState
 import kz.mybrain.superkassa.desktop.ui.history.loadDay
+import kz.mybrain.superkassa.desktop.ui.history.shiftDocumentsState
 import kz.mybrain.superkassa.desktop.ui.history.shiftsState
 import kz.mybrain.superkassa.desktop.ui.returns.ReturnKind
 import kz.mybrain.superkassa.desktop.ui.returns.basisState
@@ -152,6 +156,51 @@ class JournalUnreadTest {
         assertTrue(!none.contentEquals(unread), "«смен нет» и «прочитать не удалось» на экране неразличимы")
     }
 
+    @Test
+    fun `документы смены называют непрочитанное бедой чтения, а не пустой сменой`() {
+        val journal = texts.shifts
+
+        val unread = shiftDocumentsState(journal, documents = 0, loading = false, page = PageOutcome.unread) {}
+        val none = shiftDocumentsState(journal, documents = 0, loading = false, page = PageOutcome.page(false)) {}
+
+        assertEquals(
+            ScreenState.Trouble(journal.documentsUnread, journal.documentsUnreadHint),
+            withoutRetry(unread)
+        )
+        assertEquals(ScreenState.Empty(iconOf(none), journal.emptyDocuments, journal.emptyDocumentsHint), none)
+    }
+
+    /**
+     * Та же разница — на самом экране смены, а не только в разборе состояний.
+     *
+     * Смена открывается нажатием на её строку, и документы узел отдаёт
+     * отдельным обращением: молчание этого обращения выглядело как смена,
+     * в которой не пробито ни чека.
+     */
+    @Test
+    fun `открытая смена рисует непрочитанные документы иначе, чем смену без чеков`() {
+        val shift = Shift(id = "s-1", shiftNo = 1, status = "CLOSED", closeDocumentId = "d-close")
+        val empty = openedShift(KassaScene.session("shift-docs-none", pastShifts = listOf(shift)))
+        val unread = openedShift(
+            KassaScene.session("shift-docs-unread", pastShifts = listOf(shift), journalAnswered = false)
+        )
+
+        assertTrue(empty.isNotEmpty() && unread.isNotEmpty(), "экран не собрался")
+        assertTrue(
+            !empty.contentEquals(unread),
+            "«документов нет» и «прочитать не удалось» на экране смены неразличимы"
+        )
+    }
+
+    /** Кадр экрана смены, открытой нажатием на первую строку списка. */
+    private fun openedShift(session: Session): ByteArray =
+        RenderProbe(width = KassaScene.WIDE, height = KassaScene.TALL) { PastShiftsView(session) }.use { probe ->
+            repeat(SETTLE) { probe.frame() }
+            probe.click(FIRST_ROW)
+            repeat(SETTLE) { probe.frame() }
+            probe.frame()
+        }
+
     /** Кнопка повтора в сравнении не участвует: сравниваются слова, а не замыкания. */
     private fun withoutRetry(state: ScreenState): ScreenState =
         (state as ScreenState.Trouble).copy(onRetry = null)
@@ -161,5 +210,11 @@ class JournalUnreadTest {
 
     private companion object {
         const val WHAT = "Чеки дня"
+
+        /** Первая строка списка смен: по ней открывают смену. */
+        val FIRST_ROW = Offset(400f, 60f)
+
+        /** Сколько кадров даётся чтению, чтобы доехать до экрана. */
+        const val SETTLE = 40
     }
 }

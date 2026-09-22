@@ -21,7 +21,17 @@ import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.QueueJournalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+
+/**
+ * Число ждущих задач.
+ *
+ * У очереди, о которой узел не ответил, его нет: крупный ноль над пустым
+ * экраном владелец читает как порядок, которого никто не подтверждал.
+ */
+internal fun waitingText(read: Boolean, waiting: Int): String =
+    if (read) waiting.toString() else Glyphs.DASH
 
 /**
  * Глубина очереди и повтор.
@@ -36,6 +46,7 @@ internal fun QueueSummary(
     session: Session,
     journal: QueueJournalTexts,
     waiting: Int,
+    read: Boolean,
     hasFailed: Boolean,
     hasRejected: Boolean
 ) {
@@ -49,7 +60,7 @@ internal fun QueueSummary(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(waiting.toString(), style = MaterialTheme.typography.displaySmall)
+                Text(waitingText(read, waiting), style = MaterialTheme.typography.displaySmall)
                 Text(
                     text = texts.queue.waiting,
                     style = MaterialTheme.typography.labelMedium,
@@ -61,6 +72,10 @@ internal fun QueueSummary(
                 // отправлен» противоречит самой себе: отвергнутое повтор
                 // не берёт, но оно на экране есть, и строка это признаёт.
                 text = when {
+                    // Узел об очереди не ответил: ни числа ждущих, ни
+                    // «неудачных задач нет» за него сказать нельзя —
+                    // о непрочитанном говорит строка на месте списка.
+                    !read -> ""
                     // Повтор узел принимает только в режиме программирования.
                     // Прежде кнопка нажималась всегда и отвечала протокольным
                     // «ККМ должна быть в режиме PROGRAMMING».

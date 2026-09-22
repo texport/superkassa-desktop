@@ -93,6 +93,8 @@ private fun deliveryOf(document: Document): JournalDelivery? = when {
  * запросом узел их не отдаёт. Срок без границ читается с начала записей
  * узла и до конца сегодняшнего дня.
  *
+ * @param previous чем кончилось прошлое чтение: неудача дочитывания
+ *   не отменяет того, что за прочитанным ещё есть документы.
  * @return прочитан ли срок и есть ли за пришедшей страницей ещё
  *   документы — два разных сведения, см. [PageOutcome].
  */
@@ -100,16 +102,30 @@ internal suspend fun loadPeriod(
     session: Session,
     what: String,
     period: JournalPeriod,
-    into: MutableList<Document>
+    into: MutableList<Document>,
+    previous: PageOutcome = PageOutcome.unread
 ): PageOutcome {
-    val kkm = session.selected ?: return PageOutcome.unread
+    val kkm = session.selected ?: return PageOutcome.unreadAfter(previous)
     val from = period.range?.fromMillis() ?: FIRST_RECORD
     val to = period.range?.toMillis() ?: dayRange(LocalDate.now()).toMillis
     val loaded = session.guard(what) {
         session.client.documents(kkm.kkmId, from, to, session.pin, into.size)
-    } ?: return PageOutcome.unread
-    into.addAll(loaded)
+    } ?: return PageOutcome.unreadAfter(previous)
+    into.addAll(loaded.newTo(into))
     return PageOutcome.page(loaded.size == PAGE)
+}
+
+/**
+ * Документы страницы, которых на экране ещё нет.
+ *
+ * Страницы узел отрезает по счёту, а не по последней показанной строке:
+ * чек, пробитый между двумя обращениями, сдвигает счёт, и в следующей
+ * странице приходит документ, который уже показан. Строка журнала
+ * различается его же ключом, и такой повтор ронял список целиком.
+ */
+internal fun List<Document>.newTo(shown: List<Document>): List<Document> {
+    val already = shown.mapTo(mutableSetOf()) { it.id }
+    return filterNot { it.id in already }
 }
 
 /** Ответ ОФД: документ отвергнут. */

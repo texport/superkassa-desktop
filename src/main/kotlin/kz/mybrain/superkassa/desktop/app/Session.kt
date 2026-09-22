@@ -127,6 +127,9 @@ class Session(
     val shiftNumber: Long? get() = board.number
     val documents: List<Document> get() = board.documents
     val queueTasks: List<QueueTask> get() = board.queueTasks
+
+    /** Отвечал ли узел об очереди: пустая очередь и молчание — разные вещи. */
+    val queueRead: Boolean get() = board.queueRead
     val counters: List<CounterRecord> get() = board.counters
     val cashInDrawer: Long? get() = board.cashInDrawer
 

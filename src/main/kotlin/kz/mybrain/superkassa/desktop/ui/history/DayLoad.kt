@@ -29,6 +29,8 @@ internal suspend fun loadDay(
     val loaded = session.guard(what) {
         session.client.documents(kkm.kkmId, range.fromMillis, range.toMillis, session.pin, into.size)
     } ?: return PageOutcome.unread
-    into.addAll(loaded)
+    // Чек, пробитый между двумя обращениями, сдвигает счёт страниц, и
+    // в следующей приходит уже показанный документ: см. [newTo].
+    into.addAll(loaded.newTo(into))
     return PageOutcome.page(loaded.size == PAGE)
 }

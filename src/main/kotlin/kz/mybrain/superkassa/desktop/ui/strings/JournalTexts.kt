@@ -121,6 +121,16 @@ data class HistoryJournalTexts(
     val colFiscalSign: String,
     val colShift: String,
     val shown: String,
+
+    /**
+     * Сколько строк показано из прочитанного, когда срок прочитан не весь.
+     *
+     * «Показано: 200 / 200» под кнопкой «Показать ещё» читается как весь
+     * срок: владелец видел два одинаковых числа и уходил уверенный, что
+     * за день пробито двести чеков. Второе число — это прочитанное
+     * до сих пор, и строка обязана назвать его своим именем.
+     */
+    val shownOfRead: String,
     val showMore: String,
     val allShown: String,
     val search: String,
@@ -168,6 +178,16 @@ data class ShiftJournalTexts(
     val documents: String,
     val emptyDocuments: String,
     val emptyDocumentsHint: String,
+
+    /**
+     * Документы смены прочитать не удалось.
+     *
+     * Отдельно от «в смене документов нет»: узел отказал или не ответил,
+     * и о чеках смены он не сказал ничего. Кассир, пришедший за чеком
+     * позавчерашней смены, читал это молчание как пустую смену.
+     */
+    val documentsUnread: String,
+    val documentsUnreadHint: String,
     val back: String
 )
 
@@ -196,6 +216,16 @@ data class QueueJournalTexts(
     /** Повторять нечего, но отвергнутое на экране есть: строка обязана это признать. */
     val nothingToRetryButRejected: String,
     val emptyHint: String,
+
+    /**
+     * Очередь прочитать не удалось.
+     *
+     * Отдельно от пустой очереди: узел отказал или не ответил, и о ждущих
+     * документах он не сказал ничего. Владелец читал его молчание как
+     * «всё доставлено» — ошибка в ту сторону, в какую ошибаться нельзя.
+     */
+    val unread: String,
+    val unreadHint: String,
     /**
      * Пустая очередь заблокированной кассы.
      *

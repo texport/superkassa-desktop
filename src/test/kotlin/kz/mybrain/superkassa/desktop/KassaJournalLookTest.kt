@@ -1,14 +1,29 @@
 package kz.mybrain.superkassa.desktop
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.ui.history.JournalEntry
+import kz.mybrain.superkassa.desktop.ui.history.JournalRow
+import kz.mybrain.superkassa.desktop.ui.history.JournalState
 import kz.mybrain.superkassa.desktop.ui.components.ReceiptPreview
 import kz.mybrain.superkassa.desktop.ui.history.HistoryScreen
 import kz.mybrain.superkassa.desktop.ui.history.JournalHeader
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
+import kz.mybrain.superkassa.desktop.ui.theme.Look
+import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.theme.TextScale
+import java.io.ByteArrayInputStream
 import java.io.File
+import java.math.BigDecimal
+import javax.imageio.ImageIO
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -80,6 +95,62 @@ class KassaJournalLookTest {
     }
 
     /**
+     * Строка журнала не растёт от длины слова в столбце состояния.
+     *
+     * Плашка состояния была набрана ступенью крупнее остальных клеток,
+     * и на крупном шрифте в узком окне «Доставлен» разрывалось пополам:
+     * строка становилась выше соседних, а столбец сумм рвался зазорами,
+     * пока половина ширины таблицы стояла свободной.
+     */
+    @Test
+    fun `столбец состояния не рвёт слово на крупном шрифте`() {
+        val long = rowHeight("Доставлен")
+        val short = rowHeight(Glyphs.DASH)
+
+        assertTrue(long > 0 && short > 0, "строка не нарисовалась")
+        assertEquals(short, long, "плашка состояния перенеслась на вторую строку и подняла ряд")
+    }
+
+    /** Высота строки журнала в точках: ряд закрашен подложкой во всю ширину. */
+    private fun rowHeight(state: String): Int {
+        val entry = JournalEntry(
+            key = "row",
+            at = 0,
+            moment = "22.09 22:44:02",
+            typeCode = "SALE",
+            type = "Продажа",
+            number = "12",
+            numberOrder = 12,
+            amount = "1 500,00 ₸",
+            amountOrder = BigDecimal("1500.00"),
+            sign = "3810000000000012",
+            delivery = null,
+            shiftNo = 7,
+            state = JournalState(state, done = true)
+        )
+        val frame = RenderProbe(
+            width = NARROW_WINDOW,
+            height = TAPE_HEIGHT,
+            look = Look(textScale = TextScale.Larger),
+            // Поля раздела и место под полосу прокрутки — те же, что
+            // на экране: от них зависит, сколько ширины достаётся столбцам.
+            content = {
+                Column(modifier = Modifier.fillMaxSize().padding(Spacing.screen)) {
+                    Column(modifier = Modifier.padding(end = Spacing.normal)) {
+                        JournalRow(entry = entry, striped = true)
+                    }
+                }
+            }
+        ).use { probe ->
+            repeat(SETTLE) { probe.frame() }
+            probe.frame()
+        }
+        val image = ImageIO.read(ByteArrayInputStream(frame))
+        val background = image.getRGB(0, image.height - 1)
+        return (0 until image.height).count { y -> image.getRGB(ROW_PROBE_X, y) != background }
+    }
+
+    /**
      * Окно печатной формы: пока узел рисует, пока рисунок не разобрался
      * и когда печатать нечем.
      *
@@ -144,5 +215,11 @@ class KassaJournalLookTest {
         const val ZOOM_OUT_X = 973f
         const val ZOOM_OUT_Y = 69f
         const val NARROWING = 3
+
+        /** Окно кассы на ноутбуке: на нём столбцы тесны и без крупного шрифта. */
+        const val NARROW_WINDOW = 1000
+
+        /** Точка, по которой меряется подложка ряда: внутри полей раздела. */
+        const val ROW_PROBE_X = 20
     }
 }

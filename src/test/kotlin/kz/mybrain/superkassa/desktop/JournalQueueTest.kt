@@ -1,12 +1,19 @@
 package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.server.QueueTask
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.queue.QueueState
 import kz.mybrain.superkassa.desktop.ui.queue.failedTasks
+import kz.mybrain.superkassa.desktop.ui.queue.queueState
 import kz.mybrain.superkassa.desktop.ui.queue.queueStateOf
 import kz.mybrain.superkassa.desktop.ui.queue.rejectedTasks
 import kz.mybrain.superkassa.desktop.ui.queue.sentTasks
 import kz.mybrain.superkassa.desktop.ui.queue.waitingTasks
+import kz.mybrain.superkassa.desktop.ui.queue.waitingText
+import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
+import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -58,6 +65,38 @@ class JournalQueueTest {
         assertEquals(listOf("SENT"), sentTasks(tasks).map { it.status })
         assertEquals(listOf("REJECTED"), rejectedTasks(tasks).map { it.status })
         assertTrue(waitingTasks(tasks).none { it.status == "REJECTED" })
+    }
+
+    /**
+     * Пустая очередь и очередь, о которой узел не ответил, — разные вещи.
+     *
+     * «Ждущих документов нет — всё доставлено» владелец читает как порядок
+     * и уходит с экрана. Говорить это можно только вслед за ответом узла.
+     */
+    @Test
+    fun `непрочитанная очередь не выдаётся за пустую`() {
+        val texts = stringsOf(Language.Ru)
+        val journal = journalTexts(Language.Ru).queue
+
+        val unread = queueState(texts, journal, tasks = 0, busy = false, read = false, blocked = false) {}
+        val empty = queueState(texts, journal, tasks = 0, busy = false, read = true, blocked = false) {}
+
+        assertEquals(
+            ScreenState.Trouble(journal.unread, journal.unreadHint),
+            (unread as ScreenState.Trouble).copy(onRetry = null)
+        )
+        assertTrue(empty is ScreenState.Empty && empty.hint == journal.emptyHint)
+    }
+
+    @Test
+    fun `у непрочитанной очереди нет и числа ждущих`() {
+        assertEquals("3", waitingText(read = true, waiting = 3))
+        assertEquals("0", waitingText(read = true, waiting = 0))
+        assertEquals(
+            Glyphs.DASH,
+            waitingText(read = false, waiting = 0),
+            "крупный ноль над непрочитанной очередью читается как порядок"
+        )
     }
 
     @Test
