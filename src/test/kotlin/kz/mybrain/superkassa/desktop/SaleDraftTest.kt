@@ -81,6 +81,13 @@ class SaleDraftTest {
             DraftProblem.DiscountTooBig,
             filled.copy(discount = "300").problem(DraftField.Discount)
         )
+        // Скидка ровно в стоимость позиции — та же беда, что и большая:
+        // строка выходит нулевой, а товар за ноль вставал в чек молча.
+        assertEquals(
+            DraftProblem.DiscountTooBig,
+            filled.copy(discount = "249.90").problem(DraftField.Discount)
+        )
+        assertNull(filled.copy(discount = "249.90").position)
         // Отрицательная скидка названа своей причиной: она меньше
         // стоимости позиции, и «скидка не может быть больше стоимости»
         // кассиру, набравшему «-1», ничего не объясняло.

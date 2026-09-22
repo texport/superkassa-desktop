@@ -99,7 +99,7 @@ fun saleStateOf(session: Session, basket: Basket, form: SaleForm, total: BigDeci
     shiftOpen = session.shiftOpen,
     positions = basket.positions.size,
     hasItemDiscount = basket.hasItemDiscount,
-    hasZeroPrice = basket.hasZeroPrice,
+    hasZeroLine = basket.hasZeroLine,
     discount = form.discount,
     markup = form.markup,
     itemsSum = basket.total,

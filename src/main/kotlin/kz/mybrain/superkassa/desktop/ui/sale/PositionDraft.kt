@@ -71,6 +71,25 @@ data class PositionDraft(
     /** Ошибка этого поля, если она есть. */
     fun problem(field: DraftField): DraftProblem? = problems.firstOrNull { it.field == field }
 
+    /**
+     * Начата ли форма: кассир в неё что-то набрал.
+     *
+     * Правило одно на подсветку полей и на строку под кнопкой. Прежде
+     * его знали только поля, и над нетронутой формой — при открытии
+     * смены, до первого товара — стояло красное «Введите наименование
+     * товара» при неподсвеченных полях: кассир читал упрёк за работу,
+     * которую ещё не начинал.
+     */
+    val started: Boolean
+        get() = name.isNotBlank() ||
+            price.isNotBlank() ||
+            discount.isNotBlank() ||
+            quantity != DEFAULT_QUANTITY
+
+    /** Чего форме не хватает — или `null`, пока кассир ничего не набрал. */
+    val hint: DraftProblem?
+        get() = problems.firstOrNull()?.takeIf { started }
+
     /** Готовая позиция или `null`, если введённое ещё не образует позицию. */
     val position: Position?
         get() {
@@ -115,7 +134,7 @@ data class PositionDraft(
 
     /**
      * Скидка на позицию необязательна, но не может съесть позицию целиком:
-     * ОФД чек с отрицательной строкой не примет.
+     * БФД чек ни с отрицательной, ни с нулевой строкой не примет.
      *
      * Отрицательная скидка названа своей причиной. Прежде она считалась
      * той же бедой, что и слишком большая, и кассир, набравший «-100»,
@@ -132,10 +151,15 @@ data class PositionDraft(
         )
     }
 
+    /**
+     * Скидка, равная стоимости позиции, — та же беда, что и большая:
+     * строка выходит нулевой, а нулевая строка — не продажа. Прежде
+     * равенство проходило, и товар за ноль вставал в фискальный чек.
+     */
     private fun tooBig(value: BigDecimal): Boolean {
         val priced = amount(price).value ?: return false
         val counted = amount(quantity, QUANTITY_SCALE).value ?: return false
-        return value > priced.multiply(counted)
+        return value >= priced.multiply(counted)
     }
 }
 

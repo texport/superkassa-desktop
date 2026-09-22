@@ -111,15 +111,15 @@ class SalePriceAskTest {
             add(weighed.copy(name = "Хлеб", price = BigDecimal("249.90")))
         }
 
-        assertTrue(basket.hasZeroPrice)
-        assertEquals(SaleBlock.ZeroPrice, blockOf(SaleState(positions = 2, hasZeroPrice = true)))
+        assertTrue(basket.hasZeroLine)
+        assertEquals(SaleBlock.ZeroLine, blockOf(SaleState(positions = 2, hasZeroLine = true)))
     }
 
     @Test
     fun `чек из заполненных позиций помех не находит`() {
         val basket = Basket().apply { add(weighed.copy(price = BigDecimal("2500"))) }
 
-        assertFalse(basket.hasZeroPrice)
+        assertFalse(basket.hasZeroLine)
         assertNull(blockOf(SaleState(positions = 1, total = BigDecimal("2500"))))
     }
 }

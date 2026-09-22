@@ -14,6 +14,10 @@ import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
  * Перечень целиком от узла — справочник ИС ЭСФ. Пока он не прочитан,
  * поля нет вовсе: пустой выбор хуже отсутствующего, а узел без единицы
  * ставит штуку.
+ *
+ * Код, которого в перечне нет, показывается как есть — тем же правилом,
+ * каким его показывает строка чека. Пустое поле на такой код кассир
+ * читал как «единица не задана», тогда как в чек она уходила.
  */
 @Composable
 internal fun UnitPicker(
@@ -28,7 +32,7 @@ internal fun UnitPicker(
         label = texts.sale.measureUnit,
         options = units,
         selected = units.firstOrNull { it.code == selected },
-        title = { it?.title ?: "" },
+        title = { unit -> unitTitle(units, unit?.code ?: selected) },
         onSelect = { onSelect(it.code) },
         modifier = modifier
     )
@@ -40,6 +44,10 @@ internal fun UnitPicker(
  * Поля нет, когда выбирать не из чего: у кассы-неплательщика перечень
  * сведён к «Без НДС», и список из одной строки только занимает место
  * в кассовой колонке и обещает выбор, которого нет.
+ *
+ * Ставка, которой в перечне узла нет, показывается своим кодом, а не
+ * пустотой: в чек эта ставка уходит, и увидеть её кассир обязан до
+ * отказа узла, а не после.
  */
 @Composable
 internal fun VatPicker(selected: String, modifier: Modifier = Modifier, onSelect: (String) -> Unit) {
@@ -50,7 +58,7 @@ internal fun VatPicker(selected: String, modifier: Modifier = Modifier, onSelect
         label = texts.sale.vat,
         options = rates,
         selected = rates.firstOrNull { it.code == selected },
-        title = { rate -> rate?.let { vatTitle(rates, it.code) }.orEmpty() },
+        title = { rate -> vatTitle(rates, rate?.code ?: selected) },
         onSelect = { onSelect(it.code) },
         modifier = modifier
     )
