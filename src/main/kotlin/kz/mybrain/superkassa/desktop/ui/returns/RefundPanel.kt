@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.returns
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,6 +27,7 @@ import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.server.documentDetails
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentLines
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentSplit
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -108,24 +108,29 @@ private fun RefundForm(
         modifier = Modifier.fillMaxSize().padding(Spacing.normal),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        RefundSummary(basis, journal, total)
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        RefundItems(session, items, chosen, journal) { at ->
-            chosen = if (at in chosen) chosen - at else chosen + at
-            // Отметка позиции задаёт сумму: считать её руками кассир
-            // не должен, а поправить поле по-прежнему может.
-            entered = tengeText(if (chosen.isEmpty()) total else chosenTiyn(items, chosen))
+        // Состав чека прокручивается вместе с суммой и оплатой, а кнопка
+        // прибита к низу: у чека из десятка позиций список выдавливал
+        // за край панели и поле суммы, и само действие — вернуть деньги
+        // покупателю было нечем.
+        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.snug) {
+            RefundSummary(basis, journal, total)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            RefundItems(session, items, chosen, journal) { at ->
+                chosen = if (at in chosen) chosen - at else chosen + at
+                // Отметка позиции задаёт сумму: считать её руками кассир
+                // не должен, а поправить поле по-прежнему может.
+                entered = tengeText(if (chosen.isEmpty()) total else chosenTiyn(items, chosen))
+            }
+            RefundAmountRow(journal, entered, checked is RefundAmount.Rejected, { entered = it }) {
+                chosen = emptySet()
+                entered = tengeText(total)
+            }
+            // Возврат отдают тем же набором, каким платили: часть на карту,
+            // часть из ящика. Сумма разбивается от суммы возврата, а не от
+            // итога чека-основания.
+            PaymentLines(session, split, refundSum)
+            RefundHints(journal, checked, split.issue(refundSum), paymentTexts(session.language))
         }
-        RefundAmountRow(journal, entered, checked is RefundAmount.Rejected, { entered = it }) {
-            chosen = emptySet()
-            entered = tengeText(total)
-        }
-        // Возврат отдают тем же набором, каким платили: часть на карту,
-        // часть из ящика. Сумма разбивается от суммы возврата, а не от
-        // итога чека-основания.
-        PaymentLines(session, split, refundSum)
-        RefundHints(journal, checked, split.issue(refundSum), paymentTexts(session.language))
-        Spacer(modifier = Modifier.weight(1f))
         Button(
             enabled = !working && checked is RefundAmount.Ready && split.issue(refundSum) == null,
             onClick = {
