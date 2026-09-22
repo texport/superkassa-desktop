@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
+import kz.mybrain.superkassa.desktop.ui.settings.syncOfdServiceInfo
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 
 /**
@@ -84,7 +85,15 @@ fun RegistrationActionsBlock(
     val submit: suspend () -> Unit = {
         outcome = null
         try {
-            outcome = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
+            val sent = submitApplication(cabinet, kind, register.id, placeId, reason, comment) { stage = it }
+            outcome = sent
+            // Перерегистрация меняет торговую точку, а её адрес печатается
+            // в чеке: касса на этой машине о переезде не знает, пока
+            // не сверится с БФД. Прежде сверку приходилось делать руками,
+            // и до неё чеки печатались с прежним адресом.
+            if (kind == ActionKind.Reregistration && sent is ApplicationOutcome.Sent) {
+                syncLocal(session, register, texts)
+            }
         } finally {
             // Отсчёт снимается и с отменённой подачи: иначе он остался бы
             // на экране, хотя ждать его уже некому.
@@ -141,6 +150,22 @@ fun RegistrationActionsBlock(
             }
         }
     }
+}
+
+/**
+ * Обновляет сведения кассы на этой машине после перерегистрации.
+ *
+ * Сверку узел делает только по закрытой смене — это его правило, а не
+ * прихоть: счётчики открытой смены сверять нельзя. Поэтому отказ здесь
+ * не помеха, а повод сказать владельцу, когда адрес дойдёт до чека.
+ */
+private suspend fun syncLocal(session: Session, register: CabinetRegister, texts: CabinetTexts) {
+    val here = (nodeWork(register, session.kkms) as? NodeWork.Here)?.kkm ?: return
+    if (here.kkmId != session.selected?.kkmId || session.pin.isBlank()) return
+    val synced = session.quietly(texts.submitApplication) {
+        session.client.syncOfdServiceInfo(here.kkmId, session.pin)
+    }
+    session.report(if (synced != null) texts.localInfoSynced else texts.localInfoNeedsSync)
 }
 
 /** Помешала ли подаче открытая смена. */

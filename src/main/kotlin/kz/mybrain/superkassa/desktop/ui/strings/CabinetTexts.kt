@@ -52,6 +52,8 @@ data class CabinetTexts(
     val issueToken: String,
     val tokenIssued: String,
     val tokenGoesToNode: String,
+    val localInfoSynced: String,
+    val localInfoNeedsSync: String,
     val tokenNeedsNode: String,
     val registration: String,
     val reregistration: String,
