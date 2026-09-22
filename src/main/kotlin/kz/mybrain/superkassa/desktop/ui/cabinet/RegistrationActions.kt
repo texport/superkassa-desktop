@@ -13,6 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.closeShift
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
@@ -146,7 +147,14 @@ fun RegistrationActionsBlock(
                     session.client.closeShift(closable.kkmId, pin)
                 }
                 closingShift = false
-                if (closed != null) submit()
+                if (closed != null) {
+                    // Состояние кассы перечитывается сразу: без этого
+                    // карточка показывала «Узел · смена открыта» рядом
+                    // с только что поданным заявлением и объявляла
+                    // расхождение с кабинетом, которого уже нет.
+                    session.refreshSelected()
+                    submit()
+                }
             }
         }
     }
