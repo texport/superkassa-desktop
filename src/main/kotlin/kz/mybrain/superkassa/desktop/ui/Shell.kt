@@ -21,6 +21,7 @@ import kz.mybrain.superkassa.desktop.app.refreshKkms
 import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetDocuments
+import kz.mybrain.superkassa.desktop.ui.strings.updateTexts
 
 /**
  * Каркас окна.
@@ -53,6 +54,9 @@ fun Shell(session: Session) {
         session.refreshKkms()
         session.loadDictionaries()
     }
+    // Проверка выпусков живёт, пока открыто окно: сама ждёт своего часа
+    // и сама молчит, когда сети нет.
+    LaunchedEffect(Unit) { session.updates.watch() }
 
     // Вошли — сразу подтягиваем состояние выбранной кассы.
     LaunchedEffect(session.selected?.kkmId, session.pin) {
@@ -102,6 +106,7 @@ private fun WorkShell(
     messages: SnackbarHostState
 ) {
     var section by remember { mutableStateOf(Section.Dashboard) }
+    var updateShown by remember { mutableStateOf(false) }
     // Кассиру видны только его разделы: очередь, кассиров и настройки узел
     // отдаёт администратору, и пустой отказ вместо экрана ничему не учит.
     val sections = Section.entries.filter { session.isAdmin || !it.adminOnly }
@@ -118,7 +123,8 @@ private fun WorkShell(
                 sections = sections,
                 current = section,
                 collapsed = session.railCollapsed,
-                onToggle = { session.toggleRail() }
+                onToggle = { session.toggleRail() },
+                footer = { RailVersion(session) { updateShown = true } }
             ) { picked ->
                 // Отказ относится к действию, а не к окну: уходя с экрана
                 // своей рукой, кассир оставлял за собой отказ настроек,
@@ -132,6 +138,10 @@ private fun WorkShell(
             CompositionLocalProvider(LocalSectionSwitch provides { asked -> section = asked }) {
                 SectionContent(session, cabinet, documents, section)
             }
+        }
+        val update = session.updates.available
+        if (updateShown && update != null) {
+            UpdateDialog(update, updateTexts(session.language)) { updateShown = false }
         }
     }
 }

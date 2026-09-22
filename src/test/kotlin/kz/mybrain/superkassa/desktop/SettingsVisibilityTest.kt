@@ -29,7 +29,8 @@ class SettingsVisibilityTest {
                 Setting.CabinetAddress,
                 Setting.MapServices,
                 Setting.Debug,
-                Setting.NodeFacts
+                Setting.NodeFacts,
+                Setting.Updates
             ),
             shown
         )

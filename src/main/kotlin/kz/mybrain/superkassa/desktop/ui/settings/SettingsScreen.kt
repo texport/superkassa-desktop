@@ -79,7 +79,7 @@ private enum class SettingsGroup(val title: (SettingStrings) -> String?) {
 internal enum class Setting {
     CurrentKkm, Appearance, PrintForm, PrintTarget, PanelBehaviour,
     Tax, OfdSync, NodeAddress, CabinetAddress, MapServices, OfdToken,
-    Diagnostics, Debug, NodeFacts, Decommission
+    Diagnostics, Debug, NodeFacts, Updates, Decommission
 }
 
 /**
@@ -131,6 +131,9 @@ private val settingsCards = listOf(
     // список касс пуст. Условий у неё нет намеренно.
     SettingsCard(Setting.Debug, SettingsGroup.Service) { DebugCard(it) },
     SettingsCard(Setting.NodeFacts, SettingsGroup.Service) { NodeFactsCard(it) },
+    // Версия кассы и выпуски не зависят ни от кассы, ни от прав: узнать,
+    // что стоит и что вышло, можно с экрана входа.
+    SettingsCard(Setting.Updates, SettingsGroup.Service) { UpdatesCard(it) },
 
     SettingsCard(
         Setting.Decommission,

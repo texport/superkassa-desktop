@@ -10,7 +10,8 @@ import java.io.File
  * одним именем, а за каждым предметом стоит свой хранитель — узел и касса
  * [NodePreferences], кабинет [CabinetPreferences], вид окна [ViewPreferences],
  * мастер подключения [SetupPreferences], согласие на определение места
- * [LocationPreferences], карта [MapPreferences], печать [PrintPreferences].
+ * [LocationPreferences], карта [MapPreferences], печать [PrintPreferences],
+ * проверка обновлений [UpdatePreferences].
  * Так добавленная настройка ложится к своему предмету, а не в общую кучу.
  *
  * Пин не хранится ни здесь, ни где-либо ещё на диске: он даёт право
@@ -38,6 +39,9 @@ class Preferences(private val file: File = defaultFile()) {
 
     /** Настройки печати: принтер, вид формы и число копий. */
     val printing = PrintPreferences(file.parentFile)
+
+    /** Проверять ли выпуски самой и когда проверяли в последний раз. */
+    val updates = UpdatePreferences(file.parentFile)
 
     var defaultKkmId: String?
         get() = node.defaultKkmId

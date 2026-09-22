@@ -12,8 +12,47 @@ plugins {
 group = "kz.mybrain.superkassa"
 version = "1.0.0"
 
+/**
+ * Версия приложения, известная ему самому.
+ *
+ * Установщик называет версию в имени файла, а само приложение её не знало:
+ * кассир, звонивший в поддержку, не мог сказать, какая у него касса,
+ * а проверка выпусков сравнивать была ни с чем. Метка выпуска приходит
+ * в `-PappVersion`, как и для установщика; без неё — сборка разработчика,
+ * и она так и называется, чтобы не выдавать себя за выпуск.
+ */
+val appVersion: String = providers.gradleProperty("appVersion").getOrElse("1.0.0-dev")
+
+val versionSourceDir: Provider<Directory> = layout.buildDirectory.dir("generated/version/kotlin")
+
+val generateVersion by tasks.registering {
+    description = "Записывает версию приложения в исходный код"
+    val output = versionSourceDir.map { it.file("kz/mybrain/superkassa/desktop/app/BuildVersion.kt") }
+    inputs.property("appVersion", appVersion)
+    outputs.dir(versionSourceDir)
+    doLast {
+        output.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText(
+                """
+                package kz.mybrain.superkassa.desktop.app
+
+                /** Версия этой сборки; записывается сборкой из `appVersion`. */
+                object BuildVersion {
+                    const val NAME: String = "$appVersion"
+                }
+
+                """.trimIndent()
+            )
+        }
+    }
+}
+
 kotlin {
     jvmToolchain(21)
+    // Каталог с версией объявлен задачей, а не путём: так компиляция сама
+    // ждёт записи файла, и отдельной зависимости между задачами не нужно.
+    sourceSets["main"].kotlin.srcDir(generateVersion)
 }
 
 dependencies {
