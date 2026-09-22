@@ -117,10 +117,19 @@ private fun MinorTile(value: String, label: String, modifier: Modifier = Modifie
     Tile(value, label, MaterialTheme.typography.headlineSmall, MaterialTheme.colorScheme.onSurface, modifier)
 }
 
-/** Плитка состояния доставки: шкала помельче, а цвет несёт смысл. */
+/**
+ * Плитка состояния доставки: шкала помельче, а цвет несёт смысл.
+ *
+ * Нуль пишется тише остальных — тем же правилом, каким набраны числа
+ * учёта касс. Цвет здесь значит «этим надо заняться» или «это хорошо»,
+ * а нуль не значит ни того ни другого: в сводке показа доставлено ноль
+ * и отбраковано ноль, и красный нуль рядом с зелёным тревожил владельца
+ * тем, чего нет, и хвалил за то, чего не было.
+ */
 @Composable
 private fun StateTile(value: Int, label: String, tone: Color, modifier: Modifier = Modifier) {
-    Tile(value.toString(), label, MaterialTheme.typography.headlineSmall, tone, modifier)
+    val paint = if (value == 0) MaterialTheme.colorScheme.onSurfaceVariant else tone
+    Tile(value.toString(), label, MaterialTheme.typography.headlineSmall, paint, modifier)
 }
 
 /** Одна плитка: число, подпись под ним и рамка вокруг. */
