@@ -38,3 +38,15 @@ private fun ExchangeAddress.searchable(): List<String> = listOfNotNull(
 /** Кассы, встречающиеся в списке: из них собирается отбор. */
 fun exchangeRegisters(addresses: List<ExchangeAddress>): List<ExchangeAddress> =
     addresses.distinctBy { it.cashRegisterId }
+
+/**
+ * Разных адресов в списке.
+ *
+ * Считается по самому списку, а не берётся счётчиком кабинета: тот
+ * считает записи об обмене, а запись — это пара «касса и адрес».
+ * Четыре кассы одного магазина, выходящие на связь с одного адреса,
+ * давали «адресов: 4» над таблицей, в которой адрес один, — и владелец
+ * пересчитывал строки, не понимая, кто из двоих ошибся.
+ */
+fun exchangeAddressCount(addresses: List<ExchangeAddress>): Int =
+    addresses.map { it.address.trim() }.filter(String::isNotBlank).distinct().size

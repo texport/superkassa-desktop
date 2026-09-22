@@ -53,15 +53,26 @@ fun AnalyticsExchangePane(cabinet: CabinetSession, texts: AnalyticsTexts) {
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        ExchangeHead(model, texts) { scope.launch { model.load() } }
+        ExchangeHead(model, all, texts) { scope.launch { model.load() } }
         ExchangeFilters(model, all, texts)
         ExchangeBody(model, rows, all.isEmpty(), texts, Modifier.weight(1f)) { scope.launch { model.load() } }
     }
 }
 
-/** Заголовок раздела, счётчики кабинета и обновление. */
+/**
+ * Заголовок раздела, счётчики и обновление.
+ *
+ * Счётчики считаются по самому списку: кабинет присылает число записей
+ * об обмене, а не число разных адресов, и над таблицей с одним адресом
+ * стояло «адресов: 4».
+ */
 @Composable
-private fun ExchangeHead(model: AnalyticsExchangeModel, texts: AnalyticsTexts, onRefresh: () -> Unit) {
+private fun ExchangeHead(
+    model: AnalyticsExchangeModel,
+    all: List<ExchangeAddress>,
+    texts: AnalyticsTexts,
+    onRefresh: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
@@ -70,8 +81,8 @@ private fun ExchangeHead(model: AnalyticsExchangeModel, texts: AnalyticsTexts, o
         SectionTitle(texts.exchangeTitle)
         InfoTip(texts.exchangeHint)
         Spacer(Modifier.weight(1f))
-        CounterTile(Money.count((model.view?.cashRegisterCount ?: 0)), texts.kkmCount)
-        CounterTile(Money.count((model.view?.addressCount ?: 0)), texts.addressCount)
+        CounterTile(Money.count(exchangeRegisters(all).size), texts.kkmCount)
+        CounterTile(Money.count(exchangeAddressCount(all)), texts.addressCount)
         IconButton(onClick = onRefresh, enabled = !model.loading) {
             Icon(AppIcons.refresh, contentDescription = texts.refresh)
         }
