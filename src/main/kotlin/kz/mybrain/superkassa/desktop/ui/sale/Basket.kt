@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.sale
 import androidx.compose.runtime.mutableStateListOf
 import kz.mybrain.superkassa.desktop.server.ReceiptItem
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -157,8 +158,15 @@ data class Position(
     val total: BigDecimal
         get() = if (storno) lineSum.negate() else lineSum
 
-    /** Подпись позиции в корзине: сторно кассир должен видеть сразу. */
-    fun label(stornoCaption: String): String = if (storno) "$stornoCaption · $name" else name
+    /**
+     * Подпись позиции в корзине: сторно кассир должен видеть сразу.
+     *
+     * Разделитель — общий знак набора, а не набранная здесь точка:
+     * своя копия давала в строке чека другой зазор, чем в соседних
+     * списках приложения.
+     */
+    fun label(stornoCaption: String): String =
+        if (storno) "$stornoCaption${Glyphs.SEPARATOR}$name" else name
 }
 
 /**
@@ -166,10 +174,9 @@ data class Position(
  *
  * [Money.format] теряет минус у сумм меньше тенге: целая часть у «−0,50»
  * равна нулю, и знак пропадает вместе с ней. Сторно на полтиына показалось
- * бы кассиру обычной продажей, поэтому знак ставится здесь явно.
+ * бы кассиру обычной продажей, поэтому знак ставится здесь явно. Сам знак
+ * берётся из общего набора: своя копия под именем MINUS была вторым
+ * объявлением того же знака.
  */
 fun formatSigned(amount: BigDecimal): String =
-    if (amount.signum() < 0) MINUS + Money.format(amount.abs()) else Money.format(amount)
-
-/** Настоящий минус, а не дефис: в сумме он читается как знак, а не как перенос. */
-private const val MINUS = "−"
+    if (amount.signum() < 0) Glyphs.MINUS + Money.format(amount.abs()) else Money.format(amount)
