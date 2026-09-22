@@ -50,15 +50,38 @@ class MoneyUserRulesTest {
         assertFalse(UserRules.canCreate("Айгүл", "1111"))
     }
 
+    /**
+     * Держится только администратор.
+     *
+     * Правило прежде запрещало удалять последнего носителя любой роли,
+     * и администратор, расставшийся с единственным кассиром, упирался
+     * в погашенную корзину и совет завести второго кассира. Касса без
+     * кассиров — обычное её состояние: ровно такой она выходит
+     * из мастера подключения.
+     */
     @Test
-    fun `последнего носителя роли удалять нельзя`() {
+    fun `удалять нельзя только единственного администратора`() {
         val admin = KkmUser(userId = "1", name = "Администратор", role = "ADMIN")
         val cashier = KkmUser(userId = "2", name = "Кассир", role = "CASHIER")
         val second = KkmUser(userId = "3", name = "Второй кассир", role = "CASHIER")
+        val deputy = KkmUser(userId = "4", name = "Второй администратор", role = "ADMIN")
 
-        assertTrue(UserRules.lastOfRole(listOf(admin, cashier), admin))
-        assertTrue(UserRules.lastOfRole(listOf(admin, cashier), cashier))
-        assertFalse(UserRules.lastOfRole(listOf(admin, cashier, second), cashier))
-        assertTrue(UserRules.lastOfRole(listOf(admin, cashier, second), admin))
+        assertTrue(UserRules.lastAdmin(listOf(admin, cashier), admin))
+        assertFalse(UserRules.lastAdmin(listOf(admin, cashier), cashier))
+        assertFalse(UserRules.lastAdmin(listOf(admin, cashier, second), cashier))
+        assertFalse(UserRules.lastAdmin(listOf(admin, deputy, cashier), admin))
+    }
+
+    /** Своего кассира узнают по опознавателю узла, а не по имени. */
+    @Test
+    fun `тёзки — разные кассиры`() {
+        val one = KkmUser(userId = "1", name = "Дана Жумабаева", role = "CASHIER")
+        val other = KkmUser(userId = "2", name = "Дана Жумабаева", role = "CASHIER")
+        val nameless = KkmUser(name = "Без опознавателя", role = "CASHIER")
+
+        assertTrue(UserRules.same(one, one))
+        assertFalse(UserRules.same(one, other))
+        assertFalse(UserRules.same(nameless, nameless))
+        assertFalse(UserRules.same(null, one))
     }
 }

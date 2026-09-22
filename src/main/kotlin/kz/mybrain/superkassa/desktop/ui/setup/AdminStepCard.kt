@@ -29,8 +29,10 @@ import kz.mybrain.superkassa.desktop.ui.components.EnvironmentPicker
 import kz.mybrain.superkassa.desktop.ui.components.environmentRaised
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
+import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.users.UserRules
+import kz.mybrain.superkassa.desktop.ui.users.pinProblem
 
 /**
  * Шаг 4: касса заводится в узле, у неё появляется администратор.
@@ -71,7 +73,11 @@ fun AdminStepCard(
             ?.registrationNumber?.isNotBlank() == true
     }
 
-    val already = session.kkms.any { it.ofdSystemId == draft.systemId }
+    // Сверка по идентификатору идёт только тогда, когда он есть: без
+    // черновика идентификатор пуст, и «пусто равно пусто» помечало шаг
+    // пройденным у любого, у кого на узле есть касса без сведений об ОФД.
+    // Нетронутый мастер встречал владельца готовым «Касса подключена».
+    val already = draft.systemId?.let { known -> session.kkms.any { it.ofdSystemId == known } } == true
     SetupStepCard(
         title = setup.stepAdmin,
         hint = setup.stepAdminHint,
@@ -91,18 +97,15 @@ fun AdminStepCard(
                 selectedCode = chosenEnvironment,
                 onSelect = { environment = it }
             )
-            OutlinedTextField(
-                value = pin,
-                onValueChange = { pin = UserRules.digitsOf(it) },
-                label = { Text(texts.settings.adminPin) },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth()
-            )
+            AdminPinField(session, pin) { pin = it }
             BusyButton(
                 text = setup.connect,
                 busy = session.busy || cabinet.busy,
-                enabled = UserRules.pinAccepted(pin),
+                // Контур обязателен наравне с пином: пока справочник узла
+                // не прочитан, подставлять в поле нечего, а кнопка оживала
+                // от одного пина и заводила кассу в пустой контур —
+                // с уже выданным на неё токеном кабинета.
+                enabled = UserRules.pinAccepted(pin) && chosenEnvironment.isNotBlank(),
                 onClick = {
                     scope.launch {
                         val what = setup.stepAdmin
@@ -115,6 +118,31 @@ fun AdminStepCard(
             )
         }
     }
+}
+
+/**
+ * Пин администратора заводимой кассы.
+ *
+ * Причина, по которой пин не годится, написана под полем — как и в каждом
+ * другом поле пина приложения: узел откажет ровно по ней, а «Завести
+ * кассу» до этого просто не нажималась и о причине молчала.
+ */
+@Composable
+private fun AdminPinField(session: Session, pin: String, onChange: (String) -> Unit) {
+    val texts = LocalStrings.current
+    val cashiers = moneyTexts(session.language).cashiers
+    val trouble = pinProblem(pin, cashiers, texts.users.forbiddenPin)
+    OutlinedTextField(
+        value = pin,
+        onValueChange = { onChange(UserRules.digitsOf(it)) },
+        label = { Text(texts.settings.adminPin) },
+        singleLine = true,
+        isError = trouble != null,
+        placeholder = { Text(cashiers.pinLength) },
+        supportingText = trouble?.let { { Text(it) } },
+        visualTransformation = PasswordVisualTransformation(),
+        modifier = Modifier.fillMaxWidth()
+    )
 }
 
 /**

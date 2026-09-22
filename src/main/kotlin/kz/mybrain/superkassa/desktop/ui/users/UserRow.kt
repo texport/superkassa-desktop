@@ -33,15 +33,18 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Смена пина уехала в диалог: поле пина в каждой строке списка делало
  * из перечня кассиров форму на десять полей, а пин меняют раз в полгода.
  *
- * Удаление последнего носителя роли не просто отклоняется узлом, а гасится
- * здесь с объяснением: отказ «Нужен хотя бы один CASHIER» приходит кодом
- * роли, и администратор читает его как поломку, а не как правило.
+ * Удаление единственного администратора гасится здесь с объяснением:
+ * отказ узла приходит кодом роли, и администратор читает его как поломку,
+ * а не как правило. Остальных, включая единственного кассира, удалять
+ * можно: касса без кассиров — обычное её состояние после подключения.
  */
 @Composable
 internal fun UserRow(
     money: MoneyTexts,
     roleTitle: String,
     user: KkmUser,
+    /** Это тот кассир, который сейчас работает: только ему меняют пин себе. */
+    own: Boolean,
     deletable: Boolean,
     onChangePin: suspend (String) -> Boolean,
     onRemove: () -> Unit
@@ -84,6 +87,7 @@ internal fun UserRow(
         ChangePinDialog(
             money = money,
             who = user.name ?: roleTitle,
+            own = own,
             onDismiss = { pinAsked = false },
             onConfirm = onChangePin
         )
@@ -116,7 +120,7 @@ private fun WhoIs(money: CashierTexts, roleTitle: String, deletable: Boolean) {
                 Chip(money.onlyInRole, MaterialTheme.colorScheme.outline)
                 // Почему удалить нельзя — под значком: строка на каждой
                 // строке списка удваивает высоту перечня кассиров.
-                InfoTip(money.deleteBlocked.format(roleTitle))
+                InfoTip(money.deleteBlocked)
             }
         }
     }
