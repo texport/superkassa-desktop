@@ -45,7 +45,8 @@ internal fun receiptRow(receipt: CabinetReceipt, texts: CabinetTexts): CabinetDo
             sign = receipt.kgdMark ?: Glyphs.DASH,
             delivery = cabinetState(receipt.deliveryStatus, receipt.sendStatus),
             shiftNo = receipt.shiftNumber?.toLong(),
-            about = receipt.kgdMark?.let { texts.kgdMarked }.orEmpty()
+            about = receipt.kgdMark?.let { texts.kgdMarked }.orEmpty(),
+            printable = drawable(cabinetState(receipt.deliveryStatus, receipt.sendStatus))
         ),
         target = RowTarget.Remote(receipt.transactionId)
     )
@@ -99,7 +100,8 @@ internal fun reportRow(report: CabinetReport, texts: CabinetTexts): CabinetDocum
             amountOrder = report.total,
             sign = Glyphs.DASH,
             delivery = cabinetState(report.deliveryStatus, report.sendStatus),
-            shiftNo = report.shiftNumber?.toLong()
+            shiftNo = report.shiftNumber?.toLong(),
+            printable = drawable(cabinetState(report.deliveryStatus, report.sendStatus))
         ),
         target = RowTarget.Remote(report.transactionId)
     )
@@ -119,10 +121,25 @@ internal fun movementRow(movement: CabinetCashMovement, texts: CabinetTexts): Ca
             amountOrder = movement.amount,
             sign = Glyphs.DASH,
             delivery = cabinetState(null, movement.sendStatus),
-            shiftNo = movement.shiftNumber?.toLong()
+            shiftNo = movement.shiftNumber?.toLong(),
+            printable = drawable(cabinetState(null, movement.sendStatus))
         ),
         target = RowTarget.Remote(movement.transactionId)
     )
+
+/**
+ * Есть ли у документа кабинета печатная форма.
+ *
+ * Отвергнутый БФД документ фискальным не стал: его нет ни в БФД,
+ * ни в отчётности. Печатная форма при этом выглядит как настоящий чек —
+ * с номером, признаком и QR-кодом, — и покупатель принимает её
+ * за подтверждение покупки.
+ *
+ * Журнал кассы так и решает про свои документы; кабинет заполняет
+ * ту же таблицу, и мера у обоих одна. Чек, пробитый без связи, сюда
+ * не попадает: он фискальный, просто ещё не доставлен.
+ */
+internal fun drawable(delivery: JournalDelivery?): Boolean = delivery != JournalDelivery.Refused
 
 /**
  * Состояние доставки кабинета словами журнала.
