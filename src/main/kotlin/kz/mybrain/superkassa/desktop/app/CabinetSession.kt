@@ -169,15 +169,21 @@ class CabinetSession(
         registers = registers.map { if (it.id == register.id) register else it }
     }
 
-    /** Перечитывает торговые точки компании — все, а не первую страницу. */
-    suspend fun refreshPlaces() {
-        val current = token ?: return
-        guard {
+    /**
+     * Перечитывает торговые точки компании — все, а не первую страницу.
+     *
+     * @return удалось ли прочитать: по одному опустевшему списку колонка
+     *   не отличает хозяйство без точек от молчащего кабинета, и владельцу
+     *   с тысячей точек предлагалось завести первую.
+     */
+    suspend fun refreshPlaces(): Boolean {
+        val current = token ?: return false
+        return guard {
             client.allRetailPlaces(current) { part, total ->
                 places = part
                 placesTotal = total.toInt()
             }
-        }
+        } != null
     }
 
     /**

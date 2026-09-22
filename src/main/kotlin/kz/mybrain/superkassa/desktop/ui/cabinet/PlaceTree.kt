@@ -48,6 +48,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *   две их или две тысячи, а поиск без этого числа не отличает «нашлось
  *   три» от «их всего три».
  * @param loading ответа кабинета ещё не было: на месте строк ожидание.
+ * @param trouble кабинет списка не отдал — его словами; `null` — отдал.
  * @param footer кнопки создания под списком.
  */
 @Composable
@@ -59,6 +60,8 @@ internal fun PlaceTree(
     rows: List<PlaceRow>,
     total: Int,
     loading: Boolean,
+    trouble: String?,
+    onRetry: () -> Unit,
     query: String,
     onQuery: (String) -> Unit,
     place: String?,
@@ -82,11 +85,15 @@ internal fun PlaceTree(
             onChange = onQuery,
             modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen)
         )
-        if (!loading) PlaceCount(texts, rows, total)
+        if (!loading && trouble == null) PlaceCount(texts, rows, total)
         val state = when {
             loading -> ScreenState.Working
-            rows.isEmpty() -> treeEmpty(texts, query)
-            else -> ScreenState.Ready
+            rows.isNotEmpty() -> ScreenState.Ready
+            // Прочитанное показывается и при отказе: он мог настигнуть
+            // дочитывание сороковой страницы, и прятать за ним первые
+            // тридцать девять незачем.
+            trouble != null -> ScreenState.Trouble(trouble, onRetry = onRetry)
+            else -> treeEmpty(texts, query)
         }
         ScreenSlot(state, Modifier.weight(1f)) {
             TreeRows(texts, language, rows, place, register, onPlace, onRegister, Modifier.weight(1f))

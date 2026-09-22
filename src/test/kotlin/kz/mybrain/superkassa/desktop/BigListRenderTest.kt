@@ -85,6 +85,8 @@ class BigListRenderTest {
             rows = placeRows(all, registers(all), open = open, query = query),
             total = all.size,
             loading = false,
+            trouble = null,
+            onRetry = {},
             query = query,
             onQuery = {},
             place = chosen,

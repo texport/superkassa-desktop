@@ -124,6 +124,8 @@ class ScreenStateTest {
                 rows = emptyList(),
                 total = 0,
                 loading = true,
+                trouble = null,
+                onRetry = {},
                 query = "",
                 onQuery = {},
                 place = null,

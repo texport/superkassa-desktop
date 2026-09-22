@@ -51,9 +51,14 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     // Первого ответа кабинета ещё не было: пустая колонка до него читалась
     // как «точек нет», хотя их просто ещё не спросили.
     var answered by remember(cabinet.token) { mutableStateOf(false) }
+    // Отказ по списку точек держится здесь, а не берётся у сеанса: помеху
+    // сеанса каркас окна забирает во всплывающую строку и тут же гасит,
+    // а колонка обязана называть причину, пока список не прочитан.
+    var trouble by remember(cabinet.token) { mutableStateOf<String?>(null) }
 
     suspend fun reload() {
-        cabinet.refreshPlaces()
+        val read = cabinet.refreshPlaces()
+        trouble = if (read) null else cabinet.problem?.let { cabinetMessage(it, texts).words() } ?: texts.unreachable
         cabinet.refreshRegisters()
         answered = true
     }
@@ -74,6 +79,10 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
             // Строки встают, как только пришла первая страница: у сети их
             // сорок, и ожидание до последней заняло бы весь показ.
             loading = !answered && places.isEmpty(),
+            // Почему список пуст: кабинет отказал или у владельца и правда
+            // нет ни одной точки. Слова — те же, какими отказал кабинет.
+            trouble = trouble,
+            onRetry = { refresh() },
             query = query,
             onQuery = { query = it },
             place = place,

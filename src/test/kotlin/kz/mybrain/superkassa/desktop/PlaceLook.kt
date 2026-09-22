@@ -87,6 +87,8 @@ internal fun PlacesLook(
             rows = placeRows(places, registers, open, query),
             total = places.size,
             loading = loading,
+            trouble = null,
+            onRetry = {},
             query = query,
             onQuery = {},
             place = open,
