@@ -7,6 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.math.BigDecimal
 
+/** Место, к которому карта едет: широта и долгота цели перехода. */
+data class MapGoal(val latitude: Double, val longitude: Double)
+
 /** Где стоит торговая точка: широта и долгота, как их ждёт кабинет. */
 data class MapPoint(val latitude: BigDecimal, val longitude: BigDecimal)
 
@@ -57,11 +60,24 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
     var locationPrecise: Boolean by mutableStateOf(false)
         private set
 
+    /**
+     * Куда карта едет сейчас; пусто — стоит на месте.
+     *
+     * Само движение отсюда не ведётся: состояние живёт вне композиции
+     * и ходом кадров не распоряжается. Оно только называет цель,
+     * а ведёт к ней `MapGlide` внутри показа карты.
+     */
+    var goal: MapGoal? by mutableStateOf(null)
+        private set
+
     /** Выбрана ли точка. */
     val marked: Boolean get() = markerLatitude != null && markerLongitude != null
 
     /** Сдвигает карту на столько точек, на сколько владелец потянул. */
     fun pan(dx: Float, dy: Float) {
+        // Рука владельца отменяет начатый переход: иначе карта уезжала бы
+        // из-под пальца обратно к кассе, выбранной секунду назад.
+        goal = null
         val x = MapProjection.xOf(centerLongitude, zoom) - dx
         val y = MapProjection.yOf(centerLatitude, zoom) - dy
         centerLongitude = MapProjection.longitudeOf(x, zoom)
@@ -88,6 +104,8 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
     fun zoomAt(latitude: Double, longitude: Double, dx: Double, dy: Double, steps: Int) {
         val toZoom = (zoom + steps).coerceIn(MIN_ZOOM, MAX_ZOOM)
         if (toZoom == zoom) return
+        // Колесо под рукой владельца отменяет начатый переход — как и перетаскивание.
+        goal = null
         zoom = toZoom
         val x = MapProjection.xOf(longitude, zoom) - dx
         val y = MapProjection.yOf(latitude, zoom) - dy
@@ -142,6 +160,26 @@ class MapState(latitude: Double = ALMATY_LATITUDE, longitude: Double = ALMATY_LO
         centerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
         centerLongitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
         toZoom?.let { zoom = it.coerceIn(MIN_ZOOM, MAX_ZOOM) }
+    }
+
+    /**
+     * Ведёт карту к месту плавно, а не прыжком.
+     *
+     * Выбор кассы в списке рядом с картой переставлял карту мгновенно,
+     * и владелец терял, откуда она приехала: на карте страны прыжок
+     * от Уральска к Алматы неотличим от новой загрузки. Переход в полсекунды
+     * показывает путь и сохраняет связь между списком и картой.
+     */
+    fun glideTo(latitude: Double, longitude: Double) {
+        goal = MapGoal(
+            latitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE),
+            longitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
+        )
+    }
+
+    /** Переход закончен: цель снята, и карта снова просто стоит где стоит. */
+    fun arrived() {
+        goal = null
     }
 
     /** Знаем ли, где мы. */

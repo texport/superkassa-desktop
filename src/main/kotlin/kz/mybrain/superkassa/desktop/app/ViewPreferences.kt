@@ -100,6 +100,16 @@ class ViewPreferences(private val directory: File?) {
         get() = readSetting(mapCardFile) == COLLAPSED
         set(value) = writeSetting(mapCardFile, if (value) COLLAPSED else null)
 
+    /**
+     * Свёрнута ли легенда карты касс.
+     *
+     * Что значат цвета кружков, читают один раз: дальше легенда только
+     * занимает угол карты. Помнится так же, как карточка под картой.
+     */
+    var mapLegendCollapsed: Boolean
+        get() = readSetting(mapLegendFile) == COLLAPSED
+        set(value) = writeSetting(mapLegendFile, if (value) COLLAPSED else null)
+
     private val languageFile = File(directory, "language")
 
     private val appearanceFile = File(directory, "appearance")
@@ -119,6 +129,8 @@ class ViewPreferences(private val directory: File?) {
     private val placesFile = File(directory, "places")
 
     private val mapCardFile = File(directory, "map-card")
+
+    private val mapLegendFile = File(directory, "map-legend")
 
     companion object {
         /** Ширина и высота разделены крестиком: строка читаема глазами. */

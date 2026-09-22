@@ -127,6 +127,7 @@ fun MapView(
             }
             .pointerInput(state, canvas) { zoomByWheel(state, canvas, wheel) }
     ) {
+        MapGlide(state)
         MapCanvas(state, tiles, canvas, revision, paint)
         if (blank) BlankNotice(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.snug))
         overlay(canvas)

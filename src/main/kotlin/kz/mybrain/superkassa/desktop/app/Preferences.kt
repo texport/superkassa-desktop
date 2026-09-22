@@ -125,6 +125,12 @@ class Preferences(private val file: File = defaultFile()) {
             view.mapCardCollapsed = value
         }
 
+    var mapLegendCollapsed: Boolean
+        get() = view.mapLegendCollapsed
+        set(value) {
+            view.mapLegendCollapsed = value
+        }
+
     var locationAllowed: Boolean?
         get() = location.allowed
         set(value) {

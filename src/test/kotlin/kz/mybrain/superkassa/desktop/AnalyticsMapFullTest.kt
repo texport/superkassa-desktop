@@ -75,8 +75,8 @@ class AnalyticsMapFullTest {
         var closed = 0
         RenderProbe(WIDTH, HEIGHT) {
             val parts = MapParts(
-                session, model, MapServices(session.preferences), laid, groups,
-                Look.texts, Look.cabinet, panel
+                session, model, MapServices(session.preferences), laid, laid.placed.size, groups,
+                Look.texts, Look.cabinet, panel, Look.legend()
             )
             AnalyticsMapFullscreen(parts) { closed += 1 }
         }.use { probe ->
