@@ -47,7 +47,14 @@ fun QueueScreen(session: Session) {
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
         ScreenTitle(texts.queue.title)
-        QueueSummary(session, journal, waiting.size, failed.isNotEmpty(), rejected.isNotEmpty())
+        QueueSummary(
+            session = session,
+            journal = journal,
+            waiting = waiting.size,
+            read = session.queueRead,
+            hasFailed = failed.isNotEmpty(),
+            hasRejected = rejected.isNotEmpty()
+        )
         val state = queueState(
             texts = texts,
             journal = journal,

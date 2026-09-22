@@ -9,9 +9,11 @@ import kz.mybrain.superkassa.desktop.ui.queue.queueStateOf
 import kz.mybrain.superkassa.desktop.ui.queue.rejectedTasks
 import kz.mybrain.superkassa.desktop.ui.queue.sentTasks
 import kz.mybrain.superkassa.desktop.ui.queue.waitingTasks
+import kz.mybrain.superkassa.desktop.ui.queue.waitingText
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -84,6 +86,17 @@ class JournalQueueTest {
             (unread as ScreenState.Trouble).copy(onRetry = null)
         )
         assertTrue(empty is ScreenState.Empty && empty.hint == journal.emptyHint)
+    }
+
+    @Test
+    fun `у непрочитанной очереди нет и числа ждущих`() {
+        assertEquals("3", waitingText(read = true, waiting = 3))
+        assertEquals("0", waitingText(read = true, waiting = 0))
+        assertEquals(
+            Glyphs.DASH,
+            waitingText(read = false, waiting = 0),
+            "крупный ноль над непрочитанной очередью читается как порядок"
+        )
     }
 
     @Test
