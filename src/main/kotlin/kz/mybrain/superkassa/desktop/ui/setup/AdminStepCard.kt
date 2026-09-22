@@ -101,7 +101,11 @@ fun AdminStepCard(
             BusyButton(
                 text = setup.connect,
                 busy = session.busy || cabinet.busy,
-                enabled = UserRules.pinAccepted(pin),
+                // Контур обязателен наравне с пином: пока справочник узла
+                // не прочитан, подставлять в поле нечего, а кнопка оживала
+                // от одного пина и заводила кассу в пустой контур —
+                // с уже выданным на неё токеном кабинета.
+                enabled = UserRules.pinAccepted(pin) && chosenEnvironment.isNotBlank(),
                 onClick = {
                     scope.launch {
                         val what = setup.stepAdmin
