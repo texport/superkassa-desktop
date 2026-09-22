@@ -66,7 +66,7 @@ fun CashScreen(session: Session) {
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         spacing = Spacing.normal
     ) {
-        ScreenTitle(texts.cash.title)
+        ScreenTitle(money.drawer.inDrawer)
         DrawerCard(session, money.drawer)
         CashForm(session, money) { move, amount, key ->
             perform(session, texts, money, move, amount, key, recent)

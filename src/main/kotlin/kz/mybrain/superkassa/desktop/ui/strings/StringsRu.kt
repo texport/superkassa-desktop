@@ -63,7 +63,6 @@ internal val RussianStrings = AppStrings(
         shift = "Смена",
         shiftOpenNo = "№ %s открыта",
         shiftClosed = "Закрыта",
-        cashInDrawer = "Наличные в кассе",
         documentsInShift = "Документов за смену",
         shiftDocuments = "Документы смены",
         refused = "Отклонено БФД",
@@ -153,7 +152,6 @@ internal val RussianStrings = AppStrings(
         done = "оформлен, состояние"
     ),
     cash = CashStrings(
-        title = "Деньги в кассе",
         inDrawer = "В ящике",
         deposit = "Внести",
         withdraw = "Изъять",

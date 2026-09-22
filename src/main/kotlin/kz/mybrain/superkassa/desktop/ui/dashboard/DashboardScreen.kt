@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.ShiftState
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -53,7 +54,14 @@ fun DashboardScreen(session: Session) {
                 value = shiftValue(session),
                 modifier = Modifier.weight(1f)
             )
-            StatCard(texts.dashboard.cashInDrawer, Money.formatTiyn(session.cashInDrawer), Modifier.weight(1f))
+            // Плитка, карточка ящика и подтверждение Z-отчёта называют
+            // остаток одним именем: три названия одного числа кассир читал
+            // как три разных счётчика.
+            StatCard(
+                caption = moneyTexts(session.language).drawer.inDrawer,
+                value = Money.formatTiyn(session.cashInDrawer),
+                modifier = Modifier.weight(1f)
+            )
             StatCard(texts.dashboard.documentsInShift, session.documents.size.toString(), Modifier.weight(1f))
         }
 
