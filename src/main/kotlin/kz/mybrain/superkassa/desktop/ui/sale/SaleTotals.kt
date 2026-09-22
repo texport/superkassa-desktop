@@ -15,6 +15,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.Collapsible
 import kz.mybrain.superkassa.desktop.ui.components.HeroSumLine
 import kz.mybrain.superkassa.desktop.ui.components.MinorSumLine
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.SectionHeader
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
@@ -66,18 +67,18 @@ fun ReceiptTotals(
                     PaymentPanel(session, form, total)
                     if (changed) {
                         HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.tight))
-                        MinorSumLine(extra.itemsSum, formatSigned(basket.total))
+                        MinorSumLine(extra.itemsSum, Money.format(basket.total))
                         if (discount != null && discount > BigDecimal.ZERO) {
-                            MinorSumLine(texts.sale.receiptDiscount, formatSigned(discount.negate()))
+                            MinorSumLine(texts.sale.receiptDiscount, Money.format(discount.negate()))
                         }
                         if (markup != null && markup > BigDecimal.ZERO) {
-                            MinorSumLine(texts.sale.receiptMarkup, formatSigned(markup))
+                            MinorSumLine(texts.sale.receiptMarkup, Money.format(markup))
                         }
                     }
                 }
             }
             HorizontalDivider(modifier = Modifier.padding(vertical = Spacing.tight))
-            HeroSumLine(texts.sale.total, formatSigned(total), MaterialTheme.colorScheme.onSurface)
+            HeroSumLine(texts.sale.total, Money.format(total), MaterialTheme.colorScheme.onSurface)
             // Принятые деньги и сдача — часть денежного итога, а не оплаты:
             // кассир вводит их, глядя на сумму к оплате, и обе цифры должны
             // стоять рядом.
@@ -125,6 +126,6 @@ private fun ChangeLine(taken: BigDecimal, cashSum: BigDecimal) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     } else {
-        HeroSumLine(extra.change, formatSigned(change), MaterialTheme.colorScheme.primary)
+        HeroSumLine(extra.change, Money.format(change), MaterialTheme.colorScheme.primary)
     }
 }

@@ -93,7 +93,7 @@ fun PositionDetails.rows(
     nameKk?.takeIf { it.isNotBlank() }?.let { texts.positionNameKk to it },
     labels.price to Money.format(price),
     labels.quantity to countedText(units),
-    texts.positionSum to formatSigned(sum),
+    texts.positionSum to Money.format(sum),
     discount?.takeIf { it > BigDecimal.ZERO }?.let { labels.discount to Money.format(it) },
     vatGroup?.takeIf { it.isNotBlank() }?.let { labels.vat to vatTitle(rates, it) },
     ntin?.takeIf { it.isNotBlank() }?.let { texts.positionNtin to it },

@@ -100,7 +100,7 @@ private fun PositionSum(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = formatSigned(position.total),
+            text = Money.format(position.total),
             style = MoneyStyle.row,
             modifier = Modifier.width(Sizes.fieldAmount)
         )

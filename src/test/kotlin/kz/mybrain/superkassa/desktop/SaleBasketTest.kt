@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.desktop
 
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.sale.Basket
 import kz.mybrain.superkassa.desktop.ui.sale.Position
-import kz.mybrain.superkassa.desktop.ui.sale.formatSigned
 import kz.mybrain.superkassa.desktop.ui.sale.VatRate
 import kz.mybrain.superkassa.desktop.ui.sale.vatTitle
 import java.math.BigDecimal
@@ -91,8 +91,8 @@ class SaleBasketTest {
 
     @Test
     fun `минус у суммы меньше тенге не теряется`() {
-        assertTrue(formatSigned(BigDecimal("-0.50")).startsWith("−"))
-        assertFalse(formatSigned(BigDecimal("0.50")).startsWith("−"))
+        assertTrue(Money.format(BigDecimal("-0.50")).startsWith("−"))
+        assertFalse(Money.format(BigDecimal("0.50")).startsWith("−"))
     }
 
     @Test

@@ -47,17 +47,22 @@ object Money {
      */
     fun tengeOf(tiyn: Long): BigDecimal = BigDecimal.valueOf(tiyn, TIYN_SCALE)
 
+    /**
+     * Сумма со знаком: минус берётся из общего набора знаков.
+     *
+     * Знак вычитания и дефис переноса на экране разной ширины, и столбец
+     * сумм, где сторно набрано дефисом, а возврат — минусом, стоит рваным.
+     * Знак ставится у всей суммы, а не у целой части: у «−0,50» целых
+     * нулей, и минус пропадал вместе с ними — сторно на полтиына
+     * выглядело обычной продажей.
+     */
     fun format(amount: BigDecimal): String {
         val scaled = amount.setScale(TIYN_SCALE, RoundingMode.DOWN)
-        // Знак берётся у всей суммы, а не у целой части: у «−0,50» целых
-        // нулей, и минус пропадал вместе с ними — сторно на полтиына
-        // выглядело обычной продажей.
-        val negative = scaled.signum() < 0
         val whole = scaled.abs().toBigInteger().toString()
         val fraction = scaled.remainder(BigDecimal.ONE).abs().movePointRight(TIYN_SCALE).toBigInteger()
         val tiyn = fraction.toString().padStart(TIYN_SCALE, '0')
-        val sign = if (negative) "-" else ""
-        return "$sign${groupThousands(whole)},$tiyn${Glyphs.NBSP}$CURRENCY"
+        val sign = if (scaled.signum() < 0) Glyphs.MINUS else ""
+        return "$sign${groupThousands(whole)}${Glyphs.DECIMAL}$tiyn${Glyphs.NBSP}$CURRENCY"
     }
 
     /**

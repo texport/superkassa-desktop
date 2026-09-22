@@ -168,15 +168,3 @@ data class Position(
     fun label(stornoCaption: String): String =
         if (storno) "$stornoCaption${Glyphs.SEPARATOR}$name" else name
 }
-
-/**
- * Сумма со знаком.
- *
- * [Money.format] теряет минус у сумм меньше тенге: целая часть у «−0,50»
- * равна нулю, и знак пропадает вместе с ней. Сторно на полтиына показалось
- * бы кассиру обычной продажей, поэтому знак ставится здесь явно. Сам знак
- * берётся из общего набора: своя копия под именем MINUS была вторым
- * объявлением того же знака.
- */
-fun formatSigned(amount: BigDecimal): String =
-    if (amount.signum() < 0) Glyphs.MINUS + Money.format(amount.abs()) else Money.format(amount)

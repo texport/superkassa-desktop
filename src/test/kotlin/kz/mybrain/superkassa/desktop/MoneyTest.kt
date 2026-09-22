@@ -29,7 +29,7 @@ class MoneyTest {
 
     @Test
     fun `отрицательная сумма сохраняет знак`() {
-        assertEquals("-1\u00A0500,00\u00A0₸", Money.format(BigDecimal("-1500")))
+        assertEquals("\u22121\u00A0500,00\u00A0₸", Money.format(BigDecimal("-1500")))
     }
 
     /**
@@ -38,8 +38,8 @@ class MoneyTest {
      */
     @Test
     fun `минус сохраняется у суммы меньше тенге`() {
-        assertEquals("-0,50\u00A0₸", Money.format(BigDecimal("-0.50")))
-        assertEquals("-0,01\u00A0₸", Money.formatTiyn(-1L))
+        assertEquals("\u22120,50\u00A0₸", Money.format(BigDecimal("-0.50")))
+        assertEquals("\u22120,01\u00A0₸", Money.formatTiyn(-1L))
     }
 
     @Test
