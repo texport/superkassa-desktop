@@ -15,27 +15,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
-import kz.mybrain.superkassa.desktop.app.refreshKkms
-import kz.mybrain.superkassa.desktop.server.enterProgramming
-import kz.mybrain.superkassa.desktop.server.exitProgramming
 import kz.mybrain.superkassa.desktop.server.pingOfd
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.FactLines
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
-import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
- * Диагностика кассы: связь с ОФД, сведения о нём, узел и режим программирования.
+ * Диагностика кассы: связь с ОФД, сведения о нём и об узле.
  *
- * Режим программирования выведен сюда намеренно: настройки кассы и снятие
- * её с учёта узел разрешает только в нём, и кассир должен видеть, включён
- * он сейчас или нет, а не выяснять это отказом. Переключатель один и назван
- * по тому, что произойдёт: два соседних «войти» и «выйти» заставляют читать
- * плашку, чтобы понять, какая из кнопок сейчас что-то изменит.
+ * Режим программирования отсюда убран: выход из него стоял здесь, а вход —
+ * двумя разделами выше, и кассир, вошедший в режим, искал выход по всему
+ * экрану. И то и другое живёт теперь под самой кассой, в [ProgrammingCard].
+ *
+ * Проверки гаснут, пока узел молчит: спрашивать о связи с БФД ту самую
+ * службу, которая не отвечает, незачем — кассир получал отказ после
+ * нажатия и узнавал из него ровно то, что и так видно по состоянию узла.
  */
 @Composable
 fun DiagnosticsCard(session: Session) {
@@ -52,8 +50,7 @@ fun DiagnosticsCard(session: Session) {
         node = body?.let(::parseNodeSettings)
     }
 
-    val programming = session.selected?.state == PROGRAMMING
-    val ready = session.selected != null && !busy
+    val ready = session.selected != null && !busy && session.nodeAvailable
 
     SectionCard(
         title = texts.settings.diagnostics,
@@ -95,15 +92,6 @@ fun DiagnosticsCard(session: Session) {
                     }
                 }
             ) { Text(texts.settings.ofdInfo) }
-            // Войти в программирование предлагает та карточка, поля
-            // которой без него заперты. Здесь остаётся только выход —
-            // другого места для него на экране нет.
-            if (programming) {
-                OutlinedButton(
-                    enabled = ready,
-                    onClick = { scope.launch { switchProgramming(session, enter = false) } }
-                ) { Text(texts.settings.exitProgramming) }
-            }
         }
 
         if (summary == null && node == null) {
@@ -128,24 +116,3 @@ private suspend fun askOfd(session: Session, what: String): OfdSummary? {
     val body = session.guard(what) { session.client.ofdInfoBody(kkm.kkmId, session.pin) }
     return body?.let { parseOfdInfo(it, session.language.code) }
 }
-
-private suspend fun switchProgramming(session: Session, enter: Boolean) {
-    val texts = stringsOf(session.language)
-    val kkm = session.selected ?: return
-    session.guard(texts.settings.programmingMode) {
-        if (enter) {
-            session.client.enterProgramming(kkm.kkmId, session.pin)
-        } else {
-            session.client.exitProgramming(kkm.kkmId, session.pin)
-        }
-    } ?: return
-    // Сообщение объявляется последним: перечитывание списка касс снимает
-    // предыдущее, и объяви мы итог раньше — кассир остался бы без ответа.
-    session.refreshKkms()
-    session.report(
-        if (enter) texts.settings.enteredProgramming else texts.settings.exitedProgramming
-    )
-}
-
-/** Состояние кассы, в котором узел разрешает менять её настройки. */
-internal const val PROGRAMMING = "PROGRAMMING"

@@ -141,13 +141,23 @@ private fun EmptyPickerLine() {
 private fun shortened(text: String, width: Dp): String {
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.bodyLarge
-    val available = with(LocalDensity.current) { (width - Sizes.fieldTextInset).toPx() }
-    if (measurer.measure(text, style).size.width <= available) return text
-    var fits = 0
-    for (length in 1..text.length) {
-        val candidate = text.take(length) + Glyphs.ELLIPSIS
-        if (measurer.measure(candidate, style).size.width > available) break
-        fits = length
+    val density = LocalDensity.current
+    // Перебор букв — десятки раскладок шрифта на одно название, и делать
+    // его заново на каждую перерисовку нельзя: поле само сообщает свою
+    // ширину при каждой разметке, а при растягивании окна разметка идёт
+    // десятки раз в секунду.
+    return remember(text, width, style, density) {
+        val available = with(density) { (width - Sizes.fieldTextInset).toPx() }
+        if (measurer.measure(text, style).size.width <= available) {
+            text
+        } else {
+            var fits = 0
+            for (length in 1..text.length) {
+                val candidate = text.take(length) + Glyphs.ELLIPSIS
+                if (measurer.measure(candidate, style).size.width > available) break
+                fits = length
+            }
+            text.take(fits).trimEnd() + Glyphs.ELLIPSIS
+        }
     }
-    return text.take(fits).trimEnd() + Glyphs.ELLIPSIS
 }

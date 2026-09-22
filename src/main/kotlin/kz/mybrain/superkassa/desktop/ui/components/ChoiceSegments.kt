@@ -7,6 +7,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -40,10 +41,18 @@ fun <T> ChoiceSegments(
     // берётся числом: у сегментов Material внутренняя ширина не зависит
     // от подписи, и «Полная страница» обрезалась до «Полная стра». Единая
     // ширина на все сегменты держит ряд ровным.
+    //
+    // Считается один раз на набор подписей: при растягивании окна разметка
+    // пересчитывается десятки раз в секунду, и раскладка шрифта на каждый
+    // такой проход — работа впустую.
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.labelLarge
-    val widest = options.maxOfOrNull { measurer.measure(label(it), style).size.width } ?: 0
-    val segment = with(LocalDensity.current) { widest.toDp() } + Sizes.segmentInset
+    val density = LocalDensity.current
+    val labels = options.map(label)
+    val segment = remember(labels, style, density) {
+        val widest = labels.maxOfOrNull { measurer.measure(it, style).size.width } ?: 0
+        with(density) { widest.toDp() } + Sizes.segmentInset
+    }
     SingleChoiceSegmentedButtonRow(modifier = modifier) {
         options.forEachIndexed { at, option ->
             SegmentedButton(

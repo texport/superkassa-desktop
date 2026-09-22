@@ -81,6 +81,13 @@ class Session(
             paper.drawing = value
         }
 
+    /** Узел не нарисовал открытую форму; `null` — беды нет. */
+    var previewTrouble: PreviewTrouble?
+        get() = paper.trouble
+        set(value) {
+            paper.trouble = value
+        }
+
     /** Печать, просмотр и сохранение печатных форм. */
     val printDesk: PrintDesk by lazy { PrintDesk(this) }
 

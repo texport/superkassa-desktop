@@ -25,9 +25,6 @@ object Tape {
     val maxWidth = 1140.dp
     val widthStep = 100.dp
 
-    /** На сколько точек прокручивается лента за щелчок колеса. */
-    const val SCROLL_STEP = 60f
-
     /** Поле сверху и снизу ленты внутри окна. */
     val margin = 24.dp
 }

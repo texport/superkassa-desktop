@@ -16,6 +16,7 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -67,10 +68,15 @@ internal fun SectionRail(
     val texts = LocalStrings.current
     val measurer = rememberTextMeasurer()
     val labelStyle = MaterialTheme.typography.labelMedium
-    val widest = sections.maxOfOrNull {
-        measurer.measure(it.title(texts.sections), labelStyle).size.width
-    } ?: 0
-    val railWidth = with(LocalDensity.current) { widest.toDp() } + Spacing.roomy * 2
+    val density = LocalDensity.current
+    // Подписи меряются один раз на набор и язык, а не на каждую перерисовку:
+    // при растягивании окна разметка пересчитывается десятки раз в секунду,
+    // и раскладка шрифта на каждый такой проход — работа впустую.
+    val titles = sections.map { it.title(texts.sections) }
+    val railWidth = remember(titles, labelStyle, density) {
+        val widest = titles.maxOfOrNull { measurer.measure(it, labelStyle).size.width } ?: 0
+        with(density) { widest.toDp() } + Spacing.roomy * 2
+    }
     NavigationRail(
         containerColor = MaterialTheme.colorScheme.surface,
         modifier = Modifier.width(if (collapsed) Sizes.rail else maxOf(railWidth, Sizes.rail)),

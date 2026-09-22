@@ -55,6 +55,8 @@ data class SettingStrings(
     val programmingMode: String,
     val enterProgramming: String,
     val exitProgramming: String,
+    /** Плашка состояния: касса сейчас в режиме программирования. */
+    val programmingOn: String,
     val enteredProgramming: String,
     val exitedProgramming: String,
     val ofd: String,
@@ -90,6 +92,9 @@ data class SettingStrings(
     val taxSettingsHint: String,
     val taxRegime: String,
     val defaultVatGroup: String,
+    /** Справочники узла не прочитаны: выбирать не из чего и незачем. */
+    val dictionariesMissing: String,
+    val dictionariesMissingHint: String,
     val autoCashout: String,
     val autoCashoutHint: String,
     val settingsSaved: String,
@@ -117,7 +122,12 @@ data class SettingStrings(
     val mapReverse: String,
     val mapLocation: String,
     val mapDefault: String,
-    val groupAppearance: String,
+    /** Хозяйства настроек: где именно изменится выбранное. */
+    val householdWorkplace: String,
+    val householdKkm: String,
+    val householdCabinet: String,
+    /** Как печатает эта касса: форма на узле, принтер на этой машине. */
+    val groupPrinting: String,
     /** Настройки самой кассы: их принимает узел и только в режиме программирования. */
     val groupService: String,
     /** Адреса служб, с которыми говорит рабочее место: узел, кабинет, карта. */

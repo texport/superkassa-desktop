@@ -70,6 +70,5 @@ fun OfdTokenCard(session: Session) {
                 }
             )
         }
-        if (!programming) ProgrammingGate(session)
     }
 }

@@ -5,8 +5,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 import androidx.compose.ui.unit.Density
 import kz.mybrain.superkassa.desktop.ui.components.ReceiptPreview
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
@@ -93,6 +95,72 @@ class PreviewTapeReachTest {
         assertTrue(reached, "низ формы недостижим прокруткой: колесо упирается раньше последней строки")
     }
 
+    /**
+     * Узел отказал — окно остаётся стоять.
+     *
+     * Прежде оно исчезало целиком: владелец нажимал «показать», всё
+     * пропадало, и причина оставалась одной строкой внизу экрана.
+     * Сравнение идёт с тем же вызовом без отказа: там окна нет вовсе,
+     * и кадры обязаны разойтись.
+     */
+    @Test
+    fun `отказ узла оставляет окно просмотра открытым`() {
+        val refused = frame(ScreenState.Trouble("Узел не отдал печатную форму", "Смена не открыта") {})
+        val nothing = frame(null)
+        assertTrue(!refused.contentEquals(nothing), "отказ ничего не открыл: окно просмотра закрылось вместе с формой")
+    }
+
+    /**
+     * Ctrl-щелчок меняет масштаб и никуда не уезжает.
+     *
+     * Колесо разбиралось дважды: сначала руками — ради масштаба, — а потом
+     * родной прокруткой области, которая события не видела поглощённым.
+     * Одно движение колеса с Ctrl и увеличивало ленту, и листало её.
+     *
+     * Проверяется на пределе увеличения: дальше масштаб не растёт, и кадр
+     * обязан остаться тем же. Сдвинулся — значит лента всё-таки уехала.
+     */
+    @Test
+    fun `увеличение колесом не листает ленту заодно`() {
+        val scene = ImageComposeScene(width = WINDOW_WIDTH, height = WINDOW_HEIGHT, density = Density(1f)) {
+            CompositionLocalProvider(LocalStrings provides stringsOf(Language.Ru)) {
+                ReceiptPreview(image = longForm(FORM_HEIGHT), onDismiss = {})
+            }
+        }
+        scene.sendPointerEvent(PointerEventType.Move, Offset(WINDOW_WIDTH / 2f, WINDOW_HEIGHT / 2f))
+        repeat(ZOOM_TICKS) { zoomIn(scene) }
+        val atLimit = scene.render().encodeToData()?.bytes ?: ByteArray(0)
+        zoomIn(scene)
+        val again = scene.render().encodeToData()?.bytes ?: ByteArray(0)
+        scene.close()
+
+        assertTrue(atLimit.isNotEmpty())
+        assertTrue(atLimit.contentEquals(again), "Ctrl-щелчок на пределе увеличения сдвинул ленту")
+    }
+
+    /** Один щелчок колеса с Ctrl — увеличение. */
+    private fun zoomIn(scene: ImageComposeScene) {
+        scene.sendPointerEvent(
+            eventType = PointerEventType.Scroll,
+            position = Offset(WINDOW_WIDTH / 2f, WINDOW_HEIGHT / 2f),
+            scrollDelta = Offset(0f, -1f),
+            keyboardModifiers = PointerKeyboardModifiers(isCtrlPressed = true)
+        )
+        repeat(SETTLE_FRAMES) { scene.render() }
+    }
+
+    /** Снимок окна просмотра без картинки: с отказом или без него. */
+    private fun frame(trouble: ScreenState.Trouble?): ByteArray {
+        val scene = ImageComposeScene(width = WINDOW_WIDTH, height = WINDOW_HEIGHT, density = Density(1f)) {
+            CompositionLocalProvider(LocalStrings provides stringsOf(Language.Ru)) {
+                ReceiptPreview(image = null, drawing = false, trouble = trouble, onDismiss = {})
+            }
+        }
+        val bytes = scene.render().encodeToData()?.bytes ?: ByteArray(0)
+        scene.close()
+        return bytes
+    }
+
     /** Крутит колесо, пока не покажется низ формы или пока круги не кончатся. */
     private fun scrolledToFoot(scene: ImageComposeScene): Boolean {
         var rounds = 0
@@ -128,6 +196,12 @@ class PreviewTapeReachTest {
         const val WHEEL_ROUNDS = 40
         const val WHEEL_TICKS = 50
         const val WHEEL_DELTA = 30f
+
+        /** Столько щелчков доводят ленту до предела увеличения. */
+        const val ZOOM_TICKS = 12
+
+        /** Сколько кадров нужно, чтобы разметка встала после щелчка. */
+        const val SETTLE_FRAMES = 8
 
         /** Каждая какая точка снимка попадает в выборку. */
         const val SAMPLE_STEP = 7

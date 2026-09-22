@@ -3,7 +3,9 @@ package kz.mybrain.superkassa.desktop
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -13,6 +15,7 @@ import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kz.mybrain.superkassa.desktop.app.LocalNode
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
@@ -32,6 +35,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Durations
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
+import java.awt.Dimension
 
 /**
  * Точка входа кассы для настольных систем.
@@ -87,15 +91,22 @@ private fun ApplicationScope.SuperkassaApplication() {
         if (!AppLog.debugMode) return@LaunchedEffect
         NodeOutput(LocalNode.output(), AppLog.journal).follow()
     }
-    LaunchedEffect(windowState.size) {
-        // Размер записывается, когда рамку отпустили, а не на каждый её
-        // сдвиг: пока кассир тянет угол окна, размер меняется десятки раз
-        // в секунду, и каждый из них — запись файла настройки на диск.
-        delay(Durations.afterTyping)
-        val width = windowState.size.width.value.toInt()
-        val height = windowState.size.height.value.toInt()
-        if (width > 0 && height > 0) {
-            session.rememberWindowSize(width, height)
+    // Размер окна читается потоком снимков, а не ключом этого места.
+    // Ключом он подписывал на себя весь состав приложения: каждое движение
+    // рамки заново собирало окно вместе с темой и словарями, а рамку тянут
+    // десятками движений в секунду.
+    //
+    // Записывается размер, когда рамку отпустили: каждое движение — это
+    // запись файла настройки на диск, и делать её по ходу растягивания
+    // незачем.
+    LaunchedEffect(Unit) {
+        snapshotFlow { windowState.size }.collectLatest { size ->
+            delay(Durations.afterTyping)
+            val width = size.width.value.toInt()
+            val height = size.height.value.toInt()
+            if (width > 0 && height > 0) {
+                session.rememberWindowSize(width, height)
+            }
         }
     }
     Window(
@@ -104,6 +115,15 @@ private fun ApplicationScope.SuperkassaApplication() {
         icon = painterResource(APP_ICON),
         state = windowState
     ) {
+        // Нижняя граница размера — у самого окна, а не у разметки: system
+        // разрешала ужать окно до полосы, в которой не помещается ни одна
+        // колонка, и кассир получал экран из обрезков вместо рабочего места.
+        val density = LocalDensity.current
+        LaunchedEffect(density) {
+            window.minimumSize = with(density) {
+                Dimension(Sizes.windowMinWidth.roundToPx(), Sizes.windowMinHeight.roundToPx())
+            }
+        }
         // Escape слушается ниже Compose, у самого окна: наложения живут
         // своим слоем и клавиша до разделов не доходит, а до чего доходит —
         // решает фокус. Кто закрывается — в [EscapeCloses].
