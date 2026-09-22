@@ -35,7 +35,14 @@ enum class ReturnKind(
      *
      * Документ без номера или без суммы отброшен: чек-основание требует
      * и то, и другое, а без них кнопка возврата раньше просто молчала.
+     *
+     * Отвергнутый ОФД чек отброшен тоже: фискальным он не стал, в ОФД его
+     * нет, и возврат по нему ОФД отвергнет следом. Кассир видел такой чек
+     * в списке наравне с проведёнными и, выбрав его, отдавал деньги
+     * покупателю под чек возврата, которого у ОФД не будет.
      */
     fun basisIn(documents: List<Document>): List<Document> =
-        documents.filter { it.docType == basisType && it.docNo != null && it.totalAmount != null }
+        documents.filter {
+            it.docType == basisType && it.docNo != null && it.totalAmount != null && !it.refusedByOfd
+        }
 }

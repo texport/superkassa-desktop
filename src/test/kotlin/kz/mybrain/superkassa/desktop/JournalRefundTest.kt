@@ -117,6 +117,26 @@ class JournalRefundTest {
         assertTrue(ReturnKind.Buy.basisIn(documents).isEmpty())
     }
 
+    /**
+     * Отвергнутый ОФД чек фискальным не стал, и возврата по нему не будет.
+     *
+     * Такой чек стоял в списке оснований наравне с проведёнными, и кассир,
+     * выбрав его, отдавал деньги покупателю под чек возврата, который ОФД
+     * отвергнет следом за основанием.
+     */
+    @Test
+    fun `отвергнутый ОФД чек в основание не берётся`() {
+        val refusedByStatus = sale(number = 8).copy(ofdStatus = "FAILED")
+        val refusedByCode = sale(number = 9).copy(ofdErrorCode = 409)
+        val queued = sale(number = 10).copy(ofdStatus = "OFFLINE_QUEUED", isAutonomous = true)
+
+        assertEquals(
+            listOf(10L),
+            ReturnKind.Sell.basisIn(listOf(refusedByStatus, refusedByCode, queued)).map { it.docNo },
+            "автономный чек фискальный и в основание годится, а отвергнутого ОФД нет вовсе"
+        )
+    }
+
     @Test
     fun `чек без номера или без суммы в основание не годится`() {
         val documents = listOf(
