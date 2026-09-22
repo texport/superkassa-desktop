@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
@@ -53,6 +54,9 @@ fun main() {
 /** Имя бренда: строка меню, док и заголовок окна. */
 private const val APP_NAME = "Superkassa"
 
+/** Значок окна: он же стоит в панели задач Windows и в переключателе окон. */
+private const val APP_ICON = "icon.png"
+
 @Composable
 private fun ApplicationScope.SuperkassaApplication() {
     // Адрес узла читается из настроек при каждом обращении: его меняют
@@ -97,6 +101,7 @@ private fun ApplicationScope.SuperkassaApplication() {
     Window(
         onCloseRequest = ::exitApplication,
         title = APP_NAME,
+        icon = painterResource(APP_ICON),
         state = windowState
     ) {
         // Escape слушается ниже Compose, у самого окна: наложения живут

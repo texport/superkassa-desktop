@@ -139,6 +139,19 @@ compose.desktop {
                     }
                 }
             }
+            windows {
+                // Значок для Windows — только `.ico`: `.icns` jpackage там
+                // не понимает, и без этой строки установленная касса
+                // получала общий значок программы на Java. Файл лежит
+                // в репозитории собранным: на сборочной машине рисовать
+                // его нечем.
+                iconFile.set(project.file("icon.ico"))
+            }
+            linux {
+                // Для Linux jpackage берёт `.png` — тот же, из которого
+                // собраны остальные значки.
+                iconFile.set(project.file("icon.png"))
+            }
         }
     }
 }
@@ -156,8 +169,22 @@ tasks.test {
  * Рисует значок приложения из иконки Material 3.
  *
  * Запускается руками при смене значка: `./gradlew makeIcon`. Результат —
- * `icon.png`, из которого собирается `icon.icns` для macOS.
+ * `icon.png`; он же идёт в Linux-установщик и в окно приложения,
+ * а из него собираются `icon.icns` для macOS и `icon.ico` для Windows.
  */
+/**
+ * Кладёт значок в ресурсы приложения.
+ *
+ * Значок нужен не только установщику: окно называет его себе само, иначе
+ * в панели задач Windows рядом с кассой стоит общий значок программы
+ * на Java. Берётся тот же файл, что и для установщиков, — копия
+ * в исходниках была бы вторым значком, который однажды разойдётся
+ * с первым.
+ */
+tasks.processResources {
+    from(layout.projectDirectory.file("icon.png"))
+}
+
 tasks.register<JavaExec>("makeIcon") {
     group = "build"
     mainClass.set("kz.mybrain.superkassa.desktop.tools.IconMakerKt")
