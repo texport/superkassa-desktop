@@ -51,6 +51,35 @@ class LookTypographyTest {
         }
     }
 
+    /**
+     * Ступени идут вверх без повторов и без провалов.
+     *
+     * Две ступени с одним множителем — два одинаковых сегмента в ряду:
+     * кассир жмёт «крупнее», и ничего не меняется. Заметить это можно
+     * только сравнив кадры, а не открыв экран.
+     */
+    @Test
+    fun `ступени размера идут вверх и обычная стоит среди них`() {
+        val ladder = TextScale.entries.map { it.factor }
+        assertEquals(ladder.sorted(), ladder, "ступени переставлены местами")
+        assertEquals(ladder.size, ladder.toSet().size, "две ступени с одним множителем")
+        assertEquals(1f, TextScale.Normal.factor, "обычная ступень обязана оставить шкалу как есть")
+        assertTrue(ladder.first() < 1f && ladder.last() > 1f, "ступени только в одну сторону от обычной")
+    }
+
+    /**
+     * Строка списка остаётся читаемой на самой плотной ступени.
+     *
+     * Плотная ступень заведена ради товарного списка, и уронить его
+     * строку ниже одиннадцати точек значит выменять читаемость
+     * на лишние строки — то есть отдать то, ради чего её включали.
+     */
+    @Test
+    fun `на плотной ступени строка списка не мельче одиннадцати точек`() {
+        val row = typographyOf(Typeface.System, TextScale.Dense).bodySmall.fontSize.value
+        assertTrue(row >= FLOOR, "строка списка вышла $row точек")
+    }
+
     @Test
     fun `незнакомый код даёт обычный шрифт и размер`() {
         assertEquals(Typeface.System, Typeface.byCode(null))
@@ -71,5 +100,10 @@ class LookTypographyTest {
 
     private fun assertNear(expected: Float, actual: Float, what: String) {
         assertTrue(abs(expected - actual) < 0.01f, "$what: ожидалось $expected, вышло $actual")
+    }
+
+    private companion object {
+        /** Ниже этого строку товарного списка на кассовом мониторе не разобрать. */
+        const val FLOOR = 11f
     }
 }
