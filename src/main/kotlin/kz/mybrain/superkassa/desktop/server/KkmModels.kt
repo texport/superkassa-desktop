@@ -29,6 +29,15 @@ data class Kkm(
     val lastShiftNo: Int? = null,
     val blockReasonCode: Int? = null,
     val autonomousSince: Long? = null,
+    /**
+     * Сколько документов ждут отправки в БФД.
+     *
+     * Вместе с [autonomousSince] отвечает на вопрос, автономна ли касса
+     * сейчас: отметку о начале автономной работы узел снимает при
+     * следующей фискальной операции, и до неё касса с пустой очередью
+     * выглядела автономной, хотя связь давно вернулась.
+     */
+    val offlineQueueCount: Int? = null,
     val taxRegime: String? = null,
     val defaultVatGroup: String? = null,
     /**
@@ -82,7 +91,8 @@ data class Kkm(
      * не состояние смены, а отказ читать её.
      */
     val isProgramming: Boolean get() = state == "PROGRAMMING"
-    val isAutonomous: Boolean get() = autonomousSince != null
+    /** Касса работает автономно: есть неотправленное и отметка о начале. */
+    val isAutonomous: Boolean get() = autonomousSince != null && (offlineQueueCount ?: 0) > 0
 }
 
 @Serializable

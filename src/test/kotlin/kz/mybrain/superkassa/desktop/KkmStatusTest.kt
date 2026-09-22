@@ -28,8 +28,18 @@ class KkmStatusTest {
         nodeOffline = "Узел недоступен"
     )
 
-    private fun kkm(state: String?, autonomousSince: Long? = null) =
-        Kkm(kkmId = "kkm-1", state = state, autonomousSince = autonomousSince)
+    /**
+     * @param waiting сколько документов ждут отправки: автономной касса
+     *   считается по неотправленному, а не по одной отметке о начале —
+     *   её узел снимает лишь при следующей фискальной операции.
+     */
+    private fun kkm(state: String?, autonomousSince: Long? = null, waiting: Int = 0) =
+        Kkm(
+            kkmId = "kkm-1",
+            state = state,
+            autonomousSince = autonomousSince,
+            offlineQueueCount = waiting
+        )
 
     @Test
     fun `состояние кассы названо ровно один раз`() {
@@ -50,11 +60,15 @@ class KkmStatusTest {
 
     @Test
     fun `автономная работа добавляет плашку, обычная — нет`() {
-        val offline = kkmStatusChips(kkm("KKM_ACTIVE", autonomousSince = 1L), false, true, words)
+        val offline = kkmStatusChips(kkm("KKM_ACTIVE", autonomousSince = 1L, waiting = 1), false, true, words)
         val online = kkmStatusChips(kkm("KKM_ACTIVE"), false, true, words)
         assertTrue(offline.any { it.text == words.autonomous }, offline.joinToString { it.text })
         assertTrue(online.none { it.text == words.autonomous }, online.joinToString { it.text })
         assertEquals(offline.size - 1, online.size)
+
+        // Очередь опустела, а отметка ещё стоит: касса уже не автономна.
+        val delivered = kkmStatusChips(kkm("KKM_ACTIVE", autonomousSince = 1L), false, true, words)
+        assertTrue(delivered.none { it.text == words.autonomous }, delivered.joinToString { it.text })
     }
 
     @Test
