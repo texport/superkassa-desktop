@@ -85,6 +85,9 @@ class Session(
     /** Печать, просмотр и сохранение печатных форм. */
     val printDesk: PrintDesk by lazy { PrintDesk(this) }
 
+    /** Установленная версия и найденные выпуски; спрашивает GitHub, а не узел. */
+    val updates: Updates by lazy { Updates(preferences.updates) }
+
     /** Надписи на языке кассира: одни и те же для экранов и для сеанса. */
     val texts: AppStrings get() = stringsOf(language)
 

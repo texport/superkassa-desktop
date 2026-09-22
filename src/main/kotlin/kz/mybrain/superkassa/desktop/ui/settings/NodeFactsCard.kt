@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.FactLines
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.updateTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -62,7 +63,12 @@ fun NodeFactsCard(session: Session) {
     }
 }
 
-/** Что узел рассказал о себе; неизвестное в перечень не попадает. */
+/**
+ * Что узел рассказал о себе; неизвестное в перечень не попадает.
+ *
+ * Первой строкой — версия самой кассы: поддержка спрашивает обе,
+ * и разбирать отказ по узлу, не зная, какая касса к нему ходит, нельзя.
+ */
 @Composable
 private fun nodeLines(
     session: Session,
@@ -71,6 +77,7 @@ private fun nodeLines(
 ): List<Pair<String, String>> {
     val texts = LocalStrings.current.settings
     return listOfNotNull(
+        updateTexts(session.language).appName to session.updates.version.label,
         info?.version?.let { texts.nodeVersion to "${info.name.orEmpty()} $it".trim() },
         info?.coreVersion?.let { texts.nodeCoreVersion to it },
         info?.mode?.let { texts.nodeMode to it },

@@ -11,6 +11,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
 import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 import kz.mybrain.superkassa.desktop.ui.strings.setupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
+import kz.mybrain.superkassa.desktop.ui.strings.updateTexts
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -52,7 +53,8 @@ class AllTextsTest {
         paymentTexts(language),
         setupTexts(language),
         debugTexts(language),
-        edsTexts(language)
+        edsTexts(language),
+        updateTexts(language)
     )
 
     @Test

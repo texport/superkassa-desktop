@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Today
+import androidx.compose.material.icons.filled.Upgrade
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
@@ -202,4 +203,7 @@ object AppIcons {
 
     /** Тёмная тема: ночная смена. */
     val darkTheme: ImageVector = Icons.Outlined.DarkMode
+
+    /** Вышла новая версия кассы. */
+    val update: ImageVector = Icons.Filled.Upgrade
 }

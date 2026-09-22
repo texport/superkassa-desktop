@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
@@ -39,6 +41,9 @@ import kz.mybrain.superkassa.desktop.ui.users.UsersScreen
  * Ширина считается по самой длинной подписи набора: у Material она
  * постоянная, и «Новая касса» упиралась в край окна. Считается так же,
  * как ширина сегментов, — одним правилом на весь интерфейс.
+ *
+ * @param footer то, что стоит в нижнем углу рельса под разделами:
+ *   версия кассы и знак о новой.
  */
 @Composable
 internal fun SectionRail(
@@ -46,6 +51,7 @@ internal fun SectionRail(
     current: Section,
     collapsed: Boolean,
     onToggle: () -> Unit,
+    footer: @Composable ColumnScope.() -> Unit,
     onPick: (Section) -> Unit
 ) {
     val texts = LocalStrings.current
@@ -68,6 +74,8 @@ internal fun SectionRail(
                 label = if (collapsed) null else ({ Text(entry.title(texts.sections)) })
             )
         }
+        Spacer(Modifier.weight(1f))
+        footer()
     }
 }
 
