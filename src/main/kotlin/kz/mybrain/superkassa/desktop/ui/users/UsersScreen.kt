@@ -105,13 +105,20 @@ fun UsersScreen(session: Session) {
                     if (index > 0) {
                         HorizontalDivider()
                     }
+                    // Свой ли это кассир: от этого зависит и обещание
+                    // продолжить работу новым пином, и то, каким пином
+                    // экран перечитывает список.
+                    val own = UserRules.same(session.whoami, user)
                     UserRow(
                         money = money,
                         roleTitle = roleTitle(session, texts.users, user.role),
                         user = user,
+                        own = own,
                         deletable = !UserRules.lastOfRole(loaded, user),
                         onChangePin = { newPin ->
-                            changePin(session, texts, user, newPin) { reload(changedPin = newPin) }
+                            changePin(session, texts, user, newPin) {
+                                reload(changedPin = newPin.takeIf { own })
+                            }
                         },
                         onRemove = { scope.launch { removeCashier(session, texts, user) { reload() } } }
                     )

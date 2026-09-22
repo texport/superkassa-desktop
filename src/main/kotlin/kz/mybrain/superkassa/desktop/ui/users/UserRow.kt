@@ -42,6 +42,8 @@ internal fun UserRow(
     money: MoneyTexts,
     roleTitle: String,
     user: KkmUser,
+    /** Это тот кассир, который сейчас работает: только ему меняют пин себе. */
+    own: Boolean,
     deletable: Boolean,
     onChangePin: suspend (String) -> Boolean,
     onRemove: () -> Unit
@@ -84,6 +86,7 @@ internal fun UserRow(
         ChangePinDialog(
             money = money,
             who = user.name ?: roleTitle,
+            own = own,
             onDismiss = { pinAsked = false },
             onConfirm = onChangePin
         )

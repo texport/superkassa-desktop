@@ -34,13 +34,15 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * Диалог закрывается только по ответу узла: на отказе кассир должен
  * видеть, что именно он ввёл, а не пустой список и погасшее окно.
- * Правило про свой пин сказано здесь же — это единственное место, где
- * оно применимо.
+ * Правило про свой пин сказано здесь же — и только тому, кто меняет
+ * пин себе.
  */
 @Composable
 internal fun ChangePinDialog(
     money: MoneyTexts,
     who: String,
+    /** Кассир меняет пин себе: только тогда работа продолжится новым пином. */
+    own: Boolean,
     onDismiss: () -> Unit,
     onConfirm: suspend (String) -> Boolean
 ) {
@@ -72,11 +74,16 @@ internal fun ChangePinDialog(
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fieldWidth(texts.users.newPin, Sizes.fieldPin).focusRequester(focus)
                 )
-                Text(
-                    text = money.cashiers.ownPin,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                // Обещание продолжить работу новым пином — только тому,
+                // кто меняет пин себе. Над чужим кассиром оно обещало
+                // администратору работу под чужим пином.
+                if (own) {
+                    Text(
+                        text = money.cashiers.ownPin,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         },
         confirmButton = {

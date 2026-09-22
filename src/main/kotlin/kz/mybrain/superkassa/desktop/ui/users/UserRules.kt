@@ -64,6 +64,16 @@ object UserRules {
     fun canCreate(name: String, pin: String): Boolean = name.isNotBlank() && pinAccepted(pin)
 
     /**
+     * Один и тот же кассир.
+     *
+     * Сравниваются опознаватели узла, а не имена: тёзок на кассе двое,
+     * а пин у каждого свой. Безымянный опознаватель не считается своим —
+     * иначе два неопознанных кассира оказались бы одним.
+     */
+    fun same(who: KkmUser?, user: KkmUser): Boolean =
+        user.identifier.isNotEmpty() && who?.identifier == user.identifier
+
+    /**
      * Единственный носитель своей роли.
      *
      * Узел удалить такого не даст: касса осталась бы без администратора,
