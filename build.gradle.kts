@@ -63,9 +63,21 @@ compose.desktop {
                 // владельца. Без неё macOS окна разрешения не показывает
                 // вовсе и молча отказывает службе геопозиции.
                 infoPlist {
+                    // Языки кассы объявлены бандлом: без этого macOS считает
+                    // приложение англоязычным и показывает свои диалоги —
+                    // сохранение файла, печать — по-английски, тогда как сама
+                    // касса говорит с кассиром по-русски или по-казахски.
                     extraKeysRawXml = """
                         <key>NSLocationWhenInUseUsageDescription</key>
                         <string>Чтобы поставить торговую точку на карте там, где она стоит.</string>
+                        <key>CFBundleDevelopmentRegion</key>
+                        <string>ru</string>
+                        <key>CFBundleLocalizations</key>
+                        <array>
+                            <string>kk</string>
+                            <string>ru</string>
+                            <string>en</string>
+                        </array>
                     """.trimIndent()
                 }
                 // Подпись настоящим удостоверением, если оно есть в связке.
