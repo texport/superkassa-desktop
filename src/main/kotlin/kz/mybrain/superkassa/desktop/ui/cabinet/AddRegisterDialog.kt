@@ -13,10 +13,8 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.KkmModel
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterCreate
-import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.addRegister
-import kz.mybrain.superkassa.desktop.server.cabinet.kkmModels
-import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
+import kz.mybrain.superkassa.desktop.server.cabinet.allKkmModels
 import kz.mybrain.superkassa.desktop.server.factoryInfo
 import kz.mybrain.superkassa.desktop.ui.components.FormDialog
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
@@ -50,16 +48,17 @@ fun AddRegisterDialog(
     val scope = rememberCoroutineScope()
     val draft = remember(known) { RegisterDraft(known) }
     val issued = ourModel(draft.model)
-    var places by remember { mutableStateOf<List<RetailPlace>>(emptyList()) }
+    // Точки берутся у сеанса, а не читаются окном заново: список точек
+    // компании один, и своя копия здесь расходилась с ним — только что
+    // созданная точка появлялась в окне, но не в заявлении.
+    val places = cabinet.places
     var models by remember { mutableStateOf<List<KkmModel>>(emptyList()) }
     var addingPlace by remember { mutableStateOf(false) }
 
-    // Список точек перечитывается и после того, как точку завели отсюда же:
-    // иначе только что созданная в нём не появится.
-    LaunchedEffect(cabinet.token, addingPlace) {
+    LaunchedEffect(cabinet.token) {
         val token = cabinet.token ?: return@LaunchedEffect
-        places = cabinet.guard { cabinet.client.retailPlaces(token) }?.items.orEmpty()
-        models = cabinet.guard { cabinet.client.kkmModels(token) }?.items.orEmpty()
+        cabinet.refreshPlaces()
+        models = cabinet.guard { cabinet.client.allKkmModels(token) }.orEmpty()
     }
 
     LaunchedEffect(draft.model?.modelCode) {
@@ -89,6 +88,7 @@ fun AddRegisterDialog(
     ) {
         RegisterFields(
             texts = texts,
+            language = session.language,
             draft = draft,
             places = places,
             models = models,

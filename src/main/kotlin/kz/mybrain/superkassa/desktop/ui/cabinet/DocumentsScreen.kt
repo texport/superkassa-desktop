@@ -125,7 +125,7 @@ fun CabinetDocumentsScreen(
         }
         DocumentsJournal(
             journal = journal,
-            texts = texts,
+            empty = documentsEmpty(kind, period, overview, texts),
             list = list,
             query = query,
             desk = desk,
@@ -154,7 +154,7 @@ fun CabinetDocumentsScreen(
 @Composable
 private fun ColumnScope.DocumentsJournal(
     journal: HistoryJournalTexts,
-    texts: CabinetTexts,
+    empty: JournalEmpty,
     list: DocumentListState,
     query: JournalQuery,
     desk: DocumentDesk,
@@ -173,7 +173,7 @@ private fun ColumnScope.DocumentsJournal(
         query = query.presentIn(entries),
         loading = list.loading,
         more = list.hasMore,
-        empty = JournalEmpty(texts.documentsEmpty, texts.hints.documentsEmpty),
+        empty = empty,
         onQuery = onQuery,
         onMore = onMore,
         onOpen = { entry -> onOpen(list.targetOf(entry.key)) },

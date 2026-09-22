@@ -85,6 +85,7 @@ internal fun PlacesLook(
             collapsed = collapsed,
             onToggle = {},
             rows = placeRows(places, registers, open, query),
+            total = places.size,
             loading = loading,
             query = query,
             onQuery = {},

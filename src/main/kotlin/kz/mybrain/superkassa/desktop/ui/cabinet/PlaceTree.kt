@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +44,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * @param language на каком языке показывать адрес точки: регистр отдаёт
  *   его и по-русски, и по-казахски.
  * @param rows готовые строки дерева: сузил ли их поиск, знает [placeRows].
+ * @param total сколько точек у компании всего: по одному списку не видно,
+ *   две их или две тысячи, а поиск без этого числа не отличает «нашлось
+ *   три» от «их всего три».
  * @param loading ответа кабинета ещё не было: на месте строк ожидание.
  * @param footer кнопки создания под списком.
  */
@@ -52,6 +57,7 @@ internal fun PlaceTree(
     collapsed: Boolean,
     onToggle: () -> Unit,
     rows: List<PlaceRow>,
+    total: Int,
     loading: Boolean,
     query: String,
     onQuery: (String) -> Unit,
@@ -76,6 +82,7 @@ internal fun PlaceTree(
             onChange = onQuery,
             modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen)
         )
+        if (!loading) PlaceCount(texts, rows, total)
         val state = when {
             loading -> ScreenState.Working
             rows.isEmpty() -> treeEmpty(texts, query)
@@ -103,10 +110,14 @@ private fun TreeRows(
     ScrollableList(modifier = modifier) {
         items(items = rows, key = { it.id }) { row ->
             when (row) {
+                // Название точки — в две строки: у сети оно длинное
+                // и различается концом — «…Достык Плаза» отдел 12», —
+                // а в одну строку все отделы обрывались одинаково.
                 is PlaceRow.Point -> RecordRow(
                     title = row.place.name,
                     support = { PointSupport(texts, language, row.place) },
                     selected = row.id == place && register == null,
+                    titleLines = NAME_LINES,
                     onClick = { onPlace(row.id) }
                 )
 
@@ -121,6 +132,25 @@ private fun TreeRows(
             }
         }
     }
+}
+
+/**
+ * Сколько точек показано и сколько их всего.
+ *
+ * Пока поиск ничего не сузил, стоит одно число: владельцу сети важно
+ * видеть, что кабинет отдал все две тысячи точек, а не первую страницу.
+ * Как только поиск сузил список, рядом встаёт и общее число — иначе
+ * «три точки» читается как всё хозяйство владельца.
+ */
+@Composable
+private fun PlaceCount(texts: CabinetTexts, rows: List<PlaceRow>, total: Int) {
+    val shown = rows.count { it is PlaceRow.Point }
+    Text(
+        text = if (shown == total) "${texts.places}: $total" else texts.shownOf.format(shown, total),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(start = Spacing.tight, end = Spacing.screen)
+    )
 }
 
 /**
@@ -159,3 +189,6 @@ private fun TreeToggle(collapsed: Boolean, hint: String, onToggle: () -> Unit) {
         if (!collapsed) InfoTip(hint)
     }
 }
+
+/** Сколько строк отводится названию точки в колонке. */
+private const val NAME_LINES = 2

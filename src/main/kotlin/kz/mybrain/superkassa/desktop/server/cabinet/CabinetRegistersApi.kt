@@ -10,8 +10,19 @@ import io.ktor.http.HttpMethod
 
 // --- Кассы ---
 
-suspend fun CabinetClient.registers(token: String): CabinetPage<CabinetRegister> =
-    request(HttpMethod.Get, "/api/cash-registers?page=0&size=$PAGE_SIZE", token = token)
+suspend fun CabinetClient.registers(token: String, page: Int = 0): CabinetPage<CabinetRegister> =
+    request(HttpMethod.Get, "/api/cash-registers?page=$page&size=$PAGE_SIZE", token = token)
+
+/**
+ * Все кассы компании.
+ *
+ * Владелец ищет кассу по номеру КГД и по заводскому среди всех своих,
+ * а не среди первых пятидесяти: поиск в колонке точек идёт по прочитанному.
+ */
+suspend fun CabinetClient.allRegisters(
+    token: String,
+    onPart: (List<CabinetRegister>, Long) -> Unit = { _, _ -> }
+): List<CabinetRegister> = allPages({ page -> registers(token, page) }, onPart)
 
 suspend fun CabinetClient.register(token: String, id: String): CabinetRegister =
     request(HttpMethod.Get, "/api/cash-registers/$id", token = token)

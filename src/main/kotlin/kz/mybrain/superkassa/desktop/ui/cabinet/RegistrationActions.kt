@@ -78,9 +78,18 @@ fun RegistrationActionsBlock(
         available = { it in available },
         onSelect = { kind = it }
     )
-    ApplicationFields(kind, texts, places, placeId, reason, comment, { placeId = it }, { reason = it }) {
-        comment = it
-    }
+    ApplicationFields(
+        kind = kind,
+        texts = texts,
+        language = session.language,
+        places = places,
+        placeId = placeId,
+        reason = reason,
+        comment = comment,
+        onPlace = { placeId = it },
+        onReason = { reason = it },
+        onComment = { comment = it }
+    )
     // Подача вынесена отдельно: её же повторяет окно закрытия смены,
     // и два вызова подряд разошлись бы на первой правке.
     val submit: suspend () -> Unit = {

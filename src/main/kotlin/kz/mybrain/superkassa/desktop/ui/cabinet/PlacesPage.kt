@@ -68,7 +68,12 @@ fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
             collapsed = session.placesCollapsed,
             onToggle = { session.togglePlaces() },
             rows = placeRows(places, cabinet.registers, place, query),
-            loading = !answered,
+            // Сколько точек у компании — по словам кабинета: пока список
+            // дочитывается, прочитано меньше, и колонка об этом говорит.
+            total = maxOf(places.size, cabinet.placesTotal),
+            // Строки встают, как только пришла первая страница: у сети их
+            // сорок, и ожидание до последней заняло бы весь показ.
+            loading = !answered && places.isEmpty(),
             query = query,
             onQuery = { query = it },
             place = place,

@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
-import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -26,6 +26,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 internal fun ApplicationFields(
     kind: ActionKind,
     texts: CabinetTexts,
+    language: Language,
     places: List<RetailPlace>,
     placeId: String,
     reason: DeregistrationReason,
@@ -38,15 +39,16 @@ internal fun ApplicationFields(
         // Постановке на учёт уточнять нечего: всё нужное уже в паспорте кассы.
         ActionKind.Registration -> Unit
         // Точка выбирается из списка компании: прежде здесь стоял ввод
-        // идентификатора, а взять его владельцу было неоткуда.
-        ActionKind.Reregistration -> LabelledPicker(
+        // идентификатора, а взять его владельцу было неоткуда. Выбирается
+        // набором: у сети точек тысячи, и перебрать их глазами нельзя.
+        // О том, что точка не выбрана, говорит строка под кнопкой подачи:
+        // в поле набора её место занимает сам набор.
+        ActionKind.Reregistration -> PlacePicker(
             label = texts.newPlace,
-            options = places,
+            texts = texts,
+            language = language,
+            places = places,
             selected = places.firstOrNull { it.id == placeId },
-            // Невыбранное названо невыбранным. Пустое поле с подписью
-            // «Новая торговая точка» читалось как уже сделанный выбор,
-            // и заявление уходило в кабинет за отказом.
-            title = { it?.name ?: texts.pointNotChosen },
             onSelect = { onPlace(it.id) }
         )
         ActionKind.Deregistration -> DeregistrationFields(texts, reason, comment, onReason, onComment)

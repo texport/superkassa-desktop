@@ -48,10 +48,14 @@ fun PlaceCard(
         // окне на заголовок приходились два значка подсказки и кнопка,
         // и «Убрать» выходило как «Убр / ать».
         SectionCard(title = texts.places, info = texts.hints.places) {
+            // Две строки, а не одна: название точки владелец придумывает
+            // сам, и у сети оно длинное — «Магазин «Сауда орталығы Достык
+            // Плаза» отдел 12». В одну строку оно обрывалось ровно там,
+            // где стоит отличие одного отдела от другого.
             Text(
                 text = place.name,
                 style = MaterialTheme.typography.headlineSmall,
-                maxLines = 1,
+                maxLines = TITLE_LINES,
                 overflow = TextOverflow.Ellipsis
             )
             Column(
@@ -104,3 +108,6 @@ private fun PlaceRemoval(
         ) { Text(texts.remove) }
     }
 }
+
+/** Сколько строк отводится названию в заголовке карточки. */
+private const val TITLE_LINES = 2

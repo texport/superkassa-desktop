@@ -77,6 +77,15 @@ data class CabinetTexts(
     val reports: String,
     val cashMovements: String,
     val documentsEmpty: String,
+
+    /**
+     * За выбранный срок документов нет, а у кассы они есть.
+     *
+     * Отдельно от «документов нет вовсе»: над списком стоят счётчики
+     * за всё время, и «Здесь появится то, что БФД приняла от этой кассы»
+     * рядом с сотней чеков читалось как потеря документов.
+     */
+    val documentsNoneInPeriod: String,
     val chooseRegister: String,
     val refresh: String,
     val add: String,
@@ -335,6 +344,7 @@ data class CabinetHints(
     val okedsEmpty: String,
     val chooseRegister: String,
     val documentsEmpty: String,
+    val documentsNoneInPeriod: String,
     val actionsEmpty: String,
     val pickRegisterFirst: String,
     val technicalUnknown: String,

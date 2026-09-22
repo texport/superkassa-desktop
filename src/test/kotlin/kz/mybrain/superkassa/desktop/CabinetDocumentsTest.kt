@@ -11,12 +11,17 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetShift
+import kz.mybrain.superkassa.desktop.server.cabinet.DocumentsOverview
 import kz.mybrain.superkassa.desktop.server.cabinet.ReceiptSearch
 import kz.mybrain.superkassa.desktop.server.cabinet.cashMovement
 import kz.mybrain.superkassa.desktop.server.cabinet.receipt
 import kz.mybrain.superkassa.desktop.server.cabinet.receipts
 import kz.mybrain.superkassa.desktop.server.cabinet.report
+import kz.mybrain.superkassa.desktop.ui.cabinet.DocumentKind
+import kz.mybrain.superkassa.desktop.ui.cabinet.documentsEmpty
 import kz.mybrain.superkassa.desktop.ui.cabinet.shiftRow
+import kz.mybrain.superkassa.desktop.ui.history.JournalPeriod
+import kz.mybrain.superkassa.desktop.ui.history.JournalSpan
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
 import java.math.BigDecimal
@@ -171,5 +176,41 @@ class CabinetDocumentsTest {
         // Продажи и покупка остаются собой: их владелец сверяет с лентой.
         assertEquals(0, BigDecimal("3570.00").compareTo(shift.totals?.salesSum))
         assertEquals(0, BigDecimal("400.00").compareTo(shift.totals?.purchasesSum))
+    }
+
+    /**
+     * Пустой список за срок не объявляет кассу пустой.
+     *
+     * Над списком стоят счётчики за всё время. У кассы со ста чеками
+     * и выбранной неделей экран говорил «Здесь появится то, что БФД
+     * приняла от этой кассы» — рядом с собственной сотней.
+     */
+    @Test
+    fun `пусто за срок и пусто вовсе названы по-разному`() {
+        val texts = cabinetTexts(Language.Ru)
+        val hundred = DocumentsOverview(cashRegisterId = "c-1", receiptsCount = 100)
+        val week = JournalPeriod.of(JournalSpan.Week)
+
+        assertEquals(
+            texts.documentsNoneInPeriod,
+            documentsEmpty(DocumentKind.Receipts, week, hundred, texts).title,
+            "пустая неделя объявила кассу без чеков"
+        )
+        assertEquals(
+            texts.documentsEmpty,
+            documentsEmpty(DocumentKind.Receipts, week, DocumentsOverview(cashRegisterId = "c-1"), texts).title,
+            "у кассы без чеков вовсе предложено сменить срок"
+        )
+        assertEquals(
+            texts.documentsEmpty,
+            documentsEmpty(DocumentKind.Receipts, JournalPeriod.of(JournalSpan.All), hundred, texts).title,
+            "за всё время предложено сменить срок"
+        )
+        // У смен срока нет вовсе: кабинет их по дате не отдаёт.
+        assertEquals(
+            texts.documentsEmpty,
+            documentsEmpty(DocumentKind.Shifts, week, hundred.copy(shiftsCount = 5), texts).title,
+            "смены, которых кабинет по сроку не отдаёт, предложено искать сроком"
+        )
     }
 }

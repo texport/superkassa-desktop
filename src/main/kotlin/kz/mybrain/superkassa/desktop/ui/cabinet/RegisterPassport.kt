@@ -49,10 +49,12 @@ fun RegisterPassport(
         info = texts.hints.passport,
         trailing = { CabinetStatusChip(register.status, texts) }
     ) {
+        // Две строки, а не одна: название кассе даёт владелец, и у сети
+        // оно длиннее строки — «Касса 3, Магазин «Достык Плаза» отдел 12».
         Text(
             text = registerTitle(register),
             style = MaterialTheme.typography.headlineSmall,
-            maxLines = 1,
+            maxLines = TITLE_LINES,
             overflow = TextOverflow.Ellipsis
         )
         Column(
@@ -73,3 +75,6 @@ fun RegisterPassport(
         RegisterTokenBlock(session, cabinet, texts, register)
     }
 }
+
+/** Сколько строк отводится названию кассы в заголовке паспорта. */
+private const val TITLE_LINES = 2

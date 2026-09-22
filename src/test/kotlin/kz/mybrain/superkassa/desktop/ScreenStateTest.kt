@@ -122,6 +122,7 @@ class ScreenStateTest {
                 collapsed = false,
                 onToggle = {},
                 rows = emptyList(),
+                total = 0,
                 loading = true,
                 query = "",
                 onQuery = {},

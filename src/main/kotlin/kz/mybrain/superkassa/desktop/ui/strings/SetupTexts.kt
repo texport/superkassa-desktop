@@ -11,6 +11,18 @@ data class SetupTexts(
     val title: String,
     val explain: String,
     val startOver: String,
+
+    /**
+     * Вопрос перед тем, как забыть пройденное.
+     *
+     * Пройденное живёт на диске, и «Начать заново» стирает его одним
+     * нажатием: заводской номер, уже унесённый в кабинет, и кассу,
+     * заведённую там под ним. Сами они из кабинета не исчезают — мастер
+     * про них забывает, и владелец заводит вторую кассу под вторым
+     * номером. Об этом и сказано в вопросе.
+     */
+    val startOverAsk: String,
+    val startOverExplain: String,
     val stepFactory: String,
     val stepFactoryHint: String,
     val getFactory: String,
@@ -40,6 +52,9 @@ private val setupTextsRu = SetupTexts(
     title = "Подключение кассы",
     explain = "Шаги идут подряд; мастер можно закрыть и продолжить позже",
     startOver = "Начать заново",
+    startOverAsk = "Забыть пройденное подключение?",
+    startOverExplain = "Заводской номер и касса, заведённая в кабинете, там и останутся — мастер о них забудет, " +
+        "и подключение начнётся с нового номера",
     stepFactory = "Заводской номер",
     stepFactoryHint = "Номер выдаёт узел и запоминает: второй запрос дал бы другой",
     getFactory = "Получить номер",
@@ -69,6 +84,9 @@ private val setupTextsKk = SetupTexts(
     title = "Кассаны қосу",
     explain = "Қадамдар кезекпен жүреді; шеберді жауып, кейін жалғастыруға болады",
     startOver = "Қайтадан бастау",
+    startOverAsk = "Өткен қосылымды ұмытсын ба?",
+    startOverExplain = "Зауыттық нөмір мен кабинетте тіркелген касса сонда қалады — шебер оларды ұмытады, " +
+        "қосылу жаңа нөмірден басталады",
     stepFactory = "Зауыттық нөмір",
     stepFactoryHint = "Нөмірді түйін береді және есте сақтайды: екінші сұрау басқасын берер еді",
     getFactory = "Нөмір алу",
@@ -98,6 +116,9 @@ private val setupTextsEn = SetupTexts(
     title = "Connecting a cash register",
     explain = "The steps run in order; the wizard can be closed and resumed later",
     startOver = "Start over",
+    startOverAsk = "Forget what the wizard has done?",
+    startOverExplain = "The factory number and the register created in the cabinet stay there — the wizard " +
+        "forgets them, and the connection starts with a new number",
     stepFactory = "Factory number",
     stepFactoryHint = "The node issues the number and it is remembered: a second request would give another",
     getFactory = "Get the number",

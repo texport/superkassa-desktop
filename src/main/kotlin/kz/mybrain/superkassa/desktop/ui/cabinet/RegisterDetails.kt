@@ -55,14 +55,17 @@ fun RegisterDetails(
     var card by remember(register.id) { mutableStateOf(register) }
     var open by remember(register.id) { mutableStateOf(OPENED_AT_START) }
 
-    // Вместе с карточкой перечитывается и список касс: статус в дереве слева
-    // иначе оставался «черновиком» у кассы, только что поставленной на учёт.
+    // Прочитанная карточка подменяет собой строку списка: статус в дереве
+    // слева иначе оставался «черновиком» у кассы, только что поставленной
+    // на учёт. Меняется одна строка, а не перечитывается список компании:
+    // у сети он в сорока страницах, а карточка опрашивается каждые
+    // несколько секунд, пока ИСНА не ответит.
     suspend fun reload() {
         val token = cabinet.token ?: return
         card = cabinet.guard { cabinet.client.register(token, register.id) } ?: register
         state = cabinet.guard { cabinet.client.registerState(token, register.id) }
         actions = cabinet.guard { cabinet.client.registrationActions(token, register.id) }?.items.orEmpty()
-        cabinet.refreshRegisters()
+        cabinet.registerChanged(card)
     }
 
     LaunchedEffect(register.id, cabinet.token) { reload() }

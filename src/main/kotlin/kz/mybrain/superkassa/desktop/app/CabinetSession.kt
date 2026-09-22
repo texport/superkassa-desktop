@@ -14,11 +14,11 @@ import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRefusal
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetUser
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
+import kz.mybrain.superkassa.desktop.server.cabinet.allRegisters
+import kz.mybrain.superkassa.desktop.server.cabinet.allRetailPlaces
 import kz.mybrain.superkassa.desktop.server.cabinet.edsChallenge
 import kz.mybrain.superkassa.desktop.server.cabinet.edsLogin
 import kz.mybrain.superkassa.desktop.server.cabinet.logout
-import kz.mybrain.superkassa.desktop.server.cabinet.registers
-import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 
 /**
  * Работа в личном кабинете ОФД.
@@ -123,6 +123,7 @@ class CabinetSession(
         access.forget()
         registers = emptyList()
         places = emptyList()
+        placesTotal = 0
     }
 
     /**
@@ -133,17 +134,50 @@ class CabinetSession(
      */
     suspend fun sign(payload: String): String = eds.signCms(payload)
 
-    /** Перечитывает кассы компании. */
+    /**
+     * Сколько точек у компании по словам кабинета.
+     *
+     * Пока список читается, прочитано меньше: колонка говорит «Показано
+     * 50 из 2000», а не выдаёт первую страницу за всё хозяйство.
+     */
+    var placesTotal: Int by mutableStateOf(0)
+        private set
+
+    /**
+     * Перечитывает кассы компании — все, а не первую страницу.
+     *
+     * Список выкладывается страницами по мере чтения: у сети их сорок,
+     * и ждать последнюю, глядя в пустую колонку, владельцу незачем.
+     * Перечитывать весь список ради одной изменившейся кассы тоже
+     * незачем — для этого есть [registerChanged].
+     */
     suspend fun refreshRegisters() {
         val current = token ?: return
-        guard { registers = client.registers(current).items }
+        guard { client.allRegisters(current) { part, _ -> registers = part } }
         onRegisterNames?.invoke(registers)
     }
 
-    /** Перечитывает торговые точки компании. */
+    /**
+     * Заменяет в списке одну перечитанную кассу.
+     *
+     * Карточка кассы перечитывает себя сама — и при открытии, и каждые
+     * несколько секунд, пока ИСНА рассматривает заявление. Прежде вместе
+     * с ней перечитывался весь список касс компании: у сети это сорок
+     * запросов на каждый круг опроса ради строки, которая уже прочитана.
+     */
+    fun registerChanged(register: CabinetRegister) {
+        registers = registers.map { if (it.id == register.id) register else it }
+    }
+
+    /** Перечитывает торговые точки компании — все, а не первую страницу. */
     suspend fun refreshPlaces() {
         val current = token ?: return
-        guard { places = client.retailPlaces(current).items }
+        guard {
+            client.allRetailPlaces(current) { part, total ->
+                places = part
+                placesTotal = total.toInt()
+            }
+        }
     }
 
     /**

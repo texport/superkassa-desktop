@@ -3,11 +3,13 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetShift
 import kz.mybrain.superkassa.desktop.server.cabinet.DocumentPeriod
+import kz.mybrain.superkassa.desktop.server.cabinet.DocumentsOverview
 import kz.mybrain.superkassa.desktop.server.cabinet.ReceiptSearch
 import kz.mybrain.superkassa.desktop.server.cabinet.cashMovements
 import kz.mybrain.superkassa.desktop.server.cabinet.receipts
 import kz.mybrain.superkassa.desktop.server.cabinet.reports
 import kz.mybrain.superkassa.desktop.server.cabinet.shifts
+import kz.mybrain.superkassa.desktop.ui.history.JournalEmpty
 import kz.mybrain.superkassa.desktop.ui.history.JournalPeriod
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import java.time.Instant
@@ -100,10 +102,39 @@ fun cabinetPeriodOf(period: JournalPeriod, zone: ZoneId = ZoneId.systemDefault()
  * от возврата, X-отчёт от Z-отчёта.
  *
  * @param dated отбирает ли кабинет этот вид по сроку.
+ * @param countIn сколько таких документов у кассы за всё время: по этому
+ *   числу пустой список отличает «этого у кассы нет» от «нет за срок».
  */
-enum class DocumentKind(val title: (CabinetTexts) -> String, val dated: Boolean = true) {
-    Receipts({ it.receipts }),
-    Shifts({ it.shifts }, dated = false),
-    Reports({ it.reports }),
-    CashMovements({ it.cashMovements })
+enum class DocumentKind(
+    val title: (CabinetTexts) -> String,
+    val countIn: (DocumentsOverview) -> Long,
+    val dated: Boolean = true
+) {
+    Receipts({ it.receipts }, { it.receiptsCount }),
+    Shifts({ it.shifts }, { it.shiftsCount }, dated = false),
+    Reports({ it.reports }, { it.reportsCount }),
+    CashMovements({ it.cashMovements }, { it.cashMovementsCount })
+}
+
+/**
+ * Чем объяснить пустой список документов.
+ *
+ * Над списком стоят счётчики за всё время, и «Здесь появится то, что БФД
+ * приняла от этой кассы» рядом с сотней чеков читалось как потеря
+ * документов: чеки у кассы есть, их нет за выбранную неделю. Названо это
+ * по-разному, и во втором случае сказано, что делать.
+ */
+fun documentsEmpty(
+    kind: DocumentKind,
+    period: JournalPeriod,
+    overview: DocumentsOverview?,
+    texts: CabinetTexts
+): JournalEmpty {
+    val kept = overview?.let(kind.countIn) ?: 0
+    val narrowed = kind.dated && period.range != null && kept > 0
+    return if (narrowed) {
+        JournalEmpty(texts.documentsNoneInPeriod, texts.hints.documentsNoneInPeriod)
+    } else {
+        JournalEmpty(texts.documentsEmpty, texts.hints.documentsEmpty)
+    }
 }

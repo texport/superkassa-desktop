@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.desktop.server.enterProgramming
 import kz.mybrain.superkassa.desktop.server.exitProgramming
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
+import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.SubsectionTitle
 import kz.mybrain.superkassa.desktop.ui.settings.updateOfdToken
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
@@ -82,10 +83,14 @@ fun RegisterTokenBlock(
             DetailLine(texts.tokenIssued, value.toString())
         }
     }
+    // Кнопка тональная, а не залитая: залитая на экране одна, и это подача
+    // заявления — то, ради чего карточку кассы и открывают. Токен выдают
+    // один раз, и две залитые кнопки подряд не говорили, какую нажимать.
     BusyButton(
         text = texts.issueToken,
         busy = cabinet.busy,
         enabled = allowed,
+        kind = FieldButtonKind.Tonal,
         onClick = {
             scope.launch {
                 val token = cabinet.token ?: return@launch

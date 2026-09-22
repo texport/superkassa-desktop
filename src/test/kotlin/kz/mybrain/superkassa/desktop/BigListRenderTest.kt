@@ -1,11 +1,17 @@
 package kz.mybrain.superkassa.desktop
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.OrgInfo
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
+import kz.mybrain.superkassa.desktop.ui.cabinet.ActionKind
+import kz.mybrain.superkassa.desktop.ui.cabinet.ApplicationFields
+import kz.mybrain.superkassa.desktop.ui.cabinet.DeregistrationReason
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceTree
 import kz.mybrain.superkassa.desktop.ui.cabinet.placeRows
 import kz.mybrain.superkassa.desktop.ui.login.KkmList
@@ -15,21 +21,27 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 
 /**
- * Пятьсот торговых точек и пятьсот касс на экране.
+ * Две тысячи торговых точек и две тысячи касс на экране.
  *
- * Проверять это на кабинете владельца нельзя — там его боевые данные,
- * поэтому списки собираются здесь и рисуются сценой без окна. Мерится
- * не красота картинки, а два свойства: экран собирается за доли секунды
- * и время его сборки почти не зависит от длины списка. Столбец, собранный
- * целиком, провалил бы второе — на полутора тысячах строк он растёт
- * пропорционально их числу.
+ * Столько их будет у сети, ради которой кабинет и делается. Проверять это
+ * на кабинете владельца нельзя — там его боевые данные, поэтому списки
+ * собираются здесь и рисуются сценой без окна. Мерится не красота
+ * картинки, а два свойства: экран собирается за доли секунды и время его
+ * сборки почти не зависит от длины списка. Столбец, собранный целиком,
+ * провалил бы второе — на тысячах строк он растёт пропорционально
+ * их числу.
  */
 class BigListRenderTest {
 
     private val texts = cabinetTexts(Language.Ru)
 
     private fun places(count: Int) = (1..count).map {
-        RetailPlace(id = "p$it", name = "Торговая точка $it", cashRegisterCount = PER_PLACE.toLong())
+        RetailPlace(
+            id = "p$it",
+            name = "Торговая точка $it",
+            address = "Алматы, проспект Абая $it",
+            cashRegisterCount = PER_PLACE.toLong()
+        )
     }
 
     private fun registers(places: List<RetailPlace>) = places.flatMap { place ->
@@ -71,6 +83,7 @@ class BigListRenderTest {
             collapsed = collapsed,
             onToggle = {},
             rows = placeRows(all, registers(all), open = open, query = query),
+            total = all.size,
             loading = false,
             query = query,
             onQuery = {},
@@ -82,6 +95,25 @@ class BigListRenderTest {
         )
     }
 
+    /** Поле выбора точки в заявлении о перерегистрации — как его видит владелец. */
+    @Composable
+    private fun PlacesPicker(count: Int) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            ApplicationFields(
+                kind = ActionKind.Reregistration,
+                texts = texts,
+                language = Language.Ru,
+                places = places(count),
+                placeId = "",
+                reason = DeregistrationReason.CessationOfUse,
+                comment = "",
+                onPlace = {},
+                onReason = {},
+                onComment = {}
+            )
+        }
+    }
+
     @Composable
     private fun Logins(count: Int) {
         val all = kkms(count)
@@ -89,17 +121,17 @@ class BigListRenderTest {
     }
 
     @Test
-    fun `дерево из пятисот точек рисуется быстро и не зависит от длины списка`() {
+    fun `дерево из двух тысяч точек рисуется быстро и не зависит от длины списка`() {
         renderMillis { Tree(SMALL) }
         val small = renderMillis { Tree(SMALL) }
         val large = renderMillis { Tree(LARGE) }
         println("дерево: $SMALL точек — $small мс, $LARGE точек — $large мс")
-        assertTrue(large < BUDGET, "пятьсот точек рисуются $large мс")
+        assertTrue(large < BUDGET, "$LARGE точек рисуются $large мс")
         assertTrue(large < small * FACTOR + SLACK, "рост отрисовки с длиной списка: $small → $large мс")
     }
 
     @Test
-    fun `свёрнутая колонка держит те же пятьсот точек`() {
+    fun `свёрнутая колонка держит те же две тысячи точек`() {
         val collapsed = renderMillis { Tree(LARGE, collapsed = true) }
         println("свёрнутая колонка: $LARGE точек — $collapsed мс")
         assertTrue(collapsed < BUDGET, "свёрнутая колонка рисуется $collapsed мс")
@@ -130,19 +162,64 @@ class BigListRenderTest {
     @Test
     fun `поиск оставляет на экране найденное`() {
         RenderProbe { Tree(LARGE) }.use { whole ->
-            RenderProbe { Tree(LARGE, query = "Торговая точка 499") }.use { found ->
+            RenderProbe { Tree(LARGE, query = "Торговая точка 1999") }.use { found ->
                 assertTrue(!found.frame().contentEquals(whole.frame()), "поиск не сузил список")
             }
         }
     }
 
+    /**
+     * Точку в заявлении выбирают набором, а не перебором.
+     *
+     * Здесь стоял простой выпадающий список, раскрытый целиком: две тысячи
+     * строк владелец крутил бы колесом, а найти среди них «Торговую точку
+     * 1999» глазами нельзя. Проверяется то, ради чего поле поменяли:
+     * список раскрывается и набранное его сужает.
+     */
     @Test
-    fun `список касс на входе держит пятьсот строк`() {
+    fun `выбор точки в заявлении ищет среди двух тысяч`() {
+        RenderProbe { PlacesPicker(LARGE) }.use { probe ->
+            val closed = probe.frame()
+            probe.click(Offset(FIELD_X, FIELD_Y))
+            assertTrue(probe.changedFrom(closed), "список точек не раскрылся")
+            val opened = probe.frame()
+            probe.type("точка 1999")
+            assertTrue(probe.changedFrom(opened), "набранное не сузило список точек")
+        }
+    }
+
+    /**
+     * Раскрытие списка точек стоит одинаково при пяти и при двух тысячах.
+     *
+     * Меню собирается целиком — ленивого списка в нём быть не может, —
+     * и весь набор в нём стоил полсекунды на каждое нажатие по полю.
+     * Сразу показана первая полусотня совпадений, остальное просят
+     * последней строкой.
+     */
+    @Test
+    fun `раскрытие списка точек не зависит от их числа`() {
+        openMillis(SMALL)
+        val small = openMillis(SMALL)
+        val large = openMillis(LARGE)
+        println("раскрытие: $SMALL точек — $small мс, $LARGE точек — $large мс")
+        assertTrue(large < small * FACTOR + SLACK, "рост раскрытия с длиной набора: $small → $large мс")
+    }
+
+    /** Сколько миллисекунд занимает раскрыть список точек нажатием по полю. */
+    private fun openMillis(count: Int): Long = RenderProbe { PlacesPicker(count) }.use { probe ->
+        repeat(SETTLE) { probe.frame() }
+        val started = System.nanoTime()
+        probe.click(Offset(FIELD_X, FIELD_Y))
+        (System.nanoTime() - started) / 1_000_000
+    }
+
+    @Test
+    fun `список касс на входе держит две тысячи строк`() {
         renderMillis { Logins(SMALL) }
         val small = renderMillis { Logins(SMALL) }
         val large = renderMillis { Logins(LARGE) }
         println("вход: $SMALL касс — $small мс, $LARGE касс — $large мс")
-        assertTrue(large < BUDGET, "пятьсот касс рисуются $large мс")
+        assertTrue(large < BUDGET, "$LARGE касс рисуются $large мс")
         assertTrue(large < small * FACTOR + SLACK, "рост отрисовки с длиной списка: $small → $large мс")
     }
 
@@ -157,8 +234,12 @@ class BigListRenderTest {
 
     private companion object {
         const val SMALL = 5
-        const val LARGE = 500
-        const val PER_PLACE = 3
+
+        /** Сколько точек и касс будет у сети, ради которой кабинет и делается. */
+        const val LARGE = 2000
+
+        /** По одной кассе на точку: тогда касс на экране столько же, сколько точек. */
+        const val PER_PLACE = 1
 
         /** Сколько миллисекунд отводится на сборку и отрисовку экрана целиком. */
         const val BUDGET = 1500L
@@ -175,5 +256,12 @@ class BigListRenderTest {
 
         /** Запас на разогрев машины, не зависящий от длины списка. */
         const val SLACK = 150L
+
+        /** Где на сцене стоит первое поле формы: по нему и нажимают. */
+        const val FIELD_X = 300f
+        const val FIELD_Y = 40f
+
+        /** Сколько кадров даётся сцене, чтобы встать до нажатия. */
+        const val SETTLE = 20
     }
 }

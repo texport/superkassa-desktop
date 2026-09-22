@@ -7,15 +7,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.KkmSetupDraft
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
-import kz.mybrain.superkassa.desktop.server.cabinet.retailPlaces
 import kz.mybrain.superkassa.desktop.ui.cabinet.AddPlaceCard
 import kz.mybrain.superkassa.desktop.ui.cabinet.AddRegisterDialog
 import kz.mybrain.superkassa.desktop.ui.cabinet.FactoryStamp
@@ -43,15 +40,10 @@ fun CabinetStepCard(
     draft: KkmSetupDraft
 ) {
     val texts = cabinetTexts(session.language)
-    val scope = rememberCoroutineScope()
-    var places by remember { mutableStateOf(0) }
 
-    suspend fun countPlaces() {
-        val token = cabinet.token ?: return
-        places = cabinet.guard { cabinet.client.retailPlaces(token) }?.items?.size ?: 0
-    }
-
-    LaunchedEffect(cabinet.token) { countPlaces() }
+    // Точки берутся у сеанса: список точек компании один, и заведённая
+    // здесь же появляется в нём сама.
+    LaunchedEffect(cabinet.token) { cabinet.refreshPlaces() }
 
     SetupStepCard(
         title = setup.stepCabinet,
@@ -75,8 +67,8 @@ fun CabinetStepCard(
         // Без торговой точки кассу не завести, а у владельца, который
         // только начал, точек нет ни одной. Прежде мастер показывал пустой
         // список и упирался: точку заводили в другом разделе и возвращались.
-        if (places == 0) {
-            AddPlaceStep(session, cabinet, texts) { scope.launch { countPlaces() } }
+        if (cabinet.places.isEmpty()) {
+            AddPlaceStep(session, cabinet, texts)
             return@SetupStepCard
         }
         AddRegisterStep(
@@ -95,16 +87,11 @@ fun CabinetStepCard(
  * заведения точки разошлись бы на первой правке.
  */
 @Composable
-private fun AddPlaceStep(
-    session: Session,
-    cabinet: CabinetSession,
-    texts: CabinetTexts,
-    onAdded: () -> Unit
-) {
+private fun AddPlaceStep(session: Session, cabinet: CabinetSession, texts: CabinetTexts) {
     var adding by remember { mutableStateOf(false) }
     FilledTonalButton(onClick = { adding = true }) { Text(texts.addPlace) }
     if (adding) {
-        AddPlaceCard(session, cabinet, texts, onDismiss = { adding = false }, onAdded = onAdded)
+        AddPlaceCard(session, cabinet, texts, onDismiss = { adding = false }, onAdded = { adding = false })
     }
 }
 

@@ -11,8 +11,19 @@ import io.ktor.http.HttpMethod
 
 // --- Торговые точки ---
 
-suspend fun CabinetClient.retailPlaces(token: String): CabinetPage<RetailPlace> =
-    request(HttpMethod.Get, "/api/retail-places?page=0&size=$PAGE_SIZE", token = token)
+suspend fun CabinetClient.retailPlaces(token: String, page: Int = 0): CabinetPage<RetailPlace> =
+    request(HttpMethod.Get, "/api/retail-places?page=$page&size=$PAGE_SIZE", token = token)
+
+/**
+ * Все торговые точки компании.
+ *
+ * По списку идёт поиск в колонке и выбор точки в заявлении, поэтому он
+ * читается целиком: у сети их тысячи, а страница кабинета — пятьдесят.
+ */
+suspend fun CabinetClient.allRetailPlaces(
+    token: String,
+    onPart: (List<RetailPlace>, Long) -> Unit = { _, _ -> }
+): List<RetailPlace> = allPages({ page -> retailPlaces(token, page) }, onPart)
 
 suspend fun CabinetClient.addRetailPlace(token: String, place: RetailPlaceCreate): RetailPlace =
     request(HttpMethod.Post, "/api/retail-places", place, token)

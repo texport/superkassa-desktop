@@ -9,15 +9,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.KkmModel
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
-import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
-import kz.mybrain.superkassa.desktop.ui.components.PickerCreate
 import kz.mybrain.superkassa.desktop.ui.components.SearchablePicker
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.Language
 
 /** Поля заводимой кассы. */
 @Composable
 internal fun RegisterFields(
     texts: CabinetTexts,
+    language: Language,
     draft: RegisterDraft,
     places: List<RetailPlace>,
     models: List<KkmModel>,
@@ -28,13 +28,14 @@ internal fun RegisterFields(
     // Точка заводится отсюда же: у владельца без торговых точек форма
     // просила выбрать точку и не давала её создать — мастер подключения
     // кассы упирался в тупик на первом же шаге.
-    LabelledPicker(
+    PlacePicker(
         label = texts.place,
-        options = places,
+        texts = texts,
+        language = language,
+        places = places,
         selected = draft.place,
-        title = { it?.name.orEmpty() },
         onSelect = { draft.place = it },
-        create = PickerCreate(texts.addPlace, onCreatePlace)
+        onCreate = onCreatePlace
     )
     // Модель — поиском, а не перебором: в справочнике ИСНА их сотни,
     // и владелец набирает то, что помнит, — часть названия или код.

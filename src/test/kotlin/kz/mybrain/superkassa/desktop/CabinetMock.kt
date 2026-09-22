@@ -39,7 +39,18 @@ internal fun mockCabinet(body: String, status: HttpStatusCode = HttpStatusCode.O
         expectSuccess = false
         install(ContentNegotiation) { json(CabinetClient.lenientJson) }
     }
-    val cabinet = CabinetSession(CabinetClient(http = http))
+    return mockCabinet(CabinetClient(http = http))
+}
+
+/**
+ * Вошедший сеанс поверх своего обмена.
+ *
+ * Отличается от [mockCabinet] тем, что ответы задаёт сам вызывающий:
+ * списки сети приходят страницами, и один ответ на все ручки их не
+ * изображает.
+ */
+internal fun mockCabinet(client: CabinetClient): CabinetSession {
+    val cabinet = CabinetSession(client)
     // Вход по ЭЦП требует NCALayer, которого в проверке нет: сеанс ставится
     // тем же доступом, каким его поставил бы ответ кабинета на вход.
     cabinet.access.enter(entered())

@@ -18,10 +18,12 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.cabinet.SignInAction
 import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
+import kz.mybrain.superkassa.desktop.ui.components.ConfirmDangerDialog
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SetupTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.strings.setupTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -52,6 +54,21 @@ fun ConnectKkmScreen(
     val setup = setupTexts(session.language)
     val draft = remember { KkmSetupDraft(session.preferences) }
     var way by remember { mutableStateOf(SetupWay.ViaCabinet) }
+    var startingOver by remember { mutableStateOf(false) }
+
+    if (startingOver) {
+        ConfirmDangerDialog(
+            what = setup.startOverAsk,
+            explain = setup.startOverExplain,
+            action = setup.startOver,
+            cancel = moneyTexts(session.language).drawer.cancel,
+            onCancel = { startingOver = false },
+            onConfirm = {
+                startingOver = false
+                draft.clear()
+            }
+        )
+    }
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Возврат и название стоят в шапке, а не в прокручиваемом
@@ -63,7 +80,12 @@ fun ConnectKkmScreen(
             onBack = onBack,
             backLabel = texts.settings.back
         ) {
-            TextButton(onClick = { draft.clear() }) { Text(setup.startOver) }
+            // Пока мастер ничего не прошёл, забывать нечего, и кнопка
+            // не стоит: нажатая по ошибке, она стирает заводской номер,
+            // уже унесённый в кабинет.
+            if (draft.factoryNumber != null) {
+                TextButton(onClick = { startingOver = true }) { Text(setup.startOver) }
+            }
         }
         ScrollableColumn(
             modifier = Modifier.fillMaxSize().padding(Spacing.screen),
