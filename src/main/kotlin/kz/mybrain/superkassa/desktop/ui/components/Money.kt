@@ -25,7 +25,6 @@ object Money {
      */
     const val TIYN_SCALE: Int = 2
 
-    private const val CURRENCY = "₸"
     private const val GROUP_SIZE = 3
 
     /**
@@ -57,7 +56,7 @@ object Money {
         val fraction = scaled.remainder(BigDecimal.ONE).abs().movePointRight(TIYN_SCALE).toBigInteger()
         val tiyn = fraction.toString().padStart(TIYN_SCALE, '0')
         val sign = if (negative) "-" else ""
-        return "$sign${groupThousands(whole)},$tiyn${Glyphs.NBSP}$CURRENCY"
+        return "$sign${groupThousands(whole)},$tiyn${Glyphs.NBSP}${Glyphs.TENGE}"
     }
 
     /**
