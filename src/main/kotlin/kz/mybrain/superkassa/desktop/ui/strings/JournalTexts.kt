@@ -34,6 +34,9 @@ data class ReturnJournalTexts(
      * дня говорить нечего.
      */
     val allBasesShown: String,
+
+    /** Чеки дня прочитать не удалось: это не день без чеков. */
+    val basisUnreadable: String,
     val chooseBasis: String,
     val chooseBasisHint: String,
     val noBasisHint: String,
@@ -80,6 +83,9 @@ data class HistoryJournalTexts(
     val allTypes: String,
     val emptyDay: String,
     val emptyDayHint: String,
+
+    /** Документы за срок прочитать не удалось: это не пустой срок. */
+    val unreadable: String,
     val emptyForFilter: String,
     val emptyForFilterHint: String,
     val colTime: String,
@@ -124,6 +130,9 @@ data class ShiftJournalTexts(
     val hint: String,
     val none: String,
     val noneHint: String,
+
+    /** Смены прочитать не удалось: это не касса без смен. */
+    val unreadable: String,
     val number: String,
     val opened: String,
     val closed: String,

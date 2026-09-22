@@ -26,6 +26,7 @@ import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
+import kz.mybrain.superkassa.desktop.ui.history.JournalLoad
 import kz.mybrain.superkassa.desktop.ui.history.loadDay
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
@@ -52,6 +53,7 @@ import java.time.LocalDate
 fun ReturnsScreen(session: Session) {
     val scope = rememberCoroutineScope()
     val texts = journalTexts(session.language)
+    val common = LocalStrings.current.common
     val journal = texts.returns
     var kind by remember { mutableStateOf(ReturnKind.Sell) }
     var basisId by remember { mutableStateOf<String?>(null) }
@@ -59,7 +61,7 @@ fun ReturnsScreen(session: Session) {
     var number by remember { mutableStateOf("") }
     val documents = remember { mutableStateListOf<Document>() }
     var loading by remember { mutableStateOf(false) }
-    var more by remember { mutableStateOf(false) }
+    var load by remember { mutableStateOf(JournalLoad.Whole) }
 
     // День перечитывается и после пробитого чека: возврат по только что
     // выданному чеку — обычное дело, а список, набранный при открытии
@@ -67,8 +69,18 @@ fun ReturnsScreen(session: Session) {
     LaunchedEffect(day, session.selected?.kkmId, session.documents.size) {
         documents.clear()
         loading = true
-        more = loadDay(session, journal.basis, day, documents)
+        load = loadDay(session, journal.basis, day, documents)
         loading = false
+    }
+
+    // Одно чтение на две нужды: дочитать день и повторить после отказа.
+    // После отказа прочитанного нет, и дочитывание начинается с начала дня.
+    val readDay: () -> Unit = {
+        loading = true
+        scope.launch {
+            load = loadDay(session, journal.basis, day, documents)
+            loading = false
+        }
     }
 
     val candidates = kind.basisIn(documents).filter { it.matches(number) }
@@ -97,6 +109,12 @@ fun ReturnsScreen(session: Session) {
             // и подсказкой, а не пустым списком, из которого ничего не понять.
             !session.shiftOpen -> ScreenState.Empty(AppIcons.noBasis, journal.shiftClosed, journal.shiftClosedHint)
             loading && candidates.isEmpty() -> ScreenState.Working
+            // Узел не ответил — это не день без чеков: покупатель стоит
+            // у кассы с чеком в руках, и «подходящих оснований нет»
+            // отправляло кассира искать беду с чеком, которой нет.
+            load.failed && documents.isEmpty() ->
+                ScreenState.Trouble(journal.basisUnreadable, common.unreadableHint, onRetry = readDay)
+
             candidates.isEmpty() -> ScreenState.Empty(AppIcons.noBasis, kind.emptyText(journal), journal.noBasisHint)
             else -> ScreenState.Ready
         }
@@ -110,16 +128,10 @@ fun ReturnsScreen(session: Session) {
                     chosen = chosen,
                     journal = journal,
                     history = texts.history,
-                    more = more,
+                    more = load.more,
                     loading = loading,
                     modifier = Modifier.weight(BASIS_COLUMN),
-                    onMore = {
-                        loading = true
-                        scope.launch {
-                            more = loadDay(session, journal.basis, day, documents)
-                            loading = false
-                        }
-                    }
+                    onMore = readDay
                 ) { basisId = it.id }
                 RefundPanel(session, kind, chosen, Modifier.weight(REFUND_COLUMN)) { basisId = null }
             }

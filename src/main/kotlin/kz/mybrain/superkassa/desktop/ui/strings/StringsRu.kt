@@ -21,6 +21,7 @@ internal val RussianStrings = AppStrings(
         explain = "Пояснение",
         expand = "Развернуть",
         retry = "Повторить",
+        unreadableHint = "Узел не ответил или отказал в чтении. Повторите; если повторится — позовите обслуживание.",
         nothingToPick = "Выбирать не из чего"
     ),
     login = LoginStrings(

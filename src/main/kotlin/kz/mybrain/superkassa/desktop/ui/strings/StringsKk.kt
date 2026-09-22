@@ -21,6 +21,7 @@ internal val KazakhStrings = AppStrings(
         explain = "Түсіндірме",
         expand = "Жаю",
         retry = "Қайталау",
+        unreadableHint = "Торап жауап бермеді немесе оқудан бас тартты. Қайталаңыз; қайталанса — қызмет көрсетуді шақырыңыз.",
         nothingToPick = "Таңдайтын ештеңе жоқ"
     ),
     login = LoginStrings(
