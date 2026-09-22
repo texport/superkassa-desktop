@@ -20,7 +20,8 @@ internal val EnglishStrings = AppStrings(
         collapse = "Collapse",
         explain = "Explanation",
         expand = "Expand",
-        retry = "Try again"
+        retry = "Try again",
+        nothingToPick = "Nothing to choose from"
     ),
     login = LoginStrings(
         title = "Sign in to the register",

@@ -30,6 +30,15 @@ class PrintDrawer(private val session: Session) {
         private set
 
     /**
+     * Касса, чей пин спрашивали последним.
+     *
+     * Держится отдельно от запроса: ввод пина запрос закрывает, и когда
+     * узел отвечает на введённый отказом, спрашивать заново было уже
+     * не от чьего имени — окно открывалось с пустой первой строкой.
+     */
+    private var asked: String = ""
+
+    /**
      * Касса, которая рисует и печатает.
      *
      * Выбранная кассиром, иначе первая из списка узла. Узел не отдал
@@ -54,7 +63,8 @@ class PrintDrawer(private val session: Session) {
         val kkm = kkm() ?: return null
         val pin = session.pin.ifBlank { entered }
         if (pin.isBlank()) {
-            request = PinRequest(session.displayName(kkm), again)
+            asked = session.displayName(kkm)
+            request = PinRequest(asked, again)
             return null
         }
         return kkm to pin
@@ -71,7 +81,7 @@ class PrintDrawer(private val session: Session) {
     fun refused(again: () -> Unit) {
         if (session.pin.isNotBlank() || entered.isBlank()) return
         entered = ""
-        request = PinRequest(request?.kkmTitle ?: "", again)
+        request = PinRequest(asked, again)
     }
 
     /** Владелец ввёл пин: работа продолжается с того места, где встала. */

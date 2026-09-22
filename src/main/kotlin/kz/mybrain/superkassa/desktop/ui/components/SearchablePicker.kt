@@ -19,7 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -102,10 +106,19 @@ private fun <T> Picker(
         if (shown) onOpen(false)
         shown
     }
+    // Ширина поля нужна списку под ним: строки собираются по мере показа,
+    // а такой список меряется не содержимым, а числом.
+    var fieldWidth by remember { mutableStateOf(0.dp) }
     ExposedDropdownMenuBox(expanded = shown, onExpandedChange = onOpen, modifier = closing) {
-        PickerField(label = label, query = query, open = shown, onQuery = onQuery) { onOpen(true) }
+        PickerField(
+            label = label,
+            query = query,
+            open = shown,
+            onQuery = onQuery,
+            onWidth = { fieldWidth = it }
+        ) { onOpen(true) }
         ExposedDropdownMenu(expanded = shown, onDismissRequest = { onOpen(false) }) {
-            found.forEach { option ->
+            PickerRows(found, fieldWidth) { option ->
                 DropdownMenuItem(
                     text = { Text(text = title(option), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     onClick = { onPick(option) }
@@ -123,8 +136,10 @@ private fun ExposedDropdownMenuBoxScope.PickerField(
     query: String,
     open: Boolean,
     onQuery: (String) -> Unit,
+    onWidth: (Dp) -> Unit,
     onTaken: () -> Unit
 ) {
+    val density = LocalDensity.current
     OutlinedTextField(
         value = query,
         onValueChange = onQuery,
@@ -133,6 +148,7 @@ private fun ExposedDropdownMenuBoxScope.PickerField(
         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
         modifier = Modifier
             .fillMaxWidth()
+            .onGloballyPositioned { placed -> onWidth(with(density) { placed.size.width.toDp() }) }
             .onFocusChanged { state -> if (state.isFocused) onTaken() }
             .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
     )

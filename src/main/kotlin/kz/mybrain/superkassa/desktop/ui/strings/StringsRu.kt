@@ -20,7 +20,8 @@ internal val RussianStrings = AppStrings(
         collapse = "Свернуть",
         explain = "Пояснение",
         expand = "Развернуть",
-        retry = "Повторить"
+        retry = "Повторить",
+        nothingToPick = "Выбирать не из чего"
     ),
     login = LoginStrings(
         title = "Вход в кассу",

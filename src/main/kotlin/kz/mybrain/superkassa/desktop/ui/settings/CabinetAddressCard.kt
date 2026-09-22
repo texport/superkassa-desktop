@@ -8,10 +8,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
@@ -31,7 +27,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 fun CabinetAddressCard(session: Session) {
     val texts = cabinetTexts(session.language)
-    var address by remember { mutableStateOf(session.preferences.cabinetUrl) }
+    // Набранное переживает уход в другой раздел: экран настроек уходит
+    // из состава вместе с ним, и поле забывало набранное молча.
+    val address = SettingsDrafts.of(SettingsDrafts.Field.CABINET_ADDRESS, session.preferences.cabinetUrl)
     SectionCard(title = texts.address, info = texts.hints.address) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
@@ -39,15 +37,20 @@ fun CabinetAddressCard(session: Session) {
         ) {
             OutlinedTextField(
                 value = address,
-                onValueChange = { address = it },
+                onValueChange = { SettingsDrafts.type(SettingsDrafts.Field.CABINET_ADDRESS, it) },
                 label = { Text(texts.address) },
                 singleLine = true,
                 modifier = Modifier.width(Sizes.fieldName)
             )
             FilledTonalButton(
                 modifier = Modifier.height(Sizes.fieldHeight),
-                enabled = address.isNotBlank() && address != session.preferences.cabinetUrl,
-                onClick = { session.preferences.cabinetUrl = address }
+                enabled = address.isNotBlank() && address.trim() != session.preferences.cabinetUrl,
+                // Пробел по краям адреса приходит из буфера обмена вместе
+                // со скопированной строкой, а кабинет по такому адресу не ищется.
+                onClick = {
+                    session.preferences.cabinetUrl = address.trim()
+                    SettingsDrafts.forget(SettingsDrafts.Field.CABINET_ADDRESS)
+                }
             ) { Text(texts.save) }
         }
     }

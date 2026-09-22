@@ -64,6 +64,8 @@ internal val russianSettings = SettingStrings(
     printerHint = "Принтер держится за кассой: за одним компьютером их бывает две, " +
         "и чековая лента у каждой своя. Пока не выбран, задание уходит на системный по умолчанию.",
     printerSystem = "Системный по умолчанию",
+    printerNone = "На этой машине нет ни одного принтера: чек напечатать некуда. " +
+        "Подключите принтер и откройте настройки заново",
     printKind = "Вид файла при сохранении",
     printCopies = "Копий при печати",
     panelBehaviour = "Разделы кассовой колонки",
@@ -101,7 +103,9 @@ internal val russianSettings = SettingStrings(
     mapLocation = "Определение места",
     mapDefault = "Вернуть общедоступные",
     groupAppearance = "Оформление и печать",
-    groupService = "Обслуживание",
+    groupService = "Настройки кассы",
+    groupServices = "Адреса служб",
+    groupProgram = "Программа на этой машине",
     groupIrreversible = "Необратимое",
     panelBehaviourHint = "Выбранное здесь — то, что кассир увидит при открытии продажи. " +
         "Свернуть или развернуть раздел он всё равно может стрелкой на самом экране.",
@@ -154,6 +158,7 @@ internal val russianPreview = PreviewStrings(
     print = "Печать",
     printSent = "Отправлено на принтер",
     printFailed = "Принтер не принял задание",
+    printerMissing = "На этой машине нет ни одного принтера: печатать некуда",
     save = "Сохранить в файл",
     saved = "Сохранено",
     zoomIn = "Крупнее",

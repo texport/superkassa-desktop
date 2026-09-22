@@ -32,7 +32,7 @@ internal fun ProgrammingGate(session: Session) {
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        FilledTonalButton(onClick = {
+        FilledTonalButton(enabled = !session.busy && session.nodeAvailable, onClick = {
             scope.launch {
                 session.guard(texts.settings.enterProgramming) {
                     session.client.enterProgramming(kkm.kkmId, session.pin)

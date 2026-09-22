@@ -65,6 +65,11 @@ fun ConfirmDangerDialog(
  * кнопки здесь нет: красный отличает уничтожение от обычной работы,
  * а закрытие смены — обычная работа конца дня.
  *
+ * Escape отменяет вопрос, как и у остального наложенного: кассир,
+ * открывший его по ошибке, закрывает его той же клавишей, что и всё
+ * прочее в кассе. Пока идёт обращение к узлу — не закрывает: ответ
+ * уже в пути, и окно называет, чего ждут.
+ *
  * @param what что произойдёт — заголовок с тем, чего касается вопрос.
  * @param explain последствие числами: их читают один раз и решают.
  */
@@ -79,6 +84,7 @@ fun ConfirmActionDialog(
     onCancel: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    CloseOnEscape { if (!busy) onCancel() }
     AlertDialog(
         onDismissRequest = { if (!busy) onCancel() },
         icon = { Icon(imageVector = icon, contentDescription = null) },

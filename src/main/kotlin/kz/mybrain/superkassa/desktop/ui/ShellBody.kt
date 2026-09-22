@@ -1,10 +1,14 @@
 package kz.mybrain.superkassa.desktop.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +16,7 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -42,6 +47,11 @@ import kz.mybrain.superkassa.desktop.ui.users.UsersScreen
  * постоянная, и «Новая касса» упиралась в край окна. Считается так же,
  * как ширина сегментов, — одним правилом на весь интерфейс.
  *
+ * Разделы прокручиваются, а версия под ними стоит на месте: администратору
+ * их десяток, а окно кассы бывает ростом в 700 точек — на ноутбуке и на
+ * экране прилавка. Без прокрутки «Настройки» уходили под нижний край
+ * вместе с версией, и открыть их было нечем.
+ *
  * @param footer то, что стоит в нижнем углу рельса под разделами:
  *   версия кассы и знак о новой.
  */
@@ -66,15 +76,20 @@ internal fun SectionRail(
         modifier = Modifier.width(if (collapsed) Sizes.rail else maxOf(railWidth, Sizes.rail)),
         header = { RailToggle(collapsed, onToggle) }
     ) {
-        sections.forEach { entry ->
-            NavigationRailItem(
-                selected = current == entry,
-                onClick = { onPick(entry) },
-                icon = { Icon(entry.icon, contentDescription = entry.title(texts.sections)) },
-                label = if (collapsed) null else ({ Text(entry.title(texts.sections)) })
-            )
+        Column(
+            modifier = Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        ) {
+            sections.forEach { entry ->
+                NavigationRailItem(
+                    selected = current == entry,
+                    onClick = { onPick(entry) },
+                    icon = { Icon(entry.icon, contentDescription = entry.title(texts.sections)) },
+                    label = if (collapsed) null else ({ Text(entry.title(texts.sections)) })
+                )
+            }
         }
-        Spacer(Modifier.weight(1f))
         footer()
     }
 }

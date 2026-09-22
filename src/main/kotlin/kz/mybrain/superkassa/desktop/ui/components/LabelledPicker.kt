@@ -18,10 +18,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -55,6 +58,10 @@ fun <T> LabelledPicker(
     create: PickerCreate? = null
 ) {
     var open by remember { mutableStateOf(false) }
+    // Ширину поля меряет сама разметка: поле бывает и во всю ширину формы,
+    // и заданной ширины, а список под ним идёт с ним по одному краю.
+    var fieldWidth by remember { mutableStateOf(width ?: 0.dp) }
+    val density = LocalDensity.current
     val sized = if (width == null) modifier.fillMaxWidth() else modifier.width(width)
     ExposedDropdownMenuBox(
         expanded = open,
@@ -74,11 +81,11 @@ fun <T> LabelledPicker(
             singleLine = true,
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
-            modifier = if (width == null) {
-                Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-            } else {
-                Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-            }
+            modifier = (if (width == null) Modifier.fillMaxWidth() else Modifier)
+                .onGloballyPositioned { placed ->
+                    fieldWidth = with(density) { placed.size.width.toDp() }
+                }
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
         )
         ExposedDropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             create?.let { adding ->
@@ -92,12 +99,11 @@ fun <T> LabelledPicker(
                 )
                 if (options.isNotEmpty()) HorizontalDivider()
             }
-            options.forEach { option ->
+            if (options.isEmpty() && create == null) EmptyPickerLine()
+            PickerRows(options, fieldWidth) { option ->
                 DropdownMenuItem(
                     enabled = available(option),
-                    text = {
-                        Text(text = title(option), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
+                    text = { Text(text = title(option), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     onClick = {
                         onSelect(option)
                         open = false
@@ -106,6 +112,22 @@ fun <T> LabelledPicker(
             }
         }
     }
+}
+
+/**
+ * Пустой список — строкой, а не пустой рамкой.
+ *
+ * Раскрытая пустота читается как сбой приложения: справочник узел мог
+ * не отдать вовсе, и сказать об этом словами дешевле, чем заставлять
+ * владельца гадать.
+ */
+@Composable
+private fun EmptyPickerLine() {
+    DropdownMenuItem(
+        enabled = false,
+        text = { Text(LocalStrings.current.common.nothingToPick) },
+        onClick = {}
+    )
 }
 
 /**

@@ -28,9 +28,9 @@ class SettingsVisibilityTest {
                 Setting.NodeAddress,
                 Setting.CabinetAddress,
                 Setting.MapServices,
-                Setting.Debug,
                 Setting.NodeFacts,
-                Setting.Updates
+                Setting.Updates,
+                Setting.Debug
             ),
             shown
         )
@@ -77,5 +77,31 @@ class SettingsVisibilityTest {
     @Test
     fun `администратору в кассе видно всё`() {
         assertEquals(Setting.entries, visibleSettings(hasRegister = true, admin = true))
+    }
+
+    /**
+     * Порядок идёт от повседневного к необратимому.
+     *
+     * Прежде «Сведения об узле» и «Обновления» стояли после режима отладки,
+     * а отладка — посреди настроек кассы: владелец, пришедший узнать версию,
+     * первым делом натыкался на уровень записи журнала.
+     */
+    @Test
+    fun `порядок идёт от повседневного к необратимому`() {
+        val shown = visibleSettings(hasRegister = true, admin = true)
+
+        assertEquals(Setting.Decommission, shown.last(), "необратимое обязано стоять последним")
+        assertTrue(
+            shown.indexOf(Setting.Debug) > shown.indexOf(Setting.Updates),
+            "отладка стоит раньше обновлений"
+        )
+        assertTrue(
+            shown.indexOf(Setting.Debug) > shown.indexOf(Setting.NodeFacts),
+            "отладка стоит раньше сведений об узле"
+        )
+        assertTrue(
+            shown.indexOf(Setting.NodeAddress) > shown.indexOf(Setting.Diagnostics),
+            "адреса служб перемешаны с настройками кассы"
+        )
     }
 }
