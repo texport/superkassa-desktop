@@ -27,7 +27,8 @@ internal val journalTextsKk = JournalTexts(
         partialHint = "Чектің бір бөлігін қайтаруға болады: чек сомасынан кем соманы көрсетіңіз.",
         amountInvalid = "Сома сан емес — теңге мен тиынды үтір арқылы енгізіңіз.",
         amountTooLarge = "Чек сомасынан артық қайтаруға болмайды.",
-        amountEmpty = "Қайтару сомасын көрсетіңіз."
+        amountEmpty = "Қайтару сомасын көрсетіңіз.",
+        itemsIgnored = "Сома белгіленген жолдар бойынша емес: қайтару осы сомаға бір жолмен ресімделеді."
     ),
     history = HistoryJournalTexts(
         byPeriod = "Мерзім бойынша",

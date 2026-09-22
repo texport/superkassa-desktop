@@ -42,6 +42,18 @@ fun refundAmountOf(entered: String, basisTiyn: Long): RefundAmount {
 fun tengeText(tiyn: Long): String = Money.entered(Money.tengeOf(tiyn))
 
 /**
+ * Сумма перечисленных позиций в тиынах.
+ *
+ * Одна на весь возврат: ею заполняется поле суммы при отметке позиций,
+ * ею же решается, уйдут ли позиции строками чека. Разойдись эти два
+ * счёта — отметки попали бы в чек с чужой суммой.
+ */
+fun itemsTiyn(items: List<SoldItem>): Long =
+    items.fold(BigDecimal.ZERO) { sum, item -> sum + item.sum }
+        .movePointRight(Money.TIYN_SCALE)
+        .toLong()
+
+/**
  * Собирает чек возврата от чека-основания.
  *
  * Одной строкой: узел не отдаёт позиции чека-основания, и придумывать их
@@ -64,12 +76,17 @@ fun refundRequest(
     val number = basis.docNo ?: return null
     val basisTotal = basis.totalAmount ?: return null
     val refund = Money.tengeOf(refundTiyn)
+    // Позиции уходят строками только тогда, когда сумма возврата — это
+    // в точности их сумма. Кассир вправе поправить поле после отметок,
+    // и тогда строки чека описывали одну сумму, а оплата — другую:
+    // такой чек ОФД принять не может.
+    val lines = returned.takeIf { itemsTiyn(it) == refundTiyn }.orEmpty()
     return ReceiptRequest(
         idempotencyKey = idempotencyKey,
         // Отмеченные позиции уходят своими строками: ОФД получает то же
         // наименование, цену и ставку, что были в проданном чеке. Пустой
         // выбор означает возврат суммой — одной строкой, как раньше.
-        items = returned.ifEmpty { null }?.map { item ->
+        items = lines.ifEmpty { null }?.map { item ->
             ReceiptItem(
                 name = item.name,
                 nameKk = item.nameKk,

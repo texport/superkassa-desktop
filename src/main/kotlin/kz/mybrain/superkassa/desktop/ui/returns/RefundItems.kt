@@ -27,7 +27,6 @@ import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import java.math.BigDecimal
 
 /**
  * Позиции чека-основания: что именно возвращают.
@@ -105,7 +104,4 @@ private fun SoldDetails(session: Session, item: SoldItem, onDismiss: () -> Unit)
 
 /** Сумма отмеченных позиций в тиынах: столько и вернётся покупателю. */
 internal fun chosenTiyn(items: List<SoldItem>, chosen: Set<Int>): Long =
-    chosen.mapNotNull { items.getOrNull(it) }
-        .fold(BigDecimal.ZERO) { sum, item -> sum + item.sum }
-        .movePointRight(Money.TIYN_SCALE)
-        .toLong()
+    itemsTiyn(chosen.mapNotNull { items.getOrNull(it) })

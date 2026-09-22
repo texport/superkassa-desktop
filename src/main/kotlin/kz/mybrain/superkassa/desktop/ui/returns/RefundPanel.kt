@@ -121,6 +121,9 @@ private fun RefundForm(
                 // не должен, а поправить поле по-прежнему может.
                 entered = tengeText(if (chosen.isEmpty()) total else chosenTiyn(items, chosen))
             }
+            // Отметки описывают чек возврата только тогда, когда сумма
+            // осталась их суммой: поправленное поле отправит одну строку.
+            RefundItemsNote(journal, chosen.isNotEmpty() && chosenTiyn(items, chosen) != readyTiyn(checked))
             RefundAmountRow(journal, entered, checked is RefundAmount.Rejected, { entered = it }) {
                 chosen = emptySet()
                 entered = tengeText(total)
@@ -155,6 +158,9 @@ private fun RefundForm(
 }
 
 private fun refundKey(): String = "desktop-return-${System.currentTimeMillis()}"
+
+/** Принятая сумма возврата в тиынах, а до её принятия — ноль. */
+private fun readyTiyn(checked: RefundAmount): Long = (checked as? RefundAmount.Ready)?.tiyn ?: 0L
 
 /** Вид оплаты возврата по умолчанию: чаще всего деньги отдают из ящика. */
 private const val CASH = "CASH"

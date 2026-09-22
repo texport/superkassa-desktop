@@ -68,7 +68,16 @@ data class ReturnJournalTexts(
     val partialHint: String,
     val amountInvalid: String,
     val amountTooLarge: String,
-    val amountEmpty: String
+    val amountEmpty: String,
+
+    /**
+     * Сумма возврата набрана не по отметкам.
+     *
+     * Отмеченные позиции уходят строками чека только тогда, когда сумма
+     * возврата — это в точности их сумма. Иначе чек описывал бы строками
+     * одну сумму, а оплатой другую, и ОФД принять его не может.
+     */
+    val itemsIgnored: String
 )
 
 /**

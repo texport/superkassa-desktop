@@ -106,6 +106,23 @@ internal fun RefundHints(
     }
 }
 
+/**
+ * Отметки в чек не уйдут: сумма возврата набрана другая.
+ *
+ * Сказано до отправки и приглушённой ролью: это не ошибка ввода, а то,
+ * чем обернётся набранная сумма. Прежде экран показывал отмеченные
+ * позиции, а в ОФД уходила одна строка — и кассир об этом не знал.
+ */
+@Composable
+internal fun RefundItemsNote(journal: ReturnJournalTexts, shown: Boolean) {
+    if (!shown) return
+    Text(
+        text = journal.itemsIgnored,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
 private fun problemText(reason: RefundProblem, journal: ReturnJournalTexts): String = when (reason) {
     RefundProblem.Empty -> journal.amountEmpty
     RefundProblem.NotANumber -> journal.amountInvalid

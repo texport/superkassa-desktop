@@ -27,7 +27,8 @@ internal val journalTextsRu = JournalTexts(
         partialHint = "Можно вернуть часть чека: укажите сумму меньше суммы чека.",
         amountInvalid = "Сумма указана не числом — введите тенге и тиыны через запятую.",
         amountTooLarge = "Больше суммы чека вернуть нельзя.",
-        amountEmpty = "Укажите сумму возврата."
+        amountEmpty = "Укажите сумму возврата.",
+        itemsIgnored = "Сумма набрана не по отметкам: возврат уйдёт одной строкой на эту сумму."
     ),
     history = HistoryJournalTexts(
         byPeriod = "За период",

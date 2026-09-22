@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop
 import java.math.BigDecimal
 import kz.mybrain.superkassa.desktop.server.ReceiptPayment
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.ui.returns.RefundAmount
 import kz.mybrain.superkassa.desktop.ui.returns.RefundProblem
 import kz.mybrain.superkassa.desktop.ui.returns.ReturnKind
@@ -91,6 +92,50 @@ class JournalRefundTest {
         assertEquals(42, parent.parentTicketNumber)
         assertEquals(0, BigDecimal("1500").compareTo(parent.parentTicketTotal), "реквизит чека-основания — его собственная сумма")
         assertNull(request?.items?.single()?.vatGroup, "ставку берёт касса: своя врала бы на кассе без НДС")
+    }
+
+    /**
+     * Строки чека и оплата описывают одну и ту же сумму.
+     *
+     * Кассир отмечает позиции, поле заполняется их суммой — и поправить
+     * её он вправе. Прежде отмеченные позиции уходили в ОФД своими
+     * строками при любой набранной сумме: чек описывал строками десять
+     * тысяч, а оплатой пять, и принять такой чек ОФД не может.
+     */
+    @Test
+    fun `позиции уходят строками чека только вместе со своей суммой`() {
+        val basis = sale(number = 42, total = 150_000)
+        val returned = listOf(
+            SoldItem(name = "Баранина", price = BigDecimal("500.00"), quantityThousandths = 1_000, sum = BigDecimal("500.00")),
+            SoldItem(name = "Коньяк", price = BigDecimal("300.00"), quantityThousandths = 1_000, sum = BigDecimal("300.00"))
+        )
+
+        val matching = refundRequest(
+            basis = basis,
+            kgdKkmId = "123456789012",
+            refundTiyn = 80_000,
+            idempotencyKey = "key-1",
+            lineName = "Возврат по чеку № 42",
+            payments = listOf(ReceiptPayment("CASH", BigDecimal("800"))),
+            returned = returned
+        )
+        val edited = refundRequest(
+            basis = basis,
+            kgdKkmId = "123456789012",
+            refundTiyn = 50_000,
+            idempotencyKey = "key-2",
+            lineName = "Возврат по чеку № 42",
+            payments = listOf(ReceiptPayment("CASH", BigDecimal("500"))),
+            returned = returned
+        )
+
+        assertEquals(listOf("Баранина", "Коньяк"), matching?.items?.map { it.name })
+        assertEquals(
+            listOf("Возврат по чеку № 42"),
+            edited?.items?.map { it.name },
+            "поправленная сумма отправляла позиции на восемь тысяч с оплатой на пять"
+        )
+        assertEquals(0, BigDecimal("500").compareTo(edited?.items?.single()?.price))
     }
 
     @Test
