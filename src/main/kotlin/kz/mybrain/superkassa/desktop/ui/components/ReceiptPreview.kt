@@ -56,7 +56,8 @@ import org.jetbrains.skia.Image as SkiaImage
  * Лента лежит на поверхности окна без подложки по бокам: цветные поля
  * вокруг чека кассир принимал за часть документа. Масштаб меняется колесом
  * мыши с Ctrl и значками — словами «уже» и «шире» это читалось как ширина
- * бумаги, а не как увеличение.
+ * бумаги, а не как увеличение. Подобранный масштаб держится до закрытия
+ * кассы: сбрасывать его на каждый чек значит заставлять подбирать заново.
  *
  * Окно открывается по нажатию, а не по готовой картинке: узел рисует
  * форму секунду-другую, и всё это время в окне стоит общее ожидание —
@@ -81,6 +82,10 @@ fun ReceiptPreview(
     onSave: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
+    // Масштаб ленты живёт выше окна и переживает его закрытие: кассир
+    // подбирает ширину под свой экран один раз, а не заново у каждого чека.
+    // Внутри окна он заводился вместе с ним и умирал вместе с ним же.
+    var tapeWidth by remember { mutableStateOf(Tape.defaultWidth) }
     if (image == null && !drawing && trouble == null) return
     val texts = LocalStrings.current.preview
     CloseOnEscape(onDismiss)
@@ -93,7 +98,6 @@ fun ReceiptPreview(
             shape = RoundedCornerShape(Sizes.corner),
             tonalElevation = Sizes.dialogElevation
         ) {
-            var tapeWidth by remember { mutableStateOf(Tape.defaultWidth) }
             val bitmap = remember(image) {
                 image?.let { runCatching { SkiaImage.makeFromEncoded(it).toComposeImageBitmap() }.getOrNull() }
             }
