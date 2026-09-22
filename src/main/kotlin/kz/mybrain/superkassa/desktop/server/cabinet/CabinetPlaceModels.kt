@@ -41,6 +41,54 @@ data class RetailPlaceAddress(
     @Contextual val longitude: BigDecimal? = null
 )
 
+/**
+ * Чем кончилась смена адреса.
+ *
+ * Кабинет отвечает на смену адреса не точкой, а результатом проверки:
+ * прямо адрес меняется только у точки, где касс нет или все они черновики,
+ * ни разу не уходившие в КГД. Иначе адрес остаётся прежним, приходит
+ * `REREGISTRATION_REQUIRED` и список касс, которые этому мешают, —
+ * и в обоих случаях HTTP 200.
+ *
+ * Прежде приложение ждало здесь саму точку: успешная смена адреса падала
+ * на разборе ответа, и владелец читал «Кабинет не отвечает» о смене,
+ * которая состоялась.
+ */
+@Serializable
+data class ChangeAddressResult(
+    val retailPlaceId: String? = null,
+    val updated: Boolean = false,
+    val changeMode: String? = null,
+    val blockingCashRegisters: List<BlockingRegister> = emptyList()
+) {
+    /** Адрес не сменён: мешают кассы, которые надо перерегистрировать. */
+    val needsReregistration: Boolean get() = changeMode == REREGISTRATION_REQUIRED
+}
+
+/**
+ * Как кабинет называет случай, когда адрес не сменён.
+ *
+ * Константа на уровне файла, а не в `companion` разбираемого класса:
+ * свой companion у `@Serializable`-класса подменяет тот, в котором
+ * сериализация ищет разборщик, и ответ кабинета перестаёт читаться.
+ */
+private const val REREGISTRATION_REQUIRED = "REREGISTRATION_REQUIRED"
+
+/** Касса, из-за которой адрес точки нельзя сменить прямо. */
+@Serializable
+data class BlockingRegister(
+    val id: String? = null,
+    val internalName: String? = null,
+    val registrationNumber: String? = null,
+    val factoryNumber: String? = null
+) {
+    /** Как назвать кассу владельцу: своё название, иначе номер учёта, иначе заводской. */
+    fun title(): String =
+        internalName?.takeIf { it.isNotBlank() }
+            ?: registrationNumber?.takeIf { it.isNotBlank() }
+            ?: factoryNumber.orEmpty()
+}
+
 /** Адрес из регистра. */
 @Serializable
 data class RegisterAddress(

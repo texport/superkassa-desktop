@@ -20,7 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.server.cabinet.ChangeAddressResult
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterAddress
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlaceAddress
@@ -31,6 +33,7 @@ import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.map.MapPoint
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
@@ -155,10 +158,18 @@ private fun PlaceMove(
         enabled = chosen != null && point != null,
         onClick = {
             scope.launch {
-                if (move(cabinet, place, chosen, point)) {
+                // Смена адреса удаётся не всегда: точку с кассами,
+                // побывавшими в КГД, кабинет не переселяет и называет
+                // те кассы, которые надо перерегистрировать. Оба ответа
+                // приходят с HTTP 200, и различить их можно только здесь.
+                val result = move(cabinet, place, chosen, point) ?: return@launch
+                if (result.updated) {
                     chosen = null
                     query = ""
+                    session.lastMessage = Message.Done(texts.addressChanged)
                     onChanged()
+                } else {
+                    session.lastMessage = Message.Refusal(blockedWords(texts, result), REREGISTRATION)
                 }
             }
         }
@@ -171,16 +182,16 @@ private fun RetailPlace.registerAddress(): RegisterAddress? =
         RegisterAddress(addressRef = it, address = address, addressKz = addressKz, rka = rka, cato = cato)
     }
 
-/** Переселяет точку. Ложь означает отказ: выбранное остаётся на месте. */
+/** Переселяет точку. `null` означает отказ кабинета: выбранное остаётся на месте. */
 private suspend fun move(
     cabinet: CabinetSession,
     place: RetailPlace,
     address: RegisterAddress?,
     point: MapPoint?
-): Boolean {
-    val token = cabinet.token ?: return false
-    val chosen = address ?: return false
-    val where = point ?: return false
+): ChangeAddressResult? {
+    val token = cabinet.token ?: return null
+    val chosen = address ?: return null
+    val where = point ?: return null
     return cabinet.guard {
         cabinet.client.moveRetailPlace(
             token,
@@ -191,5 +202,21 @@ private suspend fun move(
                 longitude = where.longitude
             )
         )
-    } != null
+    }
 }
+
+/**
+ * Почему адрес остался прежним — с перечнем касс.
+ *
+ * Без имён касс владельцу пришлось бы перебирать точку целиком: на ней
+ * их бывает десяток, а мешают не все.
+ */
+private fun blockedWords(texts: CabinetTexts, result: ChangeAddressResult): String {
+    val blocked = result.blockingCashRegisters.map { it.title() }.filter { it.isNotBlank() }
+    return listOf(texts.addressNeedsReregistration, blocked.joinToString(", "))
+        .filter { it.isNotBlank() }
+        .joinToString(Glyphs.SEPARATOR)
+}
+
+/** Код помехи для поддержки: отказ по состоянию касс, а не ошибка запроса. */
+private const val REREGISTRATION = "REREGISTRATION_REQUIRED"

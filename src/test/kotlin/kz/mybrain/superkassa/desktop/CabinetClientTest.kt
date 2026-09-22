@@ -11,12 +11,16 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRefusal
+import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlaceAddress
 import kz.mybrain.superkassa.desktop.server.cabinet.edsChallenge
 import kz.mybrain.superkassa.desktop.server.cabinet.me
+import kz.mybrain.superkassa.desktop.server.cabinet.moveRetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.registers
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Обмен с личным кабинетом ОФД.
@@ -42,6 +46,45 @@ class CabinetClientTest {
         }
         return CabinetClient(http = http)
     }
+
+    /**
+     * Смена адреса отвечает результатом проверки, а не самой точкой.
+     *
+     * Кабинет меняет адрес прямо только у точки без касс или с одними
+     * черновиками; иначе адрес остаётся прежним и приходит
+     * `REREGISTRATION_REQUIRED` со списком касс — и то и другое с HTTP 200.
+     * Приложение ждало здесь объект точки, и **удавшаяся** смена адреса
+     * падала на разборе: владелец читал «Кабинет не отвечает» о смене,
+     * которая состоялась.
+     */
+    @Test
+    fun `смена адреса разбирается в оба исхода`() {
+        val direct = clientReturning(
+            HttpStatusCode.OK,
+            """{"retailPlaceId":"b9da2db3-f1df-4f7c-a93e-cbf911a7f254","updated":true,
+               "changeMode":"DIRECT","affectedDraftCashRegisters":[],"blockingCashRegisters":[]}"""
+        )
+        val done = runBlocking { direct.moveRetailPlace("token", "place-1", address()) }
+        assertTrue(done.updated, "удавшаяся смена адреса прочитана отказом")
+        assertFalse(done.needsReregistration)
+
+        val blocked = clientReturning(
+            HttpStatusCode.OK,
+            """{"retailPlaceId":"b9da2db3-f1df-4f7c-a93e-cbf911a7f254","updated":false,
+               "changeMode":"REREGISTRATION_REQUIRED","blockingCashRegisters":[
+                 {"id":"1","internalName":"Касса проверки","registrationNumber":"260940000031"},
+                 {"id":"2","registrationNumber":"260940000026"}]}"""
+        )
+        val stayed = runBlocking { blocked.moveRetailPlace("token", "place-1", address()) }
+        assertFalse(stayed.updated)
+        assertTrue(stayed.needsReregistration, "отказ по состоянию касс принят за успех")
+        assertEquals(
+            listOf("Касса проверки", "260940000026"),
+            stayed.blockingCashRegisters.map { it.title() }
+        )
+    }
+
+    private fun address() = RetailPlaceAddress(addressRef = "0201300118384402")
 
     @Test
     fun `задача на подпись разбирается целиком`() {

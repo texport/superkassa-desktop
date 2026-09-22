@@ -126,6 +126,8 @@ data class CabinetTexts(
     val optional: String,
     val foundAddresses: String,
     val addressChosen: String,
+    val addressChanged: String,
+    val addressNeedsReregistration: String,
     val addOked: String,
     val placeRemoveBlocked: String,
     val receiptMoment: String,

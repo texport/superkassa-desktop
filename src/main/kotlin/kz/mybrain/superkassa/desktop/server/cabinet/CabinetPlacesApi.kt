@@ -20,8 +20,11 @@ suspend fun CabinetClient.addRetailPlace(token: String, place: RetailPlaceCreate
 suspend fun CabinetClient.renameRetailPlace(token: String, id: String, name: String): RetailPlace =
     request(HttpMethod.Patch, "/api/retail-places/$id", RetailPlaceRename(name), token)
 
-suspend fun CabinetClient.moveRetailPlace(token: String, id: String, address: RetailPlaceAddress): RetailPlace =
-    request(HttpMethod.Put, "/api/retail-places/$id/address", address, token)
+suspend fun CabinetClient.moveRetailPlace(
+    token: String,
+    id: String,
+    address: RetailPlaceAddress
+): ChangeAddressResult = request(HttpMethod.Put, "/api/retail-places/$id/address", address, token)
 
 suspend fun CabinetClient.removeRetailPlace(token: String, id: String) {
     call(HttpMethod.Delete, "/api/retail-places/$id", null, token)
