@@ -26,11 +26,11 @@ class SettingsVisibilityTest {
                 Setting.Appearance,
                 Setting.PanelBehaviour,
                 Setting.NodeAddress,
-                Setting.CabinetAddress,
                 Setting.MapServices,
                 Setting.NodeFacts,
                 Setting.Updates,
-                Setting.Debug
+                Setting.Debug,
+                Setting.CabinetAddress
             ),
             shown
         )
@@ -53,7 +53,7 @@ class SettingsVisibilityTest {
         val shown = visibleSettings(hasRegister = false, admin = true)
 
         listOf(
-            Setting.CurrentKkm, Setting.PrintForm, Setting.PrintTarget,
+            Setting.CurrentKkm, Setting.Programming, Setting.PrintForm, Setting.PrintTarget,
             Setting.Tax, Setting.OfdSync, Setting.OfdToken,
             Setting.Diagnostics, Setting.Decommission
         ).forEach { assertTrue(it !in shown, "$it показана без кассы") }
@@ -80,7 +80,7 @@ class SettingsVisibilityTest {
     }
 
     /**
-     * Порядок идёт от повседневного к необратимому.
+     * Порядок внутри хозяйства идёт от повседневного к необратимому.
      *
      * Прежде «Сведения об узле» и «Обновления» стояли после режима отладки,
      * а отладка — посреди настроек кассы: владелец, пришедший узнать версию,
@@ -90,7 +90,11 @@ class SettingsVisibilityTest {
     fun `порядок идёт от повседневного к необратимому`() {
         val shown = visibleSettings(hasRegister = true, admin = true)
 
-        assertEquals(Setting.Decommission, shown.last(), "необратимое обязано стоять последним")
+        assertEquals(
+            Setting.Decommission,
+            shown.last { it in kkmSettings },
+            "необратимое обязано стоять последним среди настроек кассы"
+        )
         assertTrue(
             shown.indexOf(Setting.Debug) > shown.indexOf(Setting.Updates),
             "отладка стоит раньше обновлений"
@@ -100,8 +104,32 @@ class SettingsVisibilityTest {
             "отладка стоит раньше сведений об узле"
         )
         assertTrue(
-            shown.indexOf(Setting.NodeAddress) > shown.indexOf(Setting.Diagnostics),
+            shown.indexOf(Setting.NodeAddress) < shown.indexOf(Setting.Diagnostics),
             "адреса служб перемешаны с настройками кассы"
         )
     }
+
+    /**
+     * Вход в режим программирования и выход из него — одна настройка.
+     *
+     * Прежде войти предлагала карточка печатной формы, а выйти — кнопка
+     * в диагностике: кассир входил и искал выход по всему экрану.
+     */
+    @Test
+    fun `режим программирования стоит рядом с самой кассой`() {
+        val shown = visibleSettings(hasRegister = true, admin = true)
+
+        assertEquals(
+            Setting.CurrentKkm,
+            shown[shown.indexOf(Setting.Programming) - 1],
+            "режим программирования оторван от кассы, которой принадлежит"
+        )
+    }
+
+    /** Настройки, которые принимает узел этой кассы. */
+    private val kkmSettings = listOf(
+        Setting.CurrentKkm, Setting.Programming, Setting.PrintForm, Setting.PrintTarget,
+        Setting.Tax, Setting.OfdSync, Setting.OfdToken,
+        Setting.Diagnostics, Setting.Decommission
+    )
 }

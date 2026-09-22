@@ -2,16 +2,13 @@ package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
 import kz.mybrain.superkassa.desktop.ui.components.LanguagePicker
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.components.ThemeSwitch
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
  * Настройки с экрана входа.
@@ -36,11 +33,6 @@ fun WorkplaceSettingsScreen(session: Session, onBack: () -> Unit) {
             ThemeSwitch(session)
             LanguagePicker(session)
         }
-        ScrollableColumn(
-            modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-            spacing = Spacing.roomy
-        ) {
-            SettingsCards(session)
-        }
+        SettingsCards(session, Modifier.weight(1f))
     }
 }

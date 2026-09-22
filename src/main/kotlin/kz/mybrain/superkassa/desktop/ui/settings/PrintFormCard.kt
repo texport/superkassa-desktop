@@ -90,7 +90,6 @@ fun PrintFormCard(session: Session) {
         ReceiptLinesSection(kkm.kkmId, branding, programming) { changed ->
             save(changed) { forgetReceiptLineDrafts(kkm.kkmId) }
         }
-        if (!programming) ProgrammingGate(session)
     }
 }
 
