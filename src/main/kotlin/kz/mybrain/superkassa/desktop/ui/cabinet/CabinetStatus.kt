@@ -3,6 +3,8 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.desktop.ui.components.Chip
+import kz.mybrain.superkassa.desktop.ui.components.StatusTone
+import kz.mybrain.superkassa.desktop.ui.components.toneColor
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
@@ -16,7 +18,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
  * поддержки, а не в карточке кассы.
  *
  * Цвет несёт тот же смысл, что и везде в приложении: зелёный — сделано,
- * жёлтый — ждём ответа, красный — отказ.
+ * жёлтый — ждём ответа, красный — отказ, серый — законченное дело,
+ * в котором ничего не случилось.
  */
 @Composable
 fun CabinetStatusChip(status: String?, texts: CabinetTexts) {
@@ -45,6 +48,11 @@ fun statusWords(code: String, texts: CabinetTexts): String? = when (code.upperca
     "DRAFT" -> texts.statuses.draft
     "REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS" -> texts.statuses.registered
     "DEREGISTERED" -> texts.statuses.deregistered
+    // Три отказных состояния учёта не назывались никак и доходили
+    // до экрана как «состояние неизвестно» — жёлтым, будто их ещё ждут.
+    "REGISTRATION_IN_ISNA_ERROR",
+    "REGISTERED_REREGISTRATION_ERROR",
+    "DEREGISTRATION_ERROR" -> texts.statuses.rejected
     "ACTIVE", "KKM_ACTIVE" -> texts.statuses.active
     "INACTIVE", "KKM_INACTIVE" -> texts.statuses.inactive
     "BLOCKED", "KKM_BLOCKED" -> texts.statuses.blocked
@@ -57,11 +65,12 @@ fun statusWords(code: String, texts: CabinetTexts): String? = when (code.upperca
     else -> texts.statuses.inProcess.takeIf { code.endsWith(IN_PROCESS) }
 }
 
-/** Цвет состояния: сделано, ожидание или отказ. */
+/** Цвет состояния: сделано, законченное дело, отказ или ожидание. */
 @Composable
 fun statusColor(code: String): Color = when {
     code in DONE -> StatusColors.delivered
     code in REFUSED -> StatusColors.refused
+    code in SETTLED -> toneColor(StatusTone.Idle)
     else -> StatusColors.pending
 }
 
@@ -99,7 +108,21 @@ fun cardFieldTitle(code: String, texts: CabinetTexts): String = when (code.upper
 private val DONE = setOf("REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS", "KKM_ACTIVE", "ACCEPTED", "OPEN")
 
 /** Состояния, означающие отказ. */
-private val REFUSED = setOf("REJECTED", "REGISTRATION_IN_ISNA_ERROR", "DEREGISTERED")
+private val REFUSED = setOf(
+    "REJECTED",
+    "REGISTRATION_IN_ISNA_ERROR",
+    "REGISTERED_REREGISTRATION_ERROR",
+    "DEREGISTRATION_ERROR"
+)
+
+/**
+ * Состояния законченного дела: не удача и не беда.
+ *
+ * Касса, снятая с учёта по заявлению самого владельца, стояла в списке
+ * красной плашкой рядом с работающими — и выглядела сломанной. Снятие
+ * с учёта владелец затеял сам и довёл до конца; чинить здесь нечего.
+ */
+private val SETTLED = setOf("DEREGISTERED")
 
 /** Хвост кодов, означающих ожидание ответа ИСНА. */
 private const val IN_PROCESS = "_IN_ISNA_PROCESS"

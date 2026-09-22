@@ -163,7 +163,7 @@ private fun cabinetClaim(register: CabinetRegister): StateClaim = StateClaim(
     source = StateSource.Cabinet,
     usable = when {
         register.status.isBlank() -> Verdict.Unknown
-        register.status in ON_RECORD -> Verdict.Yes
+        onRecord(register.status) -> Verdict.Yes
         else -> Verdict.No
     },
     shift = Verdict.Unknown
@@ -189,6 +189,3 @@ private const val ACTIVE = "ACTIVE"
 
 /** Состояние смены в снимке БФД, означающее открытую смену. */
 private const val SHIFT_OPEN = "OPEN"
-
-/** Состояния кабинета, при которых касса стоит на учёте. */
-private val ON_RECORD = setOf("REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS")

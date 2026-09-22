@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
- * Сколько касс сейчас на виду.
+ * Сколько касс сейчас на виду и сколько из них работает по закону.
  *
  * Сеть в две тысячи касс на карте страны — это полсотни кружков с числами,
  * и сложить их глазами владелец не может: он видит, что касс много,
@@ -23,18 +23,16 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * по видимому куску карты и пересчитывается при каждом её сдвиге —
  * иначе он отвечал бы не на тот вопрос, который задан глазами.
  *
- * Вторая строка появляется только при действующем отборе: без него
- * «отобрано две тысячи из двух тысяч» — шум.
+ * Строка об учёте стоит второй и не прячется: в кабинете показа из 3294
+ * касс на учёте четыре, и число заведённых касс само по себе говорит
+ * о сети совсем не то, что о ней подумают.
  *
- * @param shown кассы мест, попавших в окно карты.
- * @param placed кассы, вставшие на карту после отбора.
- * @param whole кассы всей сети — до отбора.
+ * Строка об отборе появляется только при действующем отборе: без него
+ * «отобрано две тысячи из двух тысяч» — шум.
  */
 @Composable
 internal fun MapTally(
-    shown: Int,
-    placed: Int,
-    whole: Int,
+    shown: MapCount,
     sieved: Boolean,
     texts: AnalyticsTexts,
     modifier: Modifier = Modifier
@@ -51,16 +49,45 @@ internal fun MapTally(
         ) {
             Text(text = texts.mapShown, style = MaterialTheme.typography.labelMedium)
             Text(
-                text = texts.mapShownOf.format(Money.count(shown), Money.count(placed)),
+                text = texts.mapShownOf.format(Money.count(shown.kkms), Money.count(shown.placed)),
                 style = MaterialTheme.typography.titleMedium
             )
+            TallyNote(texts.mapOnRecordOf.format(Money.count(shown.onRecord), Money.count(shown.kkms)))
             if (sieved) {
-                Text(
-                    text = texts.mapSievedOf.format(Money.count(placed), Money.count(whole)),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                TallyNote(texts.mapSievedOf.format(Money.count(shown.placed), Money.count(shown.whole)))
             }
         }
     }
 }
+
+/** Пояснительная строка итога: тише главного числа, но читается рядом с ним. */
+@Composable
+private fun TallyNote(words: String) {
+    Text(
+        text = words,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}
+
+/**
+ * Числа итога над картой.
+ *
+ * Своим типом, а не четырьмя параметрами подряд: все четыре — кассы,
+ * все четыре `Int`, и перепутанные местами «видно» и «поставлено»
+ * не заметил бы ни разработчик, ни проверка.
+ *
+ * @param kkms кассы мест, попавших в окно карты.
+ * @param onRecord из них стоящие на учёте КГД.
+ * @param placed кассы, вставшие на карту после отбора.
+ * @param whole кассы всей сети — до отбора.
+ */
+internal data class MapCount(val kkms: Int, val onRecord: Int, val placed: Int, val whole: Int)
+
+/** Итог по видимым местам: считается там же, где отсеиваются ярлычки. */
+internal fun mapCount(shown: List<KkmGroup>, placed: Int, whole: Int): MapCount = MapCount(
+    kkms = shown.sumOf { it.size },
+    onRecord = shown.sumOf(::onRecordCount),
+    placed = placed,
+    whole = whole
+)

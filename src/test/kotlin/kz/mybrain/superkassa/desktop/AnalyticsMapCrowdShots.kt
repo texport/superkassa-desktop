@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapModel
 import kz.mybrain.superkassa.desktop.ui.analytics.KkmGroup
 import kz.mybrain.superkassa.desktop.ui.analytics.KkmMark
 import kz.mybrain.superkassa.desktop.ui.analytics.MapSieve
+import kz.mybrain.superkassa.desktop.ui.analytics.PlacedKkm
 import kz.mybrain.superkassa.desktop.ui.analytics.Placement
 import kz.mybrain.superkassa.desktop.ui.analytics.kkmGroups
 import kz.mybrain.superkassa.desktop.ui.analytics.sieved
@@ -69,6 +70,31 @@ class AnalyticsMapCrowdShots {
     }
 
     /**
+     * Сеть показа как её отдаёт кабинет: почти одни черновики.
+     *
+     * На боевых данных из 3294 касс 3288 — черновики, четыре на учёте,
+     * две сняты. Прежде каждый кружок такой сети был красным: черновик
+     * считался неблагополучным наравне с отказом КГД.
+     */
+    @Test
+    fun `сеть почти из одних черновиков`() {
+        val laid = Placement(asKgdSees(crowd()), emptyList())
+        val model = Look.model()
+        model.centre(laid.placed)
+        shoot("an-map-crowd-drafts", model, laid)
+    }
+
+    /** Те же кассы с состояниями учёта в той же пропорции, что в кабинете показа. */
+    private fun asKgdSees(placed: List<PlacedKkm>): List<PlacedKkm> = placed.mapIndexed { at, row ->
+        val status = when {
+            at < ON_RECORD -> "REGISTERED"
+            at < ON_RECORD + STRUCK -> "DEREGISTERED"
+            else -> "DRAFT"
+        }
+        row.copy(kkm = row.kkm.copy(status = status))
+    }
+
+    /**
      * Снимок и замер.
      *
      * Первый кадр считается отдельно от установившихся: в нём собирается
@@ -107,6 +133,10 @@ class AnalyticsMapCrowdShots {
     private fun spread(): Placement = Placement(crowd(), emptyList())
 
     private companion object {
+        /** Сколько касс сети стоит на учёте и сколько снято — как в кабинете показа. */
+        const val ON_RECORD = 4
+        const val STRUCK = 2
+
         const val ALMATY_LATITUDE = 43.238949
         const val ALMATY_LONGITUDE = 76.889709
         const val CITY_ZOOM = 9

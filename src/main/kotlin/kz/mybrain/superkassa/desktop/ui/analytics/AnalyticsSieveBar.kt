@@ -10,6 +10,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
 import kz.mybrain.superkassa.desktop.ui.components.MenuChip
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
@@ -53,6 +54,7 @@ fun AnalyticsSieveBar(model: AnalyticsMapModel, places: List<SievePlace>, texts:
             clearLabel = texts.sieveClear
         )
         Marks(model, texts)
+        Records(model, texts)
         if (places.isNotEmpty()) Places(model, places, texts)
         if (sieve.set) {
             TextButton(onClick = { model.sieve = MapSieve() }) { Text(texts.sieveClear) }
@@ -76,6 +78,24 @@ private fun Marks(model: AnalyticsMapModel, texts: AnalyticsTexts) {
             leadingIcon = { if (on) Icon(AppIcons.chosen, contentDescription = null) }
         )
     }
+}
+
+/**
+ * Учёт КГД — плашкой со списком: смыслов четыре, и выбирается один.
+ *
+ * Тем же способом, что и торговая точка ниже: нажимаемые плашки здесь
+ * обещали бы, что признаки складываются, а они друг друга исключают.
+ */
+@Composable
+private fun Records(model: AnalyticsMapModel, texts: AnalyticsTexts) {
+    val chosen = model.sieve.record
+    MenuChip(
+        value = recordTitle(chosen, texts),
+        options = listOf(null) + KkmRecord.entries,
+        title = { recordTitle(it, texts) },
+        chosen = chosen != null,
+        onSelect = { model.sieve = model.sieve.copy(record = it) }
+    )
 }
 
 /**
