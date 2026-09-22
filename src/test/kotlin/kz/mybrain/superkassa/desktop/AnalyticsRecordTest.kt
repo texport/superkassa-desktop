@@ -5,11 +5,12 @@ import kz.mybrain.superkassa.desktop.ui.analytics.of
 import kz.mybrain.superkassa.desktop.ui.analytics.recordCount
 import kz.mybrain.superkassa.desktop.ui.analytics.recordKkms
 import kz.mybrain.superkassa.desktop.ui.analytics.recordRegions
-import kz.mybrain.superkassa.desktop.ui.analytics.recordTitle
 import kz.mybrain.superkassa.desktop.ui.analytics.refusedKkms
 import kz.mybrain.superkassa.desktop.ui.analytics.regionOf
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
+import kz.mybrain.superkassa.desktop.ui.cabinet.recordTitle
 import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.strings.sieveTexts
 import kz.mybrain.superkassa.desktop.ui.strings.analyticsTexts
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -84,7 +85,7 @@ class AnalyticsRecordTest {
     @Test
     fun `каждый смысл учёта назван на трёх языках`() {
         Language.entries.forEach { language ->
-            val words = KkmRecord.entries.map { recordTitle(it, analyticsTexts(language)) }
+            val words = KkmRecord.entries.map { recordTitle(it, sieveTexts(language)) }
 
             assertEquals(words.size, words.toSet().size, "$language: два смысла названы одинаково")
             assertTrue(words.none(String::isBlank), "$language: смысл учёта остался без слова")

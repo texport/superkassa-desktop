@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
  * нечего — идти в список рядом и чинить причины.
  */
 internal fun emptyMapReason(placement: Placement, sieved: Boolean, texts: AnalyticsTexts): ScreenState.Empty = when {
-    sieved -> ScreenState.Empty(AppIcons.find, texts.sieveEmpty, texts.sieveEmptyHint)
+    sieved -> ScreenState.Empty(AppIcons.find, texts.sieve.empty, texts.sieve.emptyHint)
     searchingAll(placement) -> ScreenState.Empty(AppIcons.place, texts.mapSearching, texts.mapSearchingHint)
     else -> ScreenState.Empty(AppIcons.place, texts.mapEmpty, texts.mapEmptyHint)
 }

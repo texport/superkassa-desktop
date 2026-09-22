@@ -50,8 +50,8 @@ fun AnalyticsKkmList(
         if (placed.isEmpty() && unplaced.isEmpty()) {
             EmptyState(
                 icon = if (sieved) AppIcons.find else AppIcons.place,
-                title = if (sieved) texts.sieveEmpty else texts.kkmListEmpty,
-                hint = if (sieved) texts.sieveEmptyHint else texts.kkmListEmptyHint,
+                title = if (sieved) texts.sieve.empty else texts.kkmListEmpty,
+                hint = if (sieved) texts.sieve.emptyHint else texts.kkmListEmptyHint,
                 dense = true
             )
             return@Column

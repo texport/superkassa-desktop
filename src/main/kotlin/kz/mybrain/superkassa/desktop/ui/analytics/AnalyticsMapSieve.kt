@@ -4,7 +4,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.server.cabinet.KkmMapView
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
 import kz.mybrain.superkassa.desktop.ui.cabinet.kkmRecord
-import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
+import kz.mybrain.superkassa.desktop.ui.strings.SieveTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
@@ -33,30 +33,13 @@ data class MapSieve(
  * добавленный признак появляется в ряду плашек и начинает работать
  * без второй правки.
  */
-enum class KkmMark(val title: (AnalyticsTexts) -> String, val holds: (AnalyticsKkm) -> Boolean) {
+enum class KkmMark(val title: (SieveTexts) -> String, val holds: (AnalyticsKkm) -> Boolean) {
 
     /** Смена открыта: касса сейчас торгует. */
-    ShiftOpen({ it.markShiftOpen }, { it.shiftStatus == SHIFT_OPEN }),
+    ShiftOpen({ it.shiftOpen }, { it.shiftStatus == SHIFT_OPEN }),
 
     /** Касса заблокирована: фискальных операций не выполняет. */
-    Blocked({ it.markBlocked }, { it.blocked })
-}
-
-/**
- * Учёт КГД — не плашкой, а выбором из списка.
- *
- * Смыслы учёта исключают друг друга: касса не бывает разом на учёте
- * и снятой с него. Пять нажимаемых плашек в ряду обещали бы обратное —
- * нажав две, владелец получал бы пустую карту, — а ряд отбора от них
- * переносился на вторую строку и забирал высоту у самой карты.
- */
-fun recordTitle(record: KkmRecord?, texts: AnalyticsTexts): String = when (record) {
-    null -> texts.allRecords
-    KkmRecord.OnRecord -> texts.markOnRecord
-    KkmRecord.Entered -> texts.markEntered
-    KkmRecord.Applied -> texts.markApplied
-    KkmRecord.Refused -> texts.markRefused
-    KkmRecord.Deregistered -> texts.markDeregistered
+    Blocked({ it.blocked }, { it.blocked })
 }
 
 /**

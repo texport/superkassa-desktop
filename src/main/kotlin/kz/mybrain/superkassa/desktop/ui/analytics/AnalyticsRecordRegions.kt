@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
+import kz.mybrain.superkassa.desktop.ui.cabinet.recordTitle
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.StatusTone
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
@@ -38,7 +39,7 @@ internal fun RecordRegionsHead(texts: AnalyticsTexts) {
         HeadCell(texts.sales.placeCount, Modifier.weight(1f), HEAD_LINES)
         HeadCell(texts.kkmCount, Modifier.weight(1f), HEAD_LINES)
         KkmRecord.entries.forEach { meaning ->
-            HeadCell(recordTitle(meaning, texts), Modifier.weight(1f), HEAD_LINES)
+            HeadCell(recordTitle(meaning, texts.sieve), Modifier.weight(1f), HEAD_LINES)
         }
     }
 }
