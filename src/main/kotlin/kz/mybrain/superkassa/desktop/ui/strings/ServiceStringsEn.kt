@@ -105,6 +105,7 @@ internal val englishSettings = SettingStrings(
     mapLocation = "Location lookup",
     mapDefault = "Back to community",
     groupAppearance = "Appearance and printing",
+    groupLook = "Appearance",
     groupService = "Register settings",
     groupServices = "Service addresses",
     groupProgram = "Application on this machine",

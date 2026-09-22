@@ -105,6 +105,7 @@ internal val kazakhSettings = SettingStrings(
     mapLocation = "Орынды анықтау",
     mapDefault = "Ашық қызметтерге қайтару",
     groupAppearance = "Безендіру және басып шығару",
+    groupLook = "Безендіру",
     groupService = "Касса баптаулары",
     groupServices = "Қызметтер мекенжайлары",
     groupProgram = "Осы машинадағы бағдарлама",

@@ -51,10 +51,11 @@ fun SettingsScreen(session: Session) {
 fun SettingsCards(session: Session) {
     val texts = LocalStrings.current.settings
     val shown = settingsCards.filter { it.visible(session.selected != null, session.isAdmin) }
+    val names = shown.map { it.setting }
     SettingsGroup.entries.forEach { group ->
         val cards = shown.filter { it.group == group }
         if (cards.isEmpty()) return@forEach
-        group.title(texts)?.let { GroupTitle(it) }
+        group.title(texts, names)?.let { GroupTitle(it) }
         cards.forEach { it.card(session) }
     }
 }
@@ -68,23 +69,32 @@ fun SettingsCards(session: Session) {
  * сторонних служб или самой программы, — и по ней видно, что́ изменится
  * на узле, а что останется на этой машине.
  */
-private enum class SettingsGroup(val title: (SettingStrings) -> String?) {
+private enum class SettingsGroup(val title: (SettingStrings, List<Setting>) -> String?) {
 
     /** Касса, с которой работает это рабочее место: без заголовка, она одна. */
-    Current({ null }),
+    Current({ _, _ -> null }),
 
-    Appearance({ it.groupAppearance }),
+    /**
+     * Вид приложения, а с выбранной кассой — ещё и печатная форма с принтером.
+     *
+     * Заголовок называет то, что в группе есть сейчас: до входа в кассу
+     * обе карточки печати скрыты, и «Оформление и печать» над одним только
+     * выбором цвета обещало владельцу настройку, которой на экране нет.
+     */
+    Appearance({ texts, shown ->
+        if (Setting.PrintForm in shown) texts.groupAppearance else texts.groupLook
+    }),
 
     /** Настройки самой кассы: их принимает узел, и только в программировании. */
-    Kkm({ it.groupService }),
+    Kkm({ texts, _ -> texts.groupService }),
 
     /** Адреса служб, с которыми говорит рабочее место. */
-    Services({ it.groupServices }),
+    Services({ texts, _ -> texts.groupServices }),
 
     /** Программа на этой машине: сведения об узле, выпуски, журнал. */
-    Program({ it.groupProgram }),
+    Program({ texts, _ -> texts.groupProgram }),
 
-    Irreversible({ it.groupIrreversible })
+    Irreversible({ texts, _ -> texts.groupIrreversible })
 }
 
 /**

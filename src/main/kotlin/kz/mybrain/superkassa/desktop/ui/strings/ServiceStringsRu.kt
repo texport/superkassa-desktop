@@ -105,6 +105,7 @@ internal val russianSettings = SettingStrings(
     mapLocation = "Определение места",
     mapDefault = "Вернуть общедоступные",
     groupAppearance = "Оформление и печать",
+    groupLook = "Оформление",
     groupService = "Настройки кассы",
     groupServices = "Адреса служб",
     groupProgram = "Программа на этой машине",

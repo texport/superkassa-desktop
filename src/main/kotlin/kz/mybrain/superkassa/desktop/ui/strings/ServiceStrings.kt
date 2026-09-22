@@ -121,6 +121,8 @@ data class SettingStrings(
     val mapLocation: String,
     val mapDefault: String,
     val groupAppearance: String,
+    /** Та же группа до входа в кассу: печатать ещё нечего и нечем. */
+    val groupLook: String,
     /** Настройки самой кассы: их принимает узел и только в режиме программирования. */
     val groupService: String,
     /** Адреса служб, с которыми говорит рабочее место: узел, кабинет, карта. */
