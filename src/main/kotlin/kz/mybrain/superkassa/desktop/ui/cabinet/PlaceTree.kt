@@ -85,7 +85,6 @@ internal fun PlaceTree(
             onChange = onQuery,
             modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen)
         )
-        if (!loading && trouble == null) PlaceCount(texts, rows, total)
         val state = when {
             loading -> ScreenState.Working
             rows.isNotEmpty() -> ScreenState.Ready
@@ -95,6 +94,9 @@ internal fun PlaceTree(
             trouble != null -> ScreenState.Trouble(trouble, onRetry = onRetry)
             else -> treeEmpty(texts, query)
         }
+        // Счёт стоит над строками: без строк считать нечего, а над словами
+        // отказа «Показано 0 из 1004» читается как потеря тысячи точек.
+        if (state !is ScreenState.Trouble && !loading) PlaceCount(texts, rows, total)
         ScreenSlot(state, Modifier.weight(1f)) {
             TreeRows(texts, language, rows, place, register, onPlace, onRegister, Modifier.weight(1f))
         }
