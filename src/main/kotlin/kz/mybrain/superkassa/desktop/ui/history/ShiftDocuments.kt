@@ -26,6 +26,14 @@ import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
+/**
+ * Документы одной смены.
+ *
+ * @param page чем кончилось чтение документов: узел, который отказал или
+ *   промолчал, о документах смены ничего не сказал, и «документов нет»
+ *   про смену с сотней чеков — неправда.
+ * @param onRetry перечитать документы после неудачи.
+ */
 @Composable
 internal fun ColumnScope.ShiftDocuments(
     session: Session,
@@ -33,7 +41,9 @@ internal fun ColumnScope.ShiftDocuments(
     shift: Shift,
     documents: List<Document>,
     loading: Boolean,
+    page: PageOutcome,
     onBack: () -> Unit,
+    onRetry: () -> Unit,
     onPreview: (Document) -> Unit
 ) {
     val texts = LocalStrings.current
@@ -50,12 +60,7 @@ internal fun ColumnScope.ShiftDocuments(
             style = MaterialTheme.typography.titleMedium
         )
     }
-    val state = when {
-        documents.isNotEmpty() -> ScreenState.Ready
-        loading -> ScreenState.Working
-        else -> ScreenState.Empty(AppIcons.noDocuments, journal.emptyDocuments, journal.emptyDocumentsHint)
-    }
-    ScreenSlot(state, Modifier.weight(1f)) {
+    ScreenSlot(shiftDocumentsState(journal, documents.size, loading, page, onRetry), Modifier.weight(1f)) {
         // Та же таблица, что и в журнале за срок: документы смены — те же
         // документы, и вторая разметка под них разошлась бы с первой.
         val entries = journalEntriesOf(session, texts, documents)
@@ -74,16 +79,44 @@ internal fun ColumnScope.ShiftDocuments(
     }
 }
 
+/**
+ * Что стоит на месте списка документов смены.
+ *
+ * «В этой смене документов нет» — утверждение о смене, и говорить его
+ * можно только вслед за ответом узла. Узел, который отказал или промолчал,
+ * о документах смены не сказал ничего: кассир, пришедший за чеком
+ * позавчерашней смены, читал его молчание как пустую смену.
+ */
+internal fun shiftDocumentsState(
+    journal: ShiftJournalTexts,
+    documents: Int,
+    loading: Boolean,
+    page: PageOutcome,
+    onRetry: () -> Unit
+): ScreenState = when {
+    documents > 0 -> ScreenState.Ready
+    loading -> ScreenState.Working
+    !page.read -> ScreenState.Trouble(journal.documentsUnread, journal.documentsUnreadHint, onRetry)
+    else -> ScreenState.Empty(AppIcons.noDocuments, journal.emptyDocuments, journal.emptyDocumentsHint)
+}
+
+/**
+ * Читает документы смены.
+ *
+ * @return прочитаны ли они; за одно обращение узел отдаёт смену целиком,
+ *   и дочитывать здесь нечего.
+ */
 internal suspend fun loadDocuments(
     session: Session,
     what: String,
     shiftId: String,
     into: MutableList<Document>
-) {
-    val kkm = session.selected ?: return
+): PageOutcome {
+    val kkm = session.selected ?: return PageOutcome.unread
     val loaded = session.guard(what) {
         session.client.documentsOfShift(kkm.kkmId, shiftId, session.pin)
-    } ?: return
+    } ?: return PageOutcome.unread
     into.clear()
     into.addAll(loaded)
+    return PageOutcome.page(more = false)
 }

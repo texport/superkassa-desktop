@@ -95,6 +95,8 @@ internal val journalTextsEn = JournalTexts(
         documents = "Shift documents",
         emptyDocuments = "This shift has no documents.",
         emptyDocumentsHint = "The shift was opened and closed, but no receipts were issued in it.",
+        documentsUnread = "The documents of this shift could not be read: the node did not answer.",
+        documentsUnreadHint = "Read them again. If the documents still do not arrive, call service.",
         back = "Back to shifts"
     ),
     queue = QueueJournalTexts(

@@ -150,6 +150,16 @@ data class ShiftJournalTexts(
     val documents: String,
     val emptyDocuments: String,
     val emptyDocumentsHint: String,
+
+    /**
+     * Документы смены прочитать не удалось.
+     *
+     * Отдельно от «в смене документов нет»: узел отказал или не ответил,
+     * и о чеках смены он не сказал ничего. Кассир, пришедший за чеком
+     * позавчерашней смены, читал это молчание как пустую смену.
+     */
+    val documentsUnread: String,
+    val documentsUnreadHint: String,
     val back: String
 )
 

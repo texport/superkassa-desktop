@@ -62,13 +62,21 @@ fun PastShiftsView(session: Session) {
     }
     // Документы смены узел отдаёт отдельным обращением: до ответа список
     // пуст, и «документов нет» про смену с сотней чеков — неправда.
+    // Неудача этого обращения тоже не пустая смена, поэтому её итог
+    // хранится наравне с самими документами.
     var opening by remember { mutableStateOf(false) }
+    var documentsPage by remember { mutableStateOf(PageOutcome.unread) }
+
+    suspend fun readDocuments(shiftId: String) {
+        opening = true
+        documentsPage = loadDocuments(session, journal.documents, shiftId, documents)
+        opening = false
+    }
+
     LaunchedEffect(openId) {
         documents.clear()
-        val shiftId = openId ?: return@LaunchedEffect
-        opening = true
-        loadDocuments(session, journal.documents, shiftId, documents)
-        opening = false
+        documentsPage = PageOutcome.unread
+        openId?.let { readDocuments(it) }
     }
 
     val opened = shifts.firstOrNull { it.id == openId }
@@ -89,7 +97,10 @@ fun PastShiftsView(session: Session) {
                 page = page,
                 onMore = { scope.launch { read() } },
                 onRetry = { scope.launch { read() } },
-                onOpen = { openId = it.id }
+                // Ожидание ставится вместе с открытием смены: иначе
+                // до первого кадра чтения экран успевал объяснить пустоту
+                // смены, которую ещё никто не спрашивал.
+                onOpen = { openId = it.id; opening = true }
             ) { shift ->
                 session.printDesk.previewDocument(
                     shift.zReportId,
@@ -97,9 +108,17 @@ fun PastShiftsView(session: Session) {
                 )
             }
         } else {
-            ShiftDocuments(session, journal, opened, documents, opening, onBack = { openId = null }) { document ->
-                session.printDesk.preview(document)
-            }
+            ShiftDocuments(
+                session = session,
+                journal = journal,
+                shift = opened,
+                documents = documents,
+                loading = opening,
+                page = documentsPage,
+                onBack = { openId = null },
+                onRetry = { scope.launch { readDocuments(opened.id) } },
+                onPreview = { document -> session.printDesk.preview(document) }
+            )
         }
     }
 }

@@ -95,6 +95,8 @@ internal val journalTextsKk = JournalTexts(
         documents = "Ауысым құжаттары",
         emptyDocuments = "Бұл ауысымда құжат жоқ.",
         emptyDocumentsHint = "Ауысым ашылып жабылған, бірақ онда чек бұзылмаған.",
+        documentsUnread = "Ауысым құжаттарын оқу мүмкін болмады: түйін жауап бермеді.",
+        documentsUnreadHint = "Оқуды қайталаңыз. Құжаттар әрі қарай да келмесе, қызмет көрсетуді шақырыңыз.",
         back = "Ауысымдар тізіміне"
     ),
     queue = QueueJournalTexts(
