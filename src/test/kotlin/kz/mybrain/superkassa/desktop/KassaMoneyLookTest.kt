@@ -95,6 +95,19 @@ class KassaMoneyLookTest {
             "shift-closed" to KassaScene.shot("return-shift-closed") {
                 ReturnsScreen(KassaScene.session("ret-closed", journal = listOf(sold(41, 1_137_250))))
             },
+            "kkm-blocked" to KassaScene.shot("return-kkm-blocked") {
+                // Смена у снятой с учёта кассы остаётся открытой, и без
+                // своего состояния экран предлагал кнопку возврата, на
+                // которую узел отвечает KKM_BLOCKED.
+                ReturnsScreen(
+                    KassaScene.session(
+                        "ret-blocked",
+                        kkm = KassaScene.kkm(state = "BLOCKED"),
+                        shift = KassaScene.openShift(),
+                        journal = listOf(sold(41, 1_137_250))
+                    )
+                )
+            },
             "no-basis" to KassaScene.shot("return-no-basis") {
                 ReturnsScreen(KassaScene.session("ret-empty", shift = KassaScene.openShift()))
             },
@@ -120,8 +133,12 @@ class KassaMoneyLookTest {
         // только о том, что узел не отдал основания, и не обещают кассиру,
         // что продаж в этот день не случилось.
         assertTrue(
-            listOf(frames.getValue("shift-closed"), frames.getValue("no-basis"), frames.getValue("basis-list"))
-                .map { it.toList() }.distinct().size == 3,
+            listOf(
+                frames.getValue("shift-closed"),
+                frames.getValue("kkm-blocked"),
+                frames.getValue("no-basis"),
+                frames.getValue("basis-list")
+            ).map { it.toList() }.distinct().size == 4,
             "состояния возврата неотличимы друг от друга"
         )
     }
@@ -156,8 +173,59 @@ class KassaMoneyLookTest {
         }
     }
 
+    /**
+     * Чек-основание из десятка позиций не выдавливает кнопку за край.
+     *
+     * Состав чека узел отдаёт целиком, и у обычной продуктовой корзины
+     * строк бывает полтора десятка. Прежде список рос вниз без прокрутки
+     * и уносил за нижний край панели поле суммы, виды оплаты и само
+     * «Вернуть покупателю» — вернуть деньги было нечем.
+     */
+    @Test
+    fun `длинный состав чека не уносит кнопку возврата за край панели`() {
+        val short = refundPanel("ret-short", ITEMS)
+        val long = refundPanel("ret-long", MANY)
+
+        assertTrue(
+            bottomStrip(short).contentEquals(bottomStrip(long)),
+            "кнопка возврата смещается от числа позиций в чеке-основании"
+        )
+    }
+
+    /** Панель возврата с выбранным чеком: снимок после нажатия по списку. */
+    private fun refundPanel(folder: String, items: List<SoldItem>): ByteArray {
+        val session = KassaScene.session(
+            folder,
+            shift = KassaScene.openShift(),
+            journal = listOf(sold(41, items.sumOf { it.sum }.movePointRight(2).toLong())),
+            sold = items
+        )
+        return RenderProbe(
+            width = KassaScene.WIDE,
+            height = KassaScene.TALL,
+            content = { ReturnsScreen(session) }
+        ).use { probe ->
+            repeat(SETTLE) { probe.frame() }
+            probe.click(androidx.compose.ui.geometry.Offset(BASIS_X, BASIS_Y))
+            repeat(SETTLE) { probe.frame() }
+            val frame = probe.frame()
+            java.io.File("/tmp/kassa-$folder.png").writeBytes(frame)
+            frame
+        }
+    }
+
+    /** Нижняя полоса кадра: в ней стоит единственное действие панели. */
+    private fun bottomStrip(png: ByteArray): IntArray {
+        val image = javax.imageio.ImageIO.read(java.io.ByteArrayInputStream(png))
+        val from = image.height - BUTTON_STRIP
+        return image.getRGB(0, from, image.width, BUTTON_STRIP, null, 0, image.width)
+    }
+
     private companion object {
         const val SETTLE = 40
+
+        /** Высота полосы у нижнего края, в которой стоит кнопка возврата. */
+        const val BUTTON_STRIP = 60
 
         /** Первая строка списка чеков-оснований: по ней и щёлкаем. */
         const val BASIS_X = 300f
@@ -181,5 +249,17 @@ class KassaMoneyLookTest {
                 measureUnitCode = "796"
             )
         )
+
+        /** Обычная продуктовая корзина: строк больше, чем влезает в панель. */
+        val MANY = (1..14).map { at ->
+            SoldItem(
+                name = "Товар с довольно длинным наименованием номер $at",
+                price = BigDecimal("990.00"),
+                quantityThousandths = 1_000,
+                sum = BigDecimal("990.00"),
+                vatGroup = "VAT_16",
+                measureUnitCode = "796"
+            )
+        }
     }
 }

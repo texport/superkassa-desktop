@@ -74,6 +74,10 @@ fun ReceiptDetailsCard(form: SaleForm, basket: Basket, expanded: Boolean, onTogg
     val extra = LocalSaleTexts.current
     val conflict = basket.hasItemDiscount &&
         (amount(form.discount).value ?: BigDecimal.ZERO) > BigDecimal.ZERO
+    // Минус в скидке и в наценке меняет их смысл на обратный: поле
+    // краснеет у того, где он набран, а причина стоит строкой под обоими.
+    val discountBelowZero = below(form.discount)
+    val markupBelowZero = below(form.markup)
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
@@ -90,7 +94,7 @@ fun ReceiptDetailsCard(form: SaleForm, basket: Basket, expanded: Boolean, onTogg
                         onValueChange = form::enterDiscount,
                         label = { Text(texts.sale.receiptDiscount) },
                         singleLine = true,
-                        isError = conflict,
+                        isError = conflict || discountBelowZero,
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
@@ -98,11 +102,16 @@ fun ReceiptDetailsCard(form: SaleForm, basket: Basket, expanded: Boolean, onTogg
                         onValueChange = form::enterMarkup,
                         label = { Text(texts.sale.receiptMarkup) },
                         singleLine = true,
+                        isError = markupBelowZero,
                         modifier = Modifier.weight(1f)
                     )
                 }
                 Hint(
-                    problem = if (conflict) extra.blockDiscountScopes else null,
+                    problem = when {
+                        discountBelowZero || markupBelowZero -> extra.blockDiscountNegative
+                        conflict -> extra.blockDiscountScopes
+                        else -> null
+                    },
                     hint = texts.sale.discountOrMarkup
                 )
                 CustomerBinField(form)
@@ -134,4 +143,10 @@ private fun CustomerBinField(form: SaleForm) {
         },
         modifier = Modifier.fillMaxWidth()
     )
+}
+
+/** Набрано ли в поле число меньше нуля: пустое и недобранное — не минус. */
+private fun below(text: String): Boolean {
+    val value = amount(text).value ?: return false
+    return value < BigDecimal.ZERO
 }

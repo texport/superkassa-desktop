@@ -34,6 +34,16 @@ data class ReturnJournalTexts(
     val noSaleBasis: String,
     val noBuyBasis: String,
     val shiftClosed: String,
+
+    /**
+     * Касса заблокирована — в том числе снята с учёта.
+     *
+     * Узел фискальных команд такой кассе не проводит, а смена у неё
+     * может оставаться открытой: без своего состояния экран предлагал
+     * кассиру кнопку, на которую узел отвечает KKM_BLOCKED.
+     */
+    val kkmBlocked: String,
+    val kkmBlockedHint: String,
     val amount: String,
     val wholeReceipt: String,
     val partialHint: String,
@@ -120,6 +130,16 @@ data class ShiftJournalTexts(
 data class QueueJournalTexts(
     val task: String,
     val sentSection: String,
+
+    /**
+     * Задачи, отправки которых не будет.
+     *
+     * Своя строка, а не общая с отправленными: отвергнутая задача
+     * стояла под заголовком «Уже отправлено» с плашкой «Не будет
+     * отправлен» — заголовок спорил со строкой под ним, а счёт
+     * отправленных включал то, что не ушло.
+     */
+    val rejectedSection: String,
     val sending: String,
     val retrying: String,
     val rejectedForGood: String,

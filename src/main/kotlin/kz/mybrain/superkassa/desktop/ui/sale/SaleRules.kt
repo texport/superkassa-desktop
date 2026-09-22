@@ -25,6 +25,8 @@ data class SaleState(
     /** Стоит ли в чеке позиция, цену которой так и не задали. */
     val hasZeroPrice: Boolean = false,
     val receiptDiscount: BigDecimal? = null,
+    /** Наценка на чек: проверяется на знак так же, как скидка. */
+    val receiptMarkup: BigDecimal? = null,
     val total: BigDecimal = BigDecimal.ONE,
     val paymentCodes: List<String> = listOf(CASH_PAYMENT),
     /** Чем разбиение оплаты не годится, если оплат несколько. */
@@ -62,6 +64,7 @@ enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
     PaymentSplitEmpty({ _, payment -> payment.splitEmpty }),
     PaymentSplitExcess({ _, payment -> payment.splitExcess }),
     DiscountScopes({ sale, _ -> sale.blockDiscountScopes }),
+    DiscountNegative({ sale, _ -> sale.blockDiscountNegative }),
     TotalNotPositive({ sale, _ -> sale.blockTotalNotPositive }),
     CustomerBin({ sale, _ -> sale.blockBin }),
     TakenTooSmall({ sale, _ -> sale.blockTakenTooSmall });
@@ -118,6 +121,10 @@ fun blockOf(state: SaleState): SaleBlock? {
     if (state.hasItemDiscount && (state.receiptDiscount ?: BigDecimal.ZERO) > BigDecimal.ZERO) {
         return SaleBlock.DiscountScopes
     }
+    // Скидка со знаком минус прибавляла к итогу, наценка со знаком минус
+    // вычитала: «Итого» расходилось с набранным, и ни одна строка экрана
+    // этого не объясняла.
+    if (negative(state.receiptDiscount) || negative(state.receiptMarkup)) return SaleBlock.DiscountNegative
     if (state.total <= BigDecimal.ZERO) return SaleBlock.TotalNotPositive
     if (!binAccepted(state.customerBin)) return SaleBlock.CustomerBin
     if (takenTooSmall(state)) return SaleBlock.TakenTooSmall
@@ -145,6 +152,8 @@ fun changeOf(taken: BigDecimal?, cashSum: BigDecimal): BigDecimal? =
  */
 fun binAccepted(bin: String): Boolean =
     bin.isEmpty() || (bin.length == BIN_LENGTH && bin.all(Char::isDigit))
+
+private fun negative(value: BigDecimal?): Boolean = value != null && value < BigDecimal.ZERO
 
 private fun takenTooSmall(state: SaleState): Boolean {
     val cash = state.cashSum ?: state.total

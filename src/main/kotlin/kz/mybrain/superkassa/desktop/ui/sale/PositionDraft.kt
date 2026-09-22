@@ -26,7 +26,8 @@ enum class DraftProblem(val field: DraftField, val text: (SaleTexts) -> String) 
     QuantityNotWhole(DraftField.Quantity, { it.quantityWhole }),
     DiscountNotANumber(DraftField.Discount, { it.notANumber }),
     DiscountTooPrecise(DraftField.Discount, { it.pricePrecision }),
-    DiscountTooBig(DraftField.Discount, { it.discountTooBig })
+    DiscountTooBig(DraftField.Discount, { it.discountTooBig }),
+    DiscountNegative(DraftField.Discount, { it.discountNegative })
 }
 
 /**
@@ -115,18 +116,26 @@ data class PositionDraft(
     /**
      * Скидка на позицию необязательна, но не может съесть позицию целиком:
      * ОФД чек с отрицательной строкой не примет.
+     *
+     * Отрицательная скидка названа своей причиной. Прежде она считалась
+     * той же бедой, что и слишком большая, и кассир, набравший «-100»,
+     * читал «скидка не может быть больше стоимости позиции» — при скидке
+     * заведомо меньше стоимости.
      */
     private fun discountProblems(): List<DraftProblem> = when (val parsed = amount(discount)) {
         is Amount.NotANumber -> listOf(DraftProblem.DiscountNotANumber)
         is Amount.TooPrecise -> listOf(DraftProblem.DiscountTooPrecise)
         is Amount.Empty -> emptyList()
-        is Amount.Value -> listOfNotNull(DraftProblem.DiscountTooBig.takeIf { tooBig(parsed.amount) })
+        is Amount.Value -> listOfNotNull(
+            DraftProblem.DiscountNegative.takeIf { parsed.amount < BigDecimal.ZERO },
+            DraftProblem.DiscountTooBig.takeIf { tooBig(parsed.amount) }
+        )
     }
 
     private fun tooBig(value: BigDecimal): Boolean {
         val priced = amount(price).value ?: return false
         val counted = amount(quantity, QUANTITY_SCALE).value ?: return false
-        return value < BigDecimal.ZERO || value > priced.multiply(counted)
+        return value > priced.multiply(counted)
     }
 }
 
