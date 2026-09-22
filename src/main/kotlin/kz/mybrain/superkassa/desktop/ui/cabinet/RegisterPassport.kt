@@ -70,6 +70,6 @@ fun RegisterPassport(
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         RegisterEditCard(cabinet, texts, register, onChanged)
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        RegisterTokenBlock(cabinet, texts, register)
+        RegisterTokenBlock(session, cabinet, texts, register)
     }
 }

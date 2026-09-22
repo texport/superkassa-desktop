@@ -51,6 +51,8 @@ data class CabinetTexts(
     val lastContact: String,
     val issueToken: String,
     val tokenIssued: String,
+    val tokenGoesToNode: String,
+    val tokenNeedsNode: String,
     val registration: String,
     val reregistration: String,
     val deregistration: String,
