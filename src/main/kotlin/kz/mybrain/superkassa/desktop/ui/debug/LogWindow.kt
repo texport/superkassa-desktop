@@ -11,11 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kz.mybrain.superkassa.desktop.app.askWhereToSave
 import kz.mybrain.superkassa.desktop.app.log.AppLog
 import kz.mybrain.superkassa.desktop.app.log.LogEntry
@@ -63,6 +67,7 @@ fun LogWindow(language: Language, appearance: Appearance, look: Look, onClose: (
  */
 @Composable
 private fun LogBody(texts: DebugTexts) {
+    val scope = rememberCoroutineScope()
     var level by remember { mutableStateOf(LogLevel.Debug) }
     var query by remember { mutableStateOf("") }
     val shown = AppLog.entries.matching(level, query)
@@ -78,7 +83,10 @@ private fun LogBody(texts: DebugTexts) {
             onLevel = { level = it },
             onQuery = { query = it },
             onClear = AppLog::clear,
-            onSave = { saveLog(shown, texts.save) }
+            // Окно выбора файла открывается не в потоке разметки: пока
+            // оно стоит, главное окно кассы не перерисовывается, и владелец
+            // видит за ним белое пятно вместо журнала.
+            onSave = { scope.launch { saveLog(shown, texts.save) } }
         )
         LogLines(shown, texts, Modifier.weight(1f))
         Text(
@@ -95,8 +103,8 @@ private fun LogBody(texts: DebugTexts) {
  * Сохраняется то, что видно после отбора: в поддержку пересылают разбор
  * одного отказа, а не всю смену.
  */
-private fun saveLog(entries: List<LogEntry>, title: String) {
-    val target = askWhereToSave(SAVED_NAME, title) ?: return
+private suspend fun saveLog(entries: List<LogEntry>, title: String) = withContext(Dispatchers.IO) {
+    val target = askWhereToSave(SAVED_NAME, title) ?: return@withContext
     runCatching { target.writeText(entries.joinToString("\n") { it.line() }) }
 }
 

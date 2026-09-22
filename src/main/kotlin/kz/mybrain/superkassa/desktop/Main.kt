@@ -11,20 +11,24 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.delay
 import kz.mybrain.superkassa.desktop.app.LocalNode
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.appearance
+import kz.mybrain.superkassa.desktop.app.fitToScreen
 import kz.mybrain.superkassa.desktop.app.log.AppLog
 import kz.mybrain.superkassa.desktop.app.log.NodeOutput
 import kz.mybrain.superkassa.desktop.app.look
 import kz.mybrain.superkassa.desktop.app.rememberWindowSize
 import kz.mybrain.superkassa.desktop.app.rememberedWindowSize
+import kz.mybrain.superkassa.desktop.app.screenSize
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.Shell
 import kz.mybrain.superkassa.desktop.ui.components.EscapeListener
 import kz.mybrain.superkassa.desktop.ui.debug.LogWindow
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Durations
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
 
@@ -61,13 +65,17 @@ private fun ApplicationScope.SuperkassaApplication() {
         Session(ServerClient(address = { preferences.nodeUrl }), preferences)
     }
     // Размер окна берётся тот, каким кассир оставил его в прошлый раз;
-    // при первом запуске — подобранный под ноутбучный экран.
-    val remembered = remember { session.rememberedWindowSize }
+    // при первом запуске — подобранный под ноутбучный экран. И тот и другой
+    // ужимаются до экрана этой машины: запомненный на внешнем мониторе
+    // уезжал за край ноутбука вместе с шапкой.
     val windowState = rememberWindowState(
         position = WindowPosition(Alignment.Center),
-        size = remembered
-            ?.let { (width, height) -> DpSize(width.dp, height.dp) }
-            ?: DpSize(Sizes.windowWidth, Sizes.windowHeight)
+        size = remember {
+            val wanted = session.rememberedWindowSize
+                ?: (Sizes.windowWidth.value.toInt() to Sizes.windowHeight.value.toInt())
+            val (width, height) = fitToScreen(wanted, screenSize())
+            DpSize(width.dp, height.dp)
+        }
     )
     // В режиме отладки вывод узла дочитывается в тот же журнал: иначе
     // цепочка обрывается на границе с ним, а обмен с ОФД идёт там.
@@ -76,6 +84,10 @@ private fun ApplicationScope.SuperkassaApplication() {
         NodeOutput(LocalNode.output(), AppLog.journal).follow()
     }
     LaunchedEffect(windowState.size) {
+        // Размер записывается, когда рамку отпустили, а не на каждый её
+        // сдвиг: пока кассир тянет угол окна, размер меняется десятки раз
+        // в секунду, и каждый из них — запись файла настройки на диск.
+        delay(Durations.afterTyping)
         val width = windowState.size.width.value.toInt()
         val height = windowState.size.height.value.toInt()
         if (width > 0 && height > 0) {
