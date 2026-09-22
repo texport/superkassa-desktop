@@ -54,7 +54,7 @@ internal fun BasisList(
             }
             // День читается страницами: за оживлённый день чеков сотни,
             // и тянуть их все ради одного основания незачем.
-            item { MoreRow(more, loading, history.showMore, history.allShown, onMore = onMore) }
+            item { MoreRow(more, loading, history.showMore, journal.allBasesShown, onMore = onMore) }
         }
     }
 }
