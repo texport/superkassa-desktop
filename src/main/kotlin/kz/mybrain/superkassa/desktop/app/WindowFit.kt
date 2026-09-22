@@ -1,5 +1,7 @@
 package kz.mybrain.superkassa.desktop.app
 
+import androidx.compose.ui.unit.Dp
+import java.awt.Dimension
 import java.awt.GraphicsEnvironment
 import java.awt.Toolkit
 
@@ -34,3 +36,16 @@ internal fun screenSize(): Pair<Int, Int>? = runCatching {
     val insets = Toolkit.getDefaultToolkit().getScreenInsets(screen)
     (bounds.width - insets.left - insets.right) to (bounds.height - insets.top - insets.bottom)
 }.getOrNull()
+
+/**
+ * Нижняя граница размера окна — в тех же точках, что и всё остальное окно.
+ *
+ * Пересчёт в пиксели экрана здесь ошибка: на экране с удвоенной
+ * плотностью он удваивает и границу, и окно раздувается до неё при первом
+ * же запуске. На этой машине минимум в 960×640 превращался в 1920×1280 —
+ * шире всей рабочей площади, — нижняя полоса с полем пина и кнопкой
+ * «Войти» уезжала под док, а раздутый размер запоминался до следующего
+ * запуска.
+ */
+internal fun windowMinimum(width: Dp, height: Dp): Dimension =
+    Dimension(width.value.toInt(), height.value.toInt())

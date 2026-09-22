@@ -5,7 +5,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -27,6 +26,7 @@ import kz.mybrain.superkassa.desktop.app.look
 import kz.mybrain.superkassa.desktop.app.rememberWindowSize
 import kz.mybrain.superkassa.desktop.app.rememberedWindowSize
 import kz.mybrain.superkassa.desktop.app.screenSize
+import kz.mybrain.superkassa.desktop.app.windowMinimum
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.Shell
 import kz.mybrain.superkassa.desktop.ui.components.EscapeListener
@@ -35,7 +35,6 @@ import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Durations
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
-import java.awt.Dimension
 
 /**
  * Точка входа кассы для настольных систем.
@@ -118,11 +117,8 @@ private fun ApplicationScope.SuperkassaApplication() {
         // Нижняя граница размера — у самого окна, а не у разметки: system
         // разрешала ужать окно до полосы, в которой не помещается ни одна
         // колонка, и кассир получал экран из обрезков вместо рабочего места.
-        val density = LocalDensity.current
-        LaunchedEffect(density) {
-            window.minimumSize = with(density) {
-                Dimension(Sizes.windowMinWidth.roundToPx(), Sizes.windowMinHeight.roundToPx())
-            }
+        LaunchedEffect(Unit) {
+            window.minimumSize = windowMinimum(Sizes.windowMinWidth, Sizes.windowMinHeight)
         }
         // Escape слушается ниже Compose, у самого окна: наложения живут
         // своим слоем и клавиша до разделов не доходит, а до чего доходит —
