@@ -24,13 +24,12 @@ import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
-import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
+import kz.mybrain.superkassa.desktop.ui.history.PageOutcome
 import kz.mybrain.superkassa.desktop.ui.history.loadDay
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
-import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.time.LocalDate
 
@@ -58,17 +57,24 @@ fun ReturnsScreen(session: Session) {
     var day by remember { mutableStateOf(LocalDate.now()) }
     var number by remember { mutableStateOf("") }
     val documents = remember { mutableStateListOf<Document>() }
-    var loading by remember { mutableStateOf(false) }
-    var more by remember { mutableStateOf(false) }
+    // Чтение начинается вместе с экраном, поэтому ожидание стоит с первого
+    // кадра: иначе список успевал мелькнуть объяснением пустоты.
+    var loading by remember { mutableStateOf(true) }
+    // Чем кончилось чтение дня: прочитан ли он и есть ли за страницей ещё.
+    var page by remember { mutableStateOf(PageOutcome.unread) }
+
+    suspend fun read() {
+        loading = true
+        page = loadDay(session, journal.basis, day, documents)
+        loading = false
+    }
 
     // День перечитывается и после пробитого чека: возврат по только что
     // выданному чеку — обычное дело, а список, набранный при открытии
     // экрана, о нём не знает.
     LaunchedEffect(day, session.selected?.kkmId, session.documents.size) {
         documents.clear()
-        loading = true
-        more = loadDay(session, journal.basis, day, documents)
-        loading = false
+        read()
     }
 
     val candidates = kind.basisIn(documents).filter { it.matches(number) }
@@ -86,20 +92,15 @@ fun ReturnsScreen(session: Session) {
             day = it
             basisId = null
         }
-        val state = when {
-            // Заблокированная касса — и снятая с учёта в том числе — фискальных
-            // команд не принимает, а смена у неё может оставаться открытой:
-            // без этой проверки кассиру оставалась нажимаемая кнопка, на
-            // которую узел отвечает KKM_BLOCKED.
-            session.selected?.isBlocked == true ->
-                ScreenState.Empty(AppIcons.noBasis, journal.kkmBlocked, journal.kkmBlockedHint)
-            // Закрытая смена — состояние, а не отказ: об этом сказано словами
-            // и подсказкой, а не пустым списком, из которого ничего не понять.
-            !session.shiftOpen -> ScreenState.Empty(AppIcons.noBasis, journal.shiftClosed, journal.shiftClosedHint)
-            loading && candidates.isEmpty() -> ScreenState.Working
-            candidates.isEmpty() -> ScreenState.Empty(AppIcons.noBasis, kind.emptyText(journal), journal.noBasisHint)
-            else -> ScreenState.Ready
-        }
+        val state = basisState(
+            session = session,
+            journal = journal,
+            kind = kind,
+            found = candidates.isNotEmpty(),
+            loading = loading,
+            page = page,
+            onRetry = { scope.launch { read() } }
+        )
         ScreenSlot(state, Modifier.weight(1f)) {
             Row(
                 modifier = Modifier.fillMaxWidth().weight(1f),
@@ -110,16 +111,10 @@ fun ReturnsScreen(session: Session) {
                     chosen = chosen,
                     journal = journal,
                     history = texts.history,
-                    more = more,
+                    more = page.more,
                     loading = loading,
                     modifier = Modifier.weight(BASIS_COLUMN),
-                    onMore = {
-                        loading = true
-                        scope.launch {
-                            more = loadDay(session, journal.basis, day, documents)
-                            loading = false
-                        }
-                    }
+                    onMore = { scope.launch { read() } }
                 ) { basisId = it.id }
                 RefundPanel(session, kind, chosen, Modifier.weight(REFUND_COLUMN)) { basisId = null }
             }

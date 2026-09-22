@@ -9,12 +9,18 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
  * и ещё не подал. Разница между ними — вся разница между «бежать чинить»
  * и «идти дальше по делу».
  *
- * Смыслов четыре, и каждый отвечает на свой вопрос владельца:
- * [OnRecord] — касса работает по закону; [InProgress] — заявление
- * в работе или ещё пишется, ждать; [Refused] — вмешаться;
- * [Deregistered] — дело закончено, беспокоиться не о чем.
+ * Смыслов пять, и идут они жизнью кассы: [Entered] — заведена
+ * в кабинете, заявление в КГД не подавалось; [Applied] — заявление
+ * подано и ждёт ответа; [OnRecord] — касса работает по закону;
+ * [Refused] — вмешаться; [Deregistered] — дело закончено, беспокоиться
+ * не о чем.
+ *
+ * Заведённая и поданная разведены не ради подробности. Прежде они
+ * считались вместе и назывались «учёт идёт», а в сети показа из 3294
+ * касс 3288 заведены и ни одного заявления не подано: экран обещал
+ * три тысячи заявлений в КГД, которых нет.
  */
-enum class KkmRecord { OnRecord, InProgress, Refused, Deregistered }
+enum class KkmRecord { Entered, Applied, OnRecord, Refused, Deregistered }
 
 /**
  * Смысл кода состояния, пришедшего от кабинета.
@@ -22,16 +28,16 @@ enum class KkmRecord { OnRecord, InProgress, Refused, Deregistered }
  * Незнакомый код — [KkmRecord.Refused]: молча считать благополучным то,
  * чего приложение не понимает, нельзя. Отсутствие кода — другое дело:
  * кабинет о состоянии не сказал вовсе, и поднимать из-за этого тревогу
- * не за что.
+ * не за что. Такая касса считается заведённой — это самое малое, что
+ * о ней известно наверняка, и заявления оно ей не приписывает.
  */
 fun kkmRecord(status: String?): KkmRecord = when (status?.trim()?.uppercase().orEmpty()) {
     "REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS" -> KkmRecord.OnRecord
-    "DRAFT",
     "REGISTRATION_IN_ISNA_PROCESS",
     "REREGISTRATION_IN_ISNA_PROCESS",
-    "DEREGISTRATION_IN_ISNA_PROCESS" -> KkmRecord.InProgress
+    "DEREGISTRATION_IN_ISNA_PROCESS" -> KkmRecord.Applied
+    "DRAFT", "" -> KkmRecord.Entered
     "DEREGISTERED" -> KkmRecord.Deregistered
-    "" -> KkmRecord.InProgress
     else -> KkmRecord.Refused
 }
 

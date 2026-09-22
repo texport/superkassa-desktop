@@ -26,8 +26,15 @@ data class AnalyticsRecordTexts(
     val total: String,
     val places: String,
 
-    /** Работает ли парк прямо сейчас: открытые смены и блокировки. */
+    /**
+     * Работает ли парк прямо сейчас: открытые смены и блокировки.
+     *
+     * Торгующие считаются из стоящих на учёте, и [tradingOf] говорит,
+     * из скольких: «Сейчас торгуют 0» без основания читается как
+     * остановившаяся сеть.
+     */
     val trading: String,
+    val tradingOf: String,
     val blocked: String,
 
     /**

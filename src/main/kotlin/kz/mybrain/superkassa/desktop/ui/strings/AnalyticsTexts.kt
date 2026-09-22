@@ -85,10 +85,16 @@ data class AnalyticsTexts(
     val markShiftOpen: String,
     val markBlocked: String,
 
-    /** Отбор по учёту КГД: четыре смысла вместо прежнего «не на учёте» и «любой». */
+    /**
+     * Отбор по учёту КГД: пять смыслов вместо прежнего «не на учёте».
+     *
+     * Заведённая касса и поданное заявление названы порознь: «учёт идёт»
+     * обещало заявление в КГД у кассы, которую владелец только завёл.
+     */
     val allRecords: String,
     val markOnRecord: String,
-    val markInProgress: String,
+    val markEntered: String,
+    val markApplied: String,
     val markRefused: String,
     val markDeregistered: String,
     val sieveEmpty: String,

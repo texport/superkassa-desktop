@@ -57,7 +57,10 @@ class KassaJournalLookTest {
         val emptyDay = KassaScene.session("journal-empty", shift = KassaScene.openShift())
         val fullDay = KassaScene.session("journal-hundred", shift = KassaScene.openShift(), journal = hundred)
         val mixedDay = KassaScene.session("journal-mixed", shift = KassaScene.openShift(), journal = mixed)
-        val silent = KassaScene.session("journal-silent", available = false)
+        // Узел не отвечает на список документов: прежде журнал выдавал это
+        // за срок без документов, и владелец уходил с экрана уверенный,
+        // что за день ничего не пробито.
+        val silent = KassaScene.session("journal-silent", available = false, journalAnswered = false)
 
         val frames = mapOf(
             "empty" to KassaScene.shot("journal-empty") { HistoryScreen(emptyDay) },
@@ -67,13 +70,11 @@ class KassaJournalLookTest {
         )
 
         frames.forEach { (name, frame) -> assertTrue(frame.isNotEmpty(), "пустой кадр: $name") }
-        // Молчащий узел в этот набор не входит намеренно: журнал выглядит
-        // при нём так же, как при сроке без документов. Слова журнала честны
-        // в обоих случаях — «узел не отдал ни одного документа», — и сводить
-        // эти два состояния к одной картинке здесь не ошибка.
+        // Молчащий узел входит в набор наравне с остальными: «документов
+        // за срок нет» — утверждение о кассе, и говорить его можно только
+        // вслед за ответом узла.
         assertTrue(
-            listOf(frames.getValue("empty"), frames.getValue("hundred"), frames.getValue("mixed"))
-                .map { it.toList() }.distinct().size == 3,
+            frames.values.map { it.toList() }.distinct().size == frames.size,
             "состояния журнала неотличимы друг от друга"
         )
     }

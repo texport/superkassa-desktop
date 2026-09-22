@@ -52,7 +52,10 @@ internal object RecordFleet {
         kkm(8, "DEREGISTERED"),
         // Касса без адреса и без точки: в парк она входит, а области
         // у неё нет — свод обязан сказать об этом словами.
-        kkm(9, "DRAFT", address = null, place = null)
+        kkm(9, "DRAFT", address = null, place = null),
+        // Заведённая касса с открытой сменой: торгующей она не считается,
+        // потому что торговать по закону ей ещё нечем.
+        kkm(10, "DRAFT", shift = "OPEN")
     )
 
     /**
