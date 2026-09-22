@@ -47,8 +47,11 @@ fun AnalyticsSalesBody(
         SectionCard(sales.overview, info = sales.overviewHint) {
             SalesOverviewTiles(overviewOf(view.summary, view.previous), sales)
             SalesNetworkPlates(view, sales, register = register)
+            // Возвраты стоят здесь же, а не карточкой ниже: одна плитка
+            // во всю ширину читалась как ещё один главный ряд, хотя это
+            // поправка к выручке, а не самостоятельный итог.
+            SalesTiles(view.summary, texts)
         }
-        SalesTiles(view.summary, texts)
         if (view.summary.purchased) {
             SectionCard(cabinet.operationPurchase, info = sales.purchasesHint) {
                 SalesPurchaseTiles(view.summary, sales, cabinet)

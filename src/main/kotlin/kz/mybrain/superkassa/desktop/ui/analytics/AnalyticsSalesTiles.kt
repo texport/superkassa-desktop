@@ -54,7 +54,6 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
         MinorTile(cabinetSum(summary.refunds), sales.refunds, Modifier.weight(1f))
-        MinorTile(cabinetSum(summary.net), sales.net, Modifier.weight(1f))
     }
 }
 

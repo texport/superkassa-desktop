@@ -31,11 +31,14 @@ data class SalesOverview(
     val average: BigDecimal,
     val tax: BigDecimal,
     val cashless: Int?,
+    /** Выручка за вычетом возвратов: ею мерят сделанное, а не пробитое. */
+    val net: BigDecimal,
     val revenueChange: Int?,
     val receiptsChange: Int?,
     val averageChange: Int?,
     val taxChange: Int?,
-    val cashlessChange: Int?
+    val cashlessChange: Int?,
+    val netChange: Int?
 )
 
 /** Итоги срока рядом с прошлым сроком; прошлого нет — только сами числа. */
@@ -48,11 +51,13 @@ fun overviewOf(current: SalesSummary, previous: SalesSummary? = null): SalesOver
         average = current.average,
         tax = current.tax.orZero(),
         cashless = cashless,
+        net = current.net,
         revenueChange = changeOf(current.revenue.orZero(), previous?.revenue.orZero()),
         receiptsChange = changeOf(current.receiptCount, previous?.receiptCount),
         averageChange = changeOf(current.average, previous?.average),
         taxChange = changeOf(current.tax.orZero(), previous?.tax.orZero()),
-        cashlessChange = if (cashless == null || cashlessWas == null) null else cashless - cashlessWas
+        cashlessChange = if (cashless == null || cashlessWas == null) null else cashless - cashlessWas,
+        netChange = changeOf(current.net, previous?.net)
     )
 }
 

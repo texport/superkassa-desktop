@@ -60,6 +60,10 @@ fun SalesOverviewTiles(overview: SalesOverview, texts: AnalyticsSalesTexts, modi
             modifier = Modifier.weight(1f)
         )
         OverviewTile(cabinetSum(overview.average), texts.average, overview.averageChange, texts, Modifier.weight(1f))
+        // Третье место второго ряда заполняется, а не остаётся пустым:
+        // два числа в ряду на три места разъезжались по левому краю,
+        // и ровная сетка итогов ломалась ровно посередине карточки.
+        OverviewTile(cabinetSum(overview.net), texts.net, overview.netChange, texts, Modifier.weight(1f))
     }
 }
 
