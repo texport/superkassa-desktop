@@ -140,6 +140,26 @@ class RenderProbe(
         repeat(SETTLE) { frame() }
     }
 
+    /**
+     * Перетаскивание мышью: нажатие, несколько шагов пути и отпускание.
+     *
+     * Карту двигают именно так, и путь идёт шагами, а не одним прыжком:
+     * распознавание жеста ждёт, пока указатель уйдёт от места нажатия
+     * дальше порога, и только потом считает сдвиг.
+     */
+    fun drag(from: Offset, to: Offset, steps: Int = DRAG_STEPS) {
+        onScene {
+            scene.sendPointerEvent(PointerEventType.Move, from)
+            scene.sendPointerEvent(PointerEventType.Press, from)
+            for (step in 1..steps) {
+                val share = step.toFloat() / steps
+                scene.sendPointerEvent(PointerEventType.Move, from + (to - from) * share)
+            }
+            scene.sendPointerEvent(PointerEventType.Release, to)
+        }
+        repeat(SETTLE) { frame() }
+    }
+
     /** Колесо мыши над списком; кадры после него доводят прокрутку до конца хода. */
     fun wheel(at: Offset, ticks: Float) {
         onScene {
@@ -173,6 +193,7 @@ class RenderProbe(
         const val HEIGHT = 820
         const val FRAME = 16_000_000L
         const val SETTLE = 12
+        const val DRAG_STEPS = 6
         const val LIMIT = 30
     }
 }

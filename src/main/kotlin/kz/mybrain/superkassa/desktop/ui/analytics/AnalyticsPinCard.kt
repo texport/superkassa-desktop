@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -13,7 +15,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMoment
@@ -22,6 +23,7 @@ import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -33,6 +35,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * Пока ничего не выбрано, место карточки занято приглашением выбрать:
  * пустая рамка под картой не объясняет, зачем она там.
+ *
+ * @param expanded развёрнута ли карточка; свёрнутая остаётся заголовком.
+ * @param onToggle сворачивание; без него стрелки у заголовка нет.
  */
 @Composable
 fun AnalyticsPinCard(
@@ -43,10 +48,12 @@ fun AnalyticsPinCard(
     modifier: Modifier = Modifier,
     neighbours: Int = 0,
     onNeighbours: () -> Unit = {},
-    onSales: (AnalyticsKkm) -> Unit = {}
+    onSales: (AnalyticsKkm) -> Unit = {},
+    expanded: Boolean = true,
+    onToggle: (() -> Unit)? = null
 ) {
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
-        if (kkm == null) {
+        if (kkm == null && onToggle == null) {
             EmptyState(
                 icon = AppIcons.place,
                 title = texts.pickPin,
@@ -60,23 +67,44 @@ fun AnalyticsPinCard(
             modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
             verticalArrangement = Arrangement.spacedBy(Spacing.tight)
         ) {
-            CardHead(kkm, texts, cabinet)
-            CardFacts(kkm, source, texts, cabinet)
-            CardActions(kkm, texts, neighbours, onNeighbours, onSales)
+            MapCardTitle(kkm?.let(::kkmTitle) ?: texts.pickPin, expanded, onToggle)
+            MapCardBody(expanded) {
+                if (kkm == null) {
+                    PickHint(texts)
+                } else {
+                    KkmChips(kkm, texts, cabinet)
+                    CardFacts(kkm, source, texts, cabinet)
+                    CardActions(kkm, texts, neighbours, onNeighbours, onSales)
+                }
+            }
         }
     }
 }
 
-/** Название кассы и её состояние: то, что читают первым. */
+/**
+ * Приглашение выбрать кассу — под сворачиваемым заголовком.
+ *
+ * Название уже стоит в заголовке, и здесь остаётся только подсказка:
+ * повторять его вторым рядом незачем.
+ */
 @Composable
-private fun CardHead(kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts) {
-    Text(
-        text = kkmTitle(kkm),
-        style = MaterialTheme.typography.titleMedium,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
-    KkmChips(kkm, texts, cabinet)
+private fun PickHint(texts: AnalyticsTexts) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = AppIcons.place,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(Sizes.chipIcon)
+        )
+        Text(
+            text = texts.pickPinHint,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 /**

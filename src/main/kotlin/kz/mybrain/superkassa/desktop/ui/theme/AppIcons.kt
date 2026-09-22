@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.EventBusy
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Fullscreen
+import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
@@ -102,6 +104,10 @@ object AppIcons {
     /** Увеличить и уменьшить ленту в просмотре. */
     val zoomIn: ImageVector = Icons.Filled.ZoomIn
     val zoomOut: ImageVector = Icons.Filled.ZoomOut
+
+    /** Карта во всё окно и обратно. */
+    val fullscreen: ImageVector = Icons.Filled.Fullscreen
+    val fullscreenExit: ImageVector = Icons.Filled.FullscreenExit
 
     /** Закрыть окно просмотра. */
     val close: ImageVector = Icons.Filled.Close

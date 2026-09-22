@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.map
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -35,13 +36,19 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
  * Кнопки лежат на своей поверхности, а не прямо на плитках: значок
  * без подложки терялся на пёстрой карте — на светлом квартале его
  * не было видно вовсе.
+ *
+ * @param more кнопки, которые нужны только одной из карт: карта касс
+ *   раскрывается во всё окно, карте выбора места это ни к чему. Стоят
+ *   на той же подложке, а не рядом: два столбика кнопок в углу читались
+ *   бы как два разных управления.
  */
 @Composable
 internal fun MapControls(
     state: MapState,
     texts: CabinetTexts,
     preferences: Preferences,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    more: @Composable ColumnScope.() -> Unit = {}
 ) {
     Surface(
         modifier = modifier,
@@ -56,6 +63,7 @@ internal fun MapControls(
             IconButton(onClick = { state.zoomBy(-1) }) {
                 Icon(AppIcons.zoomOut, contentDescription = texts.map.zoomOut)
             }
+            more()
         }
     }
 }

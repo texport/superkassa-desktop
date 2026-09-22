@@ -92,6 +92,8 @@ internal val analyticsTextsRu = AnalyticsTexts(
     mapSearchingHint = "Кабинет отдал адреса торговых точек без координат — точки появятся по мере поиска",
     pickPin = "Выберите кассу на карте",
     pickPinHint = "Нажмите точку — здесь появится её карточка",
+    mapFullscreen = "На весь экран",
+    mapFullscreenExit = "Свернуть карту",
 
     searchKkm = "Название, номер КГД или адрес",
     searchKkmLabel = "Поиск кассы",

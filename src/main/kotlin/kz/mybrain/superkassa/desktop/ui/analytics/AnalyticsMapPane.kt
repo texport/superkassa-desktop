@@ -1,29 +1,25 @@
 package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
-import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
-import kz.mybrain.superkassa.desktop.ui.map.MapControls
-import kz.mybrain.superkassa.desktop.ui.map.MapMarks
 import kz.mybrain.superkassa.desktop.ui.map.MapServices
-import kz.mybrain.superkassa.desktop.ui.map.MapView
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -56,6 +52,7 @@ fun AnalyticsMapPane(
 ) {
     val services = remember(session.preferences) { MapServices(session.preferences) }
     val model = remember(cabinet) { AnalyticsMapModel(cabinet, services.geocoder) }
+    val panel = remember(session.preferences) { AnalyticsMapCard(session.preferences) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(cabinet.token, model.source) { model.load() }
     LaunchedEffect(model.view) { model.findAddresses() }
@@ -79,7 +76,8 @@ fun AnalyticsMapPane(
             else -> ScreenState.Ready
         }
         ScreenSlot(state, Modifier.weight(1f)) {
-            MapBody(session, model, services, placement, groups, texts, cabinetTexts, Modifier.weight(1f))
+            val parts = MapParts(session, model, services, placement, groups, texts, cabinetTexts, panel)
+            MapBody(parts, Modifier.weight(1f))
         }
     }
     // Окно аналитики кассы живёт поверх карты: закрыв его, владелец
@@ -89,89 +87,58 @@ fun AnalyticsMapPane(
     }
 }
 
-/** Карта с точками, карточка выбранной кассы и список непоставленных. */
+/**
+ * Из чего собран раздел карты.
+ *
+ * Сеанс, состояние, службы карты, расстановка и надписи нужны каждому
+ * ряду раздела и окну во весь экран; по отдельности они протягивались бы
+ * восемью параметрами через три вызова.
+ */
+internal class MapParts(
+    val session: Session,
+    val model: AnalyticsMapModel,
+    val services: MapServices,
+    val placement: Placement,
+    val groups: List<KkmGroup>,
+    val texts: AnalyticsTexts,
+    val cabinetTexts: CabinetTexts,
+    val panel: AnalyticsMapCard
+)
+
+/**
+ * Карта с точками, карточка выбранной кассы и список касс рядом.
+ *
+ * Раскрытая во всё окно карта заменяет раздел, а не ложится поверх него:
+ * две карты одного состояния тянули бы плитки на два окна разного размера.
+ * Возврат из окна собирает раздел заново на том же состоянии — выбор
+ * и место карты остаются.
+ */
 @Composable
-private fun MapBody(
-    session: Session,
-    model: AnalyticsMapModel,
-    services: MapServices,
-    placement: Placement,
-    groups: List<KkmGroup>,
-    texts: AnalyticsTexts,
-    cabinetTexts: CabinetTexts,
-    modifier: Modifier = Modifier
-) {
+private fun MapBody(parts: MapParts, modifier: Modifier = Modifier) {
+    var fullscreen by remember { mutableStateOf(false) }
+    if (fullscreen) {
+        AnalyticsMapFullscreen(parts) { fullscreen = false }
+        return
+    }
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(Spacing.normal)) {
         Column(
             modifier = Modifier.weight(1f).fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
-            MapWindow(session, model, services, placement, groups, texts, cabinetTexts, Modifier.weight(1f))
-            UnderMap(model, placement, groups, texts, cabinetTexts)
+            MapWindow(parts, fullscreen = false, onFullscreen = { fullscreen = true }, modifier = Modifier.weight(1f))
+            UnderMap(parts.model, parts.placement, parts.groups, parts.texts, parts.cabinetTexts, parts.panel)
         }
         // Список всех касс, а не только непоставленных: точки на карте
         // неотличимы, и владелец сети искал свою кассу глазами.
         AnalyticsKkmList(
-            placed = placement.placed,
-            unplaced = placement.unplaced,
-            chosen = model.chosen,
-            source = model.source,
-            texts = texts,
-            onChoose = { row -> model.show(row, groups) },
+            placed = parts.placement.placed,
+            unplaced = parts.placement.unplaced,
+            chosen = parts.model.chosen,
+            source = parts.model.source,
+            texts = parts.texts,
+            onChoose = { row -> parts.model.show(row, parts.groups) },
             modifier = Modifier.width(Sizes.unplacedColumn).fillMaxHeight(),
-            sieved = model.sieve.set
-        )
-    }
-}
-
-/**
- * Само окно карты.
- *
- * Пока ни одной точки нет, карта заменяется объяснением: пустая карта
- * города говорит владельцу не больше, чем пустой экран.
- */
-@Composable
-private fun MapWindow(
-    session: Session,
-    model: AnalyticsMapModel,
-    services: MapServices,
-    placement: Placement,
-    groups: List<KkmGroup>,
-    texts: AnalyticsTexts,
-    cabinetTexts: CabinetTexts,
-    modifier: Modifier = Modifier
-) {
-    if (placement.placed.isEmpty()) {
-        val reason = emptyMapReason(placement, model.sieve.set, texts)
-        EmptyState(
-            icon = reason.icon,
-            title = reason.title,
-            hint = reason.hint,
-            modifier = modifier,
-            centered = true
-        )
-        return
-    }
-    Box(modifier = modifier) {
-        MapView(
-            state = model.map,
-            tiles = services.tiles,
-            texts = cabinetTexts.map,
-            modifier = Modifier.fillMaxSize(),
-            // Нажатие мимо ярлычка снимает выбор: раскрытое место
-            // закрывается тем же способом, каким открылось.
-            onTap = { _, _ -> model.forget() },
-            overlay = { canvas ->
-                MapMarks(model.map, canvas, groups.map { it.mark(model) }) { mark ->
-                    model.open(groups.first { it.id == mark.id })
-                }
-            }
-        )
-        MapControls(
-            state = model.map,
-            texts = cabinetTexts,
-            preferences = session.preferences,
-            modifier = Modifier.align(Alignment.TopEnd).padding(Spacing.snug)
+            sieved = parts.model.sieve.set
         )
     }
 }
