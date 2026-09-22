@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -18,14 +20,18 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.ui.MessageEffect
 import kz.mybrain.superkassa.desktop.ui.MessageHost
+import kz.mybrain.superkassa.desktop.ui.sale.Adjustment
 import kz.mybrain.superkassa.desktop.ui.sale.AdjustmentUnit
 import kz.mybrain.superkassa.desktop.ui.sale.Basket
 import kz.mybrain.superkassa.desktop.ui.sale.BasketCard
+import kz.mybrain.superkassa.desktop.ui.sale.CustomerDataCard
+import kz.mybrain.superkassa.desktop.ui.sale.DraftFields
 import kz.mybrain.superkassa.desktop.ui.sale.IssueRow
 import kz.mybrain.superkassa.desktop.ui.sale.LocalSaleTexts
 import kz.mybrain.superkassa.desktop.ui.sale.LocalUnits
 import kz.mybrain.superkassa.desktop.ui.sale.LocalVatRates
 import kz.mybrain.superkassa.desktop.ui.sale.Position
+import kz.mybrain.superkassa.desktop.ui.sale.PositionDraft
 import kz.mybrain.superkassa.desktop.ui.sale.PositionEntryCard
 import kz.mybrain.superkassa.desktop.ui.sale.ReceiptChangesCard
 import kz.mybrain.superkassa.desktop.ui.sale.ReceiptTotals
@@ -59,7 +65,7 @@ class KassaSaleLookTest {
     @Test
     fun `экран продажи собирается во всех отказных состояниях и они различимы`() {
         val frames = mapOf(
-            "empty" to KassaScene.shot("sale-empty-basket") {
+            "empty" to KassaScene.shot("sale-empty-basket", height = FORM_TALL) {
                 SaleScreen(KassaScene.session("sale-empty", shift = KassaScene.openShift()))
             },
             "shift-closed" to KassaScene.shot("sale-shift-closed") {
@@ -74,7 +80,11 @@ class KassaSaleLookTest {
                     )
                 )
             },
-            "no-vat" to KassaScene.shot("sale-no-vat-regime") {
+            // Кадр выше остальных: у кассы без НДС в форме позиции нет
+            // выбора ставки, и единица занимает строку одна. На обычной
+            // высоте эта строка уходила под сгиб, и режим кассы на снимке
+            // было не различить вовсе.
+            "no-vat" to KassaScene.shot("sale-no-vat-regime", height = FORM_TALL) {
                 SaleScreen(
                     KassaScene.session(
                         "sale-novat",
@@ -246,16 +256,125 @@ class KassaSaleLookTest {
         assertEquals(0, redPixels(fresh), "нетронутая форма позиции показывает упрёк красным")
     }
 
-    /** Карточка ввода позиции — та же, что стоит в кассовой колонке. */
+    /**
+     * Карточка ввода позиции — та же, что стоит в кассовой колонке.
+     *
+     * Черновик подставляется снаружи: форма держит его в себе, и набрать
+     * в неё цену со скидкой снимку иначе нечем.
+     */
     @Composable
-    private fun Entry(session: Session) {
+    private fun Entry(session: Session, draft: PositionDraft? = null) {
         CompositionLocalProvider(
             LocalSaleTexts provides saleTexts(session.language),
             LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
             LocalUnits provides session.units
         ) {
             Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                if (draft == null) {
+                    PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
+                } else {
+                    DraftCard(session, draft)
+                }
+            }
+        }
+    }
+
+    /**
+     * Скидка позиции набирается тенге и долей — одним полем.
+     *
+     * Один кадр на оба способа: слева набранная сумма, справа доля
+     * от стоимости строки. Под полем в обоих случаях стоит то же число
+     * другим способом — кассир не пересчитывает его в уме.
+     */
+    @Test
+    fun `скидка позиции набирается и суммой, и долей`() {
+        val session = KassaScene.session("sale-line-discount", shift = KassaScene.openShift())
+        val frame = KassaScene.shot("sale-trim-position-discount", width = PAIR_WIDE, height = ENTRY_TALL) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.roomy)) {
+                Entry(session, DISCOUNT_TENGE)
+                Entry(session, DISCOUNT_PERCENT)
+            }
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /**
+     * Скидки и наценки рядом с соседними карточками.
+     *
+     * Один кадр на три карточки кассовой колонки: поля внутри каждой
+     * обязаны отстоять друг от друга на один и тот же шаг. Прежде поля
+     * скидки и наценки разносило шире остальных, и разнобой был виден
+     * с первого взгляда на колонку.
+     */
+    @Test
+    fun `шаг полей в карточке скидок тот же, что у соседних`() {
+        val session = KassaScene.session("sale-rhythm", shift = KassaScene.openShift())
+        val basket = Basket().apply { POSITIONS.forEach { add(it) } }
+        val frame = KassaScene.shot("sale-trim-changes-neighbours", width = ENTRY_WIDE, height = COLUMN_TALL) {
+            Neighbours(session, basket)
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /** Три соседние карточки колонки — те же, что стоят в окне. */
+    @Composable
+    private fun Neighbours(session: Session, basket: Basket) {
+        val form = SaleForm()
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(
+                modifier = Modifier.width(TILL).padding(Spacing.screen),
+                verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+            ) {
                 PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
+                ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
+                ReceiptTotals(session, form, totalOf(basket, form), expanded = true, onToggle = {})
+            }
+        }
+    }
+
+    /**
+     * В данных покупателя стоит только он сам.
+     *
+     * Отраслевые поля — вид отрасли, лицевой счёт, номер машины, часы
+     * стоянки — с экрана убраны, и блок обязан остаться тем, чем назван:
+     * ИИН или БИН того, кому выписан чек.
+     */
+    @Test
+    fun `в данных покупателя остаётся только ИИН или БИН`() {
+        val session = KassaScene.session("sale-customer", shift = KassaScene.openShift())
+        val frame = KassaScene.shot("sale-trim-customer-data", width = ENTRY_WIDE, height = ENTRY_TALL) {
+            Customer(session)
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /** Блок данных покупателя — тот же, что стоит в кассовой колонке. */
+    @Composable
+    private fun Customer(session: Session) {
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                CustomerDataCard(SaleForm(), expanded = true, onToggle = {})
+            }
+        }
+    }
+
+    /** Та же форма позиции, но с заранее набранным черновиком. */
+    @Composable
+    private fun DraftCard(session: Session, draft: PositionDraft) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
+                verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            ) {
+                DraftFields(draft, session.units) {}
             }
         }
     }
@@ -290,6 +409,32 @@ class KassaSaleLookTest {
          * отказные состояния выходили неотличимыми друг от друга.
          */
         const val RECEIPT_TALL = 1000
+
+        /** Высота кадра всей кассовой колонки: три карточки одна под другой. */
+        const val COLUMN_TALL = 1250
+
+        /** Кадр на две кассовые колонки рядом: два способа набрать скидку. */
+        const val PAIR_WIDE = 1240
+
+        /**
+         * Высота кадра, на которую входит форма позиции целиком.
+         *
+         * Нужна там, где снимок смотрит на сами поля формы: на обычной
+         * высоте кассовая колонка обрывается на «Количестве».
+         */
+        const val FORM_TALL = 1120
+
+        /** Строка на 1 500 ₸ со скидкой, набранной суммой. */
+        val DISCOUNT_TENGE = PositionDraft(
+            name = "Хлеб «Тандыр»",
+            price = "500.00",
+            quantity = "3",
+            discount = Adjustment("150.00"),
+            measureUnitCode = "796"
+        )
+
+        /** Та же строка со той же скидкой, набранной долей. */
+        val DISCOUNT_PERCENT = DISCOUNT_TENGE.copy(discount = Adjustment("10", AdjustmentUnit.Percent))
 
         /** Ширина кассовой колонки на снимке: та же, что в окне кассира. */
         val TILL = Sizes.fieldForm + Sizes.fieldPrice + Sizes.fieldQuantity

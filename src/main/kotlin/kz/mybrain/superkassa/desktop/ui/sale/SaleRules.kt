@@ -4,7 +4,6 @@ import kz.mybrain.superkassa.desktop.ui.payment.CASH_PAYMENT
 import kz.mybrain.superkassa.desktop.ui.payment.SplitIssue
 import kz.mybrain.superkassa.desktop.ui.payment.UNSUPPORTED_PAYMENTS
 import kz.mybrain.superkassa.desktop.ui.strings.PaymentTexts
-import kz.mybrain.superkassa.desktop.ui.strings.SaleStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SaleTexts
 import java.math.BigDecimal
 
@@ -45,8 +44,7 @@ data class SaleState(
     val taken: BigDecimal? = null,
     /** Наличная часть чека: с неё берётся сдача. `null` — весь чек наличными. */
     val cashSum: BigDecimal? = null,
-    val customerBin: String = "",
-    val missingDomainField: DomainField? = null
+    val customerBin: String = ""
 )
 
 /**
@@ -62,7 +60,6 @@ enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
     ShiftClosed({ sale, _ -> sale.blockShiftClosed }),
     EmptyBasket({ sale, _ -> sale.blockEmptyBasket }),
     ZeroLine({ sale, _ -> sale.blockZeroLine }),
-    DomainFields({ sale, _ -> sale.fillIn }),
     PaymentUnsupported({ sale, _ -> sale.blockPaymentUnsupported }),
     PaymentSplitEmpty({ _, payment -> payment.splitEmpty }),
     PaymentSplitExcess({ _, payment -> payment.splitExcess }),
@@ -74,28 +71,8 @@ enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
     CustomerBin({ sale, _ -> sale.blockBin }),
     TakenTooSmall({ sale, _ -> sale.blockTakenTooSmall });
 
-    /**
-     * Причина словами. Незаполненное отраслевое поле называется поимённо:
-     * «заполните реквизиты» кассиру не говорит, какое именно поле пустует.
-     *
-     * Числовому полю сказано, что от него нужно число: «Заполните: Тариф»
-     * над заполненным полем со словом «Городской» — это не причина,
-     * а загадка.
-     */
-    fun reason(
-        sale: SaleStrings,
-        texts: SaleTexts,
-        payment: PaymentTexts,
-        field: DomainField? = null
-    ): String {
-        val head = text(texts, payment)
-        if (this != DomainFields || field == null) return head
-        return if (field.numeric) {
-            texts.numberField.format(field.label(sale))
-        } else {
-            "$head: ${field.label(sale)}"
-        }
-    }
+    /** Причина словами кассира. */
+    fun reason(texts: SaleTexts, payment: PaymentTexts): String = text(texts, payment)
 }
 
 /**
@@ -116,7 +93,6 @@ fun blockOf(state: SaleState): SaleBlock? {
     // положителен, и общая причина «итог должен быть больше нуля»
     // о нулевой строке кассиру не сказала бы.
     if (state.hasZeroLine) return SaleBlock.ZeroLine
-    if (state.missingDomainField != null) return SaleBlock.DomainFields
     if (state.paymentCodes.any { it in state.unsupportedPayments }) return SaleBlock.PaymentUnsupported
     when (state.splitIssue) {
         SplitIssue.Empty -> return SaleBlock.PaymentSplitEmpty
@@ -146,7 +122,7 @@ fun changeOf(taken: BigDecimal?, cashSum: BigDecimal): BigDecimal? =
 /**
  * ИИН/БИН покупателя необязателен, но если введён — ровно двенадцать цифр.
  *
- * Узел длину не проверяет и такой чек примет: отвергнет его уже ОФД,
+ * Узел длину не проверяет и такой чек примет: отвергнет его уже БФД,
  * когда исправлять будет нечего.
  */
 fun binAccepted(bin: String): Boolean =

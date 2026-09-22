@@ -1,13 +1,11 @@
 package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.ui.sale.Adjustment
-import kz.mybrain.superkassa.desktop.ui.sale.DomainField
 import kz.mybrain.superkassa.desktop.ui.sale.SaleBlock
 import kz.mybrain.superkassa.desktop.ui.sale.SaleState
 import kz.mybrain.superkassa.desktop.ui.sale.binAccepted
 import kz.mybrain.superkassa.desktop.ui.sale.blockOf
 import kz.mybrain.superkassa.desktop.ui.sale.changeOf
-import kz.mybrain.superkassa.desktop.ui.strings.RussianStrings
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTextsRu
 import kz.mybrain.superkassa.desktop.ui.strings.saleTextsRu
 import java.math.BigDecimal
@@ -96,14 +94,6 @@ class SaleRulesTest {
     }
 
     @Test
-    fun `незаполненное отраслевое поле названо поимённо`() {
-        val block = blockOf(SaleState(missingDomainField = DomainField.CarNumber))
-        assertEquals(SaleBlock.DomainFields, block)
-        val words = block?.reason(RussianStrings.sale, saleTextsRu, paymentTextsRu, DomainField.CarNumber).orEmpty()
-        assertTrue(words.contains(RussianStrings.sale.carNumber))
-    }
-
-    @Test
     fun `принято меньше итога — только для наличных`() {
         val short = SaleState(total = BigDecimal("100"), taken = BigDecimal("50"))
         assertEquals(SaleBlock.TakenTooSmall, blockOf(short))
@@ -131,7 +121,7 @@ class SaleRulesTest {
     @Test
     fun `каждая причина названа словами на всех трёх языках`() {
         SaleBlock.entries.forEach { block ->
-            val words = block.reason(RussianStrings.sale, saleTextsRu, paymentTextsRu)
+            val words = block.reason(saleTextsRu, paymentTextsRu)
             assertTrue(words.isNotBlank(), "причина ${block.name} без текста")
         }
     }

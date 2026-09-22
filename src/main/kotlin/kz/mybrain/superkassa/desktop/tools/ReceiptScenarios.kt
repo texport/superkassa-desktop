@@ -12,8 +12,6 @@ import kz.mybrain.superkassa.desktop.server.buyReturn
 import kz.mybrain.superkassa.desktop.server.sell
 import kz.mybrain.superkassa.desktop.server.sellReturn
 import kz.mybrain.superkassa.desktop.ui.components.Money
-import kz.mybrain.superkassa.desktop.ui.sale.DomainInput
-import kz.mybrain.superkassa.desktop.ui.sale.DomainKind
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.ZoneOffset
@@ -23,14 +21,13 @@ import java.time.format.DateTimeFormatter
  * Чеки всех видов с полным наполнением.
  *
  * Наполнение намеренно предельное: несколько позиций с разными ставками,
- * позиционная скидка, сторно, скидка на чек, БИН покупателя и отраслевые
- * реквизиты. Обычный чек проходит и без этого — ломается редкое.
+ * позиционная скидка, сторно, скидка на чек и БИН покупателя. Обычный чек
+ * проходит и без этого — ломается редкое.
  */
 object ReceiptScenarios {
 
     suspend fun all(session: Session, kkmId: String, report: CycleReport) {
         sellFull(session, kkmId, report)
-        sellByDomains(session, kkmId, report)
         buyFull(session, kkmId, report)
         returns(session, kkmId, report)
     }
@@ -47,33 +44,10 @@ object ReceiptScenarios {
             payments = listOf(ReceiptPayment("CASH", BigDecimal("3755.5"))),
             discountSum = BigDecimal("200.0"),
             taken = BigDecimal("4000.0"),
-            customerBin = "960624350642",
-            domain = DomainInput(kind = DomainKind.Trading).toDomain()
+            customerBin = "960624350642"
         )
         report.step(session, "Продажа с полным наполнением") {
             session.client.sell(kkmId, request, FullCycle.WORK_PIN)
-        }
-    }
-
-    /** По одному чеку на каждый вид отрасли. */
-    private suspend fun sellByDomains(session: Session, kkmId: String, report: CycleReport) {
-        val cases = listOf(
-            DomainInput(DomainKind.Services, accountNumber = "ACC-1024"),
-            DomainInput(DomainKind.Hotels, accountNumber = "ROOM-317"),
-            DomainInput(DomainKind.GasOil, cardNumber = "CARD-77"),
-            DomainInput(DomainKind.Taxi, carNumber = "123ABC", isOrder = true, currentFee = "350"),
-            DomainInput(DomainKind.Parking, parkingHours = "2")
-        )
-        cases.forEach { domain ->
-            val request = ReceiptRequest(
-                idempotencyKey = key("sell-${domain.kind.name.lowercase()}"),
-                items = listOf(ReceiptItem(domain.kind.code, BigDecimal("1500.0"), BigDecimal("1.0"), "VAT_16")),
-                payments = listOf(ReceiptPayment("CARD", BigDecimal("1500.0"))),
-                domain = domain.toDomain()
-            )
-            report.step(session, "Продажа: ${domain.kind.code}") {
-                session.client.sell(kkmId, request, FullCycle.WORK_PIN)
-            }
         }
     }
 

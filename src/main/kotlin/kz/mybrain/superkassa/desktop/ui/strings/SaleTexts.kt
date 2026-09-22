@@ -42,6 +42,9 @@ data class SaleTexts(
     /** Набранный процент — в тенге, и набранные тенге — долей: рядом с полем. */
     val changeAsSum: String,
     val changeAsPercent: String,
+
+    /** Доля скидки на позицию: она берётся от стоимости строки, а не чека. */
+    val lineChangeAsPercent: String,
     val paymentAndTotal: String,
     val lineDiscount: String,
     val addByEnter: String,
@@ -62,9 +65,6 @@ data class SaleTexts(
     val paymentUnsupported: String,
     val takenOnlyCash: String,
     val binHint: String,
-    val fillIn: String,
-    val numberField: String,
-    val parkingHint: String,
     val blockNoKkm: String,
     val blockNoPin: String,
     val blockKkmBlocked: String,

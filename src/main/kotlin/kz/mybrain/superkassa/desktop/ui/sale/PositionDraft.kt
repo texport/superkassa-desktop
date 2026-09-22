@@ -1,34 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.sale
 
-import kz.mybrain.superkassa.desktop.ui.components.Money
-import kz.mybrain.superkassa.desktop.ui.strings.SaleTexts
-import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.math.BigDecimal
-
-/** Поле формы ввода позиции: по нему подсвечивается ошибка. */
-enum class DraftField { Name, Price, Quantity, Discount }
-
-/**
- * Что не так с введённой позицией.
- *
- * «Не число» и «слишком мелко» разведены намеренно: кассир, набравший
- * количество 1,234 килограмма, должен узнать про предел точности, а не
- * гадать, чем ему не угодила цифра.
- */
-enum class DraftProblem(val field: DraftField, val text: (SaleTexts) -> String) {
-    NameMissing(DraftField.Name, { it.needName }),
-    PriceNotANumber(DraftField.Price, { it.notANumber }),
-    PriceTooPrecise(DraftField.Price, { it.pricePrecision }),
-    PriceNotPositive(DraftField.Price, { it.needPrice }),
-    QuantityNotANumber(DraftField.Quantity, { it.notANumber }),
-    QuantityTooPrecise(DraftField.Quantity, { it.quantityPrecision }),
-    QuantityNotPositive(DraftField.Quantity, { it.needQuantity }),
-    QuantityNotWhole(DraftField.Quantity, { it.quantityWhole }),
-    DiscountNotANumber(DraftField.Discount, { it.notANumber }),
-    DiscountTooPrecise(DraftField.Discount, { it.pricePrecision }),
-    DiscountTooBig(DraftField.Discount, { it.discountTooBig }),
-    DiscountNegative(DraftField.Discount, { it.discountNegative })
-}
 
 /**
  * Введённое кассиром до того, как оно стало позицией чека.
@@ -41,7 +13,14 @@ data class PositionDraft(
     val price: String = "",
     val quantity: String = DEFAULT_QUANTITY,
     val vatGroup: String = NO_VAT,
-    val discount: String = "",
+
+    /**
+     * Скидка на позицию: сумма в тенге или доля от стоимости строки.
+     *
+     * Тем же типом, что и скидка на чек: понятие одно, и второй способ
+     * его набрать кассиру пришлось бы читать заново.
+     */
+    val discount: Adjustment = Adjustment(),
     val storno: Boolean = false,
     /**
      * Единица измерения по ОКЕИ.
@@ -65,7 +44,7 @@ data class PositionDraft(
         DraftField.Name -> name
         DraftField.Price -> price
         DraftField.Quantity -> quantity
-        DraftField.Discount -> discount
+        DraftField.Discount -> discount.text
     }
 
     /** Ошибка этого поля, если она есть. */
@@ -83,7 +62,7 @@ data class PositionDraft(
     val started: Boolean
         get() = name.isNotBlank() ||
             price.isNotBlank() ||
-            discount.isNotBlank() ||
+            discount.text.isNotBlank() ||
             quantity != DEFAULT_QUANTITY
 
     /** Чего форме не хватает — или `null`, пока кассир ничего не набрал. */
@@ -99,14 +78,43 @@ data class PositionDraft(
                 price = amount(price).value ?: BigDecimal.ZERO,
                 quantity = amount(quantity, QUANTITY_SCALE).value ?: BigDecimal.ONE,
                 vatGroup = vatGroup,
-                discount = amount(discount).value ?: BigDecimal.ZERO,
+                discount = discountSum ?: BigDecimal.ZERO,
                 storno = storno,
                 measureUnitCode = measureUnitCode
             )
         }
 
+    /**
+     * Стоимость строки до скидки: цена на количество.
+     *
+     * От неё берётся доля скидки и ею же скидка ограничена. `null`, пока
+     * цена или количество не набраны числом: доли от неизвестного нет.
+     */
+    val lineCost: BigDecimal?
+        get() {
+            val priced = amount(price).value ?: return null
+            val counted = amount(quantity, QUANTITY_SCALE).value ?: return null
+            return priced.multiply(counted)
+        }
+
+    /**
+     * Скидка на позицию в тенге — ровно это число уходит в узел.
+     *
+     * Доля остаётся способом ввода и считается тем же правилом, каким
+     * считается скидка на чек: узел принимает и процент, но округлил бы
+     * его своим порядком, и строка чека разошлась бы с экраном на тиын.
+     */
+    val discountSum: BigDecimal?
+        get() = discount.sumOf(lineCost ?: return null)
+
     /** Форма после добавления: наименование и цена очищаются, ставка остаётся. */
-    fun cleared(): PositionDraft = PositionDraft(vatGroup = vatGroup, measureUnitCode = measureUnitCode)
+    fun cleared(): PositionDraft = PositionDraft(
+        vatGroup = vatGroup,
+        // Способ ввода скидки остаётся выбранным: следующую скидку
+        // кассир обычно даёт тем же — так же, как у скидки на чек.
+        discount = Adjustment(unit = discount.unit),
+        measureUnitCode = measureUnitCode
+    )
 
     private fun priceProblems(): List<DraftProblem> = when (val parsed = amount(price)) {
         is Amount.NotANumber -> listOf(DraftProblem.PriceNotANumber)
@@ -141,55 +149,35 @@ data class PositionDraft(
      * читал «скидка не может быть больше стоимости позиции» — при скидке
      * заведомо меньше стоимости.
      */
-    private fun discountProblems(): List<DraftProblem> = when (val parsed = amount(discount)) {
+    private fun discountProblems(): List<DraftProblem> = when (val parsed = amount(discount.text)) {
         is Amount.NotANumber -> listOf(DraftProblem.DiscountNotANumber)
         is Amount.TooPrecise -> listOf(DraftProblem.DiscountTooPrecise)
         is Amount.Empty -> emptyList()
         is Amount.Value -> listOfNotNull(
             DraftProblem.DiscountNegative.takeIf { parsed.amount < BigDecimal.ZERO },
-            DraftProblem.DiscountTooBig.takeIf { tooBig(parsed.amount) }
+            DraftProblem.DiscountOverPercent.takeIf { overHundred(parsed.amount) },
+            DraftProblem.DiscountTooBig.takeIf { tooBig() }
         )
     }
+
+    /** Доля сверх ста процентов отдала бы строку даром и ещё сверху. */
+    private fun overHundred(entered: BigDecimal): Boolean =
+        discount.unit == AdjustmentUnit.Percent && entered > HUNDRED_PERCENT
 
     /**
      * Скидка, равная стоимости позиции, — та же беда, что и большая:
      * строка выходит нулевой, а нулевая строка — не продажа. Прежде
      * равенство проходило, и товар за ноль вставал в фискальный чек.
+     *
+     * Сравнивается посчитанная сумма, а не набранное: сто процентов
+     * съедают строку так же начисто, как её полная стоимость в тенге.
      */
-    private fun tooBig(value: BigDecimal): Boolean {
-        val priced = amount(price).value ?: return false
-        val counted = amount(quantity, QUANTITY_SCALE).value ?: return false
-        return value >= priced.multiply(counted)
+    private fun tooBig(): Boolean {
+        val cost = lineCost ?: return false
+        val given = discount.sumOf(cost) ?: return false
+        return given >= cost
     }
 }
-
-/** Разобранное число: пусто, не число, слишком мелко — или значение. */
-sealed interface Amount {
-    data object Empty : Amount
-    data object NotANumber : Amount
-    data object TooPrecise : Amount
-    data class Value(val amount: BigDecimal) : Amount
-
-    val value: BigDecimal? get() = (this as? Value)?.amount
-}
-
-/**
- * Разбор введённого числа.
- *
- * Принимаются и запятая, и точка, и оба вида пробела: кассир вставляет
- * сумму из отчёта, где разряды разделены неразрывным пробелом. Отдельно
- * от «не число» различается «мельче допустимого» — это разные ошибки
- * и разные подсказки.
- */
-fun amount(text: String, maxScale: Int = Money.TIYN_SCALE): Amount {
-    val normalized = text.replace(',', '.').filterNot { it == ' ' || it == Glyphs.NBSP }.trim()
-    if (normalized.isEmpty()) return Amount.Empty
-    val parsed = normalized.toBigDecimalOrNull() ?: return Amount.NotANumber
-    return if (parsed.scale() > maxScale) Amount.TooPrecise else Amount.Value(parsed)
-}
-
-/** Весовой товар взвешивается до грамма: тысячная доля килограмма. */
-const val QUANTITY_SCALE: Int = 3
 
 /** Штучный товар — обычный случай, и количество для него подставлено сразу. */
 const val DEFAULT_QUANTITY: String = "1"
