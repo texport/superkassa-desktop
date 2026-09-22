@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.loadMissingDictionaries
 import kz.mybrain.superkassa.desktop.app.refreshKkms
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
@@ -25,6 +27,8 @@ import kz.mybrain.superkassa.desktop.server.updateAutoCashout
 import kz.mybrain.superkassa.desktop.server.updateTaxSettings
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
+import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.sale.NO_VAT
 import kz.mybrain.superkassa.desktop.ui.sale.NO_VAT_REGIME
@@ -46,12 +50,29 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun TaxSettingsCard(session: Session) {
     val texts = LocalStrings.current
     val kkm = session.selected ?: return
+    SectionCard(title = texts.settings.taxSettings, info = texts.settings.taxSettingsHint) {
+        TaxFields(session, kkm)
+        AutoCashoutRow(session, kkm)
+    }
+}
+
+/**
+ * Режим и ставка по умолчанию — из справочников узла.
+ *
+ * Пока справочники не прочитаны, на их месте стоит отказ с повтором,
+ * а не два пустых поля: узел мог молчать в тот миг, когда рабочее место
+ * читало справочники при входе, и владелец видел рамки без значений,
+ * а под раскрытым списком — «Выбирать не из чего», не понимая, у кого
+ * ничего нет и что с этим делать.
+ */
+@Composable
+private fun ColumnScope.TaxFields(session: Session, kkm: Kkm) {
+    val texts = LocalStrings.current
     val regimes = session.dictionaries[Dictionary.TaxRegimes].orEmpty()
     val groups = session.dictionaries[Dictionary.VatGroups].orEmpty()
     var regime by remember(kkm.taxRegime) { mutableStateOf(kkm.taxRegime) }
     var group by remember(kkm.defaultVatGroup) { mutableStateOf(kkm.defaultVatGroup) }
-
-    SectionCard(title = texts.settings.taxSettings, info = texts.settings.taxSettingsHint) {
+    ScreenSlot(dictionariesState(session, regimes.isEmpty() || groups.isEmpty()), dense = true) {
         EntryPicker(session, texts.settings.taxRegime, regimes, Dictionary.TaxRegimes, regime) {
             regime = it
             if (it == NO_VAT_REGIME) group = NO_VAT
@@ -64,9 +85,27 @@ fun TaxSettingsCard(session: Session) {
                 group = it
             }
         }
-        AutoCashoutRow(session, kkm)
         SaveTax(session, kkm, regime, group)
     }
+}
+
+/**
+ * Есть ли из чего выбирать.
+ *
+ * Повтор дочитывает только непришедшее: справочники читаются один раз
+ * при входе, и узел, поднявшийся после него, иначе остался бы
+ * неспрошенным до перезапуска приложения.
+ */
+@Composable
+private fun dictionariesState(session: Session, missing: Boolean): ScreenState {
+    val texts = LocalStrings.current
+    val scope = rememberCoroutineScope()
+    if (!missing) return ScreenState.Ready
+    return ScreenState.Trouble(
+        title = texts.settings.dictionariesMissing,
+        hint = texts.settings.dictionariesMissingHint,
+        onRetry = { scope.launch { session.loadMissingDictionaries() } }
+    )
 }
 
 /** Выбор значения справочника узла: коды на экране кассы недопустимы. */

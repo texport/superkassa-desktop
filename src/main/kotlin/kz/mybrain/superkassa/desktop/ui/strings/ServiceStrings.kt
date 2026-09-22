@@ -90,6 +90,9 @@ data class SettingStrings(
     val taxSettingsHint: String,
     val taxRegime: String,
     val defaultVatGroup: String,
+    /** Справочники узла не прочитаны: выбирать не из чего и незачем. */
+    val dictionariesMissing: String,
+    val dictionariesMissingHint: String,
     val autoCashout: String,
     val autoCashoutHint: String,
     val settingsSaved: String,

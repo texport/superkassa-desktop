@@ -74,6 +74,8 @@ internal val englishSettings = SettingStrings(
         "from the KGD records — a mismatch sends receipts out with the wrong tax",
     taxRegime = "Tax regime",
     defaultVatGroup = "Default VAT rate",
+    dictionariesMissing = "Node dictionaries were not read",
+    dictionariesMissingHint = "Tax regimes and VAT rates come from the node. The node was silent when the workplace asked for them — try again.",
     autoCashout = "Cash out when the shift closes",
     autoCashoutHint = "The register issues the cash withdrawal together with the Z report. Without it the money in the " +
         "drawer carries over into the next shift and the register total stops matching the drawer.",
