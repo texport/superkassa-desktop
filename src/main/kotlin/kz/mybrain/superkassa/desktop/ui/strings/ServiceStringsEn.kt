@@ -107,7 +107,6 @@ internal val englishSettings = SettingStrings(
     mapDefault = "Back to community",
     householdWorkplace = "Application",
     householdKkm = "Cash register",
-    householdCabinet = "BFD cabinet",
     groupPrinting = "Printing",
     groupService = "Register settings",
     groupServices = "Service addresses",

@@ -107,7 +107,6 @@ internal val russianSettings = SettingStrings(
     mapDefault = "Вернуть общедоступные",
     householdWorkplace = "Приложение",
     householdKkm = "Касса",
-    householdCabinet = "Кабинет БФД",
     groupPrinting = "Печать",
     groupService = "Настройки кассы",
     groupServices = "Адреса служб",

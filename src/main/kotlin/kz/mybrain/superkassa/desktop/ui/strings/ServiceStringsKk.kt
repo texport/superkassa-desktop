@@ -107,7 +107,6 @@ internal val kazakhSettings = SettingStrings(
     mapDefault = "Ашық қызметтерге қайтару",
     householdWorkplace = "Қолданба",
     householdKkm = "Касса",
-    householdCabinet = "БФД кабинеті",
     groupPrinting = "Басып шығару",
     groupService = "Касса баптаулары",
     groupServices = "Қызметтер мекенжайлары",

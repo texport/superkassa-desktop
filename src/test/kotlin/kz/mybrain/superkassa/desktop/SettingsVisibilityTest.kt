@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.ui.settings.Setting
+import kz.mybrain.superkassa.desktop.ui.settings.SettingsHousehold
+import kz.mybrain.superkassa.desktop.ui.settings.settingsCards
 import kz.mybrain.superkassa.desktop.ui.settings.visibleSettings
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,11 +28,11 @@ class SettingsVisibilityTest {
                 Setting.Appearance,
                 Setting.PanelBehaviour,
                 Setting.NodeAddress,
+                Setting.CabinetAddress,
                 Setting.MapServices,
                 Setting.NodeFacts,
                 Setting.Updates,
-                Setting.Debug,
-                Setting.CabinetAddress
+                Setting.Debug
             ),
             shown
         )
@@ -124,6 +126,22 @@ class SettingsVisibilityTest {
             shown[shown.indexOf(Setting.Programming) - 1],
             "режим программирования оторван от кассы, которой принадлежит"
         )
+    }
+
+    /**
+     * Вкладка открывается разделом, а не карточкой в пустом окне.
+     *
+     * Хозяйство кабинета БФД держало один адрес: вкладка занимала треть
+     * шапки, а под ней стояла карточка и поле высотой в экран. Адрес
+     * кабинета хранится на этой же машине, как адрес узла и адреса карты,
+     * и стоит теперь рядом с ними.
+     */
+    @Test
+    fun `во вкладке не бывает одной карточки на пустом экране`() {
+        SettingsHousehold.entries.forEach { household ->
+            val cards = settingsCards.filter { it.group.household == household }
+            assertTrue(cards.size > 1, "$household открывается одной карточкой в пустом окне")
+        }
     }
 
     /** Настройки, которые принимает узел этой кассы. */
