@@ -33,9 +33,13 @@ import kz.mybrain.superkassa.desktop.ui.theme.Sizes
  */
 @Composable
 fun PrintOverlay(session: Session) {
+    val texts = LocalStrings.current.preview
     ReceiptPreview(
         image = session.preview,
         drawing = session.drawing,
+        trouble = session.previewTrouble?.let { refusal ->
+            ScreenState.Trouble(texts.missing, refusal.words, refusal.again)
+        },
         onPrint = { session.printDesk.printShown() },
         onSave = { session.printDesk.saveShown() }
     ) {

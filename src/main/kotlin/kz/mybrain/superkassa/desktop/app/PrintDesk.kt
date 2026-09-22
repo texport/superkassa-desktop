@@ -113,11 +113,15 @@ class PrintDesk(private val session: Session) {
      * Окно открывается сразу, до ответа узла: рисование длится секунду-две,
      * и без открытого окна нажатие не отзывается ничем. Признак работы
      * снимается и по картинке, и по отказу — вечно крутиться нечему.
+     *
+     * Отказ окна не закрывает: владелец нажал «показать» и остаётся
+     * там, где нажал, — с причиной и кнопкой повтора перед глазами.
      */
     private fun draw(again: () -> Unit, ask: suspend (Kkm, String) -> ByteArray) {
         val (kkm, pin) = drawer.resolve(again) ?: return
         val at = ++generation
         session.drawing = true
+        session.previewTrouble = null
         scope.launch {
             val image = try {
                 session.guard(session.texts.dashboard.printForm) { ask(kkm, pin) }
@@ -125,7 +129,10 @@ class PrintDesk(private val session: Session) {
                 if (at == generation) session.drawing = false
             }
             if (at != generation) return@launch
-            if (image == null) return@launch drawer.refused(again)
+            if (image == null) {
+                session.previewTrouble = PreviewTrouble(session.lastMessage?.words(), again)
+                return@launch drawer.refused(again)
+            }
             session.preview = withContext(Dispatchers.IO) { Printing.trim(image) }
         }
     }
@@ -141,6 +148,7 @@ class PrintDesk(private val session: Session) {
         generation += 1
         session.preview = null
         session.drawing = false
+        session.previewTrouble = null
     }
 
     /** Печатает документ, переданный данными, не открывая его. */

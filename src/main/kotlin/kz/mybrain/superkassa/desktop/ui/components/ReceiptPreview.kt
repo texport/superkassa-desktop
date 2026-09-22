@@ -62,8 +62,13 @@ import org.jetbrains.skia.Image as SkiaImage
  * форму секунду-другую, и всё это время в окне стоит общее ожидание —
  * иначе нажатие не отзывалось ничем.
  *
+ * Отказ узла окна не закрывает: причина стоит в нём вместе с повтором.
+ * Прежде окно исчезало целиком, и владелец оставался с одной строкой
+ * внизу экрана, которую мог уже закрыть.
+ *
  * @param image печатная форма в PNG; `null` — ещё не нарисована.
  * @param drawing узел сейчас рисует: окно открыто, картинки ещё нет.
+ * @param trouble узел форму не нарисовал; `null` — беды нет.
  * @param onPrint отправка на принтер; `null` — печатать нечем.
  * @param onSave сохранение в файл; `null` — сохранять нечем.
  */
@@ -71,11 +76,12 @@ import org.jetbrains.skia.Image as SkiaImage
 fun ReceiptPreview(
     image: ByteArray?,
     drawing: Boolean = false,
+    trouble: ScreenState.Trouble? = null,
     onPrint: (() -> Unit)? = null,
     onSave: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
-    if (image == null && !drawing) return
+    if (image == null && !drawing && trouble == null) return
     val texts = LocalStrings.current.preview
     CloseOnEscape(onDismiss)
     Dialog(
@@ -92,6 +98,7 @@ fun ReceiptPreview(
                 image?.let { runCatching { SkiaImage.makeFromEncoded(it).toComposeImageBitmap() }.getOrNull() }
             }
             val state = when {
+                trouble != null -> trouble
                 image == null -> ScreenState.Working
                 bitmap == null -> ScreenState.Empty(AppIcons.warning, texts.missing)
                 else -> ScreenState.Ready

@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.unit.Density
 import kz.mybrain.superkassa.desktop.ui.components.ReceiptPreview
+import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
@@ -91,6 +92,33 @@ class PreviewTapeReachTest {
         val reached = scrolledToFoot(scene)
         scene.close()
         assertTrue(reached, "низ формы недостижим прокруткой: колесо упирается раньше последней строки")
+    }
+
+    /**
+     * Узел отказал — окно остаётся стоять.
+     *
+     * Прежде оно исчезало целиком: владелец нажимал «показать», всё
+     * пропадало, и причина оставалась одной строкой внизу экрана.
+     * Сравнение идёт с тем же вызовом без отказа: там окна нет вовсе,
+     * и кадры обязаны разойтись.
+     */
+    @Test
+    fun `отказ узла оставляет окно просмотра открытым`() {
+        val refused = frame(ScreenState.Trouble("Узел не отдал печатную форму", "Смена не открыта") {})
+        val nothing = frame(null)
+        assertTrue(!refused.contentEquals(nothing), "отказ ничего не открыл: окно просмотра закрылось вместе с формой")
+    }
+
+    /** Снимок окна просмотра без картинки: с отказом или без него. */
+    private fun frame(trouble: ScreenState.Trouble?): ByteArray {
+        val scene = ImageComposeScene(width = WINDOW_WIDTH, height = WINDOW_HEIGHT, density = Density(1f)) {
+            CompositionLocalProvider(LocalStrings provides stringsOf(Language.Ru)) {
+                ReceiptPreview(image = null, drawing = false, trouble = trouble, onDismiss = {})
+            }
+        }
+        val bytes = scene.render().encodeToData()?.bytes ?: ByteArray(0)
+        scene.close()
+        return bytes
     }
 
     /** Крутит колесо, пока не покажется низ формы или пока круги не кончатся. */
