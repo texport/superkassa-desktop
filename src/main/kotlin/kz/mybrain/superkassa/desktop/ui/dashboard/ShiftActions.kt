@@ -29,8 +29,11 @@ import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.CommonStrings
 import kz.mybrain.superkassa.desktop.ui.strings.DashboardStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.strings.blockReasonTexts
+import kz.mybrain.superkassa.desktop.ui.strings.blockReasonWords
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -94,8 +97,12 @@ internal fun ShiftActions(session: Session) {
             }
         }
         if (blocked) {
+            // Причина блокировки — словами и с тем, что делать: одна фраза
+            // на все случаи отправляла кассира с отозванным токеном
+            // разбираться со снятием с учёта.
+            val reason = blockReasonWords(session.selected?.blockReasonCode, session.language)
             Text(
-                texts.dashboard.blockedNoActions,
+                "$reason${Glyphs.SEPARATOR}${blockReasonTexts(session.language).readingStays}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
