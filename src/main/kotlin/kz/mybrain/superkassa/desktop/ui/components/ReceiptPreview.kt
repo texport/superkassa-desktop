@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,13 +24,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.isCtrlPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
@@ -39,7 +38,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -131,23 +129,26 @@ fun ReceiptPreview(
  * Сама лента: прокрутка по вертикали, масштаб колесом с Ctrl.
  *
  * Колесо без Ctrl прокручивает, как в любом просмотрщике: длинный Z-отчёт
- * листают чаще, чем меняют масштаб.
+ * листают чаще, чем меняют масштаб. Прокруткой занимается сама область,
+ * а не разбор события: своя прокрутка поверх родной боролась с ней
+ * за ленту и проигрывала — щелчок колеса двигал ленту ровно настолько,
+ * насколько её двигает родная, а написанный рядом шаг не значил ничего.
+ *
+ * Ctrl-щелчок разбирается раньше области и здесь же поглощается: без
+ * этого одно движение колеса и меняло масштаб, и уезжало по ленте.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun TapeView(bitmap: BitmapPainter, width: Dp, title: String, onZoom: (Dp) -> Unit) {
     val scroll = rememberScrollState()
-    val scope = rememberCoroutineScope()
     Box(
-        modifier = Modifier.fillMaxSize().onPointerEvent(PointerEventType.Scroll) { event ->
-            val change = event.changes.first()
-            val step = change.scrollDelta.y
-            if (event.keyboardModifiers.isCtrlPressed) {
-                onZoom(Tape.widthStep * -step)
-            } else {
-                scope.launch { scroll.scrollBy(step * Tape.SCROLL_STEP) }
+        modifier = Modifier.fillMaxSize()
+            .onPointerEvent(PointerEventType.Scroll, PointerEventPass.Initial) { event ->
+                if (!event.keyboardModifiers.isCtrlPressed) return@onPointerEvent
+                val change = event.changes.first()
+                onZoom(Tape.widthStep * -change.scrollDelta.y)
+                change.consume()
             }
-        }
     ) {
         Box(
             modifier = Modifier.fillMaxSize().verticalScroll(scroll),
