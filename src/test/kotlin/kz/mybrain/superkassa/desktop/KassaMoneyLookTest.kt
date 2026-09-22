@@ -95,6 +95,19 @@ class KassaMoneyLookTest {
             "shift-closed" to KassaScene.shot("return-shift-closed") {
                 ReturnsScreen(KassaScene.session("ret-closed", journal = listOf(sold(41, 1_137_250))))
             },
+            "kkm-blocked" to KassaScene.shot("return-kkm-blocked") {
+                // Смена у снятой с учёта кассы остаётся открытой, и без
+                // своего состояния экран предлагал кнопку возврата, на
+                // которую узел отвечает KKM_BLOCKED.
+                ReturnsScreen(
+                    KassaScene.session(
+                        "ret-blocked",
+                        kkm = KassaScene.kkm(state = "BLOCKED"),
+                        shift = KassaScene.openShift(),
+                        journal = listOf(sold(41, 1_137_250))
+                    )
+                )
+            },
             "no-basis" to KassaScene.shot("return-no-basis") {
                 ReturnsScreen(KassaScene.session("ret-empty", shift = KassaScene.openShift()))
             },
@@ -120,8 +133,12 @@ class KassaMoneyLookTest {
         // только о том, что узел не отдал основания, и не обещают кассиру,
         // что продаж в этот день не случилось.
         assertTrue(
-            listOf(frames.getValue("shift-closed"), frames.getValue("no-basis"), frames.getValue("basis-list"))
-                .map { it.toList() }.distinct().size == 3,
+            listOf(
+                frames.getValue("shift-closed"),
+                frames.getValue("kkm-blocked"),
+                frames.getValue("no-basis"),
+                frames.getValue("basis-list")
+            ).map { it.toList() }.distinct().size == 4,
             "состояния возврата неотличимы друг от друга"
         )
     }

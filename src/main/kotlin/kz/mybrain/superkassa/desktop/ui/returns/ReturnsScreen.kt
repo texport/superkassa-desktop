@@ -87,6 +87,12 @@ fun ReturnsScreen(session: Session) {
             basisId = null
         }
         val state = when {
+            // Заблокированная касса — и снятая с учёта в том числе — фискальных
+            // команд не принимает, а смена у неё может оставаться открытой:
+            // без этой проверки кассиру оставалась нажимаемая кнопка, на
+            // которую узел отвечает KKM_BLOCKED.
+            session.selected?.isBlocked == true ->
+                ScreenState.Empty(AppIcons.noBasis, journal.kkmBlocked, journal.kkmBlockedHint)
             // Закрытая смена — состояние, а не отказ: об этом сказано словами
             // и подсказкой, а не пустым списком, из которого ничего не понять.
             !session.shiftOpen -> ScreenState.Empty(AppIcons.noBasis, journal.shiftClosed, journal.shiftClosedHint)

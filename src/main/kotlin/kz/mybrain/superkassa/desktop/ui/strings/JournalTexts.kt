@@ -34,6 +34,16 @@ data class ReturnJournalTexts(
     val noSaleBasis: String,
     val noBuyBasis: String,
     val shiftClosed: String,
+
+    /**
+     * Касса заблокирована — в том числе снята с учёта.
+     *
+     * Узел фискальных команд такой кассе не проводит, а смена у неё
+     * может оставаться открытой: без своего состояния экран предлагал
+     * кассиру кнопку, на которую узел отвечает KKM_BLOCKED.
+     */
+    val kkmBlocked: String,
+    val kkmBlockedHint: String,
     val amount: String,
     val wholeReceipt: String,
     val partialHint: String,
