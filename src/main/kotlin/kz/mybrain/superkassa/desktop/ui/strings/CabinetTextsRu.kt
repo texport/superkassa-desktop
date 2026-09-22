@@ -12,6 +12,7 @@ internal val cabinetTextsRu = CabinetTexts(
     signCancelled = "Подпись отменена в NCALayer",
     sessionExpired = "Доступ истёк — войдите заново",
     unreachable = "Кабинет не отвечает по заданному адресу",
+    unreadable = "Кабинет ответил не так, как приложение умеет прочитать",
     address = "Адрес кабинета",
     company = "Компания",
     bin = "БИН",

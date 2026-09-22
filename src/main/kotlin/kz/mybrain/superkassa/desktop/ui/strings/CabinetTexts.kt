@@ -22,6 +22,14 @@ data class CabinetTexts(
     val signCancelled: String,
     val sessionExpired: String,
     val unreachable: String,
+
+    /**
+     * Кабинет ответил, но ответ не разобрался.
+     *
+     * Отдельно от молчания: под общими словами о недоступности разошедшийся
+     * договор выглядел обрывом связи, и искать его шли не там.
+     */
+    val unreadable: String,
     val address: String,
     val company: String,
     val bin: String,

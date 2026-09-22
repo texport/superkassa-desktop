@@ -12,6 +12,7 @@ internal val cabinetTextsKk = CabinetTexts(
     signCancelled = "Қол қою NCALayer-де тоқтатылды",
     sessionExpired = "Рұқсат мерзімі бітті — қайта кіріңіз",
     unreachable = "Кабинет көрсетілген мекенжайда жауап бермейді",
+    unreadable = "Кабинет қолданба оқи алмайтын жауап қайтарды",
     address = "Кабинет мекенжайы",
     company = "Компания",
     bin = "БСН",

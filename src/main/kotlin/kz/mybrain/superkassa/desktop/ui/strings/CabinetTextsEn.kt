@@ -12,6 +12,7 @@ internal val cabinetTextsEn = CabinetTexts(
     signCancelled = "Signing was cancelled in NCALayer",
     sessionExpired = "Access expired — sign in again",
     unreachable = "The cabinet does not answer at the configured address",
+    unreadable = "The cabinet answered in a form the app cannot read",
     address = "Cabinet address",
     company = "Company",
     bin = "BIN",
