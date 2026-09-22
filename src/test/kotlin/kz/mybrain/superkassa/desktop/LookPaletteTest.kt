@@ -30,6 +30,28 @@ class LookPaletteTest {
         }
     }
 
+    /**
+     * Кружки в выборе тона различимы глазом, а не только числами.
+     *
+     * Равенства главных ролей мало: два тона могут разойтись на единицу
+     * из двухсот пятидесяти пяти и остаться для кассира одним и тем же
+     * кружком. Порог — вчетверо выше порога различения глазом; самая
+     * тесная пара круга, изумрудный с бирюзовым, держится выше него
+     * с запасом, а пятнадцатый тон пришлось бы ставить уже под ним.
+     */
+    @Test
+    fun `ни один тон не сливается с соседним`() {
+        listOf(false, true).forEach { dark ->
+            val primaries = Accent.entries.map { it to schemeOf(it, dark).primary }
+            primaries.forEachIndexed { at, (accent, color) ->
+                primaries.drop(at + 1).forEach { (other, second) ->
+                    val gap = LookColors.distance(color, second)
+                    assertTrue(gap >= APART, "$accent и $other сошлись при dark=$dark, ΔE $gap")
+                }
+            }
+        }
+    }
+
     @Test
     fun `индиго без выбора остаётся тем, чем касса была`() {
         assertSame(LightScheme, schemeOf(Accent.Indigo, dark = false))
@@ -87,5 +109,8 @@ class LookPaletteTest {
     private companion object {
         /** Две ступени из 255 на канал: глазом не отличить. */
         const val TOLERANCE = 2.5f / 255f
+
+        /** Насколько расходятся главные роли двух соседних тонов. */
+        const val APART = 10f
     }
 }

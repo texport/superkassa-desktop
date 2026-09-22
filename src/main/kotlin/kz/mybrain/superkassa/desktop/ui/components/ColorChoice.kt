@@ -3,7 +3,8 @@ package kz.mybrain.superkassa.desktop.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
@@ -33,6 +34,10 @@ import kz.mybrain.superkassa.desktop.ui.theme.Swatch
  * цвета живёт в подсказке и в описании для чтения с экрана: под каждым
  * кружком она удвоила бы высоту ряда ради того, что видно и так.
  *
+ * Ряд переносится: цветов больше, чем помещается в узкую карточку, и
+ * неперенесённый ряд обрезал бы последние кружки за правым краем —
+ * выбрать их стало бы нечем.
+ *
  * @param swatch заливка кружка и цвет отметки на ней — считаются
  *   в месте вызова, потому что зависят от нынешней темы.
  */
@@ -45,7 +50,11 @@ fun <T> ColorChoice(
     modifier: Modifier = Modifier,
     onSelect: (T) -> Unit
 ) {
-    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    FlowRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+    ) {
         options.forEach { option ->
             Circle(
                 swatch = swatch(option),
