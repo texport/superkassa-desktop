@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterAddress
+import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlaceCreate
 import kz.mybrain.superkassa.desktop.server.cabinet.addRetailPlace
 import kz.mybrain.superkassa.desktop.ui.components.FormDialog
@@ -59,7 +60,9 @@ fun AddPlaceCard(
         onDismiss = onDismiss,
         onAction = {
             scope.launch {
-                if (create(cabinet, name, chosen, point)) {
+                val created = create(cabinet, name, chosen, point)
+                if (created != null) {
+                    cabinet.placeAdded(created)
                     onAdded()
                     onDismiss()
                 }
@@ -103,16 +106,16 @@ private fun missingFields(
     texts.pickOnMap.takeIf { point == null }
 )
 
-/** Заводит точку в кабинете. Ложь означает отказ: введённое остаётся на месте. */
+/** Заводит точку в кабинете. `null` означает отказ: введённое остаётся на месте. */
 private suspend fun create(
     cabinet: CabinetSession,
     name: String,
     address: RegisterAddress?,
     point: MapPoint?
-): Boolean {
-    val token = cabinet.token ?: return false
-    val chosen = address ?: return false
-    val where = point ?: return false
+): RetailPlace? {
+    val token = cabinet.token ?: return null
+    val chosen = address ?: return null
+    val where = point ?: return null
     return cabinet.guard {
         cabinet.client.addRetailPlace(
             token,
@@ -123,5 +126,5 @@ private suspend fun create(
                 longitude = where.longitude
             )
         )
-    } != null
+    }
 }
