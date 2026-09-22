@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSalesBody
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsTrouble
 import kz.mybrain.superkassa.desktop.ui.analytics.SalesRegions
@@ -73,6 +74,28 @@ class AnalyticsSalesShots {
     @Test
     fun `выручка нулевая`() = body("an-sales-zero", SalesLook.nothingSold())
 
+    /**
+     * Сеть показа: полтора месяца, 81 чек и нулевой НДС на три тысячи касс.
+     *
+     * Снимается вся сводка сверху донизу, а не первый экран: провал
+     * в графике, доли расчётов, таблицы и свод по регионам стоят ниже
+     * сгиба, и именно там экран выглядит сломанным, когда данных почти нет.
+     */
+    @Test
+    fun `сеть показа`() {
+        val view = SalesLook.show()
+        RenderProbe(WIDE, HIGH) {
+            AnalyticsSalesBody(view, Look.texts, enums, journal, Look.cabinet, Modifier.fillMaxSize())
+        }.use { probe ->
+            repeat(SETTLE) { probe.frame() }
+            Look.shot("audit-analytics-sales-show", probe.frame())
+            repeat(DOWN) { at ->
+                repeat(TURNS) { probe.wheel(MIDDLE, SCROLL) }
+                Look.shot("audit-analytics-sales-show-${at + 1}", probe.frame())
+            }
+        }
+    }
+
     /** Единственный вид расчёта: доля обязана быть целой. */
     @Test
     fun `единственный вид расчётов`() = body("an-sales-one-payment", SalesLook.onlyCash())
@@ -143,6 +166,16 @@ class AnalyticsSalesShots {
 
     private companion object {
         const val SETTLE = 24
+        /** Куда наводится колесо: середина сводки. */
+        val MIDDLE = Offset(WIDE / 2f, HIGH / 2f)
+
+        /** Сколько раз сводка прокручивается вниз и на сколько за раз. */
+        const val DOWN = 3
+        const val SCROLL = 8f
+
+        /** Оборотов колеса на один экран сводки. */
+        const val TURNS = 8
+
         const val WIDE = 1180
         const val HIGH = 820
     }

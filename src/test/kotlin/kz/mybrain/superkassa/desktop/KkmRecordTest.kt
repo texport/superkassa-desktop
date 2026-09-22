@@ -42,7 +42,6 @@ class KkmRecordTest {
             "DEREGISTRATION_IN_ISNA_PROCESS"
         ).forEach { assertEquals(KkmRecord.Applied, kkmRecord(it), "«$it» — заявление подано") }
         listOf(
-            "UNKNOWN",
             "REGISTRATION_IN_ISNA_ERROR",
             "REGISTERED_REREGISTRATION_ERROR",
             "DEREGISTRATION_ERROR"
@@ -60,6 +59,22 @@ class KkmRecordTest {
     fun `отсутствие кода не считается отказом`() {
         assertEquals(KkmRecord.Entered, kkmRecord(null))
         assertEquals(KkmRecord.Entered, kkmRecord("  "))
+    }
+
+    /**
+     * «Нет сведений» — не отказ, каким бы словом оно ни пришло.
+     *
+     * `UNKNOWN` — это и есть отсутствие кода, написанное словом: тем же
+     * словом кабинет отвечает о смене кассы, которой он не знает —
+     * в ответе по карте его носят 3288 черновиков сети показа. Считаясь
+     * отказом, такая касса вставала в список отказов КГД с советом
+     * разобрать причину и подать заявление заново, а её место на карте
+     * краснело — из-за отказа, которого не было.
+     */
+    @Test
+    fun `слово «нет сведений» отказом не считается`() {
+        assertEquals(KkmRecord.Entered, kkmRecord("UNKNOWN"))
+        assertEquals(KkmRecord.Entered, kkmRecord("unknown"))
     }
 
     /**

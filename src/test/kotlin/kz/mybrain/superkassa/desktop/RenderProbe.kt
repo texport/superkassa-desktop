@@ -36,6 +36,8 @@ class RenderProbe(
     height: Int = HEIGHT,
     appearance: Appearance = Appearance.Light,
     look: Look = Look(),
+    /** Язык надписей: раздел смотрят на всех трёх, и обрезает подписи не русский. */
+    language: Language = Language.Ru,
     content: @Composable () -> Unit
 ) : AutoCloseable {
 
@@ -67,7 +69,7 @@ class RenderProbe(
             coroutineContext = thread.asCoroutineDispatcher()
         ) {
             SuperkassaTheme(appearance, look) {
-                ProvideStrings(Language.Ru) { content() }
+                ProvideStrings(language) { content() }
             }
         }
     }

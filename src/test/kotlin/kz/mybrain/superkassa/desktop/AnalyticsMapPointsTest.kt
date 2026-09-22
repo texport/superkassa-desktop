@@ -28,6 +28,8 @@ class AnalyticsMapPointsTest {
 
     private val almatyLatitude = 43.238949
     private val almatyLongitude = 76.889709
+    private val uralskLatitude = 51.227811
+    private val uralskLongitude = 51.386998
     private val zoom = 12
     private val width = 800
     private val height = 600
@@ -115,6 +117,69 @@ class AnalyticsMapPointsTest {
             listOf("г. Алматы, пр. Абая, 10", "г. Актобе, ул. Абилкайыр хана, 40"),
             addressesToFind(view)
         )
+    }
+
+    /**
+     * При адресе торговой точки дома находятся по одному, и набор растёт
+     * от одного двора до сети по всей стране. Наведённая на первый
+     * найденный адрес карта замирала на увеличении дома, и остальные
+     * кассы собирались за краем окна.
+     */
+    @Test
+    fun `карта отъезжает, пока кассы прибывают`() {
+        val model = Look.model()
+        val almaty = placed("c1", almatyLatitude, almatyLongitude)
+        val uralsk = placed("c2", uralskLatitude, uralskLongitude)
+        model.centre(listOf(almaty))
+        val house = model.map.zoom
+        model.centre(listOf(almaty, uralsk))
+        assertTrue(model.map.zoom < house, "карта осталась на увеличении ${model.map.zoom}")
+    }
+
+    /** Наведение прекращает рука владельца: карта из-под неё не уезжает. */
+    @Test
+    fun `сдвинутую владельцем карту прибывшие кассы не уводят`() {
+        val model = Look.model()
+        val almaty = placed("c1", almatyLatitude, almatyLongitude)
+        model.centre(listOf(almaty))
+        model.map.zoomBy(-3)
+        val ownZoom = model.map.zoom
+        val ownLongitude = model.map.centerLongitude
+        model.centre(listOf(almaty, placed("c2", uralskLatitude, uralskLongitude)))
+        assertEquals(ownZoom, model.map.zoom, "карта уехала из-под руки владельца")
+        assertEquals(ownLongitude, model.map.centerLongitude)
+    }
+
+    /** То же и после выбора кассы: к ней владелец и шёл. */
+    @Test
+    fun `выбранную кассу прибывшие соседи не отменяют`() {
+        val model = Look.model()
+        val almaty = placed("c1", almatyLatitude, almatyLongitude)
+        model.show(almaty, emptyList())
+        model.centre(listOf(almaty, placed("c2", uralskLatitude, uralskLongitude)))
+        assertEquals("c1", model.chosen)
+        assertEquals(almatyLongitude, model.map.goal?.longitude)
+    }
+
+    /**
+     * Счётчик над картой различает «ищем» и «поставить некуда».
+     *
+     * При адресе торговой точки через поиск проходит вся сеть, и одним
+     * числом она писала бы «без положения» о кассах, у которых адрес есть.
+     */
+    @Test
+    fun `ищущиеся кассы не числятся без положения`() {
+        val view = KkmMapView(
+            placed = listOf(kkm("c1", address = "г. Алматы, пр. Абая, 10")),
+            withoutPosition = listOf(kkm("c2"))
+        )
+        val waiting = placement(view) { AddressAnswer.Searching }
+        assertEquals(1, waiting.searching, "касса с адресом не сосчитана ищущейся")
+        assertEquals(1, waiting.nowhere, "без положения оказалась не одна касса")
+
+        val missing = placement(view) { AddressAnswer.Missing }
+        assertEquals(0, missing.searching)
+        assertEquals(2, missing.nowhere, "ненайденный адрес — это уже не поиск")
     }
 
     @Test

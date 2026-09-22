@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.server.cabinet.ExchangeAddress
+import kz.mybrain.superkassa.desktop.ui.analytics.exchangeAddressCount
 import kz.mybrain.superkassa.desktop.ui.analytics.exchangeRegisters
 import kz.mybrain.superkassa.desktop.ui.analytics.exchangeRows
 import kz.mybrain.superkassa.desktop.ui.analytics.kkmTitle
@@ -89,6 +90,22 @@ class AnalyticsExchangeTest {
         val registers = exchangeRegisters(rows)
         assertEquals(listOf("c1", "c2"), registers.map { it.cashRegisterId })
         assertEquals("Касса у входа", kkmTitle(registers.first()))
+    }
+
+    /**
+     * Счётчик адресов считает адреса, а не записи об обмене.
+     *
+     * В кабинете показа четыре кассы одного магазина выходят на связь
+     * с одного и того же адреса: кабинет присылает четыре записи,
+     * и над таблицей с единственным адресом стояло «адресов: 4».
+     */
+    @Test
+    fun `разных адресов столько, сколько их в таблице`() {
+        assertEquals(2, exchangeAddressCount(rows), "адрес посчитан дважды")
+
+        val oneAddress = rows.map { it.copy(address = "10.42.0.1") }
+        assertEquals(1, exchangeAddressCount(oneAddress), "четыре кассы с одного адреса дали четыре адреса")
+        assertEquals(2, exchangeRegisters(oneAddress).size, "касс в списке всё-таки две")
     }
 
     @Test

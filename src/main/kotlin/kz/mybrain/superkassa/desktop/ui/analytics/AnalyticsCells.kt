@@ -25,14 +25,20 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * знает, какой столбец тянется, а какой стоит на месте.
  */
 
-/** Подпись столбца. */
+/**
+ * Подпись столбца.
+ *
+ * @param lines сколько строк ей отведено. Одна — там, где столбец шире
+ *   подписи; две нужны узким столбцам: «Заявление в КГД» в сотню точек
+ *   одной строкой обрывается на первом же слове.
+ */
 @Composable
-internal fun HeadCell(title: String, modifier: Modifier) {
+internal fun HeadCell(title: String, modifier: Modifier, lines: Int = 1) {
     Text(
         text = title,
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 1,
+        maxLines = lines,
         overflow = TextOverflow.Ellipsis,
         modifier = modifier
     )

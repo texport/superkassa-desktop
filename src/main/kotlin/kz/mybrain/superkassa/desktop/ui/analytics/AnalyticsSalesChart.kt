@@ -109,21 +109,25 @@ private fun ChartReadout(text: String) {
  *
  * Подписан не каждый столбик, а каждый восьмой: тридцать дат подряд
  * слипаются в серую полосу, из которой не прочесть ни одной.
+ *
+ * Подпись занимает все деления, которые она пропускает, а не одно своё.
+ * Прежде каждая стояла в делении своего столбика, и деление у длинного
+ * срока уже самой даты: за полтора месяца от «01.09» на оси оставалось
+ * «01.0» с обрезанной посередине цифрой, а за год — два знака. Ширина
+ * подписи растёт вместе с шагом, и обрезать её длине срока больше нечем.
  */
 @Composable
 private fun ChartAxis(bars: List<SalesBar>) {
     val step = axisStep(bars.size)
     Row(modifier = Modifier.fillMaxWidth()) {
-        bars.forEachIndexed { at, bar ->
-            Box(modifier = Modifier.weight(1f)) {
-                if (at % step == 0) {
-                    Text(
-                        text = bar.label,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        softWrap = false
-                    )
-                }
+        for (at in bars.indices step step) {
+            Box(modifier = Modifier.weight(minOf(step, bars.size - at).toFloat())) {
+                Text(
+                    text = bars[at].label,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    softWrap = false
+                )
             }
         }
         // Пустые деления ряда короче недели: без них подпись единственного

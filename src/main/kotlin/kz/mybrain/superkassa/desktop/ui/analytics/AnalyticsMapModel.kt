@@ -21,8 +21,22 @@ import kz.mybrain.superkassa.desktop.ui.map.MapState
  */
 class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocoder) {
 
-    /** Откуда брать положение касс. */
-    var source: PositionSource by mutableStateOf(PositionSource.RetailPlaceAddress)
+    /**
+     * Откуда брать положение касс.
+     *
+     * Раздел открывается на координатах кабинета: их кабинет отдаёт
+     * готовыми на всю сеть, и карта заполняется сразу. Адрес торговой
+     * точки приходит без координат вовсе — дом по нему ищет открытая
+     * служба карт, по одному адресу в секунду с обязательной паузой,
+     * и сеть из тысячи разных адресов собиралась бы на карте
+     * четверть часа. Вдобавок найденное службой — догадка по строке
+     * адреса, а координаты кабинета — то, что о точке записано.
+     *
+     * Сам источник никуда не делся: он рядом, в переключателе над картой,
+     * и отвечает на свой вопрос — где касса должна стоять по учётным
+     * сведениям.
+     */
+    var source: PositionSource by mutableStateOf(PositionSource.CabinetCoordinates)
         private set
 
     var view: KkmMapView? by mutableStateOf(null)
@@ -59,7 +73,13 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
     /** Координаты адресов торговых точек — их ищет карта, а не кабинет. */
     val points = AnalyticsAddressPoints(geocoder)
 
-    private var centred = false
+    /**
+     * Распорядился ли картой сам владелец: выбором кассы или ярлычка.
+     *
+     * Его рука считается там же, в [MapState.steered]; здесь — выбор
+     * из списка и нажатие на ярлычок, которые карту тоже уводят.
+     */
+    private var chose = false
 
     /** Смена источника: спрошено будет заново, а выбранная касса сбрасывается. */
     fun choose(value: PositionSource) {
@@ -73,11 +93,15 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
         val token = cabinet.token ?: return
         loading = true
         trouble = null
-        centred = false
         askedCabinet { cabinet.client.cashRegisterMap(token, source) }
             .onSuccess {
                 view = it
                 forget()
+                // Новый ответ — новое наведение: карта встаёт как при
+                // первом открытии, и рука владельца, двигавшая прежний
+                // набор, на новом наведению не мешает.
+                chose = false
+                map = MapState()
             }
             .onFailure {
                 view = null
@@ -105,6 +129,7 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
      * владельца нажать дважды там, где выбор один, незачем.
      */
     fun open(group: KkmGroup) {
+        chose = true
         spot = group.id
         chosen = group.kkms.singleOrNull()?.kkm?.cashRegisterId
         map.glideTo(group.latitude, group.longitude)
@@ -118,6 +143,7 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
      * нового поиска по карте.
      */
     fun show(row: PlacedKkm, groups: List<KkmGroup>) {
+        chose = true
         chosen = row.kkm.cashRegisterId
         spot = groups.firstOrNull { it.holds(row.kkm.cashRegisterId) }?.id
         map.glideTo(row.latitude, row.longitude)
@@ -129,15 +155,23 @@ class AnalyticsMapModel(private val cabinet: CabinetSession, geocoder: MapGeocod
     }
 
     /**
-     * Ведёт карту к кассам — один раз на загрузку.
+     * Ведёт карту к кассам — пока владелец не распорядился ею сам.
      *
-     * Иначе карта возвращалась бы в середину набора после каждого
-     * найденного адреса, и владелец не мог бы её сдвинуть.
+     * Наводить один раз нельзя. При источнике «адрес торговой точки»
+     * координат кабинет не даёт вовсе, и кассы встают на карту по мере
+     * того, как находятся дома: первым находится один адрес, и карта,
+     * наведённая на него, замирала на увеличении дома. Сеть в три тысячи
+     * касс по всей стране собиралась за краем окна, а владелец видел
+     * один двор и список, обещающий три тысячи машин.
+     *
+     * Останавливает наведение рука владельца, а не число найденных
+     * адресов: перетаскивание, колесо и кнопки увеличения — в самой
+     * карте, выбор кассы и ярлычка — здесь. До первого такого движения
+     * карта держит весь набор в окне и отъезжает по мере его роста.
      */
     fun centre(placed: List<PlacedKkm>) {
-        if (centred) return
+        if (chose || map.steered) return
         val fit = fitting(placed, FIT_WIDTH, FIT_HEIGHT) ?: return
-        map = MapState(fit.latitude, fit.longitude, fit.zoom)
-        centred = true
+        map.centreOn(fit.latitude, fit.longitude, fit.zoom)
     }
 }

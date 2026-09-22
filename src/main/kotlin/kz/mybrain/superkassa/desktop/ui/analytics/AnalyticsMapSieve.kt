@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.KkmMapView
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
 import kz.mybrain.superkassa.desktop.ui.cabinet.kkmRecord
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Отбор касс на карте.
@@ -103,15 +104,35 @@ fun sieved(placement: Placement, sieve: MapSieve): Placement = Placement(
     unplaced = placement.unplaced.filter { sieve.keeps(it.kkm) }
 )
 
-/** Торговые точки ответа кабинета — для плашки отбора по точке. */
-fun sievePlaces(view: KkmMapView?): List<SievePlace> =
-    (view?.placed.orEmpty() + view?.withoutPosition.orEmpty())
+/**
+ * Торговые точки ответа кабинета — для плашки отбора по точке.
+ *
+ * Имя точки уникальным не бывает: в сети показа из 1002 точек триста
+ * названий носит по нескольку магазинов, а одно — девять. Список шёл
+ * по именам, и девять разных магазинов стояли в нём девятью
+ * одинаковыми строками подряд: выбрать нужный было нельзя.
+ *
+ * Поэтому к повторившемуся имени добавляется адрес — то единственное,
+ * чем эти точки и различаются. К уникальному не добавляется: адрес
+ * у каждой строки сделал бы список нечитаемым ради трёхсот случаев
+ * из тысячи.
+ */
+fun sievePlaces(view: KkmMapView?): List<SievePlace> {
+    val kkms = view?.placed.orEmpty() + view?.withoutPosition.orEmpty()
+    val shared = kkms
+        .filter { it.retailPlaceId?.isNotBlank() == true }
+        .groupBy { it.retailPlaceName.orEmpty() }
+        .filterValues { rows -> rows.distinctBy { it.retailPlaceId }.size > 1 }
+        .keys
+    return kkms
         .mapNotNull { kkm ->
             val id = kkm.retailPlaceId?.takeIf(String::isNotBlank) ?: return@mapNotNull null
-            SievePlace(id, kkm.retailPlaceName?.takeIf(String::isNotBlank) ?: id)
+            val name = kkm.retailPlaceName?.takeIf(String::isNotBlank) ?: id
+            SievePlace(id, if (name in shared) "$name${Glyphs.SEPARATOR}${kkm.address.orEmpty()}" else name)
         }
         .distinctBy { it.id }
         .sortedBy { it.name }
+}
 
 /** Состояние смены, при котором касса торгует. */
 private const val SHIFT_OPEN = "OPEN"

@@ -76,8 +76,11 @@ fun SalesOverviewTiles(overview: SalesOverview, texts: AnalyticsSalesTexts, modi
  * компании, чтобы касса, не приславшая ни одного документа, не исчезала
  * из счёта вместе со своей строкой.
  *
- * Цветом красится только то, что требует работы: ноль молчащих касс
- * красным читался бы как беда, которой нет. Плашки о заблокированных
+ * Цветом красится только то, что требует работы, и только то, о чём
+ * сводка знает наверняка. Касс без чеков за срок цвет не касается:
+ * сводка не отличает потерянную связь от кассы, которой КГД ещё не дал
+ * учёта, — а в парке показа из 3294 касс таких 3288, и красное число
+ * посылало владельца искать поломку, которой нет. Плашки о заблокированных
  * кассах здесь нет вовсе — сводка кабинета о блокировках не отвечает,
  * и выдумывать это число нельзя.
  *
@@ -101,7 +104,7 @@ fun SalesNetworkPlates(
         if (register == null) {
             val selling = sellingRegisters(view.registers)
             Plate(selling, texts.online, good(selling))
-            Plate(silent, texts.silent, attention(silent))
+            Plate(silent, texts.silent, MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Plate(view.summary.openShiftCount, texts.openShifts, MaterialTheme.colorScheme.onSurface)
         Plate(view.summary.offlineCount, texts.offline, attention(view.summary.offlineCount))

@@ -26,8 +26,14 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * под значком, а не абзацем под переключателем: места абзац занимал
  * всегда, а карте на экране его не хватает.
  *
- * Счётчики рядом — итог выбора: сколько касс встало на карту, а сколько
- * осталось без места. Это состояние, и оно остаётся на экране.
+ * Счётчики рядом — итог выбора: сколько касс встало на карту, сколько
+ * ещё ищется и сколько осталось без места. Это состояние, и оно
+ * остаётся на экране.
+ *
+ * Ищущиеся считаются своим числом и только пока они есть. При адресе
+ * торговой точки координат кабинет не даёт вовсе, и дома карта находит
+ * по одному: сведённые с непоставленными, они писали бы «без положения»
+ * о трёх тысячах касс, у каждой из которых адрес есть.
  */
 @Composable
 fun AnalyticsSourceBar(
@@ -50,7 +56,8 @@ fun AnalyticsSourceBar(
         )
         InfoTip(sourceHint(model.source, texts))
         CounterTile(Money.count(placement.placed.size), texts.placed)
-        CounterTile(Money.count(placement.unplaced.size), texts.withoutPosition)
+        if (placement.searching > 0) CounterTile(Money.count(placement.searching), texts.searchingCount)
+        CounterTile(Money.count(placement.nowhere), texts.withoutPosition)
         IconButton(onClick = onRefresh, enabled = !model.loading) {
             Icon(AppIcons.refresh, contentDescription = texts.refresh)
         }
