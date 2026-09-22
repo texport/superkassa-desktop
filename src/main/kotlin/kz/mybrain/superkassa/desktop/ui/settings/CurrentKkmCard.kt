@@ -104,7 +104,11 @@ internal fun CurrentKkmCard(session: Session) {
                 // Итог правки объявляет только удачу: отказ узла уже
                 // показан его же словами, и «Название сохранено» поверх
                 // него сказало бы владельцу неправду.
-                FieldButton(texts.settings.save) {
+                //
+                // Кнопка гаснет на время обращения: узел переименовывает
+                // кассу секунду-другую, и второе нажатие отправляло к нему
+                // то же название второй раз.
+                FieldButton(texts.settings.save, enabled = !session.busy) {
                     scope.launch {
                         if (session.rename(kkm, chosenName)) session.report(money.renameSaved)
                     }
@@ -112,7 +116,7 @@ internal fun CurrentKkmCard(session: Session) {
                 FieldButton(
                     text = money.renameReset,
                     kind = FieldButtonKind.Outlined,
-                    enabled = chosenName.isNotBlank()
+                    enabled = chosenName.isNotBlank() && !session.busy
                 ) {
                     scope.launch {
                         chosenName = ""
