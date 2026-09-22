@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
+import kz.mybrain.superkassa.desktop.ui.cabinet.recordTitle
 import kz.mybrain.superkassa.desktop.ui.components.MenuChip
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
@@ -51,13 +52,13 @@ fun AnalyticsSieveBar(model: AnalyticsMapModel, places: List<SievePlace>, texts:
             onChange = { model.sieve = sieve.copy(needle = it) },
             modifier = Modifier.fieldWidth(texts.searchKkmLabel, Sizes.fieldSearch),
             hint = texts.searchKkm,
-            clearLabel = texts.sieveClear
+            clearLabel = texts.sieve.clear
         )
         Marks(model, texts)
         Records(model, texts)
         if (places.isNotEmpty()) Places(model, places, texts)
         if (sieve.set) {
-            TextButton(onClick = { model.sieve = MapSieve() }) { Text(texts.sieveClear) }
+            TextButton(onClick = { model.sieve = MapSieve() }) { Text(texts.sieve.clear) }
         }
     }
 }
@@ -71,7 +72,7 @@ private fun Marks(model: AnalyticsMapModel, texts: AnalyticsTexts) {
         FilterChip(
             selected = on,
             onClick = { model.sieve = model.sieve.copy(marks = toggled(chosen, mark)) },
-            label = { Text(mark.title(texts)) },
+            label = { Text(mark.title(texts.sieve)) },
             // Галочка у нажатой плашки — то же правило, что у сегментов
             // в ряду выше: без неё нажатое отличалось только заливкой,
             // и в одном ряду выходило два разных языка выбора.
@@ -90,9 +91,9 @@ private fun Marks(model: AnalyticsMapModel, texts: AnalyticsTexts) {
 private fun Records(model: AnalyticsMapModel, texts: AnalyticsTexts) {
     val chosen = model.sieve.record
     MenuChip(
-        value = recordTitle(chosen, texts),
+        value = recordTitle(chosen, texts.sieve),
         options = listOf(null) + KkmRecord.entries,
-        title = { recordTitle(it, texts) },
+        title = { recordTitle(it, texts.sieve) },
         chosen = chosen != null,
         onSelect = { model.sieve = model.sieve.copy(record = it) }
     )

@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.ui.cabinet.ActionKind
 import kz.mybrain.superkassa.desktop.ui.cabinet.ApplicationFields
 import kz.mybrain.superkassa.desktop.ui.cabinet.DeregistrationReason
+import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceSieve
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceTree
 import kz.mybrain.superkassa.desktop.ui.cabinet.placeRows
 import kz.mybrain.superkassa.desktop.ui.login.KkmList
@@ -82,13 +83,14 @@ class BigListRenderTest {
             language = Language.Ru,
             collapsed = collapsed,
             onToggle = {},
-            rows = placeRows(all, registers(all), open = open, query = query),
+            rows = placeRows(all, registers(all), open = open, sieve = PlaceSieve(needle = query)),
             total = all.size,
             loading = false,
             trouble = null,
             onRetry = {},
-            query = query,
-            onQuery = {},
+            sieve = PlaceSieve(needle = query),
+            onSieve = {},
+            locksKnown = true,
             place = chosen,
             register = null,
             onPlace = {},

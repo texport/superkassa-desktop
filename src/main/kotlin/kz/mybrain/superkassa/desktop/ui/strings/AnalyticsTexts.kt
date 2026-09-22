@@ -92,24 +92,15 @@ data class AnalyticsTexts(
     val searchKkm: String,
     val searchKkmLabel: String,
     val allPlaces: String,
-    val markShiftOpen: String,
-    val markBlocked: String,
 
     /**
-     * Отбор по учёту КГД: пять смыслов вместо прежнего «не на учёте».
+     * Слова отбора: учёт КГД, признаки кассы, пустой результат и сброс.
      *
-     * Заведённая касса и поданное заявление названы порознь: «учёт идёт»
-     * обещало заявление в КГД у кассы, которую владелец только завёл.
+     * Свой набор здесь не заводится: те же слова спрашивает колонка
+     * торговых точек кабинета, и разойтись им нельзя — состав объявлен
+     * в [SieveTexts] и берётся оттуда обоими разделами.
      */
-    val allRecords: String,
-    val markOnRecord: String,
-    val markEntered: String,
-    val markApplied: String,
-    val markRefused: String,
-    val markDeregistered: String,
-    val sieveEmpty: String,
-    val sieveEmptyHint: String,
-    val sieveClear: String,
+    val sieve: SieveTexts,
     val kkmsHere: String,
     val openKkmSales: String,
     val kkmSalesTitle: String,

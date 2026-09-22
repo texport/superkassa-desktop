@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceRow
+import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceSieve
 import kz.mybrain.superkassa.desktop.ui.cabinet.placeRows
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +30,8 @@ class CabinetPlaceRowsTest {
         register("r3", "p2", "Касса склада", "000000000003")
     )
 
-    private fun rows(open: String?, query: String = "") = placeRows(places, registers, open, query)
+    private fun rows(open: String?, query: String = "") =
+        placeRows(places, registers, open, PlaceSieve(needle = query))
 
     private fun names(open: String?, query: String = "") = rows(open, query).map {
         when (it) {
@@ -38,15 +40,23 @@ class CabinetPlaceRowsTest {
         }
     }
 
+    /**
+     * Точки идут по названию, а не так, как их отдал кабинет.
+     *
+     * Порядок кабинета владельцу ничего не говорит: среди двух тысяч
+     * точек он ищет свою по названию, и список, идущий неизвестно чем,
+     * заставляет читать его целиком. Отбор и порядок называются
+     * в [CabinetPlaceSieveTest], здесь — то, что видно без них.
+     */
     @Test
-    fun `без раскрытой точки видны одни точки`() {
-        assertEquals(listOf("Магазин на Абая", "Склад у вокзала", "Ларёк в парке"), names(null))
+    fun `без раскрытой точки видны одни точки по названию`() {
+        assertEquals(listOf("Ларёк в парке", "Магазин на Абая", "Склад у вокзала"), names(null))
     }
 
     @Test
     fun `кассы показываются только у раскрытой точки`() {
         assertEquals(
-            listOf("Магазин на Абая", "000000000001", "000000000002", "Склад у вокзала", "Ларёк в парке"),
+            listOf("Ларёк в парке", "Магазин на Абая", "000000000001", "000000000002", "Склад у вокзала"),
             names("p1")
         )
     }

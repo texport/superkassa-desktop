@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
+import kz.mybrain.superkassa.desktop.ui.cabinet.recordTitle
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.StatusTone
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsRecordTexts
@@ -45,7 +46,7 @@ fun RecordTiles(count: RecordCount, texts: AnalyticsTexts, modifier: Modifier = 
             // Смыслы учёта перечисляются сами — порядок плиток и порядок
             // столбцов таблицы под ними задан одним и тем же списком.
             KkmRecord.entries.forEach { meaning ->
-                RecordTile(count.of(meaning), recordTitle(meaning, texts), recordTone(meaning))
+                RecordTile(count.of(meaning), recordTitle(meaning, texts.sieve), recordTone(meaning))
             }
         }
         TileRow {

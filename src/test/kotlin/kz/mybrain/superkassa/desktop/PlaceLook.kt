@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.CabinetRegister
 import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceCard
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceCreateButtons
+import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceSieve
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceTree
 import kz.mybrain.superkassa.desktop.ui.cabinet.placeRows
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
@@ -72,9 +73,14 @@ internal fun PlacesLook(
     places: List<RetailPlace>,
     registers: List<CabinetRegister>,
     open: String? = null,
-    query: String = "",
+    sieve: PlaceSieve = PlaceSieve(),
     loading: Boolean = false,
-    collapsed: Boolean = false
+    collapsed: Boolean = false,
+    /** Кассы, заблокированные по словам кабинета, и знает ли он о них. */
+    locked: Set<String> = emptySet(),
+    locksKnown: Boolean = true,
+    /** Кабинет списка не отдал — его словами; `null` — отдал. */
+    trouble: String? = null
 ) {
     val session = Look.session()
     val cabinet = CabinetSession()
@@ -84,13 +90,14 @@ internal fun PlacesLook(
             language = Language.Ru,
             collapsed = collapsed,
             onToggle = {},
-            rows = placeRows(places, registers, open, query),
+            rows = placeRows(places, registers, open, sieve, locked, Language.Ru),
             total = places.size,
             loading = loading,
-            trouble = null,
+            trouble = trouble,
             onRetry = {},
-            query = query,
-            onQuery = {},
+            sieve = sieve,
+            onSieve = {},
+            locksKnown = locksKnown,
             place = open,
             register = null,
             onPlace = {},

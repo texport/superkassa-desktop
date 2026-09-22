@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceSieve
 import kz.mybrain.superkassa.desktop.ui.cabinet.PlaceTree
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
@@ -126,8 +127,9 @@ class ScreenStateTest {
                 loading = true,
                 trouble = null,
                 onRetry = {},
-                query = "",
-                onQuery = {},
+                sieve = PlaceSieve(),
+                onSieve = {},
+                locksKnown = true,
                 place = null,
                 register = null,
                 onPlace = {},
