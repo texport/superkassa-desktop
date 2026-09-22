@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -23,10 +24,12 @@ import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.documentDetails
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ofdRefusalWords
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
+import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
@@ -77,8 +80,17 @@ internal fun RefusedDocuments(session: Session) {
                 )
                 InfoTip(texts.dashboard.refusedHint)
             }
-            refused.forEach { document ->
-                RefusedRow(session, document, operators[document.id])
+            // Отказы приходят пачкой, и высота карточки ограничена: перечень
+            // за сотню строк выдавливал за нижний край окна и заголовок
+            // «Документы смены», и сам список.
+            ScrollableColumn(
+                modifier = Modifier.heightIn(max = Sizes.refusedList),
+                spacing = Spacing.tight,
+                gutter = Spacing.snug
+            ) {
+                refused.forEach { document ->
+                    RefusedRow(session, document, operators[document.id])
+                }
             }
         }
     }

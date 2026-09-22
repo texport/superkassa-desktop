@@ -18,6 +18,10 @@ import kotlin.test.assertTrue
 /**
  * Вход и выбор кассы во всех своих состояниях, включая отказные.
  *
+ * Узел без касс и узел, список которого прочитать не удалось, — разные
+ * состояния, и на экране они обязаны выглядеть по-разному: во втором
+ * случае утверждать, что касс нет, приложению нечем.
+ *
  * Снимки остаются в `/tmp/kassa-login-*.png` и `/tmp/kassa-users-*.png`:
  * по ним видно, объяснён ли отказ словами, видно ли главное действие
  * и не обрублена ли строка кассы. Проверка же следит за тем, что случаи
@@ -36,13 +40,20 @@ class KassaLoginLookTest {
         }
     }
 
+    /**
+     * @param listRead прочитан ли список касс. Пустой прочитанный список
+     *   и непрочитанный — разные состояния экрана: в первом касс на узле
+     *   правда нет, во втором о них неизвестно ничего.
+     */
     private fun doorSession(
         folder: String,
         kkms: List<Kkm>,
         available: Boolean = true,
-        refusal: NodeRefusal? = null
+        refusal: NodeRefusal? = null,
+        listRead: Boolean = false
     ): Session = KassaScene.session(folder, kkm = null, available = available, refusal = refusal).also {
         it.kkms.addAll(kkms)
+        it.kkmsRead = listRead
     }
 
     @Test
@@ -50,7 +61,7 @@ class KassaLoginLookTest {
         // Сеансы создаются до сцены: вызов внутри её содержимого повторяется
         // на каждой перерисовке, и состояние доставалось каждый раз новому
         // сеансу — снимки выходили то с содержимым, то без.
-        val empty = doorSession("login-empty", emptyList())
+        val empty = doorSession("login-empty", emptyList(), listRead = true)
         val silent = doorSession("login-silent", emptyList(), available = false)
         val wrongPin = doorSession("login-pin", listOf(KassaScene.kkm()), refusal = WRONG_PIN)
         val locked = doorSession("login-locked", listOf(KassaScene.kkm()), refusal = LOCKED_CASHIER)

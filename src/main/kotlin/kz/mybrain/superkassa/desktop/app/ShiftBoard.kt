@@ -46,10 +46,32 @@ class ShiftBoard {
     var number: Long? by mutableStateOf(null)
         private set
 
+    /**
+     * Когда смену открыли, по часам узла.
+     *
+     * Сутки открытой смены — причина, по которой узел блокирует кассу:
+     * кассир должен увидеть их подходящими, а не узнать о них из отказа
+     * на первом же чеке следующего утра.
+     */
+    var openedAt: Long? by mutableStateOf(null)
+        private set
+
     /** Открыта ли смена. Закрытая смена — обычное состояние кассы утром. */
     val open: Boolean get() = state == ShiftState.Open
 
     val documents = mutableStateListOf<Document>()
+
+    /**
+     * Читал ли узел документы этой смены.
+     *
+     * Пустой список и непрочитанный список — разные вещи, как и у очереди:
+     * у кассы, снятой с учёта, узел отвечает KKM_BLOCKED, и плитка
+     * «Документов за смену» писала над открытой сменой ноль. Ноль здесь
+     * читается как «за смену не пробито ничего» — кассир решал по нему,
+     * можно ли снимать Z-отчёт.
+     */
+    var documentsRead: Boolean by mutableStateOf(false)
+        private set
 
     val queueTasks = mutableStateListOf<QueueTask>()
 
@@ -80,6 +102,8 @@ class ShiftBoard {
     fun adoptShift(shift: Shift?) {
         state = if (shift?.status == OPEN_STATUS) ShiftState.Open else ShiftState.Closed
         number = shift?.shiftNo
+        openedAt = shift?.openedAt
+        documentsRead = false
         if (state != ShiftState.Open) documents.clear()
     }
 
@@ -87,12 +111,15 @@ class ShiftBoard {
     fun forgetShift() {
         state = ShiftState.Unknown
         number = null
+        openedAt = null
         documents.clear()
+        documentsRead = false
     }
 
     fun adoptDocuments(loaded: List<Document>) {
         documents.clear()
         documents.addAll(loaded)
+        documentsRead = true
     }
 
     fun adoptQueue(loaded: List<QueueTask>) {
@@ -110,6 +137,7 @@ class ShiftBoard {
     fun closed() {
         state = ShiftState.Closed
         documents.clear()
+        documentsRead = false
     }
 
     /** Забывает всё: за машиной будет другая касса или другой кассир. */

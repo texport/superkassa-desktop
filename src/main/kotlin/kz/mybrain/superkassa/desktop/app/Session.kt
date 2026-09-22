@@ -66,6 +66,10 @@ class Session(
 
     val kkms = mutableStateListOf<Kkm>()
 
+    /** Читался ли список касс: пустой список и непрочитанный — разные вещи. */
+    var kkmsRead: Boolean by mutableStateOf(false)
+        internal set
+
     /** Печатная форма на экране просмотра; что там хранится — в [PrintPreview]. */
     internal val paper = PrintPreview()
 
@@ -125,7 +129,13 @@ class Session(
 
     /** Номер смены, названный узлом. */
     val shiftNumber: Long? get() = board.number
+    /** Когда узел открыл смену; по суткам открытой смены он блокирует кассу. */
+    val shiftOpenedAt: Long? get() = board.openedAt
+
     val documents: List<Document> get() = board.documents
+
+    /** Отвечал ли узел о документах смены: пустой список и молчание — разные вещи. */
+    val documentsRead: Boolean get() = board.documentsRead
     val queueTasks: List<QueueTask> get() = board.queueTasks
 
     /** Отвечал ли узел об очереди: пустая очередь и молчание — разные вещи. */

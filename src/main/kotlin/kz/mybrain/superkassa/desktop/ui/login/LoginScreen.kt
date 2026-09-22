@@ -126,6 +126,10 @@ fun LoginScreen(session: Session, cabinet: CabinetSession) {
             }
             if (session.kkms.isEmpty()) {
                 EmptyKkms(
+                    // Прочитанный пустой список и непрочитанный — разные
+                    // беды: у первого касс правда нет, о втором неизвестно
+                    // ничего. Отказ узла — тоже ответ, но не о кассах.
+                    listRead = session.kkmsRead,
                     onReload = { reload() },
                     onCabinet = { atCabinet = true },
                     onRegister = { registering = true },

@@ -28,6 +28,9 @@ internal val EnglishStrings = AppStrings(
         search = "Search: number, name, company",
         noKkmsTitle = "No registers on this node",
         noKkms = "The node returned no registers. Add one in settings or check the connection.",
+        kkmsUnreadTitle = "The register list was not read",
+        kkmsUnread = "The node did not hand over the register list, so how many registers it has is unknown. " +
+            "Check the node address in the settings and try again.",
         yourKkm = "Your register",
         pick = "Choose",
         picked = "Chosen",
@@ -73,6 +76,7 @@ internal val EnglishStrings = AppStrings(
         closeShiftExplain = "Documents in the shift: %s, %s in the drawer. The Z report goes to BFD and cannot be undone.",
         closeShiftCashout = "The remaining cash is withdrawn together with the report.",
         closeShiftKeepsCash = "The remaining cash stays in the drawer and carries over to the next shift.",
+        shiftTooLong = "The shift has been open for over a day: close it with a Z-report or the BFD blocks the register.",
         openShiftHint = "The shift is closed — open it to issue receipts",
         openShiftAdmin = "Only an administrator opens the shift — call them to start the day.",
         shiftOpened = "Shift opened",
@@ -82,6 +86,8 @@ internal val EnglishStrings = AppStrings(
         shiftUnknown = "Unknown",
         shiftEmpty = "No documents yet",
         shiftEmptyHint = "The shift is open: the first receipt shows up here right after it goes through.",
+        documentsUnread = "The shift documents could not be read",
+        documentsUnreadHint = "The node keeps the shift open but did not hand over its documents: how many there are is unknown.",
         shiftUnknownHint = "The node did not report the shift state — check the link to it in settings.",
         documentNo = "No."
 

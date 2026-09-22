@@ -38,6 +38,8 @@ data class DashboardStrings(
     val closeShiftCashout: String,
     /** Остаток наличных перейдёт в новую смену. */
     val closeShiftKeepsCash: String,
+    /** Смена идёт вторые сутки: по этому узел блокирует кассу. */
+    val shiftTooLong: String,
     val openShiftHint: String,
     val openShiftAdmin: String,
     val shiftOpened: String,
@@ -56,6 +58,16 @@ data class DashboardStrings(
      */
     val shiftEmpty: String,
     val shiftEmptyHint: String,
+
+    /**
+     * Документы открытой смены узел не отдал.
+     *
+     * Отдельно от пустого списка: у кассы, снятой с учёта, узел отвечает
+     * KKM_BLOCKED, и «Документов пока нет» обещало пустую смену там, где
+     * список просто не прочитан.
+     */
+    val documentsUnread: String,
+    val documentsUnreadHint: String,
     /**
      * Узел о смене не ответил, и документов поэтому не видно.
      *
