@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kz.mybrain.superkassa.desktop.app.CabinetSession
+import kz.mybrain.superkassa.desktop.server.cabinet.RetailPlace
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesDay
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesDelivery
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesFilter
@@ -27,7 +28,7 @@ import java.time.LocalDate
 /**
  * Состояние торговой сводки.
  *
- * Шесть ручек кабинета спрашиваются разом и складываются в один [SalesView]:
+ * Ручки кабинета спрашиваются разом и складываются в один [SalesView]:
  * показывать плитки за одну неделю, а таблицу под ними за другую нельзя,
  * поэтому срок меняет их все сразу, а частичный ответ не показывается
  * вовсе — помеха одна на весь экран.
@@ -70,14 +71,19 @@ class AnalyticsSalesModel(private val cabinet: CabinetSession, val register: Str
     }
 
     /**
-     * Шесть запросов разом.
+     * Семь запросов разом.
      *
-     * Подряд они заняли бы шесть кругов до кабинета вместо одного,
+     * Подряд они заняли бы семь кругов до кабинета вместо одного,
      * а первый же отказ отменяет остальные: половина сводки на экране
      * хуже честной надписи о том, что её нет.
+     *
+     * Исключение одно — прошлый срок. Он нужен только сравнению, и его
+     * отказ сводку не роняет: тогда числа стоят без изменений к прошлому
+     * сроку, а не весь экран без чисел.
      */
     private suspend fun ask(token: String, filter: SalesFilter): SalesView = coroutineScope {
         val summary = async { cabinet.client.salesSummary(token, filter) }
+        val before = async { runCatching { cabinet.client.salesSummary(token, previousFilter(filter)) } }
         val days = async { cabinet.client.salesByDay(token, filter) }
         val hours = async { cabinet.client.salesByHour(token, filter) }
         val registers = async { cabinet.client.salesByCashRegister(token, filter) }
@@ -90,7 +96,9 @@ class AnalyticsSalesModel(private val cabinet: CabinetSession, val register: Str
             hours = hours.await(),
             registers = registers.await(),
             places = places.await(),
-            delivery = delivery.await()
+            delivery = delivery.await(),
+            previous = before.await().getOrNull(),
+            retailPlaces = cabinet.places
         )
     }
 }
@@ -101,6 +109,13 @@ class AnalyticsSalesModel(private val cabinet: CabinetSession, val register: Str
  * Границы срока лежат здесь же: ряд столбиков по дням достраивает пустые
  * сутки, а знать о них без границ неоткуда — кабинет присылает только
  * те сутки, в которые торговали.
+ *
+ * @param previous итоги прошлого срока такой же длины; `null` — кабинет
+ *   о нём не ответил, и сравнивать не с чем. Сводка от этого не пропадает:
+ *   числа срока известны и без прошлого.
+ * @param retailPlaces справочник торговых точек компании. Нужен своду
+ *   по регионам: регион стоит в адресе точки, а в строках сводки адреса
+ *   нет — кабинет отдаёт только название точки и её числа.
  */
 data class SalesView(
     val range: JournalRange,
@@ -109,7 +124,9 @@ data class SalesView(
     val hours: List<SalesHour>,
     val registers: List<SalesUnit>,
     val places: List<SalesUnit>,
-    val delivery: SalesDelivery
+    val delivery: SalesDelivery,
+    val previous: SalesSummary? = null,
+    val retailPlaces: List<RetailPlace> = emptyList()
 ) {
     /**
      * Ни одного чека за срок.

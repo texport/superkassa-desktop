@@ -13,11 +13,15 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 /**
  * Сама сводка: плитки, графики, таблицы и доставка.
  *
- * Порядок отвечает порядку вопросов владельца: сколько всего — сколько
- * скуплено у населения — как это расходится по дням — чем платили —
- * когда покупают — кто торгует — всё ли доехало до БФД. Каждый раздел
+ * Порядок отвечает порядку вопросов владельца: итоги за срок и состояние
+ * сети — сколько вернули — сколько скуплено у населения — как это
+ * расходится по дням — чем платили — когда покупают — кто торгует —
+ * какая картина по регионам — всё ли доехало до БФД. Каждый раздел
  * взят в карточку раздела, общую на всё приложение, и своей разметки
  * не заводит.
+ *
+ * Свода по регионам нет в окне одной кассы: одна касса стоит в одной
+ * точке, и «сто процентов сети» в её окне — не ответ.
  *
  * Карточки покупки нет вовсе, пока за срок ничего не скуплено: у кассы,
  * которая скупкой не занимается, она стояла бы рядом нулями каждый день.
@@ -40,7 +44,11 @@ fun AnalyticsSalesBody(
 ) {
     val sales = texts.sales
     ScrollableColumn(modifier = modifier, spacing = Spacing.snug) {
-        SalesTiles(view.summary, texts, register = register)
+        SectionCard(sales.overview, info = sales.overviewHint) {
+            SalesOverviewTiles(overviewOf(view.summary, view.previous), sales)
+            SalesNetworkPlates(view, sales, register = register)
+        }
+        SalesTiles(view.summary, texts)
         if (view.summary.purchased) {
             SectionCard(cabinet.operationPurchase, info = sales.purchasesHint) {
                 SalesPurchaseTiles(view.summary, sales, cabinet)
@@ -60,6 +68,13 @@ fun AnalyticsSalesBody(
         }
         SectionCard(sales.places, info = sales.placesHint) {
             SalesTable(view.places, SalesRows.Places, texts, journal, sales.allPlacesShown)
+        }
+        // Свод по регионам стоит после таблицы точек, а не до неё: он
+        // сложен из тех же строк, и читается он как их итог.
+        if (register == null) {
+            SectionCard(sales.regions, info = sales.regionsHint) {
+                SalesRegions(regionsOf(view.places, view.registers, view.retailPlaces, sales.noAddress), sales)
+            }
         }
         SectionCard(sales.delivery, info = sales.deliveryHint) {
             SalesDeliveryTiles(view.delivery, sales)

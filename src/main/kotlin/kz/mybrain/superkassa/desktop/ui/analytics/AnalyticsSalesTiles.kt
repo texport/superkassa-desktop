@@ -17,7 +17,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesDelivery
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesSummary
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetSum
-import kz.mybrain.superkassa.desktop.ui.components.CounterTile
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsSalesTexts
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
@@ -27,64 +26,35 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
- * Главные числа срока плитками.
+ * Возвраты и чистая выручка плитками.
  *
- * Верхний ряд — то, ради чего владелец открыл раздел: выручка, чеки,
- * средний чек, возвраты и налог. Число набрано крупной шкалой, подпись —
- * служебной: на экране должно быть видно с одного взгляда, что здесь
- * главное, а что его поясняет.
+ * Стоят под итогами для руководства и с ними не спорят: выручка, чеки,
+ * средний чек, НДС и доля безналичных названы там один раз, а второй раз
+ * те же числа на одном экране заставляют владельца сверять, не разные ли
+ * они. Здесь остались числа второго вопроса: сколько вернули покупателям
+ * и сколько осталось за вычетом возвратов.
  *
- * Нижний ряд — хозяйство за теми же числами: сколько касс работало,
- * сколько смен открыто сейчас, сколько документов пробито автономно
- * и сколько ещё не доехало. Они набраны шкалой счётчика — той же, что
- * и остальные счётчики приложения, — и с главными числами не спорят.
+ * Счётчиков сети здесь тоже нет — кассы, смены, автономное и очередь
+ * собраны плашками в карточке итогов, рядом с числом молчащих касс:
+ * состояние сети читают одной строкой, а не двумя разными местами.
  *
  * Ряд переносится, а не сжимается. Пятью долями ширины плитка выручки
  * получала меньше, чем нужно её числу, и главное число экрана выходило
  * обрезанным: «128 456 00…» вместо ста двадцати восьми миллионов тенге.
- * Больше трёх главных чисел в ряд не ставится: перенос по одной плитке
- * оставлял последнюю растянутой на всю ширину, и ряд читался кривым.
- *
- * @param register касса, которой ограничен отбор; `null` — вся сеть.
- *   В окне одной кассы плитки «Кассы» нет: «1 Касс» внутри окна про одну
- *   кассу отвечает на вопрос, которого владелец здесь не задавал. Смены,
- *   автономное, очередь и неизвестное посчитаны по этой же кассе — они
- *   к ней относятся и остаются.
  */
 @Composable
-fun SalesTiles(
-    summary: SalesSummary,
-    texts: AnalyticsTexts,
-    modifier: Modifier = Modifier,
-    register: String? = null
-) {
+fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier = Modifier) {
     val sales = texts.sales
-    Column(
+    // Шкала на ступень мельче, чем у итогов над ними: эти два числа
+    // важные, но не главные, и крупной шкалой они спорили бы с выручкой
+    // за внимание.
+    FlowRow(
         modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug),
-            maxItemsInEachRow = HERO_IN_ROW
-        ) {
-            HeroTile(cabinetSum(summary.revenue), sales.revenue, Modifier.weight(1f))
-            HeroTile(Money.count(summary.receiptCount), sales.receipts, Modifier.weight(1f))
-            HeroTile(cabinetSum(summary.average), sales.average, Modifier.weight(1f))
-            HeroTile(cabinetSum(summary.refunds), sales.refunds, Modifier.weight(1f))
-            HeroTile(cabinetSum(summary.tax), sales.tax, Modifier.weight(1f))
-        }
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
-        ) {
-            if (register == null) CounterTile(Money.count(summary.cashRegisterCount), texts.kkmCount)
-            CounterTile(Money.count(summary.openShiftCount), sales.openShifts)
-            CounterTile(Money.count(summary.offlineCount), sales.offline)
-            CounterTile(Money.count(summary.queuedCount), sales.queuedCount)
-            CounterTile(Money.count(summary.unknownCount), sales.unknownCount)
-        }
+        MinorTile(cabinetSum(summary.refunds), sales.refunds, Modifier.weight(1f))
+        MinorTile(cabinetSum(summary.net), sales.net, Modifier.weight(1f))
     }
 }
 
@@ -141,21 +111,6 @@ fun SalesDeliveryTiles(delivery: SalesDelivery, texts: AnalyticsSalesTexts, modi
         StateTile(delivery.offline, texts.offline, MaterialTheme.colorScheme.onSurface, Modifier.weight(1f))
     }
 }
-
-/** Плитка главного числа: крупная шкала и обычный цвет текста. */
-@Composable
-private fun HeroTile(value: String, label: String, modifier: Modifier = Modifier) {
-    Tile(value, label, MaterialTheme.typography.headlineMedium, MaterialTheme.colorScheme.onSurface, modifier)
-}
-
-/**
- * Сколько главных чисел встаёт в ряд.
- *
- * Три: сумме в сотни миллионов тенге при крупной шкале нужна треть
- * ширины раздела, а вторая строка с двумя плитками читается как ряд,
- * а не как остаток.
- */
-private const val HERO_IN_ROW = 3
 
 /** Плитка числа, которое не главное: шкала на ступень мельче выручки. */
 @Composable

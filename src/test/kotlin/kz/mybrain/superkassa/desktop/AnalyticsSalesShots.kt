@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsSalesBody
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsTrouble
+import kz.mybrain.superkassa.desktop.ui.analytics.SalesRegions
 import kz.mybrain.superkassa.desktop.ui.analytics.SalesRows
 import kz.mybrain.superkassa.desktop.ui.analytics.SalesTable
 import kz.mybrain.superkassa.desktop.ui.analytics.SalesView
 import kz.mybrain.superkassa.desktop.ui.analytics.analyticsTroubleState
+import kz.mybrain.superkassa.desktop.ui.analytics.regionsOf
+import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.strings.Language
@@ -31,6 +34,32 @@ class AnalyticsSalesShots {
     /** Неделя торговли: главные числа, столбики, доли и таблицы. */
     @Test
     fun `неделя торговли`() = body("an-sales-week", SalesLook.view())
+
+    /** Сеть выросла: стрелки вверх и зелёный цвет у всех итогов. */
+    @Test
+    fun `итоги с ростом`() = body("an-sales-growth", SalesLook.growing())
+
+    /** Сеть просела: те же итоги стрелками вниз и цветом отказа. */
+    @Test
+    fun `итоги с падением`() = body("an-sales-fall", SalesLook.falling())
+
+    /** Регионы: семь строк со своими долями сети. */
+    @Test
+    fun `свод по регионам`() {
+        val view = SalesLook.regioned()
+        val regions = regionsOf(view.places, view.registers, view.retailPlaces, Look.texts.sales.noAddress)
+        val sales = Look.texts.sales
+        RenderProbe(WIDE, HIGH) {
+            SectionCard(sales.regions, info = sales.regionsHint) { SalesRegions(regions, sales) }
+        }.use { probe ->
+            repeat(SETTLE) { probe.frame() }
+            Look.shot("an-sales-regions", probe.frame())
+        }
+    }
+
+    /** Та же сеть целой сводкой: свод регионов стоит в ней своей карточкой. */
+    @Test
+    fun `сводка с регионами`() = body("an-sales-with-regions", SalesLook.regioned())
 
     /** Один день: столбик один, и ряд не должен выглядеть сломанным. */
     @Test

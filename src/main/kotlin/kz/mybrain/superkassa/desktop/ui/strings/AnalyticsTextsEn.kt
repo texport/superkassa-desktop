@@ -5,6 +5,17 @@ private val analyticsSalesTextsEn = AnalyticsSalesTexts(
     tab = "Sales",
     forPeriod = "Summary for",
 
+    overview = "Executive summary",
+    overviewHint = "The network's key figures for the period and how they changed against the " +
+        "previous period of the same length. The cashless share is counted from the payment " +
+        "type amounts: card, electronic money and mobile payment",
+    vat = "VAT",
+    cashless = "Cashless share",
+    versusPrevious = "vs the previous period",
+    percentPoints = "pp",
+    online = "Registers in contact",
+    silent = "Silent for the period",
+
     revenue = "Revenue",
     receipts = "Receipts",
     average = "Average receipt",
@@ -35,6 +46,15 @@ private val analyticsSalesTextsEn = AnalyticsSalesTexts(
     allRegistersShown = "All cash registers shown",
     allPlacesShown = "All retail places shown",
     colName = "Name",
+
+    regions = "By region",
+    regionsHint = "Network revenue by the regions of the retail places: the region is taken " +
+        "from the place address. The network share shows how much of all revenue fell to the region",
+    region = "Region",
+    placeCount = "Places",
+    activeRegisters = "Registers with receipts",
+    networkShare = "Network share",
+    noAddress = "No address",
 
     delivery = "Document delivery",
     delivered = "Delivered",

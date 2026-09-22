@@ -5,6 +5,17 @@ private val analyticsSalesTextsRu = AnalyticsSalesTexts(
     tab = "Торговля",
     forPeriod = "Сводка за",
 
+    overview = "Итоги для руководства",
+    overviewHint = "Главные числа сети за срок и то, как они изменились к прошлому сроку " +
+        "такой же длины. Доля безналичных считается по суммам видов расчётов: карта, " +
+        "электронные деньги и мобильный платёж",
+    vat = "НДС",
+    cashless = "Доля безналичных",
+    versusPrevious = "к прошлому сроку",
+    percentPoints = "п. п.",
+    online = "Касс на связи",
+    silent = "Молчат за срок",
+
     revenue = "Выручка",
     receipts = "Чеков",
     average = "Средний чек",
@@ -35,6 +46,15 @@ private val analyticsSalesTextsRu = AnalyticsSalesTexts(
     allRegistersShown = "Показаны все кассы",
     allPlacesShown = "Показаны все точки",
     colName = "Название",
+
+    regions = "По регионам",
+    regionsHint = "Выручка сети по регионам торговых точек: регион взят из адреса точки. " +
+        "Доля сети показывает, сколько от всей выручки пришлось на регион",
+    region = "Регион",
+    placeCount = "Точек",
+    activeRegisters = "Касс с чеками",
+    networkShare = "Доля сети",
+    noAddress = "Без адреса",
 
     delivery = "Доставка документов",
     delivered = "Доставлено",
