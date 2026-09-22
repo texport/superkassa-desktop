@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.desktop.ui.analytics.of
 import kz.mybrain.superkassa.desktop.ui.analytics.recordCount
 import kz.mybrain.superkassa.desktop.ui.analytics.recordKkms
 import kz.mybrain.superkassa.desktop.ui.analytics.recordRegions
+import kz.mybrain.superkassa.desktop.ui.analytics.recordTitle
 import kz.mybrain.superkassa.desktop.ui.analytics.refusedKkms
 import kz.mybrain.superkassa.desktop.ui.analytics.regionOf
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
@@ -28,11 +29,14 @@ class AnalyticsRecordTest {
 
     /** Учёт стоит в разделе четвёртой вкладкой и назван своим набором. */
     @Test
-    fun `учёт касс — вкладка аналитики`() {
+    fun `учёт касс — вторая вкладка аналитики`() {
         val texts = analyticsTexts(Language.Ru)
 
         assertEquals(4, AnalyticsTab.entries.size)
         assertEquals(texts.record.tab, AnalyticsTab.Record.title(texts))
+        // Учёт идёт сразу за картой: следующий вопрос к найденной кассе —
+        // вправе ли она торговать.
+        assertEquals(AnalyticsTab.Record, AnalyticsTab.entries[1])
     }
 
     @Test
@@ -42,7 +46,8 @@ class AnalyticsRecordTest {
         assertEquals(RecordFleet.WHOLE, count.total)
         assertEquals(RecordFleet.ON_RECORD, count.onRecord, "на учёте должно быть четыре кассы")
         assertEquals(RecordFleet.DEREGISTERED, count.deregistered)
-        assertEquals(RecordFleet.WHOLE - RecordFleet.ON_RECORD - RecordFleet.DEREGISTERED, count.inProgress)
+        assertEquals(RecordFleet.WHOLE - RecordFleet.ON_RECORD - RecordFleet.DEREGISTERED, count.entered)
+        assertEquals(0, count.applied, "ни одного заявления в КГД не подано")
         assertEquals(0, count.refused, "отказов в сети показа нет")
         assertEquals(RecordFleet.PLACES, count.places)
     }
@@ -59,13 +64,47 @@ class AnalyticsRecordTest {
     fun `отказы и блокировки видны в смешанном парке`() {
         val count = recordCount(RecordFleet.mixed())
 
-        assertEquals(9, count.total)
+        assertEquals(10, count.total)
         assertEquals(3, count.onRecord, "перерегистрация прошла — касса на учёте")
         assertEquals(2, count.refused)
-        assertEquals(3, count.inProgress, "черновики и заявление в работе")
+        assertEquals(3, count.entered, "заведённые: заявление по ним не подавалось")
+        assertEquals(1, count.applied, "заявление подано по одной кассе")
         assertEquals(1, count.deregistered)
-        assertEquals(2, count.trading, "торгуют те, у кого открыта смена")
+        assertEquals(2, count.trading, "торгуют кассы на учёте с открытой сменой")
         assertEquals(2, count.blocked)
+    }
+
+    /**
+     * У каждого смысла учёта своё слово на каждом языке.
+     *
+     * Из этих слов собраны и плашка отбора карты, и заголовки столбцов
+     * вкладки. Забытая ветка разбора осталась бы незаметной: на экране
+     * она выглядела бы как ещё одна касса «на учёте».
+     */
+    @Test
+    fun `каждый смысл учёта назван на трёх языках`() {
+        Language.entries.forEach { language ->
+            val words = KkmRecord.entries.map { recordTitle(it, analyticsTexts(language)) }
+
+            assertEquals(words.size, words.toSet().size, "$language: два смысла названы одинаково")
+            assertTrue(words.none(String::isBlank), "$language: смысл учёта остался без слова")
+        }
+    }
+
+    /**
+     * Смена, открытая у кассы вне учёта, торговлей не считается.
+     *
+     * Иначе экран обещал бы работающую сеть там, где КГД не учёл ни одной
+     * кассы: смену касса открывает сама, разрешения на это ей не нужно.
+     */
+    @Test
+    fun `торгующими считаются только кассы на учёте`() {
+        val open = RecordFleet.mixed().count { it.shiftStatus == "OPEN" }
+        val count = recordCount(RecordFleet.mixed())
+
+        assertEquals(3, open, "в наборе три открытые смены")
+        assertEquals(2, count.trading)
+        assertTrue(count.trading <= count.onRecord, "торгующих больше, чем касс на учёте")
     }
 
     /** Отказы вынесены отдельным списком: по ним владелец действует. */

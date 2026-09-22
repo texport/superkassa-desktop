@@ -19,8 +19,9 @@ import kz.mybrain.superkassa.desktop.ui.components.toneColor
  * Словами смысл называется там же, где и в отборе карты, — [recordTitle].
  */
 fun RecordCount.of(meaning: KkmRecord): Int = when (meaning) {
+    KkmRecord.Entered -> entered
+    KkmRecord.Applied -> applied
     KkmRecord.OnRecord -> onRecord
-    KkmRecord.InProgress -> inProgress
     KkmRecord.Refused -> refused
     KkmRecord.Deregistered -> deregistered
 }
@@ -29,12 +30,17 @@ fun RecordCount.of(meaning: KkmRecord): Int = when (meaning) {
  * Цвет смысла учёта.
  *
  * Тот же, каким покрашена касса в плашках и на карте: на учёте —
- * благополучие, учёт идёт — ожидание, отказ — то, что требует работы,
- * снятая с учёта — покой, а не беда.
+ * благополучие, заявление подано — ожидание, отказ — то, что требует
+ * работы, снятая с учёта — покой, а не беда.
+ *
+ * Заведённая касса покоем и остаётся: ждать по ней нечего, пока
+ * владелец не подаст заявление, и жёлтым она обещала бы ответ КГД,
+ * которого никто не ждёт.
  */
 fun recordTone(meaning: KkmRecord): StatusTone = when (meaning) {
+    KkmRecord.Entered -> StatusTone.Idle
+    KkmRecord.Applied -> StatusTone.Waiting
     KkmRecord.OnRecord -> StatusTone.Good
-    KkmRecord.InProgress -> StatusTone.Waiting
     KkmRecord.Refused -> StatusTone.Bad
     KkmRecord.Deregistered -> StatusTone.Idle
 }

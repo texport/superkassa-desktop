@@ -45,14 +45,15 @@ enum class KkmMark(val title: (AnalyticsTexts) -> String, val holds: (AnalyticsK
  * Учёт КГД — не плашкой, а выбором из списка.
  *
  * Смыслы учёта исключают друг друга: касса не бывает разом на учёте
- * и снятой с него. Четыре нажимаемые плашки в ряду обещали бы обратное —
+ * и снятой с него. Пять нажимаемых плашек в ряду обещали бы обратное —
  * нажав две, владелец получал бы пустую карту, — а ряд отбора от них
  * переносился на вторую строку и забирал высоту у самой карты.
  */
 fun recordTitle(record: KkmRecord?, texts: AnalyticsTexts): String = when (record) {
     null -> texts.allRecords
     KkmRecord.OnRecord -> texts.markOnRecord
-    KkmRecord.InProgress -> texts.markInProgress
+    KkmRecord.Entered -> texts.markEntered
+    KkmRecord.Applied -> texts.markApplied
     KkmRecord.Refused -> texts.markRefused
     KkmRecord.Deregistered -> texts.markDeregistered
 }
