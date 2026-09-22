@@ -150,16 +150,10 @@ internal val KazakhStrings = AppStrings(
         done = "ресімделді, күйі"
     ),
     cash = CashStrings(
-        inDrawer = "Жәшікте",
         deposit = "Салу",
         withdraw = "Алу",
         deposited = "Салынды",
         withdrawn = "Алынды"
-    ),
-    history = HistoryStrings(
-        title = "Тәулік тарихы",
-        load = "Жүктеу",
-        loading = "Оқылуда…"
     ),
     queue = QueueStrings(
         title = "Жіберу кезегі",

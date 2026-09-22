@@ -152,16 +152,10 @@ internal val RussianStrings = AppStrings(
         done = "оформлен, состояние"
     ),
     cash = CashStrings(
-        inDrawer = "В ящике",
         deposit = "Внести",
         withdraw = "Изъять",
         deposited = "Внесено",
         withdrawn = "Изъято"
-    ),
-    history = HistoryStrings(
-        title = "История за сутки",
-        load = "Загрузить",
-        loading = "Читается…"
     ),
     queue = QueueStrings(
         title = "Очередь отправки",

@@ -125,15 +125,8 @@ data class ReturnStrings(
 )
 
 data class CashStrings(
-    val inDrawer: String,
     val deposit: String,
     val withdraw: String,
     val deposited: String,
     val withdrawn: String
-)
-
-data class HistoryStrings(
-    val title: String,
-    val load: String,
-    val loading: String
 )

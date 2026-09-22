@@ -150,16 +150,10 @@ internal val EnglishStrings = AppStrings(
         done = "issued, state"
     ),
     cash = CashStrings(
-        inDrawer = "In drawer",
         deposit = "Deposit",
         withdraw = "Withdraw",
         deposited = "Deposited",
         withdrawn = "Withdrawn"
-    ),
-    history = HistoryStrings(
-        title = "Last 24 hours",
-        load = "Load",
-        loading = "Loading…"
     ),
     queue = QueueStrings(
         title = "Delivery queue",
