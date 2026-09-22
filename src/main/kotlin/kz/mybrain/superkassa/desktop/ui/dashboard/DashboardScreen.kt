@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.dashboard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -31,7 +32,7 @@ fun DashboardScreen(session: Session) {
     val texts = LocalStrings.current
     val kkm = session.selected
     Column(
-        modifier = Modifier.fillMaxWidth().padding(Spacing.screen),
+        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
         if (kkm == null) {
@@ -78,7 +79,10 @@ fun DashboardScreen(session: Session) {
 
         RefusedDocuments(session)
 
-        ShiftDocuments(session)
+        // Списку достаётся вся оставшаяся высота, а не то, что случайно
+        // осталось после карточек: в окне 1000×700 он уходил под нижний
+        // край, и документы смены кассир не видел вовсе.
+        ShiftDocuments(session, Modifier.weight(1f))
     }
 }
 

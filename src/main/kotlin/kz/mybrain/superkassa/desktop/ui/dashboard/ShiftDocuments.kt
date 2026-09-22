@@ -45,12 +45,12 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * в разделе истории, — кассир читает обе таблицы одинаково.
  */
 @Composable
-fun ShiftDocuments(session: Session) {
+fun ShiftDocuments(session: Session, modifier: Modifier = Modifier) {
     val texts = LocalStrings.current
 
     val scope = rememberCoroutineScope()
 
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
         Text(texts.dashboard.shiftDocuments, style = MaterialTheme.typography.titleMedium)
         val state = documentsState(session, texts.dashboard) {
             scope.launch { session.refreshSelected() }
