@@ -10,11 +10,13 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.ServerClient
+import kz.mybrain.superkassa.desktop.ui.dashboard.documentAmount
 import kz.mybrain.superkassa.desktop.ui.history.dayRange
 import kz.mybrain.superkassa.desktop.ui.history.documentTypeTitle
 import kz.mybrain.superkassa.desktop.ui.history.documentTypesIn
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.io.File
 import java.nio.file.Files
 import java.time.Instant
@@ -32,6 +34,19 @@ import kotlin.test.assertEquals
 class JournalHistoryTest {
 
     private fun document(type: String?) = Document(id = "d-$type", docType = type)
+
+    @Test
+    fun `у отчёта и открытия смены на главной стоит прочерк, а не ноль`() {
+        // Журнал за срок ставит на их месте прочерк, а список документов
+        // смены рисовал «0,00 ₸» — кассир читал это как «не продано ничего».
+        val report = Document(id = "d-x", docType = "X_REPORT", totalAmount = 0)
+        val opened = Document(id = "d-o", docType = "SHIFT_OPEN", totalAmount = 0)
+        val sale = Document(id = "d-s", docType = "SALE", totalAmount = 120_000)
+
+        assertEquals(Glyphs.DASH, documentAmount(report))
+        assertEquals(Glyphs.DASH, documentAmount(opened))
+        assertEquals("1${Glyphs.NBSP}200,00${Glyphs.NBSP}₸", documentAmount(sale))
+    }
 
     private fun session(): Session {
         val http = HttpClient(MockEngine { respondError(HttpStatusCode.NotFound) })

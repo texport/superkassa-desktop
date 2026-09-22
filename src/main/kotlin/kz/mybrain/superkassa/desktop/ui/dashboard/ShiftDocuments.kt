@@ -21,6 +21,7 @@ import kz.mybrain.superkassa.desktop.app.ShiftState
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.server.hasOwnAmount
 import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
@@ -103,7 +104,7 @@ private fun DocumentRow(
         // Номер подписан: голая «1» под словом «Продажа» читалась как
         // количество, а не как номер документа.
         subtitle = document.number?.let { "${texts.dashboard.documentNo} $it" } ?: Glyphs.DASH,
-        amount = Money.formatTiyn(document.totalAmount),
+        amount = documentAmount(document),
         trailing = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
@@ -137,3 +138,14 @@ private fun DocumentRow(
     )
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 }
+
+/**
+ * Сумма документа в строке смены.
+ *
+ * У отчёта и открытия смены своей суммы нет: узел держит у них ноль,
+ * и «0,00 ₸» рядом с X-отчётом кассир читал как «не продано ничего».
+ * Журнал за срок на том же месте ставит прочерк, а обе таблицы кассир
+ * читает одинаково.
+ */
+internal fun documentAmount(document: Document): String =
+    if (document.hasOwnAmount) Money.formatTiyn(document.totalAmount) else Glyphs.DASH
