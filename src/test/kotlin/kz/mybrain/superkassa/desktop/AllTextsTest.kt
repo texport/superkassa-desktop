@@ -2,7 +2,9 @@ package kz.mybrain.superkassa.desktop
 
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.analyticsTexts
+import kz.mybrain.superkassa.desktop.ui.strings.blockReasonTexts
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
+import kz.mybrain.superkassa.desktop.ui.strings.coreTexts
 import kz.mybrain.superkassa.desktop.ui.strings.debugTexts
 import kz.mybrain.superkassa.desktop.ui.strings.edsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.machineTexts
@@ -46,6 +48,12 @@ class AllTextsTest {
     private fun sets(language: Language): List<Any> = listOf(
         stringsOf(language),
         cabinetTexts(language),
+        // Плашки шапки и причины блокировки кассы — такие же наборы
+        // надписей, а под проверкой их не было: забытый перевод причины
+        // доходил до кассира пустым местом там, где сказано, что делать
+        // с заблокированной кассой.
+        coreTexts(language),
+        blockReasonTexts(language),
         analyticsTexts(language),
         machineTexts(language),
         mapAddressTexts(language),
