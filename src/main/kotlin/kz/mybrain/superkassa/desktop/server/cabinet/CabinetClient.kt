@@ -3,6 +3,8 @@ package kz.mybrain.superkassa.desktop.server.cabinet
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
+import io.ktor.client.network.sockets.ConnectTimeoutException
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.HttpRequestBuilder
@@ -172,6 +174,9 @@ class CabinetClient(
          */
         private const val ANSWER_WAIT_MS = 30_000L
 
+        /** Сколько ждать перед второй попыткой соединения. */
+        private const val RECONNECT_WAIT_MS = 400L
+
         fun defaultHttpClient(): HttpClient = HttpClient(CIO) {
             expectSuccess = false
             install(ContentNegotiation) { json(lenientJson) }
@@ -179,6 +184,21 @@ class CabinetClient(
                 connectTimeoutMillis = CONNECT_WAIT_MS
                 requestTimeoutMillis = ANSWER_WAIT_MS
                 socketTimeoutMillis = ANSWER_WAIT_MS
+            }
+            // Вторая попытка — только когда соединение не поднялось вовсе.
+            // Кабинет стоит за VPN, и первая попытка после простоя
+            // упиралась в неподнявшийся туннель: владелец читал «Кабинет
+            // не отвечает» и нажимал то же самое второй раз руками.
+            //
+            // Повтор безопасен именно в этом случае и только в нём: пока
+            // соединения нет, запрос не ушёл, и повторить можно даже подачу
+            // заявления. Истекшее ожидание ответа не повторяется — запрос
+            // мог дойти, и второе заявление было бы вторым заявлением.
+            install(HttpRequestRetry) {
+                maxRetries = 1
+                retryIf { _, _ -> false }
+                retryOnExceptionIf { _, failure -> failure is ConnectTimeoutException }
+                delayMillis { RECONNECT_WAIT_MS }
             }
         }
     }
