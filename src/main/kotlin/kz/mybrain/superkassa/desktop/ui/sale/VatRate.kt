@@ -4,6 +4,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.ui.strings.EnumStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
 /**
  * Ставка НДС: код уходит в чек, название и величина видны кассиру.
@@ -74,7 +75,7 @@ private fun knownRates(session: Session, texts: EnumStrings): List<VatRate> {
 fun vatTitle(rates: List<VatRate>, code: String): String {
     val rate = rates.firstOrNull { it.code == code } ?: return code
     val percent = rate.percent ?: return rate.title
-    return if (rate.title.contains(percent.toString())) rate.title else "${rate.title} $percent%"
+    return if (rate.title.contains(percent.toString())) rate.title else "${rate.title} $percent${Glyphs.PERCENT}"
 }
 
 /** Ставка по умолчанию: касса не додумывает налог за кассира. */

@@ -7,7 +7,10 @@ import kz.mybrain.superkassa.desktop.ui.sale.SaleBlock
 import kz.mybrain.superkassa.desktop.ui.sale.SaleState
 import kz.mybrain.superkassa.desktop.ui.sale.VatRate
 import kz.mybrain.superkassa.desktop.ui.sale.blockOf
+import kz.mybrain.superkassa.desktop.ui.sale.positionLine
 import kz.mybrain.superkassa.desktop.ui.sale.vatTitle
+import kz.mybrain.superkassa.desktop.ui.strings.saleTextsRu
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -117,6 +120,29 @@ class SaleBasketTest {
     fun `минус у суммы меньше тенге не теряется`() {
         assertTrue(Money.format(BigDecimal("-0.50")).startsWith("−"))
         assertFalse(Money.format(BigDecimal("0.50")).startsWith("−"))
+    }
+
+    /**
+     * Сведения строки разделяет общий знак набора.
+     *
+     * Состав строки собирается вне Compose и разбирается проверкой,
+     * а не глазом на снимке. Знаки берутся из общего набора: набранные
+     * на месте, они неотличимы от общих на экране и расходятся с ними
+     * на первой же правке — так лист чека однажды уже разошёлся
+     * с соседними списками приложения.
+     */
+    @Test
+    fun `состав строки набран общими знаками`() {
+        val line = positionLine(
+            position("3450.00", quantity = "1.450", discount = "50.00").copy(exciseStamps = listOf("AB1")),
+            unit = "кг",
+            vat = "НДС 16%",
+            texts = saleTextsRu
+        )
+
+        assertTrue(line.contains(Glyphs.TIMES), "количество умножается общим знаком: $line")
+        assertEquals(4, line.split(Glyphs.SEPARATOR).size, "сведения разделены общим знаком: $line")
+        assertTrue(line.startsWith("1,450 кг"), "дробь отделена общим знаком: $line")
     }
 
     @Test
