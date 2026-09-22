@@ -12,11 +12,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
@@ -55,10 +51,10 @@ internal fun CurrentKkmCard(session: Session) {
     val kkm = session.selected ?: return
     val scope = rememberCoroutineScope()
     // Поле привязано к кассе: после смены кассы в нём не должно остаться
-    // название предыдущей.
-    var chosenName by remember(kkm.kkmId) {
-        mutableStateOf(session.displayName(kkm).takeIf { it != kkm.title }.orEmpty())
-    }
+    // название предыдущей. Набранное переживает уход в другой раздел —
+    // экран настроек уходит из состава вместе с ним.
+    val field = SettingsDrafts.forKkm(SettingsDrafts.Field.KKM_NAME, kkm.kkmId)
+    val chosenName = SettingsDrafts.of(field, session.displayName(kkm).takeIf { it != kkm.title }.orEmpty())
 
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -94,7 +90,7 @@ internal fun CurrentKkmCard(session: Session) {
             ) {
                 OutlinedTextField(
                     value = chosenName,
-                    onValueChange = { chosenName = it },
+                    onValueChange = { SettingsDrafts.type(field, it) },
                     label = { Text(texts.settings.localName) },
                     trailingIcon = { InfoTip(texts.settings.localNameHint) },
                     singleLine = true,
@@ -110,7 +106,9 @@ internal fun CurrentKkmCard(session: Session) {
                 // то же название второй раз.
                 FieldButton(texts.settings.save, enabled = !session.busy) {
                     scope.launch {
-                        if (session.rename(kkm, chosenName)) session.report(money.renameSaved)
+                        if (!session.rename(kkm, chosenName)) return@launch
+                        SettingsDrafts.forget(field)
+                        session.report(money.renameSaved)
                     }
                 }
                 FieldButton(
@@ -119,8 +117,9 @@ internal fun CurrentKkmCard(session: Session) {
                     enabled = chosenName.isNotBlank() && !session.busy
                 ) {
                     scope.launch {
-                        chosenName = ""
-                        if (session.rename(kkm, null)) session.report(money.renameReset)
+                        if (!session.rename(kkm, null)) return@launch
+                        SettingsDrafts.forget(field)
+                        session.report(money.renameReset)
                     }
                 }
             }

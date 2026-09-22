@@ -40,11 +40,15 @@ fun PrintFormCard(session: Session) {
     // отказом на каждое нажатие значит врать кассиру про своё состояние.
     val programming = kkm.isProgramming
 
-    fun save(changed: Branding) {
+    fun save(changed: Branding, onSaved: () -> Unit = {}) {
         scope.launch {
             session.guard(texts.settings.printForm) {
                 session.client.updateBranding(kkm.kkmId, changed, session.pin)
             } ?: return@launch
+            // Черновик забывается только после согласия узла: отказ
+            // оставляет набранное на месте, иначе владелец набирал бы
+            // девять строк заново.
+            onSaved()
             session.refreshKkms()
             session.report(texts.settings.printFormSaved)
         }
@@ -83,7 +87,9 @@ fun PrintFormCard(session: Session) {
             InfoTip(texts.settings.printOfdAdsHint)
         }
 
-        ReceiptLinesSection(branding, programming) { save(it) }
+        ReceiptLinesSection(kkm.kkmId, branding, programming) { changed ->
+            save(changed) { forgetReceiptLineDrafts(kkm.kkmId) }
+        }
         if (!programming) ProgrammingGate(session)
     }
 }

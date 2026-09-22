@@ -4,15 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
@@ -23,7 +17,6 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.TaxSettings
-import kz.mybrain.superkassa.desktop.server.updateAutoCashout
 import kz.mybrain.superkassa.desktop.server.updateTaxSettings
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
@@ -70,22 +63,30 @@ private fun ColumnScope.TaxFields(session: Session, kkm: Kkm) {
     val texts = LocalStrings.current
     val regimes = session.dictionaries[Dictionary.TaxRegimes].orEmpty()
     val groups = session.dictionaries[Dictionary.VatGroups].orEmpty()
-    var regime by remember(kkm.taxRegime) { mutableStateOf(kkm.taxRegime) }
-    var group by remember(kkm.defaultVatGroup) { mutableStateOf(kkm.defaultVatGroup) }
+    // Выбранное держится черновиком: экран настроек уходит из состава
+    // вместе с разделом, и владелец, заглянувший в журнал по дороге
+    // к «Сохранить», возвращался к прежнему режиму.
+    val regimeField = SettingsDrafts.forKkm(SettingsDrafts.Field.TAX_REGIME, kkm.kkmId)
+    val groupField = SettingsDrafts.forKkm(SettingsDrafts.Field.TAX_VAT_GROUP, kkm.kkmId)
+    val regime = SettingsDrafts.of(regimeField, kkm.taxRegime.orEmpty()).ifBlank { null }
+    val group = SettingsDrafts.of(groupField, kkm.defaultVatGroup.orEmpty()).ifBlank { null }
     ScreenSlot(dictionariesState(session, regimes.isEmpty() || groups.isEmpty()), dense = true) {
         EntryPicker(session, texts.settings.taxRegime, regimes, Dictionary.TaxRegimes, regime) {
-            regime = it
-            if (it == NO_VAT_REGIME) group = NO_VAT
+            SettingsDrafts.type(regimeField, it)
+            if (it == NO_VAT_REGIME) SettingsDrafts.type(groupField, NO_VAT)
         }
         // Ставка по умолчанию следует за режимом: у неплательщика НДС
         // выбирать не из чего, и пара NO_VAT + VAT_12 в настройках
         // упирается в отказ узла на первом же чеке.
         if (regime != NO_VAT_REGIME) {
             EntryPicker(session, texts.settings.defaultVatGroup, groups, Dictionary.VatGroups, group) {
-                group = it
+                SettingsDrafts.type(groupField, it)
             }
         }
-        SaveTax(session, kkm, regime, group)
+        SaveTax(session, kkm, regime, group) {
+            SettingsDrafts.forget(regimeField)
+            SettingsDrafts.forget(groupField)
+        }
     }
 }
 
@@ -128,45 +129,13 @@ private fun EntryPicker(
 }
 
 /**
- * Автоизъятие наличных при закрытии смены.
+ * Сохранение налоговых настроек: обе меняются одним обращением.
  *
- * На этом месте стоял переключатель автозакрытия смены. Его настройку
- * не читал никто: смену закрывает кассир, а сверх суток касса перестаёт
- * оформлять операции — так требуют требования к ККМ. Зато автоизъятие
- * узел выполняет по-настоящему, и задать его было нечем.
- *
- * Отдельной кнопки у переключателя нет: он и есть действие, и уходит
- * на узел сразу.
+ * Черновик забывается только после согласия узла: отказ оставляет
+ * набранное на месте, иначе владелец правил бы его заново.
  */
 @Composable
-private fun AutoCashoutRow(session: Session, kkm: Kkm) {
-    val texts = LocalStrings.current
-    val scope = rememberCoroutineScope()
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Switch(
-            checked = kkm.autoCashout,
-            enabled = !session.busy && kkm.isProgramming,
-            onCheckedChange = { wanted ->
-                scope.launch {
-                    session.guard(texts.settings.autoCashout) {
-                        session.client.updateAutoCashout(kkm.kkmId, wanted, session.pin)
-                    } ?: return@launch
-                    session.refreshKkms()
-                    session.report(texts.settings.settingsSaved)
-                }
-            }
-        )
-        Text(texts.settings.autoCashout, style = MaterialTheme.typography.bodyMedium)
-        InfoTip(texts.settings.autoCashoutHint)
-    }
-}
-
-/** Сохранение налоговых настроек: обе меняются одним обращением. */
-@Composable
-private fun SaveTax(session: Session, kkm: Kkm, regime: String?, group: String?) {
+private fun SaveTax(session: Session, kkm: Kkm, regime: String?, group: String?, onSaved: () -> Unit) {
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
     val changed = regime != kkm.taxRegime || group != kkm.defaultVatGroup
@@ -183,6 +152,7 @@ private fun SaveTax(session: Session, kkm: Kkm, regime: String?, group: String?)
                     session.guard(texts.settings.taxSettings) {
                         session.client.updateTaxSettings(kkm.kkmId, settings, session.pin)
                     } ?: return@launch
+                    onSaved()
                     session.refreshKkms()
                     session.report(texts.settings.settingsSaved)
                 }
