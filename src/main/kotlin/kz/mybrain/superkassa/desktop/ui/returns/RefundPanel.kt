@@ -34,6 +34,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
+import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -132,7 +133,9 @@ private fun RefundForm(
             // Возврат отдают тем же набором, каким платили: часть на карту,
             // часть из ящика. Сумма разбивается от суммы возврата, а не от
             // итога чека-основания.
-            PaymentLines(session, split, refundSum)
+            // Почему вид оплаты в списке погас — теми же словами, что и на
+            // продаже: погасшая строка без объяснения читается как поломка.
+            PaymentLines(session, split, refundSum, saleTexts(session.language).paymentUnsupported)
             // Деньги покупателю отдают из того же ящика, из которого их
             // изымают: о нехватке говорится под видами оплаты и до выдачи,
             // а не отказом узла после.
