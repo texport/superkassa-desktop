@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -56,7 +55,7 @@ fun SalesRegions(regions: List<SalesRegion>, texts: AnalyticsSalesTexts, modifie
 /** Подписи столбцов свода. */
 @Composable
 private fun RegionsHead(texts: AnalyticsSalesTexts) {
-    RegionsRow {
+    TableRow {
         HeadCell(texts.region, Modifier.weight(1f))
         HeadCell(texts.placeCount, Modifier.width(Sizes.salesNumberColumn))
         HeadCell(texts.activeRegisters, Modifier.width(Sizes.salesNumberColumn))
@@ -69,7 +68,7 @@ private fun RegionsHead(texts: AnalyticsSalesTexts) {
 /** Строка свода: регион, его числа и доля сети полоской. */
 @Composable
 private fun RegionRow(region: SalesRegion) {
-    RegionsRow(Modifier.padding(vertical = Spacing.tight)) {
+    TableRow(Modifier.padding(vertical = Spacing.tight)) {
         RowCell(region.title, Modifier.weight(1f))
         RowCell(region.placeCount.toString(), Modifier.width(Sizes.salesNumberColumn))
         RowCell(region.registerCount.toString(), Modifier.width(Sizes.salesNumberColumn))
@@ -123,17 +122,6 @@ private fun RegionShare(percent: Int) {
             maxLines = 1
         )
     }
-}
-
-/** Строка свода: та же раскладка у заголовка и у значений. */
-@Composable
-private fun RegionsRow(modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically,
-        content = content
-    )
 }
 
 /** Целое в процентах: доля полоски меряется им же. */

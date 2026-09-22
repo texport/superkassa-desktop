@@ -179,5 +179,6 @@ internal val analyticsTextsKk = AnalyticsTexts(
     firstSeen = "Алғаш рет",
     lastSeen = "Соңғы рет",
 
-    sales = analyticsSalesTextsKk
+    sales = analyticsSalesTextsKk,
+    record = analyticsRecordTextsKk
 )
