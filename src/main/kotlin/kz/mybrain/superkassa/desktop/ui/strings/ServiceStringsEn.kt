@@ -97,6 +97,7 @@ internal val englishSettings = SettingStrings(
     nodeUnknown = "The node did not answer",
     nodeAddress = "Node address",
     nodeAddressHint = "The node usually runs on this machine. A new address applies from the next request, no restart needed",
+    addressMalformed = "The address starts with http:// or https:// and contains no spaces",
     workplace = "Workplace settings",
     mapServices = "Map services",
     mapServicesHint = "Until an address is set, the community map is used: it is not meant for every owner",

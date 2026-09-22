@@ -114,6 +114,7 @@ data class SettingStrings(
     val nodeUnknown: String,
     val nodeAddress: String,
     val nodeAddressHint: String,
+    val addressMalformed: String,
     val workplace: String,
     val mapServices: String,
     val mapServicesHint: String,

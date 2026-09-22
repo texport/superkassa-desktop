@@ -97,6 +97,7 @@ internal val russianSettings = SettingStrings(
     nodeUnknown = "Узел не ответил",
     nodeAddress = "Адрес узла",
     nodeAddressHint = "Узел обычно стоит на этой же машине. Новый адрес действует со следующего обращения, перезапуск не нужен",
+    addressMalformed = "Адрес начинается с http:// или https:// и не содержит пробелов",
     workplace = "Настройки рабочего места",
     mapServices = "Службы карты",
     mapServicesHint = "Пока адрес не задан, работает общедоступная карта сообщества: на всех владельцев она не рассчитана",
