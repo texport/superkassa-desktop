@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
+import java.awt.KeyEventDispatcher
+import java.awt.KeyboardFocusManager
+import java.awt.event.KeyEvent
 
 /**
  * Что закрывает Escape: верхнее из открытых наложений.
@@ -48,5 +51,25 @@ fun CloseOnEscape(onClose: () -> Unit) {
         val close: () -> Unit = { current() }
         EscapeCloses.register(close)
         onDispose { EscapeCloses.unregister(close) }
+    }
+}
+
+/**
+ * Слушает Escape у самого окна, ниже Compose.
+ *
+ * Наложения рисуются своим слоем и забирают ввод себе, а разделы под ними
+ * его не видят; какой из слоёв услышит клавишу, решает фокус, и владелец,
+ * ни на что не нажимавший, попадал мимо. Диспетчер клавиатуры видит
+ * каждое нажатие в окне до всех слоёв.
+ */
+@Composable
+fun EscapeListener() {
+    DisposableEffect(Unit) {
+        val manager = KeyboardFocusManager.getCurrentKeyboardFocusManager()
+        val dispatcher = KeyEventDispatcher { event ->
+            event.id == KeyEvent.KEY_PRESSED && event.keyCode == KeyEvent.VK_ESCAPE && EscapeCloses.press()
+        }
+        manager.addKeyEventDispatcher(dispatcher)
+        onDispose { manager.removeKeyEventDispatcher(dispatcher) }
     }
 }
