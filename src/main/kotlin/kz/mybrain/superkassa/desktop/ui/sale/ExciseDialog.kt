@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.desktop.ui.components.onEnter
+import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -118,8 +119,10 @@ private fun StampList(stamps: List<String>, onRemove: (Int) -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = stamp, style = MoneyStyle.row, modifier = Modifier.weight(1f))
+                // Значок называется тем, что делает: прежде он назывался
+                // «Марок нет» — надписью пустого перечня, стоявшей рядом.
                 IconButton(onClick = { onRemove(at) }) {
-                    Icon(AppIcons.remove, contentDescription = texts.exciseEmpty)
+                    Icon(AppIcons.remove, contentDescription = LocalStrings.current.sale.remove)
                 }
             }
         }
