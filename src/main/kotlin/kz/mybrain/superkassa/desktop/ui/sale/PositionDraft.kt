@@ -115,7 +115,7 @@ data class PositionDraft(
 
     /**
      * Скидка на позицию необязательна, но не может съесть позицию целиком:
-     * ОФД чек с отрицательной строкой не примет.
+     * БФД чек ни с отрицательной, ни с нулевой строкой не примет.
      *
      * Отрицательная скидка названа своей причиной. Прежде она считалась
      * той же бедой, что и слишком большая, и кассир, набравший «-100»,
@@ -132,10 +132,15 @@ data class PositionDraft(
         )
     }
 
+    /**
+     * Скидка, равная стоимости позиции, — та же беда, что и большая:
+     * строка выходит нулевой, а нулевая строка — не продажа. Прежде
+     * равенство проходило, и товар за ноль вставал в фискальный чек.
+     */
     private fun tooBig(value: BigDecimal): Boolean {
         val priced = amount(price).value ?: return false
         val counted = amount(quantity, QUANTITY_SCALE).value ?: return false
-        return value > priced.multiply(counted)
+        return value >= priced.multiply(counted)
     }
 }
 

@@ -3,7 +3,10 @@ package kz.mybrain.superkassa.desktop
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.sale.Basket
 import kz.mybrain.superkassa.desktop.ui.sale.Position
+import kz.mybrain.superkassa.desktop.ui.sale.SaleBlock
+import kz.mybrain.superkassa.desktop.ui.sale.SaleState
 import kz.mybrain.superkassa.desktop.ui.sale.VatRate
+import kz.mybrain.superkassa.desktop.ui.sale.blockOf
 import kz.mybrain.superkassa.desktop.ui.sale.vatTitle
 import java.math.BigDecimal
 import kotlin.test.Test
@@ -72,6 +75,27 @@ class SaleBasketTest {
         assertFalse(basket.hasItemDiscount)
         basket.add(position("100", discount = "10"))
         assertTrue(basket.hasItemDiscount)
+    }
+
+    /**
+     * Скидка, забравшая строку целиком, оставляет в чеке ноль.
+     *
+     * Соседние позиции держат итог чека положительным, и общая проверка
+     * итога такую строку пропускала: товар за ноль уходил в фискальный
+     * чек, а экран об этом молчал.
+     */
+    @Test
+    fun `строка, съеденная скидкой до нуля, чек пробить не даёт`() {
+        val basket = Basket()
+        basket.add(position("30", discount = "30"))
+        basket.add(position("250"))
+
+        assertEquals(BigDecimal("0.00"), basket.positions.first().lineSum)
+        assertTrue(basket.hasZeroLine, "нулевая строка видна корзине")
+        assertEquals(
+            SaleBlock.ZeroLine,
+            blockOf(SaleState(positions = 2, hasZeroLine = true, total = BigDecimal("250")))
+        )
     }
 
     @Test

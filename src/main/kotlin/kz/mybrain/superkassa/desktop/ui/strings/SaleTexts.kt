@@ -70,7 +70,7 @@ data class SaleTexts(
     val blockKkmBlocked: String,
     val blockShiftClosed: String,
     val blockEmptyBasket: String,
-    val blockZeroPrice: String,
+    val blockZeroLine: String,
     val blockPaymentUnsupported: String,
     val blockDiscountScopes: String,
 

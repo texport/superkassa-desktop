@@ -22,8 +22,8 @@ data class SaleState(
     val shiftOpen: Boolean = true,
     val positions: Int = 1,
     val hasItemDiscount: Boolean = false,
-    /** Стоит ли в чеке позиция, цену которой так и не задали. */
-    val hasZeroPrice: Boolean = false,
+    /** Стоит ли в чеке строка, стоимость которой вышла нулевой. */
+    val hasZeroLine: Boolean = false,
     /** Скидка на весь чек, как её набрал кассир: суммой или процентом. */
     val discount: Adjustment = Adjustment(),
     /** Наценка на чек: проверяется теми же правилами, что и скидка. */
@@ -61,7 +61,7 @@ enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
     KkmBlocked({ sale, _ -> sale.blockKkmBlocked }),
     ShiftClosed({ sale, _ -> sale.blockShiftClosed }),
     EmptyBasket({ sale, _ -> sale.blockEmptyBasket }),
-    ZeroPrice({ sale, _ -> sale.blockZeroPrice }),
+    ZeroLine({ sale, _ -> sale.blockZeroLine }),
     DomainFields({ sale, _ -> sale.fillIn }),
     PaymentUnsupported({ sale, _ -> sale.blockPaymentUnsupported }),
     PaymentSplitEmpty({ _, payment -> payment.splitEmpty }),
@@ -112,10 +112,10 @@ fun blockOf(state: SaleState): SaleBlock? {
     if (state.kkmBlocked) return SaleBlock.KkmBlocked
     if (!state.shiftOpen) return SaleBlock.ShiftClosed
     if (state.positions == 0) return SaleBlock.EmptyBasket
-    // Нулевая позиция названа прежде итога: итог с соседними позициями
+    // Нулевая строка названа прежде итога: итог с соседними позициями
     // положителен, и общая причина «итог должен быть больше нуля»
     // о нулевой строке кассиру не сказала бы.
-    if (state.hasZeroPrice) return SaleBlock.ZeroPrice
+    if (state.hasZeroLine) return SaleBlock.ZeroLine
     if (state.missingDomainField != null) return SaleBlock.DomainFields
     if (state.paymentCodes.any { it in state.unsupportedPayments }) return SaleBlock.PaymentUnsupported
     when (state.splitIssue) {
