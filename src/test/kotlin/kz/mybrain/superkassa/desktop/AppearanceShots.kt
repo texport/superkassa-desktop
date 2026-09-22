@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.app.chooseAccent
+import kz.mybrain.superkassa.desktop.app.chooseTextScale
+import kz.mybrain.superkassa.desktop.app.chooseTypeface
+import kz.mybrain.superkassa.desktop.app.look
 import kz.mybrain.superkassa.desktop.ui.settings.AppearanceCard
 import kz.mybrain.superkassa.desktop.ui.theme.Accent
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance

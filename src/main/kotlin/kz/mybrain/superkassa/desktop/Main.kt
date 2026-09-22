@@ -14,8 +14,12 @@ import androidx.compose.ui.window.rememberWindowState
 import kz.mybrain.superkassa.desktop.app.LocalNode
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.appearance
 import kz.mybrain.superkassa.desktop.app.log.AppLog
 import kz.mybrain.superkassa.desktop.app.log.NodeOutput
+import kz.mybrain.superkassa.desktop.app.look
+import kz.mybrain.superkassa.desktop.app.rememberWindowSize
+import kz.mybrain.superkassa.desktop.app.rememberedWindowSize
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.Shell
 import kz.mybrain.superkassa.desktop.ui.debug.LogWindow

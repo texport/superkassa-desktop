@@ -4,6 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.app.appearance
+import kz.mybrain.superkassa.desktop.app.chooseAccent
+import kz.mybrain.superkassa.desktop.app.chooseTextScale
+import kz.mybrain.superkassa.desktop.app.chooseTypeface
+import kz.mybrain.superkassa.desktop.app.look
+import kz.mybrain.superkassa.desktop.app.switchAppearance
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.ColorChoice
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard

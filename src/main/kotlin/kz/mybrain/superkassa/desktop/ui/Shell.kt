@@ -17,8 +17,10 @@ import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.adoptCabinetNames
 import kz.mybrain.superkassa.desktop.app.loadDictionaries
+import kz.mybrain.superkassa.desktop.app.railCollapsed
 import kz.mybrain.superkassa.desktop.app.refreshKkms
 import kz.mybrain.superkassa.desktop.app.refreshSelected
+import kz.mybrain.superkassa.desktop.app.toggleRail
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetDocuments
 import kz.mybrain.superkassa.desktop.ui.strings.updateTexts
