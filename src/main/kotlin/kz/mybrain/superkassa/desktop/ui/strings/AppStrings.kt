@@ -98,14 +98,14 @@ data class LoginStrings(
     val noKkms: String,
 
     /**
-     * Узел не ответил на список касс.
+     * Список касс прочитать не удалось.
      *
      * Отдельно от пустого списка: пустой список — это ответ узла, а
-     * молчание не говорит о кассах на нём ничего. Одна надпись на оба
-     * случая утверждала кассиру то, чего приложение не знает.
+     * молчание и отказ не говорят о кассах на нём ничего. Одна надпись
+     * на оба случая утверждала кассиру то, чего приложение не знает.
      */
-    val nodeSilentTitle: String,
-    val nodeSilent: String,
+    val kkmsUnreadTitle: String,
+    val kkmsUnread: String,
     val yourKkm: String,
     val pick: String,
     val picked: String,

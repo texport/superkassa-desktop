@@ -66,6 +66,10 @@ class Session(
 
     val kkms = mutableStateListOf<Kkm>()
 
+    /** Читался ли список касс: пустой список и непрочитанный — разные вещи. */
+    var kkmsRead: Boolean by mutableStateOf(false)
+        internal set
+
     /** Печатная форма на экране просмотра; что там хранится — в [PrintPreview]. */
     internal val paper = PrintPreview()
 

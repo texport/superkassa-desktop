@@ -28,9 +28,9 @@ import kotlin.test.assertTrue
 class LoginEmptyTest {
 
     @Composable
-    private fun Empty(nodeAnswered: Boolean) {
+    private fun Empty(listRead: Boolean) {
         EmptyKkms(
-            nodeAnswered = nodeAnswered,
+            listRead = listRead,
             onReload = {},
             onCabinet = {},
             onRegister = {},
@@ -38,10 +38,10 @@ class LoginEmptyTest {
         )
     }
 
-    private fun shot(name: String, nodeAnswered: Boolean): ByteArray {
+    private fun shot(name: String, listRead: Boolean): ByteArray {
         val frame = RenderProbe(width = WIDTH, height = HEIGHT) {
             androidx.compose.foundation.layout.Box(Modifier.fillMaxSize().padding(Spacing.roomy)) {
-                Empty(nodeAnswered)
+                Empty(listRead)
             }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }
@@ -53,8 +53,8 @@ class LoginEmptyTest {
 
     @Test
     fun `молчащий узел не выдаётся за узел без касс`() {
-        val answered = shot("answered", nodeAnswered = true)
-        val silent = shot("silent", nodeAnswered = false)
+        val answered = shot("answered", listRead = true)
+        val silent = shot("silent", listRead = false)
 
         assertFalse(
             answered.contentEquals(silent),
@@ -67,8 +67,8 @@ class LoginEmptyTest {
     fun `о молчании узла сказано своими словами на каждом языке`() {
         Language.entries.forEach { language ->
             val texts = stringsOf(language).login
-            assertTrue(texts.nodeSilentTitle != texts.noKkmsTitle, "$language: название беды одно на оба случая")
-            assertTrue(texts.nodeSilent != texts.noKkms, "$language: объяснение одно на оба случая")
+            assertTrue(texts.kkmsUnreadTitle != texts.noKkmsTitle, "$language: название беды одно на оба случая")
+            assertTrue(texts.kkmsUnread != texts.noKkms, "$language: объяснение одно на оба случая")
         }
     }
 

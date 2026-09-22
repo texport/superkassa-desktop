@@ -101,6 +101,11 @@ class NodeCalls(
         return try {
             block()
         } catch (refusal: ServerRefusal) {
+            // Отказ по существу — это ответ: узел на связи и разговаривает.
+            // Прежде связь считалась только по удачным обращениям, и у узла,
+            // отвечавшего отказом, шапка писала «Узел недоступен» — кассир
+            // звал обслуживание к узлу, который работает.
+            available = true
             val words = refusal.words.of(language())
             AppLog.warn(LogSource.Node, "$what: отказ ${refusal.code} — $words")
             last = Message.Refusal(words, refusal.code)

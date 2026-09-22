@@ -23,6 +23,7 @@ internal fun Session.adoptKkms(loaded: List<Kkm>) {
     kkms.addAll(loaded)
     settings.adoptNames(loaded)
     calls.answered()
+    kkmsRead = true
     selected = selected?.let { was -> loaded.firstOrNull { it.kkmId == was.kkmId } ?: was }
 }
 

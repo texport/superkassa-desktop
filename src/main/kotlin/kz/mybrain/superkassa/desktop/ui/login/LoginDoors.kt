@@ -52,17 +52,18 @@ internal fun LoginHeader(session: Session) {
 /**
  * Списка касс нет.
  *
- * Пустой список и молчание узла — разные беды, и делать вид, что они одна,
- * нельзя: на молчащем узле «на этом узле ни одной кассы» утверждает то,
- * чего приложение не знает, а «Новая касса» главным действием посылает
- * кассира заводить кассу там, где не читается даже список.
+ * Пустой список и непрочитанный список — разные беды, и делать вид, что
+ * они одна, нельзя: пока список не прочитан, «на этом узле ни одной кассы»
+ * утверждает то, чего приложение не знает, а «Новая касса» главным
+ * действием посылает кассира заводить кассу там, где не читается даже
+ * список.
  *
- * @param nodeAnswered ответил ли узел по существу; `false` — не ответил
- *   вовсе, и о кассах на нём неизвестно ничего.
+ * @param listRead прочитан ли список касс; `false` — узел промолчал
+ *   или ответил отказом, и о кассах на нём неизвестно ничего.
  */
 @Composable
 internal fun EmptyKkms(
-    nodeAnswered: Boolean,
+    listRead: Boolean,
     onReload: () -> Unit,
     onCabinet: () -> Unit,
     onRegister: () -> Unit,
@@ -73,10 +74,10 @@ internal fun EmptyKkms(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        if (nodeAnswered) {
+        if (listRead) {
             NoKkms(onRegister, onCabinet, onSettings)
         } else {
-            NodeSilent(onReload, onSettings, onCabinet)
+            KkmsUnread(onReload, onSettings, onCabinet)
         }
     }
 }
@@ -104,19 +105,20 @@ private fun NoKkms(onRegister: () -> Unit, onCabinet: () -> Unit, onSettings: ()
 }
 
 /**
- * Узел не ответил: о кассах на нём неизвестно ничего.
+ * Список не прочитан: о кассах на узле неизвестно ничего.
  *
  * Главное действие здесь — повтор, а не заведение кассы: пока список
  * не читается, заводить на этом узле нечего. Вторым идут настройки —
- * чаще всего молчит не узел, а неверно записанный его адрес.
+ * чаще всего молчит не узел, а неверно записанный его адрес. Сам отказ
+ * узла кассир читает строкой сообщения внизу окна.
  */
 @Composable
-private fun NodeSilent(onReload: () -> Unit, onSettings: () -> Unit, onCabinet: () -> Unit) {
+private fun KkmsUnread(onReload: () -> Unit, onSettings: () -> Unit, onCabinet: () -> Unit) {
     val texts = LocalStrings.current
     EmptyState(
         icon = AppIcons.warning,
-        title = texts.login.nodeSilentTitle,
-        hint = texts.login.nodeSilent
+        title = texts.login.kkmsUnreadTitle,
+        hint = texts.login.kkmsUnread
     )
     Button(onClick = onReload) { Text(texts.login.reload) }
     DoorButton(AppIcons.settings, texts.sections.settings, onSettings)

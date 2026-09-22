@@ -28,8 +28,8 @@ internal val EnglishStrings = AppStrings(
         search = "Search: number, name, company",
         noKkmsTitle = "No registers on this node",
         noKkms = "The node returned no registers. Add one in settings or check the connection.",
-        nodeSilentTitle = "The node did not answer",
-        nodeSilent = "The register list could not be read, so how many registers this node has is unknown. " +
+        kkmsUnreadTitle = "The register list was not read",
+        kkmsUnread = "The node did not hand over the register list, so how many registers it has is unknown. " +
             "Check the node address in the settings and try again.",
         yourKkm = "Your register",
         pick = "Choose",
