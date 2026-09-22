@@ -73,6 +73,24 @@ class Preferences(private val file: File = defaultFile()) {
             view.appearance = value
         }
 
+    var accent: String?
+        get() = view.accent
+        set(value) {
+            view.accent = value
+        }
+
+    var typeface: String?
+        get() = view.typeface
+        set(value) {
+            view.typeface = value
+        }
+
+    var textScale: String?
+        get() = view.textScale
+        set(value) {
+            view.textScale = value
+        }
+
     var windowSize: Pair<Int, Int>?
         get() = view.windowSize
         set(value) {

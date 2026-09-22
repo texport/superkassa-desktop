@@ -82,7 +82,7 @@ private fun ApplicationScope.SuperkassaApplication() {
         title = APP_NAME,
         state = windowState
     ) {
-        SuperkassaTheme(session.appearance) {
+        SuperkassaTheme(session.appearance, session.look) {
             ProvideStrings(session.language) {
                 Shell(session)
             }
@@ -91,6 +91,6 @@ private fun ApplicationScope.SuperkassaApplication() {
     // Журнал — соседнее окно, а не раздел кассы: по нему отлаживают
     // то, что делают в главном окне, и одно не должно закрывать другое.
     if (AppLog.debugMode) {
-        LogWindow(session.language, session.appearance) { AppLog.switchDebugMode(false) }
+        LogWindow(session.language, session.appearance, session.look) { AppLog.switchDebugMode(false) }
     }
 }

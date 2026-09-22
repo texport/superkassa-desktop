@@ -13,6 +13,7 @@ import kotlinx.coroutines.asCoroutineDispatcher
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
+import kz.mybrain.superkassa.desktop.ui.theme.Look
 import kz.mybrain.superkassa.desktop.ui.theme.SuperkassaTheme
 import java.awt.Panel
 import java.util.concurrent.Executors
@@ -33,6 +34,8 @@ import java.awt.event.KeyEvent as AwtKeyEvent
 class RenderProbe(
     width: Int = WIDTH,
     height: Int = HEIGHT,
+    appearance: Appearance = Appearance.Light,
+    look: Look = Look(),
     content: @Composable () -> Unit
 ) : AutoCloseable {
 
@@ -63,7 +66,7 @@ class RenderProbe(
             density = Density(1f),
             coroutineContext = thread.asCoroutineDispatcher()
         ) {
-            SuperkassaTheme(Appearance.Light) {
+            SuperkassaTheme(appearance, look) {
                 ProvideStrings(Language.Ru) { content() }
             }
         }

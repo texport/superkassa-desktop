@@ -42,6 +42,7 @@ internal val russianSettings = SettingStrings(
     appearance = "Оформление",
     appearanceHint = "Тема и язык этого рабочего места. Хранится на этой машине: на чеках, на других кассах и в кабинете ничего не " +
         "меняется",
+    look = russianLook,
     ofdToken = "Токен БФД",
     newToken = "Новый токен",
     saveToken = "Сохранить токен",
