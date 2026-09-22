@@ -10,7 +10,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -51,45 +50,79 @@ internal fun LoginHeader(session: Session) {
 }
 
 /**
- * Список касс пуст.
+ * Списка касс нет.
  *
- * Чаще всего это недоступный узел, а не отсутствие касс, и кассир должен
- * видеть разницу. Кнопка повтора обязана остаться на экране: без неё
- * пробовать снова нечем, кроме перезапуска кассы.
+ * Пустой список и молчание узла — разные беды, и делать вид, что они одна,
+ * нельзя: на молчащем узле «на этом узле ни одной кассы» утверждает то,
+ * чего приложение не знает, а «Новая касса» главным действием посылает
+ * кассира заводить кассу там, где не читается даже список.
+ *
+ * @param nodeAnswered ответил ли узел по существу; `false` — не ответил
+ *   вовсе, и о кассах на нём неизвестно ничего.
  */
 @Composable
 internal fun EmptyKkms(
+    nodeAnswered: Boolean,
     onReload: () -> Unit,
     onCabinet: () -> Unit,
     onRegister: () -> Unit,
     onSettings: () -> Unit
 ) {
-    val texts = LocalStrings.current
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        EmptyState(
-            icon = AppIcons.kkm,
-            // Название о том, чего нет, а не о невыбранной кассе: выбирать
-            // здесь не из чего, и «Касса не выбрана» над объяснением
-            // «узел не отдал ни одной кассы» называло другую беду.
-            title = texts.login.noKkmsTitle,
-            hint = texts.login.noKkms
-        )
-        // Завести кассу — главное действие пустого экрана: без кассы
-        // повторять запрос списка можно бесконечно.
-        Button(onClick = onRegister) { Text(texts.sections.register) }
-        // Вторая дверь стоит и здесь: у владельца, который только начал,
-        // нет ни кассы, ни компании, ни точки — и всё это заводится
-        // в кабинете, а не в кассе.
-        DoorButton(AppIcons.cabinet, texts.sections.cabinet, onCabinet)
-        // Пустой список чаще всего означает недоступный узел, и первое,
-        // что тут нужно, — проверить его адрес.
-        DoorButton(AppIcons.settings, texts.sections.settings, onSettings)
-        TextButton(onClick = onReload) { Text(texts.login.reload) }
+        if (nodeAnswered) {
+            NoKkms(onRegister, onCabinet, onSettings)
+        } else {
+            NodeSilent(onReload, onSettings, onCabinet)
+        }
     }
+}
+
+/** Узел ответил, и касс на нём правда нет: первую заводит владелец. */
+@Composable
+private fun NoKkms(onRegister: () -> Unit, onCabinet: () -> Unit, onSettings: () -> Unit) {
+    val texts = LocalStrings.current
+    EmptyState(
+        icon = AppIcons.kkm,
+        // Название о том, чего нет, а не о невыбранной кассе: выбирать
+        // здесь не из чего, и «Касса не выбрана» над объяснением
+        // «узел не отдал ни одной кассы» называло другую беду.
+        title = texts.login.noKkmsTitle,
+        hint = texts.login.noKkms
+    )
+    // Завести кассу — главное действие пустого экрана: узел на связи,
+    // и ему есть чем ответить, как только касса появится.
+    Button(onClick = onRegister) { Text(texts.sections.register) }
+    // Вторая дверь стоит и здесь: у владельца, который только начал,
+    // нет ни кассы, ни компании, ни точки — и всё это заводится
+    // в кабинете, а не в кассе.
+    DoorButton(AppIcons.cabinet, texts.sections.cabinet, onCabinet)
+    DoorButton(AppIcons.settings, texts.sections.settings, onSettings)
+}
+
+/**
+ * Узел не ответил: о кассах на нём неизвестно ничего.
+ *
+ * Главное действие здесь — повтор, а не заведение кассы: пока список
+ * не читается, заводить на этом узле нечего. Вторым идут настройки —
+ * чаще всего молчит не узел, а неверно записанный его адрес.
+ */
+@Composable
+private fun NodeSilent(onReload: () -> Unit, onSettings: () -> Unit, onCabinet: () -> Unit) {
+    val texts = LocalStrings.current
+    EmptyState(
+        icon = AppIcons.warning,
+        title = texts.login.nodeSilentTitle,
+        hint = texts.login.nodeSilent
+    )
+    Button(onClick = onReload) { Text(texts.login.reload) }
+    DoorButton(AppIcons.settings, texts.sections.settings, onSettings)
+    // Кабинет живёт своей службой и отвечает, когда узел молчит: владельцу
+    // остаётся хотя бы он.
+    DoorButton(AppIcons.cabinet, texts.sections.cabinet, onCabinet)
 }
 
 /**

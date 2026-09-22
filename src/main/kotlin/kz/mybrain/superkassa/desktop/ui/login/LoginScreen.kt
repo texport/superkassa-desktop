@@ -126,6 +126,10 @@ fun LoginScreen(session: Session, cabinet: CabinetSession) {
             }
             if (session.kkms.isEmpty()) {
                 EmptyKkms(
+                    // Узел, ответивший по существу, и узел, промолчавший, —
+                    // разные беды: у первого касс правда нет, о втором
+                    // неизвестно ничего.
+                    nodeAnswered = session.nodeAvailable,
                     onReload = { reload() },
                     onCabinet = { atCabinet = true },
                     onRegister = { registering = true },
