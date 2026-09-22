@@ -2,6 +2,8 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.server.cabinet.KkmMapView
+import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
+import kz.mybrain.superkassa.desktop.ui.cabinet.kkmRecord
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 
 /**
@@ -16,10 +18,11 @@ import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 data class MapSieve(
     val needle: String = "",
     val place: String? = null,
+    val record: KkmRecord? = null,
     val marks: Set<KkmMark> = emptySet()
 ) {
     /** Задан ли отбор хоть чем-нибудь: по этому плашки показывают, что они не пустые. */
-    val set: Boolean get() = needle.isNotBlank() || place != null || marks.isNotEmpty()
+    val set: Boolean get() = needle.isNotBlank() || place != null || record != null || marks.isNotEmpty()
 }
 
 /**
@@ -35,18 +38,42 @@ enum class KkmMark(val title: (AnalyticsTexts) -> String, val holds: (AnalyticsK
     ShiftOpen({ it.markShiftOpen }, { it.shiftStatus == SHIFT_OPEN }),
 
     /** Касса заблокирована: фискальных операций не выполняет. */
-    Blocked({ it.markBlocked }, { it.blocked }),
-
-    /** Касса не стоит на учёте КГД: снята или заявление не прошло. */
-    OffRecord({ it.markOffRecord }, { it.status != null && it.status !in ON_RECORD })
+    Blocked({ it.markBlocked }, { it.blocked })
 }
+
+/**
+ * Учёт КГД — не плашкой, а выбором из списка.
+ *
+ * Смыслы учёта исключают друг друга: касса не бывает разом на учёте
+ * и снятой с него. Четыре нажимаемые плашки в ряду обещали бы обратное —
+ * нажав две, владелец получал бы пустую карту, — а ряд отбора от них
+ * переносился на вторую строку и забирал высоту у самой карты.
+ */
+fun recordTitle(record: KkmRecord?, texts: AnalyticsTexts): String = when (record) {
+    null -> texts.allRecords
+    KkmRecord.OnRecord -> texts.markOnRecord
+    KkmRecord.InProgress -> texts.markInProgress
+    KkmRecord.Refused -> texts.markRefused
+    KkmRecord.Deregistered -> texts.markDeregistered
+}
+
+/**
+ * Что КГД знает об этой кассе.
+ *
+ * Все плашки учёта и цвет ярлычка спрашивают одно и то же, и спрашивают
+ * здесь: прежде набор «на учёте» лежал в трёх файлах тремя копиями.
+ */
+val AnalyticsKkm.record: KkmRecord get() = kkmRecord(status)
 
 /** Торговая точка для плашки отбора: чем её звать и что отбирать. */
 data class SievePlace(val id: String, val name: String)
 
 /** Оставляет ли отбор эту кассу. */
 fun MapSieve.keeps(kkm: AnalyticsKkm): Boolean =
-    marks.all { it.holds(kkm) } && keepsPlace(kkm) && keepsNeedle(kkm)
+    marks.all { it.holds(kkm) } && keepsRecord(kkm) && keepsPlace(kkm) && keepsNeedle(kkm)
+
+private fun MapSieve.keepsRecord(kkm: AnalyticsKkm): Boolean =
+    record == null || kkm.record == record
 
 private fun MapSieve.keepsPlace(kkm: AnalyticsKkm): Boolean =
     place == null || kkm.retailPlaceId == place
@@ -87,6 +114,3 @@ fun sievePlaces(view: KkmMapView?): List<SievePlace> =
 
 /** Состояние смены, при котором касса торгует. */
 private const val SHIFT_OPEN = "OPEN"
-
-/** Состояния кабинета, при которых касса стоит на учёте. */
-private val ON_RECORD = setOf("REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS")

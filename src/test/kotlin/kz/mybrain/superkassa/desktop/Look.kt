@@ -31,6 +31,7 @@ import kz.mybrain.superkassa.desktop.ui.analytics.KkmGroup
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapCard
 import kz.mybrain.superkassa.desktop.ui.analytics.AnalyticsMapLegend
 import kz.mybrain.superkassa.desktop.ui.analytics.MapLegend
+import kz.mybrain.superkassa.desktop.ui.analytics.mapCount
 import kz.mybrain.superkassa.desktop.ui.analytics.MapTally
 import kz.mybrain.superkassa.desktop.ui.analytics.Placement
 import kz.mybrain.superkassa.desktop.ui.analytics.UnderMap
@@ -216,9 +217,7 @@ private fun MapOrReason(
             }
             Box(Modifier.fillMaxSize()) {
                 MapTally(
-                    shown = shown.sumOf { it.size },
-                    placed = laid.placed.size,
-                    whole = whole,
+                    shown = mapCount(shown, laid.placed.size, whole),
                     sieved = model.sieve.set,
                     texts = Look.texts,
                     modifier = Modifier.align(Alignment.TopStart).padding(Spacing.snug)

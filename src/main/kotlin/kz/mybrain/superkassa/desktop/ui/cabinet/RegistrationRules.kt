@@ -22,8 +22,8 @@ fun availableActions(register: CabinetRegister): Set<ActionKind> {
     val status = register.status
     return when {
         status.endsWith(IN_ISNA_PROCESS) -> emptySet()
-        status == DEREGISTERED -> emptySet()
-        status in ON_RECORD -> setOf(ActionKind.Reregistration, ActionKind.Deregistration)
+        kkmRecord(status) == KkmRecord.Deregistered -> emptySet()
+        onRecord(status) -> setOf(ActionKind.Reregistration, ActionKind.Deregistration)
         else -> setOf(ActionKind.Registration)
     }
 }
@@ -56,13 +56,7 @@ fun awaitingIsna(register: CabinetRegister): Boolean = register.status.endsWith(
  * поданного заявления. Прежде кнопка нажималась всегда, и по черновику
  * приходил отказ — по-английски и кодом.
  */
-fun tokenAllowed(register: CabinetRegister): Boolean = register.status in ON_RECORD
-
-/** Состояния кассы, стоящей на учёте. */
-private val ON_RECORD = setOf("REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS")
-
-/** Состояние снятой с учёта кассы. */
-private const val DEREGISTERED = "DEREGISTERED"
+fun tokenAllowed(register: CabinetRegister): Boolean = onRecord(register.status)
 
 /** Хвост состояний, означающих ожидание ответа ИСНА. */
 private const val IN_ISNA_PROCESS = "_IN_ISNA_PROCESS"

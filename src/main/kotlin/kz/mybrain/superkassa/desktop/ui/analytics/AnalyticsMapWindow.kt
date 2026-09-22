@@ -95,9 +95,7 @@ private fun MapOverlay(parts: MapParts, canvas: IntSize) {
     }
     Box(Modifier.fillMaxSize()) {
         MapTally(
-            shown = shown.sumOf { it.size },
-            placed = parts.placement.placed.size,
-            whole = parts.whole,
+            shown = mapCount(shown, parts.placement.placed.size, parts.whole),
             sieved = model.sieve.set,
             texts = parts.texts,
             modifier = Modifier.align(Alignment.TopStart).padding(Spacing.snug)

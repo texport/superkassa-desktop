@@ -60,12 +60,21 @@ data class AnalyticsTexts(
      */
     val mapShown: String,
     val mapShownOf: String,
+
+    /**
+     * Сколько из видимых касс стоит на учёте КГД.
+     *
+     * Первое, о чём спрашивают карту сети: остальные числа говорят,
+     * сколько касс заведено, и ни одно — сколько из них работает по закону.
+     */
+    val mapOnRecordOf: String,
     val mapSievedOf: String,
 
     /** Легенда карты: что значат цвет и размер кружка. */
     val mapLegend: String,
     val legendGood: String,
-    val legendSomeBlocked: String,
+    val legendIdle: String,
+    val legendSomeTrouble: String,
     val legendTrouble: String,
     val legendSize: String,
     val legendChosen: String,
@@ -75,7 +84,13 @@ data class AnalyticsTexts(
     val allPlaces: String,
     val markShiftOpen: String,
     val markBlocked: String,
-    val markOffRecord: String,
+
+    /** Отбор по учёту КГД: четыре смысла вместо прежнего «не на учёте» и «любой». */
+    val allRecords: String,
+    val markOnRecord: String,
+    val markInProgress: String,
+    val markRefused: String,
+    val markDeregistered: String,
     val sieveEmpty: String,
     val sieveEmptyHint: String,
     val sieveClear: String,

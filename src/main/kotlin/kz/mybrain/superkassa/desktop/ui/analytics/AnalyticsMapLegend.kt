@@ -69,8 +69,11 @@ internal fun MapLegend(legend: AnalyticsMapLegend, texts: AnalyticsTexts, modifi
             SectionHeader(texts.mapLegend, legend.expanded, legend::toggle)
             Collapsible(legend.expanded) {
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+                    // Порядок от спокойного к тревожному: глаз идёт сверху
+                    // вниз, и так он идёт от «всё хорошо» к «надо вмешаться».
                     LegendLine(toneColor(StatusTone.Good), texts.legendGood)
-                    LegendLine(toneColor(StatusTone.Waiting), texts.legendSomeBlocked)
+                    LegendLine(toneColor(StatusTone.Idle), texts.legendIdle)
+                    LegendLine(toneColor(StatusTone.Waiting), texts.legendSomeTrouble)
                     LegendLine(toneColor(StatusTone.Bad), texts.legendTrouble)
                     LegendNote(texts.legendSize)
                     LegendNote(texts.legendChosen)

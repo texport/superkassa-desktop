@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.ui.analytics.KkmMark
 import kz.mybrain.superkassa.desktop.ui.analytics.MapSieve
+import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
 import kz.mybrain.superkassa.desktop.ui.analytics.sieved
 import kotlin.test.Test
 
@@ -32,6 +33,10 @@ class AnalyticsSieveShots {
     @Test
     fun `все плашки нажаты разом`() =
         look("an-sieve-all-marks", MapSieve(needle = "Касса", place = "p-1", marks = KkmMark.entries.toSet()))
+
+    /** Отбор по учёту КГД: выбранный смысл виден в плашке, а не угадывается. */
+    @Test
+    fun `отбор по учёту КГД`() = look("an-sieve-record", MapSieve(record = KkmRecord.Deregistered))
 
     /** Сброс отбора: на карте снова всё хозяйство. */
     @Test
