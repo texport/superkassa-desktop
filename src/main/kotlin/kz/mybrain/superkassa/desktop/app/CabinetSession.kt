@@ -148,12 +148,17 @@ class CabinetSession(
      *
      * Список выкладывается страницами по мере чтения: у сети их сорок,
      * и ждать последнюю, глядя в пустую колонку, владельцу незачем.
+     * Выкладывается, пока прочитанное длиннее показанного: перечитывание
+     * уже прочитанного списка иначе сбрасывало его до первой полусотни
+     * и набирало заново на глазах у владельца. Укоротившийся список
+     * принимается в конце чтения — целиком, каким его отдал кабинет.
      * Перечитывать весь список ради одной изменившейся кассы тоже
      * незачем — для этого есть [registerChanged].
      */
     suspend fun refreshRegisters() {
         val current = token ?: return
-        guard { client.allRegisters(current) { part, _ -> registers = part } }
+        val all = guard { client.allRegisters(current) { part, _ -> if (part.size >= registers.size) registers = part } }
+        if (all != null) registers = all
         onRegisterNames?.invoke(registers)
     }
 
@@ -172,18 +177,23 @@ class CabinetSession(
     /**
      * Перечитывает торговые точки компании — все, а не первую страницу.
      *
+     * Страницами выкладывается и здесь, и по тому же правилу, что у касс:
+     * колонка не пустеет от перечитывания.
+     *
      * @return удалось ли прочитать: по одному опустевшему списку колонка
      *   не отличает хозяйство без точек от молчащего кабинета, и владельцу
      *   с тысячей точек предлагалось завести первую.
      */
     suspend fun refreshPlaces(): Boolean {
         val current = token ?: return false
-        return guard {
+        val all = guard {
             client.allRetailPlaces(current) { part, total ->
-                places = part
                 placesTotal = total.toInt()
+                if (part.size >= places.size) places = part
             }
-        } != null
+        }
+        if (all != null) places = all
+        return all != null
     }
 
     /**
