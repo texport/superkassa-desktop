@@ -2,60 +2,91 @@ package kz.mybrain.superkassa.desktop.ui.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.desktop.ui.adaptive.MoneyText
+import kz.mybrain.superkassa.desktop.ui.adaptive.NumberText
+import kz.mybrain.superkassa.desktop.ui.adaptive.ScrollingTable
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableColumn
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableLine
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableWidths
+import kz.mybrain.superkassa.desktop.ui.components.stripedAt
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
+import kz.mybrain.superkassa.desktop.ui.theme.HistoryLayout
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.theme.TableColumns
 
 /**
- * Таблица журнала документов: шапка и строка.
+ * Таблица журнала документов: столбцы, шапка и строки.
  *
- * Одна на журнал кассы и на документы кассы в кабинете: столбцы, их
- * ширины и место кнопок печати заданы здесь, а не на каждом экране.
- * Написанные дважды, они разъезжались — сумма стояла в разных столбцах
- * у одного и того же чека.
+ * Одна на журнал кассы, документы смены и документы кассы в кабинете:
+ * столбцы и место кнопок заданы здесь, а не на каждом экране. Написанные
+ * дважды, они разъезжались — сумма стояла в разных столбцах у одного чека.
  *
- * Шапка стоит над списком, а не в нём: при прокрутке тысячи строк смены
- * подписи столбцов обязаны оставаться на месте.
+ * Столбец не бывает уже своей наименьшей ширины: кнопка печати пропадала
+ * до точки, сумма слипалась с признаком. Теперь таблица едет вбок.
  */
 @Composable
-fun JournalHeader(journal: HistoryJournalTexts) {
-    val texts = LocalStrings.current
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-                .padding(horizontal = Spacing.normal, vertical = Spacing.tight),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            HeadCell(journal.colTime, TIME)
-            HeadCell(journal.colType, TYPE)
-            HeadCell(journal.colNumber, NUMBER, TextAlign.End)
-            HeadCell(journal.colShift, SHIFT, TextAlign.End)
-            HeadCell(journal.colAmount, AMOUNT, TextAlign.End)
-            HeadCell(journal.colFiscalSign, SIGN)
-            HeadCell(texts.dashboard.state, STATE)
-            HeadCell(texts.common.print, PRINT, TextAlign.End)
+fun JournalTable(
+    journal: HistoryJournalTexts,
+    entries: List<JournalEntry>,
+    modifier: Modifier = Modifier,
+    onOpen: ((JournalEntry) -> Unit)? = null,
+    onPreview: ((JournalEntry) -> Unit)? = null,
+    onPrint: ((JournalEntry) -> Unit)? = null
+) {
+    ScrollingTable(
+        columns = journalColumns(),
+        modifier = modifier,
+        header = { widths -> JournalHeader(journal, widths) },
+        rows = { widths ->
+            itemsIndexed(entries, key = { _, entry -> entry.key }) { at, entry ->
+                JournalRow(
+                    entry = entry,
+                    striped = stripedAt(at),
+                    onOpen = onOpen?.let { open -> { open(entry) } },
+                    onPreview = onPreview?.let { preview -> { preview(entry) } },
+                    onPrint = onPrint?.let { print -> { print(entry) } },
+                    widths = widths
+                )
+            }
+        }
+    )
+}
+
+/** Подписи столбцов: мельче и тише строки, иначе шапка спорит с данными. */
+@Composable
+fun JournalHeader(journal: HistoryJournalTexts, widths: TableWidths = leastWidths(journalColumns())) {
+    val titles = listOf(
+        journal.colTime, journal.colType, journal.colNumber, journal.colShift,
+        journal.colAmount, journal.colFiscalSign, LocalStrings.current.dashboard.state
+    )
+    Column {
+        TableLine(widths, Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) { column ->
+            // Над кнопками подписи нет: значки говорят за себя, а слово
+            // «Печать» над двумя кнопками обрезалось бы до «Печ…».
+            titles.getOrNull(column)?.let { title ->
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(vertical = Spacing.tight)
+                )
+            }
         }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
     }
@@ -72,6 +103,7 @@ fun JournalHeader(journal: HistoryJournalTexts) {
  *   не нажимается, и указатель это показывает.
  * @param onPreview показ печатной формы; `null` — формы у источника нет.
  * @param onPrint отправка формы на принтер; `null` — печатать нечем.
+ * @param widths ширины столбцов в месте таблицы.
  */
 @Composable
 fun JournalRow(
@@ -79,98 +111,57 @@ fun JournalRow(
     striped: Boolean,
     onOpen: (() -> Unit)? = null,
     onPreview: (() -> Unit)? = null,
-    onPrint: (() -> Unit)? = null
+    onPrint: (() -> Unit)? = null,
+    widths: TableWidths = leastWidths(journalColumns())
 ) {
-    val base = Modifier.fillMaxWidth().background(rowTint(striped))
-    Row(
-        modifier = (if (onOpen == null) base else base.clickable(onClick = onOpen))
-            .padding(horizontal = Spacing.normal),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        BodyCell(entry.moment, TIME)
-        BodyCell(entry.type, TYPE)
-        BodyCell(entry.number, NUMBER, TextAlign.End)
-        BodyCell(entry.shiftNo?.toString() ?: Glyphs.DASH, SHIFT, TextAlign.End)
-        // Сумма — моноширинно и вправо: столбец читается сверху вниз
-        // одним движением глаза, а не выискивается по ширине знаков.
-        Text(
-            text = entry.amount,
-            style = MoneyStyle.row,
-            maxLines = 1,
-            modifier = Modifier.weight(AMOUNT)
-        )
-        BodyCell(entry.sign, SIGN)
-        Box(modifier = Modifier.weight(STATE)) {
-            // О доставке говорит не всякая запись: у смены состояние своё —
-            // открыта она или закрыта.
-            if (entry.delivery != null) {
-                JournalDeliveryChip(entry.delivery, entry.refusal)
-            } else {
-                JournalStateChip(entry.state)
-            }
-        }
-        Box(modifier = Modifier.weight(PRINT), contentAlignment = Alignment.CenterEnd) {
-            RowActions(entry, onPreview, onPrint)
+    // Строка своей ширины и там, где места меньше: столбцы не сжимаются,
+    // а выходят за край — в таблице их приводит прокрутка вбок.
+    val base = Modifier.wrapContentWidth(Alignment.Start, unbounded = true)
+        .heightIn(min = HistoryLayout.row)
+        .background(rowTint(striped))
+    TableLine(widths, if (onOpen == null) base else base.clickable(onClick = onOpen)) { column ->
+        when (column) {
+            TIME -> NumberText(entry.moment)
+            TYPE -> NameCell(entry.type)
+            NUMBER -> NumberText(entry.number)
+            SHIFT -> NumberText(entry.shiftNo?.toString() ?: Glyphs.DASH)
+            AMOUNT -> MoneyText(entry.amount)
+            SIGN -> NumberText(entry.sign)
+            STATE -> StateCell(entry)
+            PREVIEW -> RowAction(entry, onPreview, preview = true)
+            else -> RowAction(entry, onPrint, preview = false)
         }
     }
 }
+
+private const val TIME = 0
+private const val TYPE = 1
+private const val NUMBER = 2
+private const val SHIFT = 3
+private const val AMOUNT = 4
+private const val SIGN = 5
+private const val STATE = 6
+private const val PREVIEW = 7
+private const val PRINT = 8
 
 /**
- * Показать форму на экране и отправить её на принтер.
+ * Столбцы журнала по порядку; растут вместе с размером шрифта.
  *
- * Печатной формы у отклонённого документа нет: фиктивный чек на руках
- * покупателя дороже любого удобства.
+ * Лишнее место уходит виду документа, сумме и состоянию: у суммы в широком
+ * окне — своя ступень вместо уменьшенной, у вида и состояния — надписи,
+ * по-казахски длиннее всего. Номера и кнопки своей ширины всегда.
  */
 @Composable
-private fun RowActions(entry: JournalEntry, onPreview: (() -> Unit)?, onPrint: (() -> Unit)?) {
-    val texts = LocalStrings.current
-    Row {
-        if (onPreview != null) {
-            IconButton(enabled = entry.printable, onClick = onPreview) {
-                Icon(AppIcons.preview, contentDescription = texts.preview.title)
-            }
-        }
-        if (onPrint != null) {
-            IconButton(enabled = entry.printable, onClick = onPrint) {
-                Icon(AppIcons.print, contentDescription = texts.preview.print)
-            }
-        }
-    }
-}
+private fun journalColumns(): List<TableColumn> = grownColumns(JOURNAL_COLUMNS, setOf(PREVIEW, PRINT))
 
-/** Подпись столбца: мельче и тише строки, иначе шапка спорит с данными. */
-@Composable
-private fun RowScope.HeadCell(text: String, weight: Float, align: TextAlign = TextAlign.Start) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = align,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.weight(weight)
-    )
-}
-
-/** Клетка строки: одна строка текста, обрезается многоточием, а не переносом. */
-@Composable
-private fun RowScope.BodyCell(text: String, weight: Float, align: TextAlign = TextAlign.Start) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodySmall,
-        textAlign = align,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.weight(weight)
-    )
-}
-
-private const val TIME = 1f
-private const val TYPE = 1.1f
-private const val NUMBER = 0.6f
-private const val SHIFT = 0.5f
-private const val AMOUNT = 1.1f
-private const val SIGN = 1.5f
-private const val STATE = 0.9f
-private const val PRINT = 0.5f
+private val JOURNAL_COLUMNS = listOf(
+    TableColumn(TableColumns.moment, weight = 0f),
+    TableColumn(TableColumns.name, weight = 1f),
+    TableColumn(TableColumns.number, weight = 0f, numeric = true),
+    TableColumn(TableColumns.number, weight = 0f, numeric = true),
+    TableColumn(TableColumns.money, weight = 1f, numeric = true),
+    TableColumn(TableColumns.number, weight = 0f, numeric = true),
+    TableColumn(HistoryLayout.deliveryStatus, weight = 1f),
+    TableColumn(TableColumns.action, weight = 0f),
+    TableColumn(TableColumns.action, weight = 0f)
+)

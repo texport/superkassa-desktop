@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.history
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,9 +10,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
@@ -40,10 +39,7 @@ fun HistoryScreen(session: Session) {
         modifier = Modifier.fillMaxSize().padding(Spacing.screen),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        WrapRow(spacing = Spacing.normal) {
             ScreenTitle(texts.sections.history)
             ChoiceSegments(
                 options = HistoryView.entries,

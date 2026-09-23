@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,8 +22,6 @@ import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
-import kz.mybrain.superkassa.desktop.ui.components.stripedAt
 import kz.mybrain.superkassa.desktop.ui.strings.ShiftJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -140,11 +137,7 @@ private fun ColumnScope.ShiftList(
 ) {
     val state = shiftsState(journal, shifts.size, loading, page, onRetry)
     ScreenSlot(state, Modifier.weight(1f)) {
-        ScrollableList(modifier = Modifier.weight(1f)) {
-            itemsIndexed(shifts) { at, shift ->
-                ShiftRow(journal, shift, stripedAt(at), { onOpen(shift) }) { onZReport(shift) }
-            }
-        }
+        ShiftTable(journal, shifts, Modifier.weight(1f), onOpen, onZReport)
         // Под списком видно, кончились ли смены: молчание внизу не отличает
         // «всё» от «оборвалось на двухсотой».
         MoreRow(page.more, loading, journal.showMore, journal.allShown, onMore = onMore)

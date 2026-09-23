@@ -13,6 +13,8 @@ import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.retryFailedQueue
+import kz.mybrain.superkassa.desktop.ui.adaptive.ContentKind
+import kz.mybrain.superkassa.desktop.ui.adaptive.contentWidth
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
@@ -42,8 +44,11 @@ fun QueueScreen(session: Session) {
     val rejected = rejectedTasks(session.queueTasks)
     val sent = sentTasks(session.queueTasks)
 
+    // Очередь — перечень задач с причинами в три строки: во всю ширину
+    // монитора плашка состояния уезжала от названия задачи на полторы
+    // тысячи точек, а строку причины глаз терял на переносе.
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
+        modifier = Modifier.fillMaxSize().padding(Spacing.screen).contentWidth(ContentKind.Reading),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
         ScreenTitle(texts.queue.title)

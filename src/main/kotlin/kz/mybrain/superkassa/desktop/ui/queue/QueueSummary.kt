@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -18,10 +19,12 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshSelected
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.QueueJournalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
+import kz.mybrain.superkassa.desktop.ui.theme.HistoryLayout
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -54,11 +57,9 @@ internal fun QueueSummary(
     val scope = rememberCoroutineScope()
     val programming = session.selected?.isProgramming == true
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        // Кнопки переносятся под объяснение целиком, а не сжимают его
+        // в столбик по два слова: карточка стоит в ширину читаемого текста.
+        WrapRow(modifier = Modifier.fillMaxWidth().padding(Spacing.normal), spacing = Spacing.roomy) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(waitingText(read, waiting), style = MaterialTheme.typography.displaySmall)
                 Text(
@@ -86,14 +87,19 @@ internal fun QueueSummary(
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).widthIn(min = HistoryLayout.summaryNote)
             )
-            FilledTonalButton(
-                enabled = programming && hasFailed,
-                onClick = { scope.launch { retryQueue(session, texts) } }
-            ) { Text(texts.queue.retryFailed) }
-            IconButton(onClick = { scope.launch { session.refreshSelected() } }) {
-                Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FilledTonalButton(
+                    enabled = programming && hasFailed,
+                    onClick = { scope.launch { retryQueue(session, texts) } }
+                ) { Text(texts.queue.retryFailed) }
+                IconButton(onClick = { scope.launch { session.refreshSelected() } }) {
+                    Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
+                }
             }
         }
     }

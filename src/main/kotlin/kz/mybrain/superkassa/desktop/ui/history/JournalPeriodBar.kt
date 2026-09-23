@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -12,6 +12,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -42,12 +43,11 @@ fun JournalPeriodBar(
     // не хватало ширины, и «Сегодня» вставало столбиком из отдельных букв —
     // надпись, которую владелец не прочитал. Читаться она обязана при любой
     // ширине окна, а перенос строки этому не мешает.
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
-        itemVerticalAlignment = Alignment.CenterVertically
-    ) {
+    //
+    // Переносится полоса только целыми частями: подпись, сегменты
+    // и листание со стрелками и датой. Стрелка, уехавшая на другую строку
+    // от даты, которую она листает, читалась как отдельная кнопка.
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         Text(
             text = journal.period,
             style = MaterialTheme.typography.labelMedium,
@@ -61,7 +61,12 @@ fun JournalPeriodBar(
             enabled = !loading,
             onSelect = { onPeriod(JournalPeriod.of(it)) }
         )
-        PeriodShift(journal, period, loading, onPeriod)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            PeriodShift(journal, period, loading, onPeriod)
+        }
     }
 }
 

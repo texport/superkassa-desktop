@@ -1,6 +1,5 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -19,7 +18,6 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.time.format.DateTimeFormatter
 
 /**
@@ -70,11 +68,7 @@ fun DayJournal(session: Session) {
     val types = documentTypesIn(loaded, session.documentTypeOrder())
         .map { code -> JournalType(code, documentTypeTitle(session, texts, code)) }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
-    ) {
-        JournalPeriodBar(journal, period, loading) { period = it }
+    Column(modifier = Modifier.fillMaxSize()) {
         JournalView(
             journal = journal,
             entries = entries,
@@ -96,7 +90,10 @@ fun DayJournal(session: Session) {
                     PrintFileName.of(entry.typeCode, entry.number, entry.shiftNo)
                 )
             },
-            onPrint = { entry -> loaded.firstOrNull { it.id == entry.key }?.let(session.printDesk::print) }
+            onPrint = { entry -> loaded.firstOrNull { it.id == entry.key }?.let(session.printDesk::print) },
+            // Срок стоит над поиском и прокручивается вместе с отбором:
+            // в низком окне они вместе не должны вытеснять строки.
+            head = { JournalPeriodBar(journal, period, loading) { period = it } }
         )
     }
 }

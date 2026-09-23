@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.FilterChip
@@ -10,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.MenuChip
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -37,11 +37,7 @@ fun JournalFilters(
     query: JournalQuery,
     onQuery: (JournalQuery) -> Unit
 ) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         TypeChips(journal, types, query, onQuery)
         DeliveryChips(journal, deliveries, query, onQuery)
         ShiftChip(journal, shifts, query, onQuery)
@@ -57,12 +53,16 @@ private fun TypeChips(
     onQuery: (JournalQuery) -> Unit
 ) {
     if (types.isEmpty()) return
-    ChipGroup(journal.documentType) {
-        FilterChip(
-            selected = query.type == null,
-            onClick = { onQuery(query.copy(type = null)) },
-            label = { Text(journal.allTypes) }
-        )
+    ChipGroup(
+        title = journal.documentType,
+        first = {
+            FilterChip(
+                selected = query.type == null,
+                onClick = { onQuery(query.copy(type = null)) },
+                label = { Text(journal.allTypes) }
+            )
+        }
+    ) {
         types.forEach { type ->
             FilterChip(
                 selected = query.type == type.code,
@@ -83,12 +83,16 @@ private fun DeliveryChips(
 ) {
     if (deliveries.size < 2) return
     val states = LocalStrings.current.status
-    ChipGroup(journal.deliveryState) {
-        FilterChip(
-            selected = query.delivery == null,
-            onClick = { onQuery(query.copy(delivery = null)) },
-            label = { Text(journal.allStates) }
-        )
+    ChipGroup(
+        title = journal.deliveryState,
+        first = {
+            FilterChip(
+                selected = query.delivery == null,
+                onClick = { onQuery(query.copy(delivery = null)) },
+                label = { Text(journal.allStates) }
+            )
+        }
+    ) {
         deliveries.forEach { state ->
             FilterChip(
                 selected = query.delivery == state,
@@ -113,33 +117,48 @@ private fun ShiftChip(
     onQuery: (JournalQuery) -> Unit
 ) {
     if (shifts.isEmpty()) return
-    ChipGroup(journal.colShift) {
-        MenuChip(
-            value = shiftLabel(query.shiftNo, journal),
-            options = listOf(null) + shifts,
-            title = { shiftLabel(it, journal) },
-            chosen = query.shiftNo != null,
-            onSelect = { onQuery(query.copy(shiftNo = it)) }
-        )
-    }
+    ChipGroup(
+        title = journal.colShift,
+        first = {
+            MenuChip(
+                value = shiftLabel(query.shiftNo, journal),
+                options = listOf(null) + shifts,
+                title = { shiftLabel(it, journal) },
+                chosen = query.shiftNo != null,
+                onSelect = { onQuery(query.copy(shiftNo = it)) }
+            )
+        }
+    )
 }
 
 /** Как названа смена в отборе: номер, а «ничего не выбрано» — словами. */
 internal fun shiftLabel(shift: Long?, journal: HistoryJournalTexts): String =
     shift?.toString() ?: journal.allShifts
 
-/** Подпись отбора и его плашки одной строкой. */
+/**
+ * Подпись отбора и его плашки.
+ *
+ * Плашки переносятся по одной, а не сжимаются: в узком окне обычный ряд
+ * ставил последнюю плашку столбиком по букве. Подпись не уходит от первой
+ * плашки — строка, начатая подписью без плашек, читалась бы оборванной.
+ *
+ * @param first плашка «все», которая стоит вплотную к подписи.
+ * @param chips остальные плашки отбора.
+ */
 @Composable
-private fun ChipGroup(title: String, chips: @Composable () -> Unit) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+private fun ChipGroup(title: String, first: @Composable () -> Unit, chips: @Composable () -> Unit = {}) {
+    WrapRow(spacing = Spacing.tight) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            first()
+        }
         chips()
     }
 }

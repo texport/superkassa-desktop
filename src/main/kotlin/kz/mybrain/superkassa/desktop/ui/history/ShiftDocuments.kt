@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.history
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,8 +16,6 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
-import kz.mybrain.superkassa.desktop.ui.components.stripedAt
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ShiftJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
@@ -64,18 +61,14 @@ internal fun ColumnScope.ShiftDocuments(
         // Та же таблица, что и в журнале за срок: документы смены — те же
         // документы, и вторая разметка под них разошлась бы с первой.
         val entries = journalEntriesOf(session, texts, documents)
-        JournalHeader(history)
-        ScrollableList(modifier = Modifier.weight(1f)) {
-            itemsIndexed(entries, key = { _, entry -> entry.key }) { at, entry ->
-                val document = documents.firstOrNull { it.id == entry.key }
-                JournalRow(
-                    entry = entry,
-                    striped = stripedAt(at),
-                    onPreview = { document?.let(onPreview) },
-                    onPrint = { document?.let(session.printDesk::print) }
-                )
-            }
-        }
+        fun documentOf(entry: JournalEntry) = documents.firstOrNull { it.id == entry.key }
+        JournalTable(
+            journal = history,
+            entries = entries,
+            modifier = Modifier.weight(1f),
+            onPreview = { entry -> documentOf(entry)?.let(onPreview) },
+            onPrint = { entry -> documentOf(entry)?.let(session.printDesk::print) }
+        )
     }
 }
 

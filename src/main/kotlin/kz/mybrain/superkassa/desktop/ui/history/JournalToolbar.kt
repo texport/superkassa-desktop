@@ -1,20 +1,20 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.fieldLabelReserve
 
@@ -31,26 +31,22 @@ import kz.mybrain.superkassa.desktop.ui.theme.fieldLabelReserve
  */
 @Composable
 fun JournalToolbar(journal: HistoryJournalTexts, query: JournalQuery, onQuery: (JournalQuery) -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.Top
-    ) {
+    // Поле тянется до конца строки, пока ему хватает наименьшей ширины;
+    // не хватает — порядок уходит на строку ниже, а не сжимает поле
+    // до слова столбиком.
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         SearchField(
             value = query.search,
             label = journal.search,
             onChange = { onQuery(query.copy(search = it)) },
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldSearch),
             hint = journal.searchHint,
             clearLabel = journal.clearSearch
         )
         // Плашки порядка стоят на высоте рамки поля, а не по центру всей
         // его высоты: поле держит над рамкой место под поднятую подпись.
-        Row(
-            modifier = Modifier.padding(top = fieldLabelReserve()),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        // В узком окне они переносятся по одной, а не рвут надпись плашки.
+        WrapRow(modifier = Modifier.padding(top = fieldLabelReserve()), spacing = Spacing.tight) {
             SortChips(journal, query, onQuery)
         }
     }

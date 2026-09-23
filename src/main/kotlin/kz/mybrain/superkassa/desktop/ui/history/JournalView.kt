@@ -1,9 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.history
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,11 +9,8 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
-import kz.mybrain.superkassa.desktop.ui.components.stripedAt
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
  * Журнал документов целиком: поиск, отбор, таблица и подгрузка.
@@ -42,6 +36,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *   и вместо кнопки останется одно объяснение.
  * @param onPreview показ печатной формы; `null` — формы нет.
  * @param onPrint отправка на принтер; `null` — печатать нечем.
+ * @param head что стоит над поиском: срок журнала. Прокручивается вместе
+ *   с отбором, когда окну не хватает высоты.
  */
 @Composable
 fun ColumnScope.JournalView(
@@ -58,26 +54,32 @@ fun ColumnScope.JournalView(
     onRetry: (() -> Unit)? = null,
     onOpen: ((JournalEntry) -> Unit)? = null,
     onPreview: ((JournalEntry) -> Unit)? = null,
-    onPrint: ((JournalEntry) -> Unit)? = null
+    onPrint: ((JournalEntry) -> Unit)? = null,
+    head: @Composable () -> Unit = {}
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-        JournalToolbar(journal, query, onQuery)
-        JournalFilters(
-            journal = journal,
-            types = types,
-            deliveries = deliveriesIn(entries),
-            shifts = shiftsIn(entries),
-            query = query,
-            onQuery = onQuery
-        )
-    }
     // Отбор пересчитывается при смене строк или отбора, а не на каждый
     // набранный знак: за месяц строк тысячи, и сортировка их на каждое
     // нажатие клавиши подтормаживала бы ввод.
     val shown = remember(entries, query) { entries.select(query) }
     val state = journalState(journal, empty, entries.size, shown.size, loading, unread, onRetry)
-    ScreenSlot(state, Modifier.weight(1f)) {
-        JournalRows(journal, entries, shown, loading, more, onMore, onOpen, onPreview, onPrint)
+    JournalFrame(
+        modifier = Modifier.weight(1f),
+        head = {
+            head()
+            JournalToolbar(journal, query, onQuery)
+            JournalFilters(
+                journal = journal,
+                types = types,
+                deliveries = deliveriesIn(entries),
+                shifts = shiftsIn(entries),
+                query = query,
+                onQuery = onQuery
+            )
+        }
+    ) {
+        ScreenSlot(state, Modifier.weight(1f)) {
+            JournalRows(journal, entries, shown, loading, more, onMore, onOpen, onPreview, onPrint)
+        }
     }
 }
 
@@ -142,17 +144,6 @@ private fun ColumnScope.JournalRows(
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-    JournalHeader(journal)
-    ScrollableList(modifier = Modifier.weight(1f)) {
-        itemsIndexed(shown, key = { _, entry -> entry.key }) { at, entry ->
-            JournalRow(
-                entry = entry,
-                striped = stripedAt(at),
-                onOpen = onOpen?.let { open -> { open(entry) } },
-                onPreview = onPreview?.let { preview -> { preview(entry) } },
-                onPrint = onPrint?.let { print -> { print(entry) } }
-            )
-        }
-    }
+    JournalTable(journal, shown, Modifier.weight(1f), onOpen, onPreview, onPrint)
     MoreRow(more, loading, journal.showMore, journal.allShown, onMore = onMore)
 }
