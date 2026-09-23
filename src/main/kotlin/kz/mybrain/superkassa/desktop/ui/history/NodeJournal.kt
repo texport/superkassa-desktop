@@ -5,10 +5,7 @@ import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.PAGE
 import kz.mybrain.superkassa.desktop.server.documents
 import kz.mybrain.superkassa.desktop.server.hasOwnAmount
-import kz.mybrain.superkassa.desktop.ui.components.INTERNAL
 import kz.mybrain.superkassa.desktop.ui.components.Money
-import kz.mybrain.superkassa.desktop.ui.components.SENT
-import kz.mybrain.superkassa.desktop.ui.components.SHIFT_OPEN
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.ofdRefusalWords
@@ -67,26 +64,6 @@ private fun refusalOf(document: Document, texts: AppStrings, language: Language)
 }
 
 /**
- * Состояние доставки документа узла.
- *
- * Незнакомый код состоянием не становится: протокольных кодов на экране
- * кассира быть не должно, а угадывать смысл кода — значит однажды
- * покрасить отказ зелёным.
- */
-private fun deliveryOf(document: Document): JournalDelivery? = when {
-    // Открытие смены в ОФД не уходит никогда: команды COMMAND_OPEN_SHIFT
-    // в протоколе нет. Прежние записи хранят у него состояние доставки,
-    // но кассиру оно всё равно ничего не обещает.
-    document.docType == SHIFT_OPEN -> JournalDelivery.Internal
-    document.ofdStatus == INTERNAL -> JournalDelivery.Internal
-    document.ofdStatus == SENT && document.isAutonomous == true -> JournalDelivery.Resent
-    document.ofdStatus == SENT -> JournalDelivery.Delivered
-    document.ofdStatus == REFUSED -> JournalDelivery.Refused
-    document.ofdStatus == QUEUED -> JournalDelivery.Queued
-    else -> null
-}
-
-/**
  * Дочитывает срок с того места, где остановились.
  *
  * Страницами: за месяц оживлённой кассы документов десятки тысяч, и одним
@@ -127,12 +104,6 @@ internal fun List<Document>.newTo(shown: List<Document>): List<Document> {
     val already = shown.mapTo(mutableSetOf()) { it.id }
     return filterNot { it.id in already }
 }
-
-/** Ответ ОФД: документ отвергнут. */
-private const val REFUSED = "FAILED"
-
-/** Документ ждёт отправки в ОФД. */
-private const val QUEUED = "PENDING"
 
 /** С какого момента читается срок без границ: с начала счёта времени. */
 private const val FIRST_RECORD = 0L

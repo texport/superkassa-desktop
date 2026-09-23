@@ -99,7 +99,11 @@ class JournalSourcesTest {
         assertEquals(JournalDelivery.Refused, states["r"])
         assertEquals(JournalDelivery.Queued, states["q"])
         assertEquals(JournalDelivery.Internal, states["o"], "открытие смены в ОФД не уходит вовсе")
-        assertNull(states["s"], "незнакомый код состоянием не становится: кодов на экране быть не должно")
+        assertEquals(
+            JournalDelivery.Unknown,
+            states["s"],
+            "незнакомый код обязан дойти до строки словами: протокольных кодов на экране быть не должно"
+        )
         assertEquals("AUT1", journalEntriesOf(session(), texts, listOf(autonomous)).single().sign)
     }
 

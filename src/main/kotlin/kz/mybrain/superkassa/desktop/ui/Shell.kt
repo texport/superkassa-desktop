@@ -23,6 +23,8 @@ import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.app.toggleRail
 import kz.mybrain.superkassa.desktop.server.cabinet.CabinetClient
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetDocuments
+import kz.mybrain.superkassa.desktop.ui.login.LoginState
+import kz.mybrain.superkassa.desktop.ui.login.SignInSlot
 import kz.mybrain.superkassa.desktop.ui.strings.updateTexts
 
 /**
@@ -81,14 +83,21 @@ fun Shell(session: Session) {
  * поэтому ни рельса, ни шапки кассы здесь нет.
  */
 @Composable
-private fun DoorShell(session: Session, cabinet: CabinetSession, messages: SnackbarHostState) {
+internal fun DoorShell(session: Session, cabinet: CabinetSession, messages: SnackbarHostState) {
+    // Набранное кассиром живёт в окне: полоса пина стоит нижним слотом
+    // каркаса, а список касс — его содержимым, и оба читают одно и то же.
+    val door = remember { LoginState() }
     Scaffold(
         topBar = { BusyLine(session.busy) },
+        // Полоса пина — слот каркаса, а не последний блок экрана: Material 3
+        // кладёт снекбар над нижней полосой, и отказ входа перестал закрывать
+        // ровно то, что кассир должен исправить, — поле пина и «Войти».
+        bottomBar = { SignInSlot(session, door) },
         snackbarHost = { MessageHost(messages) }
     ) { padding ->
         ShellMessages(session, cabinet, messages)
         Row(modifier = Modifier.fillMaxSize().padding(padding)) {
-            SectionDoor(session, cabinet)
+            SectionDoor(session, cabinet, door)
         }
     }
 }

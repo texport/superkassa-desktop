@@ -69,7 +69,7 @@ data class Document(
      * не доставлен.
      */
     val refusedByOfd: Boolean
-        get() = ofdErrorCode != null || ofdStatus == REFUSED
+        get() = ofdErrorCode != null || ofdStatus in DeliveryCode.refused
 
     /**
      * Код отказа, который есть смысл показать кассиру.
@@ -83,8 +83,37 @@ data class Document(
         get() = ofdErrorCode?.takeIf { it > 0 }
 }
 
-/** Ответ ОФД: документ отвергнут. */
-private const val REFUSED = "FAILED"
+/**
+ * Коды доставки, которыми узел отмечает документ.
+ *
+ * Узел называет одно и то же двумя наборами: журнал документов отдаёт
+ * `SENT`, `FAILED` и `INTERNAL`, а справочник состояний отправки —
+ * `ONLINE_OK`, `ONLINE_ERROR`, `OFFLINE_QUEUED` и `NOT_SENT`. Поле
+ * состояния в спецификации узла объявлено свободной строкой, и обещания,
+ * что придёт код только одного набора, нет, — разбираются оба.
+ */
+object DeliveryCode {
+
+    /** Документ принят БФД. */
+    val delivered: Set<String> = setOf("SENT", "ONLINE_OK")
+
+    /** БФД документ отвергла: фискальным он не стал. */
+    val refused: Set<String> = setOf("FAILED", "ONLINE_ERROR")
+
+    /**
+     * Документ в БФД ещё не дошёл.
+     *
+     * «Не отправлен» стоит здесь же: кассиру он говорит то же самое, что
+     * и очередь, — документ пробит, а БФД о нём пока не знает.
+     */
+    val queued: Set<String> = setOf("PENDING", "OFFLINE_QUEUED", "NOT_SENT")
+
+    /** В БФД не уходит вовсе: такой команды протокол не знает. */
+    val internal: Set<String> = setOf("INTERNAL")
+}
+
+/** Открытие смены: документ есть, а команды в протоколе нет. */
+const val SHIFT_OPEN: String = "SHIFT_OPEN"
 
 /** Ответ узла на фискальную команду. */
 @Serializable

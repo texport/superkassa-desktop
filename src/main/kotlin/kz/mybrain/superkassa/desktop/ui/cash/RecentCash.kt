@@ -13,12 +13,12 @@ import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.documents
-import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
+import kz.mybrain.superkassa.desktop.ui.history.DocumentDeliveryChip
 import kz.mybrain.superkassa.desktop.ui.strings.DrawerTexts
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -96,7 +96,7 @@ private fun CashRow(session: Session, document: Document) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(moment(document.createdAt), style = MaterialTheme.typography.bodySmall)
-                DeliveryChip(document.ofdStatus, document.isAutonomous == true)
+                DocumentDeliveryChip(document)
             }
         },
     )

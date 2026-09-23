@@ -11,6 +11,7 @@ package kz.mybrain.superkassa.desktop.ui.strings
 internal val kazakhSettings = SettingStrings(
     title = "Баптаулар",
     currentKkm = "Жұмыстағы касса",
+    orgUnknown = "Ұйым көрсетілмеген",
     changeKkm = "Кассаны ауыстыру",
     registerKkm = "Касса тіркеу",
     back = "Артқа",
@@ -189,7 +190,8 @@ internal val kazakhStatus = StatusStrings(
     resent = "Кейін жіберілген",
     refused = "Қабылданбады",
     internal = "Ішкі",
-    queued = "Кезекте"
+    queued = "Кезекте",
+    unknown = "Күйі белгісіз"
 )
 
 internal val kazakhEnums = EnumStrings(

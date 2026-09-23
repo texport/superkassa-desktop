@@ -117,7 +117,7 @@ private fun KkmRow(
  */
 internal fun kkmDetail(kkm: Kkm, texts: LoginStrings): String = listOfNotNull(
     kkmNumber(kkm, texts),
-    kkm.orgTitle.takeIf { it.isNotBlank() },
+    kkm.orgTitle,
     kkm.orgAddress.takeIf { it.isNotBlank() },
     kkm.factoryNumber?.let { "${texts.factory} $it" }
 ).joinToString(Glyphs.SEPARATOR)

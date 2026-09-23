@@ -67,6 +67,14 @@ data class CommonStrings(
     val nodeUnavailable: String,
     /** Ответа не дождались, а операция могла состояться. */
     val nodeNoAnswer: String,
+    /**
+     * Узел отказал, а причины не назвал.
+     *
+     * Тело отказа бывает не разбираемым вовсе: голое «Not Found»
+     * от промежуточного звена или пустой ответ. Кассир английских
+     * отказов читать не обязан, и ответ узла остаётся журналу.
+     */
+    val nodeUnexplained: String,
     val refusalCode: String,
     val deliveredToOfd: String,
     val queuedNoLink: String,

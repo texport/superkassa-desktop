@@ -10,18 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshKkms
-import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetDoor
 import kz.mybrain.superkassa.desktop.ui.components.LoadingState
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
@@ -31,7 +26,6 @@ import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
-import kz.mybrain.superkassa.desktop.ui.users.UserRules
 
 /**
  * Вход в кассу.
@@ -41,86 +35,46 @@ import kz.mybrain.superkassa.desktop.ui.users.UserRules
  * она не меняется, и утром достаточно ввести пин.
  *
  * Раскладка та же, что у списка с действием по Material 3: перечень
- * прокручивается, а пин и кнопка стоят в отдельной поверхности внизу
- * и никуда не уезжают, сколько бы касс ни было в списке.
+ * прокручивается, а пин и кнопка стоят в нижней полосе окна и никуда
+ * не уезжают, сколько бы касс ни было в списке. Саму полосу рисует
+ * каркас — [SignInSlot]: так снекбар отказа встаёт над ней, а не поверх
+ * поля пина.
  */
 @Composable
-fun LoginScreen(session: Session, cabinet: CabinetSession) {
+fun LoginScreen(session: Session, cabinet: CabinetSession, state: LoginState) {
     val texts = LocalStrings.current
     val scope = rememberCoroutineScope()
-    var pin by remember { mutableStateOf("") }
-    var chosen by remember { mutableStateOf<Kkm?>(null) }
-    var search by remember { mutableStateOf("") }
-    // Заведение кассы открывается прямо отсюда: пока не заведена первая
-    // касса, войти некуда, а настройки живут за входом.
-    var registering by remember { mutableStateOf(false) }
-    // Кабинет открывается до выбора кассы и без пина: пока первая касса
-    // не заведена, пина кассира не существует вовсе, а завести кассу
-    // можно только начав с кабинета.
-    var atCabinet by remember { mutableStateOf(false) }
-    // Настройки рабочего места открываются до входа: адрес узла и адрес
-    // кабинета нужны раньше, чем есть куда войти.
-    var atSettings by remember { mutableStateOf(false) }
-
-    // Узел отвечает не мгновенно, и до его ответа список пуст: без этого
-    // кассир на запуске читал «касс нет» про узел с десятком касс.
-    var answered by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         session.refreshKkms()
-        answered = true
-    }
-
-    // Подстановка считается тут же, а не в отложенном эффекте: список
-    // приходит с узла позже первой отрисовки, и эффект успевал отработать
-    // на пустом списке — кассир видел «касса не выбрана» при запомненной.
-    val shown = session.kkms.filter { it.matches(search, session.displayName(it)) }
-
-    // Когда поиск оставил ровно одну кассу, она и есть выбранная: кассир
-    // набирает номер своей кассы и сразу пин, не тянясь к мыши.
-    // Порядок важен: набранный кассиром номер сильнее всего остального.
-    // Иначе после смены кассира поиск другой кассы ничего не менял —
-    // подставлялась прежняя, и кассир входил не туда, куда набрал.
-    val chosenKkm = chosen
-        ?: shown.singleOrNull()
-        ?: session.kkms.firstOrNull { it.kkmId == session.rememberedKkmId }
-        ?: session.selected
-
-    /**
-     * Вход: касса и пин запоминаются в сеансе.
-     *
-     * Перечитывание состояния делает каркас — он живёт всё время работы,
-     * а этот экран исчезает в тот же миг, и запущенное здесь обновление
-     * обрывалось бы на полпути.
-     */
-    fun enter() {
-        val kkm = chosenKkm ?: return
-        scope.launch { session.signIn(kkm, pin) }
+        state.answered = true
     }
 
     val reload = { scope.launch { session.refreshKkms() } }
-    if (registering) {
-        ConnectKkmScreen(session, cabinet) { registering = false }
-        return
-    }
-    if (atCabinet) {
-        CabinetDoor(session, cabinet) { atCabinet = false }
-        return
-    }
-    if (atSettings) {
-        WorkplaceSettingsScreen(session) { atSettings = false }
-        return
+    val shut = { state.door = Door.Kkms }
+    when (state.door) {
+        // Заведение кассы открывается прямо отсюда: пока не заведена
+        // первая касса, войти некуда, а настройки живут за входом.
+        Door.Register -> return ConnectKkmScreen(session, cabinet, shut)
+        // Кабинет открывается до выбора кассы и без пина: пока первая
+        // касса не заведена, пина кассира не существует вовсе, а завести
+        // кассу можно только начав с кабинета.
+        Door.Cabinet -> return CabinetDoor(session, cabinet, shut)
+        // Настройки рабочего места открываются до входа: адрес узла
+        // и адрес кабинета нужны раньше, чем есть куда войти.
+        Door.Settings -> return WorkplaceSettingsScreen(session, shut)
+        Door.Kkms -> Unit
     }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         // Поля и шаг между блоками задаёт колонка, а не каждый блок сам:
-        // когда шапка, список, двери и пин несли по своему отступу, все
-        // четыре зазора выходили разными.
+        // когда шапка, список и двери несли по своему отступу, все
+        // зазоры выходили разными.
         Column(
             modifier = Modifier.width(Sizes.loginColumn).fillMaxSize().padding(Spacing.roomy),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
             LoginHeader(session)
-            if (session.kkms.isEmpty() && !answered) {
+            if (session.kkms.isEmpty() && !state.answered) {
                 LoadingState(Modifier.weight(1f))
                 return@Column
             }
@@ -131,9 +85,9 @@ fun LoginScreen(session: Session, cabinet: CabinetSession) {
                     // ничего. Отказ узла — тоже ответ, но не о кассах.
                     listRead = session.kkmsRead,
                     onReload = { reload() },
-                    onCabinet = { atCabinet = true },
-                    onRegister = { registering = true },
-                    onSettings = { atSettings = true }
+                    onCabinet = { state.door = Door.Cabinet },
+                    onRegister = { state.door = Door.Register },
+                    onSettings = { state.door = Door.Settings }
                 )
                 return@Column
             }
@@ -142,39 +96,31 @@ fun LoginScreen(session: Session, cabinet: CabinetSession) {
             // после клика по другой кассе не менял ничего, и кассир входил
             // не туда, куда набрал.
             SearchField(
-                value = search,
+                value = state.search,
                 label = texts.login.search,
                 icon = AppIcons.kkm,
                 onChange = {
-                    search = it
-                    chosen = null
+                    state.search = it
+                    state.chosen = null
                 },
                 modifier = Modifier.fillMaxWidth()
             )
             KkmList(
-                kkms = shown,
+                kkms = state.shown(session),
                 nameOf = { session.displayName(it) },
-                chosenId = chosenKkm?.kkmId,
+                chosenId = state.chosenKkm(session)?.kkmId,
                 rememberedId = session.rememberedKkmId,
                 modifier = Modifier.weight(1f)
-            ) { chosen = it }
+            ) { state.chosen = it }
             // Две двери рядом: кассир входит пином ниже, владелец —
             // своей ЭЦП в кабинет. Обе со значками и в рамке: текстовыми
             // вподбор они терялись, а кабинет для нового владельца —
             // единственный вход, пока нет ни кассы, ни компании.
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-                DoorButton(AppIcons.newKkm, texts.sections.register) { registering = true }
-                DoorButton(AppIcons.cabinet, texts.sections.cabinet) { atCabinet = true }
-                DoorButton(AppIcons.settings, texts.sections.settings) { atSettings = true }
+                DoorButton(AppIcons.newKkm, texts.sections.register) { state.door = Door.Register }
+                DoorButton(AppIcons.cabinet, texts.sections.cabinet) { state.door = Door.Cabinet }
+                DoorButton(AppIcons.settings, texts.sections.settings) { state.door = Door.Settings }
             }
-            SignInBar(
-                pin = pin,
-                nameOf = { session.displayName(it) },
-                onPin = { pin = UserRules.digitsOf(it) },
-                chosen = chosenKkm,
-                onEnter = ::enter,
-                onReload = { reload() }
-            )
         }
     }
 }
