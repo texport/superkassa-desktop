@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.returns
 
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.ParentTicket
+import kz.mybrain.superkassa.desktop.server.ReceiptDomain
 import kz.mybrain.superkassa.desktop.server.ReceiptItem
 import kz.mybrain.superkassa.desktop.server.ReceiptPayment
 import kz.mybrain.superkassa.desktop.server.ReceiptRequest
@@ -87,6 +88,7 @@ fun refundRequest(
     idempotencyKey: String,
     lineName: String,
     payments: List<ReceiptPayment>,
+    domain: ReceiptDomain,
     returned: List<SoldItem> = emptyList()
 ): ReceiptRequest? {
     val number = basis.docNo ?: return null
@@ -113,6 +115,9 @@ fun refundRequest(
             )
         } ?: listOf(ReceiptItem(name = lineName, price = refund, quantity = BigDecimal("1.0"))),
         payments = payments,
+        // Вид отрасли протокол требует у каждого чека, и у возврата тоже:
+        // он тот же, в котором работает касса.
+        domain = domain,
         parentTicket = ParentTicket(
             parentTicketNumber = number,
             parentTicketDateTime = TICKET_MOMENT.format(Instant.ofEpochMilli(basis.createdAt ?: 0L)),
