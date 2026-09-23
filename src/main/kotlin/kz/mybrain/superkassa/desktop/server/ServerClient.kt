@@ -32,7 +32,15 @@ import java.math.BigDecimal
 class ServerRefusal(
     val code: String,
     val words: TrilingualText,
-    val httpStatus: Int
+    val httpStatus: Int,
+    /**
+     * Что узел ответил на самом деле.
+     *
+     * Заполнено, когда разобрать ответ было нечем: кассиру в этом случае
+     * уходят слова приложения, а сам ответ узла нужен журналу — по нему
+     * обслуживание видит, что именно пришло с той стороны.
+     */
+    val answer: String? = null
 ) : Exception("$code: ${words.ru}")
 
 /**
@@ -111,13 +119,25 @@ class ServerClient(
             }
         }
 
+    /**
+     * Отказ узла, доведённый до слов кассира.
+     *
+     * Узел объясняет отказ кодом и трёхъязычным текстом, но так отвечает
+     * не всякий отказ: тело бывает и не разбираемым вовсе — голое «Not
+     * Found» от промежуточного звена или пустой ответ. Кассир английских
+     * отказов читать не обязан, поэтому такому случаю даются свои слова
+     * на трёх языках, а ответ узла уходит в журнал.
+     */
     suspend fun refusalOf(response: HttpResponse): ServerRefusal {
         val text = response.bodyAsText()
         val error = runCatching { lenientJson.decodeFromString<ServerError>(text) }.getOrNull()
+        val explained = error?.message?.takeIf { it.isNotBlank() }
         return ServerRefusal(
             code = error?.code ?: "HTTP_${response.status.value}",
-            words = TrilingualText.of(error?.message ?: text.take(MAX_ERROR_LENGTH)),
-            httpStatus = response.status.value
+            words = explained?.let { TrilingualText.of(it) }
+                ?: TrilingualText.byLanguage { it.common.nodeUnexplained },
+            httpStatus = response.status.value,
+            answer = text.takeIf { explained == null }?.trim()?.take(MAX_ERROR_LENGTH)?.takeIf { it.isNotEmpty() }
         )
     }
 

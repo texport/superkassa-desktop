@@ -107,7 +107,11 @@ class NodeCalls(
             // звал обслуживание к узлу, который работает.
             available = true
             val words = refusal.words.of(language())
-            AppLog.warn(LogSource.Node, "$what: отказ ${refusal.code} — $words")
+            // Ответ узла идёт в журнал, а не кассиру: он бывает
+            // не разбираемым вовсе, и тогда кассир читает слова
+            // приложения, а обслуживание — то, что пришло с той стороны.
+            val said = refusal.answer?.let { " (ответ узла: $it)" }.orEmpty()
+            AppLog.warn(LogSource.Node, "$what: отказ ${refusal.code} — $words$said")
             last = Message.Refusal(words, refusal.code)
             null
         } catch (cancelled: CancellationException) {

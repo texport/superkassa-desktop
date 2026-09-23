@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.desktop.server
 
+import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.Language
+import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
 
 /**
  * Текст узла на трёх языках, разобранный по языкам.
@@ -25,6 +27,19 @@ data class TrilingualText(val ru: String, val kk: String, val en: String) {
     }
 
     companion object {
+
+        /**
+         * Собственные слова приложения на трёх языках.
+         *
+         * Нужны там, где сказать за узел приходится самому: язык кассира
+         * выбирается позже, при показе, и выбирать его здесь нечем.
+         * Надписи берутся из наборов строк, а не пишутся рядом.
+         */
+        fun byLanguage(pick: (AppStrings) -> String): TrilingualText = TrilingualText(
+            ru = pick(stringsOf(Language.Ru)),
+            kk = pick(stringsOf(Language.Kk)),
+            en = pick(stringsOf(Language.En))
+        )
 
         /** Разбирает строку узла; без разметки языков весь текст идёт во все три. */
         fun of(message: String?): TrilingualText {
