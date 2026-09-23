@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.returns
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,11 +15,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.ui.adaptive.NarrowPanes
+import kz.mybrain.superkassa.desktop.ui.adaptive.TwoPane
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
@@ -30,6 +31,7 @@ import kz.mybrain.superkassa.desktop.ui.history.loadDay
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
+import kz.mybrain.superkassa.desktop.ui.theme.Panes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.time.LocalDate
 
@@ -102,22 +104,30 @@ fun ReturnsScreen(session: Session) {
             onRetry = { scope.launch { read() } }
         )
         ScreenSlot(state, Modifier.weight(1f)) {
-            Row(
+            // Список и панель возврата — рядом, пока обеим хватает места;
+            // на узком окне выбранный чек открывает панель вместо списка.
+            TwoPane(
+                split = Panes.listDetail,
                 modifier = Modifier.fillMaxWidth().weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.normal)
-            ) {
-                BasisList(
-                    candidates = candidates,
-                    chosen = chosen,
-                    journal = journal,
-                    history = texts.history,
-                    more = page.more,
-                    loading = loading,
-                    modifier = Modifier.weight(BASIS_COLUMN),
-                    onMore = { scope.launch { read() } }
-                ) { basisId = it.id }
-                RefundPanel(session, kind, chosen, Modifier.weight(REFUND_COLUMN)) { basisId = null }
-            }
+                narrow = NarrowPanes.Switched(showSecond = chosen != null),
+                first = {
+                    BasisList(
+                        candidates = candidates,
+                        chosen = chosen,
+                        journal = journal,
+                        history = texts.history,
+                        more = page.more,
+                        loading = loading,
+                        modifier = Modifier.fillMaxSize(),
+                        onMore = { scope.launch { read() } }
+                    ) { basisId = it.id }
+                },
+                second = {
+                    RefundPanel(session, kind, chosen, Modifier.fillMaxSize(), onBack = { basisId = null }) {
+                        basisId = null
+                    }
+                }
+            )
         }
     }
 }
@@ -137,10 +147,9 @@ private fun ColumnScope.ReturnHeader(
     onKind: (ReturnKind) -> Unit
 ) {
     val texts = LocalStrings.current
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    // Ряд переносится, а не сжимается: сегменты в узком окне обрезали
+    // подпись до «Сатып а» без многоточия.
+    WrapRow(spacing = Spacing.normal) {
         ScreenTitle(texts.returns.title)
         // В сегменте стоит только направление: «Возврат» уже написано
         // заголовком слева.
@@ -155,7 +164,3 @@ private fun ColumnScope.ReturnHeader(
         InfoTip(journal.basisHint)
     }
 }
-
-/** Доли ширины: список чеков шире панели, в нём читают, а не вводят. */
-private const val BASIS_COLUMN = 1.3f
-private const val REFUND_COLUMN = 1f

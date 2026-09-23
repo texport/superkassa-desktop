@@ -1,8 +1,10 @@
 package kz.mybrain.superkassa.desktop.ui.returns
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,15 +13,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.ui.adaptive.MoneyText
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.MoneyField
-import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.payment.SplitIssue
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.PaymentTexts
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -32,21 +36,27 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * что итог чека на экране продажи: кассир сверяет её с бумагой в руке.
  */
 @Composable
-internal fun RefundSummary(basis: Document, journal: ReturnJournalTexts, total: Long) {
+internal fun RefundSummary(basis: Document, journal: ReturnJournalTexts, total: Long, onBack: () -> Unit) {
     val texts = LocalStrings.current
-    // Номер — тот, что стоит на бумажном чеке покупателя: его касса
-    // присваивает сама. Здесь стоял номер от ОФД, то есть фискальный
-    // признак, и заголовок расходился со списком рядом и с бумагой.
-    Text(
-        text = "${journal.basis}: ${texts.returns.receiptNo} ${basis.number ?: Glyphs.DASH}",
-        style = MaterialTheme.typography.titleMedium
-    )
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        // Назад к списку: на узком окне панель стоит вместо списка чеков,
+        // и выбрать другое основание иначе нечем.
+        IconButton(onClick = onBack) { Icon(AppIcons.back, contentDescription = journal.backToList) }
+        // Номер — тот, что стоит на бумажном чеке покупателя: его касса
+        // присваивает сама. Здесь стоял номер от ОФД, то есть фискальный
+        // признак, и заголовок расходился со списком рядом и с бумагой.
+        Text(
+            text = "${journal.basis}: ${texts.returns.receiptNo} ${basis.number ?: Glyphs.DASH}",
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
     Text(
         text = journal.receiptTotal,
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-    Text(Money.formatTiyn(total), style = MoneyStyle.hero, modifier = Modifier.fillMaxWidth())
+    // Одной строкой и целиком: от миллиарда сумма переносилась посреди числа.
+    MoneyText(Money.formatTiyn(total), Modifier.fillMaxWidth(), MoneyStyle.hero)
     Text(
         text = "${journal.fiscalSign}: ${basis.fiscalSign ?: basis.autonomousSign ?: Glyphs.DASH}",
         style = MaterialTheme.typography.bodySmall,
@@ -54,7 +64,12 @@ internal fun RefundSummary(basis: Document, journal: ReturnJournalTexts, total: 
     )
 }
 
-/** Сумма возврата: моноширинно и вправо, как и всякая сумма в кассе. */
+/**
+ * Сумма возврата: моноширинно и вправо, как и всякая сумма в кассе.
+ *
+ * Поле тянется на остаток ряда, а «Весь чек» уходит под него, когда
+ * кассе тесно, — не сжимается до обрывка.
+ */
 @Composable
 internal fun RefundAmountRow(
     journal: ReturnJournalTexts,
@@ -63,14 +78,11 @@ internal fun RefundAmountRow(
     onEnter: (String) -> Unit,
     onWholeReceipt: () -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.Top
-    ) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         MoneyField(
             value = entered,
             label = journal.amount,
-            modifier = Modifier.fieldWidth(journal.amount, Sizes.fieldAmount),
+            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldAmount),
             isError = rejected,
             onValueChange = onEnter
         )

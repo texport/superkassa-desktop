@@ -36,6 +36,9 @@ data class ReturnJournalTexts(
     val allBasesShown: String,
     val chooseBasis: String,
     val chooseBasisHint: String,
+
+    /** Назад к списку чеков: на узком окне панель возврата стоит вместо списка. */
+    val backToList: String,
     val noBasisHint: String,
 
     /**

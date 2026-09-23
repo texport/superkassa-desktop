@@ -2,9 +2,10 @@ package kz.mybrain.superkassa.desktop.ui.sale
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -18,9 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.UnitOfMeasurement
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.MoneyField
 import kz.mybrain.superkassa.desktop.ui.components.onEnter
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -105,7 +108,10 @@ internal fun DraftFields(
         supportingText = nameProblem?.let { { Text(it.text(extra)) } },
         modifier = Modifier.fillMaxWidth()
     )
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    // Цена и количество делят строку, пока подписи помещаются целиком;
+    // в узкой кассе они встают друг под другом, а не рвут «Количество»
+    // на две строки.
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         DraftAmountField(draft, DraftField.Price, texts.sale.price) {
             onChange(draft.copy(price = it))
         }
@@ -124,16 +130,15 @@ internal fun DraftFields(
     //
     // Ставка есть только у плательщика НДС: у кассы без НДС выбирать
     // нечего, и тогда единица занимает строку целиком сама.
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         UnitPicker(
             selected = draft.measureUnitCode,
             units = units,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldPrice)
         ) { onChange(draft.copy(measureUnitCode = it)) }
-        VatPicker(draft.vatGroup, Modifier.weight(1f)) { onChange(draft.copy(vatGroup = it)) }
+        VatPicker(draft.vatGroup, Modifier.weight(1f).widthIn(min = Sizes.fieldPrice)) {
+            onChange(draft.copy(vatGroup = it))
+        }
     }
 }
 
@@ -168,7 +173,7 @@ private fun DraftDiscountField(draft: PositionDraft, onChange: (PositionDraft) -
  * при открытии смены не должна выглядеть набором ошибок.
  */
 @Composable
-private fun RowScope.DraftAmountField(
+private fun FlowRowScope.DraftAmountField(
     draft: PositionDraft,
     field: DraftField,
     label: String,
@@ -180,7 +185,7 @@ private fun RowScope.DraftAmountField(
     MoneyField(
         value = value,
         label = label,
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldPrice),
         isError = problem != null,
         // Помеха стоит под своим полем, а не только строкой под кнопкой:
         // на окне кассира форма позиции не влезает целиком, и строка под

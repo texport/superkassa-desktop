@@ -107,7 +107,8 @@ private fun PositionList(
 ) {
     ScrollableList(modifier = modifier.fillMaxWidth()) {
         itemsIndexed(basket.positions) { index, position ->
-            PositionCard(
+            if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            PositionRow(
                 position = position,
                 onOpen = { onOpen(index) },
                 onStorno = { onStorno(index) },

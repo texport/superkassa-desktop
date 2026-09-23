@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.desktop.ui.dashboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
@@ -13,7 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.ShiftState
@@ -24,6 +24,7 @@ import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.closeShift
 import kz.mybrain.superkassa.desktop.server.openShift
 import kz.mybrain.superkassa.desktop.server.xReport
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.ConfirmActionDialog
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.CommonStrings
@@ -34,6 +35,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.blockReasonWords
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
+import kz.mybrain.superkassa.desktop.ui.theme.KassaLayout
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -63,19 +65,20 @@ internal fun ShiftActions(session: Session) {
     val enabled = !busy && session.selected != null && session.pin.isNotEmpty() && !programming
 
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        WrapRow(spacing = Spacing.snug) {
+            val main = Modifier.heightIn(min = KassaLayout.mainAction)
             // Главное действие экрана одно и зависит от состояния смены:
             // закрытую открывают, открытую закрывают. Остальное — тональное.
+            // Рост — общий для главных кнопок; ряд переносится, а не сжимается.
             val offer = !blocked && known
             if (offer && session.shiftOpen) {
                 // Z-отчёт не отменяется, и до вопроса он снимался с одного
                 // нажатия — тогда как внесение денег в ящик спрашивало.
-                Button(enabled = enabled, onClick = { asking = true }) { Text(texts.dashboard.closeShift) }
+                Button(onClick = { asking = true }, modifier = main, enabled = enabled) {
+                    Text(texts.dashboard.closeShift)
+                }
 
-                FilledTonalButton(enabled = enabled, onClick = {
+                FilledTonalButton(enabled = enabled, modifier = main, onClick = {
                     busy = true
                     scope.launch {
                         run(session, texts.dashboard.xReport, texts.dashboard.xReportDone, texts.common) {
@@ -85,7 +88,7 @@ internal fun ShiftActions(session: Session) {
                     }
                 }) { Text(texts.dashboard.xReport) }
             } else if (offer && session.isAdmin) {
-                Button(enabled = enabled, onClick = {
+                Button(enabled = enabled, modifier = main, onClick = {
                     busy = true
                     scope.launch {
                         run(session, texts.dashboard.openShift, texts.dashboard.shiftOpened, texts.common) {

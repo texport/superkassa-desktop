@@ -14,6 +14,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.ui.adaptive.MoneyText
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
@@ -62,9 +64,12 @@ internal fun BasisList(
 /**
  * Чек-основание строкой списка.
  *
- * Номер — заголовок, фискальный признак — подпись под ним, сумма и состояние
- * доставки — справа. Признак виден до нажатия: по нему кассир сверяет
- * бумажный чек покупателя со строкой на экране.
+ * Номер — заголовок во всю ширину строки, под ним сумма, фискальный
+ * признак и состояние доставки. Признак виден до нажатия: по нему кассир
+ * сверяет бумажный чек покупателя со строкой на экране. Сумма и плашка
+ * доставки стояли справа от номера, и в узком списке номер и значение
+ * признака обрезались многоточием; под номером они переносятся, а не
+ * отнимают у них место.
  */
 @Composable
 private fun BasisRow(
@@ -82,10 +87,20 @@ private fun BasisRow(
         ?.takeIf { it != number?.toString() }
     RecordRow(
         title = "${texts.returns.receiptNo} $number",
-        subtitle = sign?.let { "${journal.fiscalSign}: $it" },
-        amount = Money.formatTiyn(candidate.totalAmount),
         selected = selected,
         onClick = onChoose,
-        trailing = { DocumentDeliveryChip(candidate) }
+        support = {
+            WrapRow {
+                MoneyText(Money.formatTiyn(candidate.totalAmount))
+                sign?.let {
+                    Text(
+                        text = "${journal.fiscalSign}: $it",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                DocumentDeliveryChip(candidate)
+            }
+        }
     )
 }

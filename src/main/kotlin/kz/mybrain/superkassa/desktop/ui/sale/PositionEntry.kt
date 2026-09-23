@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.components.CollapsibleSection
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -55,7 +54,7 @@ fun PositionEntryCard(
                 title = extra.positionEntry,
                 expanded = expanded,
                 onToggle = onToggle,
-                trailing = { InfoTip(extra.barcodeHint) },
+                info = extra.barcodeHint,
                 always = { BarcodeField(session, added, add) }
             ) {
                 HorizontalDivider()

@@ -25,6 +25,7 @@ import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.hasOwnAmount
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
@@ -119,28 +120,18 @@ private fun DocumentRow(
     onPrint: () -> Unit
 ) {
     val texts = LocalStrings.current
+    // Плашка доставки и код отказа стоят под названием, а не справа:
+    // справа рядом с суммой и кнопками они оставляли названию и номеру
+    // документа ноль точек на крупном шрифте.
     RecordRow(
         title = documentTitle,
-        // Номер подписан: голая «1» под словом «Продажа» читалась как
-        // количество, а не как номер документа.
-        subtitle = document.number?.let { "${texts.dashboard.documentNo} $it" } ?: Glyphs.DASH,
         amount = documentAmount(document),
+        support = { DocumentFacts(document) },
         trailing = {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                DocumentDeliveryChip(document)
-                // Код отказа вместо кнопки повтора: документ, который ОФД
-                // отверг, повторной отправкой не исправить — операцию нужно
-                // провести заново. Кассиру полезен не повтор, а причина.
-                if (document.refusalCode != null) {
-                    Text(
-                        text = "${texts.common.refusalCode} ${document.refusalCode}",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
                 // Два действия, а не одно: «просмотр» показывает форму
                 // на экране, «печать» отправляет её на принтер рабочего
                 // места. Раньше кнопка называлась печатью, а печатала
@@ -157,6 +148,32 @@ private fun DocumentRow(
         }
     )
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+}
+
+/** Номер документа, доставка и код отказа — переносятся, а не сжимаются. */
+@Composable
+private fun DocumentFacts(document: Document) {
+    val texts = LocalStrings.current
+    WrapRow {
+        // Номер подписан: голая «1» под словом «Продажа» читалась как
+        // количество, а не как номер документа.
+        Text(
+            text = document.number?.let { "${texts.dashboard.documentNo} $it" } ?: Glyphs.DASH,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        DocumentDeliveryChip(document)
+        // Код отказа вместо кнопки повтора: документ, который ОФД
+        // отверг, повторной отправкой не исправить — операцию нужно
+        // провести заново. Кассиру полезен не повтор, а причина.
+        if (document.refusalCode != null) {
+            Text(
+                text = "${texts.common.refusalCode} ${document.refusalCode}",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+    }
 }
 
 /**

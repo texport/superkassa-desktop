@@ -3,7 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.login
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -33,7 +33,7 @@ internal fun SignInSlot(session: Session, state: LoginState) {
     val scope = rememberCoroutineScope()
     val chosen = state.chosenKkm(session)
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-        Box(modifier = Modifier.width(Sizes.loginColumn).padding(Spacing.roomy)) {
+        Box(modifier = Modifier.widthIn(max = Sizes.loginColumn).padding(Spacing.roomy)) {
             SignInBar(
                 pin = state.pin,
                 nameOf = { session.displayName(it) },

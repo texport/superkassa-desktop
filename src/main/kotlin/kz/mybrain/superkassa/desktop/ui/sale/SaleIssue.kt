@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.sale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SaleTexts
 import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
+import kz.mybrain.superkassa.desktop.ui.theme.KassaLayout
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -50,7 +52,7 @@ private fun IssueButton(session: Session, basket: Basket, form: SaleForm, enable
         text = if (form.issuing) texts.sale.issuing else form.operation.action(texts.sale),
         busy = form.issuing,
         enabled = enabled,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().heightIn(min = KassaLayout.mainAction),
         onClick = { scope.launch { issue(session, basket, form, texts, extra) } }
     )
 }

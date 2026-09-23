@@ -30,6 +30,7 @@ import kz.mybrain.superkassa.desktop.ui.sale.IssueRow
 import kz.mybrain.superkassa.desktop.ui.sale.LocalSaleTexts
 import kz.mybrain.superkassa.desktop.ui.sale.LocalUnits
 import kz.mybrain.superkassa.desktop.ui.sale.LocalVatRates
+import kz.mybrain.superkassa.desktop.ui.sale.PaymentCard
 import kz.mybrain.superkassa.desktop.ui.sale.Position
 import kz.mybrain.superkassa.desktop.ui.sale.PositionDraft
 import kz.mybrain.superkassa.desktop.ui.sale.PositionEntryCard
@@ -132,7 +133,8 @@ class KassaSaleLookTest {
                 BasketCard(basket, Modifier.weight(1f), {}, {}, {})
                 Column(modifier = Modifier.width(TILL), verticalArrangement = Arrangement.spacedBy(Spacing.normal)) {
                     ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
-                    ReceiptTotals(session, form, total, expanded = true, onToggle = {})
+                    PaymentCard(session, form, total, expanded = true, onToggle = {})
+                    ReceiptTotals(form, total, expanded = true)
                     IssueRow(session, basket, form)
                 }
             }
@@ -331,7 +333,8 @@ class KassaSaleLookTest {
             ) {
                 PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
                 ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
-                ReceiptTotals(session, form, totalOf(basket, form), expanded = true, onToggle = {})
+                PaymentCard(session, form, totalOf(basket, form), expanded = true, onToggle = {})
+                ReceiptTotals(form, totalOf(basket, form), expanded = true)
             }
         }
     }

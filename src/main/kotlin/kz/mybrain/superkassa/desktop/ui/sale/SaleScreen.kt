@@ -2,11 +2,8 @@ package kz.mybrain.superkassa.desktop.ui.sale
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -17,12 +14,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.adaptive.TwoPane
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SaleTexts
 import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 import kz.mybrain.superkassa.desktop.ui.strings.saleTextsKk
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
+import kz.mybrain.superkassa.desktop.ui.theme.KassaLayout
+import kz.mybrain.superkassa.desktop.ui.theme.Panes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -37,19 +36,24 @@ val LocalSaleTexts: ProvidableCompositionLocal<SaleTexts> = staticCompositionLoc
 /**
  * Продажа и покупка.
  *
- * Экран разложен на две колонки, как товароучётный терминал: слева чек —
- * он главный и занимает всё оставшееся место, справа узкая кассовая
- * колонка, где кассир вводит позицию, выбирает оплату и видит итог.
- * Раньше всё шло одним прокручиваемым столбцом, и итог с кнопкой уезжали
- * под сгиб ровно тогда, когда чек становился длинным.
+ * Экран разложен на две панели, как товароучётный терминал: чек — он
+ * главный и забирает всё место, кроме кассы, — и касса, где кассир вводит
+ * позицию, выбирает оплату и видит итог. Касса не шире своего предела
+ * ([Panes.receiptAndTill]): в окне по умолчанию она прежде стояла постоянной
+ * ширины и оставляла названию товара в чеке одну букву. Там, где рядом
+ * им тесно, касса встаёт под чеком.
  *
  * Одна операция на два направления намеренно: состав чека у продажи
  * и покупки одинаковый, различается только направление денег.
  */
 @Composable
 fun SaleScreen(session: Session) {
-    val basket = remember { Basket() }
-    val form = remember { SaleForm() }
+    SaleWorkplace(session, remember { Basket() }, remember { SaleForm() })
+}
+
+/** Экран продажи над готовым чеком: снимки подают его набранным. */
+@Composable
+internal fun SaleWorkplace(session: Session, basket: Basket, form: SaleForm) {
     val panels = remember { SalePanels(session.preferences) }
     val total = totalOf(basket, form)
     val texts = LocalStrings.current
@@ -58,13 +62,12 @@ fun SaleScreen(session: Session) {
         LocalVatRates provides vatRatesOf(session, texts.enums),
         LocalUnits provides session.units
     ) {
-        Row(
+        TwoPane(
+            split = Panes.receiptAndTill,
             modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.roomy)
-        ) {
-            ReceiptColumn(form, basket, Modifier.weight(1f))
-            TillColumn(session, form, basket, panels, total)
-        }
+            first = { ReceiptColumn(form, basket) },
+            second = { TillColumn(session, form, basket, panels, total) }
+        )
     }
 }
 
@@ -75,7 +78,7 @@ fun SaleScreen(session: Session) {
  * чаще, чем во всё остальное вместе взятое.
  */
 @Composable
-private fun ReceiptColumn(form: SaleForm, basket: Basket, modifier: Modifier) {
+private fun ReceiptColumn(form: SaleForm, basket: Basket) {
     // Какой позиции считывают марки: окно открывается поверх листа чека
     // и живёт, пока кассир подносит к сканеру одну бутылку за другой.
     var stamping by remember { mutableStateOf<Int?>(null) }
@@ -91,7 +94,7 @@ private fun ReceiptColumn(form: SaleForm, basket: Basket, modifier: Modifier) {
         }
     }
     Column(
-        modifier = modifier.fillMaxHeight(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
         SaleHeader(form, basket)
@@ -108,9 +111,11 @@ private fun ReceiptColumn(form: SaleForm, basket: Basket, modifier: Modifier) {
 /**
  * Правая колонка — рабочее место кассира.
  *
- * Ввод и оплата прокручиваются, итог с единственной кнопкой прибиты
- * к низу: сумма к оплате и «Пробить чек» обязаны быть на экране всегда,
- * сколько бы позиций ни набралось.
+ * Ввод, реквизиты и оплата прокручиваются, итог с единственной кнопкой
+ * прибиты к низу: сумма к оплате и «Пробить чек» обязаны быть на экране
+ * всегда, сколько бы позиций и оплат ни набралось. Прибито только то,
+ * без чего чек не пробить: пять строк оплаты внизу прежде отнимали
+ * у ввода всю высоту, и в окне 960×640 поля штрихкода не было вовсе.
  *
  * Разделы сворачиваются: высота колонки одна, и кассир отдаёт её тому,
  * чем занят сейчас.
@@ -124,60 +129,52 @@ private fun TillColumn(
     total: BigDecimal
 ) {
     Column(
-        modifier = Modifier.width(TILL_WIDTH).fillMaxHeight(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.normal)
     ) {
-        // Прокручивается ввод и реквизиты, а не деньги: «Итого» и «Пробить
-        // чек» кассир видит в каждом чеке. Обратный порядок пробовался —
-        // ввод позиции переставал прокручиваться, зато под сгиб уезжала
-        // главная кнопка экрана, и это хуже.
-        ScrollableColumn(modifier = Modifier.weight(1f)) {
-            // Отраслевые реквизиты стоят первыми и не сворачиваются:
-            // их заполняют в каждом чеке, и без них кнопка погашена —
-            // уехав под сгиб, они оставили бы кассира искать причину.
-            // У кассы в торговле карточки нет вовсе.
-            DomainCard(session, form)
+        ScrollableColumn(modifier = Modifier.weight(1f), gutter = KassaLayout.tillGutter) {
+            // Штрихкод стоит первым: сканер вводит код в поле, которое
+            // кассир видит, а реквизиты отрасли прежде уводили его под
+            // сгиб. Незаполненный реквизит назовёт строка под кнопкой.
             PositionEntryCard(
                 session = session,
                 expanded = panels.expanded(SalePanel.PositionEntry),
                 onToggle = { panels.toggle(SalePanel.PositionEntry) }
             ) { basket.add(it) }
-            ReceiptChangesCard(
+            DomainCard(session, form)
+            PaymentCard(
                 session = session,
                 form = form,
-                basket = basket,
-                expanded = panels.expanded(SalePanel.ReceiptChanges),
-                onToggle = { panels.toggle(SalePanel.ReceiptChanges) }
+                total = total,
+                expanded = panels.expanded(SalePanel.Money),
+                onToggle = { panels.toggle(SalePanel.Money) }
             )
-            CustomerDataCard(
-                form = form,
-                expanded = panels.expanded(SalePanel.CustomerData),
-                onToggle = { panels.toggle(SalePanel.CustomerData) }
-            )
+            TillExtras(session, form, basket, panels)
         }
-        // Оплата и итог прибиты к низу вместе с кнопкой: их видят в каждом
-        // чеке, и уезжать под сгиб они не имеют права.
-        ReceiptTotals(
-            session = session,
-            form = form,
-            total = total,
-            expanded = panels.expanded(SalePanel.Money),
-            onToggle = { panels.toggle(SalePanel.Money) }
-        )
-        IssueRow(session, basket, form)
+        // Прибитое стоит в тех же полях, что и прокручиваемое над ним.
+        Column(
+            modifier = Modifier.padding(end = KassaLayout.tillGutter),
+            verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        ) {
+            ReceiptTotals(form, total, expanded = panels.expanded(SalePanel.Money))
+            IssueRow(session, basket, form)
+        }
     }
 }
 
-/**
- * Ширина кассовой колонки.
- *
- * Считается из тех же полей, что в ней стоят: самая широкая строка —
- * поле реквизита рядом с ценой, плюс место под количество. Число здесь
- * развело бы ширину колонки и ширину её содержимого.
- *
- * Шире, чем нужно самой широкой строке, намеренно: плашки видов оплаты
- * при узкой колонке переносились на четыре строки и съедали высоту,
- * которой не хватало вводу позиции. По ширине место есть — лист чека
- * рядом всё равно наполовину пуст.
- */
-private val TILL_WIDTH = Sizes.fieldForm + Sizes.fieldPrice + Sizes.fieldQuantity
+/** Скидки и данные покупателя: нужны не в каждом чеке и стоят последними. */
+@Composable
+private fun TillExtras(session: Session, form: SaleForm, basket: Basket, panels: SalePanels) {
+    ReceiptChangesCard(
+        session = session,
+        form = form,
+        basket = basket,
+        expanded = panels.expanded(SalePanel.ReceiptChanges),
+        onToggle = { panels.toggle(SalePanel.ReceiptChanges) }
+    )
+    CustomerDataCard(
+        form = form,
+        expanded = panels.expanded(SalePanel.CustomerData),
+        onToggle = { panels.toggle(SalePanel.CustomerData) }
+    )
+}

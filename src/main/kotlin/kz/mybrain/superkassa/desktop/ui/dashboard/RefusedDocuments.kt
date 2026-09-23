@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -22,16 +22,17 @@ import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.documentDetails
+import kz.mybrain.superkassa.desktop.ui.adaptive.MoneyText
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ofdRefusalWords
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
+import kz.mybrain.superkassa.desktop.ui.theme.TableColumns
 
 /**
  * Документы смены, которые ОФД отверг.
@@ -80,11 +81,13 @@ internal fun RefusedDocuments(session: Session) {
                 )
                 InfoTip(texts.dashboard.refusedHint)
             }
-            // Отказы приходят пачкой, и высота карточки ограничена: перечень
-            // за сотню строк выдавливал за нижний край окна и заголовок
-            // «Документы смены», и сам список.
+            // Отказы приходят пачкой, и перечень прокручивается внутри
+            // карточки: за сотню строк он выдавливал за нижний край окна
+            // и заголовок «Документы смены», и сам список. Высоту карточке
+            // отмеряет раскладка главного экрана — рядом со списком смены
+            // или под ним, но не больше его доли.
             ScrollableColumn(
-                modifier = Modifier.heightIn(max = Sizes.refusedList),
+                modifier = Modifier.weight(1f, fill = false),
                 spacing = Spacing.tight,
                 gutter = Spacing.snug
             ) {
@@ -104,11 +107,9 @@ private fun RefusedRow(session: Session, document: Document, operator: String?) 
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        // Сумма и код переносятся под вид документа, когда карточке тесно,
+        // а не сжимают его до многоточия.
+        WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
             Text(
                 text = listOfNotNull(
                     session.titleOf(Dictionary.DocumentTypes, document.docType),
@@ -117,9 +118,9 @@ private fun RefusedRow(session: Session, document: Document, operator: String?) 
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).widthIn(min = TableColumns.name)
             )
-            Text(Money.formatTiyn(document.totalAmount), style = MoneyStyle.row)
+            MoneyText(Money.formatTiyn(document.totalAmount))
             // Код показывается, только когда он есть: у протокольного отказа
             // ОФД своего кода не присылает, и строка «Код отказа —» ничего
             // кассиру не сообщала.

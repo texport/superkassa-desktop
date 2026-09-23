@@ -4,14 +4,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,15 +24,11 @@ import kz.mybrain.superkassa.desktop.server.documentDetails
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
-import kz.mybrain.superkassa.desktop.ui.payment.PaymentLines
 import kz.mybrain.superkassa.desktop.ui.payment.PaymentSplit
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.journalTexts
-import kz.mybrain.superkassa.desktop.ui.strings.paymentTexts
-import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -47,6 +39,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * это обычный случай, — но менять её можно: покупатель возвращает один
  * товар из трёх. Больше суммы чека вернуть нельзя, и говорится об этом
  * до отправки.
+ *
+ * @param onBack вернуться к списку чеков: на узком окне панель стоит
+ *   вместо списка, а не рядом с ним.
  */
 @Composable
 fun RefundPanel(
@@ -54,6 +49,7 @@ fun RefundPanel(
     kind: ReturnKind,
     basis: Document?,
     modifier: Modifier,
+    onBack: () -> Unit,
     onDone: () -> Unit
 ) {
     val journal = journalTexts(session.language).returns
@@ -66,18 +62,25 @@ fun RefundPanel(
                 modifier = Modifier.fillMaxHeight()
             )
         } else {
-            RefundForm(session, journal, kind, basis, onDone)
+            RefundForm(session, journal, kind, basis, onBack, onDone)
         }
     }
 }
 
-/** Ввод суммы и отправка. Ключ повтора живёт, пока выбран тот же чек. */
+/**
+ * Ввод суммы и отправка. Ключ повтора живёт, пока выбран тот же чек.
+ *
+ * Прежде сумма и виды оплаты стояли под составом чека, и у чека
+ * из пятидесяти строк их на экране не было, а кнопка оставалась
+ * нажимаемой.
+ */
 @Composable
 private fun RefundForm(
     session: Session,
     journal: ReturnJournalTexts,
     kind: ReturnKind,
     basis: Document,
+    onBack: () -> Unit,
     onDone: () -> Unit
 ) {
     val texts = LocalStrings.current
@@ -109,12 +112,23 @@ private fun RefundForm(
         modifier = Modifier.fillMaxSize().padding(Spacing.normal),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        // Состав чека прокручивается вместе с суммой и оплатой, а кнопка
-        // прибита к низу: у чека из десятка позиций список выдавливал
-        // за край панели и поле суммы, и само действие — вернуть деньги
-        // покупателю было нечем.
+        // Сумма и виды оплаты стоят над составом чека, а не под ним:
+        // у чека из пятидесяти строк их на экране не было, а кнопка
+        // оставалась нажимаемой. Кнопка прибита к низу.
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.snug) {
-            RefundSummary(basis, journal, total)
+            RefundSummary(basis, journal, total, onBack)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            RefundTill {
+                // Отметки описывают чек возврата только тогда, когда сумма
+                // осталась их суммой: поправленное поле отправит одну строку.
+                val byTicks = chosen.isNotEmpty() && chosenTiyn(items, chosen) == readyTiyn(checked)
+                RefundNote(journal.itemsIgnored.takeIf { chosen.isNotEmpty() && !byTicks })
+                RefundAmountRow(journal, entered, checked is RefundAmount.Rejected, { entered = it }) {
+                    chosen = emptySet()
+                    entered = tengeText(total)
+                }
+                RefundMoney(session, kind, split, refundSum, journal, checked)
+            }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             RefundItems(session, items, chosen, journal) { at ->
                 chosen = if (at in chosen) chosen - at else chosen + at
@@ -122,48 +136,20 @@ private fun RefundForm(
                 // не должен, а поправить поле по-прежнему может.
                 entered = tengeText(if (chosen.isEmpty()) total else chosenTiyn(items, chosen))
             }
-            // Отметки описывают чек возврата только тогда, когда сумма
-            // осталась их суммой: поправленное поле отправит одну строку.
-            val byTicks = chosen.isNotEmpty() && chosenTiyn(items, chosen) == readyTiyn(checked)
-            RefundNote(journal.itemsIgnored.takeIf { chosen.isNotEmpty() && !byTicks })
-            RefundAmountRow(journal, entered, checked is RefundAmount.Rejected, { entered = it }) {
-                chosen = emptySet()
-                entered = tengeText(total)
-            }
-            // Возврат отдают тем же набором, каким платили: часть на карту,
-            // часть из ящика. Сумма разбивается от суммы возврата, а не от
-            // итога чека-основания.
-            // Почему вид оплаты в списке погас — теми же словами, что и на
-            // продаже: погасшая строка без объяснения читается как поломка.
-            PaymentLines(session, split, refundSum, saleTexts(session.language).paymentUnsupported)
-            // Деньги покупателю отдают из того же ящика, из которого их
-            // изымают: о нехватке говорится под видами оплаты и до выдачи,
-            // а не отказом узла после.
-            RefundNote(
-                drawerShortage(kind, session.cashInDrawer, split.cashSum(refundSum))
-                    ?.let { journal.drawerShort.format(Money.formatTiyn(it)) }
-            )
-            RefundHints(journal, checked, split.issue(refundSum), paymentTexts(session.language))
         }
-        Button(
-            enabled = !working && checked is RefundAmount.Ready && split.issue(refundSum) == null,
-            onClick = {
-                val ready = checked as? RefundAmount.Ready ?: return@Button
-                working = true
-                scope.launch {
-                    // Удался — выбор снимается: сумма чека в поле после
-                    // частичного возврата приглашала бы вернуть его ещё раз.
-                    val returned = chosen.mapNotNull { items.getOrNull(it) }
-                    val payments = split.toPayments(refundSum)
-                    if (refund(session, texts, kind, basis, ready.tiyn, payments, key, returned)) {
-                        onDone()
-                    }
-                    working = false
+        RefundButton(kind, enabled = !working && checked is RefundAmount.Ready && split.issue(refundSum) == null) {
+            val ready = checked as? RefundAmount.Ready ?: return@RefundButton
+            working = true
+            scope.launch {
+                // Удался — выбор снимается: сумма чека в поле после
+                // частичного возврата приглашала бы вернуть его ещё раз.
+                val returned = chosen.mapNotNull { items.getOrNull(it) }
+                val payments = split.toPayments(refundSum)
+                if (refund(session, texts, kind, basis, ready.tiyn, payments, key, returned)) {
+                    onDone()
                 }
-            },
-            modifier = Modifier.fillMaxWidth().height(Sizes.fieldHeight)
-        ) {
-            Text(kind.action(texts.returns), style = MaterialTheme.typography.titleMedium)
+                working = false
+            }
         }
     }
 }

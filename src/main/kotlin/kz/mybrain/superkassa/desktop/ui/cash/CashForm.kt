@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.desktop.ui.cash
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -14,10 +13,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.MoneyField
@@ -76,11 +75,9 @@ internal fun CashForm(
         ) {
             // Сумма и оба действия стоят одной строкой и одного роста:
             // кнопка под полем читается как отдельный блок, хотя это одно
-            // действие — «внести столько-то».
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-                verticalAlignment = Alignment.Top
-            ) {
+            // действие — «внести столько-то». Не помещаются — кнопки
+            // переносятся под поле целиком, а не сжимаются.
+            WrapRow(spacing = Spacing.snug) {
                 MoneyField(
                     value = amount,
                     label = texts.common.amount,

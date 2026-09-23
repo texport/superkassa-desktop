@@ -28,6 +28,9 @@ import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.cashIn
 import kz.mybrain.superkassa.desktop.server.cashOut
+import kz.mybrain.superkassa.desktop.ui.adaptive.ContentKind
+import kz.mybrain.superkassa.desktop.ui.adaptive.MoneyText
+import kz.mybrain.superkassa.desktop.ui.adaptive.contentWidth
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.ScreenTitle
@@ -70,8 +73,11 @@ fun CashScreen(session: Session) {
 
     LaunchedEffect(session.selected?.kkmId, session.pin) { readRecent() }
 
+    // Экран — форма и короткий список, а не рабочий стол: он не шире
+    // читаемого. На широком окне сумма операции стояла в полутора тысячах
+    // точек от её названия.
     ScrollableColumn(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
+        modifier = Modifier.fillMaxSize().padding(Spacing.screen).contentWidth(ContentKind.Reading),
         spacing = Spacing.normal
     ) {
         ScreenTitle(money.drawer.inDrawer)
@@ -110,11 +116,9 @@ private fun DrawerCard(session: Session, drawer: DrawerTexts) {
                 )
                 InfoTip(drawer.countedByNode)
             }
-            Text(
-                text = Money.formatTiyn(session.cashInDrawer),
-                style = MoneyStyle.hero,
-                modifier = Modifier.fillMaxWidth()
-            )
+            // Тем же начертанием, что плитка на главном экране: одно число
+            // в двух местах набиралось по-разному. Одной строкой и целиком.
+            MoneyText(Money.formatTiyn(session.cashInDrawer), Modifier.fillMaxWidth(), MoneyStyle.hero)
             // Пока остаток неизвестен, об этом сказано строкой: это помеха.
             // Объяснение, кто его считает, ушло под значок у подписи.
             if (session.cashInDrawer == null) {

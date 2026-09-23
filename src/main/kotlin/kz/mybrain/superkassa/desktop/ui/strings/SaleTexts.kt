@@ -45,7 +45,8 @@ data class SaleTexts(
 
     /** Доля скидки на позицию: она берётся от стоимости строки, а не чека. */
     val lineChangeAsPercent: String,
-    val paymentAndTotal: String,
+    /** Раздел кассы, где выбирают, чем платят. */
+    val payment: String,
     val lineDiscount: String,
     val addByEnter: String,
     val notANumber: String,

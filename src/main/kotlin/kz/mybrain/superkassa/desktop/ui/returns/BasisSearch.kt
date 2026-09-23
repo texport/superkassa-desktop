@@ -1,13 +1,11 @@
 package kz.mybrain.superkassa.desktop.ui.returns
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.history.DayBar
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
@@ -32,10 +30,9 @@ internal fun BasisSearch(
     onNumber: (String) -> Unit,
     onDay: (LocalDate) -> Unit
 ) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    // Ряд переносится: на узком окне поле номера уходит под перелистывание
+    // дня, а не сжимается.
+    WrapRow(spacing = Spacing.normal) {
         DayBar(history, day, loading, onDay)
         OutlinedTextField(
             value = number,

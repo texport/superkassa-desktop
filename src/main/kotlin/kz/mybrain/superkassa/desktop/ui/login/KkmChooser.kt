@@ -1,7 +1,5 @@
 package kz.mybrain.superkassa.desktop.ui.login
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,13 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.Kkm
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LoginStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
@@ -92,14 +90,17 @@ private fun KkmRow(
     onPick: () -> Unit
 ) {
     val texts = LocalStrings.current
+    // Название — в две строки: у полусотни касс с общим началом названия
+    // одна строка оставляла от каждой одинаковое «Касса торгового зала…».
     RecordRow(
         title = name,
+        titleLines = NAME_LINES,
         subtitle = kkmDetail(kkm, texts.login),
         selected = selected,
         leading = { RadioButton(selected = selected, onClick = null) },
         modifier = Modifier.selectable(selected = selected, onClick = onPick),
         trailing = {
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+            WrapRow {
                 if (remembered) Chip(texts.login.yourKkm, StatusColors.delivered)
                 if (kkm.isBlocked) Chip(texts.shell.blocked, StatusColors.refused)
                 if (kkm.isAutonomous) Chip(texts.shell.autonomous, StatusColors.pending)
@@ -130,3 +131,6 @@ internal fun kkmDetail(kkm: Kkm, texts: LoginStrings): String = listOfNotNull(
  */
 internal fun kkmNumber(kkm: Kkm, texts: LoginStrings): String? =
     kkm.kkmKgdId?.takeIf { it.isNotBlank() }?.let { "${texts.registrationNumber} $it" }
+
+/** Сколько строк отдаётся названию кассы в списке входа. */
+private const val NAME_LINES = 2

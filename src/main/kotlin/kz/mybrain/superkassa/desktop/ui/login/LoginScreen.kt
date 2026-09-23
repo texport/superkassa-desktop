@@ -3,11 +3,10 @@ package kz.mybrain.superkassa.desktop.ui.login
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -17,6 +16,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshKkms
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetDoor
 import kz.mybrain.superkassa.desktop.ui.components.LoadingState
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
@@ -70,7 +70,7 @@ fun LoginScreen(session: Session, cabinet: CabinetSession, state: LoginState) {
         // когда шапка, список и двери несли по своему отступу, все
         // зазоры выходили разными.
         Column(
-            modifier = Modifier.width(Sizes.loginColumn).fillMaxSize().padding(Spacing.roomy),
+            modifier = Modifier.widthIn(max = Sizes.loginColumn).fillMaxSize().padding(Spacing.roomy),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
             LoginHeader(session)
@@ -116,7 +116,7 @@ fun LoginScreen(session: Session, cabinet: CabinetSession, state: LoginState) {
             // своей ЭЦП в кабинет. Обе со значками и в рамке: текстовыми
             // вподбор они терялись, а кабинет для нового владельца —
             // единственный вход, пока нет ни кассы, ни компании.
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+            WrapRow {
                 DoorButton(AppIcons.newKkm, texts.sections.register) { state.door = Door.Register }
                 DoorButton(AppIcons.cabinet, texts.sections.cabinet) { state.door = Door.Cabinet }
                 DoorButton(AppIcons.settings, texts.sections.settings) { state.door = Door.Settings }

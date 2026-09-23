@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.cash
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -59,11 +60,16 @@ internal fun RecentCash(
     }
     SectionCard(title = money.recent, info = money.recentHint) {
         ScreenSlot(state, dense = true) {
-            recent.forEachIndexed { index, document ->
-                if (index > 0) {
-                    HorizontalDivider()
+            // Строки стоят вплотную через черту, без зазора карточки между
+            // ними: зазор сверху и снизу черты растягивал каждое движение
+            // на треть выше строки списка.
+            Column {
+                recent.forEachIndexed { index, document ->
+                    if (index > 0) {
+                        HorizontalDivider()
+                    }
+                    CashRow(session, document)
                 }
-                CashRow(session, document)
             }
         }
     }

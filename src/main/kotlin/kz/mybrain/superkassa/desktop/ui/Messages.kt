@@ -1,5 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -8,6 +10,8 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
@@ -24,11 +28,19 @@ import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
  * краем глаза, а причину отказа читает и решает, что делать. Гаснут оба:
  * снекбар лежит поверх содержимого, и оставленный навсегда отказ закрывал
  * нижний край экрана до тех пор, пока его не заметят и не нажмут «Скрыть».
+ *
+ * Снекбар встаёт у левого края окна, как велит Material 3 для больших
+ * экранов, а не посередине. Посередине он ложился на кассу продажи —
+ * на «Пробить чек» и «Принято», — и кассир не мог нажать кнопку, пока
+ * читал, почему её нажатие не прошло. Касса стоит справа, и слева
+ * снекбар закрывает рельс и край чека, а не действие.
  */
 @Composable
 fun MessageHost(state: SnackbarHostState) {
-    SnackbarHost(hostState = state) { data ->
-        Snackbar(snackbarData = data)
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomStart) {
+        SnackbarHost(hostState = state) { data ->
+            Snackbar(snackbarData = data)
+        }
     }
 }
 

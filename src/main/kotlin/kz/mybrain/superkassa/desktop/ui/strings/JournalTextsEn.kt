@@ -10,6 +10,7 @@ internal val journalTextsEn = JournalTexts(
         allBasesShown = "All receipts of the day are shown",
         chooseBasis = "Pick a receipt in the list",
         chooseBasisHint = "The receipt total and the fiscal sign will appear here.",
+        backToList = "Back to receipts",
         noBasisHint = "Turn to another day, type the receipt number, or check the link to the node.",
         basisUnread = "The receipts of that day could not be read: the node did not answer.",
         basisUnreadHint = "Read them again: while the node is silent, no original receipt can be found. " +
