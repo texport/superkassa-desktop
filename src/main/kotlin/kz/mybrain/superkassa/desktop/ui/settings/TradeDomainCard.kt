@@ -30,13 +30,14 @@ import kz.mybrain.superkassa.desktop.ui.strings.saleTexts
 @Composable
 internal fun TradeDomainCard(session: Session) {
     val texts = LocalStrings.current
+    val kkm = session.selected ?: return
     SectionCard(title = texts.settings.tradeDomain, info = texts.settings.tradeDomainHint) {
         LabelledPicker(
             label = texts.settings.domainKind,
             options = DomainKind.entries,
             selected = session.domain,
             title = { kind -> kind?.title(texts.enums).orEmpty() },
-            onSelect = { session.chooseDomain(it) }
+            onSelect = { session.chooseDomain(kkm.kkmId, it) }
         )
         RequisiteNames(session)
     }

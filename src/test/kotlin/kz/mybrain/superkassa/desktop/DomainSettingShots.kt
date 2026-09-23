@@ -67,7 +67,9 @@ class DomainSettingShots {
 
     /** Рабочее место с открытой сменой и выбранной отраслью. */
     private fun sellingIn(kind: DomainKind, folder: String): Session =
-        KassaScene.session(folder, shift = KassaScene.openShift()).also { it.chooseDomain(kind) }
+        KassaScene.session(folder, shift = KassaScene.openShift()).also { session ->
+            session.selected?.let { session.chooseDomain(it.kkmId, kind) }
+        }
 
     private companion object {
         /** Высота кадра, на которую входит кассовая колонка целиком. */

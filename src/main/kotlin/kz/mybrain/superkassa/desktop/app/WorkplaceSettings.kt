@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Typeface
 
 /**
  * Что помнит это рабочее место: язык, вид, рельс, колонку точек, окно,
- * отрасль кассы и свои названия касс.
+ * отрасли касс и свои названия для них.
  *
  * Выбор держится состоянием, а не читается из файла при каждом обращении:
  * файл Compose не наблюдает, и переименованная касса оставалась на экране
@@ -46,15 +46,8 @@ class WorkplaceSettings(private val preferences: Preferences) {
     )
         private set
 
-    /**
-     * Вид отрасли, в которой работает эта касса.
-     *
-     * Настройка, а не поле чека: отрасль у кассы одна, и выбирать её
-     * заново в каждом чеке кассиру незачем. От неё зависит, какие
-     * реквизиты экран продажи спрашивает и какой подблок уходит в БФД.
-     */
-    var domain: DomainKind by mutableStateOf(DomainKind.byCode(preferences.domain))
-        private set
+    /** Отрасли касс: ключ — касса, значение — в какой отрасли она работает. */
+    private val domains = mutableStateMapOf<String, DomainKind>()
 
     /** Свёрнут ли рельс разделов: подписи спрятаны, значки остались. */
     var railCollapsed: Boolean by mutableStateOf(preferences.railCollapsed)
@@ -92,9 +85,24 @@ class WorkplaceSettings(private val preferences: Preferences) {
         preferences.textScale = chosen.code
     }
 
-    fun chooseDomain(chosen: DomainKind) {
-        domain = chosen
-        preferences.domain = chosen.code
+    /**
+     * В какой отрасли работает эта касса.
+     *
+     * Настройка, а не поле чека: отрасль у кассы одна, и выбирать её
+     * заново в каждом чеке кассиру незачем. От неё зависит, какие
+     * реквизиты экран продажи спрашивает и какой подблок уходит в БФД.
+     *
+     * Без выбранной кассы — торговля: продавать всё равно нечем,
+     * а настройка принадлежит кассе, а не рабочему месту.
+     */
+    fun domainOf(kkmId: String?): DomainKind {
+        val kkm = kkmId ?: return DomainKind.Trading
+        return domains[kkm] ?: DomainKind.byCode(preferences.domain(kkm))
+    }
+
+    fun chooseDomain(kkmId: String, chosen: DomainKind) {
+        domains[kkmId] = chosen
+        preferences.chooseDomain(kkmId, chosen.code)
     }
 
     fun toggleRail() {

@@ -44,18 +44,27 @@ class DomainSettingTest {
     @Test
     fun `по умолчанию касса работает в торговле`() {
         val settings = WorkplaceSettings(Preferences(freshFile()))
-        assertEquals(DomainKind.Trading, settings.domain)
+        assertEquals(DomainKind.Trading, settings.domainOf(TAXI_KKM))
+        assertEquals(DomainKind.Trading, settings.domainOf(null), "без выбранной кассы продавать нечем")
     }
 
+    /**
+     * За одной машиной работают несколько касс, и отрасли у них разные:
+     * общая на рабочее место настройка переносила такси на магазинную
+     * кассу при переключении.
+     */
     @Test
-    fun `выбранная отрасль помнится на рабочем месте`() {
+    fun `отрасль помнится за каждой кассой отдельно`() {
         val file = freshFile()
 
-        WorkplaceSettings(Preferences(file)).chooseDomain(DomainKind.Taxi)
+        WorkplaceSettings(Preferences(file)).chooseDomain(TAXI_KKM, DomainKind.Taxi)
 
-        assertEquals(DomainKind.Taxi, WorkplaceSettings(Preferences(file)).domain, "отрасль забылась")
-        WorkplaceSettings(Preferences(file)).chooseDomain(DomainKind.Trading)
-        assertEquals(DomainKind.Trading, WorkplaceSettings(Preferences(file)).domain)
+        val saved = WorkplaceSettings(Preferences(file))
+        assertEquals(DomainKind.Taxi, saved.domainOf(TAXI_KKM), "отрасль забылась")
+        assertEquals(DomainKind.Trading, saved.domainOf(SHOP_KKM), "отрасль такси перешла на другую кассу")
+
+        WorkplaceSettings(Preferences(file)).chooseDomain(TAXI_KKM, DomainKind.Trading)
+        assertEquals(DomainKind.Trading, WorkplaceSettings(Preferences(file)).domainOf(TAXI_KKM))
     }
 
     /**
@@ -66,7 +75,7 @@ class DomainSettingTest {
     fun `отрасль кассы уходит в запрос чека вместе с её реквизитами`() {
         val sent = mutableListOf<String>()
         val session = sessionThatTakesReceipts(sent)
-        session.chooseDomain(DomainKind.Taxi)
+        session.chooseDomain(requireNotNull(session.selected).kkmId, DomainKind.Taxi)
         val basket = Basket().apply { add(POSITION) }
         val form = SaleForm().apply {
             domain = DomainInput(carNumber = "777ABC", isOrder = true, currentFee = "350")
@@ -136,6 +145,8 @@ class DomainSettingTest {
         File(Files.createTempDirectory("superkassa-domain").toFile(), "kkm")
 
     private companion object {
+        const val TAXI_KKM = "kkm-taxi"
+        const val SHOP_KKM = "kkm-shop"
         const val RECEIPT_PATH = "/receipt/"
         const val JSON = "application/json"
 

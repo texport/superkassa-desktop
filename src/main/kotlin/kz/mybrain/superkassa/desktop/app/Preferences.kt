@@ -56,11 +56,9 @@ class Preferences(private val file: File = defaultFile()) {
         }
 
     /** Вид отрасли этой кассы; пусто — торговля. */
-    var domain: String?
-        get() = node.domain
-        set(value) {
-            node.domain = value
-        }
+    fun domain(kkmId: String): String? = node.domain(kkmId)
+
+    fun chooseDomain(kkmId: String, code: String?) = node.chooseDomain(kkmId, code)
 
     fun localName(kkmId: String): String? = node.localName(kkmId)
 

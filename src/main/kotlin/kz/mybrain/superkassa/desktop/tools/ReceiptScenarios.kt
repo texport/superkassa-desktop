@@ -65,7 +65,7 @@ object ReceiptScenarios {
     private suspend fun sellByDomains(session: Session, kkmId: String, report: CycleReport) {
         val chosen = session.domain
         DOMAINS.forEach { (kind, requisites) ->
-            session.chooseDomain(kind)
+            session.chooseDomain(kkmId, kind)
             val request = ReceiptRequest(
                 idempotencyKey = key("sell-${kind.name.lowercase()}"),
                 items = listOf(ReceiptItem(kind.code, BigDecimal("1500.0"), BigDecimal("1.0"), "VAT_16")),
@@ -76,7 +76,7 @@ object ReceiptScenarios {
                 session.client.sell(kkmId, request, FullCycle.WORK_PIN)
             }
         }
-        session.chooseDomain(chosen)
+        session.chooseDomain(kkmId, chosen)
     }
 
     private suspend fun buyFull(session: Session, kkmId: String, report: CycleReport) {

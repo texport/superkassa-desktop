@@ -107,14 +107,16 @@ class Session(
     fun switchLanguage(chosen: Language) = settings.switchLanguage(chosen)
 
     /**
-     * Отрасль, в которой работает эта касса.
+     * Отрасль, в которой работает выбранная касса.
      *
      * Спрашивают её и экран продажи, и сборка чека: от неё зависит, какие
-     * реквизиты кассир заполняет и какой подблок уходит в БФД.
+     * реквизиты кассир заполняет и какой подблок уходит в БФД. Отрасль
+     * держится за кассой: на одной машине их бывает несколько, и отрасли
+     * у них разные.
      */
-    val domain: DomainKind get() = settings.domain
+    val domain: DomainKind get() = settings.domainOf(selected?.kkmId)
 
-    fun chooseDomain(chosen: DomainKind) = settings.chooseDomain(chosen)
+    fun chooseDomain(kkmId: String, chosen: DomainKind) = settings.chooseDomain(kkmId, chosen)
 
     /** Название кассы на этом рабочем месте; откуда оно берётся — в [SessionKkmNames]. */
     fun displayName(kkm: Kkm): String = settings.nameOf(kkm)
