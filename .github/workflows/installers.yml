@@ -123,13 +123,22 @@ jobs:
         with:
           path: installers
 
+      # Выпуск мог быть заведён руками до сборки — с заметками о том,
+      # что в нём поменялось. Тогда установщики докладываются в него,
+      # а не создаётся второй: попытка создать существующий роняла шаг,
+      # и выпуск оставался без файлов, хотя все три собрались.
       - name: Выпустить
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          find installers -type f \( -name '*.msi' -o -name '*.deb' -o -name '*.dmg' \) -print
-          gh release create "${GITHUB_REF_NAME}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --title "Суперкасса ${GITHUB_REF_NAME}" \
-            --notes "Установщики для Windows, Linux и macOS. Узел кассы едет внутри — ставить и запускать отдельно ничего не нужно." \
-            $(find installers -type f \( -name '*.msi' -o -name '*.deb' -o -name '*.dmg' \) -print)
+          built=$(find installers -type f \( -name '*.msi' -o -name '*.deb' -o -name '*.dmg' \) -print)
+          echo "$built"
+          if gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --clobber $built
+          else
+            gh release create "${GITHUB_REF_NAME}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --title "Суперкасса ${GITHUB_REF_NAME}" \
+              --notes "Установщики для Windows, Linux и macOS. Узел кассы едет внутри — ставить и запускать отдельно ничего не нужно." \
+              $built
+          fi
