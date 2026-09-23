@@ -3,27 +3,28 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableColumn
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableLine
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableWidths
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetSum
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsSalesTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AnalyticsLayout
 import kz.mybrain.superkassa.desktop.ui.theme.ChartColors
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.theme.TableColumns
 
 /**
  * Сеть по регионам: где она торгует и сколько это даёт.
@@ -35,7 +36,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * между собой быстрее, чем ряд процентов.
  *
  * Столбцы те же, что и у остальных таблиц сводки: числа стоят на месте
- * по своим ширинам, а название региона тянется на всё остальное.
+ * по своим ширинам и вправо, с разрядами, а название региона тянется
+ * на всё остальное. Не хватает окна — таблица едет вбок, а сумма
+ * не теряет хвост за краем столбца.
  */
 @Composable
 fun SalesRegions(regions: List<SalesRegion>, texts: AnalyticsSalesTexts, modifier: Modifier = Modifier) {
@@ -43,45 +46,63 @@ fun SalesRegions(regions: List<SalesRegion>, texts: AnalyticsSalesTexts, modifie
         Footnote(texts.empty)
         return
     }
-    Column(modifier = modifier.fillMaxWidth()) {
-        RegionsHead(texts)
+    PageTable(COLUMNS, modifier) { table ->
+        RegionsHead(table.widths, texts)
         regions.forEach { region ->
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            RegionRow(region)
+            LineDivider(table.widths)
+            RegionRow(table.widths, region)
         }
     }
 }
 
 /** Подписи столбцов свода. */
 @Composable
-private fun RegionsHead(texts: AnalyticsSalesTexts) {
-    TableRow {
-        HeadCell(texts.region, Modifier.weight(1f))
-        HeadCell(texts.placeCount, Modifier.width(Sizes.salesNumberColumn))
-        HeadCell(texts.activeRegisters, Modifier.width(Sizes.salesNumberColumn))
-        HeadCell(texts.receipts, Modifier.width(Sizes.salesNumberColumn))
-        HeadCell(texts.revenue, Modifier.width(Sizes.salesNumberColumn))
-        HeadCell(texts.networkShare, Modifier.width(Sizes.salesShareColumn))
+private fun RegionsHead(widths: TableWidths, texts: AnalyticsSalesTexts) {
+    TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column ->
+        when (column) {
+            NAME -> HeadCell(texts.region)
+            PLACES -> HeadCell(texts.placeCount, numeric = true)
+            KKMS -> HeadCell(texts.activeRegisters, numeric = true)
+            RECEIPTS -> HeadCell(texts.receipts, numeric = true)
+            REVENUE -> HeadCell(texts.revenue, numeric = true)
+            else -> HeadCell(texts.networkShare)
+        }
     }
 }
 
 /** Строка свода: регион, его числа и доля сети полоской. */
 @Composable
-private fun RegionRow(region: SalesRegion) {
-    TableRow(Modifier.padding(vertical = Spacing.tight)) {
-        RowCell(region.title, Modifier.weight(1f))
-        RowCell(region.placeCount.toString(), Modifier.width(Sizes.salesNumberColumn))
-        RowCell(region.registerCount.toString(), Modifier.width(Sizes.salesNumberColumn))
-        RowCell(region.receiptCount.toString(), Modifier.width(Sizes.salesNumberColumn))
-        Text(
-            text = cabinetSum(region.revenue),
-            style = MoneyStyle.caption,
-            maxLines = 1,
-            modifier = Modifier.width(Sizes.salesNumberColumn)
-        )
-        RegionShare(region.percent)
+private fun RegionRow(widths: TableWidths, region: SalesRegion) {
+    TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column ->
+        when (column) {
+            NAME -> RowCell(region.title)
+            PLACES -> CountCell(region.placeCount)
+            KKMS -> CountCell(region.registerCount)
+            RECEIPTS -> CountCell(region.receiptCount)
+            REVENUE -> SumCell(cabinetSum(region.revenue))
+            else -> RegionShare(region.percent)
+        }
     }
 }
+
+private const val NAME = 0
+private const val PLACES = 1
+private const val KKMS = 2
+private const val RECEIPTS = 3
+private const val REVENUE = 4
+
+/** Регион, точки, кассы на связи, чеки, выручка и доля сети. */
+private val COLUMNS = listOf(
+    TableColumn(min = AnalyticsLayout.regionName, weight = NAME_SHARE),
+    TableColumn(min = TableColumns.count, numeric = true),
+    TableColumn(min = TableColumns.count, numeric = true),
+    TableColumn(min = TableColumns.count, numeric = true),
+    TableColumn(min = AnalyticsLayout.networkSum, numeric = true),
+    TableColumn(min = Sizes.salesShareColumn, weight = 0f)
+)
+
+/** Название области берёт вдвое больше лишнего места, чем каждое число. */
+private const val NAME_SHARE = 2f
 
 /**
  * Доля региона в выручке сети: полоска и процент рядом с ней.
@@ -93,7 +114,7 @@ private fun RegionRow(region: SalesRegion) {
 @Composable
 private fun RegionShare(percent: Int) {
     Row(
-        modifier = Modifier.width(Sizes.salesShareColumn),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.desktop.ui.adaptive.MoneyText
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetSum
-import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsSalesTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
@@ -42,97 +42,25 @@ fun SalesOverviewTiles(overview: SalesOverview, texts: AnalyticsSalesTexts, modi
         verticalArrangement = Arrangement.spacedBy(Spacing.snug),
         maxItemsInEachRow = OVERVIEW_IN_ROW
     ) {
-        OverviewTile(cabinetSum(overview.revenue), texts.revenue, overview.revenueChange, texts, Modifier.weight(1f))
-        OverviewTile(cabinetSum(overview.tax), texts.vat, overview.taxChange, texts, Modifier.weight(1f))
-        OverviewTile(
-            value = shareText(overview.cashless),
-            label = texts.cashless,
-            change = overview.cashlessChange,
-            texts = texts,
-            modifier = Modifier.weight(1f),
-            points = true
-        )
-        OverviewTile(
-            value = Money.count(overview.receiptCount),
-            label = texts.receipts,
-            change = overview.receiptsChange,
-            texts = texts,
-            modifier = Modifier.weight(1f)
-        )
-        OverviewTile(cabinetSum(overview.average), texts.average, overview.averageChange, texts, Modifier.weight(1f))
+        OverviewTile(texts.revenue, overview.revenueChange, texts, Modifier.weight(1f)) {
+            HeroNumber(cabinetSum(overview.revenue))
+        }
+        OverviewTile(texts.vat, overview.taxChange, texts, Modifier.weight(1f)) { HeroNumber(cabinetSum(overview.tax)) }
+        OverviewTile(texts.cashless, overview.cashlessChange, texts, Modifier.weight(1f), points = true) {
+            HeroNumber(shareText(overview.cashless))
+        }
+        OverviewTile(texts.receipts, overview.receiptsChange, texts, Modifier.weight(1f)) {
+            HeroNumber(Money.count(overview.receiptCount))
+        }
+        OverviewTile(texts.average, overview.averageChange, texts, Modifier.weight(1f)) {
+            HeroNumber(cabinetSum(overview.average))
+        }
         // Третье место второго ряда заполняется, а не остаётся пустым:
         // два числа в ряду на три места разъезжались по левому краю,
         // и ровная сетка итогов ломалась ровно посередине карточки.
-        OverviewTile(cabinetSum(overview.net), texts.net, overview.netChange, texts, Modifier.weight(1f))
+        OverviewTile(texts.net, overview.netChange, texts, Modifier.weight(1f)) { HeroNumber(cabinetSum(overview.net)) }
     }
 }
-
-/**
- * Состояние сети касс одной строкой плашек.
- *
- * Отвечает на вопрос проверяющего: все ли кассы на связи и не работает
- * ли часть сети мимо БФД. «На связи» считается по чекам срока — своей
- * ручки о связи у кабинета нет, — а «молчат» берётся от числа касс
- * компании, чтобы касса, не приславшая ни одного документа, не исчезала
- * из счёта вместе со своей строкой.
- *
- * Цветом красится только то, что требует работы, и только то, о чём
- * сводка знает наверняка. Касс без чеков за срок цвет не касается:
- * сводка не отличает потерянную связь от кассы, которой КГД ещё не дал
- * учёта, — а в парке показа из 3294 касс таких 3288, и красное число
- * посылало владельца искать поломку, которой нет. Плашки о заблокированных
- * кассах здесь нет вовсе — сводка кабинета о блокировках не отвечает,
- * и выдумывать это число нельзя.
- *
- * @param register касса, которой ограничен отбор; `null` — вся сеть.
- *   В окне одной кассы плашек о числе касс нет: на вопрос о сети внутри
- *   окна про одну машину не отвечают.
- */
-@Composable
-fun SalesNetworkPlates(
-    view: SalesView,
-    texts: AnalyticsSalesTexts,
-    modifier: Modifier = Modifier,
-    register: String? = null
-) {
-    val silent = silentRegisters(view.summary, view.registers)
-    FlowRow(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
-    ) {
-        if (register == null) {
-            val selling = sellingRegisters(view.registers)
-            Plate(selling, texts.online, good(selling))
-            Plate(silent, texts.silent, MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        Plate(view.summary.openShiftCount, texts.openShifts, MaterialTheme.colorScheme.onSurface)
-        Plate(view.summary.offlineCount, texts.offline, attention(view.summary.offlineCount))
-        Plate(view.summary.queuedCount, texts.queuedCount, waiting(view.summary.queuedCount))
-        Plate(view.summary.unknownCount, texts.unknownCount, attention(view.summary.unknownCount))
-    }
-}
-
-/** Одна плашка сети: число и то, чего оно касается. */
-@Composable
-private fun Plate(count: Int, label: String, tone: Color) {
-    Chip(text = "${Money.count(count)}${Glyphs.SEPARATOR}$label", color = tone)
-}
-
-/** Цвет доброй вести; ноль касс на связи вестью не является. */
-@Composable
-private fun good(count: Int): Color =
-    if (count > 0) StatusColors.delivered else MaterialTheme.colorScheme.onSurfaceVariant
-
-/** Цвет числа, которое требует работы; ноль такого не требует. */
-@Composable
-private fun attention(count: Int): Color =
-    if (count > 0) StatusColors.refused else MaterialTheme.colorScheme.onSurfaceVariant
-
-/** То же для того, что доедет само: очередь — это ожидание, а не отказ. */
-@Composable
-private fun waiting(count: Int): Color =
-    if (count > 0) StatusColors.pending else MaterialTheme.colorScheme.onSurfaceVariant
 
 /**
  * Одно главное число: само число, изменение под ним и подпись.
@@ -146,23 +74,18 @@ private fun waiting(count: Int): Color =
  */
 @Composable
 private fun OverviewTile(
-    value: String,
     label: String,
     change: Int?,
     texts: AnalyticsSalesTexts,
     modifier: Modifier = Modifier,
-    points: Boolean = false
+    points: Boolean = false,
+    value: @Composable () -> Unit
 ) {
     Column(
         modifier = modifier.widthIn(min = Sizes.salesTile),
         verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
     ) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        value()
         Text(
             text = changeText(change, texts, points),
             style = MaterialTheme.typography.labelMedium,
@@ -177,6 +100,17 @@ private fun OverviewTile(
             overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+/**
+ * Главное число итогов: целиком и одной строкой.
+ *
+ * Сумма в миллиарды тенге обрывалась многоточием — «98 797 03…»; теперь
+ * она встаёт целиком, а не поместившись — ступенью мельче.
+ */
+@Composable
+private fun HeroNumber(text: String) {
+    MoneyText(text, style = MaterialTheme.typography.headlineMedium)
 }
 
 /** Изменение словами: стрелка, число и то, чем оно меряется. */

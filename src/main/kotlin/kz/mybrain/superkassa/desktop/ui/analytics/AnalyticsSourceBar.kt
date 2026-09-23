@@ -1,14 +1,12 @@
 package kz.mybrain.superkassa.desktop.ui.analytics
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.CounterTile
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
@@ -30,6 +28,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * ещё ищется и сколько осталось без места. Это состояние, и оно
  * остаётся на экране.
  *
+ * Ряд переносится, а не сжимается: в узком окне и на казахском
+ * «Обновить» уходило за край, а сегменты сжимались до обрывков слов.
+ *
  * Ищущиеся считаются своим числом и только пока они есть. При адресе
  * торговой точки координат кабинет не даёт вовсе, и дома карта находит
  * по одному: сведённые с непоставленными, они писали бы «без положения»
@@ -42,11 +43,7 @@ fun AnalyticsSourceBar(
     texts: AnalyticsTexts,
     onRefresh: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.normal) {
         ChoiceSegments(
             options = PositionSource.entries,
             selected = model.source,

@@ -78,24 +78,17 @@ private fun FullscreenHead(texts: AnalyticsTexts, cabinet: CabinetTexts, onClose
     }
 }
 
-/** Список касс и карточка выбранной — столбиком слева от карты. */
+/**
+ * Список касс и карточка выбранной — столбиком слева от карты.
+ *
+ * Карточка под списком берёт свою высоту, но не всю: в низком окне
+ * «Аналитика кассы» уходила за нижний край.
+ */
 @Composable
 private fun KkmColumn(parts: MapParts) {
-    val model = parts.model
-    Column(
+    ListOverCard(
         modifier = Modifier.width(Sizes.unplacedColumn).fillMaxHeight(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
-    ) {
-        AnalyticsKkmList(
-            placed = parts.placement.placed,
-            unplaced = parts.placement.unplaced,
-            chosen = model.chosen,
-            source = model.source,
-            texts = parts.texts,
-            onChoose = { row -> model.show(row, parts.groups) },
-            modifier = Modifier.weight(1f),
-            sieved = model.sieve.set
-        )
-        UnderMap(model, parts.placement, parts.groups, parts.texts, parts.cabinetTexts, parts.panel)
-    }
+        list = { KkmList(parts) },
+        card = { UnderMap(parts.model, parts.placement, parts.groups, parts.texts, parts.cabinetTexts, parts.panel) }
+    )
 }

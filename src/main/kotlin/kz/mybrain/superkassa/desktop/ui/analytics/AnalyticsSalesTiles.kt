@@ -7,15 +7,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesDelivery
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesSummary
+import kz.mybrain.superkassa.desktop.ui.adaptive.MoneyText
+import kz.mybrain.superkassa.desktop.ui.adaptive.NumberText
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetSum
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsSalesTexts
@@ -53,7 +54,7 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        MinorTile(cabinetSum(summary.refunds), sales.refunds, Modifier.weight(1f))
+        MinorTile(sales.refunds, Modifier.weight(1f)) { MinorSum(cabinetSum(summary.refunds)) }
     }
 }
 
@@ -81,9 +82,9 @@ fun SalesPurchaseTiles(
         horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
         verticalArrangement = Arrangement.spacedBy(Spacing.snug)
     ) {
-        MinorTile(Money.count(summary.purchaseCount), texts.receipts, Modifier.weight(1f))
-        MinorTile(cabinetSum(summary.purchases), texts.paidOut, Modifier.weight(1f))
-        MinorTile(cabinetSum(summary.purchaseRefunds), cabinet.operationPurchaseReturn, Modifier.weight(1f))
+        MinorTile(texts.receipts, Modifier.weight(1f)) { MinorCount(summary.purchaseCount) }
+        MinorTile(texts.paidOut, Modifier.weight(1f)) { MinorSum(cabinetSum(summary.purchases)) }
+        MinorTile(cabinet.operationPurchaseReturn, Modifier.weight(1f)) { MinorSum(cabinetSum(summary.purchaseRefunds)) }
     }
 }
 
@@ -113,8 +114,20 @@ fun SalesDeliveryTiles(delivery: SalesDelivery, texts: AnalyticsSalesTexts, modi
 
 /** Плитка числа, которое не главное: шкала на ступень мельче выручки. */
 @Composable
-private fun MinorTile(value: String, label: String, modifier: Modifier = Modifier) {
-    Tile(value, label, MaterialTheme.typography.headlineSmall, MaterialTheme.colorScheme.onSurface, modifier)
+private fun MinorTile(label: String, modifier: Modifier = Modifier, value: @Composable () -> Unit) {
+    Tile(label, modifier, value)
+}
+
+/** Сумма плитки: целиком, без многоточия, при нехватке места — ступенью мельче. */
+@Composable
+private fun MinorSum(text: String) {
+    MoneyText(text, style = MaterialTheme.typography.headlineSmall, color = MaterialTheme.colorScheme.onSurface)
+}
+
+/** Счёт плитки: с разрядами и целиком. */
+@Composable
+private fun MinorCount(value: Int, tone: Color = MaterialTheme.colorScheme.onSurface) {
+    NumberText(Money.count(value), style = MaterialTheme.typography.headlineSmall, color = tone)
 }
 
 /**
@@ -129,18 +142,28 @@ private fun MinorTile(value: String, label: String, modifier: Modifier = Modifie
 @Composable
 private fun StateTile(value: Int, label: String, tone: Color, modifier: Modifier = Modifier) {
     val paint = if (value == 0) MaterialTheme.colorScheme.onSurfaceVariant else tone
-    Tile(value.toString(), label, MaterialTheme.typography.headlineSmall, paint, modifier)
+    Tile(label, modifier) { MinorCount(value, paint) }
 }
 
-/** Одна плитка: число, подпись под ним и рамка вокруг. */
+/**
+ * Одна плитка: число и подпись под ним на тональной подложке.
+ *
+ * Без своей рамки: плитка стоит на карточке раздела, и рамка вокруг неё
+ * была рамкой в рамке. Подложка тоном выше карточки собирает число
+ * с подписью в одно, не добавляя границы.
+ */
 @Composable
-private fun Tile(value: String, label: String, style: TextStyle, tone: Color, modifier: Modifier) {
-    OutlinedCard(modifier = modifier.widthIn(min = Sizes.salesTile)) {
+private fun Tile(label: String, modifier: Modifier, value: @Composable () -> Unit) {
+    Surface(
+        modifier = modifier.widthIn(min = Sizes.salesTile),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(Spacing.snug),
             verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
         ) {
-            Text(text = value, style = style, color = tone, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            value()
             Text(
                 text = label,
                 style = MaterialTheme.typography.labelMedium,

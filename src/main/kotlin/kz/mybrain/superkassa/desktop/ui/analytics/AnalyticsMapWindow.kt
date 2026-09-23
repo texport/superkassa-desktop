@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.desktop.ui.analytics
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -8,6 +10,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
 import kz.mybrain.superkassa.desktop.ui.map.MapControls
@@ -49,7 +53,7 @@ internal fun MapWindow(
         )
         return
     }
-    Box(modifier = modifier) {
+    Box(modifier = modifier.testTag(MAP_TAG)) {
         MapView(
             state = model.map,
             tiles = parts.services.tiles,
@@ -83,23 +87,36 @@ internal fun MapWindow(
  * и тем же отбором считается итог: на карте написано ровно то число,
  * которое владелец сейчас видит кружками.
  *
- * Итог слева сверху, легенда слева снизу: справа стоит управление картой,
- * а угол под ним занимает объяснение о неприехавших плитках.
+ * Итог и легенда — столбиком в левом верхнем углу, управление — в правом.
+ * Легенда стояла в правом нижнем, и в низкой карте кнопка «Во весь экран»
+ * ложилась на её угол. Левый нижний занят объяснением о неприехавших
+ * плитках. Столбик слева и кнопки справа не встречаются, пока карта
+ * не уже [kz.mybrain.superkassa.desktop.ui.theme.Panes.mapAndDetails].
  */
 @Composable
 private fun MapOverlay(parts: MapParts, canvas: IntSize) {
     val model = parts.model
     val shown = onScreen(parts.groups, model.map, canvas)
-    MapMarks(model.map, canvas, kkmMarks(shown, model)) { mark ->
+    MapMarks(model.map, canvas, kkmMarks(shown, model), groupCell(LocalDensity.current.density)) { mark ->
         model.open(parts.groups.first { it.id == mark.id })
     }
-    Box(Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.padding(Spacing.snug),
+        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+    ) {
         MapTally(
             shown = mapCount(shown, parts.placement.placed.size, parts.whole),
             sieved = model.sieve.set,
-            texts = parts.texts,
-            modifier = Modifier.align(Alignment.TopStart).padding(Spacing.snug)
+            texts = parts.texts
         )
-        MapLegend(parts.legend, parts.texts, Modifier.align(Alignment.BottomEnd).padding(Spacing.snug))
+        MapLegend(parts.legend, parts.texts)
     }
 }
+
+/**
+ * Метка окна карты для проверок раскладки.
+ *
+ * Своей надписи у полотна карты нет, а мерить приходится именно его:
+ * высоту карты в малом окне и на планшете.
+ */
+internal const val MAP_TAG = "analytics-map"

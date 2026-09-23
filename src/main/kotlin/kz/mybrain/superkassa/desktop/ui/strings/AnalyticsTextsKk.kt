@@ -166,6 +166,7 @@ internal val analyticsTextsKk = AnalyticsTexts(
     exchangeEmptyHint = "Мекенжай касса БФД-мен алғаш байланысқаннан кейін осында шығады",
     exchangeNotFound = "Ештеңе табылмады",
     exchangeNotFoundHint = "Іздеу жолын өзгертіңіз немесе касса бойынша сүзгіні алып тастаңыз",
+    searchLabel = "Іздеу",
     search = "Мекенжай немесе касса бойынша іздеу",
     allRegisters = "Барлық касса",
     exchangeAddress = "Мекенжай",

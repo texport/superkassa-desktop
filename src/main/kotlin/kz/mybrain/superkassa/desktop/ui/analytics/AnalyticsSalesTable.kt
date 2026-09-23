@@ -2,12 +2,9 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,14 +16,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesUnit
+import kz.mybrain.superkassa.desktop.ui.adaptive.NumberText
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableColumn
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableLine
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableWidths
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
+import kz.mybrain.superkassa.desktop.ui.theme.AnalyticsLayout
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.MoneyStyle
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.theme.TableColumns
 
 /**
  * Сводка по кассам или по точкам таблицей.
@@ -34,6 +37,9 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * Одна таблица на оба разреза: считается в них одно и то же, а разные
  * заголовки не повод писать её дважды. Столбцы при этом зависят от того,
  * что в строках, — их набор объявлен в [salesColumns].
+ *
+ * Столбцы не уже своей наименьшей ширины; не хватает окна — таблица едет
+ * вбок, а номер КГД и суммы не обрываются. Числа — вправо, с разрядами.
  *
  * Строки показываются десятками: у сети их бывают сотни, а столбец
  * в сотню строк внутри прокручиваемого экрана заставляет искать конец
@@ -61,10 +67,12 @@ fun SalesTable(
     val page = sorted.take(shown)
     val columns = salesColumns(kind)
     Column(modifier = modifier.fillMaxWidth()) {
-        SalesHead(columns, kind, texts, journal, sort) { sort = sort.toggled(it) }
-        page.forEach { row ->
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            SalesRow(columns, kind, row)
+        PageTable(columns.map { tableColumn(it, kind) }) { table ->
+            SalesHead(table.widths, columns, kind, texts, journal, sort) { sort = sort.toggled(it) }
+            page.forEach { row ->
+                LineDivider(table.widths)
+                SalesRow(table.widths, columns, row)
+            }
         }
         TableFooter(page.size, sorted.size, journal, allShown) { shown += PAGE }
     }
@@ -92,6 +100,7 @@ private fun TableFooter(
 /** Подписи столбцов; по числовым таблица и выстраивается. */
 @Composable
 private fun SalesHead(
+    widths: TableWidths,
     columns: List<SalesColumn>,
     kind: SalesRows,
     texts: AnalyticsTexts,
@@ -99,50 +108,61 @@ private fun SalesHead(
     sort: SalesSort,
     onSort: (SalesOrder) -> Unit
 ) {
-    TableRow {
-        columns.forEach { column ->
-            val title = salesColumnTitle(column, kind, texts)
-            val order = salesSortOrder(column)
-            if (order == null) {
-                HeadCell(title, cellWidth(column, kind))
-            } else {
-                SortCell(title, order, sort, journal, onSort)
-            }
+    TableLine(widths, Modifier.padding(vertical = Spacing.hairline)) { index ->
+        val column = columns[index]
+        val title = salesColumnTitle(column, kind, texts)
+        val order = salesSortOrder(column)
+        if (order == null) {
+            HeadCell(title, numeric = salesNumeric(column))
+        } else {
+            SortCell(title, order, sort, journal, onSort)
         }
     }
 }
 
 /** Строка сводки: чем торговали и когда эта касса выходила на связь. */
 @Composable
-private fun SalesRow(columns: List<SalesColumn>, kind: SalesRows, row: SalesUnit) {
-    TableRow(Modifier.padding(vertical = Spacing.tight)) {
-        columns.forEach { column ->
-            val value = salesCellValue(column, row)
-            if (salesMoneyColumn(column)) {
-                MoneyCell(value)
-            } else {
-                RowCell(value, cellWidth(column, kind))
-            }
+private fun SalesRow(widths: TableWidths, columns: List<SalesColumn>, row: SalesUnit) {
+    TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { index ->
+        val column = columns[index]
+        val value = salesCellValue(column, row)
+        when {
+            salesMoneyColumn(column) -> SumCell(value)
+            salesNumeric(column) -> NumberText(value)
+            else -> RowCell(value)
         }
     }
 }
 
 /**
- * Ширина столбца.
+ * Столбец таблицы по смыслу.
  *
  * Числовые и время стоят на месте — по ним таблицу читают сверху вниз
  * и сравнивают строки между собой. Словесные тянутся: в таблице касс их
- * три и ширина делится между ними, в таблице точек — один, и он забирает
- * всё, что освободилось от снятых столбцов.
+ * два и ширина делится между ними, в таблице точек — один, и он забирает
+ * всё, что освободилось от снятых столбцов. Сумме отведён столбец суммы:
+ * в прежней ширине миллиарды тенге теряли тиыны за краем.
  */
-@Composable
-private fun RowScope.cellWidth(column: SalesColumn, kind: SalesRows): Modifier = when {
-    column == SalesColumn.Name && kind == SalesRows.Registers -> Modifier.width(Sizes.salesNameColumn)
-    column == SalesColumn.Name -> Modifier.weight(1f)
-    column == SalesColumn.RegistrationNumber || column == SalesColumn.RetailPlace -> Modifier.weight(1f)
-    column == SalesColumn.LastContact -> Modifier.width(Sizes.exchangeMomentColumn)
-    else -> Modifier.width(Sizes.salesNumberColumn)
+private fun tableColumn(column: SalesColumn, kind: SalesRows): TableColumn = when (column) {
+    SalesColumn.Name -> TableColumn(min = TableColumns.name, weight = if (kind == SalesRows.Registers) 1f else 2f)
+    SalesColumn.RetailPlace -> TableColumn(min = TableColumns.name)
+    SalesColumn.RegistrationNumber -> TableColumn(min = TableColumns.number, weight = 0f, numeric = true)
+    SalesColumn.Receipts -> TableColumn(min = TableColumns.count, weight = NUMBER_SHARE, numeric = true)
+    SalesColumn.Revenue, SalesColumn.Net -> TableColumn(min = AnalyticsLayout.networkSum, weight = NUMBER_SHARE, numeric = true)
+    SalesColumn.LastContact -> TableColumn(min = TableColumns.moment, weight = 0f)
 }
+
+/**
+ * Доля лишнего места у чисел — вдвое меньше, чем у названия.
+ *
+ * Лишнее достаётся и счёту, и суммам: у сети на миллиарды тенге сумма
+ * на просторе встаёт своей ступенью, а не уменьшенной.
+ */
+private const val NUMBER_SHARE = 0.5f
+
+/** Число, а не слово: номер КГД, чеки и суммы стоят вправо, моноширинно. */
+private fun salesNumeric(column: SalesColumn): Boolean =
+    column == SalesColumn.RegistrationNumber || column == SalesColumn.Receipts || salesMoneyColumn(column)
 
 /** Подпись столбца, которая и выстраивает таблицу; стрелка — куда именно. */
 @Composable
@@ -153,12 +173,8 @@ private fun SortCell(
     journal: HistoryJournalTexts,
     onSort: (SalesOrder) -> Unit
 ) {
-    TextButton(
-        onClick = { onSort(column) },
-        modifier = Modifier.width(Sizes.salesNumberColumn),
-        contentPadding = PaddingValues(Spacing.hairline)
-    ) {
-        Text(text = title, style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(1f))
+    TextButton(onClick = { onSort(column) }, contentPadding = PaddingValues(Spacing.hairline)) {
+        Text(text = title, style = MaterialTheme.typography.labelMedium, maxLines = 2, textAlign = TextAlign.End)
         if (sort.by == column) {
             Icon(
                 imageVector = if (sort.descending) AppIcons.descending else AppIcons.ascending,
@@ -167,17 +183,6 @@ private fun SortCell(
             )
         }
     }
-}
-
-/** Сумма в строке: моноширинная и по правому краю, как во всём приложении. */
-@Composable
-private fun MoneyCell(value: String) {
-    Text(
-        text = value,
-        style = MoneyStyle.caption,
-        maxLines = 1,
-        modifier = Modifier.width(Sizes.salesNumberColumn)
-    )
 }
 
 /** Строк в одном показе таблицы. */

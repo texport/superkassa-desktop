@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.SalesUnit
 import kz.mybrain.superkassa.desktop.server.cabinet.orZero
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMoment
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetSum
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 
@@ -62,7 +63,7 @@ fun salesCellValue(column: SalesColumn, row: SalesUnit): String = when (column) 
     SalesColumn.Name -> unitTitle(row)
     SalesColumn.RegistrationNumber -> row.registrationNumber ?: Glyphs.DASH
     SalesColumn.RetailPlace -> unitPlace(row)
-    SalesColumn.Receipts -> row.receiptCount.toString()
+    SalesColumn.Receipts -> Money.count(row.receiptCount)
     SalesColumn.Revenue -> cabinetSum(row.revenue)
     SalesColumn.Net -> cabinetSum(row.difference)
     SalesColumn.LastContact -> cabinetMoment(row.lastContactAt)

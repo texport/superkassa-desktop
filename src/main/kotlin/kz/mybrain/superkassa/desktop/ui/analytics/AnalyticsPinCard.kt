@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
 import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMoment
 import kz.mybrain.superkassa.desktop.ui.components.DetailLine
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
@@ -113,7 +114,8 @@ private fun PickHint(texts: AnalyticsTexts) {
  * Главное действие одно — открыть её аналитику: карточка отвечает
  * на «что это за касса», а на «как она торгует» отвечает окно сводки.
  * Рядом с ним — возврат к соседям по месту, и только когда соседи есть:
- * у одиночной кассы возвращаться некуда.
+ * у одиночной кассы возвращаться некуда. Ряд переносится: рядом с картой
+ * карточка узкая, и вторая кнопка уходит под первую, а не за край.
  */
 @Composable
 private fun CardActions(
@@ -123,11 +125,7 @@ private fun CardActions(
     onNeighbours: () -> Unit,
     onSales: (AnalyticsKkm) -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    WrapRow(modifier = Modifier.fillMaxWidth()) {
         Button(onClick = { onSales(kkm) }) { Text(texts.openKkmSales) }
         if (neighbours > 1) {
             TextButton(onClick = onNeighbours) { Text("${texts.kkmsHere} · $neighbours") }

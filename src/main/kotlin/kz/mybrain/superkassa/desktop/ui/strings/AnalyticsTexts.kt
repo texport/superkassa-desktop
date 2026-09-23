@@ -138,6 +138,8 @@ data class AnalyticsTexts(
     val exchangeEmptyHint: String,
     val exchangeNotFound: String,
     val exchangeNotFoundHint: String,
+    /** Подпись поля поиска адресов обмена; чем искать — примером в самом поле ([search]). */
+    val searchLabel: String,
     val search: String,
     val allRegisters: String,
     val exchangeAddress: String,

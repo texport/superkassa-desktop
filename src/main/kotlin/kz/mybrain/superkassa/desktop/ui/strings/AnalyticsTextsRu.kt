@@ -163,6 +163,7 @@ internal val analyticsTextsRu = AnalyticsTexts(
     exchangeEmptyHint = "Адрес появится здесь после первой связи кассы с БФД",
     exchangeNotFound = "Ничего не нашлось",
     exchangeNotFoundHint = "Измените строку поиска или снимите отбор по кассе",
+    searchLabel = "Поиск",
     search = "Поиск по адресу или кассе",
     allRegisters = "Все кассы",
     exchangeAddress = "Адрес",

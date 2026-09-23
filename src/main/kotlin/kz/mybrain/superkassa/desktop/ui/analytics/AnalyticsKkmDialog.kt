@@ -3,10 +3,10 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,9 +66,12 @@ fun AnalyticsKkmDialog(
     }
     Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(
+            // Своего размера окно не больше окна кассы: в наименьшем окне
+            // 960×640 окно высотой 680 уходило низом за край.
             modifier = Modifier
-                .width(Sizes.kkmSalesWidth)
-                .height(Sizes.kkmSalesHeight)
+                .padding(Spacing.roomy)
+                .sizeIn(maxWidth = Sizes.kkmSalesWidth, maxHeight = Sizes.kkmSalesHeight)
+                .fillMaxSize()
                 .onEscape {
                     onClose()
                     true

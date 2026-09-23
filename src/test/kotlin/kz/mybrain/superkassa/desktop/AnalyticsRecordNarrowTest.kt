@@ -1,11 +1,14 @@
 package kz.mybrain.superkassa.desktop
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.desktop.ui.analytics.REGION_COLUMNS
 import kz.mybrain.superkassa.desktop.ui.analytics.RecordRegionRow
 import kz.mybrain.superkassa.desktop.ui.analytics.RecordRegionsHead
 import kz.mybrain.superkassa.desktop.ui.analytics.recordRegions
+import kz.mybrain.superkassa.desktop.ui.analytics.rememberTableAcross
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 import kotlin.test.Test
@@ -38,9 +41,12 @@ class AnalyticsRecordNarrowTest {
     /** Чернила левого края таблицы ниже подписей столбцов. */
     private fun namesInk(width: Int): Int {
         val png = RenderProbe(width, HEIGHT) {
-            Column(Modifier.fillMaxWidth()) {
-                RecordRegionsHead(Look.texts)
-                regions.forEach { RecordRegionRow(it) }
+            BoxWithConstraints(Modifier.fillMaxWidth()) {
+                val table = rememberTableAcross(REGION_COLUMNS, maxWidth)
+                Column {
+                    RecordRegionsHead(table, Look.texts)
+                    regions.forEach { RecordRegionRow(table, it) }
+                }
             }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }

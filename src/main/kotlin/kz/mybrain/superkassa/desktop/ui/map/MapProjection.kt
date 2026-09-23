@@ -82,6 +82,30 @@ object MapProjection {
         MapPixel(xOf(longitude, zoom) - corner.x, yOf(latitude, zoom) - corner.y)
 
     /**
+     * Место знака в окне, не выходящее за его клетку.
+     *
+     * Знак места стоит в середине своих точек, и у края клетки он
+     * заходил на соседнюю — туда, где стоит соседний знак. Здесь знак
+     * сдвигается внутрь клетки ровно настолько, чтобы целиком в ней
+     * поместиться: соседние знаки не наезжают, а тот, что и так в клетке,
+     * стоит на месте. Знак шире клетки встаёт в её середину.
+     *
+     * @param at место знака в окне карты.
+     * @param corner угол окна в точках полотна мира.
+     * @param cell сторона клетки в точках полотна.
+     * @param radius половина знака в точках полотна.
+     */
+    fun keptInCell(at: MapPixel, corner: MapPixel, cell: Double, radius: Double): MapPixel =
+        MapPixel(keptInCell(at.x, corner.x, cell, radius), keptInCell(at.y, corner.y, cell, radius))
+
+    private fun keptInCell(at: Double, corner: Double, cell: Double, radius: Double): Double {
+        val start = floor((at + corner) / cell) * cell - corner
+        val lowest = start + minOf(radius, cell / 2)
+        val highest = start + cell - minOf(radius, cell / 2)
+        return at.coerceIn(lowest, highest)
+    }
+
+    /**
      * Градусы в том виде, в каком их принимает кабинет.
      *
      * Шесть знаков после запятой — примерно десятая доля метра: точнее

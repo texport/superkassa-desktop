@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -54,12 +55,24 @@ data class MapMark(
  * проекцией: карта сдвинулась — сдвинулись и они. Раскрытый рисуется
  * последним, поверх соседей: его сейчас читают.
  *
+ * @param cell сторона клетки, по которой места сведены, в точках полотна;
+ *   0 — ярлычки стоят точно в своих градусах.
+ *
+ * Ярлычки мест, сведённых по клеткам, не выходят за свою клетку ([cell]):
+ * иначе ярлычок у края клетки ложился на соседний.
+ *
  * Ушедшие за край окна не рисуются вовсе. На карте страны это половина
  * сети: показ их всё равно обрезает, а composable-ярлычок стоит дороже
  * точки на полотне.
  */
 @Composable
-fun MapMarks(state: MapState, canvas: IntSize, marks: List<MapMark>, onPick: (MapMark) -> Unit) {
+fun MapMarks(
+    state: MapState,
+    canvas: IntSize,
+    marks: List<MapMark>,
+    cell: Double = 0.0,
+    onPick: (MapMark) -> Unit
+) {
     if (canvas.width == 0 || canvas.height == 0) return
     val corner = MapProjection.corner(
         state.centerLatitude,
@@ -68,9 +81,12 @@ fun MapMarks(state: MapState, canvas: IntSize, marks: List<MapMark>, onPick: (Ma
         canvas.width,
         canvas.height
     )
+    val density = LocalDensity.current
     marks.sortedBy { it.chosen }.forEach { mark ->
         val at = MapProjection.screen(mark.latitude, mark.longitude, state.zoom, corner)
-        if (inside(at, canvas)) Mark(mark, at, onPick)
+        if (!inside(at, canvas)) return@forEach
+        val radius = with(density) { markSide(mark.count).toPx() } / 2.0
+        Mark(mark, if (cell > 0) MapProjection.keptInCell(at, corner, cell, radius) else at, onPick)
     }
 }
 

@@ -1,12 +1,14 @@
 package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -132,26 +134,44 @@ private fun RecordSections(
     texts: AnalyticsTexts,
     modifier: Modifier
 ) {
-    val record = texts.record
-    ScrollableList(modifier) {
-        item { RecordTiles(count, texts) }
-        item { RecordSectionHead(record.refusals, record.refusalsHint) }
-        if (refused.isEmpty()) {
-            item { Footnote(record.refusalsNone) }
-        } else {
-            item { RecordRefusalsHead(texts) }
-            items(refused, key = { it.cashRegisterId }) { kkm ->
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                RecordRefusalRow(kkm)
-            }
-        }
-        item { RecordSectionHead(record.regions, record.regionsHint) }
-        item { RecordRegionsHead(texts) }
-        items(regions, key = { it.title }) { region ->
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            RecordRegionRow(region)
+    // Таблицы меряют место под собой сами: строки живут в общем списке
+    // вкладки, и ширину им назначает он, за вычетом поля под полосу.
+    BoxWithConstraints(modifier = modifier) {
+        val room = maxWidth - Spacing.normal
+        val refusals = rememberTableAcross(REFUSAL_COLUMNS, room)
+        val areas = rememberTableAcross(REGION_COLUMNS, room)
+        ScrollableList(Modifier.fillMaxSize()) {
+            item { RecordTiles(count, texts) }
+            refusalItems(refused, refusals, texts)
+            regionItems(regions, areas, texts)
         }
     }
+}
+
+/** Отказы КГД: заголовок раздела и таблица, а без отказов — строка об этом. */
+private fun LazyListScope.refusalItems(refused: List<AnalyticsKkm>, table: TableAcross, texts: AnalyticsTexts) {
+    item { RecordSectionHead(texts.record.refusals, texts.record.refusalsHint) }
+    if (refused.isEmpty()) {
+        item { Footnote(texts.record.refusalsNone) }
+        return
+    }
+    item { RecordRefusalsHead(table, texts) }
+    items(refused, key = { it.cashRegisterId }) { kkm ->
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        RecordRefusalRow(table, kkm)
+    }
+    item { AcrossBar(table) }
+}
+
+/** Разрез по областям: заголовок раздела и таблица. */
+private fun LazyListScope.regionItems(regions: List<RecordRegion>, table: TableAcross, texts: AnalyticsTexts) {
+    item { RecordSectionHead(texts.record.regions, texts.record.regionsHint) }
+    item { RecordRegionsHead(table, texts) }
+    items(regions, key = { it.title }) { region ->
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        RecordRegionRow(table, region)
+    }
+    item { AcrossBar(table) }
 }
 
 /** Заголовок раздела внутри вкладки: название и объяснение под значком. */

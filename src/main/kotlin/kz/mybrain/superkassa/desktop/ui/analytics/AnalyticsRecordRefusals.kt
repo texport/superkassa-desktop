@@ -1,20 +1,18 @@
 package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.server.cabinet.AnalyticsKkm
+import kz.mybrain.superkassa.desktop.ui.adaptive.NumberText
+import kz.mybrain.superkassa.desktop.ui.adaptive.TableColumn
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMoment
 import kz.mybrain.superkassa.desktop.ui.components.StatusTone
 import kz.mybrain.superkassa.desktop.ui.components.toneColor
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
+import kz.mybrain.superkassa.desktop.ui.theme.TableColumns
 
 /**
  * Кассы, которым КГД отказал в учёте.
@@ -30,32 +28,46 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * и выдумывать её здесь нельзя.
  */
 @Composable
-internal fun RecordRefusalsHead(texts: AnalyticsTexts) {
-    TableRow {
-        HeadCell(texts.kkmColumn, Modifier.width(Sizes.salesNameColumn))
-        HeadCell(texts.registrationNumber, Modifier.width(Sizes.salesNumberColumn))
-        HeadCell(texts.retailPlace, Modifier.weight(1f))
-        HeadCell(texts.lastContact, Modifier.width(Sizes.exchangeMomentColumn))
+internal fun RecordRefusalsHead(table: TableAcross, texts: AnalyticsTexts) {
+    AcrossLine(table, Modifier.padding(vertical = Spacing.tight)) { column ->
+        when (column) {
+            KKM -> HeadCell(texts.kkmColumn)
+            NUMBER -> HeadCell(texts.registrationNumber, numeric = true)
+            PLACE -> HeadCell(texts.retailPlace)
+            else -> HeadCell(texts.lastContact)
+        }
     }
 }
 
-/** Строка отказа: касса, её номер, где она стоит и когда выходила на связь. */
+/**
+ * Строка отказа: касса, её номер, где она стоит и когда выходила на связь.
+ *
+ * Номер КГД — числом целиком: по нему кассу ищут в заявлении, и номер
+ * с многоточием вместо последних цифр искать бесполезно.
+ */
 @Composable
-internal fun RecordRefusalRow(kkm: AnalyticsKkm) {
-    TableRow(Modifier.padding(vertical = Spacing.tight)) {
-        Text(
-            text = kkmTitle(kkm),
-            style = MaterialTheme.typography.bodyMedium,
-            color = toneColor(StatusTone.Bad),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.width(Sizes.salesNameColumn)
-        )
-        RowCell(kkm.registrationNumber ?: Glyphs.DASH, Modifier.width(Sizes.salesNumberColumn))
-        RowCell(placeWords(kkm), Modifier.weight(1f))
-        RowCell(cabinetMoment(kkm.lastContactAt), Modifier.width(Sizes.exchangeMomentColumn))
+internal fun RecordRefusalRow(table: TableAcross, kkm: AnalyticsKkm) {
+    AcrossLine(table, Modifier.padding(vertical = Spacing.tight)) { column ->
+        when (column) {
+            KKM -> RowCell(kkmTitle(kkm), toneColor(StatusTone.Bad))
+            NUMBER -> NumberText(kkm.registrationNumber ?: Glyphs.DASH)
+            PLACE -> RowCell(placeWords(kkm))
+            else -> RowCell(cabinetMoment(kkm.lastContactAt))
+        }
     }
 }
+
+private const val KKM = 0
+private const val NUMBER = 1
+private const val PLACE = 2
+
+/** Касса, номер КГД, торговая точка с адресом и последняя связь. */
+internal val REFUSAL_COLUMNS = listOf(
+    TableColumn(min = TableColumns.name),
+    TableColumn(min = TableColumns.number, weight = 0f, numeric = true),
+    TableColumn(min = TableColumns.name, weight = 2f),
+    TableColumn(min = TableColumns.moment, weight = 0f)
+)
 
 /**
  * Где стоит эта касса — точкой и адресом в одной клетке.

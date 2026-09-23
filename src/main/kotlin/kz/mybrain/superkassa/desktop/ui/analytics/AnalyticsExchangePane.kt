@@ -2,31 +2,29 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.server.cabinet.ExchangeAddress
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.CounterTile
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.MenuChip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
+import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.components.SectionTitle
+import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -73,11 +71,7 @@ private fun ExchangeHead(
     texts: AnalyticsTexts,
     onRefresh: () -> Unit
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.normal) {
         SectionTitle(texts.exchangeTitle)
         InfoTip(texts.exchangeHint)
         Spacer(Modifier.weight(1f))
@@ -95,20 +89,24 @@ private fun ExchangeHead(
  * Чем этот раздел является по существу, объяснено под значком у его
  * заголовка: читают такое один раз, а абзац под заголовком занимал
  * место у самих адресов.
+ *
+ * Поле поиска — общее для приложения: со значком и кнопкой очистки,
+ * как в отборе карты. Голое поле без значка не читалось как поиск,
+ * а забытое в нём слово выглядело как пропавшие адреса.
  */
 @Composable
 private fun ExchangeFilters(model: AnalyticsExchangeModel, all: List<ExchangeAddress>, texts: AnalyticsTexts) {
     val registers = exchangeRegisters(all)
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        OutlinedTextField(
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+        SearchField(
             value = model.query,
-            onValueChange = { model.query = it },
-            label = { Text(texts.search) },
-            singleLine = true,
-            modifier = Modifier.width(Sizes.fieldSearch)
+            label = texts.searchLabel,
+            onChange = { model.query = it },
+            modifier = Modifier.fieldWidth(texts.searchLabel, Sizes.fieldSearch),
+            // Подпись короткая, а чем искать — примером в самом поле, как
+            // в отборе карты: длинная подпись в поле переносилась на две строки.
+            hint = texts.search,
+            clearLabel = texts.sieve.clear
         )
         MenuChip(
             value = registerTitle(model.register, registers, texts),

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.cabinet.PositionSource
 import kz.mybrain.superkassa.desktop.ui.components.EmptyState
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.components.SectionTitle
@@ -46,7 +47,7 @@ fun AnalyticsKkmList(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        SectionTitle("${texts.kkmCount} · ${placed.size + unplaced.size}")
+        SectionTitle("${texts.kkmCount} · ${Money.count(placed.size + unplaced.size)}")
         if (placed.isEmpty() && unplaced.isEmpty()) {
             EmptyState(
                 icon = if (sieved) AppIcons.find else AppIcons.place,

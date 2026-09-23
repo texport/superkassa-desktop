@@ -165,6 +165,7 @@ internal val analyticsTextsEn = AnalyticsTexts(
     exchangeEmptyHint = "The address appears here after the register first contacts BFD",
     exchangeNotFound = "Nothing found",
     exchangeNotFoundHint = "Change the search text or drop the register filter",
+    searchLabel = "Search",
     search = "Search by address or register",
     allRegisters = "All registers",
     exchangeAddress = "Address",

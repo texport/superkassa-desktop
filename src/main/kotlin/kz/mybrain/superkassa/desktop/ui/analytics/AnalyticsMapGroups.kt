@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop.ui.analytics
 import kz.mybrain.superkassa.desktop.ui.cabinet.KkmRecord
 import kz.mybrain.superkassa.desktop.ui.components.StatusTone
 import kz.mybrain.superkassa.desktop.ui.map.MapProjection
+import kz.mybrain.superkassa.desktop.ui.theme.AnalyticsLayout
 
 /**
  * Сводит поставленные кассы в ярлычки.
@@ -10,10 +11,12 @@ import kz.mybrain.superkassa.desktop.ui.map.MapProjection
  * Порядок касс внутри ярлычка устойчивый, а не такой, каким их отдал
  * кабинет: по списку места владелец возвращается к той же кассе,
  * и строки не должны меняться местами между перерисовками.
+ *
+ * @param cell сторона клетки в точках полотна — [groupCell] при плотности экрана.
  */
-fun kkmGroups(placed: List<PlacedKkm>, zoom: Int): List<KkmGroup> =
+fun kkmGroups(placed: List<PlacedKkm>, zoom: Int, cell: Double = groupCell(1f)): List<KkmGroup> =
     placed
-        .groupBy { MapProjection.cell(it.latitude, it.longitude, zoom, GROUP_CELL) }
+        .groupBy { MapProjection.cell(it.latitude, it.longitude, zoom, cell) }
         .map { (_, kkms) -> group(kkms.sortedBy { it.kkm.cashRegisterId }) }
         .sortedBy { it.id }
 
@@ -61,9 +64,9 @@ private const val TROUBLE_SHARE = 10
 /**
  * Сторона клетки места в точках полотна.
  *
- * Чуть больше самого крупного ярлычка: клетка меньше ярлычка сводила бы
- * кассы, чьи ярлычки всё равно наезжают друг на друга, а заметно
- * большая — склеивала бы соседние дома. Между кружками соседних клеток
- * остаётся воздух, и на карте страны они читаются порознь.
+ * Клетка задана в точках интерфейса ([AnalyticsLayout.mapCell]), как
+ * и кружки, а полотно карты меряется точками экрана: на экране двойной
+ * плотности клетка в прежние 64 точки полотна была вдвое уже самого
+ * крупного кружка, и кружки соседних клеток ложились один на другой.
  */
-private const val GROUP_CELL = 64.0
+fun groupCell(density: Float): Double = AnalyticsLayout.mapCell.value.toDouble() * density

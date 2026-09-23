@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.desktop.server.cabinet.SalesHour
 import kz.mybrain.superkassa.desktop.server.cabinet.SalesPayments
 import kz.mybrain.superkassa.desktop.server.cabinet.orZero
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetSum
+import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.history.JOURNAL_DAY
 import kz.mybrain.superkassa.desktop.ui.history.JournalRange
 import kz.mybrain.superkassa.desktop.ui.strings.AnalyticsSalesTexts
@@ -47,7 +48,7 @@ fun dayBars(days: List<SalesDay>, range: JournalRange, texts: AnalyticsSalesText
         val found = byDate[date.toString()]
         SalesBar(
             label = dayLabel(date.toString()),
-            caption = "${dayTitle(date.toString())} · ${texts.receipts}: ${found?.receiptCount ?: 0} · " +
+            caption = "${dayTitle(date.toString())} · ${texts.receipts}: ${Money.count(found?.receiptCount ?: 0)} · " +
                 cabinetSum(found?.revenue),
             value = found?.revenue.orZero()
         )
@@ -73,7 +74,7 @@ fun hourBars(hours: List<SalesHour>, texts: AnalyticsSalesTexts): List<SalesBar>
         val found = byHour[hour]
         SalesBar(
             label = hour.toString(),
-            caption = "${hourTitle(hour)} · ${texts.receipts}: ${found?.receiptCount ?: 0} · " +
+            caption = "${hourTitle(hour)} · ${texts.receipts}: ${Money.count(found?.receiptCount ?: 0)} · " +
                 cabinetSum(found?.revenue),
             value = found?.revenue.orZero()
         )
