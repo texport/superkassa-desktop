@@ -1,6 +1,5 @@
 package kz.mybrain.superkassa.desktop
 
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -8,9 +7,7 @@ import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.Kkm
 import kz.mybrain.superkassa.desktop.server.KkmUser
-import kz.mybrain.superkassa.desktop.ui.MessageEffect
-import kz.mybrain.superkassa.desktop.ui.MessageHost
-import kz.mybrain.superkassa.desktop.ui.login.LoginScreen
+import kz.mybrain.superkassa.desktop.ui.DoorShell
 import kz.mybrain.superkassa.desktop.ui.users.UsersScreen
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -30,14 +27,16 @@ import kotlin.test.assertTrue
  */
 class KassaLoginLookTest {
 
-    /** Экран входа в том же окне, что у приложения: со снекбаром отказов. */
+    /**
+     * Вход в том самом окне, каким его собирает приложение.
+     *
+     * Своя оснастка здесь была бы негодной: окно до входа само кладёт
+     * полосу пина, снекбар и полоску занятости, и проверка, собравшая
+     * каркас по-своему, проверяла бы оснастку, а не приложение.
+     */
     @Composable
     private fun Door(session: Session) {
-        val host = remember { SnackbarHostState() }
-        Scaffold(snackbarHost = { MessageHost(host) }) {
-            MessageEffect(session.lastMessage, host) {}
-            LoginScreen(session, remember { CabinetSession() })
-        }
+        DoorShell(session, remember { CabinetSession() }, remember { SnackbarHostState() })
     }
 
     /**

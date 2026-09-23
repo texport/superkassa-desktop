@@ -30,6 +30,7 @@ import kz.mybrain.superkassa.desktop.ui.components.PrintOverlay
 import kz.mybrain.superkassa.desktop.ui.dashboard.DashboardScreen
 import kz.mybrain.superkassa.desktop.ui.history.HistoryScreen
 import kz.mybrain.superkassa.desktop.ui.login.LoginScreen
+import kz.mybrain.superkassa.desktop.ui.login.LoginState
 import kz.mybrain.superkassa.desktop.ui.queue.QueueScreen
 import kz.mybrain.superkassa.desktop.ui.returns.ReturnsScreen
 import kz.mybrain.superkassa.desktop.ui.sale.SaleScreen
@@ -153,9 +154,9 @@ internal fun SectionContent(
 
 /** Вход кассира занимает окно целиком: пустые разделы без кассы ничему не учат. */
 @Composable
-internal fun SectionDoor(session: Session, cabinet: CabinetSession) {
+internal fun SectionDoor(session: Session, cabinet: CabinetSession, door: LoginState) {
     Box(modifier = Modifier.fillMaxSize()) {
-        LoginScreen(session, cabinet)
+        LoginScreen(session, cabinet, door)
         // Форму владелец может открыть и отсюда — через дверь в кабинет.
         PrintOverlay(session)
     }

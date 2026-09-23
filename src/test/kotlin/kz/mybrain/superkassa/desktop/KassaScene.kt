@@ -27,6 +27,7 @@ import kz.mybrain.superkassa.desktop.server.NodeVatRate
 import kz.mybrain.superkassa.desktop.server.NomenclatureItem
 import kz.mybrain.superkassa.desktop.server.NomenclatureLookup
 import kz.mybrain.superkassa.desktop.server.OrgInfo
+import kz.mybrain.superkassa.desktop.server.Page
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.server.SoldItem
 import kz.mybrain.superkassa.desktop.server.Trilingual
@@ -92,9 +93,16 @@ internal object KassaScene {
         sold: List<SoldItem> = emptyList(),
         cashiers: List<KkmUser>? = null,
         /** Что отдаёт каталог на поиск по штрихкоду; `null` — ничего не нашёл. */
-        catalogue: NomenclatureItem? = null
+        catalogue: NomenclatureItem? = null,
+        /**
+         * Что отдаёт узел на список касс; `null` — не отдаёт вовсе.
+         *
+         * Список нужен экрану входа: пока узел на него не отвечает, экран
+         * показывает отказ, и снимок входа выходит отказным всегда.
+         */
+        kkms: List<Kkm>? = null
     ): Session {
-        val node = NodeAnswers(journal, journalAnswered, pastShifts, sold, cashiers, catalogue)
+        val node = NodeAnswers(journal, journalAnswered, pastShifts, sold, cashiers, catalogue, kkms)
         val session = Session(client(admin, refusal, node), preferences(folder))
         // Язык сеанса тот же, каким сцена рисует надписи: иначе отказ узла
         // приходил по-казахски на русский экран — не дефект приложения,
@@ -154,8 +162,8 @@ internal object KassaScene {
      * Всё прочее — отказ: отказные снимки нужны не меньше обычных, а
      * поднимать узел ради картинки нельзя. Отказ отдаётся в том же виде,
      * в каком его отдаёт узел, — кодом и трёхъязычной строкой: с голым
-     * `respondError` на экране оказывалось английское «Not Found»,
-     * то есть не то, что кассир увидит на самом деле.
+     * `respondError` снимок выходит не с тем отказом, который кассир
+     * прочтёт на самом деле, а с общими словами о неназванной причине.
      */
     private fun client(admin: Boolean, refusal: NodeRefusal?, node: NodeAnswers): ServerClient {
         val body = """{"userId":"u-1","name":"Айгүл Сәрсенова","role":"${if (admin) "ADMIN" else "CASHIER"}"}"""
@@ -163,6 +171,9 @@ internal object KassaScene {
             val path = request.url.encodedPath
             when {
                 path.endsWith("/users/me") -> answer(body)
+                path == "/kkm" && node.kkms != null ->
+                    answer(encoded(Page.serializer(Kkm.serializer()), Page(items = node.kkms)))
+
                 path.endsWith("/users") && node.cashiers != null ->
                     answer(encoded(ListSerializer(KkmUser.serializer()), node.cashiers))
 
@@ -206,7 +217,8 @@ internal object KassaScene {
         val pastShifts: List<Shift>?,
         val sold: List<SoldItem>,
         val cashiers: List<KkmUser>?,
-        val catalogue: NomenclatureItem?
+        val catalogue: NomenclatureItem?,
+        val kkms: List<Kkm>?
     )
 
     /** Ответ узла по существу: телом идёт готовый JSON. */
