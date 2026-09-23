@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.desktop
 import kz.mybrain.superkassa.desktop.ui.sale.Adjustment
 import kz.mybrain.superkassa.desktop.ui.sale.AdjustmentUnit
 import kz.mybrain.superkassa.desktop.ui.sale.Basket
+import kz.mybrain.superkassa.desktop.ui.sale.DomainKind
 import kz.mybrain.superkassa.desktop.ui.sale.Position
 import kz.mybrain.superkassa.desktop.ui.sale.SaleBlock
 import kz.mybrain.superkassa.desktop.ui.sale.SaleForm
@@ -79,10 +80,10 @@ class SaleChangesTest {
     fun `в узел уходит посчитанная сумма, а не процент`() {
         val basket = basket("2000.00")
         val form = SaleForm().apply { switchDiscount(AdjustmentUnit.Percent); enterDiscount("10") }
-        assertEquals(BigDecimal("200.00"), form.input(basket).discount)
+        assertEquals(BigDecimal("200.00"), form.input(basket, DomainKind.Trading).discount)
         val markup = SaleForm().apply { switchMarkup(AdjustmentUnit.Percent); enterMarkup("10") }
-        assertEquals(BigDecimal("200.00"), markup.input(basket).markup)
-        assertNull(markup.input(basket).discount)
+        assertEquals(BigDecimal("200.00"), markup.input(basket, DomainKind.Trading).markup)
+        assertNull(markup.input(basket, DomainKind.Trading).discount)
     }
 
     @Test

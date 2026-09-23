@@ -57,6 +57,17 @@ internal enum class SettingsGroup(
     /** Как печатает эта касса: форма на узле, принтер на этой машине. */
     Printing(SettingsHousehold.Kkm, { it.groupPrinting }),
 
+    /**
+     * Чем торгует эта касса: вид отрасли её чеков.
+     *
+     * Своим разделом, а не вместе с настройками кассы: узел о нём
+     * не знает — вид отрасли приходит ему с каждым чеком, — и режима
+     * программирования настройка не требует. Заголовка нет: карточка
+     * так и называется, и вторая строка тем же словом над ней ничего
+     * не разделяла бы.
+     */
+    Trade(SettingsHousehold.Kkm, { null }),
+
     /** То, что хранит узел и принимает только в режиме программирования. */
     Service(SettingsHousehold.Kkm, { it.groupService }),
 
@@ -75,6 +86,7 @@ internal enum class Setting {
     NodeAddress, CabinetAddress, MapServices,
     NodeFacts, Updates, Debug,
     CurrentKkm, Programming, PrintForm, PrintTarget,
+    Domain,
     Tax, OfdSync, OfdToken, Diagnostics, Decommission
 }
 
@@ -150,6 +162,17 @@ internal val settingsCards = listOf(
         adminOnly = true
     ) { PrintFormCard(it) },
     SettingsCard(Setting.PrintTarget, SettingsGroup.Printing, needsRegister = true) { PrintTargetCard(it) },
+
+    // Отрасль стоит перед налогами: и то и другое решает, чем будет
+    // наполнен каждый чек этой кассы, и владелец задаёт их в одном месте.
+    // Кассиру выбор не показывается: отрасль задают при настройке кассы,
+    // а не по ходу смены.
+    SettingsCard(
+        Setting.Domain,
+        SettingsGroup.Trade,
+        needsRegister = true,
+        adminOnly = true
+    ) { TradeDomainCard(it) },
 
     SettingsCard(Setting.Tax, SettingsGroup.Service, needsRegister = true, adminOnly = true) { TaxSettingsCard(it) },
     SettingsCard(Setting.OfdSync, SettingsGroup.Service, needsRegister = true, adminOnly = true) { OfdSyncCard(it) },

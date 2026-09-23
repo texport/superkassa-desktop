@@ -21,6 +21,15 @@ class SaleForm {
     var markup: Adjustment by mutableStateOf(Adjustment())
         private set
     var customerBin: String by mutableStateOf("")
+
+    /**
+     * Отраслевые реквизиты этого чека.
+     *
+     * Вида отрасли здесь нет — он настройка кассы; здесь только то,
+     * что кассир набрал для этого чека: лицевой счёт, номер машины,
+     * время стоянки.
+     */
+    var domain: DomainInput by mutableStateOf(DomainInput())
     var issuing: Boolean by mutableStateOf(false)
     var attemptKey: String by mutableStateOf(newAttemptKey())
         private set
@@ -58,12 +67,15 @@ class SaleForm {
     /**
      * Что уходит в узел вместе с корзиной.
      *
+     * Вид отрасли приходит снаружи, из настроек кассы: форма его не
+     * помнит, и подблок собирается ровно под него.
+     *
      * Скидка и наценка уходят суммой в тенге, даже когда кассир набрал
      * их процентом: процент узел принимает и сам, но посчитал бы его
      * своим порядком округления, и «Итого» на экране разошлось бы
      * с фискальным чеком на тиын.
      */
-    fun input(basket: Basket): ReceiptInput {
+    fun input(basket: Basket, kind: DomainKind): ReceiptInput {
         val discountSum = discount.sumOf(basket.total)
         val markupSum = markup.sumOf(basket.total)
         val total = basket.totalWith(discountSum, markupSum)
@@ -75,6 +87,7 @@ class SaleForm {
             discount = discountSum,
             markup = markupSum,
             customerBin = customerBin,
+            domain = domain.toDomain(kind),
             idempotencyKey = attemptKey
         )
     }
@@ -89,6 +102,10 @@ class SaleForm {
         discount = discount.cleared()
         markup = markup.cleared()
         customerBin = ""
+        // Отраслевые реквизиты принадлежат покупателю и этой поездке:
+        // лицевой счёт, номер машины и время стоянки, перенесённые
+        // в следующий чек, выписали бы его на чужие реквизиты.
+        domain = DomainInput()
         split.reset()
         attemptKey = newAttemptKey()
     }

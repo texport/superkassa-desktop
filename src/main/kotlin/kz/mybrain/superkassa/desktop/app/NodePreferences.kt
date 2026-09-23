@@ -30,6 +30,18 @@ class NodePreferences(private val kkmFile: File) {
         set(value) = writeSetting(nodeFile, value.trim().takeIf { it.isNotBlank() })
 
     /**
+     * Вид отрасли, в которой работает эта касса.
+     *
+     * Отрасль у кассы одна: на заправке не бывает чеков стоянки, а
+     * в магазине — чеков такси. Поэтому она стоит здесь, рядом с выбранной
+     * кассой, а не спрашивается в каждом чеке. Пустая настройка означает
+     * торговлю — с ней касса и работала до появления выбора.
+     */
+    var domain: String?
+        get() = readSetting(domainFile)
+        set(value) = writeSetting(domainFile, value)
+
+    /**
      * Своё название кассы на этом рабочем месте.
      *
      * Все сведения о кассе — регистрационный номер, организация, адрес —
@@ -43,6 +55,8 @@ class NodePreferences(private val kkmFile: File) {
     private val directory: File? = kkmFile.parentFile
 
     private val nodeFile = File(directory, "node")
+
+    private val domainFile = File(directory, "domain")
 
     private fun nameFile(kkmId: String) = File(directory, "names/$kkmId")
 }

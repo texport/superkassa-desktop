@@ -44,7 +44,14 @@ data class SaleState(
     val taken: BigDecimal? = null,
     /** Наличная часть чека: с неё берётся сдача. `null` — весь чек наличными. */
     val cashSum: BigDecimal? = null,
-    val customerBin: String = ""
+    val customerBin: String = "",
+    /**
+     * Отраслевой реквизит, которого не хватает, или `null`.
+     *
+     * Вид отрасли — настройка кассы, и у кассы в торговле это поле пусто
+     * всегда: заполнять ей нечего.
+     */
+    val missingDomainField: DomainField? = null
 )
 
 /**
@@ -60,6 +67,7 @@ enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
     ShiftClosed({ sale, _ -> sale.blockShiftClosed }),
     EmptyBasket({ sale, _ -> sale.blockEmptyBasket }),
     ZeroLine({ sale, _ -> sale.blockZeroLine }),
+    DomainFields({ sale, _ -> sale.fillIn }),
     PaymentUnsupported({ sale, _ -> sale.blockPaymentUnsupported }),
     PaymentSplitEmpty({ _, payment -> payment.splitEmpty }),
     PaymentSplitExcess({ _, payment -> payment.splitExcess }),
@@ -71,8 +79,15 @@ enum class SaleBlock(private val text: (SaleTexts, PaymentTexts) -> String) {
     CustomerBin({ sale, _ -> sale.blockBin }),
     TakenTooSmall({ sale, _ -> sale.blockTakenTooSmall });
 
-    /** Причина словами кассира. */
-    fun reason(texts: SaleTexts, payment: PaymentTexts): String = text(texts, payment)
+    /**
+     * Причина словами кассира.
+     *
+     * Незаполненный отраслевой реквизит называется поимённо: «заполните
+     * реквизиты» не говорит кассиру, какое поле пустует, а полей у такси
+     * два.
+     */
+    fun reason(texts: SaleTexts, payment: PaymentTexts, field: DomainField? = null): String =
+        if (this == DomainFields && field != null) field.reason(texts) else text(texts, payment)
 }
 
 /**
@@ -93,6 +108,9 @@ fun blockOf(state: SaleState): SaleBlock? {
     // положителен, и общая причина «итог должен быть больше нуля»
     // о нулевой строке кассиру не сказала бы.
     if (state.hasZeroLine) return SaleBlock.ZeroLine
+    // Отраслевой реквизит назван раньше оплаты: узел такой чек пропускает,
+    // а БФД отвергает — когда исправлять уже нечего.
+    if (state.missingDomainField != null) return SaleBlock.DomainFields
     if (state.paymentCodes.any { it in state.unsupportedPayments }) return SaleBlock.PaymentUnsupported
     when (state.splitIssue) {
         SplitIssue.Empty -> return SaleBlock.PaymentSplitEmpty

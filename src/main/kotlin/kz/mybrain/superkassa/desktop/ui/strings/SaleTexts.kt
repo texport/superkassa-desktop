@@ -65,6 +65,28 @@ data class SaleTexts(
     val paymentUnsupported: String,
     val takenOnlyCash: String,
     val binHint: String,
+
+    /**
+     * Отраслевые реквизиты чека: подписи полей и объяснения к ним.
+     *
+     * Вид отрасли у кассы один и стоит в её настройках, а здесь —
+     * то, что кассир заполняет в каждом чеке этой отрасли.
+     */
+    val domainHint: String,
+    val accountNumber: String,
+    val cardNumber: String,
+    val carNumber: String,
+    val fee: String,
+    val byOrder: String,
+    val parkingFrom: String,
+    val parkingTo: String,
+
+    /** Незаполненное поле названо поимённо: «заполните реквизиты» — не причина. */
+    val fillIn: String,
+
+    /** Поле принимает только число или только часы с минутами. */
+    val numberField: String,
+    val timeField: String,
     val blockNoKkm: String,
     val blockNoPin: String,
     val blockKkmBlocked: String,

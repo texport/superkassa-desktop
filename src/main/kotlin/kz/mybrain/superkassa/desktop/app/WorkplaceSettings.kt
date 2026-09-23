@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.server.Kkm
+import kz.mybrain.superkassa.desktop.ui.sale.DomainKind
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.Accent
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
@@ -13,8 +14,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.TextScale
 import kz.mybrain.superkassa.desktop.ui.theme.Typeface
 
 /**
- * Что помнит это рабочее место: язык, вид, рельс, колонку точек, окно
- * и свои названия касс.
+ * Что помнит это рабочее место: язык, вид, рельс, колонку точек, окно,
+ * отрасль кассы и свои названия касс.
  *
  * Выбор держится состоянием, а не читается из файла при каждом обращении:
  * файл Compose не наблюдает, и переименованная касса оставалась на экране
@@ -43,6 +44,16 @@ class WorkplaceSettings(private val preferences: Preferences) {
             textScale = TextScale.byCode(preferences.textScale)
         )
     )
+        private set
+
+    /**
+     * Вид отрасли, в которой работает эта касса.
+     *
+     * Настройка, а не поле чека: отрасль у кассы одна, и выбирать её
+     * заново в каждом чеке кассиру незачем. От неё зависит, какие
+     * реквизиты экран продажи спрашивает и какой подблок уходит в БФД.
+     */
+    var domain: DomainKind by mutableStateOf(DomainKind.byCode(preferences.domain))
         private set
 
     /** Свёрнут ли рельс разделов: подписи спрятаны, значки остались. */
@@ -79,6 +90,11 @@ class WorkplaceSettings(private val preferences: Preferences) {
     fun chooseTextScale(chosen: TextScale) {
         look = look.copy(textScale = chosen)
         preferences.textScale = chosen.code
+    }
+
+    fun chooseDomain(chosen: DomainKind) {
+        domain = chosen
+        preferences.domain = chosen.code
     }
 
     fun toggleRail() {
