@@ -10,6 +10,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.asCoroutineDispatcher
+import kz.mybrain.superkassa.desktop.ui.adaptive.WindowClassRoot
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
@@ -27,9 +28,9 @@ import java.awt.event.KeyEvent as AwtKeyEvent
  * в картинку: по времени первой отрисовки видно, собирается ли список
  * целиком, а по изменению картинки — доехала ли прокрутка до содержимого.
  *
- * Оформление и надписи подставляются те же, что и в окне кассы: без них
- * разметка берёт значения по умолчанию и меряется не то, что видит
- * владелец.
+ * Оформление, надписи и класс окна подставляются те же, что и в окне
+ * кассы: без них разметка берёт значения по умолчанию и меряется не то,
+ * что видит владелец.
  */
 class RenderProbe(
     width: Int = WIDTH,
@@ -69,7 +70,7 @@ class RenderProbe(
             coroutineContext = thread.asCoroutineDispatcher()
         ) {
             SuperkassaTheme(appearance, look) {
-                ProvideStrings(language) { content() }
+                ProvideStrings(language) { WindowClassRoot(content) }
             }
         }
     }
@@ -165,11 +166,16 @@ class RenderProbe(
         repeat(SETTLE) { frame() }
     }
 
-    /** Колесо мыши над списком; кадры после него доводят прокрутку до конца хода. */
-    fun wheel(at: Offset, ticks: Float) {
+    /**
+     * Колесо мыши над списком; кадры после него доводят прокрутку до конца хода.
+     *
+     * @param across колесо вбок — так прокручивается широкая таблица.
+     */
+    fun wheel(at: Offset, ticks: Float, across: Boolean = false) {
+        val delta = if (across) Offset(ticks, 0f) else Offset(0f, ticks)
         onScene {
             scene.sendPointerEvent(PointerEventType.Move, at)
-            scene.sendPointerEvent(PointerEventType.Scroll, at, scrollDelta = Offset(0f, ticks))
+            scene.sendPointerEvent(PointerEventType.Scroll, at, scrollDelta = delta)
         }
         repeat(SETTLE) { frame() }
     }

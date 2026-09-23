@@ -39,30 +39,39 @@ fun LanguagePicker(session: Session) {
             Icon(AppIcons.language, contentDescription = texts.settings.language)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            Language.entries.forEach { language ->
-                val chosen = language == session.language
-                DropdownMenuItem(
-                    text = {
-                        Text(
-                            text = language.title,
-                            color = if (chosen) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            }
-                        )
-                    },
-                    trailingIcon = if (chosen) {
-                        { Icon(AppIcons.chosen, contentDescription = null) }
-                    } else {
-                        null
-                    },
-                    onClick = {
-                        session.switchLanguage(language)
-                        open = false
-                    }
-                )
-            }
+            LanguageMenuItems(session) { open = false }
         }
+    }
+}
+
+/**
+ * Языки пунктами меню: выбранный отмечен.
+ *
+ * Одни и те же пункты стоят в меню значка языка и в меню «Ещё» шапки
+ * узкого окна: язык меняется одним и тем же путём, откуда бы его ни взяли.
+ *
+ * @param onPicked закрыть меню после выбора.
+ */
+@Composable
+fun LanguageMenuItems(session: Session, onPicked: () -> Unit) {
+    Language.entries.forEach { language ->
+        val chosen = language == session.language
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = language.title,
+                    color = if (chosen) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                )
+            },
+            trailingIcon = if (chosen) {
+                { Icon(AppIcons.chosen, contentDescription = null) }
+            } else {
+                null
+            },
+            onClick = {
+                session.switchLanguage(language)
+                onPicked()
+            }
+        )
     }
 }

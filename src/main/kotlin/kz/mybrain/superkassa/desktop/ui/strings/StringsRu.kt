@@ -48,7 +48,8 @@ internal val RussianStrings = AppStrings(
         noKkm = "Касса не выбрана",
         autonomous = "Автономный режим",
         blocked = "Заблокирована",
-        changeCashier = "Сменить кассира"
+        changeCashier = "Сменить кассира",
+        moreActions = "Ещё"
     ),
     sections = SectionStrings(
         dashboard = "Главная",

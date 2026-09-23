@@ -46,7 +46,8 @@ internal val EnglishStrings = AppStrings(
         noKkm = "No register chosen",
         autonomous = "Autonomous mode",
         blocked = "Blocked",
-        changeCashier = "Change cashier"
+        changeCashier = "Change cashier",
+        moreActions = "More"
     ),
     sections = SectionStrings(
         dashboard = "Overview",

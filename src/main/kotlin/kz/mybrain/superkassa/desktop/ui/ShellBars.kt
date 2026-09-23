@@ -4,11 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,14 +23,9 @@ import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetBar
 import kz.mybrain.superkassa.desktop.ui.cabinet.CabinetDocuments
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMessage
 import kz.mybrain.superkassa.desktop.ui.components.AppTopBar
-import kz.mybrain.superkassa.desktop.ui.components.KkmStatusChips
-import kz.mybrain.superkassa.desktop.ui.components.LanguagePicker
-import kz.mybrain.superkassa.desktop.ui.components.ThemeSwitch
 import kz.mybrain.superkassa.desktop.ui.components.waitedLongEnough
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
-import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 
 /**
@@ -76,9 +67,10 @@ internal fun ShellBar(
 /**
  * Шапка приложения: какая касса и в каком она состоянии.
  *
- * Заголовок — номер кассы, подзаголовок — организация и смена. Плашки
+ * Заголовок — номер кассы, подзаголовок — организация и кассир. Плашки
  * состояния стоят до действий: кассир читает слева направо и должен
- * узнать о блокировке раньше, чем дотянется до кнопки.
+ * узнать о блокировке раньше, чем дотянется до кнопки. Имя кассира
+ * не сокращается: длинное название организации уступает ему место.
  */
 @Composable
 internal fun KkmTopBar(session: Session, onSignOut: () -> Unit, onRefresh: () -> Unit) {
@@ -86,15 +78,10 @@ internal fun KkmTopBar(session: Session, onSignOut: () -> Unit, onRefresh: () ->
     val kkm = session.selected
     AppTopBar(
         title = kkm?.let { session.displayName(it) } ?: texts.shell.noKkm,
-        subtitle = kkm?.let { listOfNotNull(it.orgTitle, session.whoami?.name).joinToString(Glyphs.SEPARATOR) }
+        subtitle = kkm?.orgTitle,
+        subtitleKept = kkm?.let { session.whoami?.name }
     ) {
-        KkmStatusChips(session)
-        IconButton(onClick = onRefresh) {
-            Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
-        }
-        ThemeSwitch(session)
-        LanguagePicker(session)
-        TextButton(onClick = onSignOut) { Text(texts.shell.changeCashier) }
+        KkmBarActions(session, onSignOut, onRefresh)
     }
 }
 

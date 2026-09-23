@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
@@ -39,6 +40,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  *
  * @param badge опознавательный значок слева. Уступает место возврату:
  *   там, где из раздела есть выход назад, стрелка важнее значка.
+ * @param subtitleKept хвост подзаголовка, который не сокращается: имя
+ *   кассира. Сокращается то, что перед ним, — название организации.
  * @param onBack возврат из раздела, если он есть.
  * @param actions кнопки справа: у каждого раздела свои.
  */
@@ -47,6 +50,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 fun AppTopBar(
     title: String,
     subtitle: String? = null,
+    subtitleKept: String? = null,
     badge: ImageVector? = null,
     onBack: (() -> Unit)? = null,
     backLabel: String? = null,
@@ -75,15 +79,7 @@ fun AppTopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (!subtitle.isNullOrBlank()) {
-                    Text(
-                        text = subtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                TopBarSubtitle(subtitle, subtitleKept)
             }
         },
         actions = {
@@ -119,5 +115,35 @@ private fun TopBarBadge(icon: ImageVector) {
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSecondaryContainer
         )
+    }
+}
+
+/**
+ * Подзаголовок шапки: сокращаемая часть и несокращаемый хвост.
+ *
+ * Строка одна, как и была; когда места мало, многоточие встаёт в конце
+ * названия организации, а имя кассира остаётся целым.
+ */
+@Composable
+private fun TopBarSubtitle(subtitle: String?, kept: String?) {
+    val parts = listOfNotNull(subtitle?.takeIf { it.isNotBlank() }, kept?.takeIf { it.isNotBlank() })
+    if (parts.isEmpty()) return
+    val style = MaterialTheme.typography.bodySmall
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
+    Row {
+        if (!subtitle.isNullOrBlank()) {
+            Text(
+                text = subtitle,
+                style = style,
+                color = color,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false)
+            )
+        }
+        if (!kept.isNullOrBlank()) {
+            val lead = if (subtitle.isNullOrBlank()) "" else Glyphs.SEPARATOR
+            Text(text = lead + kept, style = style, color = color, maxLines = 1, softWrap = false)
+        }
     }
 }

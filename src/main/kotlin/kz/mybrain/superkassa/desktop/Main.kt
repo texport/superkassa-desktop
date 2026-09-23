@@ -29,6 +29,7 @@ import kz.mybrain.superkassa.desktop.app.screenSize
 import kz.mybrain.superkassa.desktop.app.windowMinimum
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.ui.Shell
+import kz.mybrain.superkassa.desktop.ui.adaptive.WindowClassRoot
 import kz.mybrain.superkassa.desktop.ui.components.EscapeListener
 import kz.mybrain.superkassa.desktop.ui.debug.LogWindow
 import kz.mybrain.superkassa.desktop.ui.strings.ProvideStrings
@@ -126,7 +127,9 @@ private fun ApplicationScope.SuperkassaApplication() {
         EscapeListener()
         SuperkassaTheme(session.appearance, session.look) {
             ProvideStrings(session.language) {
-                Shell(session)
+                // Окно меряется здесь, один раз: класс окна знают все
+                // разделы, и никто не меряет его сам.
+                WindowClassRoot { Shell(session) }
             }
         }
     }

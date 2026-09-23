@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Place
@@ -91,6 +92,9 @@ object AppIcons {
 
     /** Отметка выбранного значения в меню. */
     val chosen: ImageVector = Icons.Filled.Check
+
+    /** Меню действий, которым не хватило места в шапке. */
+    val moreActions: ImageVector = Icons.Filled.MoreVert
 
     /** Свернуть и развернуть рельс разделов. */
     val menu: ImageVector = Icons.Filled.Menu
