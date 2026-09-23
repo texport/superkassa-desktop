@@ -2,18 +2,15 @@ package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -35,6 +32,8 @@ fun NodeAddressCard(session: Session) {
     // и владелец шёл искать сеть вместо своей опечатки.
     val malformed = address.isNotBlank() && !ServiceAddress.valid(address)
     SectionCard(title = texts.nodeAddress, info = texts.nodeAddressHint) {
+        // Адрес занимает остаток строки карточки, кнопка стоит за ним:
+        // адрес службы длиннее любой заданной ширины поля.
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
             verticalAlignment = Alignment.Top
@@ -46,16 +45,15 @@ fun NodeAddressCard(session: Session) {
                 isError = malformed,
                 supportingText = if (malformed) ({ Text(texts.addressMalformed) }) else null,
                 singleLine = true,
-                modifier = Modifier.width(Sizes.fieldName)
+                modifier = Modifier.weight(1f)
             )
-            FilledTonalButton(
-                modifier = Modifier.height(Sizes.fieldHeight),
-                enabled = ServiceAddress.changed(address, session.preferences.nodeUrl),
-                onClick = {
-                    session.preferences.nodeUrl = ServiceAddress.tidy(address)
-                    SettingsDrafts.forget(SettingsDrafts.Field.NODE_ADDRESS)
-                }
-            ) { Text(texts.save) }
+            FieldButton(
+                text = texts.save,
+                enabled = ServiceAddress.changed(address, session.preferences.nodeUrl)
+            ) {
+                session.preferences.nodeUrl = ServiceAddress.tidy(address)
+                SettingsDrafts.forget(SettingsDrafts.Field.NODE_ADDRESS)
+            }
         }
     }
 }

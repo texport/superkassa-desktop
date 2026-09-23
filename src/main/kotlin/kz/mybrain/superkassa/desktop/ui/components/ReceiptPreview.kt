@@ -2,24 +2,18 @@ package kz.mybrain.superkassa.desktop.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.input.pointer.PointerEventPass
@@ -38,6 +33,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kz.mybrain.superkassa.desktop.ui.adaptive.LocalWindowClass
+import kz.mybrain.superkassa.desktop.ui.adaptive.WidthClass
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
 import kz.mybrain.superkassa.desktop.ui.theme.Sizes
@@ -91,10 +88,13 @@ fun ReceiptPreview(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
+        // На узком окне форма занимает его целиком, как полноэкранный диалог
+        // Material; на широком стоит окном с полями, за которыми виден раздел.
+        val fullScreen = LocalWindowClass.current.width < WidthClass.Expanded
         Surface(
-            modifier = Modifier.fillMaxSize(Tape.DIALOG_FRACTION),
-            shape = RoundedCornerShape(Sizes.corner),
-            tonalElevation = Sizes.dialogElevation
+            modifier = if (fullScreen) Modifier.fillMaxSize() else Modifier.fillMaxSize(Tape.DIALOG_FRACTION),
+            shape = if (fullScreen) RectangleShape else RoundedCornerShape(Sizes.corner),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh
         ) {
             val bitmap = remember(image) {
                 image?.let { runCatching { SkiaImage.makeFromEncoded(it).toComposeImageBitmap() }.getOrNull() }
@@ -106,13 +106,14 @@ fun ReceiptPreview(
                 else -> ScreenState.Ready
             }
             Column(modifier = Modifier.fillMaxSize()) {
-                PreviewBar(
+                val actions = PreviewActions(
                     tapeWidth = tapeWidth,
                     onWidth = { tapeWidth = it },
                     onPrint = onPrint.takeIf { bitmap != null },
                     onSave = onSave.takeIf { bitmap != null },
                     onDismiss = onDismiss
                 )
+                if (fullScreen) FullScreenPreviewBar(actions) else WindowedPreviewBar(actions)
                 ScreenSlot(state, Modifier.fillMaxSize(), centered = true) {
                     bitmap?.let { tape ->
                         TapeView(bitmap = BitmapPainter(tape), width = tapeWidth, title = texts.title) {
@@ -165,39 +166,5 @@ private fun TapeView(bitmap: BitmapPainter, width: Dp, title: String, onZoom: (D
             adapter = rememberScrollbarAdapter(scroll),
             modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(Spacing.hairline)
         )
-    }
-}
-
-/** Строка действий над формой: печать, сохранение, масштаб и закрытие. */
-@Composable
-private fun PreviewBar(
-    tapeWidth: Dp,
-    onWidth: (Dp) -> Unit,
-    onPrint: (() -> Unit)?,
-    onSave: (() -> Unit)?,
-    onDismiss: () -> Unit
-) {
-    val texts = LocalStrings.current.preview
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.roomy, vertical = Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
-    ) {
-        Text(texts.title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-        onPrint?.let { print ->
-            IconButton(onClick = print) { Icon(AppIcons.print, contentDescription = texts.print) }
-        }
-        onSave?.let { save ->
-            IconButton(onClick = save) { Icon(AppIcons.save, contentDescription = texts.save) }
-        }
-        IconButton(
-            enabled = tapeWidth > Tape.minWidth,
-            onClick = { onWidth((tapeWidth - Tape.widthStep).coerceAtLeast(Tape.minWidth)) }
-        ) { Icon(AppIcons.zoomOut, contentDescription = texts.zoomOut) }
-        IconButton(
-            enabled = tapeWidth < Tape.maxWidth,
-            onClick = { onWidth((tapeWidth + Tape.widthStep).coerceAtMost(Tape.maxWidth)) }
-        ) { Icon(AppIcons.zoomIn, contentDescription = texts.zoomIn) }
-        IconButton(onClick = onDismiss) { Icon(AppIcons.close, contentDescription = texts.close) }
     }
 }

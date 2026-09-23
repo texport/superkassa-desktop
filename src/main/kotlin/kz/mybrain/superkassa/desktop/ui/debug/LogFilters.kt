@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.debug
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.widthIn
@@ -13,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.log.LogLevel
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.strings.DebugTexts
@@ -49,12 +49,7 @@ internal fun LogFilters(
     onClear: () -> Unit,
     onSave: () -> Unit
 ) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
-        itemVerticalAlignment = Alignment.CenterVertically
-    ) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         ChoiceSegments(
             options = LogLevel.entries,
             selected = level,
@@ -65,7 +60,10 @@ internal fun LogFilters(
             value = query,
             label = texts.search,
             onChange = onQuery,
-            modifier = Modifier.widthIn(max = Sizes.fieldSearch)
+            // Поиск берёт остаток строки и не бывает уже своей подписи:
+            // пределом сверху в 280 точек казахская подпись «Жол бойынша
+            // іздеу» ломалась в две строки, а справа пустовала половина окна.
+            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldSearch)
         )
         LogActions(texts, shown, onClear, onSave)
     }

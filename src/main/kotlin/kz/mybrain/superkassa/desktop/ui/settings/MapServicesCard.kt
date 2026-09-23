@@ -1,7 +1,5 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
@@ -12,10 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Preferences
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.map.MapService
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
  * Чьей картой пользуется рабочее место.
@@ -67,7 +65,7 @@ fun MapServicesCard(session: Session) {
         ServiceField(texts.mapLocation, location, MapService.LOCATION) {
             SettingsDrafts.type(SettingsDrafts.Field.MAP_LOCATION, it)
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+        WrapRow {
             FilledTonalButton(
                 enabled = changed(preferences, ServiceUrls(tiles, search, reverse, location)),
                 onClick = ::save

@@ -55,7 +55,7 @@ fun PrintFormCard(session: Session) {
     }
 
     SectionCard(title = texts.settings.printForm, info = texts.settings.printFormHint) {
-        Text(texts.settings.receiptLanguage, style = MaterialTheme.typography.bodyMedium)
+        PartTitle(texts.settings.receiptLanguage)
         ChoiceSegments(
             options = ReceiptLanguageChoice.entries,
             selected = ReceiptLanguageChoice.byCode(branding.language),
@@ -63,7 +63,7 @@ fun PrintFormCard(session: Session) {
             enabled = programming
         ) { save(branding.copy(language = it.code)) }
 
-        LabelWithTip(texts.settings.printLayout, texts.settings.printLayoutHint)
+        PartTitle(texts.settings.printLayout, texts.settings.printLayoutHint)
         // Перечень макетов — от узла: свой список не узнал бы о новой
         // ширине ленты, пока приложение не перевыпустят. Правило
         // «код в миллиметры» остаётся здесь: узел везёт ширину числом.
@@ -153,20 +153,3 @@ private const val FULLSCREEN = "FULLSCREEN"
 private fun layoutTitle(session: Session, code: String, texts: SettingStrings): String =
     PrintLayout.entries.firstOrNull { it.code == code }?.title(texts)
         ?: session.titleOf(Dictionary.PaperWidths, code)
-
-/**
- * Подпись выбора и объяснение под значком рядом.
- *
- * Абзац на экране занимает две-три строки постоянно, а нужен один раз
- * при настройке: по Material 3 его место — в подсказке.
- */
-@Composable
-private fun LabelWithTip(label: String, explanation: String) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(label, style = MaterialTheme.typography.bodyMedium)
-        InfoTip(explanation)
-    }
-}

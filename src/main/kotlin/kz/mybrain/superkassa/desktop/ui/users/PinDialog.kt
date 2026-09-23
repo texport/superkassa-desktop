@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.users
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -21,12 +20,12 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kotlinx.coroutines.launch
-import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
+import kz.mybrain.superkassa.desktop.ui.components.DialogBody
+import kz.mybrain.superkassa.desktop.ui.components.DialogTitle
 import kz.mybrain.superkassa.desktop.ui.strings.CashierTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.MoneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -60,9 +59,9 @@ internal fun ChangePinDialog(
     AlertDialog(
         onDismissRequest = { if (!busy) onDismiss() },
         icon = { Icon(AppIcons.pin, contentDescription = null) },
-        title = { Text(money.cashiers.changePinFor.format(who)) },
+        title = { DialogTitle(money.cashiers.changePinFor.format(who)) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+            DialogBody(spacing = Spacing.tight) {
                 OutlinedTextField(
                     value = pin,
                     onValueChange = { pin = UserRules.digitsOf(it) },
@@ -72,7 +71,10 @@ internal fun ChangePinDialog(
                     placeholder = { Text(money.cashiers.pinLength) },
                     supportingText = problem?.let { { Text(it) } },
                     visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fieldWidth(texts.users.newPin, Sizes.fieldPin).focusRequester(focus)
+                    // Поле во всю ширину диалога: причина под ним занимает его
+                    // ширину, и в поле ширины пина «ПИН-де төрт цифрдан аз»
+                    // ломалось на строки по слову.
+                    modifier = Modifier.fillMaxWidth().focusRequester(focus)
                 )
                 // Обещание продолжить работу новым пином — только тому,
                 // кто меняет пин себе. Над чужим кассиром оно обещало

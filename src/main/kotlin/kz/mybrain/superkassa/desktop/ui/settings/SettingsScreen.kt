@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.adaptive.ContentKind
+import kz.mybrain.superkassa.desktop.ui.adaptive.contentWidth
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
@@ -75,15 +78,21 @@ fun SettingsCards(session: Session, modifier: Modifier = Modifier) {
         if (households.size > 1) {
             HouseholdTabs(households, chosen) { wanted = it }
         }
-        ScrollableColumn(
-            modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-            spacing = Spacing.roomy
-        ) {
-            SettingsGroup.entries.filter { it.household == chosen }.forEach { group ->
-                val cards = shown.filter { it.group == group }
-                if (cards.isEmpty()) return@forEach
-                group.title(texts)?.let { GroupTitle(it) }
-                cards.forEach { it.card(session) }
+        // Прокручивается вся ширина раздела — колесо работает над любым
+        // местом, — а карточки стоят столбцом шириной для чтения: на широком
+        // мониторе карточка с тремя сегментами тянулась на полторы тысячи
+        // точек, и подпись оказывалась в одном конце экрана, а выбор в другом.
+        ScrollableColumn(modifier = Modifier.fillMaxSize().padding(Spacing.screen)) {
+            Column(
+                modifier = Modifier.contentWidth(ContentKind.Reading),
+                verticalArrangement = Arrangement.spacedBy(Spacing.roomy)
+            ) {
+                SettingsGroup.entries.filter { it.household == chosen }.forEach { group ->
+                    val cards = shown.filter { it.group == group }
+                    if (cards.isEmpty()) return@forEach
+                    group.title(texts)?.let { GroupTitle(it) }
+                    cards.forEach { it.card(session) }
+                }
             }
         }
     }
@@ -97,12 +106,22 @@ private fun HouseholdTabs(
     onChoose: (SettingsHousehold) -> Unit
 ) {
     val texts = LocalStrings.current.settings
-    PrimaryTabRow(selectedTabIndex = households.indexOf(chosen)) {
+    // Вкладки стоят над столбцом карточек и той же ширины: над широким
+    // экраном две вкладки расходились к его краям, и выбранная оказывалась
+    // в стороне от того, что она открыла.
+    PrimaryTabRow(
+        selectedTabIndex = households.indexOf(chosen),
+        modifier = Modifier.padding(horizontal = Spacing.screen).contentWidth(ContentKind.Reading)
+    ) {
         households.forEach { household ->
+            // По гайдлайну выбранная вкладка несёт цвет `primary`, невыбранная —
+            // `onSurfaceVariant`. Одинаковым цветом обе читались выбранными.
             Tab(
                 selected = household == chosen,
                 onClick = { onChoose(household) },
-                text = { Text(household.title(texts)) }
+                text = { Text(household.title(texts)) },
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

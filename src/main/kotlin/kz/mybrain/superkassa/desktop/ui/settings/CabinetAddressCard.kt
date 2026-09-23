@@ -2,19 +2,16 @@ package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.Session
+import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.cabinetTexts
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -37,6 +34,8 @@ fun CabinetAddressCard(session: Session) {
     // не отвечает по заданному адресу».
     val malformed = address.isNotBlank() && !ServiceAddress.valid(address)
     SectionCard(title = texts.address, info = texts.hints.address) {
+        // Адрес занимает остаток строки карточки, кнопка стоит за ним:
+        // адрес службы длиннее любой заданной ширины поля.
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
             verticalAlignment = Alignment.Top
@@ -48,16 +47,15 @@ fun CabinetAddressCard(session: Session) {
                 isError = malformed,
                 supportingText = if (malformed) ({ Text(settings.addressMalformed) }) else null,
                 singleLine = true,
-                modifier = Modifier.width(Sizes.fieldName)
+                modifier = Modifier.weight(1f)
             )
-            FilledTonalButton(
-                modifier = Modifier.height(Sizes.fieldHeight),
-                enabled = ServiceAddress.changed(address, session.preferences.cabinetUrl),
-                onClick = {
-                    session.preferences.cabinetUrl = ServiceAddress.tidy(address)
-                    SettingsDrafts.forget(SettingsDrafts.Field.CABINET_ADDRESS)
-                }
-            ) { Text(texts.save) }
+            FieldButton(
+                text = texts.save,
+                enabled = ServiceAddress.changed(address, session.preferences.cabinetUrl)
+            ) {
+                session.preferences.cabinetUrl = ServiceAddress.tidy(address)
+                SettingsDrafts.forget(SettingsDrafts.Field.CABINET_ADDRESS)
+            }
         }
     }
 }

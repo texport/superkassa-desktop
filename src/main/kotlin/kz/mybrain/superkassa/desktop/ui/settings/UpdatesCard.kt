@@ -18,6 +18,7 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.UpdateOutcome
 import kz.mybrain.superkassa.desktop.app.Updates
 import kz.mybrain.superkassa.desktop.app.openInBrowser
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.cabinet.cabinetMoment
 import kz.mybrain.superkassa.desktop.ui.components.BusyButton
 import kz.mybrain.superkassa.desktop.ui.components.FactLines
@@ -47,10 +48,10 @@ internal fun UpdatesCard(session: Session) {
     SectionCard(title = texts.title, info = texts.hint) {
         AutomaticSwitch(updates, texts.automatic)
         FactLines(texts.appName, factLines(updates, texts), texts.neverChecked)
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        // Итог проверки переносится под кнопку целиком, когда ему не хватает
+        // строки: «Сервер выпусков недоступен» по-казахски рядом с кнопкой
+        // сжимался в узкий столбик.
+        WrapRow(spacing = Spacing.snug) {
             BusyButton(
                 text = if (updates.checking) texts.checking else texts.checkNow,
                 busy = updates.checking,

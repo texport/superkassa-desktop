@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -18,7 +17,6 @@ import kz.mybrain.superkassa.desktop.app.PinRequest
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 
 /**
  * Печатная форма поверх всего, что открыто.
@@ -82,7 +80,7 @@ private fun DrawPinDialog(request: PinRequest, onDismiss: () -> Unit, onEnter: (
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-            modifier = Modifier.width(Sizes.fieldPin)
+            modifier = Modifier.fillMaxWidth()
         )
         Text(
             text = texts.preview.drawPinHint,

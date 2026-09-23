@@ -57,7 +57,7 @@ fun DecommissionCard(session: Session) {
         border = CardDefaults.outlinedCardBorder().copy(brush = errorEdge())
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
+            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
             Text(

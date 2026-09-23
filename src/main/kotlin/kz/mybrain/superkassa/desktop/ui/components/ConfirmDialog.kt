@@ -42,8 +42,8 @@ fun ConfirmDangerDialog(
                 tint = MaterialTheme.colorScheme.error
             )
         },
-        title = { Text(what) },
-        text = { Text(explain, style = MaterialTheme.typography.bodyMedium) },
+        title = { DialogTitle(what) },
+        text = { DialogBody { Text(explain, style = MaterialTheme.typography.bodyMedium) } },
         confirmButton = {
             Button(
                 onClick = onConfirm,
@@ -88,8 +88,8 @@ fun ConfirmActionDialog(
     AlertDialog(
         onDismissRequest = { if (!busy) onCancel() },
         icon = { Icon(imageVector = icon, contentDescription = null) },
-        title = { Text(what) },
-        text = { Text(explain, style = MaterialTheme.typography.bodyMedium) },
+        title = { DialogTitle(what) },
+        text = { DialogBody { Text(explain, style = MaterialTheme.typography.bodyMedium) } },
         confirmButton = { Button(enabled = !busy, onClick = onConfirm) { Text(action) } },
         dismissButton = { TextButton(enabled = !busy, onClick = onCancel) { Text(cancel) } }
     )

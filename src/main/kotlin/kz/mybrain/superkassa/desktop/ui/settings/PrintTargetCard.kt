@@ -13,10 +13,9 @@ import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.DictionaryEntry
 import kz.mybrain.superkassa.desktop.server.PrintKind
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
-import kz.mybrain.superkassa.desktop.ui.components.DictionaryPicker
+import kz.mybrain.superkassa.desktop.ui.components.LabelledPicker
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 
 /**
  * Куда печатает эта касса.
@@ -52,18 +51,23 @@ internal fun PrintTargetCard(session: Session, printers: List<String> = remember
                 color = MaterialTheme.colorScheme.error
             )
         }
-        DictionaryPicker(
+        // Поле во всю ширину карточки, как и прочие выборы настроек: имя
+        // принтера бывает длиннее заданной ширины, и выбор обрезался
+        // многоточием рядом с пустой половиной карточки.
+        val entries = printerEntries(printers, texts.settings.printerSystem)
+        val selected = printer ?: SYSTEM_PRINTER
+        LabelledPicker(
             label = texts.settings.printer,
-            entries = printerEntries(printers, texts.settings.printerSystem),
-            language = session.language.code,
-            selectedCode = printer ?: SYSTEM_PRINTER,
+            options = entries,
+            selected = entries.firstOrNull { it.code == selected },
+            title = { entry -> entry?.title(session.language.code) ?: selected },
             onSelect = { chosen ->
-                printer = chosen.takeIf { it != SYSTEM_PRINTER }
+                printer = chosen.code.takeIf { it != SYSTEM_PRINTER }
                 session.preferences.choosePrinter(kkm.kkmId, printer)
             },
-            width = Sizes.fieldBarcode
+            available = { it.supported }
         )
-        Text(texts.settings.printCopies, style = MaterialTheme.typography.bodyMedium)
+        PartTitle(texts.settings.printCopies)
         ChoiceSegments(
             options = (1..PrintPreferences.MAX_COPIES).toList(),
             selected = copies,
@@ -72,7 +76,7 @@ internal fun PrintTargetCard(session: Session, printers: List<String> = remember
             copies = chosen
             session.preferences.printCopies = chosen
         }
-        Text(texts.settings.printKind, style = MaterialTheme.typography.bodyMedium)
+        PartTitle(texts.settings.printKind)
         ChoiceSegments(
             options = PrintKind.entries,
             selected = kind,

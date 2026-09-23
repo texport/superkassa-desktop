@@ -33,7 +33,7 @@ internal fun DebugCard(session: Session) {
     val texts = debugTexts(session.language)
     SectionCard(title = texts.debugMode, info = texts.debugModeHint) {
         DebugSwitch(texts.title)
-        Text(texts.level, style = MaterialTheme.typography.titleSmall)
+        PartTitle(texts.level)
         ChoiceSegments(
             options = LogLevel.entries,
             selected = AppLog.level,

@@ -2,12 +2,13 @@ package kz.mybrain.superkassa.desktop.ui.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -19,15 +20,12 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.rename
 import kz.mybrain.superkassa.desktop.server.Kkm
-import kz.mybrain.superkassa.desktop.ui.components.FieldButton
-import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
-import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
@@ -48,9 +46,7 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 @Composable
 internal fun CurrentKkmCard(session: Session) {
     val texts = LocalStrings.current
-    val money = moneyTexts(session.language).kkm
     val kkm = session.selected ?: return
-    val scope = rememberCoroutineScope()
     // Поле привязано к кассе: после смены кассы в нём не должно остаться
     // название предыдущей. Набранное переживает уход в другой раздел —
     // экран настроек уходит из состава вместе с ним.
@@ -59,7 +55,7 @@ internal fun CurrentKkmCard(session: Session) {
 
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
+            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
             verticalArrangement = Arrangement.spacedBy(Spacing.snug)
         ) {
             Row(
@@ -82,49 +78,53 @@ internal fun CurrentKkmCard(session: Session) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            // Поле и кнопки одной геометрии и выровнены по верху:
-            // строка «поле — кнопка» разной высоты читается как сбой вёрстки.
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-                verticalArrangement = Arrangement.spacedBy(Spacing.tight),
-                itemVerticalAlignment = Alignment.Top
-            ) {
-                OutlinedTextField(
-                    value = chosenName,
-                    onValueChange = { SettingsDrafts.type(field, it) },
-                    label = { Text(texts.settings.localName) },
-                    trailingIcon = { InfoTip(texts.settings.localNameHint) },
-                    singleLine = true,
-                    enabled = !session.busy,
-                    modifier = Modifier.fieldWidth(texts.settings.localName, Sizes.fieldName)
-                )
-                // Итог правки объявляет только удачу: отказ узла уже
-                // показан его же словами, и «Название сохранено» поверх
-                // него сказало бы владельцу неправду.
-                //
-                // Кнопка гаснет на время обращения: узел переименовывает
-                // кассу секунду-другую, и второе нажатие отправляло к нему
-                // то же название второй раз.
-                FieldButton(texts.settings.save, enabled = !session.busy) {
-                    scope.launch {
-                        if (!session.rename(kkm, chosenName)) return@launch
-                        SettingsDrafts.forget(field)
-                        session.report(money.renameSaved)
-                    }
-                }
-                FieldButton(
-                    text = money.renameReset,
-                    kind = FieldButtonKind.Outlined,
-                    enabled = chosenName.isNotBlank() && !session.busy
-                ) {
-                    scope.launch {
-                        if (!session.rename(kkm, null)) return@launch
-                        SettingsDrafts.forget(field)
-                        session.report(money.renameReset)
-                    }
-                }
-            }
+            // Поле во всю ширину карточки, кнопки под ним: название кассы
+            // бывает на сотню знаков, и в поле заданной ширины от него
+            // оставалось начало. Строкой «поле — две кнопки» ряд на крупной
+            // ступени по-казахски не помещался и переносил кнопки вразнобой.
+            OutlinedTextField(
+                value = chosenName,
+                onValueChange = { SettingsDrafts.type(field, it) },
+                label = { Text(texts.settings.localName) },
+                trailingIcon = { InfoTip(texts.settings.localNameHint) },
+                singleLine = true,
+                enabled = !session.busy,
+                modifier = Modifier.fillMaxWidth()
+            )
+            RenameActions(session, kkm, chosenName, field)
         }
+    }
+}
+
+/**
+ * Сохранение названия и возврат к названию от ОФД.
+ *
+ * Итог правки объявляет только удачу: отказ узла уже показан его же
+ * словами, и «Название сохранено» поверх него сказало бы владельцу
+ * неправду. Кнопки гаснут на время обращения: узел переименовывает кассу
+ * секунду-другую, и второе нажатие отправляло к нему то же название
+ * второй раз.
+ */
+@Composable
+private fun RenameActions(session: Session, kkm: Kkm, chosenName: String, field: String) {
+    val texts = LocalStrings.current
+    val money = moneyTexts(session.language).kkm
+    val scope = rememberCoroutineScope()
+    WrapRow {
+        FilledTonalButton(enabled = !session.busy, onClick = {
+            scope.launch {
+                if (!session.rename(kkm, chosenName)) return@launch
+                SettingsDrafts.forget(field)
+                session.report(money.renameSaved)
+            }
+        }) { Text(texts.settings.save) }
+        OutlinedButton(enabled = chosenName.isNotBlank() && !session.busy, onClick = {
+            scope.launch {
+                if (!session.rename(kkm, null)) return@launch
+                SettingsDrafts.forget(field)
+                session.report(money.renameReset)
+            }
+        }) { Text(money.renameReset) }
     }
 }
 

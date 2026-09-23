@@ -1,24 +1,14 @@
 package kz.mybrain.superkassa.desktop.ui.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.Branding
-import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SettingStrings
-import kz.mybrain.superkassa.desktop.ui.theme.Sizes
-import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 
 /**
  * Свои строки кассы на чеке.
@@ -42,32 +32,22 @@ fun ReceiptLinesSection(kkmId: String, branding: Branding, enabled: Boolean, onS
         SettingsDrafts.draft(line.field(kkmId))?.let { line.write(carried, it) } ?: carried
     }
 
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(texts.settings.receiptLines, style = MaterialTheme.typography.bodyMedium)
-        InfoTip(texts.settings.receiptLinesHint)
-    }
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug),
-        itemVerticalAlignment = Alignment.CenterVertically
-    ) {
-        ReceiptLine.entries.forEach { line ->
-            OutlinedTextField(
-                value = line.read(edited).orEmpty(),
-                onValueChange = { SettingsDrafts.type(line.field(kkmId), it) },
-                label = { Text(line.title(texts.settings)) },
-                singleLine = true,
-                enabled = enabled,
-                modifier = Modifier.width(Sizes.fieldForm)
-            )
-        }
+    PartTitle(texts.settings.receiptLines, texts.settings.receiptLinesHint)
+    // Поля идут столбцом в том порядке, в каком строки встанут на чеке,
+    // и во всю ширину карточки: строка на сто знаков видна целиком
+    // и переносится внутри поля. Сеткой по два-три в ряд порядок читался
+    // слева направо и обрывался на краю, а однострочное поле показывало
+    // от строки первые двадцать знаков.
+    ReceiptLine.entries.forEach { line ->
+        OutlinedTextField(
+            value = line.read(edited).orEmpty(),
+            onValueChange = { SettingsDrafts.type(line.field(kkmId), it) },
+            label = { Text(line.title(texts.settings)) },
+            enabled = enabled,
+            modifier = Modifier.fillMaxWidth().keysOfSingleLine()
+        )
     }
     FilledTonalButton(
-        modifier = Modifier.height(Sizes.fieldHeight),
         enabled = enabled && edited != branding,
         onClick = { onSave(edited) }
     ) { Text(texts.settings.saveReceiptLines) }

@@ -13,7 +13,6 @@ import kz.mybrain.superkassa.desktop.app.switchAppearance
 import kz.mybrain.superkassa.desktop.ui.components.ChoiceSegments
 import kz.mybrain.superkassa.desktop.ui.components.ColorChoice
 import kz.mybrain.superkassa.desktop.ui.components.SectionCard
-import kz.mybrain.superkassa.desktop.ui.components.SubsectionTitle
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LookStrings
 import kz.mybrain.superkassa.desktop.ui.strings.SettingStrings
@@ -53,7 +52,7 @@ fun AppearanceCard(session: Session) {
 @Composable
 private fun Choice(title: String, info: String? = null, content: @Composable () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-        SubsectionTitle(title, info)
+        PartTitle(title, info)
         content()
     }
 }
