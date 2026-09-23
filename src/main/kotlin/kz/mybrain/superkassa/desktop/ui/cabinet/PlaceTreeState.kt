@@ -27,13 +27,13 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * иначе «три точки» читается как всё хозяйство владельца.
  */
 @Composable
-internal fun PlaceCount(texts: CabinetTexts, rows: List<PlaceRow>, total: Int) {
+internal fun PlaceCount(texts: CabinetTexts, rows: List<PlaceRow>, total: Int, modifier: Modifier = Modifier) {
     val shown = rows.count { it is PlaceRow.Point }
     Text(
         text = if (shown == total) "${texts.places}: $total" else texts.shownOf.format(shown, total),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(start = Spacing.tight, end = Spacing.screen)
+        modifier = modifier.padding(start = Spacing.tight, end = Spacing.screen)
     )
 }
 

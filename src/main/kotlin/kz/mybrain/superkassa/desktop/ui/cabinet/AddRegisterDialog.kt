@@ -86,16 +86,18 @@ fun AddRegisterDialog(
             }
         }
     ) {
-        RegisterFields(
-            texts = texts,
-            language = session.language,
-            draft = draft,
-            places = places,
-            models = models,
-            stamped = known != null,
-            issued = issued,
-            onCreatePlace = { addingPlace = true }
-        )
+        FormBody {
+            RegisterFields(
+                texts = texts,
+                language = session.language,
+                draft = draft,
+                places = places,
+                models = models,
+                stamped = known != null,
+                issued = issued,
+                onCreatePlace = { addingPlace = true }
+            )
+        }
     }
     if (addingPlace) {
         AddPlaceCard(

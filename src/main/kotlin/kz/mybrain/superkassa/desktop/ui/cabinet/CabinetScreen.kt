@@ -58,8 +58,13 @@ fun CabinetScreen(
     var page by remember { mutableStateOf(CabinetTab.Company) }
     Box(modifier = Modifier.fillMaxSize()) {
         CompositionLocalProvider(LocalRegisterDocuments provides { documents.register = it }) {
+            // Вкладки стоят вплотную под шапкой окна, как по Material 3:
+            // поле над ними отнимало у списка точек в малом окне ещё
+            // четверть строки и ничего не отделяло — вкладки и так черта.
             Column(
-                modifier = Modifier.fillMaxSize().padding(Spacing.screen),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = Spacing.screen, end = Spacing.screen, bottom = Spacing.screen),
                 verticalArrangement = Arrangement.spacedBy(Spacing.snug)
             ) {
                 CabinetTabs(page, session.language) { page = it }

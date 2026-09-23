@@ -1,8 +1,7 @@
 package kz.mybrain.superkassa.desktop.ui.cabinet
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,16 +9,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.app.CabinetSession
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.server.cabinet.RegisterAddress
+import kz.mybrain.superkassa.desktop.ui.adaptive.WrapRow
 import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.map.MapPickerDialog
 import kz.mybrain.superkassa.desktop.ui.map.MapPoint
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
+import kz.mybrain.superkassa.desktop.ui.theme.Sizes
 import kz.mybrain.superkassa.desktop.ui.theme.Spacing
 import java.math.BigDecimal
 
@@ -49,17 +49,17 @@ fun PlacePoint(
     onPoint: (MapPoint) -> Unit
 ) {
     var onMap by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    // Ряд переносится, а не сжимает строку: в узкой карточке кнопка
+    // оставляла координатам столбик в букву шириной, и «Широта» читалась
+    // сверху вниз. Строка уступает кнопке место, пока не станет уже
+    // прежнего поля формы, и тогда кнопка уходит под неё.
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
         Text(
             text = point?.let { "${texts.latitude}: ${it.latitude}${Glyphs.SEPARATOR}${texts.longitude}: ${it.longitude}" }
                 ?: texts.pointNotChosen,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldForm)
         )
         FieldButton(text = texts.pickOnMap) { onMap = true }
     }

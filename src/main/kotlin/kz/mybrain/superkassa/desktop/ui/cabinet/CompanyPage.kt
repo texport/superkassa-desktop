@@ -21,6 +21,8 @@ import kz.mybrain.superkassa.desktop.server.cabinet.CompanyProfile
 import kz.mybrain.superkassa.desktop.server.cabinet.Oked
 import kz.mybrain.superkassa.desktop.server.cabinet.company
 import kz.mybrain.superkassa.desktop.server.cabinet.saveOkeds
+import kz.mybrain.superkassa.desktop.ui.adaptive.ContentKind
+import kz.mybrain.superkassa.desktop.ui.adaptive.contentWidth
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableColumn
@@ -71,7 +73,11 @@ fun CompanyPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts) 
     }
     val titles = rememberOkedTitles(session, cabinet, okeds.toList())
     ScreenSlot(state, Modifier.fillMaxWidth(), centered = true) {
-        ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+        // Реквизиты и виды деятельности — текст и форма: не шире строки
+        // чтения. На широком мониторе название вида деятельности тянулось
+        // в одну строку на тысячу с лишним точек, а крестик удаления
+        // уезжал от него на другой край экрана.
+        ScrollableColumn(modifier = Modifier.contentWidth(ContentKind.Reading), spacing = Spacing.snug) {
             CompanyCard(cabinet, profile, texts)
             OkedsCard(texts, okeds, cabinet.busy, profile?.okeds.orEmpty(), title = titles) {
                 scope.launch {

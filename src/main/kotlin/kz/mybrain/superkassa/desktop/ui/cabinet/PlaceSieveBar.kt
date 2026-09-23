@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.desktop.ui.cabinet
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -43,7 +42,8 @@ internal fun PlaceSieveBar(
     onSieve: (PlaceSieve) -> Unit
 ) {
     FlowRow(
-        modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen),
+        // Поле под полосу прокрутки даёт список, в котором ряд стоит.
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
         verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
         // Плашки и значок стороны читаются одним рядом, а не двумя

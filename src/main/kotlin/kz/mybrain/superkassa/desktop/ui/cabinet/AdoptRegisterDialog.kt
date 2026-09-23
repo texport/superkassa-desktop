@@ -63,7 +63,9 @@ fun AdoptRegisterDialog(
         onDismiss = onDismiss,
         onAction = { scope.launch { adopt(session, cabinet, machine, register, draft, onDismiss) } }
     ) {
-        AdoptFields(session, texts, draft, environments, state?.technicalState)
+        FormBody {
+            AdoptFields(session, texts, draft, environments, state?.technicalState)
+        }
     }
 }
 

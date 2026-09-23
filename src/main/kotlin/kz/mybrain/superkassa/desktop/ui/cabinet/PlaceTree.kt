@@ -4,21 +4,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
-import kz.mybrain.superkassa.desktop.ui.components.RecordRow
-import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
-import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
 import kz.mybrain.superkassa.desktop.ui.components.SearchField
 import kz.mybrain.superkassa.desktop.ui.strings.CabinetTexts
 import kz.mybrain.superkassa.desktop.ui.strings.Language
@@ -50,6 +48,11 @@ import kz.mybrain.superkassa.desktop.ui.theme.Spacing
  * @param trouble кабинет списка не отдал — его словами; `null` — отдал.
  * @param locksKnown ответил ли кабинет, какие кассы заблокированы.
  * @param footer кнопки создания под списком.
+ * @param listState прокрутка списка точек. Хранится снаружи: на узком
+ *   окне колонка уступает место карточке целиком, и по возврату список
+ *   стоит там же, где владелец его оставил.
+ * @param modifier место колонки. Сама по себе колонка встаёт прежней
+ *   шириной; раздел кабинета отдаёт ей долю окна.
  */
 @Composable
 internal fun PlaceTree(
@@ -69,25 +72,14 @@ internal fun PlaceTree(
     register: String?,
     onPlace: (String) -> Unit,
     onRegister: (String) -> Unit,
-    footer: @Composable ColumnScope.() -> Unit
+    footer: @Composable ColumnScope.() -> Unit,
+    listState: LazyListState = rememberLazyListState(),
+    modifier: Modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn)
 ) {
     Column(
-        modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn).fillMaxHeight(),
+        modifier = modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.spacedBy(Spacing.tight)
     ) {
-        TreeToggle(collapsed, texts.hints.placesTree, onToggle)
-        if (collapsed) {
-            PlaceRail(rows, place, register, onPlace, onRegister, Modifier.weight(1f))
-            return@Column
-        }
-        SearchField(
-            value = sieve.needle,
-            label = texts.placeSearch,
-            onChange = { onSieve(sieve.copy(needle = it)) },
-            modifier = Modifier.fillMaxWidth().padding(end = Spacing.screen),
-            clearLabel = texts.sieve.clear
-        )
-        PlaceSieveBar(texts, sieve, locksKnown, onSieve)
         val state = when {
             loading -> ScreenState.Working
             rows.isNotEmpty() -> ScreenState.Ready
@@ -97,76 +89,61 @@ internal fun PlaceTree(
             trouble != null -> ScreenState.Trouble(trouble, onRetry = onRetry)
             else -> treeEmpty(texts, sieve)
         }
-        // Счёт стоит над строками: без строк считать нечего, а над словами
-        // отказа «Показано 0 из 1004» читается как потеря тысячи точек.
-        if (state !is ScreenState.Trouble && !loading) PlaceCount(texts, rows, total)
-        ScreenSlot(state, Modifier.weight(1f)) {
-            TreeRows(texts, language, rows, place, register, onPlace, onRegister, Modifier.weight(1f))
+        TreeHead(texts, collapsed, onToggle) {
+            // Счёт стоит над строками: без строк считать нечего, а над словами
+            // отказа «Показано 0 из 1004» читается как потеря тысячи точек.
+            if (state !is ScreenState.Trouble && !loading) PlaceCount(texts, rows, total, Modifier.weight(1f))
+        }
+        if (collapsed) {
+            PlaceRail(rows, place, register, onPlace, onRegister, Modifier.weight(1f))
+            return@Column
+        }
+        TreeRows(texts, language, rows, state, place, register, onPlace, onRegister, listState, Modifier.weight(1f)) {
+            SearchField(
+                value = sieve.needle,
+                label = texts.placeSearch,
+                onChange = { onSieve(sieve.copy(needle = it)) },
+                modifier = Modifier.fillMaxWidth(),
+                clearLabel = texts.sieve.clear
+            )
+            PlaceSieveBar(texts, sieve, locksKnown, onSieve)
         }
         footer()
     }
 }
 
-/** Строки дерева: точка, под раскрытой — её кассы с отступом. */
-@Composable
-private fun TreeRows(
-    texts: CabinetTexts,
-    language: Language,
-    rows: List<PlaceRow>,
-    place: String?,
-    register: String?,
-    onPlace: (String) -> Unit,
-    onRegister: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    ScrollableList(modifier = modifier) {
-        items(items = rows, key = { it.id }) { row ->
-            when (row) {
-                // Название точки — в две строки: у сети оно длинное
-                // и различается концом — «…Достык Плаза» отдел 12», —
-                // а в одну строку все отделы обрывались одинаково.
-                is PlaceRow.Point -> RecordRow(
-                    title = row.place.name,
-                    support = { PointSupport(texts, language, row.place) },
-                    selected = row.id == place && register == null,
-                    titleLines = NAME_LINES,
-                    onClick = { onPlace(row.id) }
-                )
-
-                is PlaceRow.Register -> RecordRow(
-                    title = registerTitle(row.register),
-                    subtitle = row.register.registrationNumber,
-                    selected = row.id == register,
-                    modifier = Modifier.padding(start = Spacing.normal),
-                    onClick = { onRegister(row.id) },
-                    trailing = { CabinetStatusChip(row.register.status, texts) }
-                )
-            }
-        }
-    }
-}
-
 /**
- * Кнопка сворачивания колонки.
+ * Шапка колонки: сворачивание, счёт точек и подсказка одной строкой.
  *
- * Значок и подписи те же, что у рельса разделов: два переключателя
- * в одном окне не должны выглядеть разными действиями.
+ * Прежде кнопка сворачивания с подсказкой занимали свою строку, а счёт —
+ * ещё одну над списком: в окне 960×640 это была высота строки списка,
+ * и из двух тысяч точек было видно полторы.
+ *
+ * Значок и подписи сворачивания те же, что у рельса разделов: два
+ * переключателя в одном окне не должны выглядеть разными действиями.
+ * Свёрнутая колонка — рельс шириной в одну кнопку: счёт и подсказка
+ * в неё не встают, да и объяснять нечего — списка не видно.
  */
 @Composable
-private fun TreeToggle(collapsed: Boolean, hint: String, onToggle: () -> Unit) {
+private fun TreeHead(
+    texts: CabinetTexts,
+    collapsed: Boolean,
+    onToggle: () -> Unit,
+    count: @Composable RowScope.() -> Unit
+) {
     val common = LocalStrings.current.common
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = if (collapsed) Modifier else Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         IconButton(onClick = onToggle) {
             Icon(
                 imageVector = AppIcons.menu,
                 contentDescription = if (collapsed) common.expand else common.collapse
             )
         }
-        // Свёрнутая колонка — рельс шириной в одну кнопку: второй значок
-        // в неё не встаёт, да и объяснять нечего — списка не видно.
-        if (!collapsed) InfoTip(hint)
+        if (collapsed) return@Row
+        InfoTip(texts.hints.placesTree)
+        count()
     }
 }
-
-/** Сколько строк отводится названию точки в колонке. */
-private const val NAME_LINES = 2
