@@ -4,10 +4,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import kz.mybrain.superkassa.desktop.server.DeliveryCode
+import kz.mybrain.superkassa.desktop.server.Document
+import kz.mybrain.superkassa.desktop.server.SHIFT_OPEN
 import kz.mybrain.superkassa.desktop.ui.components.Chip
 import kz.mybrain.superkassa.desktop.ui.components.Tip
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.StatusStrings
+import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
 import kz.mybrain.superkassa.desktop.ui.theme.StatusColors
 
 /**
@@ -36,7 +40,18 @@ enum class JournalDelivery(val title: (StatusStrings) -> String) {
     Refused({ it.refused }),
 
     /** В ОФД не уходит: открытие смены такой командой протокол не знает. */
-    Internal({ it.internal })
+    Internal({ it.internal }),
+
+    /**
+     * Код состояния пришёл, а разобрать его нечем.
+     *
+     * Названо словами, а не кодом: поле состояния в спецификации узла —
+     * свободная строка, и в строке документа смены у кассира стоял
+     * протокольный код. Угадывать смысл незнакомого кода нельзя —
+     * так однажды покрасишь отказ зелёным, — но и молчать о состоянии
+     * документа не следует.
+     */
+    Unknown({ it.unknown })
 }
 
 /** Цвет состояния: сделано, ожидание или отказ — как везде в приложении. */
@@ -47,7 +62,51 @@ fun JournalDelivery.color(): Color = when (this) {
     JournalDelivery.Refused -> StatusColors.refused
     // Внутреннее не ждёт ничего и ни о чём не отчитывается: цвет ему
     // отводится нейтральный, иначе строка обещает ожидание ответа ОФД.
-    JournalDelivery.Internal -> MaterialTheme.colorScheme.outline
+    JournalDelivery.Internal, JournalDelivery.Unknown -> MaterialTheme.colorScheme.outline
+}
+
+/**
+ * Состояние доставки документа узла — одно на журнал и на записи списков.
+ *
+ * Разбираются оба набора кодов узла, см. [DeliveryCode]. Незнакомый код
+ * состоянием по существу не становится: он доходит до экрана
+ * [JournalDelivery.Unknown], то есть словами, а не кодом.
+ *
+ * @return `null`, когда узел о доставке не сказал ничего: состояния нет,
+ *   и плашки у такого документа тоже нет.
+ */
+fun deliveryOf(document: Document): JournalDelivery? {
+    val status = document.ofdStatus?.takeIf { it.isNotBlank() }
+    return when {
+        // Открытие смены в ОФД не уходит никогда: команды COMMAND_OPEN_SHIFT
+        // в протоколе нет. Прежние записи хранят у него состояние доставки,
+        // но кассиру оно всё равно ничего не обещает.
+        document.docType == SHIFT_OPEN -> JournalDelivery.Internal
+        status == null -> null
+        status in DeliveryCode.internal -> JournalDelivery.Internal
+        status in DeliveryCode.delivered ->
+            if (document.isAutonomous == true) JournalDelivery.Resent else JournalDelivery.Delivered
+
+        status in DeliveryCode.refused -> JournalDelivery.Refused
+        status in DeliveryCode.queued -> JournalDelivery.Queued
+        else -> JournalDelivery.Unknown
+    }
+}
+
+/**
+ * Плашка состояния документа в записи списка.
+ *
+ * Отличается от табличной ступенью шрифта: в записи списка плашка идёт
+ * наравне с её подписями, а в ряду таблицы — наравне с клетками.
+ */
+@Composable
+fun DocumentDeliveryChip(document: Document) {
+    val state = deliveryOf(document)
+    if (state == null) {
+        Chip(Glyphs.DASH, MaterialTheme.colorScheme.outline)
+        return
+    }
+    Chip(state.title(LocalStrings.current.status), state.color())
 }
 
 /**

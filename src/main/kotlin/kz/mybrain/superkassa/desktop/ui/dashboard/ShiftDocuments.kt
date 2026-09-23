@@ -25,12 +25,12 @@ import kz.mybrain.superkassa.desktop.app.titleOf
 import kz.mybrain.superkassa.desktop.server.Dictionary
 import kz.mybrain.superkassa.desktop.server.Document
 import kz.mybrain.superkassa.desktop.server.hasOwnAmount
-import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
 import kz.mybrain.superkassa.desktop.ui.components.ScreenSlot
 import kz.mybrain.superkassa.desktop.ui.components.ScreenState
 import kz.mybrain.superkassa.desktop.ui.components.ScrollableList
+import kz.mybrain.superkassa.desktop.ui.history.DocumentDeliveryChip
 import kz.mybrain.superkassa.desktop.ui.strings.DashboardStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.theme.AppIcons
@@ -130,7 +130,7 @@ private fun DocumentRow(
                 horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                DeliveryChip(document.ofdStatus, document.isAutonomous == true, document.docType)
+                DocumentDeliveryChip(document)
                 // Код отказа вместо кнопки повтора: документ, который ОФД
                 // отверг, повторной отправкой не исправить — операцию нужно
                 // провести заново. Кассиру полезен не повтор, а причина.

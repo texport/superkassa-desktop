@@ -190,7 +190,8 @@ internal val russianStatus = StatusStrings(
     resent = "Досланный",
     refused = "Отклонён",
     internal = "Внутренний",
-    queued = "В очереди"
+    queued = "В очереди",
+    unknown = "Состояние неизвестно"
 )
 
 internal val russianEnums = EnumStrings(

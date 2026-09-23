@@ -190,7 +190,8 @@ internal val kazakhStatus = StatusStrings(
     resent = "Кейін жіберілген",
     refused = "Қабылданбады",
     internal = "Ішкі",
-    queued = "Кезекте"
+    queued = "Кезекте",
+    unknown = "Күйі белгісіз"
 )
 
 internal val kazakhEnums = EnumStrings(

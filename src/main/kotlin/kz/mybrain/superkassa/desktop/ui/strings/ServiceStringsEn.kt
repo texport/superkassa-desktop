@@ -190,7 +190,8 @@ internal val englishStatus = StatusStrings(
     resent = "Sent later",
     refused = "Refused",
     internal = "Internal",
-    queued = "Queued"
+    queued = "Queued",
+    unknown = "State unknown"
 )
 
 internal val englishEnums = EnumStrings(

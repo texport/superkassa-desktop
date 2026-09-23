@@ -36,7 +36,14 @@ data class StatusStrings(
     val resent: String,
     val refused: String,
     val internal: String,
-    val queued: String
+    val queued: String,
+    /**
+     * Код состояния доставки пришёл, а разобрать его нечем.
+     *
+     * Поле состояния в спецификации узла — свободная строка, и незнакомый
+     * код доходил до экрана кассира кодом.
+     */
+    val unknown: String
 )
 
 data class EnumStrings(

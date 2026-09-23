@@ -14,10 +14,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.desktop.server.Document
-import kz.mybrain.superkassa.desktop.ui.components.DeliveryChip
 import kz.mybrain.superkassa.desktop.ui.components.Money
 import kz.mybrain.superkassa.desktop.ui.components.MoreRow
 import kz.mybrain.superkassa.desktop.ui.components.RecordRow
+import kz.mybrain.superkassa.desktop.ui.history.DocumentDeliveryChip
 import kz.mybrain.superkassa.desktop.ui.strings.HistoryJournalTexts
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.ReturnJournalTexts
@@ -86,6 +86,6 @@ private fun BasisRow(
         amount = Money.formatTiyn(candidate.totalAmount),
         selected = selected,
         onClick = onChoose,
-        trailing = { DeliveryChip(candidate.ofdStatus, candidate.isAutonomous == true) }
+        trailing = { DocumentDeliveryChip(candidate) }
     )
 }
