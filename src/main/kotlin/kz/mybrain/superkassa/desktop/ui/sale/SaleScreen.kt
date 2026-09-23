@@ -132,6 +132,11 @@ private fun TillColumn(
         // ввод позиции переставал прокручиваться, зато под сгиб уезжала
         // главная кнопка экрана, и это хуже.
         ScrollableColumn(modifier = Modifier.weight(1f)) {
+            // Отраслевые реквизиты стоят первыми и не сворачиваются:
+            // их заполняют в каждом чеке, и без них кнопка погашена —
+            // уехав под сгиб, они оставили бы кассира искать причину.
+            // У кассы в торговле карточки нет вовсе.
+            DomainCard(session, form)
             PositionEntryCard(
                 session = session,
                 expanded = panels.expanded(SalePanel.PositionEntry),

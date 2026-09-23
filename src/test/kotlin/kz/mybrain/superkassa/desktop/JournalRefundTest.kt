@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.desktop.ui.returns.refundAmountOf
 import kz.mybrain.superkassa.desktop.ui.returns.refundLineName
 import kz.mybrain.superkassa.desktop.ui.returns.refundRequest
 import kz.mybrain.superkassa.desktop.ui.returns.tengeText
+import kz.mybrain.superkassa.desktop.ui.sale.DomainKind
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -83,7 +84,8 @@ class JournalRefundTest {
             refundTiyn = 50_000,
             idempotencyKey = "key-1",
             lineName = "Возврат по чеку № 42",
-            payments = listOf(ReceiptPayment("CARD", BigDecimal("500")))
+            payments = listOf(ReceiptPayment("CARD", BigDecimal("500"))),
+            domain = DomainKind.Taxi.plain
         )
 
         val parent = requireNonNull(request?.parentTicket)
@@ -93,6 +95,10 @@ class JournalRefundTest {
         assertEquals(42, parent.parentTicketNumber)
         assertEquals(0, BigDecimal("1500").compareTo(parent.parentTicketTotal), "реквизит чека-основания — его собственная сумма")
         assertNull(request?.items?.single()?.vatGroup, "ставку берёт касса: своя врала бы на кассе без НДС")
+        // Вид отрасли протокол требует у каждого чека: у возврата он тот же,
+        // в котором работает касса, а реквизиты поездки принадлежат основанию.
+        assertEquals("DOMAIN_TAXI", request?.domain?.type, "возврат ушёл бы торговлей с кассы такси")
+        assertNull(request?.domain?.taxi, "возврат унёс бы выдуманный номер машины")
     }
 
     /**
@@ -118,6 +124,7 @@ class JournalRefundTest {
             idempotencyKey = "key-1",
             lineName = "Возврат по чеку № 42",
             payments = listOf(ReceiptPayment("CASH", BigDecimal("800"))),
+            domain = DomainKind.Trading.plain,
             returned = returned
         )
         val edited = refundRequest(
@@ -127,6 +134,7 @@ class JournalRefundTest {
             idempotencyKey = "key-2",
             lineName = "Возврат по чеку № 42",
             payments = listOf(ReceiptPayment("CASH", BigDecimal("500"))),
+            domain = DomainKind.Trading.plain,
             returned = returned
         )
 

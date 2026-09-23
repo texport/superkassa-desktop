@@ -51,6 +51,13 @@ data class EnumStrings(
     val paymentMobile: String,
     val paymentCredit: String,
     val paymentTare: String,
+    /** Виды отрасли: их называет настройка кассы и заголовок её реквизитов. */
+    val domainTrading: String,
+    val domainServices: String,
+    val domainHotels: String,
+    val domainGasOil: String,
+    val domainTaxi: String,
+    val domainParking: String,
     val docCheck: String,
     val docShiftOpen: String,
     val docShiftClose: String,

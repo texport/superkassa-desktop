@@ -91,6 +91,16 @@ data class SettingStrings(
     val taxSettings: String,
     val taxSettingsHint: String,
     val taxRegime: String,
+    /**
+     * Отрасль кассы: от неё зависит, что кассир заполняет в каждом чеке.
+     *
+     * Хранится на этом рабочем месте, а не на узле: узлу вид отрасли
+     * приходит с каждым чеком, и настройки под него у него нет.
+     */
+    val tradeDomain: String,
+    val tradeDomainHint: String,
+    val domainKind: String,
+    val domainFields: String,
     val defaultVatGroup: String,
     /** Справочники узла не прочитаны: выбирать не из чего и незачем. */
     val dictionariesMissing: String,

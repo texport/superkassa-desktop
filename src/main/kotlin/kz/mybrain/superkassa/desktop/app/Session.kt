@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.desktop.server.QueueTask
 import kz.mybrain.superkassa.desktop.server.ServerClient
 import kz.mybrain.superkassa.desktop.server.UnitOfMeasurement
 import kz.mybrain.superkassa.desktop.server.currentUser
+import kz.mybrain.superkassa.desktop.ui.sale.DomainKind
 import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.strings.stringsOf
@@ -104,6 +105,18 @@ class Session(
     val language: Language get() = settings.language
 
     fun switchLanguage(chosen: Language) = settings.switchLanguage(chosen)
+
+    /**
+     * Отрасль, в которой работает выбранная касса.
+     *
+     * Спрашивают её и экран продажи, и сборка чека: от неё зависит, какие
+     * реквизиты кассир заполняет и какой подблок уходит в БФД. Отрасль
+     * держится за кассой: на одной машине их бывает несколько, и отрасли
+     * у них разные.
+     */
+    val domain: DomainKind get() = settings.domainOf(selected?.kkmId)
+
+    fun chooseDomain(kkmId: String, chosen: DomainKind) = settings.chooseDomain(kkmId, chosen)
 
     /** Название кассы на этом рабочем месте; откуда оно берётся — в [SessionKkmNames]. */
     fun displayName(kkm: Kkm): String = settings.nameOf(kkm)

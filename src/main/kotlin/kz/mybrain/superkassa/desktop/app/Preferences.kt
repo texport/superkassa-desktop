@@ -55,6 +55,11 @@ class Preferences(private val file: File = defaultFile()) {
             node.url = value
         }
 
+    /** Вид отрасли этой кассы; пусто — торговля. */
+    fun domain(kkmId: String): String? = node.domain(kkmId)
+
+    fun chooseDomain(kkmId: String, code: String?) = node.chooseDomain(kkmId, code)
+
     fun localName(kkmId: String): String? = node.localName(kkmId)
 
     fun rename(kkmId: String, name: String?) = node.rename(kkmId, name)

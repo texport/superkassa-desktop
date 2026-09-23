@@ -12,6 +12,8 @@ import kz.mybrain.superkassa.desktop.server.buyReturn
 import kz.mybrain.superkassa.desktop.server.sell
 import kz.mybrain.superkassa.desktop.server.sellReturn
 import kz.mybrain.superkassa.desktop.ui.components.Money
+import kz.mybrain.superkassa.desktop.ui.sale.DomainInput
+import kz.mybrain.superkassa.desktop.ui.sale.DomainKind
 import java.math.BigDecimal
 import java.time.Instant
 import java.time.ZoneOffset
@@ -21,13 +23,14 @@ import java.time.format.DateTimeFormatter
  * Чеки всех видов с полным наполнением.
  *
  * Наполнение намеренно предельное: несколько позиций с разными ставками,
- * позиционная скидка, сторно, скидка на чек и БИН покупателя. Обычный чек
- * проходит и без этого — ломается редкое.
+ * позиционная скидка, сторно, скидка на чек, БИН покупателя и отраслевые
+ * реквизиты. Обычный чек проходит и без этого — ломается редкое.
  */
 object ReceiptScenarios {
 
     suspend fun all(session: Session, kkmId: String, report: CycleReport) {
         sellFull(session, kkmId, report)
+        sellByDomains(session, kkmId, report)
         buyFull(session, kkmId, report)
         returns(session, kkmId, report)
     }
@@ -49,6 +52,31 @@ object ReceiptScenarios {
         report.step(session, "Продажа с полным наполнением") {
             session.client.sell(kkmId, request, FullCycle.WORK_PIN)
         }
+    }
+
+    /**
+     * По одному чеку на каждый вид отрасли.
+     *
+     * Отрасль стоит настройкой кассы, поэтому проба её и переключает:
+     * проверяется тот самый путь, которым идёт касса — настройка, поля
+     * выбранной отрасли, один подблок в запросе. После прогона настройка
+     * возвращается к прежней: рабочее место не должно остаться стоянкой.
+     */
+    private suspend fun sellByDomains(session: Session, kkmId: String, report: CycleReport) {
+        val chosen = session.domain
+        DOMAINS.forEach { (kind, requisites) ->
+            session.chooseDomain(kkmId, kind)
+            val request = ReceiptRequest(
+                idempotencyKey = key("sell-${kind.name.lowercase()}"),
+                items = listOf(ReceiptItem(kind.code, BigDecimal("1500.0"), BigDecimal("1.0"), "VAT_16")),
+                payments = listOf(ReceiptPayment("CARD", BigDecimal("1500.0"))),
+                domain = requisites.toDomain(kind)
+            )
+            report.step(session, "Продажа: ${kind.code}") {
+                session.client.sell(kkmId, request, FullCycle.WORK_PIN)
+            }
+        }
+        session.chooseDomain(kkmId, chosen)
     }
 
     private suspend fun buyFull(session: Session, kkmId: String, report: CycleReport) {
@@ -100,4 +128,13 @@ object ReceiptScenarios {
         DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss").withZone(ZoneOffset.UTC)
 
     private fun key(tag: String) = "cycle-$tag-${System.currentTimeMillis()}"
+
+    /** Отрасли и реквизиты, которых каждая из них требует. */
+    private val DOMAINS = listOf(
+        DomainKind.Services to DomainInput(accountNumber = "ACC-1024"),
+        DomainKind.Hotels to DomainInput(accountNumber = "ROOM-317"),
+        DomainKind.GasOil to DomainInput(cardNumber = "CARD-77"),
+        DomainKind.Taxi to DomainInput(carNumber = "123ABC", isOrder = true, currentFee = "350"),
+        DomainKind.Parking to DomainInput(parkingFrom = "8:15", parkingTo = "10:15")
+    )
 }

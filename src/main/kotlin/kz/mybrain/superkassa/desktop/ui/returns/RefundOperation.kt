@@ -39,6 +39,13 @@ internal suspend fun refund(
         idempotencyKey = key,
         lineName = refundLineName(texts.returns.refundFor, basis),
         payments = payments,
+        // Отрасль кассы — без подблока, и это решено осознанно: номер
+        // машины и время стоянки принадлежат чеку-основанию, а пустой
+        // реквизит на их месте — выдуманный реквизит в фискальном
+        // документе. Если БФД откажет в возврате по отрасли с обязательным
+        // подблоком, реквизиты придётся спрашивать на экране возврата,
+        // а не подставлять здесь.
+        domain = session.domain.plain,
         returned = returned
     ) ?: return false
     val result = session.guard(kind.title(texts.returns)) {

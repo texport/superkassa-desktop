@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.desktop.app.Message
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.refreshSelected
 import kz.mybrain.superkassa.desktop.server.FiscalResult
+import kz.mybrain.superkassa.desktop.server.ReceiptDomain
 import kz.mybrain.superkassa.desktop.server.ReceiptPayment
 import kz.mybrain.superkassa.desktop.server.ReceiptRequest
 import kz.mybrain.superkassa.desktop.server.buy
@@ -46,6 +47,8 @@ data class ReceiptInput(
     val discount: BigDecimal?,
     val markup: BigDecimal?,
     val customerBin: String,
+    /** Вид отрасли и её единственный подблок: протокол требует их у каждого чека. */
+    val domain: ReceiptDomain,
     val idempotencyKey: String
 ) {
     /**
@@ -80,6 +83,7 @@ suspend fun issueReceipt(
         markupSum = input.markup,
         taken = input.cashTaken,
         customerBin = input.customerBin.takeIf { it.isNotBlank() },
+        domain = input.domain,
         defaultVatGroup = kkm.defaultVatGroup
     )
     val title = input.operation.title(texts.sale)

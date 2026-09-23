@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.desktop.server.Kkm
+import kz.mybrain.superkassa.desktop.ui.sale.DomainKind
 import kz.mybrain.superkassa.desktop.ui.strings.Language
 import kz.mybrain.superkassa.desktop.ui.theme.Accent
 import kz.mybrain.superkassa.desktop.ui.theme.Appearance
@@ -13,8 +14,8 @@ import kz.mybrain.superkassa.desktop.ui.theme.TextScale
 import kz.mybrain.superkassa.desktop.ui.theme.Typeface
 
 /**
- * Что помнит это рабочее место: язык, вид, рельс, колонку точек, окно
- * и свои названия касс.
+ * Что помнит это рабочее место: язык, вид, рельс, колонку точек, окно,
+ * отрасли касс и свои названия для них.
  *
  * Выбор держится состоянием, а не читается из файла при каждом обращении:
  * файл Compose не наблюдает, и переименованная касса оставалась на экране
@@ -44,6 +45,9 @@ class WorkplaceSettings(private val preferences: Preferences) {
         )
     )
         private set
+
+    /** Отрасли касс: ключ — касса, значение — в какой отрасли она работает. */
+    private val domains = mutableStateMapOf<String, DomainKind>()
 
     /** Свёрнут ли рельс разделов: подписи спрятаны, значки остались. */
     var railCollapsed: Boolean by mutableStateOf(preferences.railCollapsed)
@@ -79,6 +83,26 @@ class WorkplaceSettings(private val preferences: Preferences) {
     fun chooseTextScale(chosen: TextScale) {
         look = look.copy(textScale = chosen)
         preferences.textScale = chosen.code
+    }
+
+    /**
+     * В какой отрасли работает эта касса.
+     *
+     * Настройка, а не поле чека: отрасль у кассы одна, и выбирать её
+     * заново в каждом чеке кассиру незачем. От неё зависит, какие
+     * реквизиты экран продажи спрашивает и какой подблок уходит в БФД.
+     *
+     * Без выбранной кассы — торговля: продавать всё равно нечем,
+     * а настройка принадлежит кассе, а не рабочему месту.
+     */
+    fun domainOf(kkmId: String?): DomainKind {
+        val kkm = kkmId ?: return DomainKind.Trading
+        return domains[kkm] ?: DomainKind.byCode(preferences.domain(kkm))
+    }
+
+    fun chooseDomain(kkmId: String, chosen: DomainKind) {
+        domains[kkmId] = chosen
+        preferences.chooseDomain(kkmId, chosen.code)
     }
 
     fun toggleRail() {
