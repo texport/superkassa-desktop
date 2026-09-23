@@ -3,11 +3,16 @@ package kz.mybrain.superkassa.desktop
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ImageComposeScene
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.asCoroutineDispatcher
 import kz.mybrain.superkassa.desktop.ui.adaptive.WindowClassRoot
@@ -200,6 +205,25 @@ class RenderProbe(
             !frame().contentEquals(before)
         }
 
+    /**
+     * Все узлы доступности сцены вместе с окнами поверх экрана — целиком,
+     * без слияния.
+     *
+     * По ним меряют то, до чего модификатором снаружи экрана не дотянуться:
+     * высоту карты, место кнопки внутри готового экрана и диалога, ширину
+     * поля и столбца. Читаются в потоке сцены, как и всё остальное.
+     */
+    fun semantics(): List<SemanticsNode> = onScene { everyNode() }
+
+    /** То же, но разбор идёт в потоке сцены: узел читают, пока сцена его держит. */
+    fun <T> nodes(read: (List<SemanticsNode>) -> T): T = onScene { read(everyNode()) }
+
+    /** Что сейчас стоит на экране: надпись, роль и место каждого узла. */
+    fun nodes(): List<ProbeNode> = onScene { everyNode().map(::ProbeNode) }
+
+    private fun everyNode(): List<SemanticsNode> =
+        scene.semanticsOwners.flatMap { it.unmergedRootSemanticsNode.descendants() }
+
     override fun close() {
         onScene { scene.close() }
         thread.shutdownNow()
@@ -219,6 +243,41 @@ class RenderProbe(
         /** Сколько проба ждёт между кадрами, высматривая движение рядом со сценой. */
         const val BETWEEN_FRAMES = 100L
     }
+}
+
+/** Узел и все его потомки: список, по которому ищется надпись. */
+private fun SemanticsNode.descendants(): List<SemanticsNode> = listOf(this) + children.flatMap { it.descendants() }
+
+/**
+ * Узел семантики, снятый в потоке сцены.
+ *
+ * @property visible видимая часть узла: обрезана областью прокрутки и окном,
+ *   у ушедшего за край — пустая.
+ * @property at левый верхний угол без обрезки.
+ */
+class ProbeNode(node: SemanticsNode) {
+    val text: String = listOfNotNull(
+        node.config.getOrNull(SemanticsProperties.Text)?.joinToString(" ") { it.text },
+        node.config.getOrNull(SemanticsProperties.EditableText)?.text
+    ).joinToString(" ")
+    val label: String = node.config.getOrNull(SemanticsProperties.ContentDescription)?.joinToString(" ").orEmpty()
+    val role: Role? = node.config.getOrNull(SemanticsProperties.Role)
+    val enabled: Boolean = !node.config.contains(SemanticsProperties.Disabled)
+
+    /** Поле ввода: у него своя ширина, а не ширина подписи. */
+    val editable: Boolean = node.config.contains(SemanticsProperties.EditableText)
+
+    /** Прокручивается ли узел по вертикали: так находится список. */
+    val scrolls: Boolean = node.config.contains(SemanticsProperties.VerticalScrollAxisRange)
+    val visible: Rect = node.boundsInRoot
+    val at: Offset = node.positionInRoot
+    val width: Int = node.size.width
+    val height: Int = node.size.height
+
+    /** Виден ли узел целиком, а не краем из-под прокрутки. */
+    val whole: Boolean get() = height > 0 && visible.height >= height - 1 && visible.width >= width - 1
+
+    override fun toString(): String = "«$text$label» ${width}x$height @ ${at.x.toInt()},${at.y.toInt()}"
 }
 
 /** Сколько миллисекунд занимает собрать и нарисовать экран в первый раз. */
