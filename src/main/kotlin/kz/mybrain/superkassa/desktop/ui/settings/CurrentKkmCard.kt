@@ -23,6 +23,7 @@ import kz.mybrain.superkassa.desktop.ui.components.FieldButton
 import kz.mybrain.superkassa.desktop.ui.components.FieldButtonKind
 import kz.mybrain.superkassa.desktop.ui.components.InfoTip
 import kz.mybrain.superkassa.desktop.ui.components.fieldWidth
+import kz.mybrain.superkassa.desktop.ui.strings.AppStrings
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
 import kz.mybrain.superkassa.desktop.ui.strings.moneyTexts
 import kz.mybrain.superkassa.desktop.ui.theme.Glyphs
@@ -77,7 +78,7 @@ internal fun CurrentKkmCard(session: Session) {
                 TextButton(onClick = { session.switchKkm() }) { Text(texts.settings.changeKkm) }
             }
             Text(
-                text = whatItIs(session, kkm, texts.login.factory),
+                text = whatItIs(session, kkm, texts),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -127,9 +128,15 @@ internal fun CurrentKkmCard(session: Session) {
     }
 }
 
-/** Организация, заводской номер и адрес — одной строкой под названием. */
-private fun whatItIs(session: Session, kkm: Kkm, factoryLabel: String): String = listOfNotNull(
-    kkm.orgTitle,
-    kkm.factoryNumber?.let { "$factoryLabel $it" },
+/**
+ * Организация, заводской номер и адрес — одной строкой под названием.
+ *
+ * Организация здесь названа всегда: карточка отвечает на вопрос, чья это
+ * касса, и пропуск строки читался бы как её отсутствие в карточке, а не
+ * как отсутствие сведений у ОФД.
+ */
+private fun whatItIs(session: Session, kkm: Kkm, texts: AppStrings): String = listOfNotNull(
+    kkm.orgTitle ?: texts.settings.orgUnknown,
+    kkm.factoryNumber?.let { "${texts.login.factory} $it" },
     kkm.orgAddress.takeIf { it.isNotBlank() }
 ).joinToString(Glyphs.SEPARATOR).ifBlank { session.displayName(kkm) }

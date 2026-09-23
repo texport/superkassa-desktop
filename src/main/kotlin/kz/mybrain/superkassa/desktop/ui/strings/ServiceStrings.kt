@@ -35,6 +35,14 @@ data class UserStrings(
 data class SettingStrings(
     val title: String,
     val currentKkm: String,
+    /**
+     * У кассы нет сведений об организации.
+     *
+     * Надпись живёт здесь, а не в модели кассы: подставленная в модель
+     * строка шла на казахский и английский экран по-русски и попадала
+     * в то, по чему ищет список касс.
+     */
+    val orgUnknown: String,
     val changeKkm: String,
     val registerKkm: String,
     val back: String,

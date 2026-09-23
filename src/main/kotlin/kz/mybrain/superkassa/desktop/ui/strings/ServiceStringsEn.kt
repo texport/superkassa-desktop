@@ -11,6 +11,7 @@ package kz.mybrain.superkassa.desktop.ui.strings
 internal val englishSettings = SettingStrings(
     title = "Settings",
     currentKkm = "Register in use",
+    orgUnknown = "No organization on record",
     changeKkm = "Change register",
     registerKkm = "Add a register",
     back = "Back",

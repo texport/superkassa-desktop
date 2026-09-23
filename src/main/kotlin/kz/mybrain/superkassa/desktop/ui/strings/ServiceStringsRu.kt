@@ -11,6 +11,7 @@ package kz.mybrain.superkassa.desktop.ui.strings
 internal val russianSettings = SettingStrings(
     title = "Настройки",
     currentKkm = "Касса в работе",
+    orgUnknown = "Организация не указана",
     changeKkm = "Сменить кассу",
     registerKkm = "Завести кассу",
     back = "Назад",
