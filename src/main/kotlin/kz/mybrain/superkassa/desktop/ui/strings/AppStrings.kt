@@ -130,7 +130,13 @@ data class ShellStrings(
     val noKkm: String,
     val autonomous: String,
     val blocked: String,
-    val changeCashier: String
+    val changeCashier: String,
+    /**
+     * Меню действий шапки, которым в узком окне не хватило места:
+     * обновить, тема, язык, а в самом узком — и смена кассира.
+     * Название кассы важнее значков.
+     */
+    val moreActions: String
 )
 
 data class SectionStrings(

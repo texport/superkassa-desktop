@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.desktop.ui.components
 
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -10,6 +11,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import kz.mybrain.superkassa.desktop.app.Session
 import kz.mybrain.superkassa.desktop.app.switchAppearance
 import kz.mybrain.superkassa.desktop.ui.strings.LocalStrings
@@ -32,22 +34,52 @@ import kz.mybrain.superkassa.desktop.ui.theme.LocalDarkTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThemeSwitch(session: Session) {
-    val texts = LocalStrings.current
-    val dark = LocalDarkTheme.current
-    val label = if (dark) texts.settings.appearanceLight else texts.settings.appearanceDark
+    val flip = themeFlip()
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
-        tooltip = { PlainTooltip { Text(label) } },
+        tooltip = { PlainTooltip { Text(flip.label) } },
         state = rememberTooltipState()
     ) {
-        IconButton(
-            onClick = { session.switchAppearance(if (dark) Appearance.Light else Appearance.Dark) }
-        ) {
+        IconButton(onClick = { session.switchAppearance(flip.next) }) {
             Icon(
-                imageVector = if (dark) AppIcons.lightTheme else AppIcons.darkTheme,
-                contentDescription = label,
+                imageVector = flip.icon,
+                contentDescription = flip.label,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+    }
+}
+
+/**
+ * Смена темы пунктом меню — тот же выбор, что у значка в шапке.
+ *
+ * В узком окне значок уходит в меню «Ещё», и тема меняется оттуда:
+ * пункт называет и рисует то, что получится, как и значок.
+ *
+ * @param onPicked закрыть меню после выбора.
+ */
+@Composable
+fun ThemeMenuItem(session: Session, onPicked: () -> Unit) {
+    val flip = themeFlip()
+    DropdownMenuItem(
+        text = { Text(flip.label) },
+        leadingIcon = { Icon(flip.icon, contentDescription = null) },
+        onClick = {
+            session.switchAppearance(flip.next)
+            onPicked()
+        }
+    )
+}
+
+/** Что получится после нажатия: обратная нынешней тема, её название и значок. */
+private data class ThemeFlip(val next: Appearance, val label: String, val icon: ImageVector)
+
+@Composable
+private fun themeFlip(): ThemeFlip {
+    val texts = LocalStrings.current
+    return if (LocalDarkTheme.current) {
+        ThemeFlip(Appearance.Light, texts.settings.appearanceLight, AppIcons.lightTheme)
+    } else {
+        ThemeFlip(Appearance.Dark, texts.settings.appearanceDark, AppIcons.darkTheme)
     }
 }

@@ -46,7 +46,8 @@ internal val KazakhStrings = AppStrings(
         noKkm = "Касса таңдалмады",
         autonomous = "Дербес режим",
         blocked = "Бұғатталған",
-        changeCashier = "Кассирді ауыстыру"
+        changeCashier = "Кассирді ауыстыру",
+        moreActions = "Тағы"
     ),
     sections = SectionStrings(
         dashboard = "Басты бет",
