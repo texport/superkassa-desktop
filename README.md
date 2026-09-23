@@ -27,8 +27,9 @@
 Приложению хватает открытых зависимостей:
 
 ```
-./gradlew check        # сборка и проверки
-./gradlew run          # запуск (нужен работающий узел)
+./gradlew check                      # сборка и проверки
+./gradlew :desktopApp:run            # запуск (нужен работающий узел)
+./gradlew :androidApp:assembleDebug  # приложение для Android
 ```
 
 Узел собирается отдельно, и цепочка длиннее, чем кажется: части протокола
@@ -54,7 +55,7 @@ git clone https://github.com/texport/superkassa-server.git
 
 ```
 cd ../superkassa-server && ./gradlew :server:bootJar
-cd ../superkassa-desktop && ./gradlew packageDistributionForCurrentOS
+cd ../superkassa-desktop && ./gradlew :desktopApp:packageDistributionForCurrentOS
 ```
 
 Узел берётся из соседнего дерева; другой путь — `-PnodeJar=<путь>`.
@@ -101,5 +102,5 @@ cd ../superkassa-desktop && ./gradlew packageDistributionForCurrentOS
 ## Проверка
 
 ```
-./gradlew build detekt test
+./gradlew check
 ```

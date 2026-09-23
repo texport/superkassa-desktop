@@ -1,0 +1,162 @@
+package kz.mybrain.superkassa.presentation.analytics
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.presentation.components.ScreenSlot
+import kz.mybrain.superkassa.presentation.components.ScreenState
+import kz.mybrain.superkassa.presentation.map.MapServices
+import kz.mybrain.superkassa.presentation.session.CabinetSession
+import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.presentation.strings.AnalyticsTexts
+import kz.mybrain.superkassa.presentation.strings.CabinetTexts
+import kz.mybrain.superkassa.presentation.theme.Spacing
+
+/**
+ * Все кассы компании на карте.
+ *
+ * Слева карта с ярлычками мест, справа — все кассы списком и карточка
+ * выбранной под ним; в узком окне список встаёт под карту. Оба живут
+ * от одного ответа кабинета: касса не исчезает из раздела оттого, что её
+ * негде поставить.
+ *
+ * Кассы одного места сведены в один ярлычок с числом — иначе в торговой
+ * точке с тремя кассами булавки садились одна на другую. Путь владельца
+ * тот же, что и в картах объявлений: отбор сверху, ярлычок с числом
+ * на карте, список касс места рядом, и из него — в аналитику одной
+ * кассы.
+ *
+ * При источнике «адрес торговой точки» координат кабинет не даёт вовсе,
+ * и точки появляются постепенно — по мере того, как карта находит дома.
+ * Поэтому карта ведётся к кассам один раз за загрузку: иначе она
+ * возвращалась бы в середину набора после каждого найденного адреса.
+ */
+@Composable
+fun AnalyticsMapPane(
+    session: Session,
+    cabinet: CabinetSession,
+    texts: AnalyticsTexts,
+    cabinetTexts: CabinetTexts
+) {
+    val services = remember(session.preferences) { MapServices(session.preferences) }
+    val model = remember(cabinet) { AnalyticsMapModel(cabinet, services.geocoder) }
+    val panel = remember(session.preferences) { AnalyticsMapCard(session.preferences) }
+    val legend = remember(session.preferences) { AnalyticsMapLegend(session.preferences) }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(cabinet.token, model.source) { model.load() }
+    LaunchedEffect(model.view) { model.findAddresses() }
+    // Карта ведётся к кассам по всему набору, а не по отобранному:
+    // иначе она прыгала бы к остатку при каждой нажатой плашке.
+    val whole = placement(model.view, model.points)
+    // Наводится она и на новый ответ кабинета, и на каждое прибавление
+    // касс: при адресе торговой точки дома находятся по одному, и набор
+    // растёт от одного двора до сети по всей стране.
+    LaunchedEffect(model.view, whole.placed.size) { model.centre(whole.placed) }
+    val placement = sieved(whole, model.sieve)
+    // Места пересобираются только при смене набора или увеличения, а не
+    // на каждом кадре: у сети в две тысячи касс раскладка по клеткам
+    // повторялась бы при каждом сдвиге карты, ничего не меняя.
+    val cell = groupCell(LocalDensity.current.density)
+    val groups = remember(placement.placed, model.map.zoom, cell) { kkmGroups(placement.placed, model.map.zoom, cell) }
+
+    HeadOverMap(
+        modifier = Modifier.fillMaxSize(),
+        head = {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+                AnalyticsSourceBar(model, placement, texts) { scope.launch { model.load() } }
+                AnalyticsSieveBar(model, sievePlaces(model.view), texts)
+            }
+        }
+    ) {
+        val trouble = model.trouble
+        val state = when {
+            trouble != null -> analyticsTroubleState(trouble, texts) { scope.launch { model.load() } }
+            model.view == null -> ScreenState.Working
+            else -> ScreenState.Ready
+        }
+        ScreenSlot(state, Modifier.fillMaxSize()) {
+            val parts = MapParts(
+                session, model, services, placement, whole.placed.size,
+                groups, texts, cabinetTexts, panel, legend
+            )
+            MapBody(parts, Modifier.fillMaxSize())
+        }
+    }
+    // Окно аналитики кассы живёт поверх карты: закрыв его, владелец
+    // возвращается к тому же месту и тому же отбору.
+    model.opened?.let { kkm ->
+        AnalyticsKkmDialog(session, cabinet, kkm, texts, cabinetTexts) { model.opened = null }
+    }
+}
+
+/**
+ * Из чего собран раздел карты.
+ *
+ * Сеанс, состояние, службы карты, расстановка и надписи нужны каждому
+ * ряду раздела и окну во весь экран; по отдельности они протягивались бы
+ * восемью параметрами через три вызова.
+ */
+internal class MapParts(
+    val session: Session,
+    val model: AnalyticsMapModel,
+    val services: MapServices,
+    val placement: Placement,
+    /** Сколько касс встало на карту до отбора: с этим числом сверяется итог в углу. */
+    val whole: Int,
+    val groups: List<KkmGroup>,
+    val texts: AnalyticsTexts,
+    val cabinetTexts: CabinetTexts,
+    val panel: AnalyticsMapCard,
+    val legend: AnalyticsMapLegend
+)
+
+/**
+ * Карта с точками, а рядом список касс и карточка выбранной.
+ *
+ * Раскрытая во всё окно карта заменяет раздел, а не ложится поверх него:
+ * две карты одного состояния тянули бы плитки на два окна разного размера.
+ * Возврат из окна собирает раздел заново на том же состоянии — выбор
+ * и место карты остаются.
+ */
+@Composable
+private fun MapBody(parts: MapParts, modifier: Modifier = Modifier) {
+    var fullscreen by remember { mutableStateOf(false) }
+    if (fullscreen) {
+        AnalyticsMapFullscreen(parts) { fullscreen = false }
+        return
+    }
+    MapAndDetails(
+        modifier = modifier,
+        map = { MapWindow(parts, fullscreen = false, onFullscreen = { fullscreen = true }, Modifier.fillMaxSize()) },
+        list = { KkmList(parts) },
+        card = { UnderMap(parts.model, parts.placement, parts.groups, parts.texts, parts.cabinetTexts, parts.panel) }
+    )
+}
+
+/**
+ * Список всех касс, а не только непоставленных: точки на карте
+ * неотличимы, и владелец сети искал свою кассу глазами.
+ */
+@Composable
+internal fun KkmList(parts: MapParts, modifier: Modifier = Modifier) {
+    AnalyticsKkmList(
+        placed = parts.placement.placed,
+        unplaced = parts.placement.unplaced,
+        chosen = parts.model.chosen,
+        source = parts.model.source,
+        texts = parts.texts,
+        onChoose = { row -> parts.model.show(row, parts.groups) },
+        modifier = modifier.fillMaxSize(),
+        sieved = parts.model.sieve.set
+    )
+}

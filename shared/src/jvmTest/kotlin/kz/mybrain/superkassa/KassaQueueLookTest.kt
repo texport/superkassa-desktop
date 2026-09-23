@@ -1,0 +1,61 @@
+package kz.mybrain.superkassa
+
+import kz.mybrain.superkassa.data.node.QueueTask
+import kz.mybrain.superkassa.presentation.queue.QueueScreen
+import kz.mybrain.superkassa.presentation.session.adoptQueue
+import kotlin.test.Test
+import kotlin.test.assertTrue
+
+/**
+ * Очередь отложенной отправки глазами кассира.
+ *
+ * Снимки — `/tmp/kassa-queue-*.png`. Смотреть надо на две вещи: вид задачи
+ * назван словом, а не кодом узла, и отвергнутая задача стоит своей частью,
+ * а не под заголовком «Уже отправлено».
+ */
+class KassaQueueLookTest {
+
+    @Test
+    fun `в очереди нет кодов узла, а отвергнутое стоит отдельно от отправленного`() {
+        // Пустая очередь — это очередь, о которой узел ответил: без ответа
+        // экран обязан говорить «прочитать не удалось», а не «всё доставлено».
+        val answered = KassaScene.session("queue-empty", shift = KassaScene.openShift())
+        answered.adoptQueue(emptyList())
+        val empty = KassaScene.shot("queue-empty", width = NARROW, height = SHORT) { QueueScreen(answered) }
+        val unread = KassaScene.shot("queue-unread", width = NARROW, height = SHORT) {
+            QueueScreen(KassaScene.session("queue-unread", shift = KassaScene.openShift()))
+        }
+        val filled = KassaScene.shot("queue-sections", width = NARROW, height = SHORT) {
+            val session = KassaScene.session("queue-filled", shift = KassaScene.openShift())
+            session.adoptQueue(TASKS)
+            QueueScreen(session)
+        }
+
+        assertTrue(empty.isNotEmpty() && filled.isNotEmpty() && unread.isNotEmpty())
+        assertTrue(!empty.contentEquals(filled), "пустая очередь неотличима от заполненной")
+        assertTrue(
+            !empty.contentEquals(unread),
+            "«всё доставлено» и «очередь прочитать не удалось» на экране неразличимы"
+        )
+    }
+
+    private companion object {
+        /** Узкое окно кассира: на нём строка очереди уезжала за край. */
+        const val NARROW = 1000
+        const val SHORT = 700
+
+        /** Все состояния, которые узел различает, по одной задаче на каждое. */
+        val TASKS = listOf(
+            QueueTask(id = "q1", type = "TICKET", status = "PENDING", attempt = 0),
+            QueueTask(
+                id = "q2",
+                type = "TICKET",
+                status = "FAILED",
+                attempt = 3,
+                errorRu = "БФД не отвечает: превышено время ожидания ответа на команду продажи"
+            ),
+            QueueTask(id = "q3", type = "SHIFT_CLOSE", status = "REJECTED", attempt = 5, errorRu = "Чек отвергнут"),
+            QueueTask(id = "q4", type = "TICKET", status = "SENT", attempt = 1)
+        )
+    }
+}

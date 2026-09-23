@@ -1,0 +1,282 @@
+package kz.mybrain.superkassa
+
+import androidx.compose.runtime.Composable
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.MockRequestHandleScope
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondError
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.ListSerializer
+import kz.mybrain.superkassa.data.local.Preferences
+import kz.mybrain.superkassa.data.node.CounterRecord
+import kz.mybrain.superkassa.data.node.Dictionary
+import kz.mybrain.superkassa.data.node.DictionaryEntry
+import kz.mybrain.superkassa.data.node.Document
+import kz.mybrain.superkassa.data.node.DocumentDetails
+import kz.mybrain.superkassa.data.node.Kkm
+import kz.mybrain.superkassa.data.node.KkmUser
+import kz.mybrain.superkassa.data.node.NodeVatRate
+import kz.mybrain.superkassa.data.node.NomenclatureItem
+import kz.mybrain.superkassa.data.node.NomenclatureLookup
+import kz.mybrain.superkassa.data.node.OrgInfo
+import kz.mybrain.superkassa.data.node.Page
+import kz.mybrain.superkassa.data.node.ServerClient
+import kz.mybrain.superkassa.data.node.SoldItem
+import kz.mybrain.superkassa.data.node.Trilingual
+import kz.mybrain.superkassa.data.node.UnitOfMeasurement
+import kz.mybrain.superkassa.domain.shift.Shift
+import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.presentation.strings.Language
+import java.io.File
+import java.nio.file.Files
+
+/** Отказ узла для снимка: код и слова на трёх языках, как их отдаёт узел. */
+internal data class NodeRefusal(val code: String, val ru: String, val kk: String, val en: String)
+
+/**
+ * Оснастка кассовых снимков.
+ *
+ * Экраны кассы спрашивают рабочее место, а не узел напрямую, поэтому сцене
+ * нужен настоящий [Session] — только с узлом, которого нет. Каталог настроек
+ * у каждого снимка свой: прогон проверок однажды затёр настройки рабочей
+ * кассы, и в общем каталоге это повторилось бы.
+ */
+internal object KassaScene {
+
+    /** Касса, какой её видит кассир на рабочем месте. */
+    fun kkm(
+        state: String? = "ACTIVE",
+        kgd: String? = "000000200042",
+        name: String? = "Касса у входа",
+        autonomousSince: Long? = null,
+        taxRegime: String? = "GENERAL"
+    ) = Kkm(
+        kkmId = "kkm-1",
+        name = name,
+        kkmKgdId = kgd,
+        factoryNumber = "SK-000042",
+        state = state,
+        autonomousSince = autonomousSince,
+        taxRegime = taxRegime,
+        ofdServiceInfo = OrgInfo(orgTitle = "ТОО «Пример»", orgAddress = "Алматы, Абая 150")
+    )
+
+    /**
+     * Рабочее место с выбранной кассой и принятым пином.
+     *
+     * Пин принимается через вход: узел отвечает кассиром только на запрос
+     * «кто я», и другого способа получить роль у сеанса нет.
+     */
+    fun session(
+        folder: String,
+        kkm: Kkm? = kkm(),
+        admin: Boolean = true,
+        available: Boolean = true,
+        shift: Shift? = null,
+        shiftAnswered: Boolean = true,
+        documents: List<Document> = emptyList(),
+        cashInDrawerTiyn: Long? = 125_000,
+        payments: List<DictionaryEntry>? = null,
+        refusal: NodeRefusal? = null,
+        journal: List<Document> = emptyList(),
+        /** Отвечает ли узел на список документов; `false` — не отвечает вовсе. */
+        journalAnswered: Boolean = true,
+        /** Что отдаёт узел на список прошлых смен; `null` — не отвечает вовсе. */
+        pastShifts: List<Shift>? = null,
+        sold: List<SoldItem> = emptyList(),
+        cashiers: List<KkmUser>? = null,
+        /** Что отдаёт каталог на поиск по штрихкоду; `null` — ничего не нашёл. */
+        catalogue: NomenclatureItem? = null,
+        /**
+         * Что отдаёт узел на список касс; `null` — не отдаёт вовсе.
+         *
+         * Список нужен экрану входа: пока узел на него не отвечает, экран
+         * показывает отказ, и снимок входа выходит отказным всегда.
+         */
+        kkms: List<Kkm>? = null
+    ): Session {
+        val node = NodeAnswers(journal, journalAnswered, pastShifts, sold, cashiers, catalogue, kkms)
+        val session = Session(client(admin, refusal, node), preferences(folder))
+        // Язык сеанса тот же, каким сцена рисует надписи: иначе отказ узла
+        // приходил по-казахски на русский экран — не дефект приложения,
+        // а расхождение оснастки с ним.
+        session.switchLanguage(Language.Ru)
+        if (available) session.calls.answered()
+        kkm?.let { runBlocking { session.signIn(it, PIN) } }
+        if (shiftAnswered) session.board.adoptShift(shift)
+        session.board.adoptDocuments(documents)
+        cashInDrawerTiyn?.let {
+            session.board.adoptCounters(listOf(CounterRecord(scope = "GLOBAL", key = "cash.sum", value = it)))
+        }
+        session.reference.adoptUnits(UNITS)
+        session.reference.adoptVatRates(VAT_RATES)
+        payments?.let { session.dictionaries[Dictionary.PaymentTypes] = it }
+        session.dictionaries[Dictionary.DocumentTypes] = DOCUMENT_TYPES
+        session.dictionaries[Dictionary.DeliveryStatuses] = DELIVERY_STATUSES
+        session.dictionaries[Dictionary.KkmStates] = KKM_STATES
+        return session
+    }
+
+    /** Открытая смена с этим номером. */
+    fun openShift(number: Long = 7, openedAt: Long = System.currentTimeMillis()) =
+        Shift(id = "shift-$number", shiftNo = number, status = "OPEN", openedAt = openedAt)
+
+    /**
+     * Кадр экрана в файл, чтобы смотреть глазами.
+     *
+     * Кадров несколько, а сохраняется последний: снекбар отказа, ожидание
+     * и появление списка живут в отложенных действиях, и на первом кадре
+     * их на экране ещё нет — отказной снимок выходил неотличимым
+     * от обычного.
+     */
+    fun shot(
+        name: String,
+        width: Int = WIDE,
+        height: Int = TALL,
+        settle: Int = SETTLE,
+        content: @Composable () -> Unit
+    ): ByteArray {
+        val frame = RenderProbe(width = width, height = height, content = content).use { probe ->
+            repeat(settle) { probe.frame() }
+            probe.frame()
+        }
+        File("/tmp/kassa-$name.png").writeBytes(frame)
+        return frame
+    }
+
+    private fun preferences(folder: String): Preferences {
+        val directory = Files.createTempDirectory(folder).toFile()
+        return Preferences(File(directory, "kkm"))
+    }
+
+    /**
+     * Узел, который отвечает только на «кто я».
+     *
+     * Всё прочее — отказ: отказные снимки нужны не меньше обычных, а
+     * поднимать узел ради картинки нельзя. Отказ отдаётся в том же виде,
+     * в каком его отдаёт узел, — кодом и трёхъязычной строкой: с голым
+     * `respondError` снимок выходит не с тем отказом, который кассир
+     * прочтёт на самом деле, а с общими словами о неназванной причине.
+     */
+    private fun client(admin: Boolean, refusal: NodeRefusal?, node: NodeAnswers): ServerClient {
+        val body = """{"userId":"u-1","name":"Айгүл Сәрсенова","role":"${if (admin) "ADMIN" else "CASHIER"}"}"""
+        val engine = MockEngine { request ->
+            val path = request.url.encodedPath
+            when {
+                path.endsWith("/users/me") -> answer(body)
+                path == "/kkm" && node.kkms != null ->
+                    answer(encoded(Page.serializer(Kkm.serializer()), Page(items = node.kkms)))
+
+                path.endsWith("/users") && node.cashiers != null ->
+                    answer(encoded(ListSerializer(KkmUser.serializer()), node.cashiers))
+
+                path.endsWith("/nomenclature/lookup") -> answer(
+                    encoded(
+                        NomenclatureLookup.serializer(),
+                        NomenclatureLookup(found = node.catalogue != null, item = node.catalogue)
+                    )
+                )
+
+                // Список смен узел отдаёт только там, где снимок о них
+                // спрашивает: без ответа экран прошлых смен обязан говорить
+                // «прочитать не удалось», а не «смен нет».
+                path.endsWith("/shifts") && node.pastShifts != null ->
+                    answer(encoded(ListSerializer(Shift.serializer()), node.pastShifts))
+
+                path.endsWith("/documents") && node.journalAnswered ->
+                    answer(encoded(ListSerializer(Document.serializer()), node.journal))
+
+                path.contains("/documents/") -> answer(details(node.journal, node.sold, path.substringAfterLast('/')))
+                refusal != null -> respond(
+                    """{"code":"${refusal.code}","message":"RU: ${refusal.ru} | KK: ${refusal.kk} | EN: ${refusal.en}"}""",
+                    HttpStatusCode.BadRequest,
+                    headersOf(HttpHeaders.ContentType, "application/json")
+                )
+
+                else -> respondError(HttpStatusCode.NotFound)
+            }
+        }
+        val http = HttpClient(engine) {
+            expectSuccess = false
+            install(ContentNegotiation) { json(ServerClient.lenientJson) }
+        }
+        return ServerClient(http = http)
+    }
+
+    /** Что узел отдаёт снимку: собрано в одно, чтобы не расписывать шестью доводами. */
+    private data class NodeAnswers(
+        val journal: List<Document>,
+        val journalAnswered: Boolean,
+        val pastShifts: List<Shift>?,
+        val sold: List<SoldItem>,
+        val cashiers: List<KkmUser>?,
+        val catalogue: NomenclatureItem?,
+        val kkms: List<Kkm>?
+    )
+
+    /** Ответ узла по существу: телом идёт готовый JSON. */
+    private fun MockRequestHandleScope.answer(body: String) =
+        respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))
+
+    private fun <T> encoded(serializer: KSerializer<T>, value: T): String =
+        ServerClient.lenientJson.encodeToString(serializer, value)
+
+    /** Состав документа: позиции те же, что продавались, и кассир при них. */
+    private fun details(journal: List<Document>, sold: List<SoldItem>, id: String): String {
+        val document = journal.firstOrNull { it.id == id } ?: Document(id = id)
+        return encoded(
+            DocumentDetails.serializer(),
+            DocumentDetails(document = document, items = sold, operatorName = "Айгүл Сәрсенова")
+        )
+    }
+
+    const val PIN = "1234"
+
+    /** Окно кассира на рабочем месте: столько точек даёт каркас разделу. */
+    const val WIDE = 1180
+    const val TALL = 820
+
+    /** Сколько кадров даётся отложенным действиям, чтобы доехать до экрана. */
+    private const val SETTLE = 40
+
+    private val UNITS = listOf(
+        UnitOfMeasurement(code = "796", nameShort = "шт", nameFull = "Штука"),
+        UnitOfMeasurement(code = "166", nameShort = "кг", nameFull = "Килограмм")
+    )
+
+    private val VAT_RATES = listOf(
+        NodeVatRate(code = "NO_VAT", percent = 0, name = Trilingual(ru = "Без НДС", kk = "ҚҚС-сыз", en = "No VAT")),
+        NodeVatRate(code = "VAT_16", percent = 16, name = Trilingual(ru = "НДС 16%", kk = "ҚҚС 16%", en = "VAT 16%"))
+    )
+
+    private val DOCUMENT_TYPES = listOf(
+        entry("SALE", "Продажа"),
+        entry("BUY", "Покупка"),
+        entry("RETURN", "Возврат продажи"),
+        entry("CASH_IN", "Внесение"),
+        entry("CASH_OUT", "Изъятие"),
+        entry("X_REPORT", "X-отчёт"),
+        entry("Z_REPORT", "Z-отчёт"),
+        entry("SHIFT_OPEN", "Открытие смены")
+    )
+
+    private val DELIVERY_STATUSES = listOf(
+        entry("ONLINE_OK", "Доставлен"),
+        entry("OFFLINE_QUEUED", "Ждёт отправки")
+    )
+
+    private val KKM_STATES = listOf(
+        entry("ACTIVE", "Работает"),
+        entry("BLOCKED", "Заблокирована"),
+        entry("PROGRAMMING", "Программирование")
+    )
+
+    private fun entry(code: String, ru: String) = DictionaryEntry(code = code, name = mapOf("ru" to ru))
+}

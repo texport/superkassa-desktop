@@ -1,0 +1,97 @@
+package kz.mybrain.superkassa.presentation.settings
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import kz.mybrain.superkassa.data.local.PrintPreferences
+import kz.mybrain.superkassa.data.node.DictionaryEntry
+import kz.mybrain.superkassa.data.node.PrintKind
+import kz.mybrain.superkassa.data.print.Printing
+import kz.mybrain.superkassa.presentation.components.ChoiceSegments
+import kz.mybrain.superkassa.presentation.components.LabelledPicker
+import kz.mybrain.superkassa.presentation.components.SectionCard
+import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.presentation.strings.LocalStrings
+
+/**
+ * Куда печатает эта касса.
+ *
+ * Принтер выбирается один раз и держится за кассой: за одним компьютером
+ * их бывает две, и чековая лента у каждой своя. Пока принтер не выбран,
+ * задание уходит на системный по умолчанию — так печатает любая программа,
+ * и объяснять кассиру тут нечего.
+ *
+ * Вид файла — то, чем сохраняют форму: PDF уходит покупателю, HTML —
+ * в бухгалтерию, картинка повторяет экран.
+ *
+ * @param printers принтеры этой машины. Задаются снаружи только проверкой:
+ *   спросить их у машины, на которой идёт проверка, значит увидеть её
+ *   принтеры, а не пустой список, ради которого карточку и смотрят.
+ */
+@Composable
+internal fun PrintTargetCard(session: Session, printers: List<String> = remember { Printing.printers() }) {
+    val texts = LocalStrings.current
+    val kkm = session.selected ?: return
+    var printer by remember(kkm.kkmId) { mutableStateOf(session.preferences.printer(kkm.kkmId)) }
+    var kind by remember { mutableStateOf(session.preferences.printKind()) }
+    var copies by remember { mutableStateOf(session.preferences.printCopies) }
+
+    SectionCard(title = texts.settings.printer, info = texts.settings.printerHint) {
+        // Принтеров на машине может не быть вовсе — за прилавком это
+        // обычное дело до подключения чекового. Молчание здесь кончалось
+        // отказом печати на первом же чеке, при покупателе.
+        if (printers.isEmpty()) {
+            Text(
+                text = texts.settings.printerNone,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+        // Поле во всю ширину карточки, как и прочие выборы настроек: имя
+        // принтера бывает длиннее заданной ширины, и выбор обрезался
+        // многоточием рядом с пустой половиной карточки.
+        val entries = printerEntries(printers, texts.settings.printerSystem)
+        val selected = printer ?: SYSTEM_PRINTER
+        LabelledPicker(
+            label = texts.settings.printer,
+            options = entries,
+            selected = entries.firstOrNull { it.code == selected },
+            title = { entry -> entry?.title(session.language.code) ?: selected },
+            onSelect = { chosen ->
+                printer = chosen.code.takeIf { it != SYSTEM_PRINTER }
+                session.preferences.choosePrinter(kkm.kkmId, printer)
+            },
+            available = { it.supported }
+        )
+        PartTitle(texts.settings.printCopies)
+        ChoiceSegments(
+            options = (1..PrintPreferences.MAX_COPIES).toList(),
+            selected = copies,
+            label = { it.toString() }
+        ) { chosen ->
+            copies = chosen
+            session.preferences.printCopies = chosen
+        }
+        PartTitle(texts.settings.printKind)
+        ChoiceSegments(
+            options = PrintKind.entries,
+            selected = kind,
+            label = { it.name.uppercase() }
+        ) { chosen ->
+            kind = chosen
+            session.preferences.choosePrintKind(chosen)
+        }
+    }
+}
+
+/** Список принтеров с системным первым: он же и подставляется по умолчанию. */
+private fun printerEntries(printers: List<String>, systemTitle: String): List<DictionaryEntry> =
+    listOf(DictionaryEntry(code = SYSTEM_PRINTER, name = mapOf("ru" to systemTitle, "kk" to systemTitle, "en" to systemTitle))) +
+        printers.map { DictionaryEntry(code = it) }
+
+/** Значение «печатать на системном принтере»: своего имени у него нет. */
+private const val SYSTEM_PRINTER = "SYSTEM"

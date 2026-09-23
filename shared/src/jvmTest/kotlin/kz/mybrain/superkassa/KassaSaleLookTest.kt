@@ -1,0 +1,478 @@
+package kz.mybrain.superkassa
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import kz.mybrain.superkassa.data.node.DictionaryEntry
+import kz.mybrain.superkassa.presentation.MessageEffect
+import kz.mybrain.superkassa.presentation.MessageHost
+import kz.mybrain.superkassa.presentation.messages.Message
+import kz.mybrain.superkassa.presentation.sale.Adjustment
+import kz.mybrain.superkassa.presentation.sale.AdjustmentUnit
+import kz.mybrain.superkassa.presentation.sale.Basket
+import kz.mybrain.superkassa.presentation.sale.BasketCard
+import kz.mybrain.superkassa.presentation.sale.CustomerDataCard
+import kz.mybrain.superkassa.presentation.sale.DraftFields
+import kz.mybrain.superkassa.presentation.sale.IssueRow
+import kz.mybrain.superkassa.presentation.sale.LocalSaleTexts
+import kz.mybrain.superkassa.presentation.sale.LocalUnits
+import kz.mybrain.superkassa.presentation.sale.LocalVatRates
+import kz.mybrain.superkassa.presentation.sale.PaymentCard
+import kz.mybrain.superkassa.presentation.sale.Position
+import kz.mybrain.superkassa.presentation.sale.PositionDraft
+import kz.mybrain.superkassa.presentation.sale.PositionEntryCard
+import kz.mybrain.superkassa.presentation.sale.ReceiptChangesCard
+import kz.mybrain.superkassa.presentation.sale.ReceiptTotals
+import kz.mybrain.superkassa.presentation.sale.SaleForm
+import kz.mybrain.superkassa.presentation.sale.SaleScreen
+import kz.mybrain.superkassa.presentation.sale.totalOf
+import kz.mybrain.superkassa.presentation.sale.vatRatesOf
+import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.presentation.strings.LocalStrings
+import kz.mybrain.superkassa.presentation.strings.saleTexts
+import kz.mybrain.superkassa.presentation.theme.Accent
+import kz.mybrain.superkassa.presentation.theme.Sizes
+import kz.mybrain.superkassa.presentation.theme.Spacing
+import kz.mybrain.superkassa.presentation.theme.schemeOf
+import java.io.ByteArrayInputStream
+import java.math.BigDecimal
+import javax.imageio.ImageIO
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
+/**
+ * Экран продажи во всех состояниях, ради которых он и разбирается.
+ *
+ * Снимки — `/tmp/kassa-sale-*.png`. Проверяется не красота, а то, что
+ * помеха названа словами и стоит под погашенной кнопкой: серая кнопка
+ * «Пробить чек» без строки под ней — самая дорогая ошибка кассового
+ * экрана, кассир не знает, что исправлять.
+ */
+class KassaSaleLookTest {
+
+    @Test
+    fun `экран продажи собирается во всех отказных состояниях и они различимы`() {
+        val frames = mapOf(
+            "empty" to KassaScene.shot("sale-empty-basket", height = FORM_TALL) {
+                SaleScreen(KassaScene.session("sale-empty", shift = KassaScene.openShift()))
+            },
+            "shift-closed" to KassaScene.shot("sale-shift-closed") {
+                SaleScreen(KassaScene.session("sale-closed"))
+            },
+            "kkm-blocked" to KassaScene.shot("sale-kkm-blocked") {
+                SaleScreen(
+                    KassaScene.session(
+                        "sale-blocked",
+                        kkm = KassaScene.kkm(state = "BLOCKED"),
+                        shift = KassaScene.openShift()
+                    )
+                )
+            },
+            // Кадр выше остальных: у кассы без НДС в форме позиции нет
+            // выбора ставки, и единица занимает строку одна. На обычной
+            // высоте эта строка уходила под сгиб, и режим кассы на снимке
+            // было не различить вовсе.
+            "no-vat" to KassaScene.shot("sale-no-vat-regime", height = FORM_TALL) {
+                SaleScreen(
+                    KassaScene.session(
+                        "sale-novat",
+                        kkm = KassaScene.kkm(taxRegime = "NO_VAT"),
+                        shift = KassaScene.openShift()
+                    )
+                )
+            },
+            "node-refuses" to KassaScene.shot("sale-node-refuses") {
+                val session = KassaScene.session("sale-refuse", shift = KassaScene.openShift())
+                session.lastMessage = Message.Refusal("Смена открыта больше суток, закройте её", "SHIFT_EXPIRED")
+                val host = remember { SnackbarHostState() }
+                Scaffold(snackbarHost = { MessageHost(host) }) {
+                    MessageEffect(session.lastMessage, host) {}
+                    SaleScreen(session)
+                }
+            }
+        )
+
+        frames.forEach { (name, frame) -> assertTrue(frame.isNotEmpty(), "пустой кадр: $name") }
+        assertTrue(
+            frames.values.map { it.toList() }.distinct().size == frames.size,
+            "отказные состояния продажи неотличимы друг от друга"
+        )
+    }
+
+    /**
+     * Лист чека с набранными позициями и денежный блок под ним.
+     *
+     * Корзину экран продажи держит в себе, поэтому набранный чек рисуется
+     * его же частями: лист, итоги и кнопка — те самые, что стоят в окне.
+     */
+    @Composable
+    private fun Receipt(session: Session, basket: Basket, form: SaleForm) {
+        val total = totalOf(basket, form)
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Row(
+                modifier = Modifier.fillMaxSize().padding(Spacing.screen),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.roomy)
+            ) {
+                BasketCard(basket, Modifier.weight(1f), {}, {}, {})
+                Column(modifier = Modifier.width(TILL), verticalArrangement = Arrangement.spacedBy(Spacing.normal)) {
+                    ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
+                    PaymentCard(session, form, total, expanded = true, onToggle = {})
+                    ReceiptTotals(form, total, expanded = true)
+                    IssueRow(session, basket, form)
+                }
+            }
+        }
+    }
+
+    /**
+     * Блок скидок и наценок: набранное и его последствие.
+     *
+     * Снимок смотрят глазами ради одного: видно ли из блока, во что
+     * обошлась скидка. Поэтому состояния различаются не полями, а теми
+     * строками «было — стало», которые кассир называет покупателю.
+     */
+    @Test
+    fun `блок скидок показывает было и стало`() {
+        val session = KassaScene.session("sale-changes", shift = KassaScene.openShift())
+        val basket = Basket().apply { POSITIONS.forEach { add(it) } }
+        val discounted = Basket().apply {
+            POSITIONS.forEach { add(it) }
+            positions[0] = positions[0].copy(discount = BigDecimal("500.00"))
+        }
+
+        val plain = KassaScene.shot("sale-changes-plain") { Changes(session, basket, SaleForm()) }
+        val discount = KassaScene.shot("sale-changes-discount") {
+            Changes(session, basket, SaleForm().apply { enterDiscount("1500") })
+        }
+        val markup = KassaScene.shot("sale-changes-markup") {
+            Changes(session, basket, SaleForm().apply { enterMarkup("1500") })
+        }
+        // Скидка по позициям названа в блоке строкой, и скидка на чек
+        // рядом с ней краснеет: вместе их узел не принимает.
+        val byLine = KassaScene.shot("sale-changes-by-line") {
+            Changes(session, discounted, SaleForm().apply { enterDiscount("1500") })
+        }
+
+        val byPercent = KassaScene.shot("sale-changes-percent") {
+            Changes(session, basket, SaleForm().apply { switchDiscount(AdjustmentUnit.Percent); enterDiscount("10") })
+        }
+        // Процент сверх ста узел не принимает: поле краснеет, а причина
+        // названа под ним — до нажатия, а не после отказа.
+        val overPercent = KassaScene.shot("sale-changes-percent-over") {
+            Changes(session, basket, SaleForm().apply { switchMarkup(AdjustmentUnit.Percent); enterMarkup("150") })
+        }
+
+        val frames = listOf(plain, discount, markup, byLine, byPercent, overPercent)
+        frames.forEach { assertTrue(it.isNotEmpty()) }
+        assertTrue(frames.map { it.toList() }.distinct().size == frames.size, "состояния блока скидок неотличимы")
+    }
+
+    /** Один блок скидок в кассовой колонке — тот же, что стоит в окне. */
+    @Composable
+    private fun Changes(session: Session, basket: Basket, form: SaleForm) {
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
+            }
+        }
+    }
+
+    @Test
+    fun `набранный чек рисуется вместе с итогом и помехами`() {
+        val session = KassaScene.session("sale-basket", shift = KassaScene.openShift())
+        val basket = Basket().apply { POSITIONS.forEach { add(it) } }
+
+        val plain = KassaScene.shot("sale-basket", height = RECEIPT_TALL) { Receipt(session, basket, SaleForm()) }
+        val storno = KassaScene.shot("sale-basket-storno", height = RECEIPT_TALL) {
+            Receipt(session, Basket().apply { POSITIONS.forEach { add(it) }; stornoAt(1) }, SaleForm())
+        }
+        val overDiscount = KassaScene.shot("sale-discount-over-total", height = RECEIPT_TALL) {
+            Receipt(session, basket, SaleForm().apply { enterDiscount("999999") })
+        }
+        val shortTaken = KassaScene.shot("sale-taken-too-small", height = RECEIPT_TALL) {
+            Receipt(session, basket, SaleForm().apply { taken = "100" })
+        }
+        val change = KassaScene.shot("sale-change", height = RECEIPT_TALL) {
+            Receipt(session, basket, SaleForm().apply { taken = "20000" })
+        }
+        val badBin = KassaScene.shot("sale-bin-too-short", height = RECEIPT_TALL) {
+            Receipt(session, basket, SaleForm().apply { customerBin = "1234" })
+        }
+        // Вид оплаты, которого узел не принимает: он выбран, а не просто
+        // погашен в списке — иначе на экране не видно ровно ничего.
+        val unsupported = KassaScene.shot("sale-payment-unsupported", height = RECEIPT_TALL) {
+            val picky = KassaScene.session("sale-payment", shift = KassaScene.openShift(), payments = PAYMENTS)
+            val form = SaleForm()
+            form.split.retype(form.split.entries.first(), "CARD")
+            Receipt(picky, basket, form)
+        }
+        val mixed = KassaScene.shot("sale-payment-mixed", height = RECEIPT_TALL) {
+            val form = SaleForm()
+            form.split.add("CARD")
+            form.split.entries.first().amount = "5000"
+            Receipt(session, basket, form)
+        }
+
+        val frames = listOf(plain, storno, overDiscount, shortTaken, change, badBin, unsupported, mixed)
+        frames.forEach { assertTrue(it.isNotEmpty()) }
+        assertTrue(frames.map { it.toList() }.distinct().size == frames.size, "состояния чека неотличимы")
+    }
+
+    /**
+     * Нетронутая форма позиции молчит.
+     *
+     * При открытии смены, до первого товара, под погашенной кнопкой
+     * «Добавить» стояло красное «Введите наименование товара»: касса
+     * упрекала кассира за работу, которую он ещё не начинал, тогда как
+     * сами поля формы в этот момент молчали. Ищется не надпись, а цвет:
+     * красного в нетронутой форме быть не должно вовсе.
+     */
+    @Test
+    fun `нетронутая форма позиции не краснеет`() {
+        val session = KassaScene.session("sale-entry-quiet", shift = KassaScene.openShift())
+        val fresh = KassaScene.shot("audit-sale-entry-fresh", width = ENTRY_WIDE, height = ENTRY_TALL) {
+            Entry(session)
+        }
+
+        assertEquals(0, redPixels(fresh), "нетронутая форма позиции показывает упрёк красным")
+    }
+
+    /**
+     * Карточка ввода позиции — та же, что стоит в кассовой колонке.
+     *
+     * Черновик подставляется снаружи: форма держит его в себе, и набрать
+     * в неё цену со скидкой снимку иначе нечем.
+     */
+    @Composable
+    private fun Entry(session: Session, draft: PositionDraft? = null) {
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                if (draft == null) {
+                    PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
+                } else {
+                    DraftCard(session, draft)
+                }
+            }
+        }
+    }
+
+    /**
+     * Скидка позиции набирается тенге и долей — одним полем.
+     *
+     * Один кадр на оба способа: слева набранная сумма, справа доля
+     * от стоимости строки. Под полем в обоих случаях стоит то же число
+     * другим способом — кассир не пересчитывает его в уме.
+     */
+    @Test
+    fun `скидка позиции набирается и суммой, и долей`() {
+        val session = KassaScene.session("sale-line-discount", shift = KassaScene.openShift())
+        val frame = KassaScene.shot("sale-trim-position-discount", width = PAIR_WIDE, height = ENTRY_TALL) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.roomy)) {
+                Entry(session, DISCOUNT_TENGE)
+                Entry(session, DISCOUNT_PERCENT)
+            }
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /**
+     * Скидки и наценки рядом с соседними карточками.
+     *
+     * Один кадр на три карточки кассовой колонки: поля внутри каждой
+     * обязаны отстоять друг от друга на один и тот же шаг. Прежде поля
+     * скидки и наценки разносило шире остальных, и разнобой был виден
+     * с первого взгляда на колонку.
+     */
+    @Test
+    fun `шаг полей в карточке скидок тот же, что у соседних`() {
+        val session = KassaScene.session("sale-rhythm", shift = KassaScene.openShift())
+        val basket = Basket().apply { POSITIONS.forEach { add(it) } }
+        val frame = KassaScene.shot("sale-trim-changes-neighbours", width = ENTRY_WIDE, height = COLUMN_TALL) {
+            Neighbours(session, basket)
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /** Три соседние карточки колонки — те же, что стоят в окне. */
+    @Composable
+    private fun Neighbours(session: Session, basket: Basket) {
+        val form = SaleForm()
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(
+                modifier = Modifier.width(TILL).padding(Spacing.screen),
+                verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+            ) {
+                PositionEntryCard(session = session, expanded = true, onToggle = {}) {}
+                ReceiptChangesCard(session, form, basket, expanded = true, onToggle = {})
+                PaymentCard(session, form, totalOf(basket, form), expanded = true, onToggle = {})
+                ReceiptTotals(form, totalOf(basket, form), expanded = true)
+            }
+        }
+    }
+
+    /**
+     * В данных покупателя стоит только он сам.
+     *
+     * Отраслевые поля — вид отрасли, лицевой счёт, номер машины, часы
+     * стоянки — с экрана убраны, и блок обязан остаться тем, чем назван:
+     * ИИН или БИН того, кому выписан чек.
+     */
+    @Test
+    fun `в данных покупателя остаётся только ИИН или БИН`() {
+        val session = KassaScene.session("sale-customer", shift = KassaScene.openShift())
+        val frame = KassaScene.shot("sale-trim-customer-data", width = ENTRY_WIDE, height = ENTRY_TALL) {
+            Customer(session)
+        }
+        assertTrue(frame.isNotEmpty())
+    }
+
+    /** Блок данных покупателя — тот же, что стоит в кассовой колонке. */
+    @Composable
+    private fun Customer(session: Session) {
+        CompositionLocalProvider(
+            LocalSaleTexts provides saleTexts(session.language),
+            LocalVatRates provides vatRatesOf(session, LocalStrings.current.enums),
+            LocalUnits provides session.units
+        ) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+                CustomerDataCard(SaleForm(), expanded = true, onToggle = {})
+            }
+        }
+    }
+
+    /** Та же форма позиции, но с заранее набранным черновиком. */
+    @Composable
+    private fun DraftCard(session: Session, draft: PositionDraft) {
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
+                verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            ) {
+                DraftFields(draft, session.units) {}
+            }
+        }
+    }
+
+    /** Сколько в кадре точек цвета отказа: им набран любой упрёк экрана. */
+    private fun redPixels(png: ByteArray): Int {
+        val image = ImageIO.read(ByteArrayInputStream(png))
+        val error = schemeOf(Accent.Indigo, dark = false).error
+        var found = 0
+        for (y in 0 until image.height) {
+            for (x in 0 until image.width) {
+                val pixel = Color(image.getRGB(x, y))
+                if (LookColors.distance(pixel, error) < RED_APART) found++
+            }
+        }
+        return found
+    }
+
+    private companion object {
+        /** Кадр одной кассовой колонки: в него целиком входит форма позиции. */
+        const val ENTRY_WIDE = 460
+        const val ENTRY_TALL = 700
+
+        /** Насколько точка должна сойтись с цветом отказа, чтобы счесться красной. */
+        const val RED_APART = 12f
+
+        /**
+         * Высота кадра набранного чека.
+         *
+         * Выше обычного кадра: в колонке стоят блок скидок, деньги и кнопка,
+         * и на обычной высоте причина под кнопкой уезжала за край кадра —
+         * отказные состояния выходили неотличимыми друг от друга.
+         */
+        const val RECEIPT_TALL = 1000
+
+        /** Высота кадра всей кассовой колонки: три карточки одна под другой. */
+        const val COLUMN_TALL = 1250
+
+        /** Кадр на две кассовые колонки рядом: два способа набрать скидку. */
+        const val PAIR_WIDE = 1240
+
+        /**
+         * Высота кадра, на которую входит форма позиции целиком.
+         *
+         * Нужна там, где снимок смотрит на сами поля формы: на обычной
+         * высоте кассовая колонка обрывается на «Количестве».
+         */
+        const val FORM_TALL = 1120
+
+        /** Строка на 1 500 ₸ со скидкой, набранной суммой. */
+        val DISCOUNT_TENGE = PositionDraft(
+            name = "Хлеб «Тандыр»",
+            price = "500.00",
+            quantity = "3",
+            discount = Adjustment("150.00"),
+            measureUnitCode = "796"
+        )
+
+        /** Та же строка со той же скидкой, набранной долей. */
+        val DISCOUNT_PERCENT = DISCOUNT_TENGE.copy(discount = Adjustment("10", AdjustmentUnit.Percent))
+
+        /** Ширина кассовой колонки на снимке: та же, что в окне кассира. */
+        val TILL = Sizes.fieldForm + Sizes.fieldPrice + Sizes.fieldQuantity
+
+        /** Виды оплаты узла, где кредит и тара объявлены непринимаемыми. */
+        val PAYMENTS = listOf(
+            DictionaryEntry("CASH", mapOf("ru" to "Наличные")),
+            DictionaryEntry("CARD", mapOf("ru" to "Карта"), supported = false),
+            DictionaryEntry("MOBILE", mapOf("ru" to "Мобильный платёж"))
+        )
+
+        /** Позиции для листа чека: дробное количество, акциз и длинное имя. */
+        val POSITIONS = listOf(
+            Position(
+                name = "Баранина на косточке, охлаждённая",
+                price = BigDecimal("3450.00"),
+                quantity = BigDecimal("1.450"),
+                vatGroup = "VAT_16",
+                measureUnitCode = "166"
+            ),
+            Position(
+                name = "Вода питьевая негазированная «Тау Самалы» 5 л в упаковке по шесть бутылок",
+                price = BigDecimal("690.00"),
+                quantity = BigDecimal("2"),
+                vatGroup = "VAT_16",
+                measureUnitCode = "796"
+            ),
+            Position(
+                name = "Коньяк «Казахстан» 0,5 л",
+                price = BigDecimal("4990.00"),
+                quantity = BigDecimal("1"),
+                vatGroup = "VAT_16",
+                measureUnitCode = "796",
+                exciseStamps = listOf("AB1234567890")
+            )
+        )
+    }
+}

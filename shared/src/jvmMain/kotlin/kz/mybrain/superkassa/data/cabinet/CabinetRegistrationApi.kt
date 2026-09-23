@@ -1,0 +1,44 @@
+package kz.mybrain.superkassa.data.cabinet
+
+import io.ktor.http.HttpMethod
+
+/**
+ * Заявления в ИСНА.
+ *
+ * Все три заявления идут одним путём: кабинет готовит то, что нужно
+ * подписать, владелец подписывает ЭЦП, кабинет отправляет подписанное.
+ *
+ * Сама регистрационная карта — в [CabinetRegistrationCardApi].
+ */
+
+suspend fun CabinetClient.prepareRegistration(token: String, id: String): ApplicationPrepared =
+    request(HttpMethod.Post, "/api/cash-registers/$id/registration/application", token = token)
+
+suspend fun CabinetClient.signRegistration(token: String, id: String, sign: SignRequest): ApplicationSent =
+    request(HttpMethod.Post, "/api/cash-registers/$id/registration/sign", sign, token)
+
+suspend fun CabinetClient.prepareReregistration(
+    token: String,
+    id: String,
+    application: ReregistrationRequest
+): ApplicationPrepared =
+    request(HttpMethod.Post, "/api/cash-registers/$id/reregistration/application", application, token)
+
+suspend fun CabinetClient.signReregistration(token: String, id: String, sign: SignRequest): ApplicationSent =
+    request(HttpMethod.Post, "/api/cash-registers/$id/reregistration/sign", sign, token)
+
+suspend fun CabinetClient.prepareDeregistration(
+    token: String,
+    id: String,
+    application: DeregistrationRequest
+): ApplicationPrepared =
+    request(HttpMethod.Post, "/api/cash-registers/$id/deregistration/application", application, token)
+
+suspend fun CabinetClient.signDeregistration(token: String, id: String, sign: SignRequest): ApplicationSent =
+    request(HttpMethod.Post, "/api/cash-registers/$id/deregistration/sign", sign, token)
+
+suspend fun CabinetClient.registrationActions(token: String, id: String): CabinetPage<RegistrationAction> =
+    request(HttpMethod.Get, "/api/cash-registers/$id/registration-actions?page=0&size=$PAGE_SIZE", token = token)
+
+suspend fun CabinetClient.registrationAction(token: String, id: String, actionId: String): RegistrationAction =
+    request(HttpMethod.Get, "/api/cash-registers/$id/registration-actions/$actionId", token = token)

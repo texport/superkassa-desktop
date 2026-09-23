@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:FullCycle.kt$FullCycle$private suspend fun run(systemId: String, token: String)</ID>
+    <ID>MagicNumber:IconMaker.kt$0xFF4B4FBF</ID>
+    <ID>MagicNumber:IconMaker.kt$1024</ID>
+  </CurrentIssues>
+</SmellBaseline>

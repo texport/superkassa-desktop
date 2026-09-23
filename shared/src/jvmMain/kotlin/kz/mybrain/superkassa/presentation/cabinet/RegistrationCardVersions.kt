@@ -1,0 +1,199 @@
+package kz.mybrain.superkassa.presentation.cabinet
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.data.cabinet.CabinetRegister
+import kz.mybrain.superkassa.data.cabinet.RegistrationCard
+import kz.mybrain.superkassa.data.cabinet.RegistrationCardVersion
+import kz.mybrain.superkassa.data.cabinet.registrationCardVersion
+import kz.mybrain.superkassa.data.cabinet.registrationCardVersionPdf
+import kz.mybrain.superkassa.data.cabinet.registrationCardVersions
+import kz.mybrain.superkassa.data.local.askWhereToSave
+import kz.mybrain.superkassa.presentation.components.Chip
+import kz.mybrain.superkassa.presentation.components.DetailLine
+import kz.mybrain.superkassa.presentation.components.RecordRow
+import kz.mybrain.superkassa.presentation.components.ScreenSlot
+import kz.mybrain.superkassa.presentation.components.ScreenState
+import kz.mybrain.superkassa.presentation.components.SectionTitle
+import kz.mybrain.superkassa.presentation.session.CabinetSession
+import kz.mybrain.superkassa.presentation.strings.CabinetTexts
+import kz.mybrain.superkassa.presentation.theme.AppIcons
+import kz.mybrain.superkassa.presentation.theme.Spacing
+import kz.mybrain.superkassa.presentation.theme.StatusColors
+
+/**
+ * Версии регистрационной карты кассы. Зачем они нужны владельцу —
+ * в [RegistrationCardVersion].
+ *
+ * Новые версии сверху: последняя перерегистрация нужнее той, что была
+ * три года назад.
+ */
+@Composable
+fun RegistrationCardVersions(cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister) {
+    val scope = rememberCoroutineScope()
+    var versions by remember(register.id) { mutableStateOf<List<RegistrationCardVersion>?>(null) }
+    var asked by remember(register.id) { mutableStateOf(false) }
+    LaunchedEffect(register.id, cabinet.token) {
+        val token = cabinet.token ?: return@LaunchedEffect
+        versions = cabinet.guard { cabinet.client.registrationCardVersions(token, register.id) }
+        asked = true
+    }
+    var chosen: Int? by remember(register.id) { mutableStateOf(null) }
+    val rows = versions.orEmpty().sortedByDescending { it.version }
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+        SectionTitle(texts.cardVersions)
+        ScreenSlot(versionsState(asked, rows, texts), dense = true) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+                rows.forEach { version ->
+                    VersionRow(
+                        cabinet = cabinet,
+                        texts = texts,
+                        version = version,
+                        chosen = chosen == version.version,
+                        onOpen = { chosen = if (chosen == version.version) null else version.version },
+                        onSave = { scope.launch { saveVersionPdf(cabinet, register, version.version) } }
+                    )
+                    if (chosen == version.version) VersionCard(cabinet, texts, register, version.version)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Что стоит на месте списка версий.
+ *
+ * Пустой список — не пустота: версия появляется при перерегистрации
+ * и при снятии с учёта, и у кассы, с которой ничего этого не случалось,
+ * список пуст по существу.
+ */
+private fun versionsState(asked: Boolean, rows: List<RegistrationCardVersion>, texts: CabinetTexts): ScreenState =
+    when {
+        !asked -> ScreenState.Working
+        rows.isEmpty() -> ScreenState.Empty(AppIcons.print, texts.cardVersionsEmpty, texts.hints.cardVersionsEmpty)
+        else -> ScreenState.Ready
+    }
+
+/**
+ * Одна версия: срок действия, чем открыта и закрыта, что менялось.
+ *
+ * Строка раскрывается: что именно было записано в карте той версии —
+ * адрес, точка, модель, — кабинет отдаёт отдельным обращением, и
+ * спрашивать его за все версии разом ради одной незачем.
+ */
+@Composable
+private fun VersionRow(
+    cabinet: CabinetSession,
+    texts: CabinetTexts,
+    version: RegistrationCardVersion,
+    chosen: Boolean,
+    onOpen: () -> Unit,
+    onSave: () -> Unit
+) {
+    // Срок стоит внутри служебной части: строка списка показывает либо
+    // подпись, либо служебную часть, и подпись со сроком молча пропадала —
+    // владелец не видел того, за чем в этот раздел и приходит.
+    RecordRow(
+        title = "${texts.cardVersion} ${version.version}",
+        selected = chosen,
+        onClick = onOpen,
+        support = { VersionFacts(version, texts) },
+        trailing = {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (version.open) Chip(texts.cardCurrentVersion, StatusColors.delivered)
+                TextButton(enabled = !cabinet.busy, onClick = onSave) { Text(texts.savePdf) }
+            }
+        }
+    )
+}
+
+/**
+ * Карта выбранной версии целиком.
+ *
+ * Список отвечает, когда версия действовала и что в ней поменялось;
+ * на вопрос «что в ней было записано» отвечает сама карта — её кабинет
+ * отдаёт по номеру версии.
+ */
+@Composable
+private fun VersionCard(cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, version: Int) {
+    var card by remember(register.id, version) { mutableStateOf<RegistrationCard?>(null) }
+    var asked by remember(register.id, version) { mutableStateOf(false) }
+    LaunchedEffect(register.id, version, cabinet.token) {
+        val token = cabinet.token ?: return@LaunchedEffect
+        card = cabinet.guard { cabinet.client.registrationCardVersion(token, register.id, version) }
+        asked = true
+    }
+    val shown = card
+    val state = when {
+        !asked -> ScreenState.Working
+        shown == null -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.hints.cardMissing)
+        else -> ScreenState.Ready
+    }
+    ScreenSlot(state, dense = true) {
+        if (shown == null) return@ScreenSlot
+        Column(
+            modifier = Modifier.padding(start = Spacing.roomy),
+            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        ) {
+            DetailLine(texts.registrationNumber, shown.registrationNumber)
+            DetailLine(texts.placeName, shown.retailPlaceName)
+            // Адрес точки, а не сетевой адрес кабинета.
+            DetailLine(texts.placeAddress, shown.address)
+            DetailLine(texts.model, shown.modelName)
+        }
+    }
+}
+
+/** Когда версия действовала, чем открыта и закрыта и что в ней стало другим. */
+@Composable
+private fun VersionFacts(version: RegistrationCardVersion, texts: CabinetTexts) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+        // Первой строкой и без подписи: диапазон дат говорит сам за себя.
+        Text(
+            text = versionPeriod(version),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        DetailLine(texts.openedAt, version.openedBy?.let { actionTitle(it, texts) })
+        DetailLine(texts.closedAt, version.closedBy?.let { actionTitle(it, texts) })
+        DetailLine(texts.cardChanged, changedWords(version, texts))
+    }
+}
+
+/** Что менялось — словами кабинета; нечему меняться у первой версии. */
+private fun changedWords(version: RegistrationCardVersion, texts: CabinetTexts): String? = version.changed
+    .joinToString(", ") { cardFieldTitle(it, texts) }
+    .takeIf { it.isNotBlank() }
+
+/** Срок действия версии: у действующей конца ещё нет. */
+private fun versionPeriod(version: RegistrationCardVersion): String {
+    val from = cabinetDay(version.validFrom)
+    val until = version.validTo?.takeIf { it.isNotBlank() } ?: return from
+    return "$from — ${cabinetDay(until)}"
+}
+
+/** Просит место на диске и кладёт туда карту нужной версии. */
+private suspend fun saveVersionPdf(cabinet: CabinetSession, register: CabinetRegister, version: Int) {
+    val token = cabinet.token ?: return
+    val bytes = cabinet.guard { cabinet.client.registrationCardVersionPdf(token, register.id, version) } ?: return
+    val target = askWhereToSave("registration-card-${register.kkmId}-v$version.pdf") ?: return
+    target.writeBytes(bytes)
+}

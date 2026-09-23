@@ -1,0 +1,197 @@
+package kz.mybrain.superkassa.presentation.sale
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRowScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.data.node.UnitOfMeasurement
+import kz.mybrain.superkassa.presentation.adaptive.WrapRow
+import kz.mybrain.superkassa.presentation.components.MoneyField
+import kz.mybrain.superkassa.presentation.components.onEnter
+import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.presentation.strings.LocalStrings
+import kz.mybrain.superkassa.presentation.theme.Sizes
+import kz.mybrain.superkassa.presentation.theme.Spacing
+
+/**
+ * Ввод позиции чека руками.
+ *
+ * Поля стоят столбцом по ширине кассовой колонки, а не в одну длинную
+ * строку: строка из шести полей на узкой колонке не помещается, и кассир
+ * искал бы «Количество» за краем экрана.
+ *
+ * Enter добавляет позицию из любого поля формы: за кассой руки заняты
+ * товаром, и тянуться к мыши ради каждой строки чека — потерянное время.
+ * Кнопка недоступна ровно тогда, когда введённое ещё не образует позицию,
+ * и строка над ней всегда называет, чего не хватает. Добавление —
+ * второстепенное действие экрана, поэтому кнопка тональная: главное
+ * действие здесь одно, и это «Пробить чек».
+ */
+@Composable
+fun AddPositionForm(session: Session, onAdd: (Position) -> Unit) {
+    val texts = LocalStrings.current
+    val extra = LocalSaleTexts.current
+    val vat = defaultVatOf(session, LocalVatRates.current)
+    val units = session.units
+    // Штука — то, чем торгуют чаще всего, и она же подставляется узлом.
+    // Ставим её явно: подставленное узлом кассир на экране не видит.
+    val unit = remember(units) { units.firstOrNull { it.code == PIECE }?.code }
+    var draft by remember(vat, unit) {
+        mutableStateOf(PositionDraft(vatGroup = vat, measureUnitCode = unit))
+    }
+    val submit: () -> Boolean = {
+        val ready = draft.position
+        if (ready != null) {
+            onAdd(ready)
+            draft = draft.cleared()
+        }
+        ready != null
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth().onEnter { submit() },
+        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+    ) {
+        DraftFields(draft, units) { draft = it }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            FilledTonalButton(
+                enabled = draft.position != null,
+                onClick = { submit() },
+                modifier = Modifier.weight(1f)
+            ) { Text(texts.sale.add, style = MaterialTheme.typography.titleSmall) }
+        }
+        Hint(draft.hint?.text(extra), extra.addByEnter)
+    }
+}
+
+/**
+ * Поля позиции сверху вниз: что, почём, сколько, по какой ставке.
+ *
+ * Открыто пакету ради снимков: черновик формы живёт внутри неё, и набрать
+ * в него цену со скидкой снимку иначе нечем.
+ */
+@Composable
+internal fun DraftFields(
+    draft: PositionDraft,
+    units: List<UnitOfMeasurement>,
+    onChange: (PositionDraft) -> Unit
+) {
+    val texts = LocalStrings.current
+    val extra = LocalSaleTexts.current
+    // Начатая форма: кассир уже что-то набрал. Пустая форма молчит —
+    // при открытии смены она не должна выглядеть списком недоделок.
+    val nameProblem = draft.problem(DraftField.Name)?.takeIf { draft.started }
+    OutlinedTextField(
+        value = draft.name,
+        onValueChange = { onChange(draft.copy(name = it)) },
+        label = { Text(texts.sale.name) },
+        singleLine = true,
+        // Про нехватку наименования сказано у самого поля. Строка под
+        // кнопкой на кассовой колонке уезжает за сгиб, и кассир, набравший
+        // цену без названия, видел лишь серую кнопку «Добавить».
+        supportingText = nameProblem?.let { { Text(it.text(extra)) } },
+        modifier = Modifier.fillMaxWidth()
+    )
+    // Цена и количество делят строку, пока подписи помещаются целиком;
+    // в узкой кассе они встают друг под другом, а не рвут «Количество»
+    // на две строки.
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+        DraftAmountField(draft, DraftField.Price, texts.sale.price) {
+            onChange(draft.copy(price = it))
+        }
+        DraftAmountField(draft, DraftField.Quantity, texts.sale.quantity) {
+            onChange(draft.copy(quantity = it))
+        }
+    }
+    // Скидка занимает строку целиком: внутри поля стоит выбор тенге или
+    // доли, и на половине строки число прижималось к переключателю, а
+    // подпись под полем переносилась на вторую строку.
+    DraftDiscountField(draft, onChange)
+    // Два списка делят строку: выбирают они из готового, а не набирают,
+    // и каждому хватает половины кассовой колонки. Порознь они отодвигали
+    // «Добавить» под сгиб — на окне ниже тысячи точек до кнопки
+    // приходилось прокручивать, и так на каждую позицию чека.
+    //
+    // Ставка есть только у плательщика НДС: у кассы без НДС выбирать
+    // нечего, и тогда единица занимает строку целиком сама.
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+        UnitPicker(
+            selected = draft.measureUnitCode,
+            units = units,
+            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldPrice)
+        ) { onChange(draft.copy(measureUnitCode = it)) }
+        VatPicker(draft.vatGroup, Modifier.weight(1f).widthIn(min = Sizes.fieldPrice)) {
+            onChange(draft.copy(vatGroup = it))
+        }
+    }
+}
+
+/**
+ * Скидка на позицию: тенге или доля — тем же полем, что и скидка на чек.
+ *
+ * Под полем стоит либо помеха, либо то же число другим способом: набравший
+ * долю видит тенге, которые уйдут в узел, и не пересчитывает их в уме
+ * перед покупателем.
+ */
+@Composable
+private fun DraftDiscountField(draft: PositionDraft, onChange: (PositionDraft) -> Unit) {
+    val texts = LocalStrings.current
+    val extra = LocalSaleTexts.current
+    val problem = draft.problem(DraftField.Discount)?.takeIf { draft.discount.text.isNotBlank() }
+    AdjustmentField(
+        label = texts.sale.discount,
+        change = draft.discount,
+        modifier = Modifier.fillMaxWidth(),
+        isError = problem != null,
+        supportingText = problem?.text(extra)
+            ?: sameOtherwise(draft.discount, draft.lineCost, extra.lineChangeAsPercent),
+        onEnter = { onChange(draft.copy(discount = draft.discount.copy(text = it))) },
+        onSwitch = { onChange(draft.copy(discount = draft.discount.copy(unit = it))) }
+    )
+}
+
+/**
+ * Поле числа с подсветкой ошибки.
+ *
+ * Красным поле становится, только когда в нём что-то есть: пустая форма
+ * при открытии смены не должна выглядеть набором ошибок.
+ */
+@Composable
+private fun FlowRowScope.DraftAmountField(
+    draft: PositionDraft,
+    field: DraftField,
+    label: String,
+    onChange: (String) -> Unit
+) {
+    val extra = LocalSaleTexts.current
+    val value = draft.valueOf(field)
+    val problem = draft.problem(field)?.takeIf { value.isNotBlank() }
+    MoneyField(
+        value = value,
+        label = label,
+        modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldPrice),
+        isError = problem != null,
+        // Помеха стоит под своим полем, а не только строкой под кнопкой:
+        // на окне кассира форма позиции не влезает целиком, и строка под
+        // кнопкой оказывалась за сгибом — красное поле кассир видел,
+        // а причину нет и прокручивать её не догадывался.
+        supportingText = problem?.text(extra),
+        onValueChange = onChange
+    )
+}

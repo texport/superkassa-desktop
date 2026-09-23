@@ -1,0 +1,106 @@
+package kz.mybrain.superkassa.presentation.queue
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.presentation.adaptive.WrapRow
+import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.presentation.session.refreshSelected
+import kz.mybrain.superkassa.presentation.strings.LocalStrings
+import kz.mybrain.superkassa.presentation.strings.QueueJournalTexts
+import kz.mybrain.superkassa.presentation.theme.AppIcons
+import kz.mybrain.superkassa.presentation.theme.Glyphs
+import kz.mybrain.superkassa.presentation.theme.HistoryLayout
+import kz.mybrain.superkassa.presentation.theme.Spacing
+
+/**
+ * Число ждущих задач.
+ *
+ * У очереди, о которой узел не ответил, его нет: крупный ноль над пустым
+ * экраном владелец читает как порядок, которого никто не подтверждал.
+ */
+internal fun waitingText(read: Boolean, waiting: Int): String =
+    if (read) waiting.toString() else Glyphs.DASH
+
+/**
+ * Глубина очереди и повтор.
+ *
+ * Число ждущих набрано крупно: его читают с метра, не наклоняясь к экрану.
+ * Кнопка повтора живёт только тогда, когда есть что повторять — узел
+ * повторяет неудачные задачи, а не ждущие своей очереди, — и объяснение
+ * стоит рядом с ней, а не отдельной строкой в другом конце экрана.
+ */
+@Composable
+internal fun QueueSummary(
+    session: Session,
+    journal: QueueJournalTexts,
+    waiting: Int,
+    read: Boolean,
+    hasFailed: Boolean,
+    hasRejected: Boolean
+) {
+    val texts = LocalStrings.current
+    val scope = rememberCoroutineScope()
+    val programming = session.selected?.isProgramming == true
+    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+        // Кнопки переносятся под объяснение целиком, а не сжимают его
+        // в столбик по два слова: карточка стоит в ширину читаемого текста.
+        WrapRow(modifier = Modifier.fillMaxWidth().padding(Spacing.normal), spacing = Spacing.roomy) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(waitingText(read, waiting), style = MaterialTheme.typography.displaySmall)
+                Text(
+                    text = texts.queue.waiting,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Text(
+                // «Неудачных задач нет» рядом с красной строкой «не будет
+                // отправлен» противоречит самой себе: отвергнутое повтор
+                // не берёт, но оно на экране есть, и строка это признаёт.
+                text = when {
+                    // Узел об очереди не ответил: ни числа ждущих, ни
+                    // «неудачных задач нет» за него сказать нельзя —
+                    // о непрочитанном говорит строка на месте списка.
+                    !read -> ""
+                    // Повтор узел принимает только в режиме программирования.
+                    // Прежде кнопка нажималась всегда и отвечала протокольным
+                    // «ККМ должна быть в режиме PROGRAMMING».
+                    hasFailed && !programming -> journal.retryNeedsProgramming
+                    hasFailed -> journal.retryHint
+                    hasRejected -> journal.nothingToRetryButRejected
+                    else -> journal.nothingFailed
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f).widthIn(min = HistoryLayout.summaryNote)
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                FilledTonalButton(
+                    enabled = programming && hasFailed,
+                    onClick = { scope.launch { retryQueue(session, texts) } }
+                ) { Text(texts.queue.retryFailed) }
+                IconButton(onClick = { scope.launch { session.refreshSelected() } }) {
+                    Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
+                }
+            }
+        }
+    }
+}

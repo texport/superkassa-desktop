@@ -94,7 +94,7 @@ jobs:
             [0-9]*) ;;
             *) version="" ;;
           esac
-          ./gradlew packageDistributionForCurrentOS \
+          ./gradlew :desktopApp:packageDistributionForCurrentOS \
             -PnodeJar="$(cd "$(dirname "$jar")" && pwd)/$(basename "$jar")" \
             ${version:+-PappVersion="$version"}
 
@@ -103,9 +103,9 @@ jobs:
         with:
           name: superkassa-${{ matrix.os }}
           path: |
-            superkassa-desktop/build/compose/binaries/main/msi/*.msi
-            superkassa-desktop/build/compose/binaries/main/deb/*.deb
-            superkassa-desktop/build/compose/binaries/main/dmg/*.dmg
+            superkassa-desktop/desktopApp/build/compose/binaries/main/msi/*.msi
+            superkassa-desktop/desktopApp/build/compose/binaries/main/deb/*.deb
+            superkassa-desktop/desktopApp/build/compose/binaries/main/dmg/*.dmg
           if-no-files-found: error
 
   # Выпуск с готовыми установщиками.
