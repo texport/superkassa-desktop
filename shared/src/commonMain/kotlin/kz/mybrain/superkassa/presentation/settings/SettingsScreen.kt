@@ -15,10 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.adaptive.CardColumns
-import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.adaptive.CardColumns
+import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 
 /**
  * Настройки — один экран на всё приложение.

@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.RecordCount
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.cabinet.recordTitle
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsRecordTexts
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.fill

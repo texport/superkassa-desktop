@@ -12,14 +12,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.picker.MenuChip
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.cabinet.places.PlaceOrder
 import kz.mybrain.superkassa.presentation.cabinet.places.PlaceSieve
 import kz.mybrain.superkassa.presentation.cabinet.recordTitle
-import kz.mybrain.superkassa.presentation.common.picker.MenuChip
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

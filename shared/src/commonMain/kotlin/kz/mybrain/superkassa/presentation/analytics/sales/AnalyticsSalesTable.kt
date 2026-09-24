@@ -17,6 +17,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import kz.mybrain.superkassa.designsystem.list.MoreRow
+import kz.mybrain.superkassa.designsystem.table.TableColumn
+import kz.mybrain.superkassa.designsystem.table.TableLine
+import kz.mybrain.superkassa.designsystem.table.TableWidths
+import kz.mybrain.superkassa.designsystem.text.NumberText
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.AnalyticsLayout
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
 import kz.mybrain.superkassa.domain.analytics.model.SalesUnit
 import kz.mybrain.superkassa.presentation.analytics.common.HeadCell
 import kz.mybrain.superkassa.presentation.analytics.common.LineDivider
@@ -24,16 +34,6 @@ import kz.mybrain.superkassa.presentation.analytics.common.PageTable
 import kz.mybrain.superkassa.presentation.analytics.common.RowCell
 import kz.mybrain.superkassa.presentation.analytics.common.SumCell
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.Footnote
-import kz.mybrain.superkassa.presentation.common.list.MoreRow
-import kz.mybrain.superkassa.presentation.common.table.TableColumn
-import kz.mybrain.superkassa.presentation.common.table.TableLine
-import kz.mybrain.superkassa.presentation.common.table.TableWidths
-import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.size.TableColumns
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 

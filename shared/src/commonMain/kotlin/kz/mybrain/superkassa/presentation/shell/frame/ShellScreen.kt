@@ -15,12 +15,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
+import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
-import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
-import kz.mybrain.superkassa.presentation.common.keyboard.SystemBack
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer

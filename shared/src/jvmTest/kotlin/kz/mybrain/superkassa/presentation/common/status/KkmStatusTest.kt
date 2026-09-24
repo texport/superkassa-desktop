@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.common.status
 
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.designsystem.status.StatusTone
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

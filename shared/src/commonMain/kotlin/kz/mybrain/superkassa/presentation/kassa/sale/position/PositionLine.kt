@@ -2,10 +2,10 @@ package kz.mybrain.superkassa.presentation.kassa.sale.position
 
 import androidx.compose.runtime.Composable
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 
 /** Из чего сложилась строка: количество, цена за единицу, ставка и скидка. */

@@ -7,9 +7,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextOverflow
-import kz.mybrain.superkassa.presentation.common.section.Collapsible
-import kz.mybrain.superkassa.presentation.common.section.SectionHeader
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.section.Collapsible
+import kz.mybrain.superkassa.designsystem.section.SectionHeader
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 
 /**
  * Заголовок карточки под картой.

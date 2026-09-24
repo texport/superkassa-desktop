@@ -1,11 +1,11 @@
 package kz.mybrain.superkassa.presentation.analytics.map
 
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.Placement
 import kz.mybrain.superkassa.domain.analytics.model.placement
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.analytics.SieveTexts
 
 /**

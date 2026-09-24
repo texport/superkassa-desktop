@@ -10,12 +10,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.common.field.SearchField
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.size.fieldLabelReserve
+import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.field.SearchField
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.size.fieldLabelReserve
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**

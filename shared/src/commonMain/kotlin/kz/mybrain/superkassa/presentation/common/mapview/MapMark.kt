@@ -22,9 +22,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kotlin.math.roundToInt
 
 /**

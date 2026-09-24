@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
 import kotlin.test.Test
 import kotlin.test.assertFalse

@@ -8,13 +8,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.list.RecordRow
+import kz.mybrain.superkassa.designsystem.list.ScrollableList
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.presentation.cabinet.component.registerTitle
-import kz.mybrain.superkassa.presentation.common.list.RecordRow
-import kz.mybrain.superkassa.presentation.common.list.ScrollableList
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

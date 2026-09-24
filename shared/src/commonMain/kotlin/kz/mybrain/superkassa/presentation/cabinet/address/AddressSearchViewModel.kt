@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.component.askableQuery
 import kz.mybrain.superkassa.presentation.cabinet.value
-import kz.mybrain.superkassa.presentation.theme.motion.Durations
 
 /**
  * Подбор адреса в государственном регистре по шагам.

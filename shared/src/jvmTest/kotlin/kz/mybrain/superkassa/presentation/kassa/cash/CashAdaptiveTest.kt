@@ -4,12 +4,12 @@ import kz.mybrain.superkassa.KassaExtremes.Case
 import kz.mybrain.superkassa.KassaProbe
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.KassaWindow
+import kz.mybrain.superkassa.designsystem.theme.size.CardGrid
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.theme.size.CardGrid
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import kotlin.test.Test

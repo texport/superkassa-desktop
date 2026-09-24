@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.Typeface
-import kz.mybrain.superkassa.presentation.theme.color.Accent
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.Typeface
+import kz.mybrain.superkassa.designsystem.theme.color.Accent
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue

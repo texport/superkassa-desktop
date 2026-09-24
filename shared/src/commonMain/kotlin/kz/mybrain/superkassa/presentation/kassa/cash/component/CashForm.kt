@@ -10,15 +10,15 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.button.FieldButton
+import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashDecision
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashMove
-import kz.mybrain.superkassa.presentation.common.button.FieldButton
-import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.cash.CashActions
 import kz.mybrain.superkassa.presentation.kassa.cash.CashUiState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 
 /**

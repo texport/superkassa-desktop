@@ -15,14 +15,14 @@ import io.ktor.http.headersOf
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.eds.NcaFake
 import kz.mybrain.superkassa.data.eds.NcaReply
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.company.actions
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
 import kz.mybrain.superkassa.presentation.cabinet.signingRig
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File

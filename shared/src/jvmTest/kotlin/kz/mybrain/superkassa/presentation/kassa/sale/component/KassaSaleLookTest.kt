@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.payment.PaymentSplit
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
@@ -23,7 +24,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.shell.frame.MessageEffect
 import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

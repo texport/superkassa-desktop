@@ -5,6 +5,9 @@ import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaExtremes
 import kz.mybrain.superkassa.KassaProbe
 import kz.mybrain.superkassa.KassaWindow
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.label
 import kz.mybrain.superkassa.presentation.kassa.cash.CashContent
 import kz.mybrain.superkassa.presentation.kassa.cash.cashModel
@@ -17,9 +20,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.sale
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardContent
 import kz.mybrain.superkassa.presentation.shift.dashboard.dashboardModel
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.presentation.words.kassa.action
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

@@ -3,10 +3,10 @@ package kz.mybrain.superkassa.presentation.analytics.record
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.status.toneColor
 import kz.mybrain.superkassa.domain.analytics.model.RecordCount
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
-import kz.mybrain.superkassa.presentation.common.status.toneColor
 
 /**
  * Как смысл учёта показывается на вкладке: число и цвет.

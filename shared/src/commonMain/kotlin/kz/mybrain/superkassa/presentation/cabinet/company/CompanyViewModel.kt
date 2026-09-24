@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.domain.cabinet.model.OKED_PAGE
 import kz.mybrain.superkassa.domain.cabinet.model.Oked
 import kz.mybrain.superkassa.domain.cabinet.model.OkedEntry
@@ -20,7 +21,6 @@ import kz.mybrain.superkassa.presentation.cabinet.cabinetMessage
 import kz.mybrain.superkassa.presentation.cabinet.component.askableQuery
 import kz.mybrain.superkassa.presentation.cabinet.problem
 import kz.mybrain.superkassa.presentation.cabinet.value
-import kz.mybrain.superkassa.presentation.theme.motion.Durations
 
 /**
  * Компания владельца: карточка и виды деятельности.

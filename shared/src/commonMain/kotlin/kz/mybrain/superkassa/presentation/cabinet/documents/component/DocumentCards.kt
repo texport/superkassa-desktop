@@ -6,6 +6,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.section.DetailLine
+import kz.mybrain.superkassa.designsystem.section.MinorSumLine
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovementDetails
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReportDetails
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
@@ -15,13 +21,7 @@ import kz.mybrain.superkassa.presentation.cabinet.documents.cabinetState
 import kz.mybrain.superkassa.presentation.cabinet.documents.documentTitle
 import kz.mybrain.superkassa.presentation.common.document.JournalDelivery
 import kz.mybrain.superkassa.presentation.common.document.JournalDeliveryChip
-import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.section.DetailLine
-import kz.mybrain.superkassa.presentation.common.section.MinorSumLine
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

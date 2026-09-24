@@ -15,20 +15,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
+import kz.mybrain.superkassa.designsystem.section.CollapsibleSection
+import kz.mybrain.superkassa.designsystem.section.ScreenTitle
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
 import kz.mybrain.superkassa.domain.kassa.model.sale.BIN_LENGTH
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
 import kz.mybrain.superkassa.domain.kassa.model.sale.binAccepted
-import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
-import kz.mybrain.superkassa.presentation.common.section.CollapsibleSection
-import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.contact.BuyerContactFields
 import kz.mybrain.superkassa.presentation.kassa.sale.FormActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleActions
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.words.kassa.title
 
 /**

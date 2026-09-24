@@ -9,11 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.SuperkassaTheme
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 

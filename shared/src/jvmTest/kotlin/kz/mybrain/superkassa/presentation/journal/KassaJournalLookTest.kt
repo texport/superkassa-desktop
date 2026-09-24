@@ -8,6 +8,10 @@ import androidx.compose.ui.geometry.Offset
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalHeader
@@ -15,10 +19,6 @@ import kz.mybrain.superkassa.presentation.common.document.JournalRow
 import kz.mybrain.superkassa.presentation.common.document.JournalState
 import kz.mybrain.superkassa.presentation.journal.documents.JournalUiState
 import kz.mybrain.superkassa.presentation.print.preview.component.ReceiptPreview
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.ByteArrayInputStream

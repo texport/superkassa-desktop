@@ -12,10 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.button.FieldButton
+import kz.mybrain.superkassa.designsystem.button.FieldButton
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

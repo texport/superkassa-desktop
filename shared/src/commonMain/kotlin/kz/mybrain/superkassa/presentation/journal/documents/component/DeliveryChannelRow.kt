@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import io.github.texport.superkassa.core.presentation.api.model.delivery.ReceiptDeliveryResponse
 import io.github.texport.superkassa.core.presentation.api.model.delivery.ReceiptDeliveryState
-import kz.mybrain.superkassa.presentation.common.format.Dates
-import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.StatusColors
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.journal.DeliveryTexts

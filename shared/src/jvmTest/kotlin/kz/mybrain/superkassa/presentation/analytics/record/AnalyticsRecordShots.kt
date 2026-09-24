@@ -7,13 +7,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.RecordFleet
 import kz.mybrain.superkassa.presentation.analytics.common.Reading
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.renderMillis
 import kz.mybrain.superkassa.shot
 import kz.mybrain.superkassa.strings.api.Language

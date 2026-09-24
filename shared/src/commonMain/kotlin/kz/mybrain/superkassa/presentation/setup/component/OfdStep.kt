@@ -7,14 +7,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.button.FieldButton
-import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
-import kz.mybrain.superkassa.presentation.common.field.fieldWidth
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.button.FieldButton
+import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
+import kz.mybrain.superkassa.designsystem.field.fieldWidth
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Идентификатор и токен, выданные БФД.

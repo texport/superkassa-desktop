@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.MeasureUnit
 import kz.mybrain.superkassa.presentation.kassa.sale.position.unitTitle

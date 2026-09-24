@@ -7,14 +7,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.SalesView
 import kz.mybrain.superkassa.domain.analytics.model.sellingRegisters
 import kz.mybrain.superkassa.domain.analytics.model.silentRegisters
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.theme.StatusColors
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
 
 /**

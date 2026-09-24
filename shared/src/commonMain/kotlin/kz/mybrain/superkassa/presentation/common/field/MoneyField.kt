@@ -11,10 +11,10 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import kz.mybrain.superkassa.designsystem.keyboard.enterKeyboardActions
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.type.MoneyStyle
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.keyboard.enterKeyboardActions
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 
 /**
  * Поле, в которое кассир набирает число: сумму, количество, долю.

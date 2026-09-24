@@ -9,6 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.CardSequence
+import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetOwner
 import kz.mybrain.superkassa.domain.cabinet.model.CompanyProfile
 import kz.mybrain.superkassa.domain.cabinet.model.Oked
@@ -16,12 +22,6 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.addressIn
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerIdentifier
-import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
-import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

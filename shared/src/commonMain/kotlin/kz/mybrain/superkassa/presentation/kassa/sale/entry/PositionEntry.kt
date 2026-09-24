@@ -8,11 +8,11 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.section.CollapsibleSection
+import kz.mybrain.superkassa.designsystem.section.CollapsibleSection
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Ввод позиции: штрихкодом или руками.

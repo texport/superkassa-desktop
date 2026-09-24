@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.presentation.journal.queue
 
 import io.github.texport.superkassa.core.presentation.api.model.queue.QueueItemResponse
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.journal.model.QueueState
 import kz.mybrain.superkassa.domain.journal.model.failedTasks
 import kz.mybrain.superkassa.domain.journal.model.queueStateOf
@@ -8,8 +10,6 @@ import kz.mybrain.superkassa.domain.journal.model.reason
 import kz.mybrain.superkassa.domain.journal.model.rejectedTasks
 import kz.mybrain.superkassa.domain.journal.model.sentTasks
 import kz.mybrain.superkassa.domain.journal.model.waitingTasks
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

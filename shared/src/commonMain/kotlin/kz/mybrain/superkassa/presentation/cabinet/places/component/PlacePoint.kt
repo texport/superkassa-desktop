@@ -10,21 +10,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.button.FieldButton
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.AddressLevel
 import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.address.AddressSearch
 import kz.mybrain.superkassa.presentation.cabinet.value
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.common.button.FieldButton
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.map.MapPickerDialog
 import kz.mybrain.superkassa.presentation.map.MapPoint
 import kz.mybrain.superkassa.presentation.map.MapRegistry
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 

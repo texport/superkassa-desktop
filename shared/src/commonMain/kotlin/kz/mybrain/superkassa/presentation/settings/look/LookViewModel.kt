@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.Typeface
+import kz.mybrain.superkassa.designsystem.theme.color.Accent
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.domain.workplace.model.LookChoice
 import kz.mybrain.superkassa.presentation.common.model.follow
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.Typeface
-import kz.mybrain.superkassa.presentation.theme.color.Accent
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.strings.api.Language
 
 /**

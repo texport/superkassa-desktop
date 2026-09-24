@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
+import kz.mybrain.superkassa.designsystem.adaptive.CardSequence
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.setup.component.FactoryStepCard
 import kz.mybrain.superkassa.presentation.setup.component.OfdStep
 import kz.mybrain.superkassa.presentation.setup.component.SetupStepCard

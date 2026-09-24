@@ -14,17 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
+import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
+import kz.mybrain.superkassa.designsystem.list.ScrollableList
+import kz.mybrain.superkassa.designsystem.state.EmptyState
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.type.LogStyle
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
-import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
-import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
-import kz.mybrain.superkassa.presentation.common.list.ScrollableList
-import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.theme.StatusColors
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.type.LogStyle
 import kz.mybrain.superkassa.presentation.words.debug.name
 import kz.mybrain.superkassa.strings.api.debug.DebugTexts
 

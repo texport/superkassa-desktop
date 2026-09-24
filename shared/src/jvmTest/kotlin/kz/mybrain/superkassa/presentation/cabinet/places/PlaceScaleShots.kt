@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.applications.ActionKind
 import kz.mybrain.superkassa.presentation.cabinet.applications.ApplicationFields
 import kz.mybrain.superkassa.presentation.cabinet.applications.DeregistrationReason
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

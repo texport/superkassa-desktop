@@ -1,12 +1,12 @@
 package kz.mybrain.superkassa.presentation.analytics.sales
 
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.analytics.model.SalesUnit
 import kz.mybrain.superkassa.domain.analytics.model.orZero
 import kz.mybrain.superkassa.presentation.analytics.common.unitPlace
 import kz.mybrain.superkassa.presentation.analytics.common.unitTitle
-import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /** Что показывает таблица сводки: кассы компании или её торговые точки. */

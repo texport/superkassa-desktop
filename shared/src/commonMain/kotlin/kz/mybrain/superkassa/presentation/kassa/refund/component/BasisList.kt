@@ -12,14 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
+import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.list.RecordRow
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.text.MoneyText
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.document.model.number
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.document.DocumentDeliveryChip
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.list.RecordRow
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.common.text.MoneyText
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
 
 /** Перечень чеков-оснований: список в карточке, выбранный выделен подложкой. */

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.AddressAnswer
 import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.Placement
@@ -13,7 +14,6 @@ import kz.mybrain.superkassa.domain.analytics.model.placement
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSieveBar
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSourceBar
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Разметка раздела карты так, как её собирает `AnalyticsMapScreen`.

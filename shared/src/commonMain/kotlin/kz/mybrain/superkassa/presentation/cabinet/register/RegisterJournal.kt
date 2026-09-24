@@ -3,15 +3,15 @@ package kz.mybrain.superkassa.presentation.cabinet.register
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.list.RecordRow
+import kz.mybrain.superkassa.designsystem.list.stripedAt
+import kz.mybrain.superkassa.designsystem.state.EmptyState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegistrationAction
 import kz.mybrain.superkassa.presentation.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.presentation.cabinet.actionTitle
-import kz.mybrain.superkassa.presentation.common.format.Dates
-import kz.mybrain.superkassa.presentation.common.list.RecordRow
-import kz.mybrain.superkassa.presentation.common.list.stripedAt
-import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

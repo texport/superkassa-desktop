@@ -11,12 +11,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.awaitCancellation
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.setup.model.CabinetRecord
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.cabinet.applications.LocalSignTick
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap

@@ -14,12 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.button.FieldButton
+import kz.mybrain.superkassa.designsystem.field.fieldMinWidth
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
-import kz.mybrain.superkassa.presentation.common.button.FieldButton
-import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
-import kz.mybrain.superkassa.presentation.common.message.InfoTip
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

@@ -10,9 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
-import kz.mybrain.superkassa.presentation.theme.motion.Durations
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf

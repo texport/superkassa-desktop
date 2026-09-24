@@ -7,6 +7,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.SettingsMeasure
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.tenge
@@ -14,8 +16,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.component.ExciseDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.position.PositionDetailsDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.position.VatRate
 import kz.mybrain.superkassa.presentation.kassa.sale.position.details
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File

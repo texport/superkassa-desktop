@@ -7,12 +7,12 @@ import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.local.Preferences
 import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
+import kz.mybrain.superkassa.designsystem.keyboard.EscapeCloses
 import kz.mybrain.superkassa.domain.analytics.model.Placement
 import kz.mybrain.superkassa.domain.analytics.model.PositionSource
 import kz.mybrain.superkassa.domain.map.QuietMaps
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsPinCard
-import kz.mybrain.superkassa.presentation.common.keyboard.EscapeCloses
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.shot
 import java.io.File

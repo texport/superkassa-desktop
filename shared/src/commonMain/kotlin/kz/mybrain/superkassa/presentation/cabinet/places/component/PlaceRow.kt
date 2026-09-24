@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.presentation.cabinet.places.component
 
+import kz.mybrain.superkassa.designsystem.picker.narrowed
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.places.PlaceSieve
@@ -7,7 +8,6 @@ import kz.mybrain.superkassa.presentation.cabinet.places.SievedPlace
 import kz.mybrain.superkassa.presentation.cabinet.places.attentionOf
 import kz.mybrain.superkassa.presentation.cabinet.places.keeps
 import kz.mybrain.superkassa.presentation.cabinet.places.sortedPlaces
-import kz.mybrain.superkassa.presentation.common.picker.narrowed
 import kz.mybrain.superkassa.strings.api.Language
 
 /**

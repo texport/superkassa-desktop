@@ -13,6 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapCases
@@ -20,9 +23,6 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapLocating
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf

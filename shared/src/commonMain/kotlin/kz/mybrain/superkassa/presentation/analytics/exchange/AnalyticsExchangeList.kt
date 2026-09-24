@@ -11,16 +11,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.max
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.table.ScrollingTable
+import kz.mybrain.superkassa.designsystem.table.TableColumn
+import kz.mybrain.superkassa.designsystem.table.TableLine
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
 import kz.mybrain.superkassa.domain.analytics.model.ExchangeAddress
 import kz.mybrain.superkassa.presentation.analytics.common.HeadCell
 import kz.mybrain.superkassa.presentation.analytics.common.RowCell
-import kz.mybrain.superkassa.presentation.common.format.Dates
-import kz.mybrain.superkassa.presentation.common.table.ScrollingTable
-import kz.mybrain.superkassa.presentation.common.table.TableColumn
-import kz.mybrain.superkassa.presentation.common.table.TableLine
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.size.TableColumns
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

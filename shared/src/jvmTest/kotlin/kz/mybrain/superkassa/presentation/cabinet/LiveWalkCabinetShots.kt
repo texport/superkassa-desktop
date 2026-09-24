@@ -13,6 +13,8 @@ import kz.mybrain.superkassa.CabinetStage
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.data.cabinet.CabinetBodies
+import kz.mybrain.superkassa.designsystem.section.CollapsibleCard
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.CompanyProfile
 import kz.mybrain.superkassa.domain.cabinet.model.OKED_PAGE
@@ -24,8 +26,6 @@ import kz.mybrain.superkassa.presentation.cabinet.company.CompanyUiState
 import kz.mybrain.superkassa.presentation.cabinet.company.OkedsCard
 import kz.mybrain.superkassa.presentation.cabinet.company.actions
 import kz.mybrain.superkassa.presentation.cabinet.company.companyViewModel
-import kz.mybrain.superkassa.presentation.common.section.CollapsibleCard
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.viewOf

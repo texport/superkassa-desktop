@@ -3,11 +3,11 @@ package kz.mybrain.superkassa.presentation.settings.kkm
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.theme.StatusColors
 
 /**
  * Режим программирования: в нём ли касса и чем это изменить.

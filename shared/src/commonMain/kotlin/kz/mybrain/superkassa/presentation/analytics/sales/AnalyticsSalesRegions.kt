@@ -14,6 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import kz.mybrain.superkassa.designsystem.table.TableColumn
+import kz.mybrain.superkassa.designsystem.table.TableLine
+import kz.mybrain.superkassa.designsystem.table.TableWidths
+import kz.mybrain.superkassa.designsystem.theme.ChartColors
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.AnalyticsLayout
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
 import kz.mybrain.superkassa.domain.analytics.model.SalesRegion
 import kz.mybrain.superkassa.presentation.analytics.common.CountCell
 import kz.mybrain.superkassa.presentation.analytics.common.HeadCell
@@ -23,15 +32,6 @@ import kz.mybrain.superkassa.presentation.analytics.common.RowCell
 import kz.mybrain.superkassa.presentation.analytics.common.SumCell
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.Footnote
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.table.TableColumn
-import kz.mybrain.superkassa.presentation.common.table.TableLine
-import kz.mybrain.superkassa.presentation.common.table.TableWidths
-import kz.mybrain.superkassa.presentation.theme.ChartColors
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.size.TableColumns
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
 
 /**

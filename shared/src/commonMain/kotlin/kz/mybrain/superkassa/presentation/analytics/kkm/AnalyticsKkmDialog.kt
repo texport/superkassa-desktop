@@ -21,18 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kz.mybrain.superkassa.designsystem.keyboard.onEscape
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.motion.Durations
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.presentation.analytics.common.shiftPlate
 import kz.mybrain.superkassa.presentation.analytics.map.MapWords
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSales
 import kz.mybrain.superkassa.presentation.analytics.sales.kkmSalesViewModel
-import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.motion.Durations
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

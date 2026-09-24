@@ -2,6 +2,9 @@ package kz.mybrain.superkassa.presentation.analytics.sales
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.SalesView
 import kz.mybrain.superkassa.domain.analytics.model.overviewOf
 import kz.mybrain.superkassa.domain.analytics.model.regionsOf
@@ -10,9 +13,6 @@ import kz.mybrain.superkassa.presentation.analytics.sales.chart.SalesShares
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.dayBars
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.hourBars
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.salesShares
-import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.common.EnumStrings

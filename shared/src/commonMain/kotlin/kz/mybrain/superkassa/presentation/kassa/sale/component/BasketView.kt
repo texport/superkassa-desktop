@@ -16,16 +16,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.list.ScrollableList
+import kz.mybrain.superkassa.designsystem.state.EmptyState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
-import kz.mybrain.superkassa.presentation.common.list.ScrollableList
-import kz.mybrain.superkassa.presentation.common.state.EmptyState
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.PositionDetailsDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.position.PositionRow
 import kz.mybrain.superkassa.presentation.kassa.sale.position.details
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Корзина чека на экране.

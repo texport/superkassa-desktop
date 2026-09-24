@@ -2,14 +2,14 @@ package kz.mybrain.superkassa.presentation.analytics.map
 
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.status.toneColor
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.domain.cabinet.model.kkmRecord
 import kz.mybrain.superkassa.presentation.cabinet.statusColor
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
-import kz.mybrain.superkassa.presentation.common.status.toneColor
-import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.refusal
 import kotlin.test.Test
 import kotlin.test.assertEquals

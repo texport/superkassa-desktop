@@ -15,16 +15,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.section.DetailLine
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegistrationCard
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.statusTitle
-import kz.mybrain.superkassa.presentation.common.format.Dates
-import kz.mybrain.superkassa.presentation.common.section.DetailLine
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

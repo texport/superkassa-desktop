@@ -12,9 +12,9 @@ import androidx.compose.ui.unit.dp
 import kz.mybrain.superkassa.CabinetStage
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.viewOf

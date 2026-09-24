@@ -4,12 +4,12 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.Trilin
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.asTimeZone
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.period.dayRange
 import kz.mybrain.superkassa.presentation.journal.documents.documentTypeTitle
 import kz.mybrain.superkassa.presentation.journal.documents.documentTypesIn
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.documentAmount
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.time.Instant

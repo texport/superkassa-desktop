@@ -7,11 +7,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

@@ -4,8 +4,8 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.vector.ImageVector
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.strings.api.common.SectionStrings
 
 /**

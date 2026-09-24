@@ -12,11 +12,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
-import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
+import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
+import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.common.AppStrings
 
 /**

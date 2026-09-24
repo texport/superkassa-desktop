@@ -12,13 +12,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.state.EmptyState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCard
 import kz.mybrain.superkassa.presentation.cabinet.register.RegisterDetails
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

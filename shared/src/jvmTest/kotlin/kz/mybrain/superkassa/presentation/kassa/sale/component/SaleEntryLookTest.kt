@@ -8,12 +8,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.entry.PositionEntryCard
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

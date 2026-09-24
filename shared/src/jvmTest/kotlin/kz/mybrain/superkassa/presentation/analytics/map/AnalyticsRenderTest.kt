@@ -7,6 +7,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsTrouble
 import kz.mybrain.superkassa.domain.analytics.model.ExchangeAddress
@@ -24,7 +25,6 @@ import kz.mybrain.superkassa.presentation.common.mapview.CITY_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapMark
 import kz.mybrain.superkassa.presentation.common.mapview.MapMarks
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

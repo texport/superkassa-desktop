@@ -8,11 +8,11 @@ import androidx.compose.ui.Modifier
 import io.ktor.http.HttpStatusCode
 import kz.mybrain.superkassa.CabinetStage
 import kz.mybrain.superkassa.StubReply
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.CashRegisterModel
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlaceRef
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.refusal
 import kz.mybrain.superkassa.shot
 import kz.mybrain.superkassa.strings.api.Language

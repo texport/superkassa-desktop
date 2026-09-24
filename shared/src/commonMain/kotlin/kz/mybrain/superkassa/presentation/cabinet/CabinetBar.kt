@@ -5,13 +5,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.cabinet.component.cabinetHead
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerLine
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.section.AppTopBar
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

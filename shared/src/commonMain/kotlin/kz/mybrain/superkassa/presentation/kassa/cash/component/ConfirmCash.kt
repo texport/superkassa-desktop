@@ -9,13 +9,13 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashAttempt
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashHoldup
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashMove
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashRefusal
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashRules
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.kassa.DrawerTexts
 

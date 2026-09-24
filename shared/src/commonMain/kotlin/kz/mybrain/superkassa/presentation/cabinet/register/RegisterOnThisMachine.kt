@@ -15,6 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
+import kz.mybrain.superkassa.designsystem.section.SubsectionTitle
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kkm.model.displayName
 import kz.mybrain.superkassa.domain.kkm.model.isBlocked
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
@@ -22,13 +26,9 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.register.adopt.AdoptRegisterDialog
 import kz.mybrain.superkassa.presentation.cabinet.register.adopt.adoptViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.section.SubsectionTitle
-import kz.mybrain.superkassa.presentation.common.status.Chip
 import kz.mybrain.superkassa.presentation.common.status.kkmStateColor
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.shell.section.LocalSectionSwitch
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts

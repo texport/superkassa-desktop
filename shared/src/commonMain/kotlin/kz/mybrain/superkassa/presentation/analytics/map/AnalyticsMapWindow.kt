@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
+import kz.mybrain.superkassa.designsystem.state.EmptyState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.analytics.map.component.MapLegend
 import kz.mybrain.superkassa.presentation.analytics.map.component.MapTally
 import kz.mybrain.superkassa.presentation.analytics.map.component.emptyMapReason
@@ -20,9 +23,6 @@ import kz.mybrain.superkassa.presentation.analytics.map.component.mapCount
 import kz.mybrain.superkassa.presentation.common.mapview.MapControls
 import kz.mybrain.superkassa.presentation.common.mapview.MapMarks
 import kz.mybrain.superkassa.presentation.common.mapview.MapView
-import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Само окно карты касс: плитки, ярлычки мест и управление в углу.
@@ -97,7 +97,7 @@ internal fun MapWindow(
  * Легенда стояла в правом нижнем, и в низкой карте кнопка «Во весь экран»
  * ложилась на её угол. Левый нижний занят объяснением о неприехавших
  * плитках. Столбик слева и кнопки справа не встречаются, пока карта
- * не уже [kz.mybrain.superkassa.presentation.theme.size.Panes.mapAndDetails].
+ * не уже [kz.mybrain.superkassa.designsystem.theme.size.Panes.mapAndDetails].
  */
 @Composable
 private fun MapOverlay(parts: MapParts, canvas: IntSize) {

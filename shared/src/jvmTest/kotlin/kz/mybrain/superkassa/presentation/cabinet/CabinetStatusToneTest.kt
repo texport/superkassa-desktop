@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
+import kz.mybrain.superkassa.designsystem.status.StatusTone
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

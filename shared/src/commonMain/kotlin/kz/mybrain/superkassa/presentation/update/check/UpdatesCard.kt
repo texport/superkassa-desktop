@@ -4,18 +4,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.button.BusyButton
+import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.picker.SwitchRow
+import kz.mybrain.superkassa.designsystem.section.FactLines
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.update.model.UpdateOutcome
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.common.button.BusyButton
-import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
-import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.picker.SwitchRow
-import kz.mybrain.superkassa.presentation.common.section.FactLines
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 

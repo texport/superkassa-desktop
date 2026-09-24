@@ -11,17 +11,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
-import kz.mybrain.superkassa.presentation.common.dialog.DialogBody
-import kz.mybrain.superkassa.presentation.common.dialog.DialogTitle
-import kz.mybrain.superkassa.presentation.common.keyboard.CloseOnEscape
-import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.common.state.LoadingState
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.dialog.DialogBody
+import kz.mybrain.superkassa.designsystem.dialog.DialogTitle
+import kz.mybrain.superkassa.designsystem.keyboard.CloseOnEscape
+import kz.mybrain.superkassa.designsystem.state.EmptyState
+import kz.mybrain.superkassa.designsystem.state.LoadingState
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.journal.documents.JournalActions
 import kz.mybrain.superkassa.presentation.journal.documents.ReceiptDeliveryUi
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.strings.api.journal.DeliveryTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 

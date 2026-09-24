@@ -10,15 +10,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import kz.mybrain.superkassa.designsystem.button.BusyButton
+import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.ApplicationStage
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.register.RegisterView
 import kz.mybrain.superkassa.presentation.cabinet.register.availableActions
-import kz.mybrain.superkassa.presentation.common.button.BusyButton
-import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

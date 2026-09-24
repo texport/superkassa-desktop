@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import kz.mybrain.superkassa.presentation.common.dialog.DialogBody
-import kz.mybrain.superkassa.presentation.common.dialog.DialogTitle
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.dialog.DialogBody
+import kz.mybrain.superkassa.designsystem.dialog.DialogTitle
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 

@@ -8,6 +8,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.setup.model.KkmSetupDraft
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
@@ -16,8 +18,6 @@ import kz.mybrain.superkassa.presentation.cabinet.enroll.AddRegisterDialog
 import kz.mybrain.superkassa.presentation.cabinet.enroll.FactoryStamp
 import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 import kz.mybrain.superkassa.strings.api.textsOf

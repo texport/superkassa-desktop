@@ -9,10 +9,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.section.AppTopBar
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.textsOf
 

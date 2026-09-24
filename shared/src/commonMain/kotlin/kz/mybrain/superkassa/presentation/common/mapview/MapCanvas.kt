@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kotlin.math.roundToInt
 
 /** Само полотно: плитки, своё место и метка выбранной точки. */

@@ -5,7 +5,7 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import kz.mybrain.superkassa.presentation.theme.motion.Durations
+import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 
 /**
  * Плавный переход карты к названной цели.

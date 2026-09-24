@@ -17,16 +17,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import io.github.texport.superkassa.core.presentation.api.model.receipt.ReceiptItemView
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.type.MoneyStyle
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.position.PositionDetailsDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.position.details
 import kz.mybrain.superkassa.presentation.kassa.sale.position.vatRatesOf
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
 
 /**

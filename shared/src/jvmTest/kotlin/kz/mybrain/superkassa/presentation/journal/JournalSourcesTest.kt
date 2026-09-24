@@ -4,6 +4,7 @@ import io.github.texport.superkassa.core.domain.api.model.common.Decimal
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
 import kotlinx.datetime.LocalDate
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
 import kz.mybrain.superkassa.kassa.CoreScene
@@ -18,7 +19,6 @@ import kz.mybrain.superkassa.presentation.common.document.select
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
 import kz.mybrain.superkassa.presentation.journal.documents.journalEntriesOf
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.refusal
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

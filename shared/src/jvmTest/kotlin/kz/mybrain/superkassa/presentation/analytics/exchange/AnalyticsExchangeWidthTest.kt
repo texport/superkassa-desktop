@@ -9,13 +9,13 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.text.TextLayoutResult
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.domain.analytics.model.ExchangeAddress
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
-import kz.mybrain.superkassa.presentation.theme.TextScale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kz.mybrain.superkassa.presentation.theme.Look as Scale
+import kz.mybrain.superkassa.designsystem.theme.Look as Scale
 
 /**
  * Адрес и время обмена читаются целиком в любом окне и на любой ступени шрифта.

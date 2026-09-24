@@ -2,6 +2,8 @@ package kz.mybrain.superkassa.presentation.journal.documents
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.document.model.hasOwnAmount
 import kz.mybrain.superkassa.domain.document.model.number
 import kz.mybrain.superkassa.domain.document.model.printable
@@ -11,9 +13,7 @@ import kz.mybrain.superkassa.domain.kassa.model.Tenge
 import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalType
 import kz.mybrain.superkassa.presentation.common.document.deliveryOf
-import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.common.AppStrings
 import kz.mybrain.superkassa.strings.api.textsOf

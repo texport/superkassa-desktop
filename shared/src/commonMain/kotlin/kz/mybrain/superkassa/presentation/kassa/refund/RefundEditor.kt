@@ -2,12 +2,12 @@ package kz.mybrain.superkassa.presentation.kassa.refund
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.document.model.number
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.presentation.common.model.Busy
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 
 /**
  * Сумма и отметки возврата по выбранному чеку.

@@ -1,0 +1,9 @@
+# Поэлементные размеры, с которыми код пришёл к проверке одной сетки.
+#
+# Долг, снимается при переводе компонента на раскладку: ширина из колонки
+# (fillMaxWidth) или доля ряда (weight). ElementSizesTest падает и на новое
+# место, и на исправленное, но не вычеркнутое.
+#
+# Формат: <файл от kz/mybrain/superkassa> -> <токен>
+designsystem/section/CounterTile.kt -> Sizes.counterTile
+designsystem/section/FactLines.kt -> Sizes.fieldForm

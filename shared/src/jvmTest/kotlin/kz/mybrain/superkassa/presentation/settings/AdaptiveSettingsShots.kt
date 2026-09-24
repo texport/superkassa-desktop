@@ -15,6 +15,10 @@ import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.SettingsMeasure
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
+import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.shell.WindowModels
@@ -23,10 +27,6 @@ import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
-import kz.mybrain.superkassa.presentation.theme.size.ContentWidths
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File

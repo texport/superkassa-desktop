@@ -14,20 +14,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import kz.mybrain.superkassa.presentation.common.list.stripedAt
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.common.table.ScrollingTable
-import kz.mybrain.superkassa.presentation.common.table.TableColumn
-import kz.mybrain.superkassa.presentation.common.table.TableLine
-import kz.mybrain.superkassa.presentation.common.table.TableWidths
-import kz.mybrain.superkassa.presentation.common.table.grownColumns
-import kz.mybrain.superkassa.presentation.common.table.leastWidths
-import kz.mybrain.superkassa.presentation.common.text.MoneyText
-import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.HistoryLayout
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.designsystem.list.stripedAt
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.table.ScrollingTable
+import kz.mybrain.superkassa.designsystem.table.TableColumn
+import kz.mybrain.superkassa.designsystem.table.TableLine
+import kz.mybrain.superkassa.designsystem.table.TableWidths
+import kz.mybrain.superkassa.designsystem.table.grownColumns
+import kz.mybrain.superkassa.designsystem.table.leastWidths
+import kz.mybrain.superkassa.designsystem.text.MoneyText
+import kz.mybrain.superkassa.designsystem.text.NumberText
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.HistoryLayout
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**

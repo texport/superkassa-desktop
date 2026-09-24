@@ -4,15 +4,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
+import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.kassa.model.Percent
 import kz.mybrain.superkassa.domain.kassa.model.Tenge
 import kz.mybrain.superkassa.domain.kassa.model.sale.Adjustment
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.words.kassa.sign
 import kz.mybrain.superkassa.strings.api.fill
 

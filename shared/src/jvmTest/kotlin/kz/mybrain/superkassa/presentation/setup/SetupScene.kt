@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnvironmentResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
@@ -20,7 +21,6 @@ import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationModel
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 

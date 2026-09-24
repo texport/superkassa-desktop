@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.kassa.model.decimal
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

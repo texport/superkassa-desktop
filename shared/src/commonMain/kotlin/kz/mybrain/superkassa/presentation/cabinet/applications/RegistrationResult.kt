@@ -3,11 +3,11 @@ package kz.mybrain.superkassa.presentation.cabinet.applications
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.section.DetailLine
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.presentation.cabinet.cabinetMessage
 import kz.mybrain.superkassa.presentation.cabinet.register.noActionsReason
 import kz.mybrain.superkassa.presentation.cabinet.statusTitle
-import kz.mybrain.superkassa.presentation.common.section.DetailLine
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /*

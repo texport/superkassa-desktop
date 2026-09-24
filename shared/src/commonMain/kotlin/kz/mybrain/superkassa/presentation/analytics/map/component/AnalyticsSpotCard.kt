@@ -12,14 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.designsystem.list.RecordRow
+import kz.mybrain.superkassa.designsystem.list.ScrollableList
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
 import kz.mybrain.superkassa.presentation.analytics.common.KkmChips
 import kz.mybrain.superkassa.presentation.analytics.map.KkmGroup
-import kz.mybrain.superkassa.presentation.common.list.RecordRow
-import kz.mybrain.superkassa.presentation.common.list.ScrollableList
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

@@ -24,16 +24,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import kz.mybrain.superkassa.presentation.common.image.encodedImage
-import kz.mybrain.superkassa.presentation.common.image.zoomByWheel
-import kz.mybrain.superkassa.presentation.common.keyboard.CloseOnEscape
-import kz.mybrain.superkassa.presentation.common.list.ColumnScrollbar
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.size.Tape
+import kz.mybrain.superkassa.designsystem.image.encodedImage
+import kz.mybrain.superkassa.designsystem.image.zoomByWheel
+import kz.mybrain.superkassa.designsystem.keyboard.CloseOnEscape
+import kz.mybrain.superkassa.designsystem.list.ColumnScrollbar
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.size.Tape
 
 /**
  * Печатная форма документа.

@@ -13,14 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import kz.mybrain.superkassa.designsystem.dialog.FormDialog
+import kz.mybrain.superkassa.designsystem.keyboard.onEnter
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.domain.signin.model.Pin
-import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
-import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.print.preview.PaperActions
 import kz.mybrain.superkassa.presentation.print.preview.PrintUiState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 
 /**
  * Печатная форма поверх всего, что открыто.

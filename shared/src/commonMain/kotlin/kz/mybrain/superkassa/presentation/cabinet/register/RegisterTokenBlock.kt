@@ -8,12 +8,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import kz.mybrain.superkassa.designsystem.button.BusyButton
+import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
+import kz.mybrain.superkassa.designsystem.section.DetailLine
+import kz.mybrain.superkassa.designsystem.section.SubsectionTitle
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
-import kz.mybrain.superkassa.presentation.common.button.BusyButton
-import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
-import kz.mybrain.superkassa.presentation.common.section.DetailLine
-import kz.mybrain.superkassa.presentation.common.section.SubsectionTitle
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

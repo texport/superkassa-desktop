@@ -2,11 +2,11 @@ package kz.mybrain.superkassa.presentation.setup.component
 
 import androidx.compose.runtime.Composable
 import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnvironmentResponse
+import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
-import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.words.common.of
 
 /**

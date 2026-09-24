@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.presentation.analytics
 
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
-import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
+import kz.mybrain.superkassa.designsystem.theme.size.AnalyticsLayout
 import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.Test
 import kotlin.test.assertEquals

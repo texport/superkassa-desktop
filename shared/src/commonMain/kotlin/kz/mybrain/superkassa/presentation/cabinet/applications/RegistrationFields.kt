@@ -7,11 +7,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.component.PlaceOptions
 import kz.mybrain.superkassa.presentation.cabinet.component.PlacePicker
-import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

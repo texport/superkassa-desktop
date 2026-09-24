@@ -16,14 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.kkm.model.orgAddress
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.common.message.InfoTip
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.common.AppStrings
 import kz.mybrain.superkassa.strings.api.textsOf
 

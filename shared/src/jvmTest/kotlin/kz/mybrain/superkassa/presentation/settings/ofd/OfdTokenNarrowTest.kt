@@ -7,7 +7,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File

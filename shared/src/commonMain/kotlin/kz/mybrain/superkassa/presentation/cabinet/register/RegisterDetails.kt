@@ -8,6 +8,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
+import kz.mybrain.superkassa.designsystem.section.CollapsibleCard
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegistrationAction
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
@@ -21,11 +25,7 @@ import kz.mybrain.superkassa.presentation.cabinet.register.component.TechnicalHe
 import kz.mybrain.superkassa.presentation.cabinet.register.component.disagreeing
 import kz.mybrain.superkassa.presentation.cabinet.register.component.stateAnswers
 import kz.mybrain.superkassa.presentation.cabinet.register.component.stateClaims
-import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.section.CollapsibleCard
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

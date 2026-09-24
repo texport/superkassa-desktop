@@ -10,17 +10,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.field.SearchField
+import kz.mybrain.superkassa.designsystem.field.fieldMinWidth
+import kz.mybrain.superkassa.designsystem.picker.MenuChip
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.analytics.map.KkmMark
 import kz.mybrain.superkassa.presentation.analytics.map.MapSieve
 import kz.mybrain.superkassa.presentation.analytics.map.SievePlace
 import kz.mybrain.superkassa.presentation.cabinet.recordTitle
-import kz.mybrain.superkassa.presentation.common.field.SearchField
-import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
-import kz.mybrain.superkassa.presentation.common.picker.MenuChip
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

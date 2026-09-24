@@ -5,13 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.tip.Tip
 import kz.mybrain.superkassa.domain.document.model.DeliveryCodes
 import kz.mybrain.superkassa.domain.document.model.SHIFT_OPEN_DOCUMENT
-import kz.mybrain.superkassa.presentation.common.message.Tip
-import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.StatusColors
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.common.StatusStrings
 
 /**

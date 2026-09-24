@@ -18,12 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
+import kz.mybrain.superkassa.designsystem.keyboard.CloseOnEscape
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.analytics.map.component.UnderMap
-import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
-import kz.mybrain.superkassa.presentation.common.keyboard.CloseOnEscape
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

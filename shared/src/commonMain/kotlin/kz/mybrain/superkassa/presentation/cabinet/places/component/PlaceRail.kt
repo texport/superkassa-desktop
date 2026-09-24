@@ -13,9 +13,9 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import kz.mybrain.superkassa.designsystem.list.ScrollableList
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.cabinet.component.registerTitle
-import kz.mybrain.superkassa.presentation.common.list.ScrollableList
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 
 /**
  * Свёрнутая колонка торговых точек.

@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.cabinet.enroll
 
+import kz.mybrain.superkassa.designsystem.picker.narrowed
 import kz.mybrain.superkassa.domain.cabinet.model.KkmModel
-import kz.mybrain.superkassa.presentation.common.picker.narrowed
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

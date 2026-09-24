@@ -1,5 +1,7 @@
 package kz.mybrain.superkassa.presentation.cabinet.documents
 
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovement
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
@@ -8,9 +10,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.RowTarget
 import kz.mybrain.superkassa.presentation.cabinet.statusTitle
 import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalState
-import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

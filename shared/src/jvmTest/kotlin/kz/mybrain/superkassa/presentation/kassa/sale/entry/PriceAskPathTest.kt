@@ -16,11 +16,12 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.app
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleViewModel
@@ -28,7 +29,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.measureUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest

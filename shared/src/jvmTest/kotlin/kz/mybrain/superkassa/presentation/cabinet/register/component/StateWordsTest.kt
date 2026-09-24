@@ -1,11 +1,11 @@
 package kz.mybrain.superkassa.presentation.cabinet.register.component
 
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
 import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.answer
 import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.bfd
 import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.cabinetRegister
 import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.node
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

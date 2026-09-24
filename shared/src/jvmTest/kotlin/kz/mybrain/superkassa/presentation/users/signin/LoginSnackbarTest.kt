@@ -2,13 +2,13 @@ package kz.mybrain.superkassa.presentation.users.signin
 
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
 import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.File

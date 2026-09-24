@@ -11,6 +11,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.Placement
 import kz.mybrain.superkassa.domain.analytics.model.placement
 import kz.mybrain.superkassa.presentation.analytics.common.analyticsScreenState
@@ -23,9 +25,7 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapFold
 import kz.mybrain.superkassa.presentation.common.mapview.MapLocating
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

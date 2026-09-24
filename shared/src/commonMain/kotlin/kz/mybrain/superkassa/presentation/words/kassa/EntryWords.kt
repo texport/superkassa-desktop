@@ -1,10 +1,10 @@
 package kz.mybrain.superkassa.presentation.words.kassa
 
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.kassa.model.entry.DraftProblem
 import kz.mybrain.superkassa.domain.kassa.model.entry.LookupProblem
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
 import kz.mybrain.superkassa.domain.kassa.model.sale.ExciseRefusal
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.common.SaleStrings
 import kz.mybrain.superkassa.strings.api.kassa.SaleTexts

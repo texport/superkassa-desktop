@@ -4,14 +4,14 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.section.HeroSumLine
+import kz.mybrain.superkassa.designsystem.section.MinorSumLine
+import kz.mybrain.superkassa.designsystem.section.NamedSumRow
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceiptDetails
 import kz.mybrain.superkassa.presentation.cabinet.documents.paymentTitle
 import kz.mybrain.superkassa.presentation.cabinet.documents.taxTitle
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.section.HeroSumLine
-import kz.mybrain.superkassa.presentation.common.section.MinorSumLine
-import kz.mybrain.superkassa.presentation.common.section.NamedSumRow
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

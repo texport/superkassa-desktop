@@ -10,21 +10,21 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.list.RecordRow
+import kz.mybrain.superkassa.designsystem.section.DetailLine
+import kz.mybrain.superkassa.designsystem.section.SectionTitle
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RegistrationCardVersion
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegistrationCard
 import kz.mybrain.superkassa.presentation.cabinet.actionTitle
 import kz.mybrain.superkassa.presentation.cabinet.cardFieldTitle
-import kz.mybrain.superkassa.presentation.common.format.Dates
-import kz.mybrain.superkassa.presentation.common.list.RecordRow
-import kz.mybrain.superkassa.presentation.common.section.DetailLine
-import kz.mybrain.superkassa.presentation.common.section.SectionTitle
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.theme.StatusColors
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

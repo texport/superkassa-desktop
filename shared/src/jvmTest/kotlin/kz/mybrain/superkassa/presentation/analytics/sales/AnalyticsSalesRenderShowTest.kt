@@ -4,13 +4,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.color.Accent
+import kz.mybrain.superkassa.designsystem.theme.color.LightStatuses
+import kz.mybrain.superkassa.designsystem.theme.color.schemeOf
 import kz.mybrain.superkassa.domain.analytics.model.SalesDelivery
 import kz.mybrain.superkassa.domain.analytics.model.SalesDeliveryCounts
 import kz.mybrain.superkassa.domain.analytics.model.SalesView
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
 import kz.mybrain.superkassa.presentation.common.mapview.inside
-import kz.mybrain.superkassa.presentation.theme.color.LightScheme
-import kz.mybrain.superkassa.presentation.theme.color.LightStatuses
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 import kotlin.test.Test
@@ -81,7 +82,7 @@ class AnalyticsSalesRenderShowTest {
     }
 
     /** Есть ли в кадре хоть одна точка роли отказа. */
-    private fun refusalInside(png: ByteArray): Boolean = inside(png, LightScheme.error)
+    private fun refusalInside(png: ByteArray): Boolean = inside(png, schemeOf(Accent.Indigo, dark = false).error)
 
     /** То же для цвета доставленного: им красится добрая весть. */
     private fun deliveredInside(png: ByteArray): Boolean = inside(png, LightStatuses.delivered)

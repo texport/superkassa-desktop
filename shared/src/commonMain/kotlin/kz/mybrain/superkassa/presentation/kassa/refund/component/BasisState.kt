@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.kassa.refund.component
 
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.words.kassa.emptyText
 import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
 

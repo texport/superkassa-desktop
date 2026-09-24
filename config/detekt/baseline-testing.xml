@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LongFile:RenderProbe.kt$kz.mybrain.superkassa.RenderProbe.kt</ID>
     <ID>ReturnCount:NcaFake.kt$NcaFake$private fun InputStream.readFrame(): String?</ID>
   </CurrentIssues>
 </SmellBaseline>

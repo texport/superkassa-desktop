@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.SalesView
 import kz.mybrain.superkassa.presentation.analytics.common.KkmChips
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSalesBody
@@ -16,7 +17,6 @@ import kz.mybrain.superkassa.presentation.analytics.sales.SalesLook
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

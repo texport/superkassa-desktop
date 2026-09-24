@@ -3,9 +3,9 @@ package kz.mybrain.superkassa.presentation.cabinet.places
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.ProbeNode
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
 import kz.mybrain.superkassa.presentation.cabinet.places.CabinetPlacesScene.Companion.PLACES
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.size.ContentWidths
 import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.Test
 import kotlin.test.assertEquals

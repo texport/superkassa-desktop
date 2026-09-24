@@ -3,15 +3,15 @@ package kz.mybrain.superkassa.presentation.analytics.sales.chart
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
+import kz.mybrain.superkassa.designsystem.format.Dates
+import kz.mybrain.superkassa.designsystem.format.Times
 import kz.mybrain.superkassa.domain.analytics.model.SalesDay
 import kz.mybrain.superkassa.domain.analytics.model.SalesHour
 import kz.mybrain.superkassa.domain.analytics.model.SalesPayments
 import kz.mybrain.superkassa.domain.analytics.model.SalesSpan
 import kz.mybrain.superkassa.domain.analytics.model.orZero
 import kz.mybrain.superkassa.domain.analytics.model.percentOf
-import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.Times
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
 import kz.mybrain.superkassa.strings.api.common.EnumStrings
 

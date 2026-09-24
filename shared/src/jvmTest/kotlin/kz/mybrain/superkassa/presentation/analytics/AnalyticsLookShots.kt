@@ -5,11 +5,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.domain.analytics.model.RecordFleet
 import kz.mybrain.superkassa.presentation.analytics.record.AnalyticsRecordBody
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSalesBody
 import kz.mybrain.superkassa.presentation.analytics.sales.SalesShowLook
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.shot
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

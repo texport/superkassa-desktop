@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.presentation.analytics.map.component
 
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.Placement
 import kz.mybrain.superkassa.domain.analytics.model.PlacementTrouble
@@ -9,8 +11,6 @@ import kz.mybrain.superkassa.presentation.analytics.map.KkmGroup
 import kz.mybrain.superkassa.presentation.analytics.map.MapParts
 import kz.mybrain.superkassa.presentation.analytics.map.sieved
 import kz.mybrain.superkassa.presentation.common.mapview.MapFold
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

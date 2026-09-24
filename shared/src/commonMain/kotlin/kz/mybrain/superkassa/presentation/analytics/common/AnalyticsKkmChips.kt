@@ -3,16 +3,16 @@ package kz.mybrain.superkassa.presentation.analytics.common
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.status.toneColor
+import kz.mybrain.superkassa.designsystem.theme.StatusColors
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.presentation.analytics.map.KkmMark
 import kz.mybrain.superkassa.presentation.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.presentation.cabinet.statusWords
-import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
-import kz.mybrain.superkassa.presentation.common.status.toneColor
-import kz.mybrain.superkassa.presentation.theme.StatusColors
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

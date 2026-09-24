@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.Windowed
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
 import kz.mybrain.superkassa.kassa.app
@@ -30,7 +31,6 @@ import kz.mybrain.superkassa.presentation.settings.SettingsScreen
 import kz.mybrain.superkassa.presentation.setup.ConnectKkmScreen
 import kz.mybrain.superkassa.presentation.setup.SetupModels
 import kz.mybrain.superkassa.presentation.setup.SetupScene
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 import kotlin.test.Test

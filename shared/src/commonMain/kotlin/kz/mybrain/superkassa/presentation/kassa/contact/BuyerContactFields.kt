@@ -11,12 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.BuyerContact
 import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
-import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.words.kassa.of
 import kz.mybrain.superkassa.strings.api.kassa.contact.BuyerContactTexts
 import kz.mybrain.superkassa.strings.api.textsOf

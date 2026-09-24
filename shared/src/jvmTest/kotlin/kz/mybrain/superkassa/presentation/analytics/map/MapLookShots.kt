@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
@@ -17,7 +18,6 @@ import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsPinCa
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSieveBar
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSpotCard
 import kz.mybrain.superkassa.presentation.common.mapview.MapMarks
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

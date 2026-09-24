@@ -8,6 +8,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.section.CollapsibleSection
+import kz.mybrain.superkassa.designsystem.section.MinorSumLine
+import kz.mybrain.superkassa.designsystem.section.NamedSumRow
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.domain.kassa.model.sale.Adjustment
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
@@ -19,16 +26,9 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.changesOf
 import kz.mybrain.superkassa.domain.kassa.model.sale.discountWrong
 import kz.mybrain.superkassa.domain.kassa.model.sale.markupWrong
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.section.CollapsibleSection
-import kz.mybrain.superkassa.presentation.common.section.MinorSumLine
-import kz.mybrain.superkassa.presentation.common.section.NamedSumRow
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.FormActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.words.kassa.reason
 import kz.mybrain.superkassa.strings.api.textsOf
 

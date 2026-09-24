@@ -6,14 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.document.JournalEmpty
 import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalType
 import kz.mybrain.superkassa.presentation.common.document.JournalView
 import kz.mybrain.superkassa.presentation.common.document.presentIn
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.print.preview.PrintActions
 import kz.mybrain.superkassa.strings.api.textsOf
 

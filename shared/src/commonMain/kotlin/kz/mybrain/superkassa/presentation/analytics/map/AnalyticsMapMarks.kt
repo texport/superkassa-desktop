@@ -3,12 +3,12 @@ package kz.mybrain.superkassa.presentation.analytics.map
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.IntSize
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.status.toneColor
 import kz.mybrain.superkassa.presentation.common.mapview.MapMark
 import kz.mybrain.superkassa.presentation.common.mapview.MapProjection
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.mapview.inside
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
-import kz.mybrain.superkassa.presentation.common.status.toneColor
 
 /**
  * Места, попадающие в окно карты.

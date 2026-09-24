@@ -9,10 +9,11 @@ package kz.mybrain.superkassa
  * Из чужой области брать нельзя ничего; общее лежит на общих полках,
  * которые видны всем:
  *
- * - `presentation/common`, `presentation/theme`, `presentation/words`
+ * - `presentation/common`, `presentation/words`
  *   (перевод типов домена и ядра в тексты модуля `strings`)
  *   и `presentation/shell` (каркас окна: он собирает области и видит их все);
- * - модуль текстов `strings` — не область приложения, его видят все;
+ * - модули текстов `strings` и дизайн-системы `designsystem` — не области
+ *   приложения, их видят все;
  * - общие домены [SHARED_DOMAINS]: касса и её ответ, вход, журнал
  *   приложения, правила кассы и фискального документа, смена, версия
  *   и рабочее место — то, о чём спрашивает каждая область.
@@ -21,7 +22,7 @@ package kz.mybrain.superkassa
  * `domain` — свои исходники, `shared` — экраны.
  */
 object AreaRules {
-    private val SHARED_PRESENTATION = setOf("common", "theme", "words", "shell")
+    private val SHARED_PRESENTATION = setOf("common", "words", "shell")
     private val SHARED_DOMAINS = setOf("kassa", "signin", "log", "kkm", "document", "shift", "version", "workplace")
 
     /** Импорты чужих областей в [sources]: `путь -> слой.область`. */

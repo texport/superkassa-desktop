@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.domain.analytics.model.tiynOf
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

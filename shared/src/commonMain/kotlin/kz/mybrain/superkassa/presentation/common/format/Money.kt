@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.common.format
 
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.kassa.model.Tenge
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kotlin.math.abs
 import io.github.texport.superkassa.core.domain.api.model.common.Money as KassaMoney
 

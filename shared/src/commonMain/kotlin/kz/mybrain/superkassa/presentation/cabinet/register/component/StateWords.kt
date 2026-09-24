@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.presentation.cabinet.register.component
 
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

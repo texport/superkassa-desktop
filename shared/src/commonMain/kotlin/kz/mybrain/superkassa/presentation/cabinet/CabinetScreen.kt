@@ -18,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsScreen
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.cabinet.documents.CabinetDocumentsScreen
@@ -26,8 +28,6 @@ import kz.mybrain.superkassa.presentation.cabinet.places.PlacesScreen
 import kz.mybrain.superkassa.presentation.cabinet.signin.CabinetSignIn
 import kz.mybrain.superkassa.presentation.cabinet.signin.actions
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf

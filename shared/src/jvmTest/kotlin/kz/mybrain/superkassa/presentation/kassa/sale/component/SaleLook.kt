@@ -7,6 +7,10 @@ import androidx.compose.ui.graphics.Color
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaymentTypeResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
 import kz.mybrain.superkassa.LookColors
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.color.Accent
+import kz.mybrain.superkassa.designsystem.theme.color.schemeOf
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
 import kz.mybrain.superkassa.domain.kassa.model.sale.Adjustment
@@ -16,7 +20,6 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.FormActions
@@ -25,9 +28,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.measureUnits
-import kz.mybrain.superkassa.presentation.theme.color.Accent
-import kz.mybrain.superkassa.presentation.theme.color.schemeOf
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.ByteArrayInputStream

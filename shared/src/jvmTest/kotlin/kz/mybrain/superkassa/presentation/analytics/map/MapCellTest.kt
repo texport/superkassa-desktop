@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.presentation.analytics.map
 
+import kz.mybrain.superkassa.designsystem.theme.size.AnalyticsLayout
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.common.mapview.MapPixel
 import kz.mybrain.superkassa.presentation.common.mapview.MapProjection
-import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

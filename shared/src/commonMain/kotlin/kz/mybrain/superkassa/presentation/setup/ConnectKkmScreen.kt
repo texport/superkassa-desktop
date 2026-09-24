@@ -9,16 +9,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.CardSequence
+import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
+import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.motion.Durations
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
 import kz.mybrain.superkassa.presentation.cabinet.value
-import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
-import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
 import kz.mybrain.superkassa.presentation.setup.component.CabinetStepCard
@@ -28,8 +30,6 @@ import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.theme.motion.Durations
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

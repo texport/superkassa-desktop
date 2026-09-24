@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.journal.documents
 
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.common.EnumStrings

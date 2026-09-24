@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.cancelledBySigner
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

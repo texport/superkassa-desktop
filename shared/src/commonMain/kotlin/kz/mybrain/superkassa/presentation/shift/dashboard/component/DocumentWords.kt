@@ -2,12 +2,12 @@ package kz.mybrain.superkassa.presentation.shift.dashboard.component
 
 import androidx.compose.runtime.Composable
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.document.model.hasOwnAmount
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardUiState
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 
 /** Название вида документа: из справочника кассы, иначе своими словами, иначе код. */
 @Composable

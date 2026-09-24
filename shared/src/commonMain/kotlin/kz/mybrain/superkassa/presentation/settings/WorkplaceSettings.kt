@@ -4,10 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
-import kz.mybrain.superkassa.presentation.common.section.AppTopBar
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 
 /**
  * Настройки с экрана входа.

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.ChangeAddressResult
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
@@ -19,7 +20,6 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.value
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.map.MapPoint
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 
 /**
  * Выбор в колонке точек и отбор над ней.

@@ -4,14 +4,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
+import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
+import kz.mybrain.superkassa.designsystem.section.PartTitle
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.print.model.PrintKind
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
-import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
-import kz.mybrain.superkassa.presentation.common.section.PartTitle
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.textsOf
 

@@ -1,12 +1,12 @@
 package kz.mybrain.superkassa.presentation.settings.receipt
 
 import androidx.compose.runtime.Composable
-import kz.mybrain.superkassa.presentation.common.picker.SwitchRow
-import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
-import kz.mybrain.superkassa.presentation.common.section.PartTitle
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.picker.SwitchRow
+import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
+import kz.mybrain.superkassa.designsystem.section.PartTitle
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
 import kz.mybrain.superkassa.presentation.words.common.of
 

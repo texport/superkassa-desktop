@@ -5,6 +5,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
+import kz.mybrain.superkassa.designsystem.section.CounterTile
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.analytics.model.Placement
 import kz.mybrain.superkassa.domain.analytics.model.PositionSource
 import kz.mybrain.superkassa.domain.analytics.model.placement
@@ -12,13 +18,7 @@ import kz.mybrain.superkassa.presentation.analytics.common.sourceHint
 import kz.mybrain.superkassa.presentation.analytics.common.sourceTitle
 import kz.mybrain.superkassa.presentation.analytics.map.AnalyticsMapActions
 import kz.mybrain.superkassa.presentation.analytics.map.AnalyticsMapUiState
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.message.InfoTip
-import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
-import kz.mybrain.superkassa.presentation.common.section.CounterTile
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

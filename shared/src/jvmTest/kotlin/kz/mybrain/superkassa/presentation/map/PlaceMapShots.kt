@@ -13,6 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
@@ -20,8 +22,6 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.CabinetRegist
 import kz.mybrain.superkassa.presentation.common.mapview.CITY_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

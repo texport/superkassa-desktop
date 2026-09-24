@@ -14,14 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.ContentKind
+import kz.mybrain.superkassa.designsystem.adaptive.contentWidth
+import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
-import kz.mybrain.superkassa.presentation.common.adaptive.ContentKind
-import kz.mybrain.superkassa.presentation.common.adaptive.contentWidth
-import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.words.shell.of
 import kz.mybrain.superkassa.strings.api.textsOf
 

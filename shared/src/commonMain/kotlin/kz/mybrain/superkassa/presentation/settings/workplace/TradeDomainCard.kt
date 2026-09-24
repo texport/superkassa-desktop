@@ -3,11 +3,11 @@ package kz.mybrain.superkassa.presentation.settings.workplace
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
-import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
 import kz.mybrain.superkassa.presentation.words.kassa.label
 import kz.mybrain.superkassa.presentation.words.kassa.title

@@ -10,21 +10,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kz.mybrain.superkassa.designsystem.section.Collapsible
+import kz.mybrain.superkassa.designsystem.section.SectionHeader
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.text.MoneyText
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.type.MoneyStyle
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.sale.changeOf
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.section.Collapsible
-import kz.mybrain.superkassa.presentation.common.section.SectionHeader
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

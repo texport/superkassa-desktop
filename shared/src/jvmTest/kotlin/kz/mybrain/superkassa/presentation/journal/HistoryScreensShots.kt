@@ -14,11 +14,13 @@ import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftRespo
 import io.github.texport.superkassa.core.presentation.api.model.user.UserResponse
 import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.designsystem.adaptive.ContentKind
+import kz.mybrain.superkassa.designsystem.adaptive.contentWidth
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
-import kz.mybrain.superkassa.presentation.common.adaptive.ContentKind
-import kz.mybrain.superkassa.presentation.common.adaptive.contentWidth
 import kz.mybrain.superkassa.presentation.journal.HistoryStage.Mode
 import kz.mybrain.superkassa.presentation.journal.documents.JournalUiState
 import kz.mybrain.superkassa.presentation.journal.queue.QueueActions
@@ -35,8 +37,6 @@ import kz.mybrain.superkassa.presentation.setup.SetupUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.users.UsersActions
 import kz.mybrain.superkassa.presentation.users.UsersContent
 import kz.mybrain.superkassa.presentation.users.UsersUiState

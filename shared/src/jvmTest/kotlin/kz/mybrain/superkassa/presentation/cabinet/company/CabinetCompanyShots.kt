@@ -11,9 +11,9 @@ import kz.mybrain.superkassa.CabinetStage
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.WithCabinetMessage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
 import kz.mybrain.superkassa.presentation.cabinet.signin.actions
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
 import kz.mybrain.superkassa.strings.api.Language
 import java.io.File

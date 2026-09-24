@@ -4,9 +4,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaymentTypeResponse
-import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.common.EnumStrings

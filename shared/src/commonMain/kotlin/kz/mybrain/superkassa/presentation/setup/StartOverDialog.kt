@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.setup
 
 import androidx.compose.runtime.Composable
-import kz.mybrain.superkassa.presentation.common.dialog.ConfirmDangerDialog
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.dialog.ConfirmDangerDialog
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

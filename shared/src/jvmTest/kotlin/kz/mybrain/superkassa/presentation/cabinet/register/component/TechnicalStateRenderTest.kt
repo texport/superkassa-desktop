@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.section.CollapsibleCard
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegisterState
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.common.section.CollapsibleCard
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File

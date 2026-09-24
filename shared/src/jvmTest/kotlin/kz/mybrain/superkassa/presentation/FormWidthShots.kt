@@ -21,6 +21,7 @@ import kz.mybrain.superkassa.ProbeNode
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.SettingsMeasure
 import kz.mybrain.superkassa.StubReply
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
@@ -39,7 +40,6 @@ import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap

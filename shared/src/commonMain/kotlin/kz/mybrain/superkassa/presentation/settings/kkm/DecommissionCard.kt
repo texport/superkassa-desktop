@@ -13,11 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import kz.mybrain.superkassa.designsystem.dialog.ConfirmDangerDialog
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
-import kz.mybrain.superkassa.presentation.common.dialog.ConfirmDangerDialog
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.settings.SettingRequirements
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.textsOf
 

@@ -8,13 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import kz.mybrain.superkassa.presentation.common.button.BusyButton
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.button.BusyButton
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.setup.KkmForm
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.users.pinProblem
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 import kz.mybrain.superkassa.strings.api.textsOf

@@ -14,6 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.analytics.exchange.AnalyticsExchangeScreen
 import kz.mybrain.superkassa.presentation.analytics.exchange.analyticsExchangeViewModel
 import kz.mybrain.superkassa.presentation.analytics.map.AnalyticsMapScreen
@@ -24,9 +26,7 @@ import kz.mybrain.superkassa.presentation.analytics.record.AnalyticsRecordScreen
 import kz.mybrain.superkassa.presentation.analytics.record.analyticsRecordViewModel
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSalesScreen
 import kz.mybrain.superkassa.presentation.analytics.sales.analyticsSalesViewModel
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf

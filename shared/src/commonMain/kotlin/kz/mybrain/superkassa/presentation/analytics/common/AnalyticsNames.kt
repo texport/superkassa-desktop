@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.analytics.common
 
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.analytics.model.PositionSource
 import kz.mybrain.superkassa.domain.analytics.model.SalesUnit
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

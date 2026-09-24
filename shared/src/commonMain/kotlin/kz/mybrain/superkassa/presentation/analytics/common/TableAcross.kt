@@ -17,17 +17,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import kz.mybrain.superkassa.presentation.common.list.RowScrollbar
-import kz.mybrain.superkassa.presentation.common.table.TableColumn
-import kz.mybrain.superkassa.presentation.common.table.TableLine
-import kz.mybrain.superkassa.presentation.common.table.TableWidths
-import kz.mybrain.superkassa.presentation.common.table.tableWidths
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.list.RowScrollbar
+import kz.mybrain.superkassa.designsystem.table.TableColumn
+import kz.mybrain.superkassa.designsystem.table.TableLine
+import kz.mybrain.superkassa.designsystem.table.TableWidths
+import kz.mybrain.superkassa.designsystem.table.tableWidths
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 
 /**
  * Таблица аналитики, которая живёт не сама по себе, а внутри страницы.
  *
- * Общая таблица ([kz.mybrain.superkassa.presentation.common.table.ScrollingTable])
+ * Общая таблица ([kz.mybrain.superkassa.designsystem.table.ScrollingTable])
  * сама прокручивает свои строки и потому занимает всю высоту. В аналитике
  * таблицы стоят внутри прокручиваемой страницы — сводка торговли — или
  * строками внутри общего ленивого списка вкладки — учёт касс. Столбцы

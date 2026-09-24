@@ -22,18 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
+import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
+import kz.mybrain.superkassa.designsystem.button.FieldButton
+import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
+import kz.mybrain.superkassa.designsystem.button.underFieldLabel
+import kz.mybrain.superkassa.designsystem.field.fieldWidth
+import kz.mybrain.superkassa.designsystem.keyboard.onEnter
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.signin.model.Pin
-import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
-import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
-import kz.mybrain.superkassa.presentation.common.button.FieldButton
-import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
-import kz.mybrain.superkassa.presentation.common.button.underFieldLabel
-import kz.mybrain.superkassa.presentation.common.field.fieldWidth
-import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Пин и вход.

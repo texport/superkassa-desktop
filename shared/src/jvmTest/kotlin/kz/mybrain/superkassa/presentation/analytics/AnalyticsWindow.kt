@@ -27,6 +27,8 @@ import kz.mybrain.superkassa.CabinetWire
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.analytics.CabinetReplies
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetCompany
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetUser
 import kz.mybrain.superkassa.presentation.settings.look.lookModel
@@ -38,8 +40,6 @@ import kz.mybrain.superkassa.presentation.shell.frame.shellModel
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 

@@ -11,6 +11,9 @@ import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.Windowed
+import kz.mybrain.superkassa.designsystem.state.EmptyState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlaceRef
@@ -19,9 +22,6 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCard
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCreateButtons
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
 import kz.mybrain.superkassa.presentation.cabinet.places.component.placeRows
-import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.Language
 
 /**

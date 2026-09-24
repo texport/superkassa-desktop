@@ -1,10 +1,10 @@
 package kz.mybrain.superkassa.presentation.analytics.map
 
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.theme.size.AnalyticsLayout
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.common.mapview.MapProjection
-import kz.mybrain.superkassa.presentation.common.status.StatusTone
-import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
 
 /**
  * Сводит поставленные кассы в ярлычки.

@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.designsystem.text.MoneyText
+import kz.mybrain.superkassa.designsystem.text.NumberText
+import kz.mybrain.superkassa.designsystem.theme.size.NumberStyle
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.text.MoneyText
-import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.theme.size.NumberStyle
 
 /**
  * Клетки таблиц аналитики.
@@ -21,7 +21,7 @@ import kz.mybrain.superkassa.presentation.theme.size.NumberStyle
  * читают эти таблицы сверху вниз, сравнивая строки между собой.
  *
  * Ширину клетка не задаёт: её назначает таблица ([TableAcross]
- * или [kz.mybrain.superkassa.presentation.common.table.ScrollingTable]), потому
+ * или [kz.mybrain.superkassa.designsystem.table.ScrollingTable]), потому
  * что только она знает, какой столбец тянется, а какой стоит на месте.
  */
 

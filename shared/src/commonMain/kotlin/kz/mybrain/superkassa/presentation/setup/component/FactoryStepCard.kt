@@ -3,9 +3,9 @@ package kz.mybrain.superkassa.presentation.setup.component
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /**

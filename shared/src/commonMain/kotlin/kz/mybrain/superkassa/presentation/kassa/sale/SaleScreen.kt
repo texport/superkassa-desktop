@@ -14,12 +14,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
+import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.KassaLayout
+import kz.mybrain.superkassa.designsystem.theme.size.Panes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
-import kz.mybrain.superkassa.presentation.common.adaptive.TwoPane
-import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.component.BasketCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.CheckoutPanel
 import kz.mybrain.superkassa.presentation.kassa.sale.component.CustomerDataCard
@@ -35,9 +38,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.entry.PositionEntryCard
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.measureUnits
-import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
-import kz.mybrain.superkassa.presentation.theme.size.Panes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

@@ -12,9 +12,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import kz.mybrain.superkassa.designsystem.dialog.FormDialog
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.domain.users.model.UserRules
-import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

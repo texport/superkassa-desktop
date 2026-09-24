@@ -2,8 +2,8 @@ package kz.mybrain.superkassa.presentation.analytics
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.analytics.map.MAP_TAG
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 

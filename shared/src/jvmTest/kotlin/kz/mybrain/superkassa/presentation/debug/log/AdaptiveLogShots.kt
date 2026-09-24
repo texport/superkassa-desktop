@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.SettingsMeasure
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File

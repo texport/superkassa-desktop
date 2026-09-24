@@ -24,7 +24,7 @@ object SourceTree {
     const val ROOT = "kz.mybrain.superkassa"
 
     private const val PREFIX = "kotlin/kz/mybrain/superkassa"
-    private val MAIN_SETS = listOf("commonMain", "jvmMain", "androidMain")
+    private val MAIN_SETS = listOf("commonMain", "jvmMain", "androidMain", "iosMain")
 
     /** Основные наборы модуля — общий и платформенные; отсутствующих нет. */
     fun main(): List<Source> = MAIN_SETS
@@ -33,7 +33,7 @@ object SourceTree {
         .flatMap { root -> root.walkTopDown().filter { it.extension == "kt" }.map { root to it } }
         .map { (root, file) -> of(file.relativeTo(root).invariantSeparatorsPath, file.readLines()) }
 
-    /** Наборы основного кода, которые у модуля есть: `commonMain`, `jvmMain`, `androidMain`. */
+    /** Наборы основного кода, которые у модуля есть: `commonMain`, `jvmMain`, `androidMain`, `iosMain`. */
     fun mainSets(): List<String> = MAIN_SETS.filter { File("src/$it").isDirectory }
 
     /**

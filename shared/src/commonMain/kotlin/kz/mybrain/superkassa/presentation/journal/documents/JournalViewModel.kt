@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.document.model.number
 import kz.mybrain.superkassa.domain.journal.model.ReceiptDeliveryRules
 import kz.mybrain.superkassa.domain.kassa.model.Answer
@@ -20,7 +21,6 @@ import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
 import kz.mybrain.superkassa.presentation.journal.outcome
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

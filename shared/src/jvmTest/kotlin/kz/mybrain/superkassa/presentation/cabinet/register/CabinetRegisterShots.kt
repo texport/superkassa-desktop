@@ -9,6 +9,7 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.CabinetStage
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.WithCabinetMessage
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.CashRegisterModel
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlaceRef
@@ -16,7 +17,6 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.RegisterState
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
 import kotlin.test.Test
 import kotlin.test.assertTrue

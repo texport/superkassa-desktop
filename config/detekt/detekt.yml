@@ -30,6 +30,12 @@ complexity:
     active: true
     functionThreshold: 8
     constructorThreshold: 8
+  TooManyFunctions:
+    active: true
+    # Проверки меряют одним предметом много сторон, и detekt их не считает.
+    # Оснастка проверок (`testing`) — тот же код проверок, хоть и собирается
+    # основным набором: сцена отрисовки уходит туда из проверок экранов.
+    excludes: ['**/test/**', '**/*Test/**', '**/testing/src/**']
 
 style:
   active: true

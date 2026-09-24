@@ -1,12 +1,12 @@
 package kz.mybrain.superkassa.presentation.settings.look
 
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.designsystem.theme.Typeface
+import kz.mybrain.superkassa.designsystem.theme.color.Accent
+import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.domain.workplace.model.LookChoice
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
-import kz.mybrain.superkassa.presentation.theme.Typeface
-import kz.mybrain.superkassa.presentation.theme.color.Accent
-import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.strings.api.Language
 
 /**

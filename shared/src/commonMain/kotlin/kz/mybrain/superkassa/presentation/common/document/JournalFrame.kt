@@ -14,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
-import kz.mybrain.superkassa.presentation.common.keyboard.scrolledByKeys
-import kz.mybrain.superkassa.presentation.common.list.ColumnScrollbar
-import kz.mybrain.superkassa.presentation.theme.size.HistoryLayout
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
+import kz.mybrain.superkassa.designsystem.list.ColumnScrollbar
+import kz.mybrain.superkassa.designsystem.theme.size.HistoryLayout
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kotlin.math.roundToInt
 
 /**

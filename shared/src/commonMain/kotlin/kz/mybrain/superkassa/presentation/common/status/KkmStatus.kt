@@ -7,12 +7,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmState
+import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.status.StatusTone
+import kz.mybrain.superkassa.designsystem.status.toneColor
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kkm.model.isAutonomous
 import kz.mybrain.superkassa.domain.kkm.model.isBlocked
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.common.EnumStrings
 import kz.mybrain.superkassa.strings.api.textsOf
 

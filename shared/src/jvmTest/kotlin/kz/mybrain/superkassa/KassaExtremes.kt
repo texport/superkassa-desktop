@@ -3,6 +3,8 @@ package kz.mybrain.superkassa
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaymentTypeResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
+import kz.mybrain.superkassa.designsystem.theme.Look
+import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.payment.PaymentSplit
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
@@ -10,8 +12,6 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.strings.api.Language
 import java.math.BigDecimal
 

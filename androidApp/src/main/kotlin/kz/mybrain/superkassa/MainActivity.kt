@@ -13,11 +13,12 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.Deferred
+import kz.mybrain.superkassa.designsystem.adaptive.WindowClassRoot
+import kz.mybrain.superkassa.designsystem.strings.ProvideStrings
+import kz.mybrain.superkassa.designsystem.theme.SuperkassaTheme
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
-import kz.mybrain.superkassa.presentation.common.adaptive.WindowClassRoot
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.strings.ProvideStrings
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.debug.log.LogDialog
 import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
@@ -25,7 +26,6 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.ShellScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartRefusedScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartingScreen
-import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
 
 /**
  * Точка входа кассы на Android — единственная активность.

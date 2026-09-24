@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.presentation.settings.core
 
 import androidx.compose.runtime.Composable
-import kz.mybrain.superkassa.presentation.common.section.FactLines
-import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.section.FactLines
+import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

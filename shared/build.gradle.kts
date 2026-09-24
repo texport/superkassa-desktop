@@ -27,11 +27,14 @@ kotlin {
             // Слой данных экранам не виден: адаптеры собирают точки
             // сборки платформенных приложений.
             api(project(":domain"))
+            // Токены оформления и общие компоненты — модулем `designsystem`.
+            // Открыт наружу: тема, выбор оформления и компоненты стоят
+            // в открытых объявлениях `shared` и в точках сборки.
+            api(project(":designsystem"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.ui)
             implementation(libs.compose.material3)
-            implementation(libs.compose.material.icons.extended)
             api(libs.lifecycle.viewmodel.compose)
             implementation(libs.lifecycle.runtime.compose)
             implementation(libs.navigation.compose)
@@ -40,10 +43,6 @@ kotlin {
             // формы текстов в параметрах экранов), и платформенные
             // приложения выбирают язык тем же `Language`.
             api(project(":strings"))
-        }
-        androidMain.dependencies {
-            // «Назад» закрывает наложение так же, как Escape на настольной кассе.
-            implementation(libs.androidx.activity.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

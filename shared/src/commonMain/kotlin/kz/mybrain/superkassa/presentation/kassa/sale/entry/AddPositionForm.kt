@@ -12,13 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.keyboard.EnterSubmits
+import kz.mybrain.superkassa.designsystem.keyboard.enterKeyboardActions
+import kz.mybrain.superkassa.designsystem.keyboard.onEnter
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.entry.DraftField
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
-import kz.mybrain.superkassa.presentation.common.keyboard.EnterSubmits
-import kz.mybrain.superkassa.presentation.common.keyboard.enterKeyboardActions
-import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.component.AdjustmentField
@@ -26,7 +27,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.component.Hint
 import kz.mybrain.superkassa.presentation.kassa.sale.component.sameOtherwise
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.MeasureUnit
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.words.kassa.text
 
 /**

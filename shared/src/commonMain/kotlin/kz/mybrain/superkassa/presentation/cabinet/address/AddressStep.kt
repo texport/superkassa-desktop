@@ -19,8 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.designsystem.keyboard.onEscape
 import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
-import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

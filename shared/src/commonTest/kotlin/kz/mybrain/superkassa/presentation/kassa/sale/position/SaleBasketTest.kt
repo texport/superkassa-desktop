@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.position
 
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
@@ -8,7 +9,6 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.SaleState
 import kz.mybrain.superkassa.domain.kassa.model.sale.blockOf
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

@@ -6,6 +6,9 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.domain.analytics.model.SalesDay
 import kz.mybrain.superkassa.domain.analytics.model.SalesDelivery
 import kz.mybrain.superkassa.domain.analytics.model.SalesDeliveryCounts
@@ -21,9 +24,6 @@ import kz.mybrain.superkassa.presentation.analytics.sales.chart.SalesShares
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.dayBars
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.hourBars
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.salesShares
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

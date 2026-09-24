@@ -11,24 +11,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.field.SearchField
+import kz.mybrain.superkassa.designsystem.field.fieldWidth
+import kz.mybrain.superkassa.designsystem.picker.MenuChip
+import kz.mybrain.superkassa.designsystem.section.CounterTile
+import kz.mybrain.superkassa.designsystem.section.SectionTitle
+import kz.mybrain.superkassa.designsystem.state.ScreenSlot
+import kz.mybrain.superkassa.designsystem.state.ScreenState
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.analytics.model.ExchangeAddress
 import kz.mybrain.superkassa.domain.analytics.model.exchangeAddressCount
 import kz.mybrain.superkassa.domain.analytics.model.exchangeRegisters
 import kz.mybrain.superkassa.presentation.analytics.common.analyticsScreenState
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.common.field.SearchField
-import kz.mybrain.superkassa.presentation.common.field.fieldWidth
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.message.InfoTip
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.picker.MenuChip
-import kz.mybrain.superkassa.presentation.common.section.CounterTile
-import kz.mybrain.superkassa.presentation.common.section.SectionTitle
-import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

@@ -10,10 +10,10 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.section.ScreenTitle
+import kz.mybrain.superkassa.designsystem.section.SectionTitle
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
-import kz.mybrain.superkassa.presentation.common.section.SectionTitle
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleActions
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState

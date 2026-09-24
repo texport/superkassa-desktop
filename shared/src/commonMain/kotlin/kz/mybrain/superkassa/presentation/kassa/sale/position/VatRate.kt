@@ -3,10 +3,10 @@ package kz.mybrain.superkassa.presentation.kassa.sale.position
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.github.texport.superkassa.core.presentation.api.model.common.VatRateResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.kassa.model.paysVat
 import kz.mybrain.superkassa.domain.kassa.model.sale.FALLBACK_VAT_CODES
 import kz.mybrain.superkassa.domain.kassa.model.sale.NO_VAT
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.common.EnumStrings

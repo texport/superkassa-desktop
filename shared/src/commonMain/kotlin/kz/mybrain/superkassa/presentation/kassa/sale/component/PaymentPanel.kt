@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.payment.paymentEntries
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentLines
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Оплата чека.

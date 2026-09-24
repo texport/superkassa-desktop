@@ -2,8 +2,8 @@ package kz.mybrain.superkassa.presentation.common.mapview
 
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.ui.graphics.ImageBitmap
+import kz.mybrain.superkassa.designsystem.image.encodedImage
 import kz.mybrain.superkassa.domain.map.usecase.ReadTile
-import kz.mybrain.superkassa.presentation.common.image.encodedImage
 
 /**
  * Плитки карты, готовые к рисованию.

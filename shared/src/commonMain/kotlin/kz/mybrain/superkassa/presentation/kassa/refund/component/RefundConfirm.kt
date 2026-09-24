@@ -1,16 +1,16 @@
 package kz.mybrain.superkassa.presentation.kassa.refund.component
 
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.dialog.ConfirmActionDialog
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.document.model.number
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.domain.kassa.model.refund.ReturnKind
-import kz.mybrain.superkassa.presentation.common.dialog.ConfirmActionDialog
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.refund.RefundActions
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.words.kassa.action
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.textsOf

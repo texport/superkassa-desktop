@@ -7,10 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
+import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
 import kz.mybrain.superkassa.presentation.cabinet.CabinetScreen
 import kz.mybrain.superkassa.presentation.cabinet.signin.CabinetDoor
-import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
-import kz.mybrain.superkassa.presentation.common.keyboard.SystemBack
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
 import kz.mybrain.superkassa.presentation.debug.log.DebugSetting

@@ -4,10 +4,10 @@ import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftRespo
 import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftStatus
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.designsystem.state.ScreenState
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.document.JournalEmpty
 import kz.mybrain.superkassa.presentation.common.document.journalState
-import kz.mybrain.superkassa.presentation.common.state.ScreenState
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsActions
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsScreen
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsUiState

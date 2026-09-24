@@ -13,17 +13,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.NarrowPanes
+import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.theme.size.CabinetPanes
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCreateButtons
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceRow
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
 import kz.mybrain.superkassa.presentation.cabinet.places.component.placeRows
-import kz.mybrain.superkassa.presentation.common.adaptive.NarrowPanes
-import kz.mybrain.superkassa.presentation.common.adaptive.TwoPane
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.theme.size.CabinetPanes
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

@@ -2,12 +2,12 @@ package kz.mybrain.superkassa.presentation.users.signin
 
 import kz.mybrain.superkassa.KassaExtremes
 import kz.mybrain.superkassa.KassaProbe
+import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
 import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.label
-import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen

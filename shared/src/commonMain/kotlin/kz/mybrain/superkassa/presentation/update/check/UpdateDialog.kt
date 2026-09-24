@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.presentation.update.check
 
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.designsystem.dialog.ConfirmActionDialog
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.domain.update.model.AvailableUpdate
-import kz.mybrain.superkassa.presentation.common.dialog.ConfirmActionDialog
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 
 /**

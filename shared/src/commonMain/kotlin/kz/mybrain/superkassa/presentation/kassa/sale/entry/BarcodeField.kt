@@ -23,18 +23,18 @@ import androidx.compose.ui.input.InputMode
 import androidx.compose.ui.platform.LocalInputModeManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import kz.mybrain.superkassa.presentation.common.keyboard.EnterSubmits
-import kz.mybrain.superkassa.presentation.common.keyboard.enterKeyboardActions
-import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
-import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
-import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.keyboard.EnterSubmits
+import kz.mybrain.superkassa.designsystem.keyboard.enterKeyboardActions
+import kz.mybrain.superkassa.designsystem.keyboard.onEnter
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.component.Hint
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
-import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.words.kassa.lookupProblemWords
 
 /**
