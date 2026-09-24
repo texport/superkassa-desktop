@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("superkassa.ios")
 }
 
 /**
@@ -17,17 +16,6 @@ plugins {
  * подделки, которые пишутся на JVM, — в `jvmMain`.
  */
 kotlin {
-    jvmToolchain(21)
-
-    jvm()
-    android {
-        namespace = "kz.mybrain.superkassa.testing"
-        compileSdk = libs.versions.androidCompileSdk.get().toInt()
-        minSdk = libs.versions.androidMinSdk.get().toInt()
-    }
-    iosArm64()
-    iosSimulatorArm64()
-
     sourceSets {
         commonMain.dependencies {
             api(project(":domain"))

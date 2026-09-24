@@ -1,6 +1,8 @@
 rootProject.name = "superkassa-desktop"
 
 pluginManagement {
+    // Общая настройка модулей-библиотек — плагинами `build-logic`.
+    includeBuild("build-logic")
     repositories {
         gradlePluginPortal()
         google()

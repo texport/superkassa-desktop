@@ -1,6 +1,5 @@
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
+    id("superkassa.ios")
 }
 
 /**
@@ -64,18 +63,6 @@ val generateVersion = tasks.register("generateVersion") {
  * iOS, и домен собирается под неё без единой платформенной строки.
  */
 kotlin {
-    jvmToolchain(21)
-
-    jvm()
-    android {
-        namespace = "kz.mybrain.superkassa.domain"
-        compileSdk = libs.versions.androidCompileSdk.get().toInt()
-        minSdk = libs.versions.androidMinSdk.get().toInt()
-        withHostTest {}
-    }
-    iosArm64()
-    iosSimulatorArm64()
-
     sourceSets {
         commonMain {
             // Каталог с версией объявлен задачей, а не путём: так компиляция
