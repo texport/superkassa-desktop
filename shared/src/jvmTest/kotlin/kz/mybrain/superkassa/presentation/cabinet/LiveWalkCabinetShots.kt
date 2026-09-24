@@ -25,9 +25,9 @@ import kz.mybrain.superkassa.presentation.cabinet.company.OkedsCard
 import kz.mybrain.superkassa.presentation.cabinet.company.actions
 import kz.mybrain.superkassa.presentation.cabinet.company.companyViewModel
 import kz.mybrain.superkassa.presentation.common.section.CollapsibleCard
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.viewOf
 import java.io.File
 import kotlin.test.Test
@@ -131,7 +131,7 @@ class LiveWalkCabinetShots {
 
     @Composable
     private fun Okeds(changed: Boolean) {
-        val texts = cabinetTexts(Language.Ru)
+        val texts = textsOf(Language.Ru).cabinet
         val saved = listOf(Oked(code = "47.11", name = "Розничная торговля", primary = true))
         val added = Oked(code = "56.10", name = "Рестораны и услуги по доставке еды")
         val profile = CompanyProfile(id = "c-1", bin = "230140000000", name = "ТОО «Азик и Ко»", okeds = saved)

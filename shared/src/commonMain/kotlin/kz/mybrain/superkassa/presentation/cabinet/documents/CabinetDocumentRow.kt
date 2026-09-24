@@ -10,8 +10,8 @@ import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalState
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Документы кабинета строками общего журнала.

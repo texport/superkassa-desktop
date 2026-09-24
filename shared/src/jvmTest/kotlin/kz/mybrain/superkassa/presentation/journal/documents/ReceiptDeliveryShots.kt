@@ -11,11 +11,11 @@ import kz.mybrain.superkassa.presentation.journal.HistoryParts
 import kz.mybrain.superkassa.presentation.journal.HistoryStage
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.journal.deliveryTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -59,7 +59,7 @@ class ReceiptDeliveryShots {
         HistoryStage.SIZES.forEach { (width, height) ->
             MODES.forEach { mode ->
                 val nodes = shot("failed", width, height, mode, failed())
-                val resend = deliveryTexts(mode.language).resend
+                val resend = textsOf(mode.language).journal.delivery.resend
                 val where = "${mode.tag} $width×$height"
                 val button = assertNotNull(nodes.firstOrNull { it.text == resend }, "нет кнопки повтора: $where")
                 assertTrue(button.whole, "кнопка повтора обрезана: ${mode.tag} $width×$height — $button")
@@ -82,9 +82,9 @@ class ReceiptDeliveryShots {
         states.forEach { (name, state) ->
             listOf(SMALLEST, TABLET).forEach { (width, height) ->
                 val nodes = shot(name, width, height, HistoryStage.Mode(Language.Kk, TextScale.Larger), state)
-                val close = deliveryTexts(Language.Kk).close
+                val close = textsOf(Language.Kk).journal.delivery.close
                 assertTrue(nodes.any { it.text == close && it.whole }, "нет кнопки «Жабу»: $name $width×$height")
-                val resend = deliveryTexts(Language.Kk).resend
+                val resend = textsOf(Language.Kk).journal.delivery.resend
                 assertTrue(nodes.none { it.text == resend }, "повтор предложен без отказа: $name")
             }
         }

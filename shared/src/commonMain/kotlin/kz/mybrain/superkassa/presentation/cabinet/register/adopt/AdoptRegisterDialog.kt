@@ -12,14 +12,14 @@ import kz.mybrain.superkassa.presentation.cabinet.register.adoptMissing
 import kz.mybrain.superkassa.presentation.cabinet.register.heardElsewhere
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.MachineTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.machineTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.users.signin.LoginViewModel
 import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Заведение кассы кабинета на этой машине — одним действием владельца.
@@ -41,7 +41,7 @@ fun AdoptRegisterDialog(
 ) {
     val language = LocalLanguage.current
     val register = view.card
-    val machine = machineTexts(language)
+    val machine = textsOf(language).cabinet.machine
     val model = adoptViewModel(cabinet.cabinet)
     val adopt by model.state.collectAsScreenState()
     val login = loginViewModel(cabinet.app)

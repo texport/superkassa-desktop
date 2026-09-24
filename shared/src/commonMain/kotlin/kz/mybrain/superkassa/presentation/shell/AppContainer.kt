@@ -7,7 +7,7 @@ import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Всё, что экранам нужно снаружи: порты `domain`, собранные из `data`.

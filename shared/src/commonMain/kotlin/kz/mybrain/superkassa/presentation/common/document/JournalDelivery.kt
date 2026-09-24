@@ -9,10 +9,10 @@ import kz.mybrain.superkassa.domain.document.model.DeliveryCodes
 import kz.mybrain.superkassa.domain.document.model.SHIFT_OPEN_DOCUMENT
 import kz.mybrain.superkassa.presentation.common.message.Tip
 import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.common.StatusStrings
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.common.StatusStrings
 
 /**
  * Что стало с документом по дороге в ОФД.

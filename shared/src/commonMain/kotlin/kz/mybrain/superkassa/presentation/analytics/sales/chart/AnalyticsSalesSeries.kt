@@ -12,8 +12,8 @@ import kz.mybrain.superkassa.domain.analytics.model.percentOf
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.format.Times
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsSalesTexts
-import kz.mybrain.superkassa.presentation.strings.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
+import kz.mybrain.superkassa.strings.api.common.EnumStrings
 
 /**
  * Ряд столбиков для графика.

@@ -6,7 +6,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.presentation.cabinet.applications.RegistrationActionsBlock
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.viewOf
 import kotlin.test.Test
 import kotlin.test.assertEquals

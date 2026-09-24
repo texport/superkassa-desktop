@@ -17,14 +17,14 @@ import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
 import kz.mybrain.superkassa.presentation.common.adaptive.WindowClassRoot
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.strings.ProvideStrings
+import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.debug.log.LogDialog
 import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.ShellScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartRefusedScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartingScreen
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.ProvideStrings
 import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
 
 /**
@@ -85,7 +85,7 @@ private suspend fun Deferred<AppContainer>.opened(): Start = runCatching { await
 /** До кассы: тема системы и язык приложения — выбора кассира ещё не прочитать. */
 @Composable
 private fun Bare(content: @Composable () -> Unit) {
-    SuperkassaTheme { ProvideStrings(Language.byCode(null), content) }
+    SuperkassaTheme { ProvideStrings(workplaceLanguage(null), content) }
 }
 
 /** Тема, язык и класс окна — вокруг каркаса, как на компьютере. */

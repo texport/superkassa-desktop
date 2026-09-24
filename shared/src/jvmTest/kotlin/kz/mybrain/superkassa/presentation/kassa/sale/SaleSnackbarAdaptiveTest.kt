@@ -11,7 +11,7 @@ import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.shell.frame.MessageEffect
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -50,7 +50,7 @@ class SaleSnackbarAdaptiveTest {
 
     /** Что снекбар закрыл собой: кнопку, «Принято» — или его нет вовсе. */
     private fun covered(probe: KassaProbe, case: Case): List<String> {
-        val texts = stringsOf(case.language)
+        val texts = textsOf(case.language).common
         val bar = probe.part(REFUSAL_PROBE)?.boundsInRoot
         val issue = probe.node(texts.sale.issueSale)?.boundsInRoot
         val taken = probe.node(texts.sale.taken)?.boundsInRoot

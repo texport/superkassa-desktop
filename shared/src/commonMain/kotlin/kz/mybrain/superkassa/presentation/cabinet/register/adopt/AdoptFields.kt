@@ -21,17 +21,16 @@ import kz.mybrain.superkassa.presentation.cabinet.register.heardElsewhere
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
 import kz.mybrain.superkassa.presentation.common.section.DetailLine
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.MachineTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.machineTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.users.pinProblem
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Что заполняет владелец, заводя кассу на этой машине.
@@ -48,7 +47,7 @@ internal fun AdoptFields(
     view: RegisterView
 ) {
     val language = LocalLanguage.current
-    val machine = machineTexts(language)
+    val machine = textsOf(language).cabinet.machine
     val technical = view.state.state?.technicalState
     val stranded = view.card.id in adopt.stranded
     EnvironmentChoice(draft, adopt.environments, language)
@@ -98,7 +97,7 @@ private fun EnvironmentChoice(draft: AdoptDraft, environments: List<OfdEnvironme
 private fun AdminPinField(draft: AdoptDraft) {
     val language = LocalLanguage.current
     val strings = LocalStrings.current
-    val cashiers = moneyTexts(language).cashiers
+    val cashiers = textsOf(language).kassa.money.cashiers
     val trouble = pinProblem(draft.adminPin, cashiers)
     OutlinedTextField(
         value = draft.adminPin,

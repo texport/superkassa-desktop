@@ -9,13 +9,10 @@ import kz.mybrain.superkassa.domain.analytics.model.RecordFleet
 import kz.mybrain.superkassa.presentation.analytics.record.AnalyticsRecordBody
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSalesBody
 import kz.mybrain.superkassa.presentation.analytics.sales.SalesShowLook
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 
 /**
@@ -57,16 +54,16 @@ class AnalyticsLookShots {
     @Composable
     private fun sales(language: Language) = AnalyticsSalesBody(
         view = SalesShowLook.show(),
-        texts = analyticsTexts(language),
-        enums = stringsOf(language).enums,
-        journal = journalTexts(language).history,
-        cabinet = cabinetTexts(language),
+        texts = textsOf(language).analytics,
+        enums = textsOf(language).common.enums,
+        journal = textsOf(language).journal.history,
+        cabinet = textsOf(language).cabinet,
         modifier = Modifier.fillMaxSize()
     )
 
     @Composable
     private fun record(language: Language) =
-        AnalyticsRecordBody(RecordFleet.show(), analyticsTexts(language), Modifier.fillMaxSize())
+        AnalyticsRecordBody(RecordFleet.show(), textsOf(language).analytics, Modifier.fillMaxSize())
 
     private fun shot(
         name: String,

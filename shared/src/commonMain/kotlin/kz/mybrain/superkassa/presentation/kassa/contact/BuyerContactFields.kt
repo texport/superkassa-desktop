@@ -15,10 +15,11 @@ import kz.mybrain.superkassa.domain.kassa.model.BuyerContact
 import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.kassa.BuyerContactTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.buyerContactTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.of
+import kz.mybrain.superkassa.strings.api.kassa.contact.BuyerContactTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Куда отправить чек покупателю: не отправлять, телефон, почта или Telegram.
@@ -40,7 +41,7 @@ fun BuyerContactFields(
     onText: (String) -> Unit,
     enabled: Boolean = true
 ) {
-    val texts = buyerContactTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).kassa.contact
     if (channels.none) {
         Note(texts.unavailable)
         return
@@ -49,13 +50,13 @@ fun BuyerContactFields(
         WideChoiceSegments(
             options = ContactKind.entries,
             selected = contact.kind,
-            label = { texts.kinds.getValue(it) },
+            label = { texts.kinds.of(it) },
             enabled = enabled,
             available = channels::allows,
             onSelect = onKind
         )
         val off = ContactKind.entries.filterNot(channels::allows)
-        if (off.isNotEmpty()) Note("${texts.notConfigured}: ${off.joinToString { texts.kinds.getValue(it) }}")
+        if (off.isNotEmpty()) Note("${texts.notConfigured}: ${off.joinToString { texts.kinds.of(it) }}")
         if (contact.kind != ContactKind.None) ContactField(contact, texts, onText, enabled)
     }
 }
@@ -65,7 +66,7 @@ private fun ContactField(contact: BuyerContact, texts: BuyerContactTexts, onText
     OutlinedTextField(
         value = contact.text,
         onValueChange = onText,
-        label = { Text(texts.labels.getValue(contact.kind)) },
+        label = { Text(texts.labels.of(contact.kind)) },
         singleLine = true,
         enabled = enabled,
         isError = contact.malformed,
@@ -84,7 +85,7 @@ private fun Note(text: String) {
 /** Строка под полем: зачем оно, как набрать или куда уйдёт чек. */
 private fun BuyerContactTexts.below(contact: BuyerContact): String = when {
     contact.empty -> hint
-    contact.malformed -> formats.getValue(contact.kind)
+    contact.malformed -> formats.of(contact.kind)
     else -> "$sendsTo ${contact.normalized}"
 }
 

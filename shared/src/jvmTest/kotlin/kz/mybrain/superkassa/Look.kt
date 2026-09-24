@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa
 
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.assertTrue
 
@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
  */
 internal object Look {
 
-    val cabinet = cabinetTexts(Language.Ru)
+    val cabinet = textsOf(Language.Ru).cabinet
 
     fun shot(name: String, bytes: ByteArray) {
         val file = File("/tmp/$name.png")

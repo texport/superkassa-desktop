@@ -15,8 +15,8 @@ import kz.mybrain.superkassa.presentation.common.model.followSeat
 import kz.mybrain.superkassa.presentation.common.model.latest
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Очередь отложенной отправки выбранной кассы.
@@ -29,7 +29,7 @@ class QueueViewModel(private val cases: QueueCases, private val talk: Talk) : Vi
     private val screen = MutableStateFlow(QueueUiState())
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = stringsOf(talk.language())
+    private val texts: AppStrings get() = textsOf(talk.language()).common
 
     val state: StateFlow<QueueUiState> = screen.asStateFlow()
 

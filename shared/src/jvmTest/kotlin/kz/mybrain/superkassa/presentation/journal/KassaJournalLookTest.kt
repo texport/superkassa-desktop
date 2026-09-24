@@ -15,13 +15,12 @@ import kz.mybrain.superkassa.presentation.common.document.JournalRow
 import kz.mybrain.superkassa.presentation.common.document.JournalState
 import kz.mybrain.superkassa.presentation.journal.documents.JournalUiState
 import kz.mybrain.superkassa.presentation.print.preview.component.ReceiptPreview
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.ByteArrayInputStream
 import java.io.File
 import javax.imageio.ImageIO
@@ -203,7 +202,7 @@ class KassaJournalLookTest {
     }
 
     private companion object {
-        val TEXTS = journalTexts(Language.Ru).history
+        val TEXTS = textsOf(Language.Ru).journal.history
 
         /** Лента чека: длинная и узкая, как её рисует узел. */
         const val TAPE_WIDTH = 384
@@ -211,7 +210,7 @@ class KassaJournalLookTest {
         const val SETTLE = 40
 
         /** Надпись значка «мельче» в шапке окна просмотра. */
-        val ZOOM_OUT = stringsOf(Language.Ru).preview.zoomOut
+        val ZOOM_OUT = textsOf(Language.Ru).common.preview.zoomOut
         const val NARROWING = 3
 
         /** Окно кассы на ноутбуке: на нём столбцы тесны и без крупного шрифта. */

@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Сверка кассы с БФД.
@@ -34,7 +34,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 fun OfdSyncCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
-    val money = moneyTexts(LocalLanguage.current).kkm
+    val money = textsOf(LocalLanguage.current).kassa.money.kkm
     SectionCard(title = money.syncTitle, info = money.bfdMeaning) {
         SyncAction(money.syncService, money.syncServiceHint, ofd.serviceSyncable, actions::syncService)
         SyncAction(money.syncCounters, money.syncCountersHint, ofd.syncable, actions::syncCounters)

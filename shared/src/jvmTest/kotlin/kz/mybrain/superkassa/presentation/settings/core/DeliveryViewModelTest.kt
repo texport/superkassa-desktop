@@ -19,8 +19,8 @@ import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.MemoryCoreSettings
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class DeliveryViewModelTest {
     private val notices = Notices()
-    private val texts = coreSettingTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).settings.core
 
     @BeforeTest
     fun main() = Dispatchers.setMain(UnconfinedTestDispatcher())

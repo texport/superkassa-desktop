@@ -20,17 +20,17 @@ import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.refund.component.BasisList
 import kz.mybrain.superkassa.presentation.kassa.refund.component.BasisSearch
 import kz.mybrain.superkassa.presentation.kassa.refund.component.RefundPanel
 import kz.mybrain.superkassa.presentation.kassa.refund.component.basisState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.ReturnJournalTexts
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.shortTitle
 import kz.mybrain.superkassa.presentation.theme.size.Panes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.shortTitle
+import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Возврат по чеку-основанию.
@@ -59,7 +59,7 @@ fun ReturnsScreen(model: ReturnsViewModel) {
 /** Возврат по готовому состоянию: снимки вида рисуют его без модели. */
 @Composable
 fun ReturnsContent(state: ReturnsUiState, actions: ReturnsActions = ReturnsActions()) {
-    val texts = journalTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).journal
     val journal = texts.returns
     val chosen = state.basis
     Column(

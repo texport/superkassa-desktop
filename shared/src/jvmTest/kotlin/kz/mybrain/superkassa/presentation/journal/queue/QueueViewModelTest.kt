@@ -13,8 +13,8 @@ import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -91,7 +91,7 @@ class QueueViewModelTest {
         model.retryFailed()
 
         assertTrue(retried)
-        assertEquals(Message.Done(stringsOf(Language.Ru).queue.retryDone), notices.last)
+        assertEquals(Message.Done(textsOf(Language.Ru).common.queue.retryDone), notices.last)
         assertTrue(model.state.value.failed.isEmpty(), "очередь не перечитана после повтора")
     }
 

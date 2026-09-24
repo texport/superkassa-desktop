@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.value
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.picker.BFD_PROVIDER
-import kz.mybrain.superkassa.presentation.strings.cabinet.machineTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Касса кабинета на этой машине.
@@ -72,7 +72,7 @@ class AdoptViewModel(private val cabinet: CabinetViewModel) : ViewModel() {
         viewModelScope.launch {
             try {
                 val token = tokenFor(register) ?: return@launch
-                val what = machineTexts(talk.language()).workHere
+                val what = textsOf(talk.language()).cabinet.machine.workHere
                 val kkm = cases.enrollKkm(register, BFD_PROVIDER, environment, adminPin, token)
                     .shown(what, "adopt kkm", talk)
                 if (kkm == null) {
@@ -81,7 +81,7 @@ class AdoptViewModel(private val cabinet: CabinetViewModel) : ViewModel() {
                 }
                 screen.update { it.copy(issued = it.issued - register.id) }
                 cases.workOn(kkm)
-                talk.done(machineTexts(talk.language()).done)
+                talk.done(textsOf(talk.language()).cabinet.machine.done)
                 onDone()
             } finally {
                 screen.update { it.copy(adopting = false) }

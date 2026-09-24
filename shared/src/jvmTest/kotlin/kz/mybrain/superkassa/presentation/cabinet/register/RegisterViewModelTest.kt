@@ -15,8 +15,8 @@ import kz.mybrain.superkassa.domain.cabinet.unwired
 import kz.mybrain.superkassa.presentation.cabinet.CabinetScene
 import kz.mybrain.superkassa.presentation.cabinet.onTestClock
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.IOException
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -111,7 +111,7 @@ class RegisterViewModelTest {
 
         model.show(WAITING.copy(status = "REGISTERED"))
 
-        assertEquals(cabinetTexts(Language.Ru).unreachable, assertIs<Message.Refusal>(scene.app.notices.last).text)
+        assertEquals(textsOf(Language.Ru).cabinet.unreachable, assertIs<Message.Refusal>(scene.app.notices.last).text)
         assertFalse(scene.cabinet.state.value.busy)
     }
 

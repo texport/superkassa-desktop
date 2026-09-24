@@ -21,11 +21,11 @@ import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.presentation.analytics.map.component.UnderMap
 import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
 import kz.mybrain.superkassa.presentation.common.keyboard.CloseOnEscape
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Карта касс во всё окно.

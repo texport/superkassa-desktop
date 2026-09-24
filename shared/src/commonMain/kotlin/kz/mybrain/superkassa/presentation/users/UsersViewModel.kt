@@ -16,8 +16,8 @@ import kz.mybrain.superkassa.presentation.common.message.words
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.followSeat
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Кассиры кассы: список, заведение, смена пина, удаление.
@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.presentation.strings.common.stringsOf
  */
 class UsersViewModel(private val cases: UsersCases, private val talk: Talk) : ViewModel(), UsersActions {
     private val screen = MutableStateFlow(UsersUiState())
-    private val texts: AppStrings get() = stringsOf(talk.language())
+    private val texts: AppStrings get() = textsOf(talk.language()).common
 
     val state: StateFlow<UsersUiState> = screen.asStateFlow()
 
@@ -135,7 +135,7 @@ class UsersViewModel(private val cases: UsersCases, private val talk: Talk) : Vi
  */
 private fun PinChange.refused(answer: Answer<*>, talk: Talk): PinChange {
     val refusal = answer as? Answer.Refused
-    if (refusal == null) answer.shown(stringsOf(talk.language()).users.change, "change user pin", talk)
+    if (refusal == null) answer.shown(textsOf(talk.language()).common.users.change, "change user pin", talk)
     refusal?.let { talk.journal.warn("change user pin: refused ${it.code}") }
     return copy(busy = false, refusal = refusal?.words(talk.language()))
 }

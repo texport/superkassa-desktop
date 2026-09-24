@@ -20,8 +20,8 @@ import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.users.signin.loginModel
+import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 import kotlin.io.path.createTempDirectory
 

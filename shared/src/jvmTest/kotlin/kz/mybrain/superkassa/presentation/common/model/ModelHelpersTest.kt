@@ -13,7 +13,7 @@ import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.SilentJournal
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

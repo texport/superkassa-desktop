@@ -10,9 +10,9 @@ import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.list.RecordRow
 import kz.mybrain.superkassa.presentation.common.list.stripedAt
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Журнал регистрационных действий кассы.

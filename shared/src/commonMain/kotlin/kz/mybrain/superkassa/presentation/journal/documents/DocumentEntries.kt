@@ -13,10 +13,10 @@ import kz.mybrain.superkassa.presentation.common.document.JournalType
 import kz.mybrain.superkassa.presentation.common.document.deliveryOf
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.journal.ofdRefusalWords
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Документы кассы строками общего журнала.
@@ -77,7 +77,8 @@ fun journalTypesOf(
  * в обслуживание.
  */
 private fun refusalOf(document: FiscalDocumentResponse, texts: AppStrings, language: Language): String? {
-    val words = ofdRefusalWords(document.refusalCode, language) ?: document.ofdErrorText?.takeIf { it.isNotBlank() }
+    val words = textsOf(language).journal.ofdRefusal.words(document.refusalCode)
+        ?: document.ofdErrorText?.takeIf { it.isNotBlank() }
     val code = document.refusalCode?.let { "${texts.common.refusalCode} $it" }
     val reason = listOfNotNull(words, code)
     return reason.takeIf { it.isNotEmpty() }?.joinToString(Glyphs.SEPARATOR)

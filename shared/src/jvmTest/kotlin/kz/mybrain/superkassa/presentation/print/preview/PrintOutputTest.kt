@@ -19,9 +19,8 @@ import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.FakePrintOut
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.print.printTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -44,7 +43,7 @@ class PrintOutputTest {
     private val notices = Notices()
     private val out = FakePrintOut()
     private val app = CoreScene.app(core, signIn, notices, settings = settingsPorts().copy(printOut = out))
-    private val texts = stringsOf(Language.Ru).preview
+    private val texts = textsOf(Language.Ru).common.preview
 
     @BeforeTest
     fun main() {
@@ -108,7 +107,7 @@ class PrintOutputTest {
         model.preview(PrintSource.Journal("d-1"), "receipt")
         model.saveShown()
 
-        assertEquals(Message.Refusal(printTexts(Language.Ru).keepUnavailable, "NO_FILES"), notices.last)
+        assertEquals(Message.Refusal(textsOf(Language.Ru).print.keepUnavailable, "NO_FILES"), notices.last)
     }
 
     /**

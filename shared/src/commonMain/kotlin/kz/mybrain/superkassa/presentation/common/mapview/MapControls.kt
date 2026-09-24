@@ -14,9 +14,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Управление картой: своё место, приближение и разрешение на определение.

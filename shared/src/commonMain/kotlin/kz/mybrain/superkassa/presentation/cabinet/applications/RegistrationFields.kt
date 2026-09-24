@@ -11,9 +11,9 @@ import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.component.PlaceOptions
 import kz.mybrain.superkassa.presentation.cabinet.component.PlacePicker
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Что нужно уточнить у выбранного вида заявления.

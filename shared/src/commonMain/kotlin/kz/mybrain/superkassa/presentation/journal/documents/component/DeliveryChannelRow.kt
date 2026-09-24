@@ -10,12 +10,12 @@ import io.github.texport.superkassa.core.presentation.api.model.delivery.Receipt
 import io.github.texport.superkassa.core.presentation.api.model.delivery.ReceiptDeliveryState
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.of
-import kz.mybrain.superkassa.presentation.strings.journal.DeliveryTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.presentation.words.common.of
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.journal.DeliveryTexts
 
 /**
  * Доставка по одному каналу: куда, что с ней и почему не вышло.

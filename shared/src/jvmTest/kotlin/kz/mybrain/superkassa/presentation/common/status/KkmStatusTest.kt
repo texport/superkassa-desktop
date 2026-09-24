@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.common.status
 
 import kz.mybrain.superkassa.KassaScene
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -83,7 +83,7 @@ class KkmStatusTest {
     @Test
     fun `состояния ядра названы словами`() {
         Language.entries.forEach { language ->
-            val enums = stringsOf(language).enums
+            val enums = textsOf(language).common.enums
             val said = listOf("ACTIVE", "BLOCKED", "PROGRAMMING", "REGISTRATION").map { enums.kkmState(it) }
             assertTrue(said.all { it.isNotBlank() }, "$language: $said")
             assertEquals(said.distinct(), said, "$language: состояния названы одним словом")

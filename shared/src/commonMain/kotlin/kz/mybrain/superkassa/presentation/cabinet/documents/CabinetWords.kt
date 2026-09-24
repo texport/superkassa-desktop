@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.presentation.cabinet.documents
 
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Слова документов кабинета: что это, дошло ли и чем расплатились.

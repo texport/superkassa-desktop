@@ -16,11 +16,11 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.asCoroutineDispatcher
 import kz.mybrain.superkassa.presentation.common.adaptive.WindowClassRoot
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.ProvideStrings
+import kz.mybrain.superkassa.presentation.common.strings.ProvideStrings
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
 import java.awt.Panel
 import java.util.concurrent.Executors
 import java.awt.event.KeyEvent as AwtKeyEvent

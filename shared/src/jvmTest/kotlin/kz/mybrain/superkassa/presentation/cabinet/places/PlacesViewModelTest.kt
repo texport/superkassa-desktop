@@ -14,8 +14,8 @@ import kz.mybrain.superkassa.jsonHttp
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.map.MapPoint
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
  */
 class PlacesViewModelTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     @Test
     fun `точка по занятому адресу и месту не выдаётся за новую`(): Unit = inlineMain {

@@ -3,8 +3,8 @@ package kz.mybrain.superkassa.presentation.cabinet.documents
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovement
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
  */
 class RefusedDocumentPrintTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     @Test
     fun `отвергнутый чек кабинета не открывается печатной формой`() {

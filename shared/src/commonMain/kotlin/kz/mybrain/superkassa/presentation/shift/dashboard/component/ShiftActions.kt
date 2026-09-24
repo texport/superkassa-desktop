@@ -19,19 +19,17 @@ import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.dialog.ConfirmActionDialog
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardActions
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardUiState
-import kz.mybrain.superkassa.presentation.strings.common.DashboardStrings
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.blockReasonTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.blockReasonWords
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.common.DashboardStrings
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Управление сменой.
@@ -109,8 +107,8 @@ private fun ShiftNote(state: DashboardUiState) {
     val texts = LocalStrings.current
     val language = LocalLanguage.current
     val note = when {
-        state.blocked -> blockReasonWords(state.kkm?.blockReasonCode, language) +
-            Glyphs.SEPARATOR + blockReasonTexts(language).readingStays
+        state.blocked -> textsOf(language).kassa.blockReason.words(state.kkm?.blockReasonCode) +
+            Glyphs.SEPARATOR + textsOf(language).kassa.blockReason.readingStays
         state.programming -> texts.settings.enteredProgramming
         // Смену открывает администратор: кассиру вместо кнопки, на которую
         // касса ответит отказом, сказано, кого позвать.
@@ -157,7 +155,7 @@ private fun CloseShiftAsk(state: DashboardUiState, onCancel: () -> Unit, onConfi
         what = texts.dashboard.closeShiftAsk,
         explain = closeShiftExplain(state, texts.dashboard),
         action = texts.dashboard.closeShift,
-        cancel = moneyTexts(LocalLanguage.current).drawer.cancel,
+        cancel = textsOf(LocalLanguage.current).kassa.money.drawer.cancel,
         busy = state.busy,
         onCancel = onCancel,
         onConfirm = onConfirm

@@ -14,8 +14,8 @@ import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.FakePrintOut
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -39,7 +39,7 @@ class PrintViewModelTest {
     private val notices = Notices()
     private val out = FakePrintOut()
     private val app = CoreScene.app(core, signIn, notices, settings = settingsPorts().copy(printOut = out))
-    private val texts = stringsOf(Language.Ru).preview
+    private val texts = textsOf(Language.Ru).common.preview
 
     /** Какими пинами касса рисовала форму, по порядку. */
     private val pins = mutableListOf<String>()

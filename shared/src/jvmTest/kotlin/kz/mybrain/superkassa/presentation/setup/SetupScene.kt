@@ -19,9 +19,9 @@ import kz.mybrain.superkassa.kassa.MemorySetup
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationModel
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Мастер подключения поверх кассы процесса для снимков и нажатий.
@@ -46,7 +46,7 @@ internal class SetupScene(
     val memory = MemorySetup()
     val cabinet = FakeSetupCabinet()
     val calls = DirectCalls()
-    val texts = setupTexts(Language.Ru)
+    val texts = textsOf(Language.Ru).setup
 
     /** Пройденное до открытия мастера: номер и, если [halfway], касса в кабинете. */
     fun started(halfway: Boolean = false): SetupScene = apply {

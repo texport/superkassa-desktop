@@ -9,9 +9,9 @@ import kz.mybrain.superkassa.presentation.common.period.dayRange
 import kz.mybrain.superkassa.presentation.journal.documents.documentTypeTitle
 import kz.mybrain.superkassa.presentation.journal.documents.documentTypesIn
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.documentAmount
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.time.Instant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -62,7 +62,7 @@ class JournalHistoryTest {
     @Test
     fun `название типа берётся у кассы, а снятый с учёта CHECK показан словом`() {
         val names = mapOf("SALE" to TrilingualMessageResponse("Продажа", "Сатылым", "Sale"))
-        val texts = stringsOf(Language.Ru)
+        val texts = textsOf(Language.Ru).common
 
         assertEquals("Продажа", documentTypeTitle("SALE", names, Language.Ru, texts.enums))
         assertEquals("Сатылым", documentTypeTitle("SALE", names, Language.Kk, texts.enums))

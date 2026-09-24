@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.users.signin
 
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
  */
 class LoginKkmNameTest {
 
-    private val texts = stringsOf(Language.Ru).login
+    private val texts = textsOf(Language.Ru).common.login
 
     private val kkm = CoreScene.kkm(id = "1f2e", kgd = "000000000042").let {
         it.copy(factoryNumber = "SK-77", ofdServiceInfo = it.ofdServiceInfo?.copy(orgAddress = "Алматы, Абая 1"))
@@ -58,7 +58,7 @@ class LoginKkmNameTest {
     @Test
     fun `подпись номера заполнена на каждом языке`() {
         Language.entries.forEach { language ->
-            val label = stringsOf(language).login.registrationNumber
+            val label = textsOf(language).common.login.registrationNumber
             assertTrue(label.isNotBlank(), "$language: пустая подпись номера")
         }
     }

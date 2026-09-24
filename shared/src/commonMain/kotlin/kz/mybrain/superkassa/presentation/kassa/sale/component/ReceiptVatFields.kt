@@ -10,14 +10,14 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.kassa.model.VatScope
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.VatActions
 import kz.mybrain.superkassa.presentation.kassa.sale.position.vatTitle
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.SaleTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 
 /**
  * НДС чека: на весь чек или по позициям — и ставка, если на весь чек.

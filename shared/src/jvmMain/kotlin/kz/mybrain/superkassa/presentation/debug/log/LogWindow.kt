@@ -10,12 +10,12 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.rememberWindowState
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.debug.debugTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Окно журнала приложения.
@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Sizes
  */
 @Composable
 fun LogWindow(model: LogViewModel, language: Language, appearance: Appearance, look: Look, onClose: () -> Unit) {
-    val texts = debugTexts(language)
+    val texts = textsOf(language).debug
     val state = rememberWindowState(size = DpSize(Sizes.logWindowWidth, Sizes.logWindowHeight))
     val journal by model.state.collectAsScreenState()
     Window(onCloseRequest = onClose, title = texts.title, state = state) {

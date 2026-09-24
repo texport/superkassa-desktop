@@ -25,8 +25,8 @@ import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsViewModel
 import kz.mybrain.superkassa.presentation.kassa.refund.returnsModel
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.buyerContactTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -44,7 +44,7 @@ import kotlin.test.assertTrue
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class ContactChannelsModelTest {
-    private val texts = buyerContactTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).kassa.contact
 
     @BeforeTest
     fun inlineMain() = Dispatchers.setMain(UnconfinedTestDispatcher())

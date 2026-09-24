@@ -11,9 +11,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.cabinet.model.OkedEntry
 import kz.mybrain.superkassa.presentation.cabinet.addressIn
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Ввод вида деятельности: выбор из классификатора ОКЭД.

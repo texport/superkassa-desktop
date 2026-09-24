@@ -1,11 +1,10 @@
 package kz.mybrain.superkassa.presentation.journal.documents
 
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
-import kz.mybrain.superkassa.presentation.strings.common.EnumStrings
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.documentFallback
-import kz.mybrain.superkassa.presentation.strings.common.of
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.presentation.words.common.of
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.common.EnumStrings
 
 /**
  * Название вида документа для кассира.

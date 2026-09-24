@@ -15,7 +15,6 @@ import kz.mybrain.superkassa.domain.kassa.model.refund.span
 import kz.mybrain.superkassa.domain.signin.model.SignInState
 import kz.mybrain.superkassa.domain.signin.model.sameSeat
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
 import kz.mybrain.superkassa.presentation.common.model.Busy
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
@@ -27,10 +26,10 @@ import kz.mybrain.superkassa.presentation.kassa.payment.FiscalWords
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.payment.SplitEditor
 import kz.mybrain.superkassa.presentation.kassa.payment.fiscal
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.title
+import kz.mybrain.superkassa.presentation.words.kassa.title
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Возврат по чеку-основанию.
@@ -44,7 +43,7 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
     private val screen = MutableStateFlow(ReturnsUiState())
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = stringsOf(talk.language())
+    private val texts: AppStrings get() = textsOf(talk.language()).common
 
     val state: StateFlow<ReturnsUiState> = screen.asStateFlow()
 
@@ -129,7 +128,7 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
         screen.update { it.copy(refund = it.refund?.copy(attempt = attempt)) }
         whileBusy(busy) {
             val what = plan.kind.title(texts.returns)
-            val done = checkoutTexts(talk.language()).refundDone.fill(what, Money.formatTiyn(plan.refundTiyn))
+            val done = textsOf(talk.language()).kassa.checkout.refundDone.fill(what, Money.formatTiyn(plan.refundTiyn))
             val words = FiscalWords(what, done, "refund")
             val outcome = talk.fiscal(cases.issue(plan, attempt.key), words, texts)
             screen.update { it.copy(refund = it.refund?.after(outcome)) }

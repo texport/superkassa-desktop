@@ -21,8 +21,9 @@ import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.presentation.common.adaptive.TwoPane
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.AutonomousCard
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.DashboardPage
@@ -30,13 +31,12 @@ import kz.mybrain.superkassa.presentation.shift.dashboard.component.RefusedDocum
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.RefusedSummary
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.ShiftActions
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.ShiftDocuments
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Главный экран: состояние выбранной кассы и документы текущей смены.
@@ -105,7 +105,7 @@ private fun StatTiles(state: DashboardUiState) {
         // остаток одним именем: три названия одного числа кассир читал
         // как три разных счётчика. Набран он тем же начертанием, что
         // в «Деньгах», — главным числом, одной строкой.
-        StatCard(moneyTexts(LocalLanguage.current).drawer.inDrawer, drawer.fillMaxRowHeight()) {
+        StatCard(textsOf(LocalLanguage.current).kassa.money.drawer.inDrawer, drawer.fillMaxRowHeight()) {
             MoneyText(Money.formatTiyn(state.cashInDrawer), Modifier.fillMaxWidth(), MoneyStyle.hero)
         }
         // Число документов — только там, где касса их назвала. Непрочитанный

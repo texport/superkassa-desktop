@@ -2,8 +2,8 @@ package kz.mybrain.superkassa.presentation.settings
 
 import kz.mybrain.superkassa.domain.settings.model.KkmDemand
 import kz.mybrain.superkassa.domain.settings.model.KkmNeed
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
@@ -23,7 +23,7 @@ class SettingRequirementsTest {
     @Test
     fun `выполненное и невыполненное требование различаются надписью`() {
         Language.entries.forEach { language ->
-            val texts = moneyTexts(language).kkm
+            val texts = textsOf(language).kassa.money.kkm
             KkmDemand.entries.forEach { demand ->
                 val met = requirementLine(KkmNeed(demand, met = true), texts)
                 val unmet = requirementLine(KkmNeed(demand, met = false), texts)

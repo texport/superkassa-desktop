@@ -15,11 +15,11 @@ import kz.mybrain.superkassa.presentation.cabinet.applications.ApplicationFields
 import kz.mybrain.superkassa.presentation.cabinet.applications.DeregistrationReason
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
 import kz.mybrain.superkassa.presentation.cabinet.places.component.placeRows
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.users.signin.KkmList
 import kz.mybrain.superkassa.presentation.users.signin.LoginUiState
 import kz.mybrain.superkassa.renderMillis
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -36,7 +36,7 @@ import kotlin.test.assertTrue
  */
 class BigListRenderTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     private fun places(count: Int) = (1..count).map {
         RetailPlace(

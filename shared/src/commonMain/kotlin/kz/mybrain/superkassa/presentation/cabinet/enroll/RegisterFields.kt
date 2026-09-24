@@ -10,8 +10,8 @@ import kz.mybrain.superkassa.presentation.cabinet.component.PlaceOptions
 import kz.mybrain.superkassa.presentation.cabinet.component.PlacePicker
 import kz.mybrain.superkassa.presentation.common.picker.PickerWords
 import kz.mybrain.superkassa.presentation.common.picker.SearchablePicker
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Поля заводимой кассы.

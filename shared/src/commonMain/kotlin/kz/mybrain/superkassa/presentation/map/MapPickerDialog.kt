@@ -20,13 +20,12 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapLocating
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.map.mapAddressTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Выбор места торговой точки на карте.
@@ -62,7 +61,7 @@ fun MapPickerDialog(
     onPicked: (MapPoint) -> Unit
 ) {
     val language = LocalLanguage.current
-    val texts = cabinetTexts(language)
+    val texts = textsOf(language).cabinet
     val parts = rememberPickerParts(services, registry, address, language, point)
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
@@ -137,7 +136,7 @@ private fun PickerBody(
 ) {
     val language = LocalLanguage.current
     val state = parts.state
-    val notices = remember(language) { mapAddressTexts(language) }
+    val notices = remember(language) { textsOf(language).map.address }
     Column(
         modifier = Modifier.fillMaxSize().padding(Spacing.cardPadding),
         verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)

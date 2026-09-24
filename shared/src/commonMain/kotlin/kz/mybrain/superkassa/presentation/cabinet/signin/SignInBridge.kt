@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * То же действие для мастера подключения: вход — в кабинет окна, но без

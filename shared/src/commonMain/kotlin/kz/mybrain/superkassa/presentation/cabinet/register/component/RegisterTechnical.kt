@@ -12,15 +12,15 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegisterState
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
 import kz.mybrain.superkassa.presentation.common.format.Dates
-import kz.mybrain.superkassa.presentation.common.format.fill
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
 import kz.mybrain.superkassa.presentation.common.section.DetailLine
 import kz.mybrain.superkassa.presentation.common.status.Chip
 import kz.mybrain.superkassa.presentation.common.status.StatusTone
 import kz.mybrain.superkassa.presentation.common.status.toneColor
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.fill
 
 /**
  * Техническое состояние: ответ по существу, а под ним — кто его дал.

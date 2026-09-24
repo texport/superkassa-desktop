@@ -4,7 +4,7 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Сверка состояний кассы по всем, кто о ней знает.

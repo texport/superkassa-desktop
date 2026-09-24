@@ -18,9 +18,9 @@ import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
 import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Правка кассы в кабинете: своё название, заводской номер и удаление.

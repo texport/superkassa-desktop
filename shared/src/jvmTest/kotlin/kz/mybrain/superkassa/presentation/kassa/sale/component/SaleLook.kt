@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.FormActions
@@ -24,12 +25,11 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.measureUnits
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.color.Accent
 import kz.mybrain.superkassa.presentation.theme.color.schemeOf
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 
@@ -39,7 +39,7 @@ import javax.imageio.ImageIO
 @Composable
 internal fun Till(state: SaleUiState, content: @Composable () -> Unit) {
     CompositionLocalProvider(
-        LocalSaleTexts provides saleTexts(Language.Ru),
+        LocalSaleTexts provides textsOf(Language.Ru).kassa.sale,
         LocalVatRates provides state.vat(Language.Ru, LocalStrings.current.enums),
         LocalUnits provides measureUnits(Language.Ru),
         content = content

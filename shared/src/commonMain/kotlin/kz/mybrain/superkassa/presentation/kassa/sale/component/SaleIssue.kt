@@ -14,15 +14,15 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainField
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleBlock
 import kz.mybrain.superkassa.presentation.common.button.BusyButton
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.action
-import kz.mybrain.superkassa.presentation.strings.kassa.paymentTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.reason
 import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.action
+import kz.mybrain.superkassa.presentation.words.kassa.reason
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Единственное главное действие экрана и причина, по которой оно недоступно.
@@ -56,8 +56,9 @@ fun IssueRow(state: SaleUiState, onIssue: () -> Unit) {
 @Composable
 private fun BlockReason(block: SaleBlock?, missingField: DomainField?) {
     // Одна причина без вступления: кнопка рядом и так погашена.
+    val payment = textsOf(LocalLanguage.current).kassa.payment
     Text(
-        text = block?.reason(LocalSaleTexts.current, paymentTexts(LocalLanguage.current), missingField).orEmpty(),
+        text = block?.reason(LocalSaleTexts.current, payment, missingField).orEmpty(),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.error
     )

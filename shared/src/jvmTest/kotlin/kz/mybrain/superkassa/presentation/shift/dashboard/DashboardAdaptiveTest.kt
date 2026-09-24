@@ -11,7 +11,7 @@ import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -33,7 +33,7 @@ class DashboardAdaptiveTest {
         val accepted = (REFUSED + 1..REFUSED + ACCEPTED).map { KassaExtremes.sale(it) }
         val desk = KassaScene.desk(KassaScene.kkm(shiftOpen = true))
         val state = DashboardScene.state(shift = CoreScene.openShift(), documents = refused + accepted, cash = DRAWER)
-        val texts = stringsOf(case.language)
+        val texts = textsOf(case.language).common
         val failures = mutableListOf<String>()
         probe.show(case.look, case.language) {
             KassaWindow(desk, Section.Dashboard) { DashboardContent(state) }

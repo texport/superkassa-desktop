@@ -25,9 +25,9 @@ import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.payment.SplitEditor
 import kz.mybrain.superkassa.presentation.kassa.payment.fiscal
 import kz.mybrain.superkassa.presentation.kassa.sale.entry.EntryEditor
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.title
+import kz.mybrain.superkassa.presentation.words.kassa.title
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Продажа и покупка: корзина, набранное поверх неё и пробитие чека.
@@ -41,7 +41,7 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
     private val screen = MutableStateFlow(SaleUiState(collapsed = panelsOf(cases.panels())))
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = stringsOf(talk.language())
+    private val texts: AppStrings get() = textsOf(talk.language()).common
 
     val state: StateFlow<SaleUiState> = screen.asStateFlow()
 

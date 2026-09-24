@@ -5,8 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
-import kz.mybrain.superkassa.presentation.strings.setup.SetupTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /**
  * Шаг 1: заводской номер кассы.

@@ -17,7 +17,7 @@ import kz.mybrain.superkassa.presentation.common.model.Busy
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.update.updateTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
 
@@ -63,7 +63,7 @@ class UpdatesViewModel(private val cases: UpdatesCases, private val talk: Talk) 
     override fun install(update: AvailableUpdate) {
         whileBusy(installing) {
             talk.clear()
-            val texts = updateTexts(talk.language())
+            val texts = textsOf(talk.language()).update
             when (cases.install(update)) {
                 InstallOutcome.Started -> talk.done(texts.installerOpened, INSTALL)
                 InstallOutcome.PageOpened -> talk.done(texts.pageOpened)

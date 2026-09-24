@@ -11,10 +11,10 @@ import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.applications.ActionKind
 import kz.mybrain.superkassa.presentation.cabinet.applications.ApplicationFields
 import kz.mybrain.superkassa.presentation.cabinet.applications.DeregistrationReason
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 
@@ -29,7 +29,7 @@ import kotlin.test.Test
  */
 class PlaceScaleShots {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     private fun places(count: Int, long: Boolean = false) = (1..count).map {
         RetailPlace(

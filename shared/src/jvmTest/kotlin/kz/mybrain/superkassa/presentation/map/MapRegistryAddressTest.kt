@@ -12,9 +12,9 @@ import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.CabinetWire
 import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
 import kz.mybrain.superkassa.domain.cabinet.model.distinctSuggestions
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.map.mapAddressTexts
 import kz.mybrain.superkassa.signedPorts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -52,7 +52,7 @@ class MapRegistryAddressTest {
     @Test
     fun `надписи связки заполнены на каждом языке`() {
         Language.entries.forEach { language ->
-            val texts = mapAddressTexts(language)
+            val texts = textsOf(language).map.address
             listOf(texts.pickAddressFirst, texts.searching, texts.notOnMap).forEach {
                 assertTrue(it.isNotBlank(), "$language: пустая надпись связки карты с регистром")
             }

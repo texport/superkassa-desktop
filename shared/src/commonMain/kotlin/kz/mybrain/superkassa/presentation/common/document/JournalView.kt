@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.list.MoreRow
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Журнал документов целиком: поиск, отбор, таблица и подгрузка.

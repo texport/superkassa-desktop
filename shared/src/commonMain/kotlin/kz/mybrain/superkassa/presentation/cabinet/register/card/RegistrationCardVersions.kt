@@ -22,10 +22,10 @@ import kz.mybrain.superkassa.presentation.common.section.SectionTitle
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
 import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Версии регистрационной карты кассы. Зачем они нужны владельцу —

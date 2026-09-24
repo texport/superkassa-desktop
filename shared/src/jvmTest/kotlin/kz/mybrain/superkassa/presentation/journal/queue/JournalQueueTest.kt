@@ -9,10 +9,9 @@ import kz.mybrain.superkassa.domain.journal.model.rejectedTasks
 import kz.mybrain.superkassa.domain.journal.model.sentTasks
 import kz.mybrain.superkassa.domain.journal.model.waitingTasks
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -78,8 +77,8 @@ class JournalQueueTest {
      */
     @Test
     fun `непрочитанная очередь не выдаётся за пустую`() {
-        val texts = stringsOf(Language.Ru)
-        val journal = journalTexts(Language.Ru).queue
+        val texts = textsOf(Language.Ru).common
+        val journal = textsOf(Language.Ru).journal.queue
 
         val none = object : QueueActions {}
         val unread = queueState(texts, journal, QueueUiState(read = false), none)

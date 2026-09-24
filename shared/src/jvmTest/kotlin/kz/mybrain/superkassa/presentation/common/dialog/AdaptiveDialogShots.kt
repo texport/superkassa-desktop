@@ -17,11 +17,8 @@ import kz.mybrain.superkassa.SettingsMeasure
 import kz.mybrain.superkassa.domain.update.model.AvailableUpdate
 import kz.mybrain.superkassa.domain.version.model.AppVersion
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.print.preview.component.ReceiptPreview
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.update.updateTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
@@ -29,6 +26,8 @@ import kz.mybrain.superkassa.presentation.update.check.UpdateDialog
 import kz.mybrain.superkassa.presentation.users.ChangePinDialog
 import kz.mybrain.superkassa.presentation.users.PinChange
 import kz.mybrain.superkassa.presentation.users.UsersActions
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Rect
@@ -83,7 +82,7 @@ class AdaptiveDialogShots {
 
     @Test
     fun `подтверждение необратимого`() = everywhere("danger") { language ->
-        val money = moneyTexts(language)
+        val money = textsOf(language).kassa.money
         ConfirmDangerDialog(
             what = money.kkm.decommissionConfirm.format(SettingsMeasure.LONG_KKM),
             explain = List(REPEAT) { money.kkm.decommissionHint }.joinToString(" "),
@@ -96,13 +95,14 @@ class AdaptiveDialogShots {
 
     @Test
     fun `предложение обновления`() = everywhere("update") { language ->
-        UpdateDialog(AvailableUpdate(AppVersion(1, 0, 7), "https://example.kz", null), updateTexts(language), {}) {}
+        UpdateDialog(AvailableUpdate(AppVersion(1, 0, 7), "https://example.kz", null), textsOf(language).update, {}) {}
     }
 
     @Test
     fun `смена пина с причиной под полем`() = everywhere("pin") { language ->
         val user = UserResponse(userId = "u-1", name = SettingsMeasure.LONG_KKM, role = UserRole.ADMIN)
-        ChangePinDialog(moneyTexts(language), PinChange(user, own = true, pin = "12"), "", object : UsersActions {})
+        val texts = textsOf(language).kassa.money
+        ChangePinDialog(texts, PinChange(user, own = true, pin = "12"), "", object : UsersActions {})
     }
 
     @Test

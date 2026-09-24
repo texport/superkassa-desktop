@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.common.message
 
 import io.github.texport.superkassa.core.presentation.api.model.ofd.DeliveryStatus
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.AppStrings
 
 /**
  * Что сказать кассиру после фискального действия: что сделано и что стало с документом в БФД.

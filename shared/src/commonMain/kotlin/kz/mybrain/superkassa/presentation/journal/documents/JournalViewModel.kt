@@ -20,9 +20,8 @@ import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
 import kz.mybrain.superkassa.presentation.journal.outcome
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.deliveryTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Журнал документов кассы за выбранный срок.
@@ -126,7 +125,7 @@ class JournalViewModel(private val cases: JournalCases, private val talk: Talk) 
         }
         screen.update { it.copy(loading = true) }
         val now = screen.value
-        val what = stringsOf(talk.language()).sections.history
+        val what = textsOf(talk.language()).common.sections.history
         val page = cases.readPeriodDocuments(now.bounds(), now.documents).shown(what, "read journal", talk)
         screen.update { latest ->
             val (documents, outcome) = page.outcome(latest.documents, latest.page)
@@ -139,7 +138,7 @@ class JournalViewModel(private val cases: JournalCases, private val talk: Talk) 
 private fun problemOf(answer: Answer<*>, action: String, talk: Talk): String? = when (answer) {
     is Answer.Done -> null
     is Answer.Refused -> answer.words(talk.language()).also { talk.journal.warn("$action: refused ${answer.code}") }
-    is Answer.Failed -> deliveryTexts(talk.language()).unread.also {
+    is Answer.Failed -> textsOf(talk.language()).journal.delivery.unread.also {
         talk.journal.failure("$action: failed ${answer.reason}")
     }
 }

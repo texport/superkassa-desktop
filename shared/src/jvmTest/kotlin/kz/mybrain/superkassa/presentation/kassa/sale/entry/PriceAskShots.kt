@@ -9,9 +9,9 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.position.MeasureUnit
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -140,7 +140,7 @@ class PriceAskShots {
     /** Надписи области подставляются те же, что на экране продажи. */
     @Composable
     private fun Dialog(found: Position, onAdd: (Position) -> Unit, onDismiss: () -> Unit) {
-        CompositionLocalProvider(LocalSaleTexts provides saleTexts(Language.Ru)) {
+        CompositionLocalProvider(LocalSaleTexts provides textsOf(Language.Ru).kassa.sale) {
             PriceAskDialog(found, units, onAdd, onDismiss)
         }
     }

@@ -16,14 +16,14 @@ import kz.mybrain.superkassa.presentation.common.dialog.DialogTitle
 import kz.mybrain.superkassa.presentation.common.keyboard.CloseOnEscape
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
 import kz.mybrain.superkassa.presentation.common.state.LoadingState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.journal.documents.JournalActions
 import kz.mybrain.superkassa.presentation.journal.documents.ReceiptDeliveryUi
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.journal.DeliveryTexts
-import kz.mybrain.superkassa.presentation.strings.journal.deliveryTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.strings.api.journal.DeliveryTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Доставка чека покупателю — по каналу на строку.
@@ -38,7 +38,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Sizes
  */
 @Composable
 fun ReceiptDeliveryDialog(delivery: ReceiptDeliveryUi, actions: JournalActions) {
-    val texts = deliveryTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).journal.delivery
     CloseOnEscape { actions.closeDelivery() }
     AlertDialog(
         onDismissRequest = actions::closeDelivery,

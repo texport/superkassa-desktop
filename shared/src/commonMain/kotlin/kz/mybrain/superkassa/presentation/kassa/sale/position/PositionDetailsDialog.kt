@@ -17,11 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.presentation.common.dialog.formDialogWidth
 import kz.mybrain.superkassa.presentation.common.list.ScrollableList
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Окно подробностей строки чека.
@@ -49,7 +49,7 @@ fun PositionDetailsDialog(
     onRemove: (() -> Unit)? = null
 ) {
     val language = LocalLanguage.current
-    val texts = saleTexts(language)
+    val texts = textsOf(language).kassa.sale
     val rows = details.rows(LocalStrings.current.sale, texts, measureUnits(language), rates)
     AlertDialog(
         onDismissRequest = onDismiss,

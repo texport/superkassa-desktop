@@ -18,12 +18,10 @@ import kz.mybrain.superkassa.presentation.common.document.select
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
 import kz.mybrain.superkassa.presentation.journal.documents.journalEntriesOf
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.ofdRefusalWords
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.refusal
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -39,8 +37,8 @@ import kotlin.test.assertTrue
  */
 class JournalSourcesTest {
 
-    private val texts = stringsOf(Language.Ru)
-    private val cabinet = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
+    private val cabinet = textsOf(Language.Ru).cabinet
 
     private val names = mapOf("SALE" to TrilingualMessageResponse("Продажа", "Сатылым", "Sale"))
 
@@ -110,7 +108,7 @@ class JournalSourcesTest {
         val entry = entries(refused).single()
 
         assertEquals(
-            ofdRefusalWords(17, Language.Ru) + Glyphs.SEPARATOR + "${texts.common.refusalCode} 17",
+            textsOf(Language.Ru).journal.ofdRefusal.words(17) + Glyphs.SEPARATOR + "${texts.common.refusalCode} 17",
             entry.refusal
         )
         assertTrue(entry.searchable.contains("17"), "по причине отказа строка обязана находиться")

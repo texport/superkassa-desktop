@@ -14,10 +14,10 @@ import kz.mybrain.superkassa.presentation.kassa.sale.component.ExciseDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.position.PositionDetailsDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.position.VatRate
 import kz.mybrain.superkassa.presentation.kassa.sale.position.details
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -54,7 +54,7 @@ class KassaDialogWidthShots {
 
     @Test
     fun `акцизные марки не выходят за экран телефона`() = everywhere("excise") {
-        CompositionLocalProvider(LocalSaleTexts provides saleTexts(Language.Ru)) {
+        CompositionLocalProvider(LocalSaleTexts provides textsOf(Language.Ru).kassa.sale) {
             ExciseDialog(position.exciseStamps, onChanged = {}, onDismiss = {})
         }
     }

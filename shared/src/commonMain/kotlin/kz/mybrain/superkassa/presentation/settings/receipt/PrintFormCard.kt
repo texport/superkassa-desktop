@@ -5,10 +5,10 @@ import kz.mybrain.superkassa.presentation.common.picker.SwitchRow
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.PartTitle
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.common.of
+import kz.mybrain.superkassa.presentation.words.common.of
 
 /**
  * Печатная форма чека: язык, ширина ленты и реклама ОФД.

@@ -15,13 +15,12 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.presentation.cabinet.addressIn
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.map.MapAddressTexts
-import kz.mybrain.superkassa.presentation.strings.map.mapAddressTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.map.MapAddressTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Адрес точки: выбирается в государственном адресном регистре, карта идёт за ним.
@@ -49,8 +48,8 @@ internal fun RegistryAddress(
     onAddress: (RegisterAddress) -> Unit
 ) {
     val language = LocalLanguage.current
-    val texts = remember(language) { cabinetTexts(language) }
-    val notices = remember(language) { mapAddressTexts(language) }
+    val texts = remember(language) { textsOf(language).cabinet }
+    val notices = remember(language) { textsOf(language).map.address }
     val pick = parts.pick
     val shown = addressIn(language, address?.address, address?.addressKz)
     val lookup = rememberLookup(parts, shown, address?.addressRef)

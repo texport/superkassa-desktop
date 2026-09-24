@@ -12,11 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.field.SearchField
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.fieldLabelReserve
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Поиск и порядок строк журнала.

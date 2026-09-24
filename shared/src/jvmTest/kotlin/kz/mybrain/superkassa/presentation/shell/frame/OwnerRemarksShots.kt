@@ -29,8 +29,8 @@ import kz.mybrain.superkassa.presentation.settings.SettingsScreen
 import kz.mybrain.superkassa.presentation.setup.ConnectKkmScreen
 import kz.mybrain.superkassa.presentation.setup.SetupModels
 import kz.mybrain.superkassa.presentation.setup.SetupScene
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue

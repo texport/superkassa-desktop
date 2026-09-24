@@ -5,9 +5,9 @@ import kz.mybrain.superkassa.domain.settings.model.KassaFacts
 import kz.mybrain.superkassa.domain.settings.model.frozen
 import kz.mybrain.superkassa.domain.settings.model.secondsOf
 import kz.mybrain.superkassa.domain.settings.model.server
-import kz.mybrain.superkassa.presentation.strings.kassa.KkmSetupTexts
-import kz.mybrain.superkassa.presentation.strings.settings.CoreSettingTexts
-import kz.mybrain.superkassa.presentation.strings.settings.KassaFactsTexts
+import kz.mybrain.superkassa.strings.api.kassa.KkmSetupTexts
+import kz.mybrain.superkassa.strings.api.settings.CoreSettingTexts
+import kz.mybrain.superkassa.strings.api.settings.KassaFactsTexts
 
 /**
  * Настройки кассы на этой машине, как их видит владелец.

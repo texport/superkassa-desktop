@@ -1,12 +1,13 @@
 package kz.mybrain.superkassa.presentation.settings.look
 
 import kz.mybrain.superkassa.domain.workplace.model.LookChoice
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.Typeface
 import kz.mybrain.superkassa.presentation.theme.color.Accent
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Вид окна словами оформления: язык, тема, тон, шрифт и свёрнутые части.
@@ -15,7 +16,7 @@ import kz.mybrain.superkassa.presentation.theme.color.Appearance
  * или язык системы, если он один из трёх.
  */
 data class LookUiState(
-    val language: Language = Language.byCode(null),
+    val language: Language = workplaceLanguage(null),
     val appearance: Appearance = Appearance.System,
     val look: Look = Look(),
     val railCollapsed: Boolean = false,
@@ -24,7 +25,7 @@ data class LookUiState(
     companion object {
         /** Сохранённый выбор, прочитанный словами оформления; незнакомый код — умолчание. */
         fun of(choice: LookChoice) = LookUiState(
-            language = Language.byCode(choice.language),
+            language = workplaceLanguage(choice.language),
             appearance = Appearance.byCode(choice.appearance),
             look = Look(
                 accent = Accent.byCode(choice.accent),

@@ -25,8 +25,8 @@ import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
 import kz.mybrain.superkassa.presentation.kassa.payment.FiscalWords
 import kz.mybrain.superkassa.presentation.kassa.payment.fiscal
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.time.Clock
 
 /**
@@ -41,7 +41,7 @@ class CashViewModel(private val cases: CashCases, private val talk: Talk) : View
     private val screen = MutableStateFlow(CashUiState())
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = stringsOf(talk.language())
+    private val texts: AppStrings get() = textsOf(talk.language()).common
 
     val state: StateFlow<CashUiState> = screen.asStateFlow()
 

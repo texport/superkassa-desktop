@@ -34,9 +34,6 @@ import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
@@ -45,6 +42,8 @@ import kz.mybrain.superkassa.presentation.users.CashierForm
 import kz.mybrain.superkassa.presentation.users.UsersActions
 import kz.mybrain.superkassa.presentation.users.UsersContent
 import kz.mybrain.superkassa.presentation.users.UsersUiState
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -107,7 +106,7 @@ class AreaQaShots {
             me = users.first(),
             form = CashierForm(name = users.last().name, role = UserRole.CASHIER, pin = "1234567890")
         )
-        everywhere("users-list", { stringsOf(it).users.create }) {
+        everywhere("users-list", { textsOf(it).common.users.create }) {
             Place { UsersContent(state, object : UsersActions {}) }
         }
     }
@@ -116,7 +115,7 @@ class AreaQaShots {
     fun `мастер подключения — первый шаг`() {
         val contours = listOf("DEV", "TEST", "PROD")
             .map { OfdEnvironmentResponse(it, TrilingualMessageResponse(it, it, it)) }
-        everywhere("setup-factory", { setupTexts(it).getFactory }) {
+        everywhere("setup-factory", { textsOf(it).setup.getFactory }) {
             val desk = KassaScene.desk()
             Place {
                 SetupContent(
@@ -138,7 +137,7 @@ class AreaQaShots {
     fun `очередь с неудачными в режиме программирования`() {
         val kkm = CoreScene.kkm(state = "PROGRAMMING")
         val queue = QueueUiState(kkm = kkm, tasks = HistoryStage.tasks(TASKS), read = true)
-        everywhere("queue-failed", { stringsOf(it).queue.retryFailed }) {
+        everywhere("queue-failed", { textsOf(it).common.queue.retryFailed }) {
             Place { QueueContent(queue, object : QueueActions {}) }
         }
     }

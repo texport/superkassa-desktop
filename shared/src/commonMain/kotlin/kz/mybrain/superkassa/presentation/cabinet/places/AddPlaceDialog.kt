@@ -16,11 +16,11 @@ import kz.mybrain.superkassa.presentation.cabinet.addressIn
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlacePoint
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.map.MapPoint
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Создание торговой точки: название, адрес из регистра и место на карте.

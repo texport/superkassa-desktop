@@ -9,8 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
-import kz.mybrain.superkassa.presentation.strings.debug.DebugTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.debug.DebugTexts
 
 /**
  * Содержимое журнала: отбор сверху, строки посередине, обещание о тайном внизу.

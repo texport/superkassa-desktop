@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
-import kz.mybrain.superkassa.presentation.strings.analytics.SieveTexts
+import kz.mybrain.superkassa.strings.api.analytics.SieveTexts
 
 /**
  * Смысл учёта КГД словами — одними и теми же во всём приложении.

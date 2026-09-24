@@ -5,8 +5,8 @@ import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.Placement
 import kz.mybrain.superkassa.domain.analytics.model.placement
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
-import kz.mybrain.superkassa.presentation.strings.analytics.SieveTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.analytics.SieveTexts
 
 /**
  * Отбор касс на карте.

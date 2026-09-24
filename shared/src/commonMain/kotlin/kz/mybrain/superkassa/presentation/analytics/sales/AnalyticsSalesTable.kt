@@ -29,13 +29,13 @@ import kz.mybrain.superkassa.presentation.common.table.TableColumn
 import kz.mybrain.superkassa.presentation.common.table.TableLine
 import kz.mybrain.superkassa.presentation.common.table.TableWidths
 import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Сводка по кассам или по точкам таблицей.

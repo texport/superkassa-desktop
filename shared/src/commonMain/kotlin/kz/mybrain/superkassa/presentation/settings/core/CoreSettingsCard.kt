@@ -10,12 +10,11 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.status.Chip
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Касса на этой машине: сколько она ждёт БФД.
@@ -28,8 +27,8 @@ import kz.mybrain.superkassa.presentation.theme.StatusColors
 @Composable
 internal fun CoreSettingsCard(core: CoreSettingsUiState, actions: CoreSettingsActions) {
     val language = LocalLanguage.current
-    val texts = coreSettingTexts(language)
-    val money = moneyTexts(language).kkm
+    val texts = textsOf(language).settings.core
+    val money = textsOf(language).kassa.money.kkm
     SectionCard(
         title = texts.title,
         info = texts.hint,
@@ -54,7 +53,7 @@ internal fun CoreSettingsCard(core: CoreSettingsUiState, actions: CoreSettingsAc
 /** Поле секунд: негодное названо под полем до сохранения. */
 @Composable
 private fun SecondsField(label: String, value: String, valid: Boolean, enabled: Boolean, onChange: (String) -> Unit) {
-    val texts = coreSettingTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).settings.core
     OutlinedTextField(
         value = value,
         onValueChange = onChange,

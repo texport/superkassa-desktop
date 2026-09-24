@@ -12,10 +12,10 @@ import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.CashRegisterModel
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlaceRef
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.refusal
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

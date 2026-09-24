@@ -11,8 +11,8 @@ import kz.mybrain.superkassa.presentation.common.document.JournalQuery
 import kz.mybrain.superkassa.presentation.common.document.select
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class JournalCoreTest {
     private val scene = DeliveryBench(ordered = false)
-    private val texts = stringsOf(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
 
     @BeforeTest
     fun inlineMain() = Dispatchers.setMain(UnconfinedTestDispatcher())

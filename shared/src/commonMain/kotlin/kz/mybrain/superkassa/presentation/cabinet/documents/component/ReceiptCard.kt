@@ -13,9 +13,9 @@ import kz.mybrain.superkassa.presentation.common.document.JournalDeliveryChip
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.section.DetailLine
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Чек целиком, как его принял ОФД.

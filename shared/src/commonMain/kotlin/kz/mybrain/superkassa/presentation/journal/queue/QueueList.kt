@@ -21,15 +21,14 @@ import kz.mybrain.superkassa.presentation.common.list.RecordRow
 import kz.mybrain.superkassa.presentation.common.list.ScrollableList
 import kz.mybrain.superkassa.presentation.common.list.stripedAt
 import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.common.documentFallback
-import kz.mybrain.superkassa.presentation.strings.common.of
-import kz.mybrain.superkassa.presentation.strings.journal.QueueJournalTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.common.of
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.journal.QueueJournalTexts
 
 /**
  * Ждущие сверху, под ними — отправленные и отвергнутые: это история,

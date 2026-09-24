@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.settings.receipt
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptLanguage
-import kz.mybrain.superkassa.presentation.strings.common.SettingStrings
+import kz.mybrain.superkassa.strings.api.common.SettingStrings
 
 /**
  * Язык печатного чека, как его выбирает владелец.

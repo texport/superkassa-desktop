@@ -10,13 +10,12 @@ import kz.mybrain.superkassa.presentation.common.picker.SwitchRow
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.SettingRequirements
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.common.of
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+import kz.mybrain.superkassa.presentation.words.common.of
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Налоговый режим кассы, её ставка по умолчанию, автозакрытие и автоизъятие.
@@ -31,7 +30,7 @@ fun TaxSettingsCard(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
     tax.kkm ?: return
     SectionCard(title = texts.settings.taxSettings, info = texts.settings.taxSettingsHint) {
         TaxFields(tax, actions)
-        val core = coreSettingTexts(LocalLanguage.current)
+        val core = textsOf(LocalLanguage.current).settings.core
         // Переключатель и есть действие: уходит в кассу сразу. Касса меняет
         // его только в режиме программирования; вне режима он погашен,
         // а не отвечает отказом на каждое нажатие.
@@ -63,7 +62,7 @@ private fun ColumnScope.TaxFields(tax: TaxSettingsUiState, actions: TaxSettingsA
         if (tax.vatChoosable) {
             Picker(texts.defaultVatGroup, tax.vatRates.map { it.code to it.name }, tax.vatGroup, actions::chooseVat)
         }
-        SettingRequirements(tax.needs, moneyTexts(LocalLanguage.current).kkm)
+        SettingRequirements(tax.needs, textsOf(LocalLanguage.current).kassa.money.kkm)
         FilledTonalButton(enabled = tax.savable, onClick = actions::saveTax) { Text(texts.save) }
     }
 }

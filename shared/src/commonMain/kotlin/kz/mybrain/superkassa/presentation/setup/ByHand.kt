@@ -9,11 +9,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.setup.component.FactoryStepCard
 import kz.mybrain.superkassa.presentation.setup.component.OfdStep
 import kz.mybrain.superkassa.presentation.setup.component.SetupStepCard
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Ручной путь: заводской номер и касса по идентификатору и токену.
@@ -25,7 +25,7 @@ import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
  */
 @Composable
 fun ByHand(state: SetupUiState, actions: SetupActions) {
-    val setup = setupTexts(LocalLanguage.current)
+    val setup = textsOf(LocalLanguage.current).setup
     Text(
         text = setup.manuallyHint,
         style = MaterialTheme.typography.bodyMedium,

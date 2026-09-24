@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.settings.deliveryTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Каналы доставки чека: SMS, Telegram, WhatsApp и почта — включены ли,
@@ -35,7 +35,7 @@ class DeliveryViewModel(private val cases: DeliveryCases, private val talk: Talk
     init {
         follow(busy.active) { on -> screen.update { it.copy(busy = on) } }
         viewModelScope.launch {
-            val texts = deliveryTexts(talk.language())
+            val texts = textsOf(talk.language()).settings.delivery
             val settings = cases.read().shown(texts.title, "read delivery settings", talk) ?: return@launch
             screen.update { DeliveryUiState.of(settings, it.busy) }
         }
@@ -55,7 +55,7 @@ class DeliveryViewModel(private val cases: DeliveryCases, private val talk: Talk
         val now = screen.value
         if (!now.savable) return
         whileBusy(busy) {
-            val texts = deliveryTexts(talk.language())
+            val texts = textsOf(talk.language()).settings.delivery
             val answer = cases.save(now.drafts, now.switched)
             val saved = talk.savedCore(answer, texts.title, "save delivery settings", now.server) ?: return@whileBusy
             screen.update { DeliveryUiState.of(saved, it.busy) }

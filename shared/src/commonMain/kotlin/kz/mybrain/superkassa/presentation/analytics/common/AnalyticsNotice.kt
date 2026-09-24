@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.presentation.analytics.common
 
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsTrouble
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Помеха аналитики словами владельца — в общем виде состояний экрана.

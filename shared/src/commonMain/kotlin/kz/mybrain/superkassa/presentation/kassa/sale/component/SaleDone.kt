@@ -19,15 +19,15 @@ import androidx.compose.ui.text.TextStyle
 import kz.mybrain.superkassa.domain.kassa.model.sale.IssuedReceipt
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.sale.ReceiptOutput
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.title
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
+import kz.mybrain.superkassa.presentation.words.kassa.title
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Итог пробитого чека: сумма, сдача и что сделать с чеком.
@@ -40,7 +40,7 @@ import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
  */
 @Composable
 fun IssuedCard(issued: IssuedReceipt, output: ReceiptOutput, onNext: () -> Unit, modifier: Modifier = Modifier) {
-    val texts = checkoutTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).kassa.checkout
     ElevatedCard(modifier = modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(Spacing.blockPadding),

@@ -13,11 +13,11 @@ import kz.mybrain.superkassa.domain.analytics.model.RecordFleet
 import kz.mybrain.superkassa.presentation.analytics.common.Reading
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.renderMillis
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -33,7 +33,7 @@ import kotlin.test.assertTrue
  */
 class AnalyticsRecordShots {
 
-    private val texts = analyticsTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).analytics
 
     @Composable
     private fun Body(kkms: List<AnalyticsKkm>) {

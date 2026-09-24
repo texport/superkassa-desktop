@@ -8,7 +8,7 @@ import kz.mybrain.superkassa.presentation.cabinet.places.attentionOf
 import kz.mybrain.superkassa.presentation.cabinet.places.keeps
 import kz.mybrain.superkassa.presentation.cabinet.places.sortedPlaces
 import kz.mybrain.superkassa.presentation.common.picker.narrowed
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Строка колонки торговых точек: сама точка или касса под ней.

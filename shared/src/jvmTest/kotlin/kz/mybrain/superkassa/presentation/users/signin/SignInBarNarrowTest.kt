@@ -6,9 +6,9 @@ import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.label
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.theme.Look
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -26,7 +26,7 @@ class SignInBarNarrowTest {
     private fun check(probe: KassaProbe, language: Language): List<String> {
         val kkms = KassaExtremes.kkms(KKMS)
         val app = CoreScene.app(LoginScene.core(kkms))
-        val texts = stringsOf(language)
+        val texts = textsOf(language).common
         probe.show(Look(), language) { LoginScene.Door(app) }
         probe.frame(KassaProbe.SETTLE)
         val name = requireNotNull(kkms.first().name)

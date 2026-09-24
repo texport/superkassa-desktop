@@ -24,12 +24,12 @@ import kz.mybrain.superkassa.presentation.analytics.record.AnalyticsRecordScreen
 import kz.mybrain.superkassa.presentation.analytics.record.analyticsRecordViewModel
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSalesScreen
 import kz.mybrain.superkassa.presentation.analytics.sales.analyticsSalesViewModel
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Аналитика по кассам компании.
@@ -53,7 +53,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 fun AnalyticsScreen(app: AppContainer, access: String?, cabinetTexts: CabinetTexts) {
     val language = LocalLanguage.current
-    val texts = remember(language) { analyticsTexts(language) }
+    val texts = remember(language) { textsOf(language).analytics }
     var page by remember { mutableStateOf(AnalyticsTab.Map) }
     Column(
         modifier = Modifier.fillMaxSize(),

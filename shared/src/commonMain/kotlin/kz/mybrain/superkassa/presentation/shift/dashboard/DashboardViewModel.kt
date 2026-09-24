@@ -20,8 +20,8 @@ import kz.mybrain.superkassa.presentation.common.model.followSeat
 import kz.mybrain.superkassa.presentation.common.model.latest
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Главный экран: смена выбранной кассы, её документы и действия над сменой.
@@ -34,7 +34,7 @@ class DashboardViewModel(private val cases: DashboardCases, private val talk: Ta
     private val screen = MutableStateFlow(DashboardUiState())
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = stringsOf(talk.language())
+    private val texts: AppStrings get() = textsOf(talk.language()).common
 
     val state: StateFlow<DashboardUiState> = screen.asStateFlow()
 

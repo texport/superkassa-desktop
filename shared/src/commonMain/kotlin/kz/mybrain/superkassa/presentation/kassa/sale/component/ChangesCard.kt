@@ -22,15 +22,15 @@ import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.section.CollapsibleSection
 import kz.mybrain.superkassa.presentation.common.section.MinorSumLine
 import kz.mybrain.superkassa.presentation.common.section.NamedSumRow
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.FormActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.paymentTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.reason
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.reason
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Скидки и наценки чека — одним блоком.
@@ -78,7 +78,7 @@ private fun ChangeFields(sale: SaleUiState, actions: FormActions) {
     DiscountField(sale, state, actions)
     MarkupField(sale, state, actions)
     Hint(
-        problem = changeBlockOf(state)?.reason(LocalSaleTexts.current, paymentTexts(LocalLanguage.current)),
+        problem = changeBlockOf(state)?.reason(LocalSaleTexts.current, textsOf(LocalLanguage.current).kassa.payment),
         hint = LocalStrings.current.sale.discountOrMarkup
     )
 }

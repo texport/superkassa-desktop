@@ -13,16 +13,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import io.github.texport.superkassa.core.presentation.api.model.user.UserResponse
 import kz.mybrain.superkassa.presentation.common.dialog.ConfirmDangerDialog
-import kz.mybrain.superkassa.presentation.common.format.fill
 import kz.mybrain.superkassa.presentation.common.list.RecordRow
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
 import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.CashierTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.MoneyTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.kassa.CashierTexts
+import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 
 /**
  * Строка кассира: имя, роль и действия над ним.

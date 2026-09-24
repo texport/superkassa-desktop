@@ -24,10 +24,10 @@ import kz.mybrain.superkassa.presentation.cabinet.register.component.stateClaims
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.CollapsibleCard
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Выбранная касса: чем она является, как себя чувствует и что с ней делали.

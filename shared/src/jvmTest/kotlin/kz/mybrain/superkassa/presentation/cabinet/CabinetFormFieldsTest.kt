@@ -12,8 +12,8 @@ import kz.mybrain.superkassa.mockCabinet
 import kz.mybrain.superkassa.presentation.cabinet.enroll.AddRegisterDialog
 import kz.mybrain.superkassa.presentation.cabinet.places.AddPlaceCard
 import kz.mybrain.superkassa.presentation.cabinet.register.adopt.AdoptRegisterDialog
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.viewOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
  */
 class CabinetFormFieldsTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     @Test
     fun `окно заведения точки показывает поля`() = fieldsShown("точки") {

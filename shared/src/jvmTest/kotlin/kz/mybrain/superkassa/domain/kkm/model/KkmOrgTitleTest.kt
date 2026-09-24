@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.domain.kkm.model
 
 import kz.mybrain.superkassa.KassaScene
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -44,7 +44,7 @@ class KkmOrgTitleTest {
 
     @Test
     fun `отсутствие организации названо на всех трёх языках`() {
-        val words = Language.entries.associateWith { stringsOf(it).settings.orgUnknown }
+        val words = Language.entries.associateWith { textsOf(it).common.settings.orgUnknown }
 
         words.forEach { (language, text) ->
             assertTrue(text.isNotBlank(), "надписи об отсутствии организации нет на языке $language")

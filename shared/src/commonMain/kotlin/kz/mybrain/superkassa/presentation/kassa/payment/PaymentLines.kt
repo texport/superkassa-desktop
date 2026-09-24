@@ -16,12 +16,12 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.Paymen
 import kz.mybrain.superkassa.domain.kassa.model.payment.PaymentSplit
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.kassa.payment.component.PaymentPicker
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.kassa.paymentTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Чем платят за чек.
@@ -46,7 +46,7 @@ fun PaymentLines(
     actions: PaymentActions,
     unsupportedNote: String = ""
 ) {
-    val texts = paymentTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).kassa.payment
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
@@ -81,7 +81,7 @@ private fun PaymentRow(
     total: Long,
     actions: PaymentActions
 ) {
-    val texts = paymentTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).kassa.payment
     // Вид оплаты и его снятие — рядом, сумма — под ними во всю ширину:
     // суммы от миллиона не помещались в половину узкой кассы, а края полей
     // совпадают с краями прочих полей панели.
@@ -111,7 +111,7 @@ private fun PaymentRow(
  */
 @Composable
 private fun AmountField(split: PaymentSplit, at: Int, total: Long, actions: PaymentActions) {
-    val texts = paymentTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).kassa.payment
     val line = split.entries[at]
     val takesRest = split.takesRest(at)
     val rest = total - split.assigned()

@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.presentation.common.status.Chip
 import kz.mybrain.superkassa.presentation.common.status.StatusTone
 import kz.mybrain.superkassa.presentation.common.status.toneColor
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Состояния кабинета словами и цветом.

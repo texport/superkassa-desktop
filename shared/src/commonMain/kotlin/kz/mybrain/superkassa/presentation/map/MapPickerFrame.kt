@@ -21,10 +21,10 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapLocating
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
 import kz.mybrain.superkassa.presentation.common.mapview.MapView
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Обрамление окна карты: шапка, само полотно и подвал.

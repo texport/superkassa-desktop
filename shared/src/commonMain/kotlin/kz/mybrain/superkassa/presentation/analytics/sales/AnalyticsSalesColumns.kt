@@ -6,8 +6,8 @@ import kz.mybrain.superkassa.presentation.analytics.common.unitPlace
 import kz.mybrain.superkassa.presentation.analytics.common.unitTitle
 import kz.mybrain.superkassa.presentation.common.format.Dates
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /** Что показывает таблица сводки: кассы компании или её торговые точки. */
 enum class SalesRows { Registers, Places }

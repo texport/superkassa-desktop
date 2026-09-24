@@ -12,10 +12,10 @@ import kz.mybrain.superkassa.presentation.analytics.common.RowCell
 import kz.mybrain.superkassa.presentation.analytics.common.TableAcross
 import kz.mybrain.superkassa.presentation.cabinet.recordTitle
 import kz.mybrain.superkassa.presentation.common.table.TableColumn
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Учёт по регионам: строка области и её числа.

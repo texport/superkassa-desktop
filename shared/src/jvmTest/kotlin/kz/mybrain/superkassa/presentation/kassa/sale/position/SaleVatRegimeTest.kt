@@ -4,8 +4,8 @@ import kz.mybrain.superkassa.domain.kassa.model.paysVat
 import kz.mybrain.superkassa.domain.kassa.model.sale.NO_VAT
 import kz.mybrain.superkassa.domain.kassa.model.sale.defaultVatOf
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
  */
 class SaleVatRegimeTest {
 
-    private val enums = stringsOf(Language.Ru).enums
+    private val enums = textsOf(Language.Ru).common.enums
 
     private fun kkmWith(regime: String?, group: String?) = CoreScene.kkm().copy(
         kkmId = "4166498c-d0c1-406e-863d-20458dfd3040",

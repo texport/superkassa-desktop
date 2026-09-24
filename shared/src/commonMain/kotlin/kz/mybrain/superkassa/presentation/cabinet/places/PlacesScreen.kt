@@ -22,9 +22,9 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.placeRows
 import kz.mybrain.superkassa.presentation.common.adaptive.NarrowPanes
 import kz.mybrain.superkassa.presentation.common.adaptive.TwoPane
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.CabinetPanes
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Хозяйство владельца так, как оно устроено: точка — кассы — документы.

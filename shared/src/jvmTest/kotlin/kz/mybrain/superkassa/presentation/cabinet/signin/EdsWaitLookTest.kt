@@ -21,11 +21,10 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.company.actions
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
 import kz.mybrain.superkassa.presentation.cabinet.signingRig
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.edsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -44,8 +43,8 @@ import kotlin.time.Duration.Companion.seconds
  */
 class EdsWaitLookTest {
 
-    private val texts = cabinetTexts(Language.Ru)
-    private val eds = edsTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
+    private val eds = textsOf(Language.Ru).cabinet.eds
 
     /**
      * Ожидание видно, и оно движется.

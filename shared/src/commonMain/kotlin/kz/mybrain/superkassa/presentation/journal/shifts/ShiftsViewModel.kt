@@ -14,7 +14,7 @@ import kz.mybrain.superkassa.presentation.common.model.latest
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
 import kz.mybrain.superkassa.presentation.journal.outcome
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Прошлые смены и их документы.
@@ -88,5 +88,5 @@ class ShiftsViewModel(private val cases: ShiftsCases, private val talk: Talk) : 
         }
     }
 
-    private fun what(): String = stringsOf(talk.language()).sections.history
+    private fun what(): String = textsOf(talk.language()).common.sections.history
 }

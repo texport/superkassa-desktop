@@ -8,8 +8,9 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.SaleState
 import kz.mybrain.superkassa.domain.kassa.model.sale.blockOf
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTextsRu
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -135,7 +136,7 @@ class SaleBasketTest {
             position("3450.00", quantity = "1.450", discount = "50.00").copy(exciseStamps = listOf("AB1")),
             unit = "кг",
             vat = "НДС 16%",
-            texts = saleTextsRu
+            texts = textsOf(Language.Ru).kassa.sale
         )
 
         assertTrue(line.contains(Glyphs.TIMES), "количество умножается общим знаком: $line")

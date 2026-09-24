@@ -2,9 +2,8 @@ package kz.mybrain.superkassa.presentation.setup
 
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.kassa.inlineMain
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test
@@ -21,8 +20,8 @@ import kotlin.test.assertTrue
  * Пинов по умолчанию нет, и пин из одинаковых цифр — обычный пин.
  */
 class SetupAdminPinTest {
-    private val texts = stringsOf(Language.Ru)
-    private val cashiers = moneyTexts(Language.Ru).cashiers
+    private val texts = textsOf(Language.Ru).common
+    private val cashiers = textsOf(Language.Ru).kassa.money.cashiers
 
     @Test
     fun `короткий пин объяснён под полем`() {

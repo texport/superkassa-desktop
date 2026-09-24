@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 
 /**
  * Чьей картой пользуется рабочее место.

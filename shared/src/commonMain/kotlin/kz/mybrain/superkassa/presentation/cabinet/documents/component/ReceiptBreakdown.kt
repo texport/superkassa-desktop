@@ -11,8 +11,8 @@ import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.section.HeroSumLine
 import kz.mybrain.superkassa.presentation.common.section.MinorSumLine
 import kz.mybrain.superkassa.presentation.common.section.NamedSumRow
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Состав чека: позиции, оплата, налоги и итог.

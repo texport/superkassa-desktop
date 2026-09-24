@@ -9,11 +9,10 @@ import kz.mybrain.superkassa.presentation.cabinet.component.cabinetHead
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerLine
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.AppTopBar
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Шапка кабинета — одна на оба входа в него.
@@ -32,8 +31,8 @@ import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 fun CabinetBar(model: CabinetViewModel, look: CabinetLook, onExit: (() -> Unit)? = null) {
     val state by model.state.collectAsScreenState()
     val language = LocalLanguage.current
-    val texts = cabinetTexts(language)
-    val journal = journalTexts(language).history
+    val texts = textsOf(language).cabinet
+    val journal = textsOf(language).journal.history
     val head = cabinetHead(
         register = state.documentsOf,
         company = state.owner?.company?.name,

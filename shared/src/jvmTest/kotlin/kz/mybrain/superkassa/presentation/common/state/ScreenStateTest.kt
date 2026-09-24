@@ -10,11 +10,10 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
 import kz.mybrain.superkassa.presentation.common.document.JournalEmpty
 import kz.mybrain.superkassa.presentation.common.document.JournalQuery
 import kz.mybrain.superkassa.presentation.common.document.JournalView
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.motion.Durations
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -29,8 +28,8 @@ import kotlin.test.assertTrue
  */
 class ScreenStateTest {
 
-    private val journal = journalTexts(Language.Ru).history
-    private val cabinet = cabinetTexts(Language.Ru)
+    private val journal = textsOf(Language.Ru).journal.history
+    private val cabinet = textsOf(Language.Ru).cabinet
 
     private fun probe(state: ScreenState, onContent: () -> Unit = {}) = RenderProbe {
         Column(modifier = Modifier.fillMaxSize()) {

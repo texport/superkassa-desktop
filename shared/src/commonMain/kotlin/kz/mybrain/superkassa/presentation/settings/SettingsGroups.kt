@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.presentation.settings
 
-import kz.mybrain.superkassa.presentation.strings.common.SettingStrings
+import kz.mybrain.superkassa.strings.api.common.SettingStrings
 
 /**
  * Два хозяйства настроек: чьё это и кто их хранит.

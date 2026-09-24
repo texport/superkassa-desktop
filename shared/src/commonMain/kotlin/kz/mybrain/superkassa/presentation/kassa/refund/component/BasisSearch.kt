@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.datetime.LocalDate
 import kz.mybrain.superkassa.presentation.common.period.DayBar
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Поиск чека-основания: день и номер.

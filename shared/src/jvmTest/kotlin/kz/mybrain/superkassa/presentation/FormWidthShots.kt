@@ -39,9 +39,9 @@ import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test
@@ -61,7 +61,7 @@ class FormWidthShots {
     /** Экран раздела; у настроек две вкладки, и вторая открывается нажатием. */
     private enum class Screen(val section: Section, val tab: ((Language) -> String)? = null) {
         SettingsKkm(Section.Settings),
-        SettingsWorkplace(Section.Settings, { stringsOf(it).settings.householdWorkplace }),
+        SettingsWorkplace(Section.Settings, { textsOf(it).common.settings.householdWorkplace }),
         Cash(Section.Cash),
         Users(Section.Users),
         Queue(Section.Queue),

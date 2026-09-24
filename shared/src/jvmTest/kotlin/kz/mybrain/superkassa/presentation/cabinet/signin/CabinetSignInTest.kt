@@ -4,8 +4,8 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.log.AppLog
 import kz.mybrain.superkassa.integrations.bfdcabinet.CabinetSettings
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -35,7 +35,8 @@ class CabinetSignInTest {
     private fun door(debug: Boolean): ByteArray {
         AppLog.switchDebugMode(debug)
         val state = CabinetUiState(address = CabinetSettings.DEFAULT_URL)
-        return RenderProbe { CabinetSignIn(state, Language.Ru, cabinetTexts(Language.Ru), object : CabinetActions {}) }
+        val texts = textsOf(Language.Ru).cabinet
+        return RenderProbe { CabinetSignIn(state, Language.Ru, texts, object : CabinetActions {}) }
             .use { probe ->
                 val frame = probe.frame()
                 File("/tmp/signin-${if (debug) "debug" else "plain"}.png").writeBytes(frame)

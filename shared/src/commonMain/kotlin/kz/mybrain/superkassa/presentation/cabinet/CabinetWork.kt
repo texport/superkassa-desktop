@@ -4,7 +4,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.StateFlow
 import kz.mybrain.superkassa.presentation.common.model.Busy
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Итог обращения к кабинету: значение или помеха — прямо в руки вызвавшему. */
 sealed interface CabinetReply<out T> {
@@ -79,7 +79,7 @@ class CabinetWork(private val talk: Talk) {
     private fun show(action: String, failure: Throwable): CabinetProblem {
         val problem = cabinetProblemOf(failure)
         talk.journal.failure("cabinet: $action ${problem.logged()}")
-        talk.say(action, cabinetMessage(problem, cabinetTexts(talk.language())))
+        talk.say(action, cabinetMessage(problem, textsOf(talk.language()).cabinet))
         return problem
     }
 

@@ -25,14 +25,14 @@ import kz.mybrain.superkassa.domain.settings.model.DeliveryField
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.settings.DeliveryTexts
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
-import kz.mybrain.superkassa.presentation.strings.settings.deliveryTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.settings.of
+import kz.mybrain.superkassa.strings.api.settings.DeliveryTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Доставка чека покупателю: включённые каналы, адреса служб и ключи.
@@ -46,8 +46,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 internal fun DeliveryCard(delivery: DeliveryUiState, actions: DeliveryActions) {
-    val texts = deliveryTexts(LocalLanguage.current)
-    val core = coreSettingTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).settings.delivery
+    val core = textsOf(LocalLanguage.current).settings.core
     SectionCard(
         title = texts.title,
         info = texts.hint,
@@ -90,7 +90,7 @@ private fun ChannelHead(
     actions: DeliveryActions,
     texts: DeliveryTexts
 ) {
-    val name = texts.channels.getValue(channel)
+    val name = texts.channels.of(channel)
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
@@ -127,7 +127,7 @@ private fun FlowRowScope.DeliveryInput(
     OutlinedTextField(
         value = delivery.value(field),
         onValueChange = { actions.type(field, it) },
-        label = { Text(texts.fields.getValue(field)) },
+        label = { Text(texts.fields.of(field)) },
         isError = malformed,
         supportingText = if (malformed) ({ Text(texts.problem(field)) }) else null,
         singleLine = true,

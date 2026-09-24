@@ -26,10 +26,10 @@ import kz.mybrain.superkassa.presentation.shell.bar.KkmBarActions
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.ContentWidths
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue

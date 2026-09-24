@@ -13,8 +13,7 @@ import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Сама касса в настройках: её название, режим программирования и снятие.
@@ -54,7 +53,7 @@ class KkmSettingsViewModel(private val cases: KkmCases, private val talk: Talk) 
     override fun switchProgramming() {
         val enter = !screen.value.programming
         whileBusy(busy) {
-            val texts = stringsOf(talk.language()).settings
+            val texts = textsOf(talk.language()).common.settings
             val action = if (enter) "enter programming" else "exit programming"
             val changed = cases.programming(enter).shown(texts.programmingMode, action, talk)
             if (changed != null) talk.done(if (enter) texts.enteredProgramming else texts.exitedProgramming)
@@ -74,7 +73,7 @@ class KkmSettingsViewModel(private val cases: KkmCases, private val talk: Talk) 
     override fun decommission() {
         cancelDecommission()
         whileBusy(busy) {
-            val texts = moneyTexts(talk.language()).kkm
+            val texts = textsOf(talk.language()).kassa.money.kkm
             cases.decommission().shown(texts.decommission, "decommission kkm", talk) ?: return@whileBusy
             talk.done(texts.decommissionDone, "decommission kkm")
         }
@@ -89,8 +88,8 @@ class KkmSettingsViewModel(private val cases: KkmCases, private val talk: Talk) 
     private fun rename(name: String?) {
         val kkmId = screen.value.kkm?.kkmId ?: return
         whileBusy(busy) {
-            val texts = stringsOf(talk.language())
-            val money = moneyTexts(talk.language()).kkm
+            val texts = textsOf(talk.language()).common
+            val money = textsOf(talk.language()).kassa.money.kkm
             val saved = cases.rename(name).shown(texts.settings.localName, "rename kkm", talk)
             val local = cases.localName(kkmId)
             screen.update { it.copy(localName = local, nameDraft = if (saved == null) it.nameDraft else null) }

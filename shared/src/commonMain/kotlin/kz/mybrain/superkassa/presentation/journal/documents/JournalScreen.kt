@@ -12,10 +12,10 @@ import kz.mybrain.superkassa.presentation.common.document.JournalType
 import kz.mybrain.superkassa.presentation.common.document.JournalView
 import kz.mybrain.superkassa.presentation.common.document.presentIn
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.print.preview.PrintActions
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Журнал документов кассы за выбранный срок.
@@ -32,7 +32,7 @@ import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
  */
 @Composable
 fun JournalScreen(state: JournalUiState, actions: JournalActions, print: PrintActions) {
-    val journal = journalTexts(LocalLanguage.current).history
+    val journal = textsOf(LocalLanguage.current).journal.history
     val (entries, types) = rowsOf(state)
     val printing = print.of(state.documents)
     Column(modifier = Modifier.fillMaxSize()) {

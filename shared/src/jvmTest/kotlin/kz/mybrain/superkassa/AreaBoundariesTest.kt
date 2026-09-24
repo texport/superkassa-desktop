@@ -14,8 +14,10 @@ import kotlin.test.assertTrue
  * Из чужой области брать нельзя ничего; общее лежит на общих полках,
  * которые видны всем:
  *
- * - `presentation/common`, `presentation/theme`, `presentation/strings`
+ * - `presentation/common`, `presentation/theme`, `presentation/words`
+ *   (перевод типов домена и ядра в тексты модуля `strings`)
  *   и `presentation/shell` (каркас окна: он собирает области и видит их все);
+ * - модуль текстов `strings` — не область приложения, его видят все;
  * - общие домены [SHARED_DOMAINS]: касса и её ответ, вход, журнал
  *   приложения, правила кассы и фискального документа, смена, версия
  *   и рабочее место — то, о чём спрашивает каждая область.
@@ -121,7 +123,7 @@ class AreaBoundariesTest {
         const val ROOT = "kz.mybrain.superkassa"
         const val PREFIX = "kotlin/kz/mybrain/superkassa"
         val SOURCE_SETS = listOf("src/commonMain/$PREFIX", "src/jvmMain/$PREFIX", "src/androidMain/$PREFIX")
-        val SHARED_PRESENTATION = setOf("common", "theme", "strings", "shell")
+        val SHARED_PRESENTATION = setOf("common", "theme", "words", "shell")
         val SHARED_DOMAINS = setOf("kassa", "signin", "log", "kkm", "document", "shift", "version", "workplace")
         const val AREA_DEBT = "area-debt.txt"
         const val MODEL_DEBT = "model-debt.txt"

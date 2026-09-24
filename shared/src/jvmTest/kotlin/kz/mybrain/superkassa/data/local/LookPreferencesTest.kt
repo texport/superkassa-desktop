@@ -2,11 +2,11 @@ package kz.mybrain.superkassa.data.local
 
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.presentation.settings.look.LookUiState
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.Typeface
 import kz.mybrain.superkassa.presentation.theme.color.Accent
+import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals

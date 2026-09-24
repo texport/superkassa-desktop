@@ -5,9 +5,8 @@ import io.github.texport.superkassa.core.presentation.api.model.receipt.ReceiptI
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.tenge
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -21,8 +20,8 @@ import kotlin.test.assertNull
  */
 class PositionDetailsTest {
 
-    private val labels = stringsOf(Language.Ru).sale
-    private val texts = saleTexts(Language.Ru)
+    private val labels = textsOf(Language.Ru).common.sale
+    private val texts = textsOf(Language.Ru).kassa.sale
     private val units = measureUnits(Language.Ru)
     private val rates = listOf(VatRate("NO_VAT", "Без НДС"), VatRate("VAT_16", "НДС", percent = 16))
 

@@ -17,9 +17,9 @@ import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.CounterTile
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Откуда брать положение касс — и что из этого вышло.

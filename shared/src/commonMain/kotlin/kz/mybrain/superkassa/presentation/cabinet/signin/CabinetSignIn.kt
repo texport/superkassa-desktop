@@ -27,13 +27,13 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
 import kz.mybrain.superkassa.presentation.common.button.BusyButton
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.edsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.motion.Durations
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.time.Duration
 import kotlin.time.TimeMark
 
@@ -126,7 +126,7 @@ fun SignInAction(
             left = leftOf(since),
             window = Signer.SIGN_WINDOW,
             texts = texts,
-            eds = edsTexts(language),
+            eds = textsOf(language).cabinet.eds,
             onCancel = actions::cancelSignIn
         )
     }

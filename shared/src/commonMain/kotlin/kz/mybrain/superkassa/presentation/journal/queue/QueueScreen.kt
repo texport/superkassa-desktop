@@ -11,13 +11,13 @@ import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.QueueJournalTexts
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.journal.QueueJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Очередь отложенной отправки: состояние — из модели, действия — ей же. */
 @Composable
@@ -41,7 +41,7 @@ fun QueueScreen(model: QueueViewModel) {
 @Composable
 fun QueueContent(state: QueueUiState, actions: QueueActions) {
     val texts = LocalStrings.current
-    val journal = journalTexts(LocalLanguage.current).queue
+    val journal = textsOf(LocalLanguage.current).journal.queue
     // Очередь — перечень во всю ширину раздела, как любой список Material 3.
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.cabinet.model.documents.DocumentsOverview
 import kz.mybrain.superkassa.presentation.common.section.CounterTile
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Сколько чего у кассы накопилось по данным БФД.

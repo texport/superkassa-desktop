@@ -44,10 +44,10 @@ import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.settings.SettingsPorts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import java.io.File
 
 /**
@@ -63,7 +63,7 @@ private const val TILES = "tiles"
 
 /** Собирает зависимости экранов: порты `domain` из реализаций `data`. */
 internal fun assemble(kassa: Superkassa, preferences: Preferences, look: WorkplaceLook): AppContainer {
-    val language = { Language.byCode(look.state.value.language) }
+    val language = { workplaceLanguage(look.state.value.language) }
     // Кабинет и мастер заведения кассы: один кабинет на приложение и подпись владельца.
     val cabinet = cabinet(preferences) { language().code }
     return AppContainer(

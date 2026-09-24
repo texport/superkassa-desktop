@@ -17,8 +17,8 @@ import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -39,7 +39,7 @@ class SetupViewModelTest {
     private val core = FakeCore()
     private val notices = Notices()
     private val memory = MemorySetup()
-    private val texts = setupTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).setup
     private var done = 0
     private val cabinet = FakeSetupCabinet(token = "3735928559")
 

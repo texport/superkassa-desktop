@@ -26,16 +26,16 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.asCoroutineDispatcher
 import kz.mybrain.superkassa.presentation.common.adaptive.WindowClassRoot
+import kz.mybrain.superkassa.presentation.common.strings.ProvideStrings
 import kz.mybrain.superkassa.presentation.shell.bar.ShellBar
 import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.ProvideStrings
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 import java.util.concurrent.Executors
 

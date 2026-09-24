@@ -13,12 +13,12 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.AppTopBar
 import kz.mybrain.superkassa.presentation.common.state.waitedLongEnough
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.ShellUiState
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
 

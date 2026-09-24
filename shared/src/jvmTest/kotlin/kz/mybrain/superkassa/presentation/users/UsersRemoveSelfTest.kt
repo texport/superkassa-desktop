@@ -3,8 +3,8 @@ package kz.mybrain.superkassa.presentation.users
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.kassa.inlineMain
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
  * Корзина ищется по подписи в строке своего кассира, «Удалить» — по надписи.
  */
 class UsersRemoveSelfTest {
-    private val texts = stringsOf(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
 
     @Test
     fun `удаливший себя администратор выходит из кассы`(): Unit = inlineMain {

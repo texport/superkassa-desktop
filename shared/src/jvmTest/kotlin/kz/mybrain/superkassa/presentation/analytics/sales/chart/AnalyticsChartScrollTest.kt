@@ -12,8 +12,8 @@ import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.analytics.model.tiynOf
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -30,7 +30,7 @@ import kotlin.test.assertTrue
  */
 class AnalyticsChartScrollTest {
 
-    private val texts = analyticsTexts(Language.Ru).sales
+    private val texts = textsOf(Language.Ru).analytics.sales
 
     private fun bars() = (1..WEEK).map {
         SalesBar(label = "0$it.09", caption = "сутки $it", value = tiynOf("${it * 1000}"))

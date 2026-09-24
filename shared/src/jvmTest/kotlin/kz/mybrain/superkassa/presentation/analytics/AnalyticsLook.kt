@@ -16,8 +16,8 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapCases
 import kz.mybrain.superkassa.presentation.common.mapview.MapFold
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Оснастка снимков аналитики: одни и те же кассы, надписи и средства карты
@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.presentation.strings.common.Language
  */
 internal object AnalyticsLook {
 
-    val texts = analyticsTexts(Language.Ru)
+    val texts = textsOf(Language.Ru).analytics
     val cabinet = Look.cabinet
     val words = MapWords(texts, cabinet)
 

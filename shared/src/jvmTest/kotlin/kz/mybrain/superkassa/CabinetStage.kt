@@ -25,8 +25,8 @@ import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.frame.MessageEffect
 import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 
 /**
@@ -48,7 +48,7 @@ internal class CabinetStage(private val reply: (String) -> StubReply) {
     /** Вид окна, из которого собран [cabinet]: каркасу окна нужна модель целиком. */
     val look: LookViewModel get() = rig.look
 
-    val texts = cabinetTexts(Language.Ru)
+    val texts = textsOf(Language.Ru).cabinet
 
     /** Модели окна: разделы кабинета берут свои модели у окна, как в приложении. */
     val models = WindowModels()
@@ -111,7 +111,7 @@ internal fun refusal(code: String, detail: String, status: HttpStatusCode) = Stu
 internal fun WithCabinetMessage(problem: CabinetProblem, content: @Composable () -> Unit) {
     val messages = remember { SnackbarHostState() }
     Scaffold(snackbarHost = { MessageHost(messages) }) {
-        MessageEffect(cabinetMessage(problem, cabinetTexts(Language.Ru)), messages) {}
+        MessageEffect(cabinetMessage(problem, textsOf(Language.Ru).cabinet), messages) {}
         content()
     }
 }

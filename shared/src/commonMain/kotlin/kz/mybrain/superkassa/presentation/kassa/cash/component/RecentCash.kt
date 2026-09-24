@@ -19,13 +19,13 @@ import kz.mybrain.superkassa.presentation.common.list.RecordRow
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.cash.CashUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.common.of
-import kz.mybrain.superkassa.presentation.strings.kassa.DrawerTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.common.of
+import kz.mybrain.superkassa.strings.api.kassa.DrawerTexts
 
 /**
  * Что уже внесено и изъято.

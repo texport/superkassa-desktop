@@ -16,10 +16,9 @@ import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.cabinet.signingRig
 import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.shell.WindowModels
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.edsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import kz.mybrain.superkassa.viewOf
 import java.io.File
@@ -40,7 +39,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 class ApplicationSignWaitTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     /** Куда дошли обращения к кабинету: по ним видно, ушло ли подписанное. */
     private val asked = CopyOnWriteArrayList<String>()
@@ -62,7 +61,7 @@ class ApplicationSignWaitTest {
 
                 // Отмена возвращает кнопку подачи: оставленный отсчёт значил бы,
                 // что владелец ждёт того, чего никто уже не делает.
-                probe.tap { it.text == edsTexts(Language.Ru).cancelWait }
+                probe.tap { it.text == textsOf(Language.Ru).cabinet.eds.cancelWait }
                 val cancelled = probe.frame()
                 File("/tmp/fix-15-cabinet-cancelled.png").writeBytes(cancelled)
                 assertFalse(cancelled.contentEquals(waiting), "отсчёт остался на экране после отмены")

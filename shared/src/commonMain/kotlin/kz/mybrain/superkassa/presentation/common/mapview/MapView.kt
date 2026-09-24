@@ -27,10 +27,10 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
-import kz.mybrain.superkassa.presentation.strings.map.MapTexts
 import kz.mybrain.superkassa.presentation.theme.MapColors
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.map.MapTexts
 
 /**
  * Карта с точкой: владелец ставит место торговой точки нажатием.

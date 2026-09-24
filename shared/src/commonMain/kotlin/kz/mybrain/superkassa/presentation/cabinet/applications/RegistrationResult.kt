@@ -8,7 +8,7 @@ import kz.mybrain.superkassa.presentation.cabinet.cabinetMessage
 import kz.mybrain.superkassa.presentation.cabinet.register.noActionsReason
 import kz.mybrain.superkassa.presentation.cabinet.statusTitle
 import kz.mybrain.superkassa.presentation.common.section.DetailLine
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /*
  * Что владелец читает под кнопкой подачи: почему заявлений нет,

@@ -18,15 +18,15 @@ import kz.mybrain.superkassa.presentation.cabinet.address.AddressSearch
 import kz.mybrain.superkassa.presentation.cabinet.value
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.map.MapPickerDialog
 import kz.mybrain.superkassa.presentation.map.MapPoint
 import kz.mybrain.superkassa.presentation.map.MapRegistry
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Место торговой точки — строкой и кнопкой карты.
@@ -99,7 +99,7 @@ internal class CabinetRegistry(private val window: CabinetWindow) : MapRegistry 
 
     @Composable
     override fun Search(query: String, onQuery: (String) -> Unit, owner: Any?, onChoose: (RegisterAddress) -> Unit) {
-        val texts = cabinetTexts(LocalLanguage.current)
+        val texts = textsOf(LocalLanguage.current).cabinet
         AddressSearch(window, texts, query, onQuery, owner, onChoose = onChoose)
     }
 }

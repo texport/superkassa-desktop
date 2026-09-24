@@ -8,9 +8,9 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 import androidx.compose.ui.unit.Density
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.Image
 import java.awt.Color
@@ -80,7 +80,7 @@ class PreviewTapeReachTest {
     fun `низ длинной формы достигается прокруткой`() {
         val form = longForm(FORM_HEIGHT)
         val scene = ImageComposeScene(width = WINDOW_WIDTH, height = WINDOW_HEIGHT, density = Density(1f)) {
-            CompositionLocalProvider(LocalStrings provides stringsOf(Language.Ru)) {
+            CompositionLocalProvider(LocalStrings provides textsOf(Language.Ru).common) {
                 ReceiptPreview(image = form, onDismiss = {})
             }
         }
@@ -122,7 +122,7 @@ class PreviewTapeReachTest {
     @Test
     fun `увеличение колесом не листает ленту заодно`() {
         val scene = ImageComposeScene(width = WINDOW_WIDTH, height = WINDOW_HEIGHT, density = Density(1f)) {
-            CompositionLocalProvider(LocalStrings provides stringsOf(Language.Ru)) {
+            CompositionLocalProvider(LocalStrings provides textsOf(Language.Ru).common) {
                 ReceiptPreview(image = longForm(FORM_HEIGHT), onDismiss = {})
             }
         }
@@ -151,7 +151,7 @@ class PreviewTapeReachTest {
     /** Снимок окна просмотра без картинки: с отказом или без него. */
     private fun frame(trouble: ScreenState.Trouble?): ByteArray {
         val scene = ImageComposeScene(width = WINDOW_WIDTH, height = WINDOW_HEIGHT, density = Density(1f)) {
-            CompositionLocalProvider(LocalStrings provides stringsOf(Language.Ru)) {
+            CompositionLocalProvider(LocalStrings provides textsOf(Language.Ru).common) {
                 ReceiptPreview(image = null, drawing = false, trouble = trouble, onDismiss = {})
             }
         }

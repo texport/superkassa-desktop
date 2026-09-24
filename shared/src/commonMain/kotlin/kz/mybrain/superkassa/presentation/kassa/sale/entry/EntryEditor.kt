@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.kassa.sale.BarcodeSearch
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Позиция встаёт в чек: по штрихкоду из справочника кассы или руками.
@@ -48,7 +48,7 @@ class EntryEditor(
             // Беда кассы — её словами в строке сообщений; отсутствие товара
             // бедой не считается и названо под полем.
             if (answer !is Answer.Done) {
-                answer.shown(stringsOf(talk.language()).sale.barcodeSearch, "barcode lookup", talk)
+                answer.shown(textsOf(talk.language()).common.sale.barcodeSearch, "barcode lookup", talk)
             }
             val item = (answer as? Answer.Done)?.value?.takeIf { it.found }?.item
             screen.update { now ->

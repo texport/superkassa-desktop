@@ -7,11 +7,10 @@ import kz.mybrain.superkassa.domain.kassa.model.outcome
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.deliveryReport
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.of
-import kz.mybrain.superkassa.presentation.strings.journal.ofdRefusalWords
-import kz.mybrain.superkassa.presentation.strings.kassa.paymentTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.refusal.kassaRefusalWords
+import kz.mybrain.superkassa.presentation.words.common.of
+import kz.mybrain.superkassa.presentation.words.kassa.kassaRefusalWords
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Как фискальная операция названа кассиру и журналу.
@@ -62,8 +61,9 @@ private fun Talk.rejected(fiscal: Fiscal, words: FiscalWords, texts: AppStrings)
     val code = fiscal.refusalCode
     journal.warn("${words.action}: rejected by bfd ${code ?: "without code"}")
     // Слова кассы о причине — на языке кассира; без них — свой справочник кодов.
-    val reason = fiscal.refusal?.of(language()) ?: ofdRefusalWords(code, language())
-    val text = listOfNotNull("${words.what}: ${texts.status.refused}", reason, paymentTexts(language()).rejectedKept)
+    val all = textsOf(language())
+    val reason = fiscal.refusal?.of(language()) ?: all.journal.ofdRefusal.words(code)
+    val text = listOfNotNull("${words.what}: ${texts.status.refused}", reason, all.kassa.payment.rejectedKept)
         .joinToString(". ")
     say(words.action, Message.Refusal(text, code?.toString() ?: REJECTED))
 }

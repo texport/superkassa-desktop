@@ -13,8 +13,7 @@ import kz.mybrain.superkassa.KassaWindow
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -47,8 +46,8 @@ class ReturnsAdaptiveTest {
             ReturnsScene.item(it.name, it.price, it.quantityThousandths, it.sum)
         }
         val model = ReturnsScene.model(bases, sold)
-        val texts = stringsOf(case.language)
-        val journal = journalTexts(case.language).returns
+        val texts = textsOf(case.language).common
+        val journal = textsOf(case.language).journal.returns
         val failures = mutableListOf<String>()
         probe.show(case.look, case.language) {
             KassaWindow(desk, Section.Returns) { ReturnsScreen(model) }

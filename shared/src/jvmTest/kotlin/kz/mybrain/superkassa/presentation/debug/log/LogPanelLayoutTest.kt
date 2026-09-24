@@ -9,8 +9,8 @@ import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.debug.debugTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
  */
 class LogPanelLayoutTest {
 
-    private val texts = debugTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).debug
 
     /** Высота того, что нарисовалось в окне заданной ширины. */
     private fun heightAt(width: Int, content: @Composable () -> Unit): Int {

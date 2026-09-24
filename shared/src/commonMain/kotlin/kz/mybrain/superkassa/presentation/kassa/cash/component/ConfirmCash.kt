@@ -15,9 +15,9 @@ import kz.mybrain.superkassa.domain.kassa.model.cash.CashMove
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashRefusal
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashRules
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
-import kz.mybrain.superkassa.presentation.strings.kassa.DrawerTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.kassa.DrawerTexts
 
 /** Вопрос перед проведением: сумма словами кассира и остаток после. */
 @Composable

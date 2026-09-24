@@ -18,11 +18,11 @@ import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
 import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
 import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.MoneyTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 
 /**
  * Заведение кассира — главное действие экрана.

@@ -6,8 +6,8 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.DocumentKind
 import kz.mybrain.superkassa.domain.cabinet.model.documents.DocumentsOverview
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -23,7 +23,7 @@ class CabinetDocumentsTest {
     fun `у смены печатать нечего — её Z-отчёт стоит своей строкой`() {
         val shift = shiftRow(
             CabinetShift(shiftNumber = 3, state = "CLOSED", saleTotal = Decimal.parse("100.00")),
-            cabinetTexts(Language.Ru)
+            textsOf(Language.Ru).cabinet
         )
 
         assertFalse(shift.entry.printable)
@@ -64,7 +64,7 @@ class CabinetDocumentsTest {
      */
     @Test
     fun `пусто за срок и пусто вовсе названы по-разному`() {
-        val texts = cabinetTexts(Language.Ru)
+        val texts = textsOf(Language.Ru).cabinet
         val hundred = DocumentsOverview(cashRegisterId = "c-1", receiptsCount = 100)
         val week = JournalPeriod.of(JournalSpan.Week)
 

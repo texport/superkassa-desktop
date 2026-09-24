@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.RenderProbe
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -60,7 +60,7 @@ class LoginEmptyTest {
     @Test
     fun `о молчании узла сказано своими словами на каждом языке`() {
         Language.entries.forEach { language ->
-            val texts = stringsOf(language).login
+            val texts = textsOf(language).common.login
             assertTrue(texts.kkmsUnreadTitle != texts.noKkmsTitle, "$language: название беды одно на оба случая")
             assertTrue(texts.kkmsUnread != texts.noKkms, "$language: объяснение одно на оба случая")
         }

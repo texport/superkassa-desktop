@@ -18,8 +18,7 @@ import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Налоговый режим кассы, её ставка по умолчанию, автозакрытие и автоизъятие.
@@ -59,7 +58,7 @@ class TaxSettingsViewModel(private val cases: TaxCases, private val talk: Talk) 
         val regime = now.regime?.let(::regimeOf) ?: return
         val group = now.vatGroup?.let(::groupOf) ?: return
         whileBusy(busy) {
-            val texts = stringsOf(talk.language()).settings
+            val texts = textsOf(talk.language()).common.settings
             cases.save(regime, group).shown(texts.taxSettings, "update tax settings", talk) ?: return@whileBusy
             screen.update { it.saved() }
             talk.done(texts.settingsSaved)
@@ -72,17 +71,17 @@ class TaxSettingsViewModel(private val cases: TaxCases, private val talk: Talk) 
     }
 
     override fun switchAutoClose(on: Boolean) =
-        saveSwitches(coreSettingTexts(talk.language()).autoClose) { on to it.autoCashout }
+        saveSwitches(textsOf(talk.language()).settings.core.autoClose) { on to it.autoCashout }
 
     override fun switchAutoCashout(on: Boolean) =
-        saveSwitches(stringsOf(talk.language()).settings.autoCashout) { it.autoCloseShift to on }
+        saveSwitches(textsOf(talk.language()).common.settings.autoCashout) { it.autoCloseShift to on }
 
     /** Автозакрытие и автоизъятие касса меняет одним обращением: оба уходят каждый раз. */
     private fun saveSwitches(what: String, wanted: (KkmResponse) -> Pair<Boolean, Boolean>) {
         val (autoClose, autoCashout) = wanted(screen.value.kkm ?: return)
         whileBusy(busy) {
             cases.switches(autoClose, autoCashout).shown(what, "update kkm switches", talk) ?: return@whileBusy
-            talk.done(stringsOf(talk.language()).settings.settingsSaved)
+            talk.done(textsOf(talk.language()).common.settings.settingsSaved)
         }
     }
 

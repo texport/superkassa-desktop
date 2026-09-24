@@ -18,6 +18,7 @@ import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
 import kz.mybrain.superkassa.presentation.setup.component.CabinetStepCard
@@ -27,11 +28,9 @@ import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
 import kz.mybrain.superkassa.presentation.theme.motion.Durations
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Мастер окна: модель — из портов мастера, обращения к кабинету — через кабинет окна.
@@ -109,7 +108,7 @@ class SetupParts(
  */
 @Composable
 fun SetupContent(parts: SetupParts) {
-    val setup = setupTexts(LocalLanguage.current)
+    val setup = textsOf(LocalLanguage.current).setup
     val state = parts.state
     SetupFrame(state, parts.actions, parts.onBack) {
         WideChoiceSegments(
@@ -133,7 +132,7 @@ internal fun SetupFrame(
     onBack: (() -> Unit)?,
     steps: @Composable ColumnScope.() -> Unit
 ) {
-    val setup = setupTexts(LocalLanguage.current)
+    val setup = textsOf(LocalLanguage.current).setup
     if (state.startingOver) StartOverDialog(actions)
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -155,13 +154,13 @@ internal fun SetupFrame(
  */
 @Composable
 private fun ViaCabinet(parts: SetupParts) {
-    val setup = setupTexts(LocalLanguage.current)
+    val setup = textsOf(LocalLanguage.current).setup
     val draft = parts.state.draft
     val open = parts.window.open
     if (!open && draft.cabinetRegisterId != null) {
         // Та же кнопка, что на двери кабинета: со сроком ожидания и отменой.
         val language = LocalLanguage.current
-        SignInAction(parts.cabinet.cabinet, language, cabinetTexts(language), modifier = Modifier)
+        SignInAction(parts.cabinet.cabinet, language, textsOf(language).cabinet, modifier = Modifier)
     }
     // Касса в кабинете перечитывается, пока номера КГД нет: оба последних
     // шага ждут его, и владелец не должен открывать мастер заново.

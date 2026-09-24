@@ -5,7 +5,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.domain.cabinet.model.kkmRecord
 import kz.mybrain.superkassa.domain.cabinet.model.onRecord
 import kz.mybrain.superkassa.presentation.cabinet.applications.ActionKind
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Какое заявление в ИСНА по кассе сейчас подаётся.

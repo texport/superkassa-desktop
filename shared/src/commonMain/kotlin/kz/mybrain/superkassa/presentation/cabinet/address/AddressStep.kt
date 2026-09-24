@@ -21,7 +21,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
 import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Текущий шаг: поле поиска и найденное выпадающим списком.

@@ -13,7 +13,7 @@ import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Настройки кассы на этой машине: сроки обмена с БФД и сведения о ней.
@@ -43,7 +43,7 @@ class CoreSettingsViewModel(
             screen.update { it.copy(about = facts) }
         }
         viewModelScope.launch {
-            val texts = coreSettingTexts(talk.language())
+            val texts = textsOf(talk.language()).settings.core
             val settings = cases.read().shown(texts.title, "read core settings", talk)
             if (settings != null) screen.update { it.copy(settings = settings) }
         }
@@ -60,7 +60,7 @@ class CoreSettingsViewModel(
         val reconnect = secondsOf(now.reconnect)
         if (now.settings == null || timeout == null || reconnect == null) return
         whileBusy(busy) {
-            val texts = coreSettingTexts(talk.language())
+            val texts = textsOf(talk.language()).settings.core
             val saved = talk.savedCore(cases.save(timeout, reconnect), texts.title, "save core settings", now.server)
             saved ?: return@whileBusy
             screen.update { CoreSettingsUiState(settings = saved, busy = it.busy) }

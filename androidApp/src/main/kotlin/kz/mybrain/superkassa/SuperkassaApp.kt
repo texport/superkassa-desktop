@@ -33,10 +33,10 @@ import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.settings.SettingsPorts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import java.io.File
 
 /**
@@ -90,7 +90,7 @@ class SuperkassaApp : Application() {
             memory = workplace,
             look = look,
             // Слова кассиру — на языке окна, как на компьютере.
-            talk = Talk(Notices(), LogcatJournal(log)) { Language.byCode(look.state.value.language) },
+            talk = Talk(Notices(), LogcatJournal(log)) { workplaceLanguage(look.state.value.language) },
             // Кабинета на Android нет: подписи ЭЦП здесь пока нет. Мастер
             // подключения без кабинета ведёт ручной путь — идентификатор и токен.
             areas = AreaPorts(

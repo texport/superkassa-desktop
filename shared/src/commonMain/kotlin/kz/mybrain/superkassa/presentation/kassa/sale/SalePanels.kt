@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
-import kz.mybrain.superkassa.presentation.strings.common.SettingStrings
+import kz.mybrain.superkassa.strings.api.common.SettingStrings
 
 /**
  * Разделы кассовой колонки, которые сворачиваются.

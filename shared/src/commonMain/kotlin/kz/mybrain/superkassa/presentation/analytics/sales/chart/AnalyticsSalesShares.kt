@@ -20,12 +20,12 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsSalesTexts
 import kz.mybrain.superkassa.presentation.theme.ChartColors
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
 
 /** Полоса долей и подписи под ней. */
 @Composable

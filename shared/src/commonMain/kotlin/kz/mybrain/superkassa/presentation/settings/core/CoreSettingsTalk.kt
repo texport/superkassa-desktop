@@ -4,7 +4,7 @@ import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Итог сохранения настроек кассы.
@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
  */
 internal fun <T> Talk.savedCore(answer: Answer<T>, what: String, action: String, server: Boolean): T? {
     if (answer !is Answer.Refused || answer.code != SETTINGS_FROZEN) return answer.shown(what, action, this)
-    val texts = coreSettingTexts(language())
+    val texts = textsOf(language()).settings.core
     journal.warn("$action: refused $SETTINGS_FROZEN")
     say(action, Message.Refusal(if (server) texts.serverHint else texts.frozenHint, SETTINGS_FROZEN))
     return null

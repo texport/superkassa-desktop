@@ -2,14 +2,14 @@ package kz.mybrain.superkassa.presentation.kassa.sale.position
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.github.texport.superkassa.core.domain.api.model.common.UnitOfMeasurement
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.unitShort
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Единица измерения, как её видит кассир: код ИС ЭСФ и сокращение.
  *
  * Перечень — справочник единиц самой кассы; слово на языке кассира —
- * из надписей области ([unitShort]): у справочника слов только два языка.
+ * из текстов кассы (`UnitTexts.short`): у справочника слов только два языка.
  */
 data class MeasureUnit(val code: String, val title: String)
 
@@ -24,7 +24,7 @@ val LocalUnits = staticCompositionLocalOf<List<MeasureUnit>> { emptyList() }
 /** Единицы справочника кассы словами кассира; «неизвестная» в выбор не идёт. */
 fun measureUnits(language: Language): List<MeasureUnit> = UnitOfMeasurement.entries
     .filter { it != UnitOfMeasurement.UNKNOWN }
-    .map { MeasureUnit(it.code, unitShort(it.code, language) ?: it.code) }
+    .map { MeasureUnit(it.code, textsOf(language).kassa.units.short(it.code) ?: it.code) }
 
 /**
  * Как назвать единицу в строке чека.

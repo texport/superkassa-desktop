@@ -15,8 +15,8 @@ import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
@@ -39,7 +39,7 @@ class QueueCoreTest {
     private val kassa: ReadyKassa = bench.registerKassa(appKassa(adminPin = ADMIN, cashierPin = CASHIER))
     private val notices = Notices()
     private val signIn = SignIn()
-    private val texts = journalTexts(Language.Ru).queue
+    private val texts = textsOf(Language.Ru).journal.queue
 
     @BeforeTest
     fun inlineMain() = Dispatchers.setMain(UnconfinedTestDispatcher())

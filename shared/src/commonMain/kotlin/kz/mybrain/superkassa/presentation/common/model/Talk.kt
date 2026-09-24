@@ -5,7 +5,7 @@ import kz.mybrain.superkassa.domain.log.port.Journal
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.message.words
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Чем модели окна говорят с кассиром: строка сообщений, журнал и язык.

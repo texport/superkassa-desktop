@@ -16,17 +16,17 @@ import kz.mybrain.superkassa.presentation.common.list.MoreRow
 import kz.mybrain.superkassa.presentation.common.period.text
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
 import kz.mybrain.superkassa.presentation.journal.documents.journalEntriesOf
 import kz.mybrain.superkassa.presentation.journal.documents.of
 import kz.mybrain.superkassa.presentation.print.preview.PrintActions
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.ShiftJournalTexts
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.journal.ShiftJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Документы одной смены.
@@ -43,7 +43,7 @@ internal fun ColumnScope.ShiftDocuments(
 ) {
     val texts = LocalStrings.current
     val language = LocalLanguage.current
-    val history = journalTexts(language).history
+    val history = textsOf(language).journal.history
     ShiftHeading(journal, state, actions)
     val page = state.documentsPage
     val slot = shiftDocumentsState(journal, state.documents.size, state.opening, page, actions::moreDocuments)

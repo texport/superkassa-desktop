@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.presentation.common.list.stripedAt
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.table.ScrollingTable
 import kz.mybrain.superkassa.presentation.common.table.TableColumn
 import kz.mybrain.superkassa.presentation.common.table.TableLine
@@ -23,12 +24,11 @@ import kz.mybrain.superkassa.presentation.common.table.grownColumns
 import kz.mybrain.superkassa.presentation.common.table.leastWidths
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.HistoryLayout
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Таблица журнала документов: столбцы, шапка и строки.

@@ -23,12 +23,9 @@ import kz.mybrain.superkassa.presentation.analytics.sales.chart.hourBars
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.salesShares
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -42,10 +39,10 @@ import kotlin.test.assertTrue
  */
 class AnalyticsSalesRenderTest {
 
-    private val texts = analyticsTexts(Language.Ru)
-    private val enums = stringsOf(Language.Ru).enums
-    private val journal = journalTexts(Language.Ru).history
-    private val cabinet = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).analytics
+    private val enums = textsOf(Language.Ru).common.enums
+    private val journal = textsOf(Language.Ru).journal.history
+    private val cabinet = textsOf(Language.Ru).cabinet
 
     private fun money(value: String): Long = tiynOf(value)
 

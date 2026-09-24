@@ -2,8 +2,8 @@ package kz.mybrain.superkassa.presentation.setup
 
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.kassa.inlineMain
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test
@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
  * контура.
  */
 class SetupContourTest {
-    private val texts = stringsOf(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
 
     @Test
     fun `без выбранного контура касса не заводится`(): Unit = inlineMain {

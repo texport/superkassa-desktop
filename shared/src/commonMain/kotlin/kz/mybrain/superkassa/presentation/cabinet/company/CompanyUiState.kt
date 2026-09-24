@@ -3,7 +3,7 @@ package kz.mybrain.superkassa.presentation.cabinet.company
 import kz.mybrain.superkassa.domain.cabinet.model.CompanyProfile
 import kz.mybrain.superkassa.domain.cabinet.model.Oked
 import kz.mybrain.superkassa.domain.cabinet.model.OkedEntry
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Компания владельца и её виды деятельности.

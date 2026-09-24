@@ -19,8 +19,8 @@ import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.FakeReleases
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.update.updateTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -49,7 +49,7 @@ class UpdatesViewModelTest {
 
     private val notices = Notices()
 
-    private val texts = updateTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).update
 
     @BeforeTest
     fun main() = Dispatchers.setMain(UnconfinedTestDispatcher())

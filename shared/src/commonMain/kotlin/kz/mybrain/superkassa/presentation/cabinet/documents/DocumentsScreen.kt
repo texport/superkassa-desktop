@@ -25,13 +25,13 @@ import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.print.preview.LocalPrint
 import kz.mybrain.superkassa.presentation.print.preview.PrintActions
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Документы кассы по данным ОФД — отдельным экраном.
@@ -60,7 +60,7 @@ fun CabinetDocumentsScreen(
     val model = documentsViewModel(cabinet)
     val state by model.state.collectAsScreenState()
     LaunchedEffect(register.id) { model.show(register) }
-    val journal = journalTexts(language).history
+    val journal = textsOf(language).journal.history
     val print = LocalPrint.current
     Column(
         modifier = Modifier.fillMaxSize(),

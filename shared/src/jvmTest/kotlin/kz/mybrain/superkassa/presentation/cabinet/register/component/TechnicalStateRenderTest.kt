@@ -9,8 +9,8 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.RegisterState
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.section.CollapsibleCard
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
  */
 class TechnicalStateRenderTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     private fun node(state: String) = CoreScene.kkm(state = state, id = "k-1").copy(ofdSystemId = "5000021")
 

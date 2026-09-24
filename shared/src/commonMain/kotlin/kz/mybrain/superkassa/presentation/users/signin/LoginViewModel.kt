@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.domain.signin.model.Pin
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Вход кассира: список касс, выбор, пин и проверка пина кассой.
@@ -73,7 +73,7 @@ class LoginViewModel(private val cases: LoginCases, private val talk: Talk) : Vi
 
     private suspend fun read() {
         val choice = cases.readKkms(screen.value.kkms)
-        val read = choice.answer.shown(stringsOf(talk.language()).login.reload, "read kkm list", talk) != null
+        val read = choice.answer.shown(textsOf(talk.language()).common.login.reload, "read kkm list", talk) != null
         screen.update { now ->
             now.copy(
                 kkms = choice.kkms,
@@ -89,7 +89,7 @@ class LoginViewModel(private val cases: LoginCases, private val talk: Talk) : Vi
     private suspend fun enterWith(kkm: KkmResponse, pin: String) {
         talk.clear()
         val answer = cases.signInCashier(kkm, pin)
-        answer.shown(stringsOf(talk.language()).login.enter, "sign in", talk)
+        answer.shown(textsOf(talk.language()).common.login.enter, "sign in", talk)
         screen.update { it.copy(entering = false, pin = if (answer is Answer.Done) "" else it.pin) }
     }
 }

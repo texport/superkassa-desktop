@@ -20,12 +20,12 @@ import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetActions
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetCard
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetUiState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.settings.deliveryTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -66,7 +66,7 @@ class DeliveryCardShots {
             }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }
-            val texts = deliveryTexts(language)
+            val texts = textsOf(language).settings.delivery
             val seen = probe.nodes().joinToString(" ") { it.toString() }
             assertTrue(seen.contains(texts.title), "$name: карточки доставки нет")
             assertTrue(!seen.contains(SMS_KEY) && !seen.contains(MAIL_PASSWORD), "$name: ключ на экране")

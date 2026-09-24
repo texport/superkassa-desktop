@@ -25,14 +25,14 @@ import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.SubsectionTitle
 import kz.mybrain.superkassa.presentation.common.status.Chip
 import kz.mybrain.superkassa.presentation.common.status.kkmStateColor
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.shell.section.LocalSectionSwitch
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.MachineTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.machineTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Работает ли эта касса на этой машине.
@@ -49,7 +49,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 fun RegisterOnThisMachine(cabinet: CabinetWindow, texts: CabinetTexts, view: RegisterView) {
     val language = LocalLanguage.current
     var adopting by remember(view.row.id) { mutableStateOf(false) }
-    val machine = machineTexts(language)
+    val machine = textsOf(language).cabinet.machine
     val model = adoptViewModel(cabinet.cabinet)
     val adopt by model.state.collectAsScreenState()
     SubsectionTitle(machine.title, texts.hints.onThisMachine)

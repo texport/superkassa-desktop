@@ -26,12 +26,11 @@ import kz.mybrain.superkassa.presentation.cabinet.places.PlacesScreen
 import kz.mybrain.superkassa.presentation.cabinet.signin.CabinetSignIn
 import kz.mybrain.superkassa.presentation.cabinet.signin.actions
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Личный кабинет ОФД внутри рабочего места.
@@ -50,7 +49,7 @@ fun CabinetScreen(window: CabinetWindow) {
     val model = window.cabinet
     val state by model.state.collectAsScreenState()
     val language = LocalLanguage.current
-    val texts = cabinetTexts(language)
+    val texts = textsOf(language).cabinet
     if (!state.open) {
         CabinetSignIn(state, language, texts, model.actions())
         return
@@ -143,7 +142,7 @@ private fun CabinetPage(window: CabinetWindow, texts: CabinetTexts, page: Cabine
  * у аналитики набор надписей свой.
  */
 enum class CabinetTab(val title: (Language) -> String) {
-    Company({ cabinetTexts(it).company }),
-    Places({ cabinetTexts(it).places }),
-    Analytics({ analyticsTexts(it).title })
+    Company({ textsOf(it).cabinet.company }),
+    Places({ textsOf(it).cabinet.places }),
+    Analytics({ textsOf(it).analytics.title })
 }

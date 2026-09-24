@@ -4,8 +4,7 @@ import kz.mybrain.superkassa.domain.print.model.Kept
 import kz.mybrain.superkassa.domain.print.usecase.PrintTape
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.print.printTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Итог печати словами кассира.
@@ -15,12 +14,12 @@ import kz.mybrain.superkassa.presentation.strings.print.printTexts
  * Закрытый системный диалог — не отказ: кассир передумал сам.
  */
 internal fun Talk.printed(result: PrintTape.Result, action: String) {
-    val texts = stringsOf(language()).preview
+    val texts = textsOf(language()).common.preview
     when (result) {
         PrintTape.Result.Sent -> done(texts.printSent, action)
         PrintTape.Result.Refused -> refuse(action, texts.printFailed, PRINTER_REFUSED)
         PrintTape.Result.NoPrinter -> refuse(action, texts.printerMissing, NO_PRINTER)
-        PrintTape.Result.PrinterGone -> refuse(action, printTexts(language()).printerGone, PRINTER_GONE)
+        PrintTape.Result.PrinterGone -> refuse(action, textsOf(language()).print.printerGone, PRINTER_GONE)
         PrintTape.Result.Cancelled -> Unit
     }
 }
@@ -28,9 +27,9 @@ internal fun Talk.printed(result: PrintTape.Result, action: String) {
 /** Итог сохранения формы: передумавшему владельцу говорить не о чем, а «некуда» — сказать. */
 internal fun Talk.kept(kept: Kept, action: String) {
     when (kept) {
-        is Kept.Saved -> done("${stringsOf(language()).preview.saved}: ${kept.name}", action)
+        is Kept.Saved -> done("${textsOf(language()).common.preview.saved}: ${kept.name}", action)
         Kept.Cancelled -> Unit
-        Kept.Unavailable -> refuse(action, printTexts(language()).keepUnavailable, NO_FILES)
+        Kept.Unavailable -> refuse(action, textsOf(language()).print.keepUnavailable, NO_FILES)
     }
 }
 

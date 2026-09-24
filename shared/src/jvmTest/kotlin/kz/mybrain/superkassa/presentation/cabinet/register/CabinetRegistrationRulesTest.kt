@@ -2,8 +2,8 @@ package kz.mybrain.superkassa.presentation.cabinet.register
 
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.presentation.cabinet.applications.ActionKind
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -83,7 +83,7 @@ class CabinetRegistrationRulesTest {
 
     @Test
     fun `причина названа по существу, а не одной строкой на оба случая`() {
-        val texts = cabinetTexts(Language.Ru)
+        val texts = textsOf(Language.Ru).cabinet
         assertEquals(texts.applicationInFlight, noActionsReason(register("REGISTRATION_IN_ISNA_PROCESS"), texts))
         assertEquals(texts.noApplications, noActionsReason(register("DEREGISTERED"), texts))
     }

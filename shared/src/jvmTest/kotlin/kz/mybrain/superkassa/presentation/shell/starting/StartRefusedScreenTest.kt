@@ -3,8 +3,9 @@ package kz.mybrain.superkassa.presentation.shell.starting
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.shell.startTexts
+import kz.mybrain.superkassa.presentation.words.shell.of
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -24,7 +25,7 @@ class StartRefusedScreenTest {
     @Test
     fun `причина, что делать и закрытие — на каждом языке`() {
         Language.entries.forEach { language ->
-            val texts = startTexts(language)
+            val texts = textsOf(language).shell
             val problem = StartProblem(StartRefusal.NodeRunning, "Node answers at 127.0.0.1:8080")
             RenderProbe(WIDTH, HEIGHT, language = language) { StartRefusedScreen(problem) {} }.use { probe ->
                 probe.frame()
@@ -43,7 +44,7 @@ class StartRefusedScreenTest {
     @Test
     fun `у каждой причины свои слова`() {
         Language.entries.forEach { language ->
-            val texts = startTexts(language)
+            val texts = textsOf(language).shell
             val words = StartRefusal.entries.map(texts::of)
             assertEquals(words.size, words.map { it.reason }.distinct().size, "$language: причины названы одинаково")
             assertEquals(words.size, words.map { it.action }.distinct().size, "$language: действия названы одинаково")

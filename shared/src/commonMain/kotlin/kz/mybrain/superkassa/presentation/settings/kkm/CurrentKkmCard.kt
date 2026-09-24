@@ -20,12 +20,12 @@ import kz.mybrain.superkassa.domain.kkm.model.orgAddress
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Какая касса сейчас в работе.
@@ -116,7 +116,7 @@ private fun NameField(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
 @Composable
 private fun RenameActions(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
     val texts = LocalStrings.current
-    val money = moneyTexts(LocalLanguage.current).kkm
+    val money = textsOf(LocalLanguage.current).kassa.money.kkm
     WrapRow {
         FilledTonalButton(enabled = !kkm.busy, onClick = actions::saveName) { Text(texts.settings.save) }
         OutlinedButton(enabled = kkm.nameField.isNotBlank() && !kkm.busy, onClick = actions::resetName) {

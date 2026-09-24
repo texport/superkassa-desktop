@@ -12,11 +12,11 @@ import kz.mybrain.superkassa.presentation.analytics.sales.chart.hourBars
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.salesShares
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.EnumStrings
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Сама сводка: плитки, графики, таблицы и доставка.

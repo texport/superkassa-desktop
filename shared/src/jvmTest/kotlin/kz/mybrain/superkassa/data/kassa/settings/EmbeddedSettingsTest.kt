@@ -18,8 +18,8 @@ import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.core.coreSettingsModel
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
@@ -76,7 +76,7 @@ class EmbeddedSettingsTest {
         model.typeTimeout("9")
         model.save()
 
-        assertEquals(Message.Done(coreSettingTexts(Language.Ru).saved), notices.last)
+        assertEquals(Message.Done(textsOf(Language.Ru).settings.core.saved), notices.last)
         assertEquals(9L, runBlocking { store().read() }.ofdTimeoutSeconds)
     }
 

@@ -27,6 +27,7 @@ import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.presentation.common.adaptive.WindowClassRoot
 import kz.mybrain.superkassa.presentation.common.keyboard.EscapeListener
+import kz.mybrain.superkassa.presentation.common.strings.ProvideStrings
 import kz.mybrain.superkassa.presentation.debug.log.LogWindow
 import kz.mybrain.superkassa.presentation.debug.log.logViewModel
 import kz.mybrain.superkassa.presentation.settings.look.LookUiState
@@ -36,7 +37,6 @@ import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.frame.ShellScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartRefusedScreen
-import kz.mybrain.superkassa.presentation.strings.common.ProvideStrings
 import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
 import kz.mybrain.superkassa.presentation.theme.motion.Durations
 import kz.mybrain.superkassa.presentation.theme.size.Sizes

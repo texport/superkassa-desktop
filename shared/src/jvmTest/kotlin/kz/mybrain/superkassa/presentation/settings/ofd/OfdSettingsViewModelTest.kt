@@ -15,9 +15,8 @@ import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -39,8 +38,8 @@ class OfdSettingsViewModelTest {
     private val signIn = SignIn()
     private val notices = Notices()
     private val app = CoreScene.app(core, signIn, notices)
-    private val money = moneyTexts(Language.Ru).kkm
-    private val texts = stringsOf(Language.Ru).settings
+    private val money = textsOf(Language.Ru).kassa.money.kkm
+    private val texts = textsOf(Language.Ru).common.settings
 
     @BeforeTest
     fun main() {

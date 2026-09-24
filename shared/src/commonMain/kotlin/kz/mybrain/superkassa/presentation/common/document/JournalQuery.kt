@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.presentation.common.document
 
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Порядок строк журнала.

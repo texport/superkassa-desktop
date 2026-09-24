@@ -10,10 +10,10 @@ import kz.mybrain.superkassa.presentation.common.picker.SwitchRow
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.PartTitle
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.debug.debugTexts
-import kz.mybrain.superkassa.presentation.strings.debug.name
+import kz.mybrain.superkassa.presentation.words.debug.name
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Журнал приложения и режим отладки.
@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.presentation.strings.debug.name
  */
 @Composable
 internal fun DebugCard(journal: LogUiState, actions: LogActions) {
-    val texts = debugTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).debug
     SectionCard(title = texts.debugMode, info = texts.debugModeHint) {
         SwitchRow(texts.title, journal.book.debugMode, actions::switchDebugMode)
         PartTitle(texts.level)

@@ -9,7 +9,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import kz.mybrain.superkassa.presentation.common.format.Dates
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 import kotlin.time.Clock
 
 /**

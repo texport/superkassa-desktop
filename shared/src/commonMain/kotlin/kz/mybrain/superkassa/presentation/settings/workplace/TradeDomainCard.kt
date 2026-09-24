@@ -6,12 +6,12 @@ import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
 import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.label
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.title
+import kz.mybrain.superkassa.presentation.words.kassa.label
+import kz.mybrain.superkassa.presentation.words.kassa.title
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Отрасль, в которой работает эта касса.
@@ -51,7 +51,7 @@ internal fun TradeDomainCard(workplace: WorkplaceSettingsUiState, actions: Workp
 @Composable
 private fun RequisiteNames(kind: DomainKind) {
     val texts = LocalStrings.current
-    val sale = saleTexts(LocalLanguage.current)
+    val sale = textsOf(LocalLanguage.current).kassa.sale
     if (kind.fields.isEmpty()) return
     Text(
         text = "${texts.settings.domainFields}: ${kind.fields.joinToString { it.label(sale) }}",

@@ -18,12 +18,12 @@ import kz.mybrain.superkassa.domain.analytics.model.SalesSummary
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsSalesTexts
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Возвраты и чистая выручка плитками.

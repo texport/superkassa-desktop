@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
-import kz.mybrain.superkassa.presentation.strings.debug.debugTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Журнал рабочего места: окно отладки и карточка «Режим отладки».
@@ -36,7 +36,7 @@ class LogViewModel(private val cases: LogCases, private val talk: Talk) : ViewMo
     /** Сохраняется то, что видно после отбора: в поддержку пересылают разбор одного отказа. */
     override fun save() {
         val lines = screen.value.shown
-        viewModelScope.launch { cases.save(lines, debugTexts(talk.language()).save) }
+        viewModelScope.launch { cases.save(lines, textsOf(talk.language()).debug.save) }
     }
 
     override fun chooseLevel(level: LogLevel) = cases.chooseLevel(level)

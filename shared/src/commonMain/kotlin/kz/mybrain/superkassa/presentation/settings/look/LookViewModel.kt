@@ -6,11 +6,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kz.mybrain.superkassa.domain.workplace.model.LookChoice
 import kz.mybrain.superkassa.presentation.common.model.follow
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.Typeface
 import kz.mybrain.superkassa.presentation.theme.color.Accent
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Вид окна: язык, тема, тон, шрифт, рельс разделов и колонка точек.

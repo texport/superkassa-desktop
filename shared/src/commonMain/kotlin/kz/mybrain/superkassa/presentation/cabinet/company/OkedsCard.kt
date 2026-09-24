@@ -21,10 +21,10 @@ import kz.mybrain.superkassa.presentation.common.section.CollapsibleCard
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
 import kz.mybrain.superkassa.presentation.common.status.Chip
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Виды деятельности: список с одним основным.

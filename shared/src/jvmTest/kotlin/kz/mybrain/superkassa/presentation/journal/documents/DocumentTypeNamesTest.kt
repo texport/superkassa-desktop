@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.journal.documents
 
 import io.github.texport.superkassa.core.presentation.api.model.receipt.DocumentType
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -19,7 +19,7 @@ class DocumentTypeNamesTest {
     fun `ни один вид документа ядра не показан кодом без справочника`() {
         val codes = DocumentType.entries.map { it.name } + "Z_REPORT"
         Language.entries.forEach { language ->
-            val enums = stringsOf(language).enums
+            val enums = textsOf(language).common.enums
             codes.forEach { code ->
                 val title = documentTypeTitle(code, emptyMap(), language, enums)
                 assertTrue(title != code, "$language: вид $code показан кодом")

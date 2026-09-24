@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.analytics.sales
 
 import kotlinx.datetime.plus
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -23,7 +23,7 @@ class AnalyticsSalesColumnsTest {
 
     @Test
     fun `у таблицы касс столбцы кассы на месте и подписаны по-своему`() {
-        val whole = analyticsTexts(Language.Ru)
+        val whole = textsOf(Language.Ru).analytics
         val registers = salesColumns(SalesRows.Registers)
         assertTrue(SalesColumn.RegistrationNumber in registers)
         assertEquals(whole.sales.colName, salesColumnTitle(SalesColumn.Name, SalesRows.Registers, whole))

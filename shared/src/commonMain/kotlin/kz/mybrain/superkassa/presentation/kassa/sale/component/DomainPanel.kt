@@ -15,13 +15,13 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainInput
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
 import kz.mybrain.superkassa.presentation.common.section.SectionTitle
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.label
-import kz.mybrain.superkassa.presentation.strings.kassa.reason
-import kz.mybrain.superkassa.presentation.strings.kassa.title
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.label
+import kz.mybrain.superkassa.presentation.words.kassa.reason
+import kz.mybrain.superkassa.presentation.words.kassa.title
 
 /**
  * Реквизиты отрасли, в которой работает эта касса.

@@ -2,8 +2,7 @@ package kz.mybrain.superkassa.presentation.common.message
 
 import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.choose
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Итог обращения к кассе — в строку сообщений и в журнал окна.

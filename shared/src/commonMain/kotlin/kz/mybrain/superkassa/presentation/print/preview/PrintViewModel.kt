@@ -19,7 +19,7 @@ import kz.mybrain.superkassa.presentation.common.message.words
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Печать, просмотр и сохранение печатной формы — одни на окно.
@@ -75,7 +75,7 @@ class PrintViewModel(private val cases: PrintCases, private val talk: Talk) : Vi
      * @param file как назвать файл, если форму сохранят.
      */
     fun preview(source: PrintSource?, file: String?) {
-        if (source == null) return talk.done(stringsOf(talk.language()).preview.missing)
+        if (source == null) return talk.done(textsOf(talk.language()).common.preview.missing)
         shown = source
         screen.update { it.copy(savingName = file ?: source.name) }
         val at = ++generation
@@ -96,7 +96,7 @@ class PrintViewModel(private val cases: PrintCases, private val talk: Talk) : Vi
             if (!cases.print.hasPrinter()) return@launch talk.printed(PrintTape.Result.NoPrinter, PRINT)
             val drawn = drawer.render(source, cases.print.kind) { print(source) }
             asked()
-            val done = drawn?.shown(stringsOf(talk.language()).preview.print, PRINT, talk) ?: return@launch
+            val done = drawn?.shown(textsOf(talk.language()).common.preview.print, PRINT, talk) ?: return@launch
             talk.printed(cases.print(done.kkm, done.bytes), PRINT)
         }
     }
@@ -131,7 +131,7 @@ class PrintViewModel(private val cases: PrintCases, private val talk: Talk) : Vi
         viewModelScope.launch {
             val drawn = drawer.render(source, kind) { saveShown() }
             asked()
-            val texts = stringsOf(talk.language()).preview
+            val texts = textsOf(talk.language()).common.preview
             val done = drawn?.shown(texts.save, SAVE, talk) ?: return@launch
             talk.kept(cases.keep(done.bytes, name, texts.save), SAVE)
         }
@@ -167,7 +167,7 @@ class PrintViewModel(private val cases: PrintCases, private val talk: Talk) : Vi
     /** Форма нарисована или касса отказала: окно показывает итог. */
     private suspend fun showDrawn(answer: Answer<PrintDrawer.Drawn>?) {
         asked()
-        val texts = stringsOf(talk.language())
+        val texts = textsOf(talk.language()).common
         val trouble = when (answer) {
             null -> null
             is Answer.Done -> null

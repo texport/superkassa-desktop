@@ -15,8 +15,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.domain.cabinet.model.OkedEntry
 import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Поле поиска по классификатору и найденное выпадающим списком.

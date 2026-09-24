@@ -14,10 +14,9 @@ import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleViewModel
 import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.blockReasonTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.lookupProblemWords
+import kz.mybrain.superkassa.presentation.words.kassa.lookupProblemWords
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -37,7 +36,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class SaleLookupTest {
     private val notices = Notices()
-    private val sale = stringsOf(Language.Ru).sale
+    private val sale = textsOf(Language.Ru).common.sale
 
     @BeforeTest
     fun inlineMain() = Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -90,7 +89,7 @@ class SaleLookupTest {
         val model = search(core, blockReason = INVALID_TOKEN)
 
         assertEquals(LookupProblem.Blocked, model.state.value.search.problem)
-        assertEquals(blockReasonTexts(Language.Ru).invalidToken, words(model))
+        assertEquals(textsOf(Language.Ru).kassa.blockReason.invalidToken, words(model))
     }
 
     @Test

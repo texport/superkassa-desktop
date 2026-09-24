@@ -6,8 +6,8 @@ import kz.mybrain.superkassa.domain.kassa.model.Tenge
 import kz.mybrain.superkassa.domain.kassa.model.entry.QUANTITY_SCALE
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.strings.common.SaleStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.SaleTexts
+import kz.mybrain.superkassa.strings.api.common.SaleStrings
+import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 
 /**
  * Всё, что касса знает о строке чека.

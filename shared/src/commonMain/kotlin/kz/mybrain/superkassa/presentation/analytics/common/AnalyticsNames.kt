@@ -2,8 +2,8 @@ package kz.mybrain.superkassa.presentation.analytics.common
 
 import kz.mybrain.superkassa.domain.analytics.model.PositionSource
 import kz.mybrain.superkassa.domain.analytics.model.SalesUnit
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Как названа строка торговой сводки — касса или торговая точка.

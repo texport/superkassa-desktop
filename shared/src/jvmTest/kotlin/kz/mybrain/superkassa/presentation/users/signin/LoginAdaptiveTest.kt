@@ -7,7 +7,7 @@ import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
 import kz.mybrain.superkassa.kassa.inlineMain
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -27,7 +27,7 @@ class LoginAdaptiveTest {
     private fun check(probe: KassaProbe, case: Case): List<String> {
         val kkms = KassaExtremes.kkms()
         val app = CoreScene.app(LoginScene.core(kkms))
-        val texts = stringsOf(case.language)
+        val texts = textsOf(case.language).common
         val failures = mutableListOf<String>()
         probe.show(case.look, case.language) {
             LoginScene.Door(app)

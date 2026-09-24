@@ -7,9 +7,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -24,7 +24,7 @@ class OfdTokenNarrowTest {
 
     @Test
     fun `поле токена и кнопка видны целиком на телефоне`() {
-        val texts = stringsOf(Language.Ru).settings
+        val texts = textsOf(Language.Ru).common.settings
         val state = OfdSettingsUiState(kkm = KassaScene.kkm(state = PROGRAMMING), token = "123456789012")
         RenderProbe(WIDTH, HEIGHT) {
             Surface(Modifier.fillMaxSize()) {

@@ -15,11 +15,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.domain.analytics.model.SalesOverview
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsSalesTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
 import kotlin.math.abs
 
 /**

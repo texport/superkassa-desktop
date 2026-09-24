@@ -11,11 +11,11 @@ import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.debug.debugTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -41,7 +41,7 @@ class AdaptiveLogShots {
 
     @Composable
     private fun Body(language: Language) {
-        val texts = debugTexts(language)
+        val texts = textsOf(language).debug
         Surface(Modifier.fillMaxSize()) {
             Column(Modifier.fillMaxSize()) {
                 val journal = LogUiState(LogBookState(entries))

@@ -10,11 +10,11 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmState
 import kz.mybrain.superkassa.domain.kkm.model.isAutonomous
 import kz.mybrain.superkassa.domain.kkm.model.isBlocked
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
-import kz.mybrain.superkassa.presentation.strings.common.EnumStrings
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.shift.coreTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Плашка шапки: слово и роль цвета. */
 data class KkmStatusChip(val text: String, val tone: StatusTone)
@@ -93,7 +93,7 @@ fun KkmStatusChips(kkm: KkmResponse?) {
 @Composable
 private fun statusWords(kkm: KkmResponse?): KkmStatusWords {
     val texts = LocalStrings.current
-    val core = coreTexts(LocalLanguage.current)
+    val core = textsOf(LocalLanguage.current).shift
     return KkmStatusWords(
         state = kkm?.let { texts.enums.kkmState(it.state) }.orEmpty(),
         autonomous = texts.shell.autonomous,

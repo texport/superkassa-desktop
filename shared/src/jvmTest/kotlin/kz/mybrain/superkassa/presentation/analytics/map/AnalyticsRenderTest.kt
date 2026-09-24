@@ -25,9 +25,8 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapMark
 import kz.mybrain.superkassa.presentation.common.mapview.MapMarks
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -41,8 +40,8 @@ import kotlin.test.assertTrue
  */
 class AnalyticsRenderTest {
 
-    private val texts = analyticsTexts(Language.Ru)
-    private val cabinet = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).analytics
+    private val cabinet = textsOf(Language.Ru).cabinet
 
     private fun kkm(at: Int) = AnalyticsKkm(
         cashRegisterId = "c$at",

@@ -8,8 +8,8 @@ import kz.mybrain.superkassa.presentation.cabinet.places.SieveScene.kkms
 import kz.mybrain.superkassa.presentation.cabinet.places.SieveScene.names
 import kz.mybrain.superkassa.presentation.cabinet.places.SieveScene.rows
 import kz.mybrain.superkassa.presentation.cabinet.places.component.treeEmpty
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -123,7 +123,7 @@ class CabinetPlaceSieveTest {
      */
     @Test
     fun `пустой отбор, ненайденное и пустое хозяйство названы по-разному`() {
-        val texts = cabinetTexts(Language.Ru)
+        val texts = textsOf(Language.Ru).cabinet
         val sieved = treeEmpty(texts, PlaceSieve(record = KkmRecord.Refused))
         val searched = treeEmpty(texts, PlaceSieve(needle = "аптека"))
         val nothing = treeEmpty(texts, PlaceSieve())

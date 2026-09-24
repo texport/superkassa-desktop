@@ -14,9 +14,9 @@ import kz.mybrain.superkassa.presentation.common.list.RecordRow
 import kz.mybrain.superkassa.presentation.common.list.ScrollableList
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Строки дерева: точка, под раскрытой — её кассы с отступом.

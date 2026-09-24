@@ -17,11 +17,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kz.mybrain.superkassa.presentation.common.dialog.DialogBody
 import kz.mybrain.superkassa.presentation.common.dialog.DialogTitle
-import kz.mybrain.superkassa.presentation.common.format.fill
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.MoneyTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 
 /**
  * Смена пина кассиру.

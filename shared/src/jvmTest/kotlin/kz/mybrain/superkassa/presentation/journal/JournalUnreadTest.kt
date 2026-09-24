@@ -16,8 +16,8 @@ import kz.mybrain.superkassa.presentation.journal.shifts.shiftsState
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
 import kz.mybrain.superkassa.presentation.kassa.refund.component.basisState
 import kz.mybrain.superkassa.presentation.print.preview.PrintActions
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -34,7 +34,7 @@ import kotlin.test.assertTrue
  */
 class JournalUnreadTest {
 
-    private val texts = journalTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).journal
 
     @Test
     fun `возврат называет непрочитанный день бедой чтения, а не отсутствием оснований`() {

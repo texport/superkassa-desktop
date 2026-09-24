@@ -15,10 +15,10 @@ import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.field.SearchField
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
-import kz.mybrain.superkassa.presentation.strings.debug.DebugTexts
-import kz.mybrain.superkassa.presentation.strings.debug.name
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.debug.name
+import kz.mybrain.superkassa.strings.api.debug.DebugTexts
 
 /**
  * Отбор строк журнала и действия над ними.

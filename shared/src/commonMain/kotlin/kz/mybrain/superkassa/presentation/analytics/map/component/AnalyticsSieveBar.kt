@@ -18,10 +18,10 @@ import kz.mybrain.superkassa.presentation.cabinet.recordTitle
 import kz.mybrain.superkassa.presentation.common.field.SearchField
 import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
 import kz.mybrain.superkassa.presentation.common.picker.MenuChip
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Отбор касс над картой.

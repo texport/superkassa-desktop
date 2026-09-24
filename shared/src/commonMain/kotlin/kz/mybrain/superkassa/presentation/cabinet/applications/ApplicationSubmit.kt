@@ -6,7 +6,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.ApplicationSent
 import kz.mybrain.superkassa.domain.cabinet.model.documents.DeregistrationRequest
 import kz.mybrain.superkassa.domain.cabinet.model.documents.ReregistrationRequest
 import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Что владелец подаёт в ИСНА и чем кончилась подача.

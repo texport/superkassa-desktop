@@ -13,14 +13,14 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.kassa.contact.BuyerContactFields
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsActions
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.journal.ReturnJournalTexts
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Сумма возврата и само действие.
@@ -33,7 +33,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 fun RefundPanel(state: ReturnsUiState, actions: ReturnsActions, modifier: Modifier) {
-    val journal = journalTexts(LocalLanguage.current).returns
+    val journal = textsOf(LocalLanguage.current).journal.returns
     val draft = state.refund?.takeIf { state.basis != null }
     ElevatedCard(modifier = modifier.fillMaxHeight()) {
         if (draft == null) {

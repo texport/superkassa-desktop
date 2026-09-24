@@ -5,9 +5,9 @@ import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.
 import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.bfd
 import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.cabinetRegister
 import kz.mybrain.superkassa.presentation.cabinet.register.component.StateScene.node
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
  */
 class StateWordsTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     /**
      * О смене не высказался никто: касса заведена на другой машине,

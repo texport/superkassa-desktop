@@ -5,7 +5,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetPage
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /** Прочитанная страница списка и сколько всего строк за сроком. */
 data class DocumentSlice(val rows: List<CabinetDocumentRow> = emptyList(), val total: Long = 0)

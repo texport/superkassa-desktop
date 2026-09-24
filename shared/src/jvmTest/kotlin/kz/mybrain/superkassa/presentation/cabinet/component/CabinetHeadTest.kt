@@ -1,9 +1,8 @@
 package kz.mybrain.superkassa.presentation.cabinet.component
 
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -20,8 +19,8 @@ import kotlin.test.assertTrue
  */
 class CabinetHeadTest {
 
-    private val texts = cabinetTexts(Language.Ru)
-    private val documentsTitle = journalTexts(Language.Ru).history.registerDocuments
+    private val texts = textsOf(Language.Ru).cabinet
+    private val documentsTitle = textsOf(Language.Ru).journal.history.registerDocuments
 
     private fun head(register: CabinetRegister?, company: String? = "ТОО «Пример»", owner: String? = "Владелец") =
         cabinetHead(register, company, owner, texts, documentsTitle)

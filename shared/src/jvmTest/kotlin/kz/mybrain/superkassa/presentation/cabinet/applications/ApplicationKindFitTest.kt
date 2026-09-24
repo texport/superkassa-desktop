@@ -13,10 +13,10 @@ import kz.mybrain.superkassa.CabinetStage
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.viewOf
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -38,7 +38,7 @@ class ApplicationKindFitTest {
     }
 
     private fun check(language: Language, scale: TextScale) {
-        val texts = cabinetTexts(language)
+        val texts = textsOf(language).cabinet
         val stage = CabinetStage { StubReply("{}") }
         val register = CabinetRegister(id = "r-1", kkmId = 5_000_021, status = "REGISTERED")
         RenderProbe(WIDTH, HEIGHT, look = Look(textScale = scale), language = language) {

@@ -23,17 +23,17 @@ import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.keyboard.SystemBack
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.refund.RefundActions
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.ReturnJournalTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.PaymentTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
+import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
+import kz.mybrain.superkassa.strings.api.kassa.PaymentTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Чек-основание в лицо: номер, сумма крупно, фискальный признак.
@@ -94,7 +94,7 @@ internal fun RefundAmountRow(journal: ReturnJournalTexts, draft: RefundDraft, ac
             modifier = Modifier.weight(1f),
             isError = rejected != null,
             supportingText = rejected?.let { problemText(it.reason, journal) }
-                ?: checkoutTexts(LocalLanguage.current).refundPart.takeIf { partial },
+                ?: textsOf(LocalLanguage.current).kassa.checkout.refundPart.takeIf { partial },
             onValueChange = actions::enter
         )
         FieldButton(journal.wholeReceipt, FieldButtonKind.Text, onClick = actions::wholeReceipt)

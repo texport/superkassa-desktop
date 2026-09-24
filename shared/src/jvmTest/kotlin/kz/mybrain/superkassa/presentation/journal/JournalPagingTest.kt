@@ -16,8 +16,8 @@ import kz.mybrain.superkassa.presentation.common.state.ScreenState
 import kz.mybrain.superkassa.presentation.journal.documents.journalModel
 import kz.mybrain.superkassa.presentation.journal.shifts.shiftsModel
 import kz.mybrain.superkassa.presentation.journal.shifts.shiftsState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -35,7 +35,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class JournalPagingTest {
 
-    private val texts = journalTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).journal
     private val signIn = SignIn().apply { enter(CoreScene.kkm(), CoreScene.cashier(), CoreScene.PIN) }
 
     @BeforeTest

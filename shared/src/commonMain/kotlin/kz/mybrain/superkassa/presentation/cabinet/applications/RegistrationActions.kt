@@ -17,10 +17,10 @@ import kz.mybrain.superkassa.presentation.cabinet.register.RegisterView
 import kz.mybrain.superkassa.presentation.cabinet.register.availableActions
 import kz.mybrain.superkassa.presentation.common.button.BusyButton
 import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Заявления в ИСНА: постановка на учёт, перерегистрация, снятие с учёта.

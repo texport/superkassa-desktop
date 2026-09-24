@@ -14,18 +14,17 @@ import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.domain.kassa.model.refund.ReturnKind
 import kz.mybrain.superkassa.domain.kassa.model.refund.drawerShortage
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentLines
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.ReturnJournalTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.action
-import kz.mybrain.superkassa.presentation.strings.kassa.paymentTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.action
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Касса возврата: сумма и виды оплаты.
@@ -81,11 +80,11 @@ internal fun RefundMoney(
         entries = paymentEntries(state.paymentTypes),
         total = draft.readyTiyn,
         actions = payments,
-        unsupportedNote = saleTexts(language).paymentUnsupported
+        unsupportedNote = textsOf(language).kassa.sale.paymentUnsupported
     )
     RefundNote(
         drawerShortage(state.kind, state.cashInDrawer, draft.split.cashSum(draft.readyTiyn))
             ?.let { journal.drawerShort.fill(Money.formatTiyn(it)) }
     )
-    RefundHints(draft.split.issue(draft.readyTiyn), paymentTexts(language))
+    RefundHints(draft.split.issue(draft.readyTiyn), textsOf(language).kassa.payment)
 }

@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.analytics.common
 
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsTrouble
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /** Заголовок помехи словами владельца. */
 fun troubleTitle(trouble: AnalyticsTrouble, texts: AnalyticsTexts): String = when (trouble) {

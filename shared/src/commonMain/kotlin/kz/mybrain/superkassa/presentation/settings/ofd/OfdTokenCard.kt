@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
 import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 

@@ -17,10 +17,10 @@ import kz.mybrain.superkassa.presentation.cabinet.places.PlaceOrder
 import kz.mybrain.superkassa.presentation.cabinet.places.PlaceSieve
 import kz.mybrain.superkassa.presentation.cabinet.recordTitle
 import kz.mybrain.superkassa.presentation.common.picker.MenuChip
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Ряд отбора и порядка над списком точек.

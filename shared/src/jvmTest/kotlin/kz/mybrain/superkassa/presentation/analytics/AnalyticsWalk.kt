@@ -3,10 +3,9 @@ package kz.mybrain.superkassa.presentation.analytics
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import kz.mybrain.superkassa.presentation.analytics.map.MAP_TAG
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Проход по четырём вкладкам аналитики с замерами и кадрами.
@@ -17,8 +16,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Sizes
  */
 internal class AnalyticsWalk(private val window: AnalyticsWindow, private val tag: String) {
 
-    private val texts: AnalyticsTexts = analyticsTexts(window.language)
-    private val map = cabinetTexts(window.language).map
+    private val texts: AnalyticsTexts = textsOf(window.language).analytics
+    private val map = textsOf(window.language).cabinet.map
 
     /** Что намерено; печатается строкой и проверяется тестом. */
     data class Measure(
@@ -34,7 +33,7 @@ internal class AnalyticsWalk(private val window: AnalyticsWindow, private val ta
 
     fun mapPart(): Measure {
         window.settle(STARTUP)
-        window.click(analyticsTexts(window.language).title)
+        window.click(textsOf(window.language).analytics.title)
         window.settle(STARTUP)
         window.shot("$tag-map")
         val before = mapBox()
@@ -81,7 +80,7 @@ internal class AnalyticsWalk(private val window: AnalyticsWindow, private val ta
         window.click(texts.openKkmSales)
         window.settle(STARTUP)
         window.shot("$tag-kkm-dialog")
-        val close = window.all().lastOrNull { it.words == cabinetTexts(window.language).close }
+        val close = window.all().lastOrNull { it.words == textsOf(window.language).cabinet.close }
         val fits = close != null && visible(close.shown, close.whole)
         close?.let { window.probe.click(it.shown.center) }
         window.settle()

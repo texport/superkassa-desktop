@@ -18,6 +18,8 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.presentation.common.adaptive.TwoPane
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.component.BasketCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.CheckoutPanel
 import kz.mybrain.superkassa.presentation.kassa.sale.component.CustomerDataCard
@@ -33,12 +35,10 @@ import kz.mybrain.superkassa.presentation.kassa.sale.entry.PositionEntryCard
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.measureUnits
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
 import kz.mybrain.superkassa.presentation.theme.size.Panes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Продажа и покупка.
@@ -69,7 +69,7 @@ fun SaleContent(state: SaleUiState, actions: SaleActions = SaleActions(), output
     val texts = LocalStrings.current
     val language = LocalLanguage.current
     CompositionLocalProvider(
-        LocalSaleTexts provides saleTexts(language),
+        LocalSaleTexts provides textsOf(language).kassa.sale,
         LocalVatRates provides state.positionVat(language, texts.enums),
         LocalUnits provides measureUnits(language)
     ) {

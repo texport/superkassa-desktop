@@ -6,7 +6,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Чтение хозяйства компании: точки, кассы и блокировки.
@@ -46,7 +46,7 @@ internal class CabinetLists(
                 screen.update { it.copy(placesTotal = total.toInt(), places = longer(part, it.places)) }
             }
         }
-        val trouble = reply.problem?.let { cabinetMessage(it, cabinetTexts(talk.language())).words() }
+        val trouble = reply.problem?.let { cabinetMessage(it, textsOf(talk.language()).cabinet).words() }
         screen.update { now ->
             now.copy(places = reply.value ?: now.places, placesRead = true, placesTrouble = trouble)
         }

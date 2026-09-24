@@ -16,11 +16,10 @@ import kz.mybrain.superkassa.presentation.analytics.sales.SalesLook
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -34,8 +33,8 @@ import kotlin.test.assertTrue
  */
 class LiveWalkAnalyticsShots {
 
-    private val enums = stringsOf(Language.Ru).enums
-    private val journal = journalTexts(Language.Ru).history
+    private val enums = textsOf(Language.Ru).common.enums
+    private val journal = textsOf(Language.Ru).journal.history
 
     /** Состояние смены, которого кабинет не знает: кода на экране быть не должно. */
     @Test

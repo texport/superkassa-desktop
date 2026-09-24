@@ -20,9 +20,9 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCreateBu
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
 import kz.mybrain.superkassa.presentation.cabinet.places.component.placeRows
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Составы раздела торговых точек для снимков.

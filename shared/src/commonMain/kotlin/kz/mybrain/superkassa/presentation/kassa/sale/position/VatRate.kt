@@ -6,10 +6,10 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.domain.kassa.model.paysVat
 import kz.mybrain.superkassa.domain.kassa.model.sale.FALLBACK_VAT_CODES
 import kz.mybrain.superkassa.domain.kassa.model.sale.NO_VAT
-import kz.mybrain.superkassa.presentation.strings.common.EnumStrings
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.of
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.presentation.words.common.of
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.common.EnumStrings
 
 /**
  * Ставка НДС: код уходит в чек, название и величина видны кассиру.

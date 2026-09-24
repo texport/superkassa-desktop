@@ -20,13 +20,13 @@ import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
 import kz.mybrain.superkassa.presentation.common.list.ScrollableList
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.strings.debug.DebugTexts
-import kz.mybrain.superkassa.presentation.strings.debug.name
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.LogStyle
+import kz.mybrain.superkassa.presentation.words.debug.name
+import kz.mybrain.superkassa.strings.api.debug.DebugTexts
 
 /**
  * Строки журнала списком.

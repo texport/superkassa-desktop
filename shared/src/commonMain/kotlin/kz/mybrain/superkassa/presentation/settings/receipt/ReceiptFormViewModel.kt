@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Что владелец меняет в печатной форме. Пустые действия — для снимков вида. */
 interface ReceiptFormActions {
@@ -66,7 +66,7 @@ class ReceiptFormViewModel(
 
     private fun save(changed: ReceiptBrandingRequest, onSaved: () -> Unit = {}) {
         whileBusy(busy) {
-            val texts = stringsOf(talk.language()).settings
+            val texts = textsOf(talk.language()).common.settings
             cases.save(changed).shown(texts.printForm, "update branding", talk) ?: return@whileBusy
             onSaved()
             talk.done(texts.printFormSaved)

@@ -9,9 +9,8 @@ import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
 import kz.mybrain.superkassa.presentation.theme.size.CardGrid
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -50,7 +49,7 @@ class CashAdaptiveTest {
 
     private fun check(probe: KassaProbe, case: Case): List<String> {
         val desk = KassaScene.desk(KassaScene.kkm(shiftOpen = true))
-        val texts = stringsOf(case.language)
+        val texts = textsOf(case.language).common
         val failures = mutableListOf<String>()
         probe.show(case.look, case.language) {
             KassaWindow(desk, Section.Cash) { CashContent(drawer) }
@@ -60,7 +59,7 @@ class CashAdaptiveTest {
         val drawer = probe.part(Money.formatTiyn(DRAWER))
         val amount = probe.part(Money.formatTiyn(DRAWER - 1))?.boundsInRoot
         // Движения — своей карточкой: сумма меряется от её левого края, от заголовка.
-        val recent = probe.part(moneyTexts(case.language).drawer.recent)
+        val recent = probe.part(textsOf(case.language).kassa.money.drawer.recent)
         println("деньги ${case.tag}: кнопка ${deposit?.size}, ящик ${drawer?.boundsInRoot}, движение $amount")
         if (deposit?.wholeOnScreen(case.width, case.height) != true) failures += "${case.tag}: «Внести» не видна"
         if ((deposit?.size?.height ?: 0) < TOUCH) failures += "${case.tag}: «Внести» ниже цели нажатия"

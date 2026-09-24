@@ -11,9 +11,9 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.CabinetWire
 import kz.mybrain.superkassa.presentation.cabinet.cardFieldTitle
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.signedPorts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -118,7 +118,7 @@ class CabinetRegistrationCardTest {
      */
     @Test
     fun `изменённое названо словами, а незнакомый код показан как пришёл`() {
-        val texts = cabinetTexts(Language.Ru)
+        val texts = textsOf(Language.Ru).cabinet
         assertEquals(texts.placeAddress, cardFieldTitle("ADDRESS", texts))
         assertEquals(texts.placeName, cardFieldTitle("RETAIL_PLACE", texts))
         assertEquals(texts.model, cardFieldTitle("KKM_MODEL", texts))

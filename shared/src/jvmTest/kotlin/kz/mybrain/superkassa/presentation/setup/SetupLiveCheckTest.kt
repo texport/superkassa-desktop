@@ -16,9 +16,9 @@ import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.cabinet.applications.LocalSignTick
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test
@@ -57,7 +57,7 @@ class SetupLiveCheckTest {
     fun `пока заявление у КГД, главное действие — обновить, а подачи нет`(): Unit = inlineMain {
         val draft = frame("draft", CabinetRecord("DRAFT", null))
         val awaiting = frame("awaiting", CabinetRecord(IN_KGD, null, awaiting = true))
-        val refresh = cabinetTexts(Language.Ru).refresh
+        val refresh = textsOf(Language.Ru).cabinet.refresh
         val submit = SetupScene().texts.submit
 
         assertTrue(submit in draft, "черновику не предложено подать заявление")

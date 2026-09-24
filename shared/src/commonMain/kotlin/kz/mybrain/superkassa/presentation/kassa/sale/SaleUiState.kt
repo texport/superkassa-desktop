@@ -24,8 +24,8 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.blockOf
 import kz.mybrain.superkassa.domain.kassa.model.sale.issued
 import kz.mybrain.superkassa.presentation.kassa.sale.position.VatRate
 import kz.mybrain.superkassa.presentation.kassa.sale.position.vatRatesOf
-import kz.mybrain.superkassa.presentation.strings.common.EnumStrings
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.common.EnumStrings
 
 /**
  * Продажа: касса, чек и всё набранное поверх него.

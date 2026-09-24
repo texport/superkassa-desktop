@@ -3,10 +3,8 @@ package kz.mybrain.superkassa.presentation.settings.core
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.presentation.common.section.FactLines
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
-import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Сведения о кассе на этой машине: версии, режим, протокол, хранилище,
@@ -19,8 +17,9 @@ import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
 @Composable
 internal fun KassaFactsCard(core: CoreSettingsUiState) {
     val language = LocalLanguage.current
-    val texts = kassaFactsTexts(language)
+    val all = textsOf(language)
+    val texts = all.settings.facts
     SectionCard(title = texts.title, info = texts.hint) {
-        FactLines(null, core.facts(texts, coreSettingTexts(language), moneyTexts(language).kkm), texts.unread)
+        FactLines(null, core.facts(texts, all.settings.core, all.kassa.money.kkm), texts.unread)
     }
 }

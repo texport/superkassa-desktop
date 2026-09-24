@@ -10,11 +10,11 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Adjustment
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.sign
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.presentation.words.kassa.sign
+import kz.mybrain.superkassa.strings.api.fill
 
 /**
  * Поле скидки или наценки со способом ввода внутри него.

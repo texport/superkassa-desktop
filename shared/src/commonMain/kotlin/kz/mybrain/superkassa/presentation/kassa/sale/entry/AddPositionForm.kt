@@ -18,6 +18,7 @@ import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.keyboard.EnterSubmits
 import kz.mybrain.superkassa.presentation.common.keyboard.enterKeyboardActions
 import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.component.AdjustmentField
@@ -25,9 +26,8 @@ import kz.mybrain.superkassa.presentation.kassa.sale.component.Hint
 import kz.mybrain.superkassa.presentation.kassa.sale.component.sameOtherwise
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.MeasureUnit
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.text
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.text
 
 /**
  * Ввод позиции чека руками.

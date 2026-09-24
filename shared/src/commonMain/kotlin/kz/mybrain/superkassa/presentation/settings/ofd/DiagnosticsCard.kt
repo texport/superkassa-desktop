@@ -11,14 +11,13 @@ import kz.mybrain.superkassa.domain.settings.model.OfdSummary
 import kz.mybrain.superkassa.presentation.common.section.FactLines
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.status.Chip
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.KkmSetupTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.kassa.KkmSetupTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Диагностика кассы: связь с ОФД и сведения о кассе у него.
@@ -33,7 +32,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
     val texts = LocalStrings.current
-    val money = moneyTexts(LocalLanguage.current).kkm
+    val money = textsOf(LocalLanguage.current).kassa.money.kkm
     ofd.kkm ?: return
     SectionCard(
         title = texts.settings.diagnostics,
@@ -75,7 +74,7 @@ private fun Checks(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
         OutlinedButton(enabled = !busy, onClick = actions::askInfo) { Text(texts.ofdInfo) }
         if (ofd.admin) {
             OutlinedButton(enabled = !busy, onClick = actions::askNextRequest) {
-                Text(kassaFactsTexts(LocalLanguage.current).ofdAuth)
+                Text(textsOf(LocalLanguage.current).settings.facts.ofdAuth)
             }
         }
     }
@@ -85,7 +84,7 @@ private fun Checks(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
 @Composable
 private fun NextRequest(number: Int?) {
     number ?: return
-    val facts = kassaFactsTexts(LocalLanguage.current)
+    val facts = textsOf(LocalLanguage.current).settings.facts
     FactLines(facts.ofdAuth, listOf(facts.nextRequest to number.toString()), facts.unread)
 }
 

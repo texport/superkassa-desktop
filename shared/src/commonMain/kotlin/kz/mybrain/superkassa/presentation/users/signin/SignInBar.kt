@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
 import kz.mybrain.superkassa.presentation.common.button.underFieldLabel
 import kz.mybrain.superkassa.presentation.common.field.fieldWidth
 import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing

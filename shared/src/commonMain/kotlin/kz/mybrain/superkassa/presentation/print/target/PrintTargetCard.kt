@@ -10,10 +10,10 @@ import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.PartTitle
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.print.printTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Куда печатает эта касса.
@@ -56,7 +56,7 @@ internal fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetAct
 private fun PrinterChoice(target: PrintTargetUiState, actions: PrintTargetActions) {
     val texts = LocalStrings.current
     if (target.noPrinters) Warning(texts.settings.printerNone)
-    if (target.printerGone) Warning(printTexts(LocalLanguage.current).printerGone)
+    if (target.printerGone) Warning(textsOf(LocalLanguage.current).print.printerGone)
     PrinterPicker(target, actions)
     PartTitle(texts.settings.printCopies)
     WideChoiceSegments(
@@ -77,7 +77,7 @@ private fun PrinterChoice(target: PrintTargetUiState, actions: PrintTargetAction
 @Composable
 private fun SystemDialogNote() {
     Text(
-        text = printTexts(LocalLanguage.current).systemDialog,
+        text = textsOf(LocalLanguage.current).print.systemDialog,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

@@ -9,11 +9,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Адрес личного кабинета ОФД.
@@ -25,7 +25,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 fun CabinetAddressCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSettingsActions) {
-    val texts = cabinetTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).cabinet
     val settings = LocalStrings.current.settings
     SectionCard(title = texts.address, info = texts.hints.address) {
         // Адрес занимает остаток строки карточки, кнопка стоит за ним:

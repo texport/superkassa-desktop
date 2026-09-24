@@ -14,8 +14,8 @@ import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -36,7 +36,7 @@ import kotlin.test.assertTrue
 class DashboardViewModelTest {
     private val signIn = SignIn()
     private val notices = Notices()
-    private val texts = stringsOf(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
     private val blocked = CoreScene.kkm(state = "BLOCKED", blockReasonCode = 1015)
 
     private fun model(core: FakeCore) = dashboardModel(CoreScene.app(core, signIn, notices))

@@ -9,16 +9,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kz.mybrain.superkassa.presentation.common.button.BusyButton
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.setup.KkmForm
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.setup.SetupTexts
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.users.pinProblem
+import kz.mybrain.superkassa.strings.api.setup.SetupTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Шаг 4: касса заводится на рабочем месте, у неё появляется администратор.
@@ -88,7 +87,7 @@ private fun AdminForm(
 @Composable
 internal fun AdminPinField(pin: String, modifier: Modifier = Modifier.fillMaxWidth(), onChange: (String) -> Unit) {
     val texts = LocalStrings.current
-    val cashiers = moneyTexts(LocalLanguage.current).cashiers
+    val cashiers = textsOf(LocalLanguage.current).kassa.money.cashiers
     val trouble = pinProblem(pin, cashiers)
     OutlinedTextField(
         value = pin,
@@ -112,7 +111,7 @@ internal fun AdminPinField(pin: String, modifier: Modifier = Modifier.fillMaxWid
  */
 @Composable
 internal fun RepeatPinField(form: KkmForm, modifier: Modifier = Modifier.fillMaxWidth(), onChange: (String) -> Unit) {
-    val setup = setupTexts(LocalLanguage.current)
+    val setup = textsOf(LocalLanguage.current).setup
     OutlinedTextField(
         value = form.adminPinRepeat,
         onValueChange = onChange,

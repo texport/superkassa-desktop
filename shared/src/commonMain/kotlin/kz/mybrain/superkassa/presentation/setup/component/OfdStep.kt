@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
 import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
 import kz.mybrain.superkassa.presentation.common.field.fieldWidth
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 

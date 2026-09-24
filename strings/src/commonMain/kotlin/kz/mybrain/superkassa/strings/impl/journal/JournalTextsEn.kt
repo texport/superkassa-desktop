@@ -1,0 +1,138 @@
+package kz.mybrain.superkassa.strings.impl.journal
+
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
+import kz.mybrain.superkassa.strings.api.journal.JournalTexts
+import kz.mybrain.superkassa.strings.api.journal.QueueJournalTexts
+import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
+import kz.mybrain.superkassa.strings.api.journal.ShiftJournalTexts
+
+/** Надписи [JournalTexts] по-английски. */
+internal val journalTextsEn = JournalTexts(
+    returns = ReturnJournalTexts(
+        itemsToReturn = "What is returned",
+        basis = "Original receipt",
+        basisHint = "The original receipt is found by day and number: a customer may return goods later. " +
+            "A refund of a refund is not allowed, so such receipts are not listed.",
+        basisColumn = "Receipts of the day",
+        allBasesShown = "All receipts of the day are shown",
+        chooseBasis = "Pick a receipt in the list",
+        chooseBasisHint = "The receipt total and the fiscal sign will appear here.",
+        backToList = "Back to receipts",
+        noBasisHint = "Turn to another day or type the customer's receipt number.",
+        basisUnread = "The receipts of that day could not be read: the cash register did not answer.",
+        basisUnreadHint = "Read them again: while the cash register is silent, no original receipt can be found. " +
+            "If it stays silent, call service.",
+        shiftClosedHint = "Open the shift on the dashboard: the refund itself is issued while the shift is open.",
+        receiptTotal = "Receipt total",
+        fiscalSign = "Fiscal sign",
+        noSaleBasis = "The cash register returned no sale for that day that can serve as a basis.",
+        noBuyBasis = "The cash register returned no purchase for that day that can serve as a basis.",
+        shiftClosed = "The shift is closed. A refund is issued while the shift is open.",
+        kkmBlocked = "The cash register is blocked: it issues no refunds.",
+        kkmBlockedHint = "Clear the block in the register settings: while it holds, the register is read-only.",
+        amount = "Refund amount",
+        wholeReceipt = "Whole receipt",
+        partialHint = "Part of a receipt can be refunded: enter an amount below the receipt total.",
+        amountInvalid = "The amount is not a number — enter tenge and tiyn separated by a comma.",
+        amountTooLarge = "Cannot refund more than the receipt total.",
+        amountEmpty = "Enter the refund amount.",
+        itemsIgnored = "The amount does not match the ticked lines: the refund goes as a single line for that amount.",
+        drawerShort = "The drawer holds only %s — that much cannot be refunded in cash. " +
+            "Pay cash in or refund part of it by another payment type."
+    ),
+    history = HistoryJournalTexts(
+        byPeriod = "By period",
+        byShift = "By shift",
+        day = "Day",
+        today = "Today",
+        earlierDay = "Previous day",
+        laterDay = "Next day",
+        documentType = "Document type",
+        allTypes = "All types",
+        emptyDay = "The cash register returned no documents for this period.",
+        emptyDayHint = "Turn the period back or take a wider one: a week or a month.",
+        emptyForFilter = "No document matches the search and the filters.",
+        emptyForFilterHint = "Clear the search line or the filters: there are documents in this period.",
+        unread = "The documents for this period could not be read: the cash register did not answer.",
+        unreadHint = "Read them again. If the cash register stays silent, call service.",
+        colTime = "Time",
+        colType = "Type",
+        colNumber = "Number",
+        colAmount = "Amount",
+        colFiscalSign = "Fiscal sign",
+        colShift = "Shift",
+        shown = "Shown",
+        shownOfRead = "Shown of what is read",
+        showMore = "Show more",
+        allShown = "The whole period is shown",
+        search = "Search",
+        searchHint = "Number, sign, amount or item",
+        clearSearch = "Clear the search",
+        sort = "Order",
+        sortTime = "By time",
+        sortAmount = "By amount",
+        sortNumber = "By number",
+        ascending = "Ascending",
+        descending = "Descending",
+        period = "Period",
+        spanWeek = "Week",
+        spanMonth = "Month",
+        spanAll = "All time",
+        earlierSpan = "Previous period",
+        laterSpan = "Next period",
+        deliveryState = "Delivery state",
+        allStates = "Any state",
+        allShifts = "All shifts",
+        registerDocuments = "Cash register documents",
+        registerDocumentsHint = "Receipts, shifts, reports and cash movements as the BFD knows them — " +
+            "on a screen of their own, with search, filters and printing.",
+        openDocuments = "Open the documents",
+        backToRegister = "Back to the register card"
+    ),
+    shifts = ShiftJournalTexts(
+        showMore = "Show more",
+        allShown = "All shifts are shown",
+        title = "Past shifts",
+        load = "Load shifts",
+        hint = "The Z-report of a closed shift is printed here: no need to hunt for it in the daily journal.",
+        none = "The cash register returned no shifts.",
+        noneHint = "Shifts appear here after a shift has been opened on this cash register.",
+        unread = "The shifts could not be read: the cash register did not answer.",
+        unreadHint = "Read them again. If the shifts still do not arrive, call service.",
+        number = "Shift no.",
+        opened = "Opened",
+        closed = "Closed",
+        stillOpen = "Not closed",
+        zReport = "Z-report",
+        documents = "Shift documents",
+        emptyDocuments = "This shift has no documents.",
+        emptyDocumentsHint = "The shift was opened and closed, but no receipts were issued in it.",
+        documentsUnread = "The documents of this shift could not be read: the cash register did not answer.",
+        documentsUnreadHint = "Read them again. If the documents still do not arrive, call service.",
+        back = "Back to shifts"
+    ),
+    queue = QueueJournalTexts(
+        task = "Task",
+        sentSection = "Already sent",
+        rejectedSection = "Will not be sent",
+        sending = "Sending",
+        retrying = "Retrying",
+        rejectedForGood = "Will not be sent",
+        nextAttempt = "Next attempt",
+        lastFailure = "Reason of the last failure",
+        retryHint = "“Retry failed” re-queues only the tasks whose sending failed. The rest go out on their " +
+            "own and need no intervention.",
+        retryNeedsProgramming = "Retrying is only queued in programming mode: enter it in the register settings",
+        retryNeedsClosedShift = "Retrying needs a closed shift: " +
+            "close the shift on the overview, then enter programming mode",
+        nothingFailed = "No failed tasks — nothing to retry.",
+        nothingToRetryButRejected = "Nothing to retry: rejected tasks are never resent, service staff handle them.",
+        emptyHint = "Nothing to send: the cash register is online with the BFD.",
+        unread = "The queue could not be read: the cash register did not answer.",
+        unreadHint = "Read it again. While the cash register stays silent, " +
+            "nothing is known about waiting documents.",
+        emptyBlockedHint = "Nothing to send: the cash register is blocked and issues no new documents."
+    ),
+    delivery = deliveryTextsEn,
+    ofdRefusal = ofdRefusalTextsEn
+)

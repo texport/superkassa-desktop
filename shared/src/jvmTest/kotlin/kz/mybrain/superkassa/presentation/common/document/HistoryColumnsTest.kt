@@ -16,14 +16,12 @@ import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.status.Chip
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.englishStatus
-import kz.mybrain.superkassa.presentation.strings.common.kazakhStatus
-import kz.mybrain.superkassa.presentation.strings.common.russianStatus
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.size.HistoryLayout
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -135,6 +133,6 @@ class HistoryColumnsTest {
         const val SHIFT = 65_535L
 
         /** Названия состояний на каждом языке. */
-        val STATUS = mapOf(Language.Ru to russianStatus, Language.Kk to kazakhStatus, Language.En to englishStatus)
+        val STATUS = Language.entries.associateWith { textsOf(it).common.status }
     }
 }

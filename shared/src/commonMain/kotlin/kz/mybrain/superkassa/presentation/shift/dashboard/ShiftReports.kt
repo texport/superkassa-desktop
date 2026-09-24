@@ -3,9 +3,9 @@ package kz.mybrain.superkassa.presentation.shift.dashboard
 import kz.mybrain.superkassa.domain.shift.model.ShiftPart
 import kz.mybrain.superkassa.domain.shift.model.ShiftSnapshot
 import kz.mybrain.superkassa.domain.shift.model.ShiftTrouble
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Принимает перечитанное: касса, смена, документы и наличные. */
 internal fun DashboardUiState.adopt(snapshot: ShiftSnapshot): DashboardUiState = copy(
@@ -25,7 +25,7 @@ internal fun ShiftTrouble.words(texts: AppStrings, language: Language): String =
     ShiftPart.Kkm -> texts.login.reload
     ShiftPart.Shift -> texts.dashboard.shift
     ShiftPart.Documents -> texts.dashboard.shiftDocuments
-    ShiftPart.Cash -> moneyTexts(language).drawer.inDrawer
+    ShiftPart.Cash -> textsOf(language).kassa.money.drawer.inDrawer
 }
 
 /** Что не прочиталось — для журнала. */

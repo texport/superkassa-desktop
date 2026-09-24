@@ -20,10 +20,10 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.CabinetRegist
 import kz.mybrain.superkassa.presentation.common.mapview.CITY_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.map.mapAddressTexts
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 
 /**
@@ -105,7 +105,7 @@ class PlaceMapShots {
 @Composable
 private fun PickerLook(address: RegisterAddress?, state: MapState) {
     val registry = remember { CabinetRegistry(idleCabinet()) }
-    val notices = mapAddressTexts(Language.Ru)
+    val notices = textsOf(Language.Ru).map.address
     val cases = remember { AnalyticsLook.mapCases() }
     val parts = remember {
         val pick = MapAddressPick(address, Language.Ru)

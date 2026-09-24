@@ -15,11 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
 import kz.mybrain.superkassa.presentation.common.dialog.ConfirmDangerDialog
-import kz.mybrain.superkassa.presentation.common.format.fill
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.settings.SettingRequirements
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Снятие кассы с учёта.
@@ -34,7 +34,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 fun DecommissionCard(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
-    val money = moneyTexts(LocalLanguage.current).kkm
+    val money = textsOf(LocalLanguage.current).kassa.money.kkm
     val current = kkm.kkm ?: return
     val needs = KkmSettingRules.decommission(current)
     OutlinedCard(
@@ -60,7 +60,7 @@ fun DecommissionCard(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
 /** Что сделает снятие: названо цветом отказа и объяснено до нажатия. */
 @Composable
 private fun DecommissionHeading() {
-    val money = moneyTexts(LocalLanguage.current).kkm
+    val money = textsOf(LocalLanguage.current).kassa.money.kkm
     Text(
         text = money.decommission,
         style = MaterialTheme.typography.titleMedium,
@@ -76,7 +76,7 @@ private fun DecommissionHeading() {
 /** Вопрос перед необратимым: что будет удалено и с какой кассой. */
 @Composable
 private fun DecommissionQuestion(name: String, actions: KkmSettingsActions) {
-    val money = moneyTexts(LocalLanguage.current)
+    val money = textsOf(LocalLanguage.current).kassa.money
     ConfirmDangerDialog(
         what = money.kkm.decommissionConfirm.fill(name),
         explain = money.kkm.decommissionHint,

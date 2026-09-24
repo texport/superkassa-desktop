@@ -4,8 +4,8 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.kkm.model.isAutonomous
 import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
  */
 class DashboardLinkCoreTest {
     private val desk = CoreDesk()
-    private val texts = stringsOf(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
 
     @AfterTest
     fun close() = desk.close()

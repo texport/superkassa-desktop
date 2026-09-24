@@ -16,11 +16,11 @@ import kz.mybrain.superkassa.presentation.cabinet.enroll.AddRegisterDialog
 import kz.mybrain.superkassa.presentation.cabinet.enroll.FactoryStamp
 import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.setup.SetupTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.setup.SetupTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Шаг 2: касса заводится в кабинете ОФД.
@@ -72,7 +72,7 @@ private fun CabinetStep(
     onRegister: (id: String, kkmId: Int, name: String?) -> Unit
 ) {
     val language = LocalLanguage.current
-    val texts = cabinetTexts(language)
+    val texts = textsOf(language).cabinet
     when {
         !window.open -> {
             Text(setup.signInFirst)

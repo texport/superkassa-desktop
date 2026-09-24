@@ -20,9 +20,9 @@ import kz.mybrain.superkassa.presentation.common.section.Collapsible
 import kz.mybrain.superkassa.presentation.common.section.SectionHeader
 import kz.mybrain.superkassa.presentation.common.status.StatusTone
 import kz.mybrain.superkassa.presentation.common.status.toneColor
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Что означают цвета и размеры ярлычков — карточкой в углу карты.

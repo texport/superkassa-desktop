@@ -9,9 +9,8 @@ import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsTab
 import kz.mybrain.superkassa.presentation.cabinet.recordTitle
 import kz.mybrain.superkassa.presentation.kassa.sale.component.open
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.analytics.sieveTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -31,7 +30,7 @@ class AnalyticsRecordTest {
     /** Учёт стоит в разделе четвёртой вкладкой и назван своим набором. */
     @Test
     fun `учёт касс — вторая вкладка аналитики`() {
-        val texts = analyticsTexts(Language.Ru)
+        val texts = textsOf(Language.Ru).analytics
 
         assertEquals(4, AnalyticsTab.entries.size)
         assertEquals(texts.record.tab, AnalyticsTab.Record.title(texts))
@@ -85,7 +84,7 @@ class AnalyticsRecordTest {
     @Test
     fun `каждый смысл учёта назван на трёх языках`() {
         Language.entries.forEach { language ->
-            val words = KkmRecord.entries.map { recordTitle(it, sieveTexts(language)) }
+            val words = KkmRecord.entries.map { recordTitle(it, textsOf(language).analytics.sieve) }
 
             assertEquals(words.size, words.toSet().size, "$language: два смысла названы одинаково")
             assertTrue(words.none(String::isBlank), "$language: смысл учёта остался без слова")

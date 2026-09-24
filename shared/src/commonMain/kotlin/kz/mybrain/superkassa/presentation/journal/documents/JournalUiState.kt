@@ -9,7 +9,7 @@ import kz.mybrain.superkassa.presentation.common.period.JournalSpan
 import kz.mybrain.superkassa.presentation.common.period.dayRange
 import kz.mybrain.superkassa.presentation.common.period.workplaceToday
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
  * Журнал документов кассы, каким его видит кассир.

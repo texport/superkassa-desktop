@@ -20,6 +20,7 @@ import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
 import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
 import kz.mybrain.superkassa.presentation.common.keyboard.SystemBack
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
@@ -33,14 +34,13 @@ import kz.mybrain.superkassa.presentation.shell.section.SectionDoor
 import kz.mybrain.superkassa.presentation.shell.section.SectionTrail
 import kz.mybrain.superkassa.presentation.shell.section.SectionTrailSaver
 import kz.mybrain.superkassa.presentation.shell.section.sectionsFor
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.update.updateTexts
 import kz.mybrain.superkassa.presentation.update.check.RailVersion
 import kz.mybrain.superkassa.presentation.update.check.UpdateDialog
 import kz.mybrain.superkassa.presentation.update.check.UpdatesUiState
 import kz.mybrain.superkassa.presentation.update.check.UpdatesViewModel
 import kz.mybrain.superkassa.presentation.update.check.updatesViewModel
 import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Каркас окна.
@@ -170,7 +170,7 @@ private fun rememberSectionTrail(sections: List<Section>, onLeave: () -> Unit): 
 @Composable
 private fun UpdateOffer(release: UpdatesUiState, updates: UpdatesViewModel, shown: Boolean, onClose: () -> Unit) {
     val update = release.available
-    if (shown && update != null) UpdateDialog(update, updateTexts(LocalLanguage.current), updates::install, onClose)
+    if (shown && update != null) UpdateDialog(update, textsOf(LocalLanguage.current).update, updates::install, onClose)
 }
 
 /**

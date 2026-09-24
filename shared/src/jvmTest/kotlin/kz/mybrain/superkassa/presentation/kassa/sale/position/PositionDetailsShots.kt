@@ -14,10 +14,10 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.component.BasketCard
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -34,7 +34,7 @@ import kotlin.test.assertTrue
  */
 class PositionDetailsShots {
 
-    private val texts = saleTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).kassa.sale
     private val units = listOf(
         MeasureUnit("796", "шт"),
         MeasureUnit("116", "кг")

@@ -11,6 +11,8 @@ import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.journal.documents.HistoryView
 import kz.mybrain.superkassa.presentation.journal.documents.JournalActions
 import kz.mybrain.superkassa.presentation.journal.documents.JournalScreen
@@ -22,10 +24,8 @@ import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsScreen
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsUiState
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsViewModel
 import kz.mybrain.superkassa.presentation.print.preview.PrintActions
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Журнал документов: состояние — из моделей, действия — им же. */
 @Composable
@@ -68,7 +68,7 @@ class HistoryParts(
 @Composable
 fun HistoryContent(parts: HistoryParts) {
     val texts = LocalStrings.current
-    val journal = journalTexts(LocalLanguage.current).history
+    val journal = textsOf(LocalLanguage.current).journal.history
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)

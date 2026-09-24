@@ -9,7 +9,7 @@ import kz.mybrain.superkassa.domain.kkm.model.isProgramming
 import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.domain.shift.model.queueResendAllowed
 import kz.mybrain.superkassa.domain.shift.model.shiftActionsAllowed
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Главный экран: выбранная касса, её смена и документы смены.

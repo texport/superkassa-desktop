@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.cabinet.component
 
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Что шапка окна говорит о кабинете.

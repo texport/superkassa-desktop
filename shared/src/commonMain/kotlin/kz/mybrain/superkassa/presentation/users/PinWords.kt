@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.presentation.users
 
 import kz.mybrain.superkassa.domain.users.model.PinRefusal
 import kz.mybrain.superkassa.domain.users.model.UserRules
-import kz.mybrain.superkassa.presentation.strings.kassa.CashierTexts
+import kz.mybrain.superkassa.strings.api.kassa.CashierTexts
 
 /**
  * Что не так с набранным пином.

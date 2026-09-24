@@ -27,7 +27,7 @@ import kz.mybrain.superkassa.presentation.settings.SettingsPorts
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Касса процесса для проверок: касса, кассир, смена и документы в типах ядра.

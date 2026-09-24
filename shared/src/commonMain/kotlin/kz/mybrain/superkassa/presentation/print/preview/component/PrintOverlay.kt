@@ -17,9 +17,9 @@ import kz.mybrain.superkassa.domain.signin.model.Pin
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
 import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.print.preview.PaperActions
 import kz.mybrain.superkassa.presentation.print.preview.PrintUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 
 /**

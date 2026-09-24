@@ -20,15 +20,15 @@ import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.journal.ofdRefusalWords
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Документы смены, которые ОФД отверг.
@@ -149,7 +149,7 @@ private fun RefusalCode(document: FiscalDocumentResponse) {
  */
 @Composable
 private fun RefusalReason(document: FiscalDocumentResponse) {
-    val words = ofdRefusalWords(document.refusalCode, LocalLanguage.current) ?: document.ofdErrorText
+    val words = textsOf(LocalLanguage.current).journal.ofdRefusal.words(document.refusalCode) ?: document.ofdErrorText
     val reason = words?.takeIf { it.isNotBlank() } ?: return
     Text(text = reason, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }

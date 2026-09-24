@@ -3,8 +3,8 @@ package kz.mybrain.superkassa.domain.analytics.model
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -66,14 +66,14 @@ class AnalyticsNumbersTest {
 
     @Test
     fun `120 и 125 и 127 слова о числах говорят то, что считается`() {
-        val ru = analyticsTexts(Language.Ru)
+        val ru = textsOf(Language.Ru).analytics
         assertEquals("Касс с продажами", ru.sales.online)
         assertEquals("4 971 из 4 971", ru.mapShownOf.format("4 971", "4 971"))
         Language.entries.forEach { language ->
-            val hint = analyticsTexts(language).sales.deliveryHint
+            val hint = textsOf(language).analytics.sales.deliveryHint
             assertFalse("БФД" in hint || "BFD" in hint, "$language: получателем назван БФД")
         }
-        assertTrue("МКК" in analyticsTexts(Language.Kk).sales.deliveryHint)
+        assertTrue("МКК" in textsOf(Language.Kk).analytics.sales.deliveryHint)
         assertTrue("КГД" in ru.sales.deliveryHint)
     }
 
@@ -83,7 +83,7 @@ class AnalyticsNumbersTest {
         assertFalse(none.taxCharged)
         assertTrue(overviewOf(SalesSummary(tax = tiynOf("107.14"))).taxCharged)
         Language.entries.forEach { language ->
-            val sales = analyticsTexts(language).sales
+            val sales = textsOf(language).analytics.sales
             assertTrue(sales.vatNone.isNotBlank() && sales.vatNone != sales.vat, "$language: нуль НДС без слов")
         }
     }

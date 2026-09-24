@@ -16,10 +16,10 @@ import kz.mybrain.superkassa.data.cabinet.CabinetBodies
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.cabinet.register.card.RegistrationCardBlock
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.refusal
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.viewOf
 import java.io.File
 import kotlin.test.Test

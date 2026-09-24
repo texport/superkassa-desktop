@@ -9,8 +9,8 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
  * способе ставка стоит на одном уровне — у чека или у позиций.
  */
 class SaleReceiptVatTest {
-    private val enums = stringsOf(Language.Ru).enums
+    private val enums = textsOf(Language.Ru).common.enums
     private val payer = CoreScene.kkm().copy(taxRegime = "VAT_PAYER", defaultVatGroup = "VAT_16")
     private val notPayer = CoreScene.kkm().copy(taxRegime = "NO_VAT", defaultVatGroup = NO_VAT)
 

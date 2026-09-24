@@ -26,13 +26,13 @@ import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.table.TableColumn
 import kz.mybrain.superkassa.presentation.common.table.TableLine
 import kz.mybrain.superkassa.presentation.common.table.TableWidths
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsSalesTexts
 import kz.mybrain.superkassa.presentation.theme.ChartColors
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.AnalyticsLayout
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
 
 /**
  * Сеть по регионам: где она торгует и сколько это даёт.

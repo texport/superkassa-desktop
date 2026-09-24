@@ -30,11 +30,11 @@ import kz.mybrain.superkassa.presentation.common.table.TableWidths
 import kz.mybrain.superkassa.presentation.common.table.grownColumns
 import kz.mybrain.superkassa.presentation.common.table.leastWidths
 import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.strings.journal.ShiftJournalTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.size.HistoryLayout
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.journal.ShiftJournalTexts
 
 /**
  * Прошлые смены таблицей: номер, открытие, закрытие, Z-отчёт.

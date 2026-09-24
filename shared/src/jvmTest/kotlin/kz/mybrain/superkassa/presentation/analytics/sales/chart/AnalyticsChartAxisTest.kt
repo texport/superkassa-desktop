@@ -7,8 +7,8 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.analytics.model.SalesDay
 import kz.mybrain.superkassa.domain.analytics.model.SalesSpan
 import kz.mybrain.superkassa.domain.analytics.model.tiynOf
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
 import kotlin.test.Test
@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
  */
 class AnalyticsChartAxisTest {
 
-    private val texts = analyticsTexts(Language.Ru).sales
+    private val texts = textsOf(Language.Ru).analytics.sales
     private val first: LocalDate = LocalDate.parse("2026-09-01")
 
     @Test

@@ -101,6 +101,11 @@ kotlin {
                 // наружу `data` (`RemoteCabinet.bfd`), и точка сборки отдаёт
                 // его соседним адаптерам того же кабинета.
                 api(project(":integrations:bfd-cabinet"))
+                // Тексты кассы — модулем `strings`. Открыт наружу: его типы
+                // стоят в открытых объявлениях `shared` (язык в `ProvideStrings`,
+                // формы текстов в параметрах экранов), и платформенные
+                // приложения выбирают язык тем же `Language`.
+                api(project(":strings"))
             }
         }
         androidMain.dependencies {

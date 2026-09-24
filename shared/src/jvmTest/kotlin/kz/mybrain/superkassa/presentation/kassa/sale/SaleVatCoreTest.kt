@@ -18,8 +18,8 @@ import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
@@ -42,7 +42,7 @@ class SaleVatCoreTest {
     private val directory: File = createTempDirectory("kassa-vat-").toFile()
     private val bench = appBench(directory)
     private val notices = Notices()
-    private val texts = saleTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).kassa.sale
 
     @BeforeTest
     fun inlineMain() = Dispatchers.setMain(UnconfinedTestDispatcher())

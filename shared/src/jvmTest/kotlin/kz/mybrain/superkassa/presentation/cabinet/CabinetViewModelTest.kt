@@ -11,8 +11,8 @@ import kz.mybrain.superkassa.domain.cabinet.model.EdsProblem
 import kz.mybrain.superkassa.domain.cabinet.model.EdsRefusal
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -60,7 +60,7 @@ class CabinetViewModelTest {
         scene.cabinet.signIn()
 
         val shown = assertIs<Message.Refusal>(scene.app.notices.last)
-        assertEquals(cabinetTexts(Language.Ru).noNcaLayer, shown.text)
+        assertEquals(textsOf(Language.Ru).cabinet.noNcaLayer, shown.text)
         assertFalse(scene.cabinet.state.value.busy)
     }
 

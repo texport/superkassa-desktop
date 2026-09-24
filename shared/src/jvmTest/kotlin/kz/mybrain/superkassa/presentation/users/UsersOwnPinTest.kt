@@ -3,8 +3,8 @@ package kz.mybrain.superkassa.presentation.users
 import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.kassa.inlineMain
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test
@@ -23,7 +23,7 @@ import kotlin.test.assertTrue
  * Кнопки ищутся по надписи в строке кассира, а не по месту на экране.
  */
 class UsersOwnPinTest {
-    private val texts = stringsOf(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
 
     @Test
     fun `чужой пин не становится пином работающего`(): Unit = inlineMain {

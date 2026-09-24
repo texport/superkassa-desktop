@@ -8,10 +8,10 @@ import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.workplace.model.LookChoice
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.kassa.MemoryLook
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Accent
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

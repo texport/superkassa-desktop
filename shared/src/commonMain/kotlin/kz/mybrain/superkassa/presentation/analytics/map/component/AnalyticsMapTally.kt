@@ -13,10 +13,10 @@ import kz.mybrain.superkassa.presentation.analytics.map.KkmGroup
 import kz.mybrain.superkassa.presentation.analytics.map.onRecordCount
 import kz.mybrain.superkassa.presentation.analytics.map.sieved
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.fill
 
 /**
  * Сколько касс сейчас на виду и сколько из них работает по закону.

@@ -35,12 +35,12 @@ import kz.mybrain.superkassa.presentation.setup.SetupUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.users.UsersActions
 import kz.mybrain.superkassa.presentation.users.UsersContent
 import kz.mybrain.superkassa.presentation.users.UsersUiState
+import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

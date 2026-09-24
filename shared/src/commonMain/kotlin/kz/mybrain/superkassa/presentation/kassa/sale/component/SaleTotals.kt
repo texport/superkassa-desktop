@@ -17,15 +17,15 @@ import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.section.Collapsible
 import kz.mybrain.superkassa.presentation.common.section.SectionHeader
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Оплата чека: чем платят и сколько каждым видом.
@@ -72,7 +72,7 @@ fun ReceiptTotals(form: SaleForm, total: Long, expanded: Boolean, onTaken: (Stri
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
-        SumLine(checkoutTexts(LocalLanguage.current).toPay, total, MaterialTheme.colorScheme.onSurface)
+        SumLine(textsOf(LocalLanguage.current).kassa.checkout.toPay, total, MaterialTheme.colorScheme.onSurface)
         // Принятые деньги и сдача — часть денежного итога, а не оплаты:
         // кассир вводит их, глядя на сумму к оплате, и обе цифры должны
         // стоять рядом.

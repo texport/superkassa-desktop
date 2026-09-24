@@ -17,12 +17,12 @@ import kz.mybrain.superkassa.presentation.kassa.sale.sale
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardContent
 import kz.mybrain.superkassa.presentation.shift.dashboard.dashboardModel
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.action
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.presentation.words.kassa.action
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import java.io.File
 import kotlin.test.AfterTest
@@ -78,17 +78,17 @@ class KassaCoreLookTest {
         }.state.value
         val cash = cashModel(desk.app).apply { visit() }.state.value
         val closeAndRefused = { language: Language ->
-            listOf(stringsOf(language).dashboard.closeShift, refusedHead(language))
+            listOf(textsOf(language).common.dashboard.closeShift, refusedHead(language))
         }
         return listOf(
             Screen("dashboard", Section.Dashboard, closeAndRefused) { DashboardContent(dashboard) },
-            Screen("sale", Section.Sale, { listOf(sale.form.operation.action(stringsOf(it).sale)) }) {
+            Screen("sale", Section.Sale, { listOf(sale.form.operation.action(textsOf(it).common.sale)) }) {
                 SaleContent(sale)
             },
-            Screen("returns", Section.Returns, { listOf(returns.kind.action(stringsOf(it).returns)) }) {
+            Screen("returns", Section.Returns, { listOf(returns.kind.action(textsOf(it).common.returns)) }) {
                 ReturnsContent(returns)
             },
-            Screen("cash", Section.Cash, { listOf(stringsOf(it).cash.deposit) }) { CashContent(cash) }
+            Screen("cash", Section.Cash, { listOf(textsOf(it).common.cash.deposit) }) { CashContent(cash) }
         )
     }
 
@@ -119,7 +119,7 @@ class KassaCoreLookTest {
     }
 
     /** Заголовок карточки отклонённых БФД документов: в сценарии отказ один. */
-    private fun refusedHead(language: Language): String = "${stringsOf(language).dashboard.refused}: 1"
+    private fun refusedHead(language: Language): String = "${textsOf(language).common.dashboard.refused}: 1"
 
     /** Вид окна: светлый с обычным шрифтом по-русски, тёмный с крупным по-казахски. */
     private class View(val appearance: Appearance, val look: Look, val language: Language, val tag: String)

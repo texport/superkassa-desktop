@@ -13,7 +13,7 @@ import kz.mybrain.superkassa.domain.signin.model.Pin
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Подключение кассы: от заводского номера до входа кассира.
@@ -59,7 +59,7 @@ class SetupViewModel(
         if (screen.value.gettingFactory) return
         screen.update { it.copy(gettingFactory = true) }
         viewModelScope.launch {
-            val what = setupTexts(talk.language()).stepFactory
+            val what = textsOf(talk.language()).setup.stepFactory
             val draft = cases.getFactoryNumber(screen.value.draft)?.shown(what, "factory number", talk)
             screen.update { it.copy(gettingFactory = false) }
             draft?.let(::show)
@@ -95,7 +95,7 @@ class SetupViewModel(
             var notIssued = false
             val outcome = cases.enroll(now.plan) { tokenFor(now) { notIssued = true } }
             screen.update { it.withForm(it.form.copy(busy = false)) }
-            if (notIssued) talk.say(INIT_KKM, Message.Refusal(setupTexts(talk.language()).noToken, NO_TOKEN))
+            if (notIssued) talk.say(INIT_KKM, Message.Refusal(textsOf(talk.language()).setup.noToken, NO_TOKEN))
             if (!outcome.announced(talk)) return@launch
             // Через кабинет пройденное забывается: касса подключена. Вручную —
             // стирается набранный токен: на экране ему не место.
@@ -130,7 +130,7 @@ class SetupViewModel(
 
 /** Итог заведения — в строку сообщений; `true` — касса заведена и читается. */
 private fun EnrollOutcome.announced(talk: Talk): Boolean {
-    val texts = setupTexts(talk.language())
+    val texts = textsOf(talk.language()).setup
     when (this) {
         is EnrollOutcome.Enrolled -> talk.done(texts.connected)
         EnrollOutcome.NotStored -> talk.say(INIT_KKM, Message.Refusal(texts.notStored, NOT_STORED))

@@ -14,7 +14,7 @@ import kz.mybrain.superkassa.presentation.common.button.BusyButton
 import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
 import kz.mybrain.superkassa.presentation.common.section.DetailLine
 import kz.mybrain.superkassa.presentation.common.section.SubsectionTitle
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Технический токен кассы.

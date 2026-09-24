@@ -15,14 +15,14 @@ import kz.mybrain.superkassa.presentation.common.list.MoreRow
 import kz.mybrain.superkassa.presentation.common.period.text
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
 import kz.mybrain.superkassa.presentation.print.preview.PrintActions
 import kz.mybrain.superkassa.presentation.print.preview.PrintFileName
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.journal.ShiftJournalTexts
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.journal.ShiftJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Прошлые смены и их документы.
@@ -32,7 +32,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 fun ShiftsScreen(state: ShiftsUiState, actions: ShiftsActions, print: PrintActions) {
-    val journal = journalTexts(LocalLanguage.current).shifts
+    val journal = textsOf(LocalLanguage.current).journal.shifts
     val opened = state.opened
     Column(
         modifier = Modifier.fillMaxSize(),

@@ -22,15 +22,12 @@ import kz.mybrain.superkassa.presentation.journal.HistoryStage
 import kz.mybrain.superkassa.presentation.journal.documents.journalEntriesOf
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -73,16 +70,16 @@ class PolishShots {
 
     @Test
     fun `в журнале окна 1180 кнопки строки видны целиком`() {
-        val journal = journalTexts(Language.Ru).history
+        val journal = textsOf(Language.Ru).journal.history
         val nodes = shoot("journal-1180x820", JOURNAL_W, JOURNAL_H) {
             // Слева — место рельса окна: таблице остаётся то же, что в окне кассы.
             Column(Modifier.fillMaxSize().padding(start = RAIL_ROOM.dp)) {
                 val documents = HistoryStage.documents(ROWS)
-                val entries = journalEntriesOf(stringsOf(Language.Ru), Language.Ru, emptyMap(), documents)
+                val entries = journalEntriesOf(textsOf(Language.Ru).common, Language.Ru, emptyMap(), documents)
                 JournalTable(journal, entries, onPreview = {}, onPrint = {})
             }
         }
-        val preview = stringsOf(Language.Ru).preview.title
+        val preview = textsOf(Language.Ru).common.preview.title
         val buttons = nodes.filter { it.label == preview && it.visible.height > 0f }
         assertTrue(buttons.isNotEmpty(), "у строк нет кнопки показа")
         buttons.forEach { assertTrue(it.whole && it.at.x + it.width <= JOURNAL_W, "кнопка за краем: $it") }
@@ -90,7 +87,7 @@ class PolishShots {
 
     @Test
     fun `без прошлого срока под каждым числом стоит прочерк, и ряд не ломается`() {
-        val texts = analyticsTexts(Language.Ru).sales
+        val texts = textsOf(Language.Ru).analytics.sales
         val nodes = shoot("sales-overview-no-previous", OVERVIEW_W, OVERVIEW_H) {
             Column(Modifier.fillMaxWidth().padding(Spacing.fieldGap)) { SalesOverviewTiles(NO_PREVIOUS, texts) }
         }
@@ -100,7 +97,7 @@ class PolishShots {
 
     @Test
     fun `заголовок карточки кассы по-казахски на крупном шрифте переносится, а не обрывается`() {
-        val texts = cabinetTexts(Language.Kk)
+        val texts = textsOf(Language.Kk).cabinet
         val nodes = shoot("cabinet-technical-kk-larger", CARD_W, CARD_H, Language.Kk, TextScale.Larger) {
             Column(Modifier.width(CARD_PANE.dp).padding(Spacing.fieldGap)) {
                 CollapsibleCard(

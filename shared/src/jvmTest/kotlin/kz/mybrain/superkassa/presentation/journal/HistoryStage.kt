@@ -26,10 +26,10 @@ import kz.mybrain.superkassa.presentation.common.section.AppTopBar
 import kz.mybrain.superkassa.presentation.shell.bar.KkmBarActions
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.strings.api.Language
 import java.io.ByteArrayInputStream
 import java.io.File
 import javax.imageio.ImageIO

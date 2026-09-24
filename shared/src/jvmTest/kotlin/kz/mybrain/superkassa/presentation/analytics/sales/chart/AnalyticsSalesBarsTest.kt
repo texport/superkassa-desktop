@@ -6,8 +6,8 @@ import kz.mybrain.superkassa.domain.analytics.model.SalesDay
 import kz.mybrain.superkassa.domain.analytics.model.SalesHour
 import kz.mybrain.superkassa.domain.analytics.model.SalesSpan
 import kz.mybrain.superkassa.domain.analytics.model.tiynOf
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
  */
 class AnalyticsSalesBarsTest {
 
-    private val texts = analyticsTexts(Language.Ru).sales
+    private val texts = textsOf(Language.Ru).analytics.sales
 
     private fun sum(value: String): Long = tiynOf(value)
 

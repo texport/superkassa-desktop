@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnvironmentResponse
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
 import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.common.of
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.presentation.words.common.of
 
 /**
  * Выбор контура БФД: стенд, тестовый или промышленный.

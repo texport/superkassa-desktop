@@ -11,14 +11,14 @@ import kz.mybrain.superkassa.domain.setup.model.CabinetRecord
 import kz.mybrain.superkassa.presentation.cabinet.applications.ApplicationSignWait
 import kz.mybrain.superkassa.presentation.cabinet.statusTitle
 import kz.mybrain.superkassa.presentation.common.button.BusyButton
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.setup.SetupTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.setup.SetupTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Шаг 3: постановка кассы на учёт в ИСНА.
@@ -53,7 +53,7 @@ fun ApplicationStepCard(
     ) {
         val id = registerId ?: return@SetupStepCard
         if (state.onRecord(id)) return@SetupStepCard
-        val cabinet = cabinetTexts(LocalLanguage.current)
+        val cabinet = textsOf(LocalLanguage.current).cabinet
         RecordStatus(record, setup, cabinet)
         // Пока NCALayer ждёт подпись, на месте кнопок идёт отсчёт срока
         // с отменой — тот же, что на двери входа и при подаче из кабинета.

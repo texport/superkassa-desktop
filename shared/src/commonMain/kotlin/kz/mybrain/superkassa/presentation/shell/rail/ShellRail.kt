@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
 import kz.mybrain.superkassa.presentation.common.list.ColumnScrollbar
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing

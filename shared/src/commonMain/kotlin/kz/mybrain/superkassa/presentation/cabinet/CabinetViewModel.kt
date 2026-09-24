@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.CabinetOwner
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.time.TimeSource
 
 /**
@@ -124,5 +124,5 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
     }
 
     /** Слова кабинета на языке кассира сейчас. */
-    internal val texts get() = cabinetTexts(talk.language())
+    internal val texts get() = textsOf(talk.language()).cabinet
 }

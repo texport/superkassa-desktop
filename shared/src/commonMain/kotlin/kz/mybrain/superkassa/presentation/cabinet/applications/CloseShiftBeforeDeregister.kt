@@ -14,8 +14,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import kz.mybrain.superkassa.domain.users.model.UserRules
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Закрытие смены перед снятием кассы с учёта.

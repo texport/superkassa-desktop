@@ -13,11 +13,10 @@ import kz.mybrain.superkassa.presentation.analytics.common.analyticsTroubleState
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.refusal
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 
 /**
@@ -29,8 +28,8 @@ import kotlin.test.Test
  */
 class AnalyticsSalesShots {
 
-    private val enums = stringsOf(Language.Ru).enums
-    private val journal = journalTexts(Language.Ru).history
+    private val enums = textsOf(Language.Ru).common.enums
+    private val journal = textsOf(Language.Ru).journal.history
 
     /** Неделя торговли: главные числа, столбики, доли и таблицы. */
     @Test

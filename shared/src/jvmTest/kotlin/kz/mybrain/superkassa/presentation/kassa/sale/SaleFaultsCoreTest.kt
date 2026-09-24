@@ -7,8 +7,8 @@ import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LosingKassa
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
  */
 class SaleFaultsCoreTest {
     private val desk = CoreDesk()
-    private val texts = stringsOf(Language.Ru)
+    private val texts = textsOf(Language.Ru).common
 
     @AfterTest
     fun close() = desk.close()

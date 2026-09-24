@@ -13,11 +13,11 @@ import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.picker.SwitchRow
 import kz.mybrain.superkassa.presentation.common.section.FactLines
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.update.UpdateTexts
-import kz.mybrain.superkassa.presentation.strings.update.updateTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
+import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 
 /**
  * Обновления кассы.
@@ -32,7 +32,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 internal fun UpdatesCard(updates: UpdatesUiState, actions: UpdatesActions) {
-    val texts = updateTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).update
     SectionCard(title = texts.title, info = texts.hint) {
         SwitchRow(texts.automatic, updates.automatic, actions::switchAutomatic)
         FactLines(texts.appName, factLines(updates, texts), texts.neverChecked)

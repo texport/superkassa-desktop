@@ -14,9 +14,8 @@ import kz.mybrain.superkassa.domain.analytics.model.tiynOf
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.salesShares
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -31,8 +30,8 @@ import kotlin.test.assertTrue
  */
 class AnalyticsSalesTest {
 
-    private val texts = analyticsTexts(Language.Ru).sales
-    private val enums = stringsOf(Language.Ru).enums
+    private val texts = textsOf(Language.Ru).analytics.sales
+    private val enums = textsOf(Language.Ru).common.enums
     private val today = LocalDate.parse("2026-09-20")
 
     private fun sum(value: String): Long = tiynOf(value)

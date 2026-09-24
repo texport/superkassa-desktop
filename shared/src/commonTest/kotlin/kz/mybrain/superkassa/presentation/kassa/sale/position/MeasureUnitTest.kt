@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.position
 
 import io.github.texport.superkassa.core.domain.api.model.common.UnitOfMeasurement
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.unitShort
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -21,7 +21,7 @@ class MeasureUnitTest {
     @Test
     fun `у каждой единицы ядра есть слово на каждом языке`() {
         Language.entries.forEach { language ->
-            val missing = known.filter { unitShort(it.code, language).isNullOrBlank() }
+            val missing = known.filter { textsOf(language).kassa.units.short(it.code).isNullOrBlank() }
             assertTrue(missing.isEmpty(), "$language: нет слова для ${missing.map { it.code }}")
         }
     }
@@ -40,7 +40,7 @@ class MeasureUnitTest {
 
     @Test
     fun `незнакомый код показывается как есть, пустой — без единицы`() {
-        assertNull(unitShort("999", Language.En))
+        assertNull(textsOf(Language.En).kassa.units.short("999"))
         assertEquals("999", unitTitle(measureUnits(Language.En), "999"))
         assertEquals("", unitTitle(measureUnits(Language.En), null))
     }

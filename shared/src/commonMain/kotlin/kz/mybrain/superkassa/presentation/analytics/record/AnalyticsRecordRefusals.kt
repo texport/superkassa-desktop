@@ -13,10 +13,10 @@ import kz.mybrain.superkassa.presentation.common.status.StatusTone
 import kz.mybrain.superkassa.presentation.common.status.toneColor
 import kz.mybrain.superkassa.presentation.common.table.TableColumn
 import kz.mybrain.superkassa.presentation.common.text.NumberText
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Кассы, которым КГД отказал в учёте.

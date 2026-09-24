@@ -24,10 +24,10 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsSalesTexts
 import kz.mybrain.superkassa.presentation.theme.ChartColors
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
 
 /**
  * Столбики сводки: выручка по дням и нагрузка по часам.

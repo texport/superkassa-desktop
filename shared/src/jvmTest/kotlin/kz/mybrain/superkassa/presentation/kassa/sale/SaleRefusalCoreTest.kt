@@ -5,8 +5,8 @@ import io.github.texport.superkassa.testing.api.kassa.VatMode
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
 import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.refusal.kassaRefusalTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -50,7 +50,7 @@ class SaleRefusalCoreTest {
         model.issue()
 
         assertIs<Message.Refusal>(desk.said, desk.saidText)
-        assertEquals(kassaRefusalTexts(Language.Ru).vatUnknown, desk.saidText)
+        assertEquals(textsOf(Language.Ru).kassa.refusal.vatUnknown, desk.saidText)
         assertTrue(desk.bfd.countedTickets().isEmpty(), "чек с незнакомой ставкой ушёл в БФД")
     }
 }

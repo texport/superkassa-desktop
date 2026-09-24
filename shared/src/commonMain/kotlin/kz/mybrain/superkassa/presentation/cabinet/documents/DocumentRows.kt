@@ -7,7 +7,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.DocumentsOverview
 import kz.mybrain.superkassa.presentation.common.document.JournalEmpty
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.workplaceToday
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kotlin.time.Instant
 
 /**

@@ -4,9 +4,9 @@ import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.CabinetListsRig
 import kz.mybrain.superkassa.CabinetWire
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.replying
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -22,7 +22,7 @@ import kotlin.test.assertTrue
  */
 class CabinetUnreadableTest {
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     @Test
     fun `непонятный ответ не выдаётся за молчание кабинета`() {

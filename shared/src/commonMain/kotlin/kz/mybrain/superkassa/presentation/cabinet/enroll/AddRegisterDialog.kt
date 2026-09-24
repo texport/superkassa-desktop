@@ -14,9 +14,9 @@ import kz.mybrain.superkassa.presentation.cabinet.component.PlaceOptions
 import kz.mybrain.superkassa.presentation.cabinet.places.AddPlaceCard
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Заведение кассы в кабинете — одной формой для мастера и для окна.

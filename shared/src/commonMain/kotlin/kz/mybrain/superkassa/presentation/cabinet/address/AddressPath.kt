@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.presentation.cabinet.address
 
 import kz.mybrain.superkassa.domain.cabinet.model.AddressLevel
 import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Что уже выбрано в адресном регистре и какого рода следующий шаг.

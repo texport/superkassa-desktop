@@ -20,9 +20,9 @@ import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeMenuItem
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
 import kz.mybrain.superkassa.presentation.common.status.KkmStatusChips
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.shell.frame.ShellUiState
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 
 /**

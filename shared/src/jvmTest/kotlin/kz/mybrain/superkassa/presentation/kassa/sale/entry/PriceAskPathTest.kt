@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleViewModel
@@ -26,10 +27,9 @@ import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalVatRates
 import kz.mybrain.superkassa.presentation.kassa.sale.position.measureUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -101,7 +101,7 @@ class PriceAskPathTest {
     private fun Field(model: SaleViewModel) {
         val state by model.state.collectAsState()
         CompositionLocalProvider(
-            LocalSaleTexts provides saleTexts(Language.Ru),
+            LocalSaleTexts provides textsOf(Language.Ru).kassa.sale,
             LocalVatRates provides state.vat(Language.Ru, LocalStrings.current.enums),
             LocalUnits provides measureUnits(Language.Ru)
         ) {

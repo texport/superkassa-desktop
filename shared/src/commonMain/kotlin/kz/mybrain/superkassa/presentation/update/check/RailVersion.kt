@@ -16,12 +16,12 @@ import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.update.UpdateTexts
-import kz.mybrain.superkassa.presentation.strings.update.updateTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.textsOf
+import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 
 /**
  * Версия кассы в углу рельса разделов.
@@ -37,7 +37,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun RailVersion(updates: UpdatesUiState, onOpenUpdate: () -> Unit) {
-    val tip = versionTip(updates, updateTexts(LocalLanguage.current))
+    val tip = versionTip(updates, textsOf(LocalLanguage.current).update)
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
         tooltip = { PlainTooltip { Text(tip) } },

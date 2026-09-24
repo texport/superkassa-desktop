@@ -15,9 +15,7 @@ import kz.mybrain.superkassa.presentation.common.model.follow
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
 import kz.mybrain.superkassa.presentation.settings.refusedByOfd
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Что владелец делает со связью кассы. Пустые действия — для снимков вида. */
 interface OfdSettingsActions {
@@ -62,18 +60,16 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
         follow(busy.active) { on -> screen.update { it.copy(busy = on) } }
     }
 
-    override fun syncService() =
-        sync(SyncWithBfd.Part.Service, moneyTexts(talk.language()).kkm.run { syncService to syncServiceDone })
+    override fun syncService() = sync(SyncWithBfd.Part.Service, kkmTexts().run { syncService to syncServiceDone })
 
-    override fun syncCounters() =
-        sync(SyncWithBfd.Part.Counters, moneyTexts(talk.language()).kkm.run { syncCounters to syncCountersDone })
+    override fun syncCounters() = sync(SyncWithBfd.Part.Counters, kkmTexts().run { syncCounters to syncCountersDone })
 
     override fun typeToken(text: String) = screen.update { it.copy(token = text.filter(Char::isDigit)) }
 
     override fun saveToken() {
         val token = screen.value.token.takeIf { it.isNotBlank() } ?: return
         whileBusy(busy) {
-            val texts = stringsOf(talk.language()).settings
+            val texts = textsOf(talk.language()).common.settings
             cases.token(token).shown(texts.saveToken, "update ofd token", talk) ?: return@whileBusy
             screen.update { it.copy(token = "") }
             talk.done(texts.tokenSaved)
@@ -84,14 +80,14 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
     override fun checkLink() {
         if (screen.value.kkm == null) return
         whileBusy(busy) {
-            val alive = cases.link().shown(stringsOf(talk.language()).settings.ofdLink, "check ofd link", talk)
+            val alive = cases.link().shown(textsOf(talk.language()).common.settings.ofdLink, "check ofd link", talk)
             alive?.let { screen.update { it.copy(linkAlive = alive) } }
         }
     }
 
     override fun askInfo() {
         whileBusy(busy) {
-            val texts = stringsOf(talk.language()).settings
+            val texts = textsOf(talk.language()).common.settings
             val summary = cases.info(talk.language().code).shown(texts.ofdInfo, "read ofd info", talk)
             if (summary != null) screen.update { it.copy(summary = summary) }
         }
@@ -100,7 +96,7 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
     /** Номер следующего запроса к БФД: им сверяют расхождения счёта запросов. */
     override fun askNextRequest() {
         whileBusy(busy) {
-            val texts = kassaFactsTexts(talk.language())
+            val texts = textsOf(talk.language()).settings.facts
             val number = cases.nextRequest().shown(texts.ofdAuth, "read ofd request number", talk)
             if (number != null) screen.update { it.copy(nextRequest = number) }
         }
@@ -127,4 +123,7 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
         /** Сверка с БФД — для журнала; удачная сверка снимает отказ прежней. */
         const val SYNC = "sync with ofd"
     }
+
+    /** Надписи настройки кассы на языке кассира: ими названы сверки с БФД. */
+    private fun kkmTexts() = textsOf(talk.language()).kassa.money.kkm
 }

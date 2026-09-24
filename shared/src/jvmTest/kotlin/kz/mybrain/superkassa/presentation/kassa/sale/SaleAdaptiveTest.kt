@@ -12,13 +12,12 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.label
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -42,8 +41,8 @@ class SaleAdaptiveTest {
 
     private fun measure(probe: KassaProbe, case: Case, basket: Basket, form: SaleForm, shot: String): Measured {
         val desk = desk()
-        val texts = stringsOf(case.language)
-        val sale = saleTexts(case.language)
+        val texts = textsOf(case.language).common
+        val sale = textsOf(case.language).kassa.sale
         probe.show(case.look, case.language) {
             KassaWindow(desk, Section.Sale) { SaleContent(sale(basket, form)) }
         }
@@ -96,7 +95,7 @@ class SaleAdaptiveTest {
         )
         val failures = eachWindow(cases, Appearance.Dark) { probe, case ->
             val desk = desk()
-            val texts = stringsOf(case.language)
+            val texts = textsOf(case.language).common
             val started = System.nanoTime()
             probe.show(case.look, case.language) {
                 KassaWindow(desk, Section.Sale) {
@@ -130,7 +129,7 @@ class SaleAdaptiveTest {
                 KassaWindow(desk, Section.Sale) { SaleContent(sale(cheap, KassaExtremes.fivePayments())) }
             }
             // Кадр — с оплатой на виду: касса прокручена от штрихкода вниз.
-            probe.node(stringsOf(case.language).sale.barcode)?.boundsInRoot?.center
+            probe.node(textsOf(case.language).common.sale.barcode)?.boundsInRoot?.center
                 ?.let { at -> repeat(WHEELS) { probe.wheel(at, SCROLL) } }
             probe.save("sale-payments-${case.tag}")
             val fields = probe.parts().filter { it.config.getOrNull(SemanticsProperties.EditableText) != null }

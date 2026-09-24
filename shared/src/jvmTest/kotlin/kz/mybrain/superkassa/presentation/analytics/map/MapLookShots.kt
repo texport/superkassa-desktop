@@ -17,11 +17,10 @@ import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsPinCa
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSieveBar
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSpotCard
 import kz.mybrain.superkassa.presentation.common.mapview.MapMarks
-import kz.mybrain.superkassa.presentation.strings.analytics.analyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -36,8 +35,8 @@ import kotlin.test.assertTrue
  */
 class MapLookShots {
 
-    private val texts = analyticsTexts(Language.Ru)
-    private val cabinetWords = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).analytics
+    private val cabinetWords = textsOf(Language.Ru).cabinet
 
     private fun kkm(at: Int, place: String = "Магазин на Абая") = AnalyticsKkm(
         cashRegisterId = "c$at",

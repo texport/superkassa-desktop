@@ -7,9 +7,9 @@ import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.integrations.bfdcabinet.CabinetSettings
 import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.shot
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -31,7 +31,7 @@ class CabinetDoorShots {
     @AfterTest
     fun restore() = AppLog.switchDebugMode(was)
 
-    private val texts = cabinetTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).cabinet
 
     /** Дверь до входа: кабинет по своему адресу, никто не вошёл. */
     private val shut = CabinetUiState(address = CabinetSettings.DEFAULT_URL)

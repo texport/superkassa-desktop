@@ -18,11 +18,11 @@ import kz.mybrain.superkassa.presentation.shell.frame.shellModel
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.refusal
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
 import java.io.File
 
@@ -40,7 +40,7 @@ internal class CabinetPlacesScene(
     val language: Language = Language.Ru,
     val scale: TextScale = TextScale.Normal
 ) {
-    val texts = cabinetTexts(language)
+    val texts = textsOf(language).cabinet
     private val stage = CabinetStage(::reply)
     private val parts = WindowParts(shellModel(stage.app), stage.look, stage.cabinet)
 

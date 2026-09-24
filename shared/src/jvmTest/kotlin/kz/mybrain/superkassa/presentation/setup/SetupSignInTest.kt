@@ -8,8 +8,8 @@ import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.mockCabinet
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
-import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
  * Кнопки входа ищутся по надписи, а их место — по заголовку первого шага.
  */
 class SetupSignInTest {
-    private val signIn = cabinetTexts(Language.Ru).signIn
+    private val signIn = textsOf(Language.Ru).cabinet.signIn
 
     @Test
     fun `над шагами не стоит второй такой же вход`() {

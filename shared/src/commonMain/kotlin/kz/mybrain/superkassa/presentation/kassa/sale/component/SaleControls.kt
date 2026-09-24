@@ -23,13 +23,13 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.binAccepted
 import kz.mybrain.superkassa.presentation.common.picker.ChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.CollapsibleSection
 import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.contact.BuyerContactFields
 import kz.mybrain.superkassa.presentation.kassa.sale.FormActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleActions
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.title
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.kassa.title
 
 /**
  * Заголовок чека: направление операции и очистка набранного.

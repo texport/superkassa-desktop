@@ -26,14 +26,13 @@ import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
-import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
-import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Чем торговали кассы компании за срок.
@@ -77,8 +76,8 @@ fun AnalyticsSales(
 ) {
     val state by model.state.collectAsScreenState()
     val language = LocalLanguage.current
-    val journal = remember(language) { journalTexts(language).history }
-    val enums = remember(language) { stringsOf(language).enums }
+    val journal = remember(language) { textsOf(language).journal.history }
+    val enums = remember(language) { textsOf(language).common.enums }
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         SalesHead(state, texts, journal, model::choose, model::refresh)
         ScreenSlot(salesState(state.reading, texts, model::refresh), Modifier.weight(1f)) {

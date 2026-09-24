@@ -18,11 +18,12 @@ import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.presentation.common.adaptive.ContentKind
 import kz.mybrain.superkassa.presentation.common.adaptive.contentWidth
 import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.shell.startTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.shell.of
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Касса не открылась: что случилось и что делать сейчас.
@@ -34,7 +35,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 fun StartRefusedScreen(problem: StartProblem, onClose: () -> Unit) {
-    val texts = startTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).shell
     val words = texts.of(problem.refusal)
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(

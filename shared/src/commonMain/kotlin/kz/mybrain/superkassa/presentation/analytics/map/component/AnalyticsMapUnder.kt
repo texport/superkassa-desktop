@@ -10,8 +10,8 @@ import kz.mybrain.superkassa.presentation.analytics.map.MapParts
 import kz.mybrain.superkassa.presentation.analytics.map.sieved
 import kz.mybrain.superkassa.presentation.common.mapview.MapFold
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**
  * Почему на месте карты стоит объяснение, а не карта.

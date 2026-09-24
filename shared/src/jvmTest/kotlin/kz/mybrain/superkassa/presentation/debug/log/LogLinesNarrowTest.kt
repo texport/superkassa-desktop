@@ -7,8 +7,8 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.debug.debugTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -33,7 +33,7 @@ class LogLinesNarrowTest {
     @Test
     fun `текст записи на телефоне занимает строку, а не столбик`() {
         RenderProbe(WIDTH, HEIGHT) {
-            Surface(Modifier.fillMaxSize()) { LogLines(entries, debugTexts(Language.Ru), Modifier.fillMaxSize()) }
+            Surface(Modifier.fillMaxSize()) { LogLines(entries, textsOf(Language.Ru).debug, Modifier.fillMaxSize()) }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             File("/tmp/narrow-log.png").writeBytes(probe.frame())

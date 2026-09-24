@@ -16,8 +16,8 @@ import kz.mybrain.superkassa.kassa.MemorySetup
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
@@ -41,7 +41,7 @@ class SetupCoreTest {
     private val notices = Notices()
     private val memory = MemorySetup()
     private val cabinet = FakeSetupCabinet(token = FakeBfd.FIRST_TOKEN.toString())
-    private val texts = setupTexts(Language.Ru)
+    private val texts = textsOf(Language.Ru).setup
     private var done = 0
 
     @BeforeTest

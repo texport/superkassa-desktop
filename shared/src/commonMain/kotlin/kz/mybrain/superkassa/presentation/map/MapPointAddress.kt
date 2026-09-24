@@ -25,9 +25,9 @@ import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.domain.map.usecase.NamePoint
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
-import kz.mybrain.superkassa.presentation.strings.map.MapAddressTexts
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.map.MapAddressTexts
 
 /**
  * Подбор адреса по метке на карте.

@@ -9,10 +9,8 @@ import kotlinx.serialization.json.JsonObject
 import kz.mybrain.superkassa.domain.settings.model.KassaFacts
 import kz.mybrain.superkassa.domain.settings.model.OfdSummary
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsUiState
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
-import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -28,7 +26,7 @@ import kotlin.test.assertTrue
  */
 class MoneyOfdSummaryTest {
 
-    private val texts = moneyTexts(Language.Ru).kkm
+    private val texts = textsOf(Language.Ru).kassa.money.kkm
 
     private val answer = """
         {
@@ -144,9 +142,9 @@ class MoneyOfdSummaryTest {
 
     private val lenient = Json { ignoreUnknownKeys = true }
 
-    private val core = coreSettingTexts(Language.Ru)
+    private val core = textsOf(Language.Ru).settings.core
 
-    private val about = kassaFactsTexts(Language.Ru)
+    private val about = textsOf(Language.Ru).settings.facts
 
     private val settings = CoreSettings(
         mode = CoreMode.DESKTOP,

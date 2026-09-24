@@ -17,8 +17,8 @@ import kz.mybrain.superkassa.presentation.cabinet.component.registerTitle
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.DetailLine
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Паспорт кассы: то, что о ней записано в кабинете, и что здесь же меняется.

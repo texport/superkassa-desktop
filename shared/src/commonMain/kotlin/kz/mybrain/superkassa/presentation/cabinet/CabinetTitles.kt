@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetStatusNames
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetStatusNames
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Название состояния словами.

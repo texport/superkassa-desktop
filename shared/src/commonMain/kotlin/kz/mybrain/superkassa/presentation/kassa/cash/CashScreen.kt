@@ -20,15 +20,15 @@ import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.cash.component.CashForm
 import kz.mybrain.superkassa.presentation.kassa.cash.component.RecentCash
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.DrawerTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
+import kz.mybrain.superkassa.strings.api.kassa.DrawerTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Денежный ящик: остаток, внесение, изъятие и что уже проведено.
@@ -48,7 +48,7 @@ fun CashScreen(model: CashViewModel) {
 /** Денежный ящик по готовому состоянию: снимки вида рисуют его без модели. */
 @Composable
 fun CashContent(state: CashUiState, actions: CashActions = object : CashActions {}) {
-    val money = moneyTexts(LocalLanguage.current)
+    val money = textsOf(LocalLanguage.current).kassa.money
     // Экран во всю ширину раздела: на широком окне остаток с формой стоят
     // слева, проведённое — справа, и половина экрана не пустует.
     ScrollableColumn(modifier = Modifier.fillMaxSize(), spacing = Spacing.cardGap) {

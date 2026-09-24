@@ -29,12 +29,12 @@ import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.domain.kassa.model.sale.ExciseRules
 import kz.mybrain.superkassa.presentation.common.dialog.formDialogWidth
 import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.words
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
+import kz.mybrain.superkassa.presentation.words.kassa.words
 
 /**
  * Акцизные марки позиции.

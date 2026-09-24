@@ -14,12 +14,12 @@ import kz.mybrain.superkassa.presentation.common.section.ScreenTitle
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.MoneyTexts
-import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Кассиры кассы: состояние — из модели, действия — ей же. */
 @Composable
@@ -46,7 +46,7 @@ fun UsersScreen(model: UsersViewModel) {
 fun UsersContent(state: UsersUiState, actions: UsersActions) {
     val texts = LocalStrings.current
     val language = LocalLanguage.current
-    val money = moneyTexts(language)
+    val money = textsOf(language).kassa.money
     ScrollableColumn(
         modifier = Modifier.fillMaxSize(),
         spacing = Spacing.cardGap

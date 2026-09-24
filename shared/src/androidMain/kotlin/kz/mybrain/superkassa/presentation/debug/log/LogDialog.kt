@@ -11,10 +11,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.AppTopBar
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.debug.debugTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Журнал приложения на Android — во весь экран поверх кассы.
@@ -29,7 +29,7 @@ fun LogDialog(app: AppContainer) {
     val model = logViewModel(app)
     val journal by model.state.collectAsScreenState()
     if (!journal.book.debugMode) return
-    val texts = debugTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).debug
     val close = { model.switchDebugMode(false) }
     Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {

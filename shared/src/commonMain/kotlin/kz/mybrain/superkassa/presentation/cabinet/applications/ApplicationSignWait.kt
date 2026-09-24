@@ -12,10 +12,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.edsTexts
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.motion.Durations
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.time.Duration
 import kotlin.time.TimeSource
 
@@ -42,7 +42,7 @@ fun ApplicationSignWait(language: Language, texts: CabinetTexts, onCancel: () ->
         left = signWaitLeft(LocalSignTick.current),
         window = Signer.SIGN_WINDOW,
         texts = texts,
-        eds = edsTexts(language),
+        eds = textsOf(language).cabinet.eds,
         onCancel = onCancel
     )
 }

@@ -33,23 +33,13 @@
     <ID>ArgumentListWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))</ID>
     <ID>ArgumentListWrapping:ShellAdaptiveTest.kt$ShellAdaptiveTest$("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
     <ID>CyclomaticComplexMethod:AppearanceCard.kt$private fun Accent.title(texts: LookStrings): String</ID>
-    <ID>LargeClass:CabinetTexts.kt$CabinetTexts</ID>
-    <ID>LongFile:AnalyticsTexts.kt$kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts.kt</ID>
     <ID>LongFile:AppIcons.kt$kz.mybrain.superkassa.presentation.theme.icon.AppIcons.kt</ID>
     <ID>LongFile:BigListRenderTest.kt$kz.mybrain.superkassa.presentation.cabinet.places.BigListRenderTest.kt</ID>
-    <ID>LongFile:CabinetTexts.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts.kt</ID>
-    <ID>LongFile:CabinetTextsEn.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsEn.kt</ID>
-    <ID>LongFile:CabinetTextsKk.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsKk.kt</ID>
-    <ID>LongFile:CabinetTextsRu.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsRu.kt</ID>
     <ID>LongFile:JournalSourcesTest.kt$kz.mybrain.superkassa.presentation.journal.JournalSourcesTest.kt</ID>
-    <ID>LongFile:JournalTexts.kt$kz.mybrain.superkassa.presentation.strings.journal.JournalTexts.kt</ID>
     <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.presentation.journal.KassaJournalLookTest.kt</ID>
     <ID>LongFile:KassaProbe.kt$kz.mybrain.superkassa.KassaProbe.kt</ID>
     <ID>LongFile:PreviewTapeReachTest.kt$kz.mybrain.superkassa.presentation.print.preview.component.PreviewTapeReachTest.kt</ID>
     <ID>LongFile:RenderProbe.kt$kz.mybrain.superkassa.RenderProbe.kt</ID>
-    <ID>LongFile:ServiceStringsEn.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsEn.kt</ID>
-    <ID>LongFile:ServiceStringsKk.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsKk.kt</ID>
-    <ID>LongFile:ServiceStringsRu.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsRu.kt</ID>
     <ID>LongFile:Sizes.kt$kz.mybrain.superkassa.presentation.theme.size.Sizes.kt</ID>
     <ID>LongMethod:AnalyticsKkmDialog.kt$@Composable private fun DialogHead( kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts, onClose: () -&gt; Unit )</ID>
     <ID>LongMethod:AnalyticsMapLayout.kt$@Composable internal fun HeadOverMap( modifier: Modifier = Modifier, head: @Composable () -&gt; Unit, body: @Composable () -&gt; Unit )</ID>
@@ -75,7 +65,6 @@
     <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `экран продажи собирается во всех отказных состояниях и они различимы`()</ID>
     <ID>LongMethod:KassaShiftLookTest.kt$KassaShiftLookTest$@Test fun `главный экран собирается во всех состояниях смены и они различимы`()</ID>
     <ID>LongMethod:LabelledPicker.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun &lt;T&gt; LabelledPicker( label: String, options: List&lt;T&gt;, selected: T?, title: (T?) -&gt; String, onSelect: (T) -&gt; Unit, modifier: Modifier = Modifier, available: (T) -&gt; Boolean = { true }, width: Dp? = null, create: PickerCreate? = null )</ID>
-    <ID>LongMethod:MapTexts.kt$fun mapAddressTexts(language: Language): MapAddressTexts</ID>
     <ID>LongMethod:MapView.kt$@Composable fun MapView( state: MapState, tiles: MapTiles, texts: MapTexts, modifier: Modifier = Modifier, // Что значит нажатие по карте, решает вызывающий: в окне выбора места // оно ставит метку, на карте касс — снимает выбор ярлычка. onTap: ((Double, Double) -&gt; Unit)? = null, // Ярлычки поверх карты. Стоят внутри её окна, а не рядом: место // каждого считается от размера этого окна, и знать его должен тот, // кто им владеет. overlay: @Composable (IntSize) -&gt; Unit = {} )</ID>
     <ID>LongMethod:PlaceLook.kt$@Composable internal fun PlacesLook( places: List&lt;RetailPlace&gt;, registers: List&lt;CabinetRegister&gt;, open: String? = null, sieve: PlaceSieve = PlaceSieve(), loading: Boolean = false, collapsed: Boolean = false, /** Кассы, заблокированные по словам кабинета, и знает ли он о них. */ locked: Set&lt;String&gt; = emptySet(), locksKnown: Boolean = true, /** Кабинет списка не отдал — его словами; `null` — отдал. */ trouble: String? = null )</ID>
     <ID>LongMethod:PlaceMapShots.kt$@Composable private fun PickerLook(address: RegisterAddress?, state: MapState)</ID>
@@ -125,21 +114,6 @@
     <ID>MagicNumber:Look.kt$TextScale.Dense$0.8f</ID>
     <ID>MagicNumber:Look.kt$TextScale.Large$1.15f</ID>
     <ID>MagicNumber:Look.kt$TextScale.Larger$1.3f</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.Blocked$15</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.Deregistered$18</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.Disconnected$19</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.IncorrectRequestData$13</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.InvalidConfiguration$6</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.InvalidRequestNumber$8</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.InvalidRetryRequest$9</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.NotEnoughCash$14</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.OpenShiftTimeoutExpired$11</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.ProtocolError$3</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.SameTaxpayerAndCustomer$17</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.ServiceTemporarilyUnavailable$254</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.UnknownCommand$4</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.UnknownError$255</ID>
-    <ID>MagicNumber:OfdRefusalTexts.kt$OfdResult.UnsupportedCommand$5</ID>
     <ID>MagicNumber:Palette.kt$0xFF000000</ID>
     <ID>MagicNumber:Palette.kt$0xFF000F5C</ID>
     <ID>MagicNumber:Palette.kt$0xFF0E0E13</ID>
@@ -204,89 +178,29 @@
     <ID>MaxLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$RenderProbe { SalesChart(dayBars(view(days = 1).days, view(days = 1).range, sales), sales, Modifier.fillMaxSize()) }</ID>
     <ID>MaxLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$RenderProbe { SalesChart(dayBars(view(days = MONTH).days, view(days = MONTH).range, sales), sales, Modifier.fillMaxSize()) }</ID>
     <ID>MaxLineLength:AnalyticsSalesTable.kt$SalesColumn.Revenue, SalesColumn.Net -&gt; TableColumn(min = AnalyticsLayout.networkSum, weight = NUMBER_SHARE, numeric = true)</ID>
-    <ID>MaxLineLength:AnalyticsTextsEn.kt$purchasesHint = "What the register buys from individuals is paid out of the drawer: this money is not revenue and is not part of the numbers above"</ID>
-    <ID>MaxLineLength:AnalyticsTextsKk.kt$purchasesHint = "Халықтан сатып алынғанын касса жәшіктен төлейді: бұл ақша түсім емес және жоғарыдағы сандарға кірмейді"</ID>
-    <ID>MaxLineLength:AnalyticsTextsRu.kt$purchasesHint = "Скупленное у населения касса оплачивает из ящика: эти деньги не выручка, и в числа выше они не входят"</ID>
     <ID>MaxLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
     <ID>MaxLineLength:CabinetContractTest.kt$CabinetContractTest$status</ID>
     <ID>MaxLineLength:CabinetMessageTest.kt$CabinetMessageTest$assertEquals(texts.sessionExpired, assertIs&lt;Message.Refusal&gt;(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)</ID>
     <ID>MaxLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$seenPath = request.url.encodedPath + (request.url.encodedQuery.takeIf { it.isNotEmpty() }?.let { "?$it" } ?: "")</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$documentsNoneInPeriod = "The register has documents from another time — widen the period or take the whole time"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$localInfoNeedsSync = "The new place reaches receipts after the details are synced in the register settings: it cannot be done right now"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$okedNotFound = "Nothing found. The classifier knows only its own wording: a pharmacy there is trade in pharmaceutical goods"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$shiftOpenAsk = "A register can be taken off record only with the shift closed. Close the shift on this register and file the application?"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$token = "The key the register signs its requests with. Copy it into the register settings: it is not shown here twice"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$tokenNeedsNode = "The register works on this machine: write the new token into its settings, otherwise it stops at the first receipt"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$documentsNoneInPeriod = "Кассада басқа уақыттағы құжаттар бар — кезеңді кеңейтіңіз немесе «Барлық уақыт» алыңыз"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$localInfoNeedsSync = "Жаңа нүкте чектерде касса баптауларындағы салыстырудан кейін шығады: қазір оны жасау мүмкін емес"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$okedNotFound = "Ештеңе табылмады. Жіктеуіш тек өз тұжырымдарын біледі: дәріхана онда фармацевтикалық тауарлар саудасы деп аталады"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$shiftOpenAsk = "Кассаны есептен шығару ауысым жабылған кезде ғана мүмкін. Осы кассада ауысымды жабып, өтініш беру керек пе?"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$tokenNeedsNode = "Касса осы машинада жұмыс істейді: жаңа токенді оның баптауларына жазыңыз, әйтпесе ол алғашқы чекте тоқтайды"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$okedNotFound = "Ничего не нашлось. Классификатор знает только свои формулировки: аптека в нём называется торговлей фармацевтическими товарами"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$shiftOpenAsk = "Снять кассу с учёта можно только при закрытой смене. Закрыть смену на этой кассе и подать заявление?"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$token = "Ключ, которым касса подписывает обращения. Перенесите его в настройки кассы: второй раз он здесь не покажется"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$tokenNeedsNode = "Касса работает на этой машине: впишите новый токен в её настройках, иначе она встанет на первом же чеке"</ID>
     <ID>MaxLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
-    <ID>MaxLineLength:MoneyTextsEn.kt$deleteBlocked = "The only administrator cannot be deleted: no one would be left to add cashiers and change settings. Add a second administrator first, then delete."</ID>
-    <ID>MaxLineLength:MoneyTextsEn.kt$listHint</ID>
-    <ID>MaxLineLength:MoneyTextsKk.kt$deleteBlocked = "Жалғыз әкімшіні жоюға болмайды: кассирлерді енгізетін және баптауларды өзгертетін ешкім қалмайды. Алдымен екінші әкімшіні енгізіңіз, содан кейін жойыңыз."</ID>
-    <ID>MaxLineLength:MoneyTextsKk.kt$listHint</ID>
-    <ID>MaxLineLength:MoneyTextsKk.kt$recentHint</ID>
-    <ID>MaxLineLength:MoneyTextsRu.kt$deleteBlocked = "Единственного администратора удалять нельзя: некому будет заводить кассиров и менять настройки. Заведите второго администратора, потом удаляйте."</ID>
-    <ID>MaxLineLength:MoneyTextsRu.kt$listHint</ID>
-    <ID>MaxLineLength:MoneyTextsRu.kt$recentHint</ID>
     <ID>MaxLineLength:PlacePoint.kt$text</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$autoCashoutHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$printFormHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$taxSettingsHint</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$mapServicesHint = "Мекенжай көрсетілмегенше, қоғамдастықтың ашық картасы жұмыс істейді: ол барлық иелерге есептелмеген"</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$printFormHint</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$taxSettingsHint</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$mapServicesHint = "Пока адрес не задан, работает общедоступная карта сообщества: на всех владельцев она не рассчитана"</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$printFormHint</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$taxSettingsHint</ID>
     <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$.</ID>
     <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$nodes.filter { SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null }</ID>
-    <ID>MaxLineLength:SetupTexts.kt$stepAdminHint = "The token is issued by the cabinet and never written to a file: resume later and a new one is issued"</ID>
     <ID>MaxLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$println("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
-    <ID>MaxLineLength:StringsEn.kt$closeShiftExplain = "Documents in the shift: %s, %s in the drawer. The Z report goes to BFD and cannot be undone."</ID>
-    <ID>MaxLineLength:StringsEn.kt$sendQueuedRules = "Only an admin can flush the queue: the shift must be closed and the register in programming mode."</ID>
-    <ID>MaxLineLength:StringsEn.kt$shiftTooLong = "The shift has been open for over a day: close it with a Z-report or the BFD blocks the register."</ID>
-    <ID>MaxLineLength:StringsKk.kt$sendQueuedRules = "Жинақталғанды әкімші жібереді: ауысым жабық болуы және касса бағдарламалау режимінде болуы керек."</ID>
-    <ID>MaxLineLength:StringsRu.kt$sendQueuedRules = "Досылку накопленного делает администратор: смена должна быть закрыта, а касса переведена в режим программирования."</ID>
     <ID>MaximumLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$ </ID>
     <ID>MaximumLineLength:AdaptiveLogShots.kt$AdaptiveLogShots$ </ID>
     <ID>MaximumLineLength:AnalyticsExchangeList.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsMapPointsTest.kt$AnalyticsMapPointsTest$ </ID>
     <ID>MaximumLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$ </ID>
     <ID>MaximumLineLength:AnalyticsSalesTable.kt$ </ID>
-    <ID>MaximumLineLength:AnalyticsTextsEn.kt$ </ID>
-    <ID>MaximumLineLength:AnalyticsTextsKk.kt$ </ID>
-    <ID>MaximumLineLength:AnalyticsTextsRu.kt$ </ID>
     <ID>MaximumLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$ </ID>
     <ID>MaximumLineLength:CabinetContractTest.kt$CabinetContractTest$ </ID>
     <ID>MaximumLineLength:CabinetMessageTest.kt$CabinetMessageTest$ </ID>
     <ID>MaximumLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$ </ID>
-    <ID>MaximumLineLength:CabinetTextsEn.kt$ </ID>
-    <ID>MaximumLineLength:CabinetTextsKk.kt$ </ID>
-    <ID>MaximumLineLength:CabinetTextsRu.kt$ </ID>
     <ID>MaximumLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$ </ID>
-    <ID>MaximumLineLength:MoneyTextsEn.kt$ </ID>
-    <ID>MaximumLineLength:MoneyTextsKk.kt$ </ID>
-    <ID>MaximumLineLength:MoneyTextsRu.kt$ </ID>
     <ID>MaximumLineLength:PlacePoint.kt$ </ID>
-    <ID>MaximumLineLength:ServiceStringsEn.kt$ </ID>
-    <ID>MaximumLineLength:ServiceStringsKk.kt$ </ID>
-    <ID>MaximumLineLength:ServiceStringsRu.kt$ </ID>
     <ID>MaximumLineLength:SettingsMeasure.kt$SettingsMeasure$ </ID>
-    <ID>MaximumLineLength:SetupTexts.kt$ </ID>
     <ID>MaximumLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$ </ID>
-    <ID>MaximumLineLength:StringsEn.kt$ </ID>
-    <ID>MaximumLineLength:StringsKk.kt$ </ID>
-    <ID>MaximumLineLength:StringsRu.kt$ </ID>
     <ID>PropertyWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
     <ID>PropertyWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
     <ID>ReturnCount:AnalyticsSalesGeometry.kt$internal fun barAt(x: Float, width: Int, count: Int): Int?</ID>

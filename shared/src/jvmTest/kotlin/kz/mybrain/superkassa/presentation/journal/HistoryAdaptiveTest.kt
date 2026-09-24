@@ -13,11 +13,11 @@ import kz.mybrain.superkassa.presentation.common.adaptive.contentWidth
 import kz.mybrain.superkassa.presentation.journal.HistoryStage.Mode
 import kz.mybrain.superkassa.presentation.journal.documents.JournalUiState
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.presentation.theme.size.ContentWidths
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.Test
 import kotlin.test.assertTrue
 

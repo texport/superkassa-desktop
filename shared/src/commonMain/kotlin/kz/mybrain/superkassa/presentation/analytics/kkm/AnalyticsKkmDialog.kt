@@ -28,13 +28,13 @@ import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSales
 import kz.mybrain.superkassa.presentation.analytics.sales.kkmSalesViewModel
 import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.motion.Durations
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Вся аналитика одной кассы.

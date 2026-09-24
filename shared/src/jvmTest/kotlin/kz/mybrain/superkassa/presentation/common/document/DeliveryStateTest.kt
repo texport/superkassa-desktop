@@ -7,9 +7,9 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.document.model.DeliveryCodes
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.strings.common.Language
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.Language
+import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -54,7 +54,7 @@ class DeliveryStateTest {
     fun `незнакомый код становится состоянием без имени кода`() {
         assertEquals(JournalDelivery.Unknown, deliveryOf(document("DELIVERED")))
         assertNull(deliveryOf(document(null)), "касса о доставке не сказала ничего — состояния нет")
-        val words = Language.entries.associateWith { JournalDelivery.Unknown.title(stringsOf(it).status) }
+        val words = Language.entries.associateWith { JournalDelivery.Unknown.title(textsOf(it).common.status) }
         words.forEach { (language, text) ->
             assertTrue(text.isNotBlank(), "на языке $language состояние не названо")
             assertFalse(

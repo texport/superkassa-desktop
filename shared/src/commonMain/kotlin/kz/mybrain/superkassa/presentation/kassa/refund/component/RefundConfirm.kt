@@ -6,14 +6,14 @@ import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.domain.kassa.model.refund.ReturnKind
 import kz.mybrain.superkassa.presentation.common.dialog.ConfirmActionDialog
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.format.fill
+import kz.mybrain.superkassa.presentation.common.strings.LocalLanguage
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.refund.RefundActions
-import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.kassa.action
-import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.presentation.words.kassa.action
+import kz.mybrain.superkassa.strings.api.fill
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Вопрос перед возвратом: сколько и по какому чеку.
@@ -24,7 +24,7 @@ import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
  */
 @Composable
 internal fun RefundConfirm(kind: ReturnKind, draft: RefundDraft, busy: Boolean, actions: RefundActions) {
-    val texts = checkoutTexts(LocalLanguage.current)
+    val texts = textsOf(LocalLanguage.current).kassa.checkout
     val sum = Money.formatTiyn(draft.readyTiyn)
     val question = if (kind == ReturnKind.Sell) texts.confirmGive else texts.confirmTake
     val number = draft.basis.number?.toString() ?: Glyphs.DASH

@@ -8,7 +8,7 @@ import kz.mybrain.superkassa.domain.print.model.PrintKind
 import kz.mybrain.superkassa.domain.print.model.PrintSource
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Касса, которая рисует печатную форму, и пин, введённый ради неё.
@@ -60,7 +60,7 @@ internal class PrintDrawer(private val cases: PrintCases, private val talk: Talk
 
     /** Касса-рисовальщик; не заведено ни одной — владельцу сказано об этом словами, а не молчанием. */
     private suspend fun kkm(): KkmResponse? {
-        val texts = stringsOf(talk.language()).preview
+        val texts = textsOf(talk.language()).common.preview
         val answer = cases.findDrawer()
         if (answer !is Answer.Done) return answer.shown(texts.title, "read kkm to draw", talk)
         if (answer.value == null) talk.done(texts.noDrawer)

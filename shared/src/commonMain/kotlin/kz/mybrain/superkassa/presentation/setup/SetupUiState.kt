@@ -6,7 +6,7 @@ import kz.mybrain.superkassa.domain.setup.model.EnrollmentPlan
 import kz.mybrain.superkassa.domain.setup.model.KkmSetupDraft
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
 import kz.mybrain.superkassa.domain.users.model.UserRules
-import kz.mybrain.superkassa.presentation.strings.setup.SetupTexts
+import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /**
  * Мастер подключения кассы, каким его видит владелец.

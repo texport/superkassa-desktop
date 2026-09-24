@@ -17,9 +17,9 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCard
 import kz.mybrain.superkassa.presentation.cabinet.register.RegisterDetails
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
-import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
  * Справа — выбранная касса целиком, а до выбора кассы сама точка.

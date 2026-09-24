@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.strings.common.AppStrings
-import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+import kz.mybrain.superkassa.strings.api.common.AppStrings
 
 /**
  * Сообщения кассиру — снекбаром поверх содержимого.
