@@ -4,7 +4,6 @@
   <CurrentIssues>
     <ID>ArgumentListWrapping:AdaptiveDialogShots.kt$AdaptiveDialogShots$(Rect.makeXYWH(TAPE_MARGIN, line + TAPE_MARGIN, (line * 7 % 400 + 80).toFloat(), 10f), ink)</ID>
     <ID>ArgumentListWrapping:AdaptiveDialogShots.kt$AdaptiveDialogShots$(TAPE_MARGIN, line + TAPE_MARGIN, (line * 7 % 400 + 80).toFloat(), 10f)</ID>
-    <ID>ArgumentListWrapping:AdaptiveLogShots.kt$AdaptiveLogShots$("журнал $name: правый край кнопок $right из $width, за краем ${controls.count { it.right &gt; width }}")</ID>
     <ID>ArgumentListWrapping:AnalyticsExchangeList.kt$(cellText(column, row))</ID>
     <ID>ArgumentListWrapping:AnalyticsExchangeList.kt$(column, row)</ID>
     <ID>ArgumentListWrapping:AnalyticsExchangeList.kt$(vertical = Spacing.tight)</ID>
@@ -78,7 +77,6 @@
     <ID>MaxLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$"кнопки ${controls.joinToString { "${it.left}..${it.right}@${it.top}" }}; за краем $outside; прокрутка $scrolls"</ID>
     <ID>MaxLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$private</ID>
     <ID>MaxLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$surface.canvas.drawRect(Rect.makeXYWH(TAPE_MARGIN, line + TAPE_MARGIN, (line * 7 % 400 + 80).toFloat(), 10f), ink)</ID>
-    <ID>MaxLineLength:AdaptiveLogShots.kt$AdaptiveLogShots$println("журнал $name: правый край кнопок $right из $width, за краем ${controls.count { it.right &gt; width }}")</ID>
     <ID>MaxLineLength:AnalyticsExchangeList.kt$TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column -&gt; RowCell(cellText(column, row)) }</ID>
     <ID>MaxLineLength:AnalyticsMapPointsTest.kt$AnalyticsMapPointsTest$kkm("c4", address = "Есть свои", position = KkmPosition(latitude = degrees(43.2), longitude = degrees(76.8)))</ID>
     <ID>MaxLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$RenderProbe { SalesChart(dayBars(view(days = 1).days, view(days = 1).range, sales), sales, Modifier.fillMaxSize()) }</ID>
@@ -93,7 +91,6 @@
     <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$nodes.filter { SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null }</ID>
     <ID>MaxLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$println("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
     <ID>MaximumLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$ </ID>
-    <ID>MaximumLineLength:AdaptiveLogShots.kt$AdaptiveLogShots$ </ID>
     <ID>MaximumLineLength:AnalyticsExchangeList.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsMapPointsTest.kt$AnalyticsMapPointsTest$ </ID>
     <ID>MaximumLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$ </ID>

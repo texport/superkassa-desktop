@@ -10,10 +10,10 @@ import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
+import kz.mybrain.superkassa.domain.debug.port.MemoryLogBook
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.services
-import kz.mybrain.superkassa.presentation.settings.MemoryLogBook
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

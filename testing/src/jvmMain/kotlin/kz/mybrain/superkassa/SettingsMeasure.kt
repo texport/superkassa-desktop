@@ -16,7 +16,7 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptLangu
  * край кнопки относительно края окна. Меряется `positionInRoot` и размер
  * узла, а не видимая область: у прокручиваемого столбца она обрезана.
  */
-internal object SettingsMeasure {
+object SettingsMeasure {
 
     /** Прямоугольник узла в точках окна. */
     data class Box(val left: Int, val top: Int, val width: Int, val height: Int) {

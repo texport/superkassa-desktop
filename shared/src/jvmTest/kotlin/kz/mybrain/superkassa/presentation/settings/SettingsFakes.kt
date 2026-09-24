@@ -5,13 +5,10 @@ import io.github.texport.superkassa.core.domain.api.model.settings.CoreMode
 import io.github.texport.superkassa.core.domain.api.model.settings.CoreSettings
 import io.github.texport.superkassa.core.domain.api.model.settings.StorageSettings
 import io.github.texport.superkassa.core.string.api.TrilingualMessage
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kz.mybrain.superkassa.domain.debug.model.LogEntry
-import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.debug.port.LogBook
-import kz.mybrain.superkassa.domain.debug.port.LogBookState
+import kz.mybrain.superkassa.domain.debug.port.MemoryLogBook
 import kz.mybrain.superkassa.domain.print.port.FakePrintOut
 import kz.mybrain.superkassa.domain.print.port.MemoryPrintChoices
 import kz.mybrain.superkassa.domain.print.port.PrintChoices
@@ -59,28 +56,6 @@ data class MachinePorts(
     val print: PrintPorts get() = PrintPorts(printOut, printChoices)
     val update: UpdatePorts get() = UpdatePorts(releases, updateMemory)
     val debug: DebugPorts get() = DebugPorts(logBook)
-}
-
-/**
- * Журнал для проверок: книга в памяти, без файла и без окна выбора.
- *
- * @property saved что просили сохранить в последний раз.
- */
-class MemoryLogBook(initial: LogBookState = LogBookState()) : LogBook {
-    override val state = MutableStateFlow(initial)
-
-    var saved: List<LogEntry>? = null
-        private set
-
-    override fun chooseLevel(level: LogLevel) = state.update { it.copy(level = level) }
-
-    override fun switchDebugMode(on: Boolean) = state.update { it.copy(debugMode = on) }
-
-    override fun clear() = state.update { it.copy(entries = emptyList()) }
-
-    override suspend fun save(lines: List<LogEntry>, title: String) {
-        saved = lines
-    }
 }
 
 /**

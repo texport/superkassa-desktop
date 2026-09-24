@@ -10,5 +10,5 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 fun logViewModel(services: WindowServices, ports: DebugPorts): LogViewModel = viewModel { logModel(services, ports) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun logModel(services: WindowServices, ports: DebugPorts): LogViewModel =
+internal fun logModel(services: WindowServices, ports: DebugPorts): LogViewModel =
     LogViewModel(LogCases(ports.logBook), services.talk)

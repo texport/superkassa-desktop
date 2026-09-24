@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * запуск кассы.
  */
 @Composable
-internal fun DebugCard(journal: LogUiState, actions: LogActions) {
+fun DebugCard(journal: LogUiState, actions: LogActions) {
     val texts = textsOf(LocalLanguage.current).debug
     SectionCard(title = texts.debugMode, info = texts.debugModeHint) {
         SwitchRow(texts.title, journal.book.debugMode, actions::switchDebugMode)

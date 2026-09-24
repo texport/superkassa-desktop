@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:AdaptiveLogShots.kt$AdaptiveLogShots$("журнал $name: правый край кнопок $right из $width, за краем ${controls.count { it.right &gt; width }}")</ID>
+    <ID>MaxLineLength:AdaptiveLogShots.kt$AdaptiveLogShots$println("журнал $name: правый край кнопок $right из $width, за краем ${controls.count { it.right &gt; width }}")</ID>
+    <ID>MaximumLineLength:AdaptiveLogShots.kt$AdaptiveLogShots$ </ID>
+  </CurrentIssues>
+</SmellBaseline>
