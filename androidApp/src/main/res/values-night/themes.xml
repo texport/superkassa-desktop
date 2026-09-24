@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Тёмная система — тёмный фон окна, чтобы до первого кадра не мигало белым. -->
+    <style name="Theme.Superkassa" parent="android:Theme.Material.NoActionBar" />
+</resources>

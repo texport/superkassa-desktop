@@ -1,14 +1,15 @@
 package kz.mybrain.superkassa.data.log
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import java.io.File
 
 /**
  * Журнал приложения, доступный отовсюду.
  *
- * Одно место на всё приложение: обмен с узлом и с кабинетом, отказы
+ * Одно место на всё приложение: обмен с кассой и с кабинетом, отказы
  * подписи и переходы состояния кассы пишутся сюда, а не каждый в своё
  * место. Иначе разбор отказа означает сложить три источника по времени
  * руками.
@@ -20,23 +21,35 @@ object AppLog {
 
     private var settings: LogSettings? = null
 
-    /** Журнал рабочего места. Подменяется проверками на свой, без файла. */
-    var journal: LogJournal by mutableStateOf(LogJournal())
+    private val current = MutableStateFlow(LogJournal())
+
+    private val debug = MutableStateFlow(false)
+
+    /** Журнал рабочего места потоком: проверки подменяют его своим. */
+    val journals: StateFlow<LogJournal> = current.asStateFlow()
 
     /**
-     * Включён ли режим отладки.
-     *
-     * При нём рядом с главным окном открыто окно журнала. Выбор держится
-     * рабочего места: разбор отказа идёт не за один запуск.
+     * Режим отладки потоком: при нём рядом с главным окном открыто окно
+     * журнала. Выбор держится рабочего места: разбор отказа идёт не за
+     * один запуск.
      */
-    var debugMode: Boolean by mutableStateOf(false)
-        private set
+    val debugModes: StateFlow<Boolean> = debug.asStateFlow()
+
+    /** Журнал рабочего места. Подменяется проверками на свой, без файла. */
+    var journal: LogJournal
+        get() = current.value
+        set(value) {
+            current.value = value
+        }
+
+    /** Включён ли режим отладки сейчас. */
+    val debugMode: Boolean get() = debug.value
 
     /** Поднимает журнал рабочего места: уровень, файл и режим отладки с диска. */
     fun start(loaded: LogSettings = LogSettings()) {
         settings = loaded
         journal = LogJournal(file = LogFile(loaded.directory), level = loaded.level)
-        debugMode = loaded.debugMode
+        debug.value = loaded.debugMode
     }
 
     /** Порог записи, выбранный в настройках. */
@@ -54,7 +67,7 @@ object AppLog {
     }
 
     fun switchDebugMode(on: Boolean) {
-        debugMode = on
+        debug.value = on
         settings?.debugMode = on
     }
 

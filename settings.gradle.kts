@@ -22,3 +22,12 @@ dependencyResolutionManagement {
 // живёт библиотекой, у каждой платформы — своё приложение поверх неё.
 // `detekt-rules` — свои правила проверки, в приложение не входят.
 include(":shared", ":desktopApp", ":androidApp", ":detekt-rules")
+
+// Внешние службы — каждая своим модулем: модуль знает только протокол
+// своей службы и не зависит ни от приложения, ни от соседних интеграций.
+include(
+    ":integrations:bfd-cabinet",
+    ":integrations:maps",
+    ":integrations:ncalayer",
+    ":integrations:releases"
+)

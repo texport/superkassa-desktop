@@ -1,10 +1,12 @@
 package kz.mybrain.superkassa.data.log
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * Журнал приложения: одно место, куда пишется всё.
@@ -29,13 +31,25 @@ class LogJournal(
     private val clock: () -> LocalDateTime = LocalDateTime::now
 ) {
 
-    /** Порог записи, выбранный в настройках. */
-    var level: LogLevel by mutableStateOf(level)
+    private val threshold = MutableStateFlow(level)
 
-    private val records = mutableStateListOf<LogEntry>()
+    private val records = MutableStateFlow<List<LogEntry>>(emptyList())
+
+    /** Порог записи, выбранный в настройках, — потоком для окна отладки. */
+    val levels: StateFlow<LogLevel> = threshold.asStateFlow()
+
+    /** Строки журнала от старой к новой — потоком для окна отладки. */
+    val lines: StateFlow<List<LogEntry>> = records.asStateFlow()
+
+    /** Порог записи, выбранный в настройках. */
+    var level: LogLevel
+        get() = threshold.value
+        set(value) {
+            threshold.value = value
+        }
 
     /** Строки журнала от старой к новой. */
-    val entries: List<LogEntry> get() = records
+    val entries: List<LogEntry> get() = records.value
 
     /**
      * Записывает событие.
@@ -46,7 +60,7 @@ class LogJournal(
     fun record(source: LogSource, level: LogLevel, text: String, body: String? = null) {
         if (!level.passes(this.level)) return
         val entry = LogEntry(
-            at = clock(),
+            time = TIME.format(clock()),
             level = level,
             source = source,
             text = hideSecrets(text),
@@ -57,16 +71,12 @@ class LogJournal(
     }
 
     /** Забывает записанное: окно чистят перед тем, как повторить отказ. */
-    @Synchronized
-    fun clear() = records.clear()
-
-    @Synchronized
-    private fun keep(entry: LogEntry) {
-        records.add(entry)
-        while (records.size > capacity) {
-            records.removeAt(0)
-        }
+    fun clear() {
+        records.value = emptyList()
     }
+
+    /** Старые строки уходят, когда память полна: всё, что старше, осталось в файле. */
+    private fun keep(entry: LogEntry) = records.update { (it + entry).takeLast(capacity) }
 
     private companion object {
 
@@ -77,14 +87,8 @@ class LogJournal(
          * кассы они не занимают заметно. Всё, что старше, осталось в файле.
          */
         const val CAPACITY = 2000
+
+        /** Время записи так, как его читают в окне и в файле. */
+        val TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
     }
 }
-
-/**
- * Отбор строк: уровень не ниже выбранного и совпадение с набранным.
- *
- * Отбор живёт здесь, а не в окне: это правило журнала, и проверяется оно
- * без запущенного интерфейса.
- */
-fun List<LogEntry>.matching(level: LogLevel, query: String): List<LogEntry> =
-    filter { it.level.passes(level) && it.matches(query) }

@@ -1,7 +1,8 @@
 package kz.mybrain.superkassa.data.local
 
+import kz.mybrain.superkassa.domain.update.port.UpdateMemory
 import java.io.File
-import java.time.Instant
+import kotlin.time.Instant
 
 /**
  * Что рабочее место помнит о проверке обновлений.
@@ -12,10 +13,10 @@ import java.time.Instant
  * Отказаться можно: на рабочем месте без выхода в интернет проверка
  * только пишет отказы в журнал.
  */
-class UpdatePreferences(private val directory: File?) {
+class UpdatePreferences(private val directory: File?) : UpdateMemory {
 
     /** Проверять ли выпуски самой; файла нет — проверять. */
-    var automatic: Boolean
+    override var automatic: Boolean
         get() = readSetting(automaticFile) != OFF
         set(value) = writeSetting(automaticFile, if (value) null else OFF)
 
@@ -25,7 +26,7 @@ class UpdatePreferences(private val directory: File?) {
      * Хранится, а не живёт в памяти: касса перезапускается каждое утро,
      * и без записи проверка шла бы при каждом запуске, а не раз в сутки.
      */
-    var lastChecked: Instant?
+    override var lastChecked: Instant?
         get() = readSetting(checkedFile)?.let { runCatching { Instant.parse(it) }.getOrNull() }
         set(value) = writeSetting(checkedFile, value?.toString())
 

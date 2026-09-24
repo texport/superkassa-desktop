@@ -1,0 +1,76 @@
+package kz.mybrain.superkassa.domain.analytics.model
+
+/**
+ * Адрес, с которого касса присылала данные.
+ *
+ * Сведение служебное: по нему видно, что касса, числящаяся в Актобе,
+ * выходит на связь из другого города, и что под одним адресом работает
+ * десяток машин. Владельцу оно показывается, в журнал приложения
+ * не пишется.
+ */
+data class ExchangeAddress(
+    val cashRegisterId: String,
+    val kkmId: Int = 0,
+    val registrationNumber: String? = null,
+    val internalName: String? = null,
+    val retailPlaceName: String? = null,
+    val address: String = "",
+    val firstSeen: String? = null,
+    val lastSeen: String? = null
+) {
+    /** Касса строки — тем же правилом, что и в прочих списках аналитики. */
+    val title: String get() = kkmTitle(internalName, registrationNumber, kkmId)
+}
+
+/**
+ * Адреса обмена: по всем кассам компании или по одной.
+ *
+ * У кассы без единого обмена список пуст, а счётчики нулевые: кабинет
+ * отвечает пустотой, а не отсутствием ручки.
+ */
+data class ExchangeAddresses(
+    val cashRegisterCount: Int = 0,
+    val addressCount: Int = 0,
+    val addresses: List<ExchangeAddress> = emptyList()
+)
+
+/**
+ * Отбор и поиск по адресам обмена.
+ *
+ * Список приходит по убыванию последнего обмена, и порядок этот
+ * сохраняется: свежая связь важнее прочего. Отбор по кассе и поиск
+ * работают вместе — владелец сначала выбирает кассу, потом ищет среди
+ * её адресов.
+ *
+ * Поиск идёт по всему, что видно в строке: сам адрес, номер КГД, своё
+ * название кассы, номер машины и торговая точка. Искать только по
+ * адресу мало: владелец помнит кассу по названию, а не по адресу,
+ * с которого она вышла на связь.
+ */
+fun exchangeRows(addresses: List<ExchangeAddress>, query: String, register: String?): List<ExchangeAddress> {
+    val needle = query.trim().lowercase()
+    return addresses
+        .filter { register == null || it.cashRegisterId == register }
+        .filter { needle.isBlank() || it.matches(needle) }
+}
+
+/** Совпадает ли строка с искомым. */
+private fun ExchangeAddress.matches(needle: String): Boolean =
+    listOfNotNull(address, registrationNumber, internalName, retailPlaceName, kkmId.toString())
+        .any { it.lowercase().contains(needle) }
+
+/** Кассы, встречающиеся в списке: из них собирается отбор. */
+fun exchangeRegisters(addresses: List<ExchangeAddress>): List<ExchangeAddress> =
+    addresses.distinctBy { it.cashRegisterId }
+
+/**
+ * Разных адресов в списке.
+ *
+ * Считается по самому списку, а не берётся счётчиком кабинета: тот
+ * считает записи об обмене, а запись — это пара «касса и адрес».
+ * Четыре кассы одного магазина, выходящие на связь с одного адреса,
+ * давали «адресов: 4» над таблицей, в которой адрес один, — и владелец
+ * пересчитывал строки, не понимая, кто из двоих ошибся.
+ */
+fun exchangeAddressCount(addresses: List<ExchangeAddress>): Int =
+    addresses.map { it.address.trim() }.filter(String::isNotBlank).distinct().size

@@ -22,374 +22,91 @@
     <ID>ArgumentListWrapping:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$(view(days = 1).days, view(days = 1).range, sales)</ID>
     <ID>ArgumentListWrapping:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$(view(days = MONTH).days, view(days = MONTH).range, sales)</ID>
     <ID>ArgumentListWrapping:AnalyticsSalesTable.kt$(min = AnalyticsLayout.networkSum, weight = NUMBER_SHARE, numeric = true)</ID>
-    <ID>ArgumentListWrapping:AnalyticsSalesTiles.kt$(1f)</ID>
-    <ID>ArgumentListWrapping:AnalyticsSalesTiles.kt$(cabinet.operationPurchaseReturn, Modifier.weight(1f))</ID>
-    <ID>ArgumentListWrapping:AnalyticsSalesTiles.kt$(cabinetSum(summary.purchaseRefunds))</ID>
-    <ID>ArgumentListWrapping:AnalyticsSalesTiles.kt$(summary.purchaseRefunds)</ID>
     <ID>ArgumentListWrapping:AnalyticsWalk.kt$AnalyticsWalk$( window.find(texts.mapFullscreen), window.find(map.zoomIn), window.find(map.zoomOut), window.find(map.myLocation) )</ID>
-    <ID>ArgumentListWrapping:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$(Spacing.screen)</ID>
-    <ID>ArgumentListWrapping:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$(modifier = Modifier.fillMaxWidth().padding(Spacing.screen))</ID>
-    <ID>ArgumentListWrapping:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$(session, cabinet, setup, started)</ID>
-    <ID>ArgumentListWrapping:CabinetAddressApi.kt$(HttpMethod.Get, "/api/reference/addresses/${rka.encoded()}", token = token)</ID>
-    <ID>ArgumentListWrapping:CabinetAddressApi.kt$(HttpMethod.Get, "/api/reference/addresses/localities?parentId=$localityId&amp;limit=$NESTED_PROBE", token = token)</ID>
     <ID>ArgumentListWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest)</ID>
-    <ID>ArgumentListWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$("application-shift-here", node = Kkm(kkmId = "k-1", ofdSystemId = "5000021", state = "ACTIVE"))</ID>
-    <ID>ArgumentListWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$(kkmId = "k-1", ofdSystemId = "5000021", state = "ACTIVE")</ID>
     <ID>ArgumentListWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
-    <ID>ArgumentListWrapping:CabinetClientTest.kt$CabinetClientTest$(HttpStatusCode.Unauthorized, """{"code":"UNAUTHORIZED","message":"Сессия истекла"}""")</ID>
-    <ID>ArgumentListWrapping:CabinetContractTest.kt$CabinetContractTest$("""{"kkmId":5000001,"token":-1234567890,"status":"ISSUED"}""")</ID>
-    <ID>ArgumentListWrapping:CabinetContractTest.kt$CabinetContractTest$("development", "07aeaff1")</ID>
     <ID>ArgumentListWrapping:CabinetMessageTest.kt$CabinetMessageTest$(CabinetProblem.SessionExpired, texts)</ID>
     <ID>ArgumentListWrapping:CabinetMessageTest.kt$CabinetMessageTest$(cabinetMessage(CabinetProblem.SessionExpired, texts))</ID>
     <ID>ArgumentListWrapping:CabinetMessageTest.kt$CabinetMessageTest$(texts.sessionExpired, assertIs&lt;Message.Refusal&gt;(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)</ID>
-    <ID>ArgumentListWrapping:CabinetPlaceModels.kt$ResolvedAddress$(addressRef = rka, address = displayAddress, addressKz = displayAddressKk, rka = rka, cato = cato)</ID>
-    <ID>ArgumentListWrapping:DashboardDocumentsTest.kt$DashboardDocumentsTest$(HttpHeaders.ContentType, "application/json")</ID>
-    <ID>ArgumentListWrapping:DashboardDocumentsTest.kt$DashboardDocumentsTest$(blockedBody, HttpStatusCode.BadRequest, headersOf(HttpHeaders.ContentType, "application/json"))</ID>
-    <ID>ArgumentListWrapping:DashboardScreen.kt$(Spacing.hairline)</ID>
-    <ID>ArgumentListWrapping:DashboardScreen.kt$(Spacing.normal)</ID>
-    <ID>ArgumentListWrapping:DashboardScreen.kt$(modifier = Modifier.padding(Spacing.normal), verticalArrangement = Arrangement.spacedBy(Spacing.hairline))</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$("1500")</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$("300.00")</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$("500")</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$("500.00")</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$(0, BigDecimal("1500").compareTo(parent.parentTicketTotal), "реквизит чека-основания — его собственная сумма")</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$(0, BigDecimal("500").compareTo(request?.items?.single()?.price), "возвращается указанная часть, а не весь чек")</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$(name = "Баранина", price = BigDecimal("500.00"), quantityThousandths = 1_000, sum = BigDecimal("500.00"))</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$(name = "Коньяк", price = BigDecimal("300.00"), quantityThousandths = 1_000, sum = BigDecimal("300.00"))</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$(parent.parentTicketTotal)</ID>
-    <ID>ArgumentListWrapping:JournalRefundTest.kt$JournalRefundTest$(request?.items?.single()?.price)</ID>
     <ID>ArgumentListWrapping:JournalTable.kt$( journal.colTime, journal.colType, journal.colNumber, journal.colShift, journal.colAmount, journal.colFiscalSign, LocalStrings.current.dashboard.state )</ID>
-    <ID>ArgumentListWrapping:KkmNameTest.kt$KkmNameTest$("""{"items":[${current.joinToString(",")}],"total":${current.size}""" + ""","limit":500,"offset":0,"hasMore":false}""")</ID>
-    <ID>ArgumentListWrapping:Look.kt$(model.map, Look.tiles(), Look.cabinet.map, Modifier.fillMaxSize(), onTap = { _, _ -&gt; model.forget() })</ID>
     <ID>ArgumentListWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$(HttpHeaders.ContentType, "application/json")</ID>
     <ID>ArgumentListWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))</ID>
-    <ID>ArgumentListWrapping:PlaceEditRow.kt$( session, cabinet, texts, query, onQuery, owner = place.id, title = texts.changeAddress, onChoose = onAddress )</ID>
-    <ID>ArgumentListWrapping:PlaceMapShots.kt$( session, cabinet, Look.cabinet, state, MapGeocoder(NOWHERE), address, pick, notices )</ID>
-    <ID>ArgumentListWrapping:PositionDetailsShots.kt$PositionDetailsShots$("15")</ID>
-    <ID>ArgumentListWrapping:PositionDetailsShots.kt$PositionDetailsShots$(name = "Пакет", price = BigDecimal("15"), quantity = BigDecimal.ONE, vatGroup = "NO_VAT")</ID>
-    <ID>ArgumentListWrapping:PrintFileNameTest.kt$PrintFileNameTest$(HttpHeaders.ContentType, "image/png")</ID>
-    <ID>ArgumentListWrapping:PrintFileNameTest.kt$PrintFileNameTest$(MockEngine { respond(png, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "image/png")) })</ID>
-    <ID>ArgumentListWrapping:PrintFileNameTest.kt$PrintFileNameTest$(png, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "image/png"))</ID>
-    <ID>ArgumentListWrapping:SaleChangesTest.kt$SaleChangesTest$(SaleBlock.TotalNotPositive, blockOf(SaleState(discount = hundred, itemsSum = items, total = BigDecimal.ZERO)))</ID>
-    <ID>ArgumentListWrapping:SaleChangesTest.kt$SaleChangesTest$(SaleState(discount = hundred, itemsSum = items, total = BigDecimal.ZERO))</ID>
-    <ID>ArgumentListWrapping:SaleChangesTest.kt$SaleChangesTest$(discount = hundred, itemsSum = items, total = BigDecimal.ZERO)</ID>
     <ID>ArgumentListWrapping:ShellAdaptiveTest.kt$ShellAdaptiveTest$("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
     <ID>CyclomaticComplexMethod:AppearanceCard.kt$private fun Accent.title(texts: LookStrings): String</ID>
-    <ID>CyclomaticComplexMethod:BarcodeField.kt$@Composable fun BarcodeField(session: Session, added: Int, onFound: (Position) -&gt; Unit)</ID>
-    <ID>CyclomaticComplexMethod:CabinetStatus.kt$fun statusWords(code: String, texts: CabinetTexts): String?</ID>
-    <ID>CyclomaticComplexMethod:KassaScene.kt$KassaScene$private fun client(admin: Boolean, refusal: NodeRefusal?, node: NodeAnswers): ServerClient</ID>
-    <ID>CyclomaticComplexMethod:OkedPicker.kt$@Composable fun OkedPicker( session: Session, cabinet: CabinetSession, texts: CabinetTexts, known: List&lt;String&gt;, onAdd: (Oked) -&gt; Unit )</ID>
-    <ID>CyclomaticComplexMethod:RegistrationActions.kt$@Composable fun RegistrationActionsBlock( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, onDone: () -&gt; Unit )</ID>
-    <ID>CyclomaticComplexMethod:SaleRules.kt$@Suppress("ReturnCount") fun blockOf(state: SaleState): SaleBlock?</ID>
-    <ID>LargeClass:AnalyticsSalesTest.kt$AnalyticsSalesTest</ID>
     <ID>LargeClass:CabinetTexts.kt$CabinetTexts</ID>
-    <ID>LargeClass:KassaSaleLookTest.kt$KassaSaleLookTest</ID>
-    <ID>LargeClass:SalesLook.kt$SalesLook</ID>
-    <ID>LongFile:AnalyticsMapPointsTest.kt$kz.mybrain.superkassa.AnalyticsMapPointsTest.kt</ID>
-    <ID>LongFile:AnalyticsOverviewTest.kt$kz.mybrain.superkassa.AnalyticsOverviewTest.kt</ID>
-    <ID>LongFile:AnalyticsSalesContractTest.kt$kz.mybrain.superkassa.AnalyticsSalesContractTest.kt</ID>
-    <ID>LongFile:AnalyticsSalesTest.kt$kz.mybrain.superkassa.AnalyticsSalesTest.kt</ID>
-    <ID>LongFile:AnalyticsTexts.kt$kz.mybrain.superkassa.presentation.strings.AnalyticsTexts.kt</ID>
-    <ID>LongFile:AppIcons.kt$kz.mybrain.superkassa.presentation.theme.AppIcons.kt</ID>
-    <ID>LongFile:ApplicationSignWaitTest.kt$kz.mybrain.superkassa.ApplicationSignWaitTest.kt</ID>
+    <ID>LongFile:AnalyticsTexts.kt$kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts.kt</ID>
+    <ID>LongFile:AppIcons.kt$kz.mybrain.superkassa.presentation.theme.icon.AppIcons.kt</ID>
     <ID>LongFile:BigListRenderTest.kt$kz.mybrain.superkassa.BigListRenderTest.kt</ID>
-    <ID>LongFile:CabinetClient.kt$kz.mybrain.superkassa.data.cabinet.CabinetClient.kt</ID>
-    <ID>LongFile:CabinetContractTest.kt$kz.mybrain.superkassa.CabinetContractTest.kt</ID>
-    <ID>LongFile:CabinetDocumentsTest.kt$kz.mybrain.superkassa.CabinetDocumentsTest.kt</ID>
-    <ID>LongFile:CabinetPlaceModels.kt$kz.mybrain.superkassa.data.cabinet.CabinetPlaceModels.kt</ID>
-    <ID>LongFile:CabinetPlaceSieveTest.kt$kz.mybrain.superkassa.CabinetPlaceSieveTest.kt</ID>
-    <ID>LongFile:CabinetSession.kt$kz.mybrain.superkassa.presentation.session.CabinetSession.kt</ID>
-    <ID>LongFile:CabinetTexts.kt$kz.mybrain.superkassa.presentation.strings.CabinetTexts.kt</ID>
-    <ID>LongFile:CabinetTextsEn.kt$kz.mybrain.superkassa.presentation.strings.CabinetTextsEn.kt</ID>
-    <ID>LongFile:CabinetTextsKk.kt$kz.mybrain.superkassa.presentation.strings.CabinetTextsKk.kt</ID>
-    <ID>LongFile:CabinetTextsRu.kt$kz.mybrain.superkassa.presentation.strings.CabinetTextsRu.kt</ID>
-    <ID>LongFile:DocumentModels.kt$kz.mybrain.superkassa.data.node.DocumentModels.kt</ID>
-    <ID>LongFile:EdsExchangeTest.kt$kz.mybrain.superkassa.EdsExchangeTest.kt</ID>
-    <ID>LongFile:JournalQueryTest.kt$kz.mybrain.superkassa.JournalQueryTest.kt</ID>
-    <ID>LongFile:JournalRefundTest.kt$kz.mybrain.superkassa.JournalRefundTest.kt</ID>
-    <ID>LongFile:JournalSourcesTest.kt$kz.mybrain.superkassa.JournalSourcesTest.kt</ID>
-    <ID>LongFile:JournalTexts.kt$kz.mybrain.superkassa.presentation.strings.JournalTexts.kt</ID>
-    <ID>LongFile:JournalUnreadTest.kt$kz.mybrain.superkassa.JournalUnreadTest.kt</ID>
-    <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.KassaJournalLookTest.kt</ID>
-    <ID>LongFile:KassaMoneyLookTest.kt$kz.mybrain.superkassa.KassaMoneyLookTest.kt</ID>
+    <ID>LongFile:CabinetTexts.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts.kt</ID>
+    <ID>LongFile:CabinetTextsEn.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsEn.kt</ID>
+    <ID>LongFile:CabinetTextsKk.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsKk.kt</ID>
+    <ID>LongFile:CabinetTextsRu.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsRu.kt</ID>
+    <ID>LongFile:JournalSourcesTest.kt$kz.mybrain.superkassa.presentation.journal.JournalSourcesTest.kt</ID>
+    <ID>LongFile:JournalTexts.kt$kz.mybrain.superkassa.presentation.strings.journal.JournalTexts.kt</ID>
+    <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.presentation.journal.KassaJournalLookTest.kt</ID>
     <ID>LongFile:KassaProbe.kt$kz.mybrain.superkassa.KassaProbe.kt</ID>
-    <ID>LongFile:KassaSaleLookTest.kt$kz.mybrain.superkassa.KassaSaleLookTest.kt</ID>
-    <ID>LongFile:KassaScene.kt$kz.mybrain.superkassa.KassaScene.kt</ID>
-    <ID>LongFile:KkmModels.kt$kz.mybrain.superkassa.data.node.KkmModels.kt</ID>
-    <ID>LongFile:LocalNode.kt$kz.mybrain.superkassa.data.node.LocalNode.kt</ID>
-    <ID>LongFile:Look.kt$kz.mybrain.superkassa.Look.kt</ID>
-    <ID>LongFile:MapPointAddressTest.kt$kz.mybrain.superkassa.MapPointAddressTest.kt</ID>
-    <ID>LongFile:MapState.kt$kz.mybrain.superkassa.presentation.map.MapState.kt</ID>
-    <ID>LongFile:MapView.kt$kz.mybrain.superkassa.presentation.map.MapView.kt</ID>
-    <ID>LongFile:NcaExchange.kt$kz.mybrain.superkassa.data.eds.NcaExchange.kt</ID>
-    <ID>LongFile:PastShiftsView.kt$kz.mybrain.superkassa.presentation.history.PastShiftsView.kt</ID>
-    <ID>LongFile:PlaceEditRow.kt$kz.mybrain.superkassa.presentation.cabinet.PlaceEditRow.kt</ID>
     <ID>LongFile:PreviewTapeReachTest.kt$kz.mybrain.superkassa.PreviewTapeReachTest.kt</ID>
-    <ID>LongFile:PrintDesk.kt$kz.mybrain.superkassa.presentation.print.PrintDesk.kt</ID>
-    <ID>LongFile:PrintDrawerTest.kt$kz.mybrain.superkassa.PrintDrawerTest.kt</ID>
-    <ID>LongFile:RegisterDetails.kt$kz.mybrain.superkassa.presentation.cabinet.RegisterDetails.kt</ID>
-    <ID>LongFile:RegistrationActions.kt$kz.mybrain.superkassa.presentation.cabinet.RegistrationActions.kt</ID>
-    <ID>LongFile:RegistrationCardVersions.kt$kz.mybrain.superkassa.presentation.cabinet.RegistrationCardVersions.kt</ID>
     <ID>LongFile:RenderProbe.kt$kz.mybrain.superkassa.RenderProbe.kt</ID>
-    <ID>LongFile:SaleAdaptiveTest.kt$kz.mybrain.superkassa.SaleAdaptiveTest.kt</ID>
-    <ID>LongFile:SalesLook.kt$kz.mybrain.superkassa.SalesLook.kt</ID>
-    <ID>LongFile:ServiceStringsEn.kt$kz.mybrain.superkassa.presentation.strings.ServiceStringsEn.kt</ID>
-    <ID>LongFile:ServiceStringsKk.kt$kz.mybrain.superkassa.presentation.strings.ServiceStringsKk.kt</ID>
-    <ID>LongFile:ServiceStringsRu.kt$kz.mybrain.superkassa.presentation.strings.ServiceStringsRu.kt</ID>
-    <ID>LongFile:Session.kt$kz.mybrain.superkassa.presentation.session.Session.kt</ID>
-    <ID>LongFile:SessionTest.kt$kz.mybrain.superkassa.SessionTest.kt</ID>
-    <ID>LongFile:Sizes.kt$kz.mybrain.superkassa.presentation.theme.Sizes.kt</ID>
-    <ID>LongFile:StateCheck.kt$kz.mybrain.superkassa.presentation.cabinet.StateCheck.kt</ID>
-    <ID>LongFile:StateCheckTest.kt$kz.mybrain.superkassa.StateCheckTest.kt</ID>
-    <ID>LongMethod:AddCashier.kt$@Composable internal fun AddCashier(session: Session, money: MoneyTexts, onCreated: suspend () -&gt; Unit)</ID>
-    <ID>LongMethod:AddPlaceDialog.kt$@Composable fun AddPlaceCard( session: Session, cabinet: CabinetSession, texts: CabinetTexts, onDismiss: () -&gt; Unit, onAdded: () -&gt; Unit )</ID>
-    <ID>LongMethod:AddPositionForm.kt$@Composable fun AddPositionForm(session: Session, onAdd: (Position) -&gt; Unit)</ID>
-    <ID>LongMethod:AddPositionForm.kt$@Composable internal fun DraftFields( draft: PositionDraft, units: List&lt;UnitOfMeasurement&gt;, onChange: (PositionDraft) -&gt; Unit )</ID>
-    <ID>LongMethod:AddRegisterDialog.kt$@Composable fun AddRegisterDialog( session: Session, cabinet: CabinetSession, texts: CabinetTexts, known: FactoryStamp? = null, onDismiss: () -&gt; Unit, onAdded: (CabinetRegister) -&gt; Unit )</ID>
-    <ID>LongMethod:AddressSearch.kt$@Composable fun AddressSearch( session: Session, cabinet: CabinetSession, texts: CabinetTexts, query: String, onQuery: (String) -&gt; Unit, owner: Any? = null, title: String = texts.placeAddress, onChoose: (RegisterAddress) -&gt; Unit )</ID>
-    <ID>LongMethod:AddressStep.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun AddressStep(cabinet: CabinetSession, texts: CabinetTexts, path: AddressPath)</ID>
-    <ID>LongMethod:AdminStepCard.kt$@Composable fun AdminStepCard( session: Session, cabinet: CabinetSession, setup: SetupTexts, draft: KkmSetupDraft, registered: Boolean, onDone: () -&gt; Unit )</ID>
-    <ID>LongMethod:AnalyticsKkmDialog.kt$@Composable fun AnalyticsKkmDialog( session: Session, cabinet: CabinetSession, kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinetTexts: CabinetTexts, onClose: () -&gt; Unit )</ID>
+    <ID>LongFile:ServiceStringsEn.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsEn.kt</ID>
+    <ID>LongFile:ServiceStringsKk.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsKk.kt</ID>
+    <ID>LongFile:ServiceStringsRu.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsRu.kt</ID>
+    <ID>LongFile:Sizes.kt$kz.mybrain.superkassa.presentation.theme.size.Sizes.kt</ID>
     <ID>LongMethod:AnalyticsKkmDialog.kt$@Composable private fun DialogHead( kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts, onClose: () -&gt; Unit )</ID>
-    <ID>LongMethod:AnalyticsMapFullTest.kt$AnalyticsMapFullTest$@Test fun `карта во всё окно рисуется со списком касс и закрывается Escape`()</ID>
     <ID>LongMethod:AnalyticsMapLayout.kt$@Composable internal fun HeadOverMap( modifier: Modifier = Modifier, head: @Composable () -&gt; Unit, body: @Composable () -&gt; Unit )</ID>
-    <ID>LongMethod:AnalyticsMapLegend.kt$@Composable internal fun MapLegend(legend: AnalyticsMapLegend, texts: AnalyticsTexts, modifier: Modifier = Modifier)</ID>
-    <ID>LongMethod:AnalyticsMapPane.kt$@Composable fun AnalyticsMapPane( session: Session, cabinet: CabinetSession, texts: AnalyticsTexts, cabinetTexts: CabinetTexts )</ID>
-    <ID>LongMethod:AnalyticsMapUnder.kt$@Composable internal fun UnderMap( model: AnalyticsMapModel, placement: Placement, groups: List&lt;KkmGroup&gt;, texts: AnalyticsTexts, cabinetTexts: CabinetTexts, panel: AnalyticsMapCard )</ID>
     <ID>LongMethod:AnalyticsMapWindow.kt$@Composable internal fun MapWindow( parts: MapParts, fullscreen: Boolean, onFullscreen: () -&gt; Unit, modifier: Modifier = Modifier )</ID>
     <ID>LongMethod:AnalyticsPinCard.kt$@Composable fun AnalyticsPinCard( kkm: AnalyticsKkm?, source: PositionSource, texts: AnalyticsTexts, cabinet: CabinetTexts, modifier: Modifier = Modifier, neighbours: Int = 0, onNeighbours: () -&gt; Unit = {}, onSales: (AnalyticsKkm) -&gt; Unit = {}, expanded: Boolean = true, onToggle: (() -&gt; Unit)? = null )</ID>
     <ID>LongMethod:AnalyticsSalesBody.kt$@Composable fun AnalyticsSalesBody( view: SalesView, texts: AnalyticsTexts, enums: EnumStrings, journal: HistoryJournalTexts, cabinet: CabinetTexts, modifier: Modifier = Modifier, register: String? = null )</ID>
-    <ID>LongMethod:AnalyticsSalesPane.kt$@Composable fun AnalyticsSales( session: Session, model: AnalyticsSalesModel, texts: AnalyticsTexts, cabinetTexts: CabinetTexts, modifier: Modifier = Modifier )</ID>
     <ID>LongMethod:AnalyticsSalesRegions.kt$@Composable private fun RegionShare(percent: Int)</ID>
     <ID>LongMethod:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$private fun view(days: Int = DAYS, rows: Int = ROWS)</ID>
     <ID>LongMethod:AnalyticsUnplaced.kt$@Composable fun AnalyticsKkmList( placed: List&lt;PlacedKkm&gt;, unplaced: List&lt;UnplacedKkm&gt;, chosen: String?, source: PositionSource, texts: AnalyticsTexts, onChoose: (PlacedKkm) -&gt; Unit, modifier: Modifier = Modifier, sieved: Boolean = false )</ID>
     <ID>LongMethod:AppTopBar.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AppTopBar( title: String, subtitle: String? = null, subtitleKept: String? = null, badge: ImageVector? = null, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, actions: @Composable RowScope.() -&gt; Unit )</ID>
-    <ID>LongMethod:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$@Test fun `подача из кабинета показывает ожидание подписи`()</ID>
-    <ID>LongMethod:ApplicationStepCard.kt$@Composable fun ApplicationStepCard( session: Session, cabinet: CabinetSession, setup: SetupTexts, draft: KkmSetupDraft, onRegistered: () -&gt; Unit )</ID>
-    <ID>LongMethod:ApplicationSubmit.kt$suspend fun submitApplication( cabinet: CabinetSession, kind: ActionKind, registerId: String, placeId: String, reason: DeregistrationReason, comment: String, onStage: (ApplicationStage) -&gt; Unit = {} ): ApplicationOutcome</ID>
-    <ID>LongMethod:BarcodeField.kt$@Composable fun BarcodeField(session: Session, added: Int, onFound: (Position) -&gt; Unit)</ID>
     <ID>LongMethod:BasketView.kt$@Composable fun BasketCard( basket: Basket, modifier: Modifier = Modifier, onStorno: (Int) -&gt; Unit, onExcise: (Int) -&gt; Unit, onRemove: (Int) -&gt; Unit )</ID>
     <ID>LongMethod:BusyButton.kt$@Composable fun BusyButton( text: String, busy: Boolean, enabled: Boolean = true, modifier: Modifier = Modifier, kind: FieldButtonKind = FieldButtonKind.Filled, contentPadding: PaddingValues = PaddingValues(horizontal = Spacing.normal, vertical = Spacing.snug), onClick: () -&gt; Unit )</ID>
-    <ID>LongMethod:CabinetAddressCard.kt$@Composable fun CabinetAddressCard(session: Session)</ID>
     <ID>LongMethod:CabinetContractTest.kt$CabinetContractTest$@Test fun `карточка и строка списка дают модель и точку одинаково`()</ID>
     <ID>LongMethod:CabinetDocumentsTest.kt$CabinetDocumentsTest$@Test fun `пусто за срок и пусто вовсе названы по-разному`()</ID>
     <ID>LongMethod:CabinetDoorShots.kt$CabinetDoorShots$@Test fun `отказные случаи входа показываются владельцу и все они разные`()</ID>
-    <ID>LongMethod:CabinetScreen.kt$@Composable fun CabinetScreen( session: Session, cabinet: CabinetSession, // Документы кассы открываются экраном поверх кабинета, а не вместо // него: выбранная точка и выбранная касса остаются выбранными, и по // возврату владелец видит ту же карточку, из которой уходил. Состояние // приходит снаружи: возврат из документов рисует шапка окна. documents: CabinetDocuments )</ID>
-    <ID>LongMethod:CabinetSignIn.kt$@Composable fun CabinetSignIn(session: Session, cabinet: CabinetSession, texts: CabinetTexts)</ID>
-    <ID>LongMethod:CabinetStepCard.kt$@Composable fun CabinetStepCard( session: Session, cabinet: CabinetSession, setup: SetupTexts, draft: KkmSetupDraft )</ID>
-    <ID>LongMethod:CashAdaptiveTest.kt$CashAdaptiveTest$private fun check(probe: KassaProbe, case: Case): List&lt;String&gt;</ID>
-    <ID>LongMethod:CashForm.kt$@Composable internal fun CashForm( session: Session, money: MoneyTexts, onSubmit: suspend (CashMove, BigDecimal, String) -&gt; Boolean )</ID>
-    <ID>LongMethod:CashScreen.kt$@Composable private fun DrawerCard(session: Session, drawer: DrawerTexts)</ID>
-    <ID>LongMethod:ChangesCard.kt$@Composable fun ReceiptChangesCard( session: Session, form: SaleForm, basket: Basket, expanded: Boolean, onToggle: () -&gt; Unit )</ID>
-    <ID>LongMethod:CompanyPage.kt$@Composable fun CompanyPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts)</ID>
     <ID>LongMethod:ConfirmDialog.kt$@Composable fun ConfirmDangerDialog( what: String, explain: String, action: String, cancel: String, onCancel: () -&gt; Unit, onConfirm: () -&gt; Unit )</ID>
-    <ID>LongMethod:ConnectKkmScreen.kt$@Composable fun ConnectKkmScreen( session: Session, cabinet: CabinetSession, onBack: (() -&gt; Unit)? = null )</ID>
-    <ID>LongMethod:CurrentKkmCard.kt$@Composable internal fun CurrentKkmCard(session: Session)</ID>
     <ID>LongMethod:DashboardAdaptiveTest.kt$DashboardAdaptiveTest$private fun check(probe: KassaProbe, case: Case): List&lt;String&gt;</ID>
-    <ID>LongMethod:DayJournal.kt$@Composable fun DayJournal(session: Session)</ID>
-    <ID>LongMethod:DecommissionCard.kt$@Composable fun DecommissionCard(session: Session)</ID>
-    <ID>LongMethod:DiagnosticsCard.kt$@Composable fun DiagnosticsCard(session: Session)</ID>
-    <ID>LongMethod:DocumentsScreen.kt$@Composable fun CabinetDocumentsScreen( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister )</ID>
-    <ID>LongMethod:DomainSettingTest.kt$DomainSettingTest$private fun sessionThatTakesReceipts(sent: MutableList&lt;String&gt;): Session</ID>
     <ID>LongMethod:EmptyState.kt$@Composable fun EmptyState( icon: ImageVector, title: String, hint: String? = null, modifier: Modifier = Modifier, dense: Boolean = false, centered: Boolean = false )</ID>
     <ID>LongMethod:ExciseDialog.kt$@Composable fun ExciseDialog(stamps: List&lt;String&gt;, onChanged: (List&lt;String&gt;) -&gt; Unit, onDismiss: () -&gt; Unit)</ID>
-    <ID>LongMethod:JournalPagingTest.kt$JournalPagingTest$private fun session(answers: Int, growing: Boolean = false): Session</ID>
-    <ID>LongMethod:JournalRefundTest.kt$JournalRefundTest$@Test fun `позиции уходят строками чека только вместе со своей суммой`()</ID>
     <ID>LongMethod:KassaJournalLookTest.kt$KassaJournalLookTest$@Test fun `журнал собирается пустым, полным и с отказным документом`()</ID>
     <ID>LongMethod:KassaJournalLookTest.kt$KassaJournalLookTest$private fun rowHeight(state: String): Int</ID>
-    <ID>LongMethod:KassaMoneyLookTest.kt$KassaMoneyLookTest$@Test fun `возврат собирается во всех состояниях и они различимы`()</ID>
-    <ID>LongMethod:KassaMoneyLookTest.kt$KassaMoneyLookTest$@Test fun `денежный ящик собирается во всех состояниях и они различимы`()</ID>
-    <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `блок скидок показывает было и стало`()</ID>
     <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `набранный чек рисуется вместе с итогом и помехами`()</ID>
     <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `экран продажи собирается во всех отказных состояниях и они различимы`()</ID>
-    <ID>LongMethod:KassaScene.kt$KassaScene$private fun client(admin: Boolean, refusal: NodeRefusal?, node: NodeAnswers): ServerClient</ID>
     <ID>LongMethod:KassaShiftLookTest.kt$KassaShiftLookTest$@Test fun `главный экран собирается во всех состояниях смены и они различимы`()</ID>
-    <ID>LongMethod:KkmNameTest.kt$KkmNameTest$private fun sessionThatAnswers( kkms: List&lt;String&gt;, nameAccepted: Boolean = true, written: MutableList&lt;String&gt; = mutableListOf() ): Session</ID>
     <ID>LongMethod:LabelledPicker.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun &lt;T&gt; LabelledPicker( label: String, options: List&lt;T&gt;, selected: T?, title: (T?) -&gt; String, onSelect: (T) -&gt; Unit, modifier: Modifier = Modifier, available: (T) -&gt; Boolean = { true }, width: Dp? = null, create: PickerCreate? = null )</ID>
-    <ID>LongMethod:LogWindow.kt$@Composable private fun LogBody(texts: DebugTexts)</ID>
-    <ID>LongMethod:Look.kt$@Composable internal fun MapLook( model: AnalyticsMapModel, laid: Placement, groups: List&lt;KkmGroup&gt;, view: KkmMapView?, whole: Int = laid.placed.size )</ID>
-    <ID>LongMethod:MapPickerFrame.kt$@Composable internal fun MapFooter( state: MapState, texts: CabinetTexts, onDismiss: () -&gt; Unit, onPicked: (BigDecimal, BigDecimal) -&gt; Unit )</ID>
-    <ID>LongMethod:MapRegistryAddress.kt$@Composable internal fun RegistryAddress( session: Session, cabinet: CabinetSession, texts: CabinetTexts, state: MapState, geocoder: MapGeocoder, address: RegisterAddress?, pick: MapAddressPick, notices: MapAddressTexts, onAddress: (RegisterAddress) -&gt; Unit )</ID>
-    <ID>LongMethod:MapServicesCard.kt$@Composable fun MapServicesCard(session: Session)</ID>
     <ID>LongMethod:MapTexts.kt$fun mapAddressTexts(language: Language): MapAddressTexts</ID>
     <ID>LongMethod:MapView.kt$@Composable fun MapView( state: MapState, tiles: MapTiles, texts: MapTexts, modifier: Modifier = Modifier, // Что значит нажатие по карте, решает вызывающий: в окне выбора места // оно ставит метку, на карте касс — снимает выбор ярлычка. onTap: ((Double, Double) -&gt; Unit)? = null, // Ярлычки поверх карты. Стоят внутри её окна, а не рядом: место // каждого считается от размера этого окна, и знать его должен тот, // кто им владеет. overlay: @Composable (IntSize) -&gt; Unit = {} )</ID>
-    <ID>LongMethod:NodeAddressCard.kt$@Composable fun NodeAddressCard(session: Session)</ID>
-    <ID>LongMethod:NodeCalls.kt$NodeCalls$suspend fun &lt;T&gt; guard(what: String, block: suspend () -&gt; T): T?</ID>
-    <ID>LongMethod:NodeFactsCard.kt$@Composable fun NodeFactsCard(session: Session)</ID>
-    <ID>LongMethod:OfdStep.kt$@Composable fun OfdStep(session: Session)</ID>
-    <ID>LongMethod:OfdSyncCard.kt$@Composable fun OfdSyncCard(session: Session)</ID>
-    <ID>LongMethod:OfdTokenCard.kt$@Composable fun OfdTokenCard(session: Session)</ID>
-    <ID>LongMethod:OkedPicker.kt$@Composable fun OkedPicker( session: Session, cabinet: CabinetSession, texts: CabinetTexts, known: List&lt;String&gt;, onAdd: (Oked) -&gt; Unit )</ID>
-    <ID>LongMethod:OkedSuggestions.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun OkedSuggestions( texts: CabinetTexts, query: String, found: List&lt;OkedEntry&gt;, open: Boolean, rest: Long?, title: (OkedEntry) -&gt; String, onMore: () -&gt; Unit, onOpen: (Boolean) -&gt; Unit, onQuery: (String) -&gt; Unit, onPick: (OkedEntry) -&gt; Unit )</ID>
-    <ID>LongMethod:OkedsCard.kt$@Composable fun OkedsCard( texts: CabinetTexts, okeds: MutableList&lt;Oked&gt;, busy: Boolean, saved: List&lt;Oked&gt;, title: (Oked) -&gt; String, onSave: () -&gt; Unit )</ID>
-    <ID>LongMethod:PastShiftsView.kt$@Composable fun PastShiftsView(session: Session)</ID>
-    <ID>LongMethod:PaymentLines.kt$@Composable fun PaymentLines( session: Session, split: PaymentSplit, total: BigDecimal, unsupportedNote: String = "", modifier: Modifier = Modifier )</ID>
-    <ID>LongMethod:PinDialog.kt$@Composable internal fun ChangePinDialog( money: MoneyTexts, who: String, /** Кассир меняет пин себе: только тогда работа продолжится новым пином. */ own: Boolean, onDismiss: () -&gt; Unit, onConfirm: suspend (String) -&gt; Boolean )</ID>
-    <ID>LongMethod:PlaceCard.kt$@Composable fun PlaceCard( session: Session, cabinet: CabinetSession, texts: CabinetTexts, place: RetailPlace, modifier: Modifier = Modifier, onChanged: () -&gt; Unit )</ID>
-    <ID>LongMethod:PlaceEditRow.kt$@Composable private fun PlaceMove( session: Session, cabinet: CabinetSession, texts: CabinetTexts, place: RetailPlace, onChanged: () -&gt; Unit )</ID>
-    <ID>LongMethod:PlaceEditRow.kt$@Composable private fun PlaceRename( cabinet: CabinetSession, texts: CabinetTexts, place: RetailPlace, onChanged: () -&gt; Unit )</ID>
     <ID>LongMethod:PlaceLook.kt$@Composable internal fun PlacesLook( places: List&lt;RetailPlace&gt;, registers: List&lt;CabinetRegister&gt;, open: String? = null, sieve: PlaceSieve = PlaceSieve(), loading: Boolean = false, collapsed: Boolean = false, /** Кассы, заблокированные по словам кабинета, и знает ли он о них. */ locked: Set&lt;String&gt; = emptySet(), locksKnown: Boolean = true, /** Кабинет списка не отдал — его словами; `null` — отдал. */ trouble: String? = null )</ID>
     <ID>LongMethod:PlaceMapShots.kt$@Composable private fun PickerLook(address: RegisterAddress?, state: MapState)</ID>
-    <ID>LongMethod:PlacePoint.kt$@Composable fun PlacePoint( session: Session, cabinet: CabinetSession, texts: CabinetTexts, point: MapPoint?, address: RegisterAddress?, onAddress: (RegisterAddress) -&gt; Unit, onPoint: (MapPoint) -&gt; Unit )</ID>
     <ID>LongMethod:PlaceTree.kt$@Composable internal fun PlaceTree( texts: CabinetTexts, language: Language, collapsed: Boolean, onToggle: () -&gt; Unit, rows: List&lt;PlaceRow&gt;, total: Int, loading: Boolean, trouble: String?, onRetry: () -&gt; Unit, sieve: PlaceSieve, onSieve: (PlaceSieve) -&gt; Unit, locksKnown: Boolean, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, footer: @Composable ColumnScope.() -&gt; Unit, listState: LazyListState = rememberLazyListState(), modifier: Modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn) )</ID>
     <ID>LongMethod:PlaceTreeRows.kt$@Composable internal fun TreeRows( texts: CabinetTexts, language: Language, rows: List&lt;PlaceRow&gt;, state: ScreenState, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, listState: LazyListState, modifier: Modifier = Modifier, sieve: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongMethod:PlacesPage.kt$@Composable fun PlacesPage(session: Session, cabinet: CabinetSession, texts: CabinetTexts)</ID>
-    <ID>LongMethod:PositionEntry.kt$@Composable fun PositionEntryCard( session: Session, expanded: Boolean, onToggle: () -&gt; Unit, onAdd: (Position) -&gt; Unit )</ID>
-    <ID>LongMethod:PriceAskDialog.kt$@Composable fun PriceAskDialog( found: Position, units: List&lt;UnitOfMeasurement&gt;, onAdd: (Position) -&gt; Unit, onDismiss: () -&gt; Unit )</ID>
-    <ID>LongMethod:PrintFormCard.kt$@Composable fun PrintFormCard(session: Session)</ID>
-    <ID>LongMethod:PrintOverlay.kt$@Composable private fun DrawPinDialog(request: PinRequest, onDismiss: () -&gt; Unit, onEnter: (String) -&gt; Unit)</ID>
-    <ID>LongMethod:PrintTargetCard.kt$@Composable internal fun PrintTargetCard(session: Session, printers: List&lt;String&gt; = remember { Printing.printers() })</ID>
     <ID>LongMethod:Printing.kt$Printing$private fun clearCorners(picture: BufferedImage, background: Int): BufferedImage</ID>
-    <ID>LongMethod:QueueScreen.kt$@Composable fun QueueScreen(session: Session)</ID>
-    <ID>LongMethod:QueueSummary.kt$@Composable internal fun QueueSummary( session: Session, journal: QueueJournalTexts, waiting: Int, read: Boolean, hasFailed: Boolean, hasRejected: Boolean )</ID>
-    <ID>LongMethod:RailVersion.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable internal fun RailVersion(session: Session, onOpenUpdate: () -&gt; Unit)</ID>
     <ID>LongMethod:ReceiptBreakdown.kt$@Composable fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetTexts)</ID>
     <ID>LongMethod:ReceiptPreview.kt$@Composable fun ReceiptPreview( image: ByteArray?, drawing: Boolean = false, trouble: ScreenState.Trouble? = null, onPrint: (() -&gt; Unit)? = null, onSave: (() -&gt; Unit)? = null, onDismiss: () -&gt; Unit )</ID>
-    <ID>LongMethod:ReceiptPreview.kt$@OptIn(ExperimentalComposeUiApi::class) @Composable private fun TapeView(bitmap: BitmapPainter, width: Dp, title: String, onZoom: (Dp) -&gt; Unit)</ID>
     <ID>LongMethod:RecordRow.kt$@Composable fun RecordRow( title: String, modifier: Modifier = Modifier, subtitle: String? = null, amount: String? = null, support: @Composable (() -&gt; Unit)? = null, striped: Boolean = false, selected: Boolean = false, leading: @Composable (() -&gt; Unit)? = null, trailing: @Composable (() -&gt; Unit)? = null, titleLines: Int = 1, onClick: (() -&gt; Unit)? = null )</ID>
-    <ID>LongMethod:RefundItems.kt$@Composable internal fun RefundItems( session: Session, items: List&lt;SoldItem&gt;, chosen: Set&lt;Int&gt;, journal: ReturnJournalTexts, onToggle: (Int) -&gt; Unit )</ID>
-    <ID>LongMethod:RefundOperation.kt$internal suspend fun refund( session: Session, texts: AppStrings, kind: ReturnKind, basis: Document, refundTiyn: Long, payments: List&lt;ReceiptPayment&gt;, key: String, returned: List&lt;SoldItem&gt; ): Boolean</ID>
-    <ID>LongMethod:RefundPanel.kt$@Composable private fun RefundForm( session: Session, journal: ReturnJournalTexts, kind: ReturnKind, basis: Document, onBack: () -&gt; Unit, onDone: () -&gt; Unit )</ID>
-    <ID>LongMethod:RefundPlan.kt$fun refundRequest( basis: Document, kgdKkmId: String, refundTiyn: Long, idempotencyKey: String, lineName: String, payments: List&lt;ReceiptPayment&gt;, domain: ReceiptDomain, returned: List&lt;SoldItem&gt; = emptyList() ): ReceiptRequest?</ID>
-    <ID>LongMethod:RegisterDetails.kt$@Composable fun RegisterDetails( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, modifier: Modifier = Modifier )</ID>
-    <ID>LongMethod:RegisterDetails.kt$@Composable private fun RegisterLiveBlocks( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, card: CabinetRegister, state: RegisterState?, open: Set&lt;RegisterBlock&gt;, onToggle: (RegisterBlock) -&gt; Unit, onDone: () -&gt; Unit )</ID>
-    <ID>LongMethod:RegisterEditCard.kt$@Composable fun RegisterEditCard( cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, onChanged: () -&gt; Unit )</ID>
     <ID>LongMethod:RegisterFields.kt$@Composable internal fun RegisterFields( texts: CabinetTexts, language: Language, draft: RegisterDraft, places: List&lt;RetailPlace&gt;, models: List&lt;KkmModel&gt;, stamped: Boolean, issued: Boolean, onCreatePlace: () -&gt; Unit )</ID>
-    <ID>LongMethod:RegisterPassport.kt$@Composable fun RegisterPassport( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, state: RegisterState?, onChanged: () -&gt; Unit )</ID>
-    <ID>LongMethod:RegisterTokenBlock.kt$@Composable fun RegisterTokenBlock( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister )</ID>
-    <ID>LongMethod:RegistrationActions.kt$@Composable fun RegistrationActionsBlock( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, onDone: () -&gt; Unit )</ID>
-    <ID>LongMethod:RegistrationCardBlock.kt$@Composable fun RegistrationCardBlock(cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister)</ID>
-    <ID>LongMethod:RegistrationCardVersions.kt$@Composable fun RegistrationCardVersions(cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister)</ID>
-    <ID>LongMethod:RegistrationCardVersions.kt$@Composable private fun VersionCard(cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, version: Int)</ID>
     <ID>LongMethod:ReturnsAdaptiveTest.kt$ReturnsAdaptiveTest$private fun check(probe: KassaProbe, case: Case): List&lt;String&gt;</ID>
-    <ID>LongMethod:ReturnsScreen.kt$@Composable fun ReturnsScreen(session: Session)</ID>
-    <ID>LongMethod:SaleAdaptiveTest.kt$SaleAdaptiveTest$@Test fun `снекбар отказа не закрывает кнопку и принятые деньги`()</ID>
-    <ID>LongMethod:SaleScreen.kt$@Composable private fun ReceiptColumn(form: SaleForm, basket: Basket)</ID>
-    <ID>LongMethod:SaleScreen.kt$@Composable private fun TillColumn( session: Session, form: SaleForm, basket: Basket, panels: SalePanels, total: BigDecimal )</ID>
-    <ID>LongMethod:SalesLook.kt$SalesLook$fun show(): SalesView</ID>
     <ID>LongMethod:ScrollingTableTest.kt$ScrollingTableTest$@Test fun `в узком окне кнопка строки целиком за краем и приезжает прокруткой вбок`()</ID>
     <ID>LongMethod:SearchablePicker.kt$@Composable fun &lt;T&gt; SearchablePicker( label: String, options: List&lt;T&gt;, selected: T?, title: (T) -&gt; String, keys: (T) -&gt; List&lt;String&gt;, notFound: String, onSelect: (T) -&gt; Unit )</ID>
     <ID>LongMethod:SearchablePicker.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable private fun &lt;T&gt; Picker( label: String, query: String, found: List&lt;T&gt;, open: Boolean, title: (T) -&gt; String, onOpen: (Boolean) -&gt; Unit, onQuery: (String) -&gt; Unit, onPick: (T) -&gt; Unit )</ID>
-    <ID>LongMethod:SettingsScreen.kt$@Composable fun SettingsCards(session: Session, modifier: Modifier = Modifier)</ID>
-    <ID>LongMethod:SetupStepCard.kt$@Composable fun SetupStepCard( title: String, hint: String, texts: SetupTexts, done: Boolean, ready: Boolean, summary: String = "", content: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongMethod:ShiftDocuments.kt$@Composable internal fun ColumnScope.ShiftDocuments( session: Session, journal: ShiftJournalTexts, shift: Shift, documents: List&lt;Document&gt;, loading: Boolean, page: PageOutcome, onBack: () -&gt; Unit, onRetry: () -&gt; Unit, onPreview: (Document) -&gt; Unit )</ID>
     <ID>LongMethod:SignWait.kt$@Composable fun SignWait( left: Duration, window: Duration, texts: CabinetTexts, eds: EdsTexts, onCancel: () -&gt; Unit )</ID>
-    <ID>LongMethod:UserRow.kt$@Composable internal fun UserRow( money: MoneyTexts, roleTitle: String, user: KkmUser, /** Это тот кассир, который сейчас работает: только ему меняют пин себе. */ own: Boolean, deletable: Boolean, onChangePin: suspend (String) -&gt; Boolean, onRemove: () -&gt; Unit )</ID>
-    <ID>LongMethod:UsersOwnPinTest.kt$UsersOwnPinTest$private fun workplace(): Session</ID>
-    <ID>LongMethod:UsersScreen.kt$@Composable fun UsersScreen(session: Session)</ID>
-    <ID>LongParameterList:AdaptiveDialogShots.kt$AdaptiveDialogShots$(kind: String, width: Int, height: Int, language: Language, scale: TextScale, type: String? = null, content: @Composable () -&gt; Unit)</ID>
-    <ID>LongParameterList:AddRegisterDialog.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, known: FactoryStamp? = null, onDismiss: () -&gt; Unit, onAdded: (CabinetRegister) -&gt; Unit )</ID>
-    <ID>LongParameterList:AddressSearch.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, query: String, onQuery: (String) -&gt; Unit, owner: Any? = null, title: String = texts.placeAddress, onChoose: (RegisterAddress) -&gt; Unit )</ID>
-    <ID>LongParameterList:AdjustmentField.kt$( label: String, change: Adjustment, modifier: Modifier, isError: Boolean, supportingText: String?, onEnter: (String) -&gt; Unit, onSwitch: (AdjustmentUnit) -&gt; Unit )</ID>
-    <ID>LongParameterList:AdminStepCard.kt$( session: Session, cabinet: CabinetSession, setup: SetupTexts, draft: KkmSetupDraft, registered: Boolean, onDone: () -&gt; Unit )</ID>
-    <ID>LongParameterList:AdoptRegisterDialog.kt$( session: Session, cabinet: CabinetSession, machine: MachineTexts, register: CabinetRegister, draft: AdoptDraft, onDone: () -&gt; Unit )</ID>
-    <ID>LongParameterList:AdoptRegisterDialog.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, state: RegisterState?, onDismiss: () -&gt; Unit )</ID>
-    <ID>LongParameterList:AnalyticsAdaptiveTest.kt$AnalyticsAdaptiveTest$( set: String, reply: (String) -&gt; String?, size: Pair&lt;Int, Int&gt;, scale: TextScale, language: Language, dark: Boolean = false )</ID>
-    <ID>LongParameterList:AnalyticsExchangePane.kt$( model: AnalyticsExchangeModel, rows: List&lt;ExchangeAddress&gt;, nothingAtAll: Boolean, texts: AnalyticsTexts, modifier: Modifier = Modifier, onRetry: () -&gt; Unit )</ID>
-    <ID>LongParameterList:AnalyticsExchangeTest.kt$AnalyticsExchangeTest$( id: String, kkmId: Int, registrationNumber: String, internalName: String, place: String, address: String )</ID>
-    <ID>LongParameterList:AnalyticsKkmDialog.kt$( session: Session, cabinet: CabinetSession, kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinetTexts: CabinetTexts, onClose: () -&gt; Unit )</ID>
-    <ID>LongParameterList:AnalyticsLookShots.kt$AnalyticsLookShots$( name: String, language: Language, width: Int, height: Int, appearance: Appearance = Appearance.Light, content: @Composable () -&gt; Unit )</ID>
-    <ID>LongParameterList:AnalyticsMapGroupsTest.kt$AnalyticsMapGroupsTest$( id: String, latitude: Double, longitude: Double, blocked: Boolean = false, name: String? = null, address: String? = null )</ID>
-    <ID>LongParameterList:AnalyticsMapPane.kt$MapParts$( val session: Session, val model: AnalyticsMapModel, val services: MapServices, val placement: Placement, /** Сколько касс встало на карту до отбора: с этим числом сверяется итог в углу. */ val whole: Int, val groups: List&lt;KkmGroup&gt;, val texts: AnalyticsTexts, val cabinetTexts: CabinetTexts, val panel: AnalyticsMapCard, val legend: AnalyticsMapLegend )</ID>
-    <ID>LongParameterList:AnalyticsMapShots.kt$AnalyticsMapShots$( name: String, view: KkmMapView, found: Map&lt;String, Pair&lt;Double, Double&gt;?&gt;, width: Int = WIDE, height: Int = HIGH, settle: (AnalyticsMapModel, List&lt;KkmGroup&gt;) -&gt; Unit = { _, _ -&gt; } )</ID>
-    <ID>LongParameterList:AnalyticsMapUnder.kt$( model: AnalyticsMapModel, placement: Placement, groups: List&lt;KkmGroup&gt;, texts: AnalyticsTexts, cabinetTexts: CabinetTexts, panel: AnalyticsMapCard )</ID>
     <ID>LongParameterList:AnalyticsPinCard.kt$( kkm: AnalyticsKkm?, source: PositionSource, texts: AnalyticsTexts, cabinet: CabinetTexts, modifier: Modifier = Modifier, neighbours: Int = 0, onNeighbours: () -&gt; Unit = {}, onSales: (AnalyticsKkm) -&gt; Unit = {}, expanded: Boolean = true, onToggle: (() -&gt; Unit)? = null )</ID>
-    <ID>LongParameterList:AnalyticsSalesBody.kt$( view: SalesView, texts: AnalyticsTexts, enums: EnumStrings, journal: HistoryJournalTexts, cabinet: CabinetTexts, modifier: Modifier = Modifier, register: String? = null )</ID>
-    <ID>LongParameterList:AnalyticsSalesOverview.kt$( label: String, change: Int?, texts: AnalyticsSalesTexts, modifier: Modifier = Modifier, points: Boolean = false, value: @Composable () -&gt; Unit )</ID>
-    <ID>LongParameterList:AnalyticsSalesTable.kt$( rows: List&lt;SalesUnit&gt;, kind: SalesRows, texts: AnalyticsTexts, journal: HistoryJournalTexts, allShown: String, modifier: Modifier = Modifier )</ID>
-    <ID>LongParameterList:AnalyticsSalesTable.kt$( widths: TableWidths, columns: List&lt;SalesColumn&gt;, kind: SalesRows, texts: AnalyticsTexts, journal: HistoryJournalTexts, sort: SalesSort, onSort: (SalesOrder) -&gt; Unit )</ID>
-    <ID>LongParameterList:AnalyticsSpotCard.kt$( group: KkmGroup, texts: AnalyticsTexts, cabinet: CabinetTexts, onChoose: (PlacedKkm) -&gt; Unit, modifier: Modifier = Modifier, expanded: Boolean = true, onToggle: (() -&gt; Unit)? = null )</ID>
     <ID>LongParameterList:AnalyticsUnplaced.kt$( placed: List&lt;PlacedKkm&gt;, unplaced: List&lt;UnplacedKkm&gt;, chosen: String?, source: PositionSource, texts: AnalyticsTexts, onChoose: (PlacedKkm) -&gt; Unit, modifier: Modifier = Modifier, sieved: Boolean = false )</ID>
-    <ID>LongParameterList:AppTopBar.kt$( title: String, subtitle: String? = null, subtitleKept: String? = null, badge: ImageVector? = null, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, actions: @Composable RowScope.() -&gt; Unit )</ID>
-    <ID>LongParameterList:ApplicationSubmit.kt$( cabinet: CabinetSession, kind: ActionKind, registerId: String, placeId: String, reason: DeregistrationReason, comment: String, onStage: (ApplicationStage) -&gt; Unit = {} )</ID>
-    <ID>LongParameterList:BasisList.kt$( candidates: List&lt;Document&gt;, chosen: Document?, journal: ReturnJournalTexts, history: HistoryJournalTexts, more: Boolean, loading: Boolean, modifier: Modifier, onMore: () -&gt; Unit, onChoose: (Document) -&gt; Unit )</ID>
-    <ID>LongParameterList:BasisSearch.kt$( history: HistoryJournalTexts, day: LocalDate, number: String, loading: Boolean, onNumber: (String) -&gt; Unit, onDay: (LocalDate) -&gt; Unit )</ID>
-    <ID>LongParameterList:BasisState.kt$( session: Session, journal: ReturnJournalTexts, kind: ReturnKind, found: Boolean, loading: Boolean, page: PageOutcome, onRetry: () -&gt; Unit )</ID>
-    <ID>LongParameterList:BasketView.kt$( basket: Basket, modifier: Modifier, onOpen: (Int) -&gt; Unit, onStorno: (Int) -&gt; Unit, onExcise: (Int) -&gt; Unit, onRemove: (Int) -&gt; Unit )</ID>
-    <ID>LongParameterList:BusyButton.kt$( text: String, busy: Boolean, enabled: Boolean = true, modifier: Modifier = Modifier, kind: FieldButtonKind = FieldButtonKind.Filled, contentPadding: PaddingValues = PaddingValues(horizontal = Spacing.normal, vertical = Spacing.snug), onClick: () -&gt; Unit )</ID>
-    <ID>LongParameterList:CabinetPlaceSieveShots.kt$CabinetPlaceSieveShots$( name: String, sieve: PlaceSieve, places: List&lt;RetailPlace&gt; = this.places, locked: Set&lt;String&gt; = emptySet(), locksKnown: Boolean = true, trouble: String? = null )</ID>
-    <ID>LongParameterList:CashScreen.kt$( session: Session, texts: AppStrings, money: MoneyTexts, move: CashMove, amount: BigDecimal, idempotencyKey: String, recent: MutableList&lt;Document&gt; )</ID>
-    <ID>LongParameterList:ChoiceSegments.kt$( options: List&lt;T&gt;, selected: T, label: (T) -&gt; String, modifier: Modifier = Modifier, enabled: Boolean = true, available: (T) -&gt; Boolean = { true }, onSelect: (T) -&gt; Unit )</ID>
-    <ID>LongParameterList:CollapsibleSection.kt$( title: String, expanded: Boolean, onToggle: () -&gt; Unit, info: String? = null, trailing: @Composable () -&gt; Unit = {}, always: @Composable ColumnScope.() -&gt; Unit = {}, content: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongParameterList:ColorChoice.kt$( options: List&lt;T&gt;, selected: T, swatch: @Composable (T) -&gt; Swatch, label: (T) -&gt; String, modifier: Modifier = Modifier, onSelect: (T) -&gt; Unit )</ID>
-    <ID>LongParameterList:ConfirmCash.kt$( deposit: CashDecision, withdraw: CashDecision, money: DrawerTexts, drawer: Long?, shiftOpen: Boolean = true, kkmBlocked: Boolean = false )</ID>
-    <ID>LongParameterList:ConfirmCash.kt$( money: DrawerTexts, pending: CashAttempt, drawer: Long?, busy: Boolean, onCancel: () -&gt; Unit, onConfirm: () -&gt; Unit )</ID>
     <ID>LongParameterList:ConfirmDialog.kt$( icon: ImageVector, what: String, explain: String, action: String, cancel: String, busy: Boolean = false, onCancel: () -&gt; Unit, onConfirm: () -&gt; Unit )</ID>
-    <ID>LongParameterList:ConfirmDialog.kt$( what: String, explain: String, action: String, cancel: String, onCancel: () -&gt; Unit, onConfirm: () -&gt; Unit )</ID>
-    <ID>LongParameterList:DocumentListState.kt$DocumentListState$( cabinet: CabinetSession, token: String, registerId: String, kind: DocumentKind, period: DocumentPeriod, texts: CabinetTexts )</ID>
-    <ID>LongParameterList:DocumentRows.kt$( cabinet: CabinetSession, token: String, id: String, kind: DocumentKind, page: Int, period: DocumentPeriod, texts: CabinetTexts )</ID>
-    <ID>LongParameterList:DocumentsScreen.kt$( journal: HistoryJournalTexts, empty: JournalEmpty, list: DocumentListState, query: JournalQuery, desk: DocumentDesk, registerId: String, kind: DocumentKind, onQuery: (JournalQuery) -&gt; Unit, onOpen: (RowTarget?) -&gt; Unit, onMore: () -&gt; Unit )</ID>
-    <ID>LongParameterList:EmptyState.kt$( icon: ImageVector, title: String, hint: String? = null, modifier: Modifier = Modifier, dense: Boolean = false, centered: Boolean = false )</ID>
     <ID>LongParameterList:FormDialog.kt$( title: String, icon: ImageVector, action: String, close: String, busy: Boolean, missing: List&lt;String&gt;, onDismiss: () -&gt; Unit, onAction: () -&gt; Unit, content: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongParameterList:JournalFilters.kt$( journal: HistoryJournalTexts, types: List&lt;JournalType&gt;, deliveries: List&lt;JournalDelivery&gt;, shifts: List&lt;Long&gt;, query: JournalQuery, onQuery: (JournalQuery) -&gt; Unit )</ID>
-    <ID>LongParameterList:JournalQueryTest.kt$JournalQueryTest$( key: String, at: Long? = 0, type: String? = "SALE", number: String = "1", numberOrder: Long? = 1, amount: String = "0,00 ₸", amountOrder: BigDecimal? = BigDecimal.ZERO, sign: String = "—", delivery: JournalDelivery? = JournalDelivery.Delivered, shiftNo: Long? = 7, about: String = "" )</ID>
-    <ID>LongParameterList:JournalTable.kt$( entry: JournalEntry, striped: Boolean, onOpen: (() -&gt; Unit)? = null, onPreview: (() -&gt; Unit)? = null, onPrint: (() -&gt; Unit)? = null, widths: TableWidths = leastWidths(journalColumns()) )</ID>
-    <ID>LongParameterList:JournalTable.kt$( journal: HistoryJournalTexts, entries: List&lt;JournalEntry&gt;, modifier: Modifier = Modifier, onOpen: ((JournalEntry) -&gt; Unit)? = null, onPreview: ((JournalEntry) -&gt; Unit)? = null, onPrint: ((JournalEntry) -&gt; Unit)? = null )</ID>
-    <ID>LongParameterList:JournalView.kt$( journal: HistoryJournalTexts, empty: JournalEmpty, rows: Int, shown: Int, loading: Boolean, unread: Boolean, onRetry: (() -&gt; Unit)? )</ID>
     <ID>LongParameterList:JournalView.kt$( journal: HistoryJournalTexts, entries: List&lt;JournalEntry&gt;, shown: List&lt;JournalEntry&gt;, loading: Boolean, more: Boolean, onMore: () -&gt; Unit, onOpen: ((JournalEntry) -&gt; Unit)?, onPreview: ((JournalEntry) -&gt; Unit)?, onPrint: ((JournalEntry) -&gt; Unit)? )</ID>
     <ID>LongParameterList:JournalView.kt$( journal: HistoryJournalTexts, entries: List&lt;JournalEntry&gt;, types: List&lt;JournalType&gt;, query: JournalQuery, loading: Boolean, more: Boolean, empty: JournalEmpty, unread: Boolean = false, onQuery: (JournalQuery) -&gt; Unit, onMore: () -&gt; Unit, onRetry: (() -&gt; Unit)? = null, onOpen: ((JournalEntry) -&gt; Unit)? = null, onPreview: ((JournalEntry) -&gt; Unit)? = null, onPrint: ((JournalEntry) -&gt; Unit)? = null, head: @Composable () -&gt; Unit = {} )</ID>
-    <ID>LongParameterList:KassaScene.kt$KassaScene$( folder: String, kkm: Kkm? = kkm(), admin: Boolean = true, available: Boolean = true, shift: Shift? = null, shiftAnswered: Boolean = true, documents: List&lt;Document&gt; = emptyList(), cashInDrawerTiyn: Long? = 125_000, payments: List&lt;DictionaryEntry&gt;? = null, refusal: NodeRefusal? = null, journal: List&lt;Document&gt; = emptyList(), /** Отвечает ли узел на список документов; `false` — не отвечает вовсе. */ journalAnswered: Boolean = true, /** Что отдаёт узел на список прошлых смен; `null` — не отвечает вовсе. */ pastShifts: List&lt;Shift&gt;? = null, sold: List&lt;SoldItem&gt; = emptyList(), cashiers: List&lt;KkmUser&gt;? = null, /** Что отдаёт каталог на поиск по штрихкоду; `null` — ничего не нашёл. */ catalogue: NomenclatureItem? = null, /** * Что отдаёт узел на список касс; `null` — не отдаёт вовсе. * * Список нужен экрану входа: пока узел на него не отвечает, экран * показывает отказ, и снимок входа выходит отказным всегда. */ kkms: List&lt;Kkm&gt;? = null )</ID>
     <ID>LongParameterList:LabelledPicker.kt$( label: String, options: List&lt;T&gt;, selected: T?, title: (T?) -&gt; String, onSelect: (T) -&gt; Unit, modifier: Modifier = Modifier, available: (T) -&gt; Boolean = { true }, width: Dp? = null, create: PickerCreate? = null )</ID>
-    <ID>LongParameterList:LogFilters.kt$( texts: DebugTexts, level: LogLevel, query: String, shown: Int, onLevel: (LogLevel) -&gt; Unit, onQuery: (String) -&gt; Unit, onClear: () -&gt; Unit, onSave: () -&gt; Unit )</ID>
-    <ID>LongParameterList:Look.kt$Look$( at: Int, place: String? = "Магазин на Абая", placeId: String? = "p-1", address: String? = "г. Алматы, пр. Абая, 10", blocked: Boolean = false, status: String? = "REGISTERED", shiftOpen: Boolean = false )</ID>
-    <ID>LongParameterList:MapPickerDialog.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, latitude: BigDecimal?, longitude: BigDecimal?, address: RegisterAddress?, onAddress: (RegisterAddress) -&gt; Unit, onDismiss: () -&gt; Unit, onPicked: (BigDecimal, BigDecimal) -&gt; Unit )</ID>
-    <ID>LongParameterList:MapPickerDialog.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, parts: MapPickerParts, address: RegisterAddress?, onAddress: (RegisterAddress) -&gt; Unit, onDismiss: () -&gt; Unit, onPicked: (BigDecimal, BigDecimal) -&gt; Unit )</ID>
-    <ID>LongParameterList:MapRegistryAddress.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, state: MapState, geocoder: MapGeocoder, address: RegisterAddress?, pick: MapAddressPick, notices: MapAddressTexts, onAddress: (RegisterAddress) -&gt; Unit )</ID>
-    <ID>LongParameterList:MapView.kt$( state: MapState, tiles: MapTiles, texts: MapTexts, modifier: Modifier = Modifier, // Что значит нажатие по карте, решает вызывающий: в окне выбора места // оно ставит метку, на карте касс — снимает выбор ярлычка. onTap: ((Double, Double) -&gt; Unit)? = null, // Ярлычки поверх карты. Стоят внутри её окна, а не рядом: место // каждого считается от размера этого окна, и знать его должен тот, // кто им владеет. overlay: @Composable (IntSize) -&gt; Unit = {} )</ID>
     <ID>LongParameterList:MoneyField.kt$( value: String, label: String, modifier: Modifier, isError: Boolean = false, placeholder: String? = null, supportingText: String? = null, trailing: (@Composable () -&gt; Unit)? = null, readOnly: Boolean = false, onValueChange: (String) -&gt; Unit )</ID>
-    <ID>LongParameterList:MoneyField.kt$( value: TextFieldValue, label: String, modifier: Modifier, isError: Boolean = false, supportingText: String? = null, onValueChange: (TextFieldValue) -&gt; Unit )</ID>
-    <ID>LongParameterList:MoreRow.kt$( more: Boolean, loading: Boolean, showMore: String, allShown: String, note: String? = null, onMore: () -&gt; Unit )</ID>
     <ID>LongParameterList:OkedSuggestions.kt$( texts: CabinetTexts, query: String, found: List&lt;OkedEntry&gt;, open: Boolean, rest: Long?, title: (OkedEntry) -&gt; String, onMore: () -&gt; Unit, onOpen: (Boolean) -&gt; Unit, onQuery: (String) -&gt; Unit, onPick: (OkedEntry) -&gt; Unit )</ID>
-    <ID>LongParameterList:OkedsCard.kt$( oked: Oked, texts: CabinetTexts, title: String, striped: Boolean, onPrimary: () -&gt; Unit, onRemove: () -&gt; Unit )</ID>
-    <ID>LongParameterList:OkedsCard.kt$( texts: CabinetTexts, okeds: MutableList&lt;Oked&gt;, busy: Boolean, saved: List&lt;Oked&gt;, title: (Oked) -&gt; String, onSave: () -&gt; Unit )</ID>
-    <ID>LongParameterList:PastShiftsView.kt$( journal: ShiftJournalTexts, shifts: List&lt;Shift&gt;, loading: Boolean, page: PageOutcome, onMore: () -&gt; Unit, onRetry: () -&gt; Unit, onOpen: (Shift) -&gt; Unit, onZReport: (Shift) -&gt; Unit )</ID>
-    <ID>LongParameterList:PaymentPicker.kt$( entries: List&lt;DictionaryEntry&gt;, language: String, selectedCode: String, onSelect: (String) -&gt; Unit, unsupportedNote: String = "", modifier: Modifier = Modifier )</ID>
-    <ID>LongParameterList:Pickers.kt$( label: String, entries: List&lt;DictionaryEntry&gt;, language: String, selectedCode: String, onSelect: (String) -&gt; Unit, width: Dp, available: (DictionaryEntry) -&gt; Boolean = { it.supported } )</ID>
-    <ID>LongParameterList:PlaceCard.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, place: RetailPlace, modifier: Modifier = Modifier, onChanged: () -&gt; Unit )</ID>
-    <ID>LongParameterList:PlaceDetail.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, places: List&lt;RetailPlace&gt;, place: String?, register: String?, onBack: (() -&gt; Unit)?, onChanged: () -&gt; Unit )</ID>
     <ID>LongParameterList:PlaceLook.kt$( places: List&lt;RetailPlace&gt;, registers: List&lt;CabinetRegister&gt;, open: String? = null, sieve: PlaceSieve = PlaceSieve(), loading: Boolean = false, collapsed: Boolean = false, /** Кассы, заблокированные по словам кабинета, и знает ли он о них. */ locked: Set&lt;String&gt; = emptySet(), locksKnown: Boolean = true, /** Кабинет списка не отдал — его словами; `null` — отдал. */ trouble: String? = null )</ID>
-    <ID>LongParameterList:PlacePicker.kt$( label: String, texts: CabinetTexts, language: Language, places: List&lt;RetailPlace&gt;, selected: RetailPlace?, onSelect: (RetailPlace) -&gt; Unit, onCreate: (() -&gt; Unit)? = null )</ID>
-    <ID>LongParameterList:PlacePoint.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, point: MapPoint?, address: RegisterAddress?, onAddress: (RegisterAddress) -&gt; Unit, onPoint: (MapPoint) -&gt; Unit )</ID>
-    <ID>LongParameterList:PlaceRail.kt$( rows: List&lt;PlaceRow&gt;, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, modifier: Modifier = Modifier )</ID>
-    <ID>LongParameterList:PlaceRow.kt$( places: List&lt;RetailPlace&gt;, registers: List&lt;CabinetRegister&gt;, open: String?, sieve: PlaceSieve = PlaceSieve(), locked: Set&lt;String&gt; = emptySet(), language: Language = Language.Ru )</ID>
     <ID>LongParameterList:PlaceTree.kt$( texts: CabinetTexts, language: Language, collapsed: Boolean, onToggle: () -&gt; Unit, rows: List&lt;PlaceRow&gt;, total: Int, loading: Boolean, trouble: String?, onRetry: () -&gt; Unit, sieve: PlaceSieve, onSieve: (PlaceSieve) -&gt; Unit, locksKnown: Boolean, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, footer: @Composable ColumnScope.() -&gt; Unit, listState: LazyListState = rememberLazyListState(), modifier: Modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn) )</ID>
     <ID>LongParameterList:PlaceTreeRows.kt$( texts: CabinetTexts, language: Language, rows: List&lt;PlaceRow&gt;, state: ScreenState, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, listState: LazyListState, modifier: Modifier = Modifier, sieve: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongParameterList:PositionDetailsDialog.kt$( details: PositionDetails, texts: SaleTexts, units: List&lt;UnitOfMeasurement&gt;, rates: List&lt;VatRate&gt;, onDismiss: () -&gt; Unit, onStorno: (() -&gt; Unit)? = null, onRemove: (() -&gt; Unit)? = null )</ID>
-    <ID>LongParameterList:PriceAskDialog.kt$( ask: PriceAsk, field: DraftField, value: TextFieldValue, label: String, modifier: Modifier, onChange: (TextFieldValue) -&gt; Unit )</ID>
-    <ID>LongParameterList:QueueList.kt$( task: QueueTask, texts: AppStrings, journal: QueueJournalTexts, striped: Boolean, language: String, taskTitle: (String?) -&gt; String )</ID>
-    <ID>LongParameterList:QueueList.kt$( title: String, tasks: List&lt;QueueTask&gt;, texts: AppStrings, journal: QueueJournalTexts, language: String, taskTitle: (String?) -&gt; String )</ID>
-    <ID>LongParameterList:QueueList.kt$( waiting: List&lt;QueueTask&gt;, sent: List&lt;QueueTask&gt;, rejected: List&lt;QueueTask&gt;, journal: QueueJournalTexts, language: String, taskTitle: (String?) -&gt; String, modifier: Modifier )</ID>
-    <ID>LongParameterList:QueueScreen.kt$( texts: AppStrings, journal: QueueJournalTexts, tasks: Int, busy: Boolean, read: Boolean, blocked: Boolean, onRetry: () -&gt; Unit )</ID>
-    <ID>LongParameterList:QueueSummary.kt$( session: Session, journal: QueueJournalTexts, waiting: Int, read: Boolean, hasFailed: Boolean, hasRejected: Boolean )</ID>
-    <ID>LongParameterList:ReadApi.kt$( kkmId: String, fromMillis: Long, toMillis: Long, pin: String, offset: Int = 0, limit: Int = PAGE )</ID>
-    <ID>LongParameterList:ReceiptPreview.kt$( image: ByteArray?, drawing: Boolean = false, trouble: ScreenState.Trouble? = null, onPrint: (() -&gt; Unit)? = null, onSave: (() -&gt; Unit)? = null, onDismiss: () -&gt; Unit )</ID>
-    <ID>LongParameterList:RecentCash.kt$( session: Session, money: DrawerTexts, recent: List&lt;Document&gt;, loading: Boolean, read: Boolean, onRetry: () -&gt; Unit )</ID>
-    <ID>LongParameterList:RecordFleet.kt$RecordFleet$( at: Int, status: String, shift: String? = "CLOSE", blocked: Boolean = false, place: String? = "Магазин $at", address: String? = "${REGIONS[at % REGIONS.size]}, проспект Абая, $at" )</ID>
     <ID>LongParameterList:RecordRow.kt$( title: String, modifier: Modifier = Modifier, subtitle: String? = null, amount: String? = null, support: @Composable (() -&gt; Unit)? = null, striped: Boolean = false, selected: Boolean = false, leading: @Composable (() -&gt; Unit)? = null, trailing: @Composable (() -&gt; Unit)? = null, titleLines: Int = 1, onClick: (() -&gt; Unit)? = null )</ID>
-    <ID>LongParameterList:RefundOperation.kt$( session: Session, texts: AppStrings, kind: ReturnKind, basis: Document, refundTiyn: Long, payments: List&lt;ReceiptPayment&gt;, key: String, returned: List&lt;SoldItem&gt; )</ID>
-    <ID>LongParameterList:RefundPanel.kt$( session: Session, journal: ReturnJournalTexts, kind: ReturnKind, basis: Document, onBack: () -&gt; Unit, onDone: () -&gt; Unit )</ID>
-    <ID>LongParameterList:RefundPanel.kt$( session: Session, kind: ReturnKind, basis: Document?, modifier: Modifier, onBack: () -&gt; Unit, onDone: () -&gt; Unit )</ID>
-    <ID>LongParameterList:RefundPlan.kt$( basis: Document, kgdKkmId: String, refundTiyn: Long, idempotencyKey: String, lineName: String, payments: List&lt;ReceiptPayment&gt;, domain: ReceiptDomain, returned: List&lt;SoldItem&gt; = emptyList() )</ID>
-    <ID>LongParameterList:RefundTill.kt$( session: Session, kind: ReturnKind, split: PaymentSplit, refundSum: BigDecimal, journal: ReturnJournalTexts, checked: RefundAmount )</ID>
-    <ID>LongParameterList:RegisterDetails.kt$( block: RegisterBlock, open: Set&lt;RegisterBlock&gt;, onToggle: (RegisterBlock) -&gt; Unit, title: String, info: String? = null, trailing: @Composable () -&gt; Unit = {}, content: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongParameterList:RegisterDetails.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, card: CabinetRegister, state: RegisterState?, open: Set&lt;RegisterBlock&gt;, onToggle: (RegisterBlock) -&gt; Unit, onDone: () -&gt; Unit )</ID>
-    <ID>LongParameterList:RegisterEditCard.kt$( label: String, save: String, hint: String, initial: String, key: String, enabled: Boolean, busy: Boolean, allowBlank: Boolean = false, onSave: (String) -&gt; Unit )</ID>
     <ID>LongParameterList:RegisterFields.kt$( texts: CabinetTexts, language: Language, draft: RegisterDraft, places: List&lt;RetailPlace&gt;, models: List&lt;KkmModel&gt;, stamped: Boolean, issued: Boolean, onCreatePlace: () -&gt; Unit )</ID>
-    <ID>LongParameterList:RegisterPassport.kt$( session: Session, cabinet: CabinetSession, texts: CabinetTexts, register: CabinetRegister, state: RegisterState?, onChanged: () -&gt; Unit )</ID>
-    <ID>LongParameterList:RegistrationCardVersions.kt$( cabinet: CabinetSession, texts: CabinetTexts, version: RegistrationCardVersion, chosen: Boolean, onOpen: () -&gt; Unit, onSave: () -&gt; Unit )</ID>
     <ID>LongParameterList:RegistrationFields.kt$( kind: ActionKind, texts: CabinetTexts, language: Language, places: List&lt;RetailPlace&gt;, placeId: String, reason: DeregistrationReason, comment: String, onPlace: (String) -&gt; Unit, onReason: (DeregistrationReason) -&gt; Unit, onComment: (String) -&gt; Unit )</ID>
-    <ID>LongParameterList:SaleOperation.kt$( session: Session, basket: Basket, input: ReceiptInput, texts: AppStrings, extra: SaleTexts, statusTitle: (String?) -&gt; String )</ID>
-    <ID>LongParameterList:SearchField.kt$( value: String, label: String, onChange: (String) -&gt; Unit, modifier: Modifier = Modifier, hint: String? = null, icon: ImageVector = AppIcons.find, clearLabel: String? = null )</ID>
-    <ID>LongParameterList:SearchablePicker.kt$( label: String, options: List&lt;T&gt;, selected: T?, title: (T) -&gt; String, keys: (T) -&gt; List&lt;String&gt;, notFound: String, onSelect: (T) -&gt; Unit )</ID>
     <ID>LongParameterList:SearchablePicker.kt$( label: String, query: String, found: List&lt;T&gt;, open: Boolean, title: (T) -&gt; String, onOpen: (Boolean) -&gt; Unit, onQuery: (String) -&gt; Unit, onPick: (T) -&gt; Unit )</ID>
-    <ID>LongParameterList:SearchablePicker.kt$( label: String, query: String, open: Boolean, onQuery: (String) -&gt; Unit, onWidth: (Dp) -&gt; Unit, onTaken: () -&gt; Unit )</ID>
-    <ID>LongParameterList:SectionCard.kt$( title: String, expanded: Boolean, onToggle: () -&gt; Unit, modifier: Modifier = Modifier, info: String? = null, trailing: @Composable () -&gt; Unit = {}, content: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongParameterList:SetupStepCard.kt$( title: String, hint: String, texts: SetupTexts, done: Boolean, ready: Boolean, summary: String = "", content: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongParameterList:ShellRail.kt$( sections: List&lt;Section&gt;, current: Section, collapsed: Boolean, onToggle: () -&gt; Unit, footer: @Composable ColumnScope.() -&gt; Unit, onPick: (Section) -&gt; Unit )</ID>
-    <ID>LongParameterList:ShiftDocuments.kt$( session: Session, journal: ShiftJournalTexts, shift: Shift, documents: List&lt;Document&gt;, loading: Boolean, page: PageOutcome, onBack: () -&gt; Unit, onRetry: () -&gt; Unit, onPreview: (Document) -&gt; Unit )</ID>
-    <ID>LongParameterList:ShiftRow.kt$( journal: ShiftJournalTexts, shift: Shift, striped: Boolean, widths: TableWidths, onOpen: () -&gt; Unit, onZReport: () -&gt; Unit )</ID>
-    <ID>LongParameterList:TaxSettingsCard.kt$( session: Session, label: String, entries: List&lt;DictionaryEntry&gt;, dictionary: Dictionary, selected: String?, onSelect: (String) -&gt; Unit )</ID>
-    <ID>LongParameterList:UserRow.kt$( money: MoneyTexts, roleTitle: String, user: KkmUser, /** Это тот кассир, который сейчас работает: только ему меняют пин себе. */ own: Boolean, deletable: Boolean, onChangePin: suspend (String) -&gt; Boolean, onRemove: () -&gt; Unit )</ID>
     <ID>MagicNumber:Accent.kt$Accent.Amber$80f</ID>
     <ID>MagicNumber:Accent.kt$Accent.Azure$225f</ID>
     <ID>MagicNumber:Accent.kt$Accent.Blue$265f</ID>
@@ -404,9 +121,6 @@
     <ID>MagicNumber:Accent.kt$Accent.Red$30f</ID>
     <ID>MagicNumber:Accent.kt$Accent.Teal$195f</ID>
     <ID>MagicNumber:Accent.kt$Accent.Violet$320f</ID>
-    <ID>MagicNumber:AnalyticsSalesSeries.kt$100</ID>
-    <ID>MagicNumber:ExtraApi.kt$200</ID>
-    <ID>MagicNumber:ExtraApi.kt$299</ID>
     <ID>MagicNumber:Look.kt$TextScale.Compact$0.9f</ID>
     <ID>MagicNumber:Look.kt$TextScale.Dense$0.8f</ID>
     <ID>MagicNumber:Look.kt$TextScale.Large$1.15f</ID>
@@ -468,10 +182,6 @@
     <ID>MagicNumber:Palette.kt$0xFFFBF8FF</ID>
     <ID>MagicNumber:Palette.kt$0xFFFFD8EE</ID>
     <ID>MagicNumber:Palette.kt$0xFFFFFFFF</ID>
-    <ID>MagicNumber:PrintFormCard.kt$PrintLayout.Narrow$58</ID>
-    <ID>MagicNumber:PrintFormCard.kt$PrintLayout.Wide$80</ID>
-    <ID>MagicNumber:ReceiptChange.kt$100</ID>
-    <ID>MagicNumber:SalesOverview.kt$100</ID>
     <ID>MagicNumber:TableColumns.kt$MoneyFit$0.72f</ID>
     <ID>MagicNumber:TableColumns.kt$MoneyFit$0.85f</ID>
     <ID>MagicNumber:TapePrintable.kt$16</ID>
@@ -484,34 +194,22 @@
     <ID>MagicNumber:TonalScheme.kt$0xFFF2B8B5</ID>
     <ID>MagicNumber:TonalScheme.kt$0xFFF9DEDC</ID>
     <ID>MagicNumber:TonalScheme.kt$0xFFFFFFFF</ID>
-    <ID>MagicNumber:UsersApi.kt$200</ID>
-    <ID>MagicNumber:UsersApi.kt$299</ID>
     <ID>MaxLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$"диалог $name: окно ${dialog?.width}×${dialog?.height} слева ${dialog?.left} низ ${dialog?.bottom} из $height; "</ID>
     <ID>MaxLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$"кнопки ${controls.joinToString { "${it.left}..${it.right}@${it.top}" }}; за краем $outside; прокрутка $scrolls"</ID>
     <ID>MaxLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$private</ID>
     <ID>MaxLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$surface.canvas.drawRect(Rect.makeXYWH(TAPE_MARGIN, line + TAPE_MARGIN, (line * 7 % 400 + 80).toFloat(), 10f), ink)</ID>
     <ID>MaxLineLength:AdaptiveLogShots.kt$AdaptiveLogShots$println("журнал $name: правый край кнопок $right из $width, за краем ${controls.count { it.right &gt; width }}")</ID>
-    <ID>MaxLineLength:AdaptiveSettingsShots.kt$AdaptiveSettingsShots$session.dictionaries[Dictionary.TaxRegimes] = listOf(DictionaryEntry("GENERAL", mapOf("ru" to "Общеустановленный")))</ID>
     <ID>MaxLineLength:AnalyticsExchangeList.kt$TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column -&gt; RowCell(cellText(column, row)) }</ID>
     <ID>MaxLineLength:AnalyticsMapPointsTest.kt$AnalyticsMapPointsTest$kkm("c4", address = "Есть свои", position = KkmPosition(latitude = degrees(43.2), longitude = degrees(76.8)))</ID>
     <ID>MaxLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$RenderProbe { SalesChart(dayBars(view(days = 1).days, view(days = 1).range, sales), sales, Modifier.fillMaxSize()) }</ID>
     <ID>MaxLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$RenderProbe { SalesChart(dayBars(view(days = MONTH).days, view(days = MONTH).range, sales), sales, Modifier.fillMaxSize()) }</ID>
     <ID>MaxLineLength:AnalyticsSalesTable.kt$SalesColumn.Revenue, SalesColumn.Net -&gt; TableColumn(min = AnalyticsLayout.networkSum, weight = NUMBER_SHARE, numeric = true)</ID>
-    <ID>MaxLineLength:AnalyticsSalesTiles.kt$MinorTile(cabinet.operationPurchaseReturn, Modifier.weight(1f)) { MinorSum(cabinetSum(summary.purchaseRefunds)) }</ID>
     <ID>MaxLineLength:AnalyticsTextsEn.kt$purchasesHint = "What the register buys from individuals is paid out of the drawer: this money is not revenue and is not part of the numbers above"</ID>
     <ID>MaxLineLength:AnalyticsTextsKk.kt$purchasesHint = "Халықтан сатып алынғанын касса жәшіктен төлейді: бұл ақша түсім емес және жоғарыдағы сандарға кірмейді"</ID>
     <ID>MaxLineLength:AnalyticsTextsRu.kt$purchasesHint = "Скупленное у населения касса оплачивает из ящика: эти деньги не выручка, и в числа выше они не входят"</ID>
-    <ID>MaxLineLength:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) { ApplicationStepCard(session, cabinet, setup, started) {} }</ID>
-    <ID>MaxLineLength:CabinetAddressApi.kt$request(HttpMethod.Get, "/api/reference/addresses/localities?parentId=$localityId&amp;limit=$NESTED_PROBE", token = token)</ID>
-    <ID>MaxLineLength:CabinetAddressApi.kt$request&lt;ResolvedAddress&gt;(HttpMethod.Get, "/api/reference/addresses/${rka.encoded()}", token = token).toRegisterAddress()</ID>
-    <ID>MaxLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$val here = shiftOpen("application-shift-here", node = Kkm(kkmId = "k-1", ofdSystemId = "5000021", state = "ACTIVE"))</ID>
     <ID>MaxLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
-    <ID>MaxLineLength:CabinetClientTest.kt$CabinetClientTest$val expired = clientReturning(HttpStatusCode.Unauthorized, """{"code":"UNAUTHORIZED","message":"Сессия истекла"}""")</ID>
-    <ID>MaxLineLength:CabinetContractTest.kt$CabinetContractTest$clientReturning("""{"kkmId":5000001,"token":-1234567890,"status":"ISSUED"}""").issueToken("development", "07aeaff1")</ID>
     <ID>MaxLineLength:CabinetContractTest.kt$CabinetContractTest$status</ID>
     <ID>MaxLineLength:CabinetMessageTest.kt$CabinetMessageTest$assertEquals(texts.sessionExpired, assertIs&lt;Message.Refusal&gt;(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)</ID>
-    <ID>MaxLineLength:CabinetPlaceModels.kt$CabinetRegister$get() = modelView ?: if (modelCode == null &amp;&amp; modelName == null) null else CashRegisterModel(modelCode.orEmpty(), modelName)</ID>
-    <ID>MaxLineLength:CabinetPlaceModels.kt$ResolvedAddress$RegisterAddress(addressRef = rka, address = displayAddress, addressKz = displayAddressKk, rka = rka, cato = cato)</ID>
     <ID>MaxLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$seenPath = request.url.encodedPath + (request.url.encodedQuery.takeIf { it.isNotEmpty() }?.let { "?$it" } ?: "")</ID>
     <ID>MaxLineLength:CabinetTextsEn.kt$documentsNoneInPeriod = "The register has documents from another time — widen the period or take the whole time"</ID>
     <ID>MaxLineLength:CabinetTextsEn.kt$localInfoNeedsSync = "The new place reaches receipts after the details are synced in the register settings: it cannot be done right now"</ID>
@@ -528,207 +226,92 @@
     <ID>MaxLineLength:CabinetTextsRu.kt$shiftOpenAsk = "Снять кассу с учёта можно только при закрытой смене. Закрыть смену на этой кассе и подать заявление?"</ID>
     <ID>MaxLineLength:CabinetTextsRu.kt$token = "Ключ, которым касса подписывает обращения. Перенесите его в настройки кассы: второй раз он здесь не покажется"</ID>
     <ID>MaxLineLength:CabinetTextsRu.kt$tokenNeedsNode = "Касса работает на этой машине: впишите новый токен в её настройках, иначе она встанет на первом же чеке"</ID>
-    <ID>MaxLineLength:CompanyPage.kt$refused = if (loaded == null) cabinet.problem?.let { cabinetMessage(it, texts).words() } ?: texts.unreachable else null</ID>
-    <ID>MaxLineLength:DashboardDocumentsTest.kt$DashboardDocumentsTest$respond(blockedBody, HttpStatusCode.BadRequest, headersOf(HttpHeaders.ContentType, "application/json"))</ID>
-    <ID>MaxLineLength:DashboardScreen.kt$Column</ID>
-    <ID>MaxLineLength:JournalRefundTest.kt$JournalRefundTest$SoldItem(name = "Баранина", price = BigDecimal("500.00"), quantityThousandths = 1_000, sum = BigDecimal("500.00"))</ID>
-    <ID>MaxLineLength:JournalRefundTest.kt$JournalRefundTest$SoldItem(name = "Коньяк", price = BigDecimal("300.00"), quantityThousandths = 1_000, sum = BigDecimal("300.00"))</ID>
-    <ID>MaxLineLength:JournalRefundTest.kt$JournalRefundTest$assertEquals(0, BigDecimal("1500").compareTo(parent.parentTicketTotal), "реквизит чека-основания — его собственная сумма")</ID>
-    <ID>MaxLineLength:JournalRefundTest.kt$JournalRefundTest$assertEquals(0, BigDecimal("500").compareTo(request?.items?.single()?.price), "возвращается указанная часть, а не весь чек")</ID>
-    <ID>MaxLineLength:JournalTextsKk.kt$nothingToRetryButRejected = "Қайталайтын ештеңе жоқ: қабылданбаған тапсырмаларды түйін қайталамайды, оларды қызмет көрсету қарайды."</ID>
-    <ID>MaxLineLength:JournalTextsRu.kt$nothingToRetryButRejected = "Повторять нечего: отвергнутые задачи узел не повторяет, их разбирает обслуживание."</ID>
-    <ID>MaxLineLength:KassaScene.kt$KassaScene$"""{"code":"${refusal.code}","message":"RU: ${refusal.ru} | KK: ${refusal.kk} | EN: ${refusal.en}"}"""</ID>
-    <ID>MaxLineLength:Look.kt$MapView</ID>
     <ID>MaxLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
     <ID>MaxLineLength:MoneyTextsEn.kt$deleteBlocked = "The only administrator cannot be deleted: no one would be left to add cashiers and change settings. Add a second administrator first, then delete."</ID>
     <ID>MaxLineLength:MoneyTextsEn.kt$listHint</ID>
-    <ID>MaxLineLength:MoneyTextsEn.kt$recentUnreadHint = "Read them again: while the node is silent, nothing is known about this day's pay-ins and payouts."</ID>
     <ID>MaxLineLength:MoneyTextsKk.kt$deleteBlocked = "Жалғыз әкімшіні жоюға болмайды: кассирлерді енгізетін және баптауларды өзгертетін ешкім қалмайды. Алдымен екінші әкімшіні енгізіңіз, содан кейін жойыңыз."</ID>
     <ID>MaxLineLength:MoneyTextsKk.kt$listHint</ID>
     <ID>MaxLineLength:MoneyTextsKk.kt$recentHint</ID>
-    <ID>MaxLineLength:MoneyTextsKk.kt$recentUnreadHint = "Оқуды қайталаңыз: түйін үндемей тұрғанда осы тәуліктегі салым мен алу туралы ештеңе белгісіз."</ID>
     <ID>MaxLineLength:MoneyTextsRu.kt$deleteBlocked = "Единственного администратора удалять нельзя: некому будет заводить кассиров и менять настройки. Заведите второго администратора, потом удаляйте."</ID>
     <ID>MaxLineLength:MoneyTextsRu.kt$listHint</ID>
     <ID>MaxLineLength:MoneyTextsRu.kt$recentHint</ID>
     <ID>MaxLineLength:PlacePoint.kt$text</ID>
-    <ID>MaxLineLength:PositionDetailsShots.kt$PositionDetailsShots$private val bare = Position(name = "Пакет", price = BigDecimal("15"), quantity = BigDecimal.ONE, vatGroup = "NO_VAT")</ID>
-    <ID>MaxLineLength:PrintFileNameTest.kt$PrintFileNameTest$val http = HttpClient(MockEngine { respond(png, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "image/png")) })</ID>
-    <ID>MaxLineLength:PrintTargetCard.kt$listOf(DictionaryEntry(code = SYSTEM_PRINTER, name = mapOf("ru" to systemTitle, "kk" to systemTitle, "en" to systemTitle)))</ID>
-    <ID>MaxLineLength:PrintTargetCardTest.kt$PrintTargetCardTest$private</ID>
-    <ID>MaxLineLength:RefundOperation.kt$"${session.titleOf(Dictionary.DeliveryStatuses, result.deliveryStatus)}${Glyphs.SEPARATOR}${Money.formatTiyn(refundTiyn)}"</ID>
-    <ID>MaxLineLength:SaleChangesTest.kt$SaleChangesTest$assertEquals(SaleBlock.TotalNotPositive, blockOf(SaleState(discount = hundred, itemsSum = items, total = BigDecimal.ZERO)))</ID>
     <ID>MaxLineLength:ServiceStringsEn.kt$appearanceHint</ID>
     <ID>MaxLineLength:ServiceStringsEn.kt$autoCashoutHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$dictionariesMissingHint = "Tax regimes and VAT rates come from the node. The node was silent when the workplace asked for them — try again."</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$nodeAddressHint = "The node usually runs on this machine. A new address applies from the next request, no restart needed"</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$nodeHint</ID>
     <ID>MaxLineLength:ServiceStringsEn.kt$printFormHint</ID>
     <ID>MaxLineLength:ServiceStringsEn.kt$taxSettingsHint</ID>
     <ID>MaxLineLength:ServiceStringsKk.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$dictionariesMissingHint = "Салық режимдері мен ҚҚС мөлшерлемелері түйіннен келеді. Жұмыс орны оларды сұрағанда түйін жауап бермеді — қайталап көріңіз."</ID>
     <ID>MaxLineLength:ServiceStringsKk.kt$mapServicesHint = "Мекенжай көрсетілмегенше, қоғамдастықтың ашық картасы жұмыс істейді: ол барлық иелерге есептелмеген"</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$nodeAddressHint = "Торап әдетте осы машинада тұрады. Жаңа мекенжай келесі сұраныстан бастап қолданылады, қайта қосу қажет емес"</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$nodeHint</ID>
     <ID>MaxLineLength:ServiceStringsKk.kt$printFormHint</ID>
     <ID>MaxLineLength:ServiceStringsKk.kt$taxSettingsHint</ID>
     <ID>MaxLineLength:ServiceStringsRu.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$dictionariesMissingHint = "Режимы налогообложения и ставки НДС приходят с узла. Узел молчал, когда рабочее место их спрашивало — попробуйте ещё раз."</ID>
     <ID>MaxLineLength:ServiceStringsRu.kt$mapServicesHint = "Пока адрес не задан, работает общедоступная карта сообщества: на всех владельцев она не рассчитана"</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$nodeAddressHint = "Узел обычно стоит на этой же машине. Новый адрес действует со следующего обращения, перезапуск не нужен"</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$nodeHint</ID>
     <ID>MaxLineLength:ServiceStringsRu.kt$printFormHint</ID>
     <ID>MaxLineLength:ServiceStringsRu.kt$taxSettingsHint</ID>
-    <ID>MaxLineLength:SessionTest.kt$SessionTest$val body = """{"code":"KKM_BLOCKED","message":"RU: Касса заблокирована | KK: Касса бұғатталған | EN: Blocked"}"""</ID>
     <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$.</ID>
     <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$nodes.filter { SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null }</ID>
     <ID>MaxLineLength:SetupTexts.kt$stepAdminHint = "The token is issued by the cabinet and never written to a file: resume later and a new one is issued"</ID>
     <ID>MaxLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$println("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
     <ID>MaxLineLength:StringsEn.kt$closeShiftExplain = "Documents in the shift: %s, %s in the drawer. The Z report goes to BFD and cannot be undone."</ID>
-    <ID>MaxLineLength:StringsEn.kt$documentsUnreadHint = "The node keeps the shift open but did not hand over its documents: how many there are is unknown."</ID>
-    <ID>MaxLineLength:StringsEn.kt$nodeNoAnswer = "No answer received — the document may have gone through, check the journal; a repeat will not duplicate it"</ID>
     <ID>MaxLineLength:StringsEn.kt$sendQueuedRules = "Only an admin can flush the queue: the shift must be closed and the register in programming mode."</ID>
     <ID>MaxLineLength:StringsEn.kt$shiftTooLong = "The shift has been open for over a day: close it with a Z-report or the BFD blocks the register."</ID>
-    <ID>MaxLineLength:StringsKk.kt$nodeUnexplained = "Түйін бас тартты, себебін айтпады. Қайталаңыз; бас тарту қайталанса — қызмет көрсетуді шақырыңыз."</ID>
     <ID>MaxLineLength:StringsKk.kt$sendQueuedRules = "Жинақталғанды әкімші жібереді: ауысым жабық болуы және касса бағдарламалау режимінде болуы керек."</ID>
     <ID>MaxLineLength:StringsRu.kt$sendQueuedRules = "Досылку накопленного делает администратор: смена должна быть закрыта, а касса переведена в режим программирования."</ID>
     <ID>MaximumLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$ </ID>
     <ID>MaximumLineLength:AdaptiveLogShots.kt$AdaptiveLogShots$ </ID>
-    <ID>MaximumLineLength:AdaptiveSettingsShots.kt$AdaptiveSettingsShots$ </ID>
     <ID>MaximumLineLength:AnalyticsExchangeList.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsMapPointsTest.kt$AnalyticsMapPointsTest$ </ID>
     <ID>MaximumLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$ </ID>
     <ID>MaximumLineLength:AnalyticsSalesTable.kt$ </ID>
-    <ID>MaximumLineLength:AnalyticsSalesTiles.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsTextsEn.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsTextsKk.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsTextsRu.kt$ </ID>
-    <ID>MaximumLineLength:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$ </ID>
-    <ID>MaximumLineLength:CabinetAddressApi.kt$ </ID>
     <ID>MaximumLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$ </ID>
-    <ID>MaximumLineLength:CabinetClientTest.kt$CabinetClientTest$ </ID>
     <ID>MaximumLineLength:CabinetContractTest.kt$CabinetContractTest$ </ID>
     <ID>MaximumLineLength:CabinetMessageTest.kt$CabinetMessageTest$ </ID>
-    <ID>MaximumLineLength:CabinetPlaceModels.kt$CabinetRegister$ </ID>
-    <ID>MaximumLineLength:CabinetPlaceModels.kt$ResolvedAddress$ </ID>
     <ID>MaximumLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$ </ID>
     <ID>MaximumLineLength:CabinetTextsEn.kt$ </ID>
     <ID>MaximumLineLength:CabinetTextsKk.kt$ </ID>
     <ID>MaximumLineLength:CabinetTextsRu.kt$ </ID>
-    <ID>MaximumLineLength:CompanyPage.kt$ </ID>
-    <ID>MaximumLineLength:DashboardDocumentsTest.kt$DashboardDocumentsTest$ </ID>
-    <ID>MaximumLineLength:DashboardScreen.kt$ </ID>
-    <ID>MaximumLineLength:JournalRefundTest.kt$JournalRefundTest$ </ID>
-    <ID>MaximumLineLength:JournalTextsKk.kt$ </ID>
-    <ID>MaximumLineLength:JournalTextsRu.kt$ </ID>
-    <ID>MaximumLineLength:KassaScene.kt$KassaScene$ </ID>
-    <ID>MaximumLineLength:Look.kt$ </ID>
     <ID>MaximumLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$ </ID>
     <ID>MaximumLineLength:MoneyTextsEn.kt$ </ID>
     <ID>MaximumLineLength:MoneyTextsKk.kt$ </ID>
     <ID>MaximumLineLength:MoneyTextsRu.kt$ </ID>
     <ID>MaximumLineLength:PlacePoint.kt$ </ID>
-    <ID>MaximumLineLength:PositionDetailsShots.kt$PositionDetailsShots$ </ID>
-    <ID>MaximumLineLength:PrintFileNameTest.kt$PrintFileNameTest$ </ID>
-    <ID>MaximumLineLength:PrintTargetCard.kt$ </ID>
-    <ID>MaximumLineLength:PrintTargetCardTest.kt$PrintTargetCardTest$ </ID>
-    <ID>MaximumLineLength:RefundOperation.kt$ </ID>
-    <ID>MaximumLineLength:SaleChangesTest.kt$SaleChangesTest$ </ID>
     <ID>MaximumLineLength:ServiceStringsEn.kt$ </ID>
     <ID>MaximumLineLength:ServiceStringsKk.kt$ </ID>
     <ID>MaximumLineLength:ServiceStringsRu.kt$ </ID>
-    <ID>MaximumLineLength:SessionTest.kt$SessionTest$ </ID>
     <ID>MaximumLineLength:SettingsMeasure.kt$SettingsMeasure$ </ID>
     <ID>MaximumLineLength:SetupTexts.kt$ </ID>
     <ID>MaximumLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$ </ID>
     <ID>MaximumLineLength:StringsEn.kt$ </ID>
     <ID>MaximumLineLength:StringsKk.kt$ </ID>
     <ID>MaximumLineLength:StringsRu.kt$ </ID>
-    <ID>MultiLineIfElse:CabinetCompanyShots.kt$CabinetCompanyShots$CabinetReply("""{"items":[],"total":0}""")</ID>
-    <ID>MultiLineIfElse:CabinetCompanyShots.kt$CabinetCompanyShots$CabinetReply("{}")</ID>
-    <ID>NoConsecutiveBlankLines:SalesLook.kt$SalesLook$ </ID>
-    <ID>PropertyWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$val here = shiftOpen("application-shift-here", node = Kkm(kkmId = "k-1", ofdSystemId = "5000021", state = "ACTIVE"))</ID>
     <ID>PropertyWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
-    <ID>PropertyWrapping:CabinetClientTest.kt$CabinetClientTest$val expired = clientReturning(HttpStatusCode.Unauthorized, """{"code":"UNAUTHORIZED","message":"Сессия истекла"}""")</ID>
     <ID>PropertyWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
-    <ID>PropertyWrapping:PositionDetailsShots.kt$PositionDetailsShots$private val bare = Position(name = "Пакет", price = BigDecimal("15"), quantity = BigDecimal.ONE, vatGroup = "NO_VAT")</ID>
-    <ID>PropertyWrapping:PrintFileNameTest.kt$PrintFileNameTest$val http = HttpClient(MockEngine { respond(png, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "image/png")) })</ID>
-    <ID>ReturnCount:AddCashier.kt$private suspend fun create( session: Session, what: String, name: String, role: String, pin: String ): Boolean</ID>
-    <ID>ReturnCount:AddPlaceDialog.kt$private suspend fun create( cabinet: CabinetSession, name: String, address: RegisterAddress?, point: MapPoint? ): RetailPlace?</ID>
-    <ID>ReturnCount:AddRegisterDialog.kt$private suspend fun add( cabinet: CabinetSession, draft: RegisterDraft, known: FactoryStamp?, onAdded: (CabinetRegister) -&gt; Unit )</ID>
-    <ID>ReturnCount:AdjustmentField.kt$@Composable fun sameOtherwise(change: Adjustment, base: BigDecimal?, asPercent: String): String?</ID>
-    <ID>ReturnCount:AdminStepCard.kt$private suspend fun connect( session: Session, cabinet: CabinetSession, draft: KkmSetupDraft, registration: Registration, what: String ): Boolean</ID>
-    <ID>ReturnCount:Amount.kt$fun amount(text: String, maxScale: Int = Money.TIYN_SCALE): Amount</ID>
-    <ID>ReturnCount:AnalyticsPlacement.kt$private fun pointOf(kkm: AnalyticsKkm, lookup: AddressLookup): AddressAnswer</ID>
     <ID>ReturnCount:AnalyticsSalesGeometry.kt$internal fun barAt(x: Float, width: Int, count: Int): Int?</ID>
     <ID>ReturnCount:AnalyticsWalk.kt$AnalyticsWalk$fun kkmSalesReachable(): Boolean</ID>
     <ID>ReturnCount:AppVersion.kt$AppVersion.Companion$fun parse(text: String?): AppVersion?</ID>
-    <ID>ReturnCount:ApplicationStepCard.kt$private suspend fun submit( cabinet: CabinetSession, draft: KkmSetupDraft, onStage: (ApplicationStage) -&gt; Unit ): ApplicationSent?</ID>
     <ID>ReturnCount:CashRules.kt$CashRules$fun check( text: String, move: CashMove, drawerTiyn: Long?, shiftOpen: Boolean, kkmBlocked: Boolean = false ): CashDecision</ID>
-    <ID>ReturnCount:CashScreen.kt$private suspend fun perform( session: Session, texts: AppStrings, money: MoneyTexts, move: CashMove, amount: BigDecimal, idempotencyKey: String, recent: MutableList&lt;Document&gt; ): Boolean</ID>
-    <ID>ReturnCount:ConfirmCash.kt$internal fun adviceOn( deposit: CashDecision, withdraw: CashDecision, money: DrawerTexts, drawer: Long?, shiftOpen: Boolean = true, kkmBlocked: Boolean = false ): CashAdvice</ID>
-    <ID>ReturnCount:DayLoad.kt$internal suspend fun loadDay( session: Session, what: String, day: LocalDate, into: MutableList&lt;Document&gt; ): PageOutcome</ID>
     <ID>ReturnCount:JournalQuery.kt$private fun JournalQuery.accepts(entry: JournalEntry): Boolean</ID>
-    <ID>ReturnCount:LocalNode.kt$LocalNode$fun awaitReady(millis: Long = READY_TIMEOUT): Boolean</ID>
-    <ID>ReturnCount:LocalNode.kt$LocalNode$fun start(): Boolean</ID>
-    <ID>ReturnCount:LocalNode.kt$LocalNode$private fun ownRuntime(): File?</ID>
-    <ID>ReturnCount:LocalNode.kt$LocalNode.Companion$fun placeOf(address: String): InetSocketAddress?</ID>
-    <ID>ReturnCount:LogExchange.kt$private suspend fun exchangeBody(path: String, request: Any?, response: HttpResponse): String?</ID>
     <ID>ReturnCount:MacLocation.kt$MacLocation$private fun placeOf(manager: Pointer): MapPlace?</ID>
     <ID>ReturnCount:MacLocation.kt$MacLocation$suspend fun locate(): MapPlace?</ID>
-    <ID>ReturnCount:MapGeocoder.kt$FoundPlace$fun place(): MapPlace?</ID>
-    <ID>ReturnCount:MapLocator.kt$MapLocator$private fun placeOf(answer: LocationAnswer): MapPlace?</ID>
-    <ID>ReturnCount:MapPointAddress.kt$private suspend fun placeUnder(cabinet: CabinetSession, state: MapState, reverse: MapReverseGeocoder): PointMatch</ID>
-    <ID>ReturnCount:MapPointAddress.kt$private suspend fun resolved(cabinet: CabinetSession, house: AddressSuggestion): RegisterAddress?</ID>
     <ID>ReturnCount:MapRegistryWalk.kt$internal suspend fun matchPointPlace(steps: RegistrySteps, place: MapPointPlace): PointMatch</ID>
-    <ID>ReturnCount:MapReverseGeocoder.kt$internal fun pointPlaceOf(body: String): MapPointPlace?</ID>
     <ID>ReturnCount:NcaFake.kt$NcaFake$private fun InputStream.readFrame(): String?</ID>
-    <ID>ReturnCount:NodeJournal.kt$internal suspend fun loadPeriod( session: Session, what: String, period: JournalPeriod, into: MutableList&lt;Document&gt;, previous: PageOutcome = PageOutcome.unread ): PageOutcome</ID>
-    <ID>ReturnCount:NodeOutput.kt$NodeOutput$private fun pass(read: Long): Long</ID>
-    <ID>ReturnCount:OpenedDocument.kt$suspend fun openDocument( cabinet: CabinetSession, registerId: String?, kind: DocumentKind, target: RowTarget? ): OpenedDocument?</ID>
-    <ID>ReturnCount:PastShiftsView.kt$internal suspend fun loadShifts( session: Session, what: String, into: MutableList&lt;Shift&gt;, previous: PageOutcome = PageOutcome.unread ): PageOutcome</ID>
-    <ID>ReturnCount:PlaceEditRow.kt$private suspend fun move( cabinet: CabinetSession, place: RetailPlace, address: RegisterAddress?, point: MapPoint? ): ChangeAddressResult?</ID>
     <ID>ReturnCount:PositionDraft.kt$PositionDraft$private fun tooBig(): Boolean</ID>
-    <ID>ReturnCount:PrintDrawer.kt$PrintDrawer$fun resolve(again: () -&gt; Unit): Pair&lt;Kkm, String&gt;?</ID>
     <ID>ReturnCount:Printing.kt$Printing$fun trim(image: ByteArray): ByteArray</ID>
-    <ID>ReturnCount:RecentCash.kt$internal suspend fun reloadRecent(session: Session, money: MoneyTexts, into: MutableList&lt;Document&gt;): Boolean</ID>
-    <ID>ReturnCount:RefundOperation.kt$internal suspend fun refund( session: Session, texts: AppStrings, kind: ReturnKind, basis: Document, refundTiyn: Long, payments: List&lt;ReceiptPayment&gt;, key: String, returned: List&lt;SoldItem&gt; ): Boolean</ID>
-    <ID>ReturnCount:RefundPlan.kt$fun drawerShortage(kind: ReturnKind, drawerTiyn: Long?, cashRefund: BigDecimal): Long?</ID>
-    <ID>ReturnCount:RefundPlan.kt$fun refundAmountOf(entered: String, basisTiyn: Long): RefundAmount</ID>
-    <ID>ReturnCount:RefundPlan.kt$fun refundRequest( basis: Document, kgdKkmId: String, refundTiyn: Long, idempotencyKey: String, lineName: String, payments: List&lt;ReceiptPayment&gt;, domain: ReceiptDomain, returned: List&lt;SoldItem&gt; = emptyList() ): ReceiptRequest?</ID>
-    <ID>ReturnCount:RegistrationCardBlock.kt$private suspend fun savePdf(cabinet: CabinetSession, register: CabinetRegister)</ID>
-    <ID>ReturnCount:RegistrationCardVersions.kt$private suspend fun saveVersionPdf(cabinet: CabinetSession, register: CabinetRegister, version: Int)</ID>
-    <ID>ReturnCount:ReleaseClient.kt$ReleaseClient$suspend fun latest(): ReleaseAnswer</ID>
-    <ID>ReturnCount:SaleOperation.kt$suspend fun issueReceipt( session: Session, basket: Basket, input: ReceiptInput, texts: AppStrings, extra: SaleTexts, statusTitle: (String?) -&gt; String ): Boolean</ID>
-    <ID>ReturnCount:SaleRules.kt$fun changeBlockOf(state: SaleState): SaleBlock?</ID>
     <ID>ReturnCount:SaleRules.kt$private fun takenTooSmall(state: SaleState): Boolean</ID>
     <ID>ReturnCount:ServiceAddress.kt$ServiceAddress$fun valid(text: String): Boolean</ID>
-    <ID>ReturnCount:SessionDictionaries.kt$fun Session.titleOf(dictionary: Dictionary, code: String?): String</ID>
-    <ID>ReturnCount:SessionRefresh.kt$private suspend fun Session.readDocuments(kkmId: String): Message?</ID>
-    <ID>ReturnCount:ShiftDocuments.kt$internal suspend fun loadDocuments( session: Session, what: String, shiftId: String, into: MutableList&lt;Document&gt; ): PageOutcome</ID>
-    <ID>ReturnCount:Updates.kt$Updates$private fun adopt(release: Release): UpdateOutcome</ID>
     <ID>ReturnCount:VatRate.kt$fun vatTitle(rates: List&lt;VatRate&gt;, code: String): String</ID>
-    <ID>ReturnCount:VatRate.kt$private fun knownRates(session: Session, texts: EnumStrings): List&lt;VatRate&gt;</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsMapCrowdTest.kt$AnalyticsMapCrowdTest.Companion$/** Увеличение, на котором в окно попадает область, а не вся страна. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsSalesShots.kt$AnalyticsSalesShots.Companion$/** Куда наводится колесо: середина сводки. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:ApplicationSignWaitTest.kt$ApplicationSignWaitTest.Companion$/** Шаг отсчёта в проверке: секунда не ловится под нагрузкой соседних прогонов. */</ID>
-    <ID>SpacingBetweenDeclarationsWithComments:DocumentModels.kt$QueueTask$/** * Задача ещё не доставлена. * * Отправляемая прямо сейчас (IN_PROGRESS) тоже ждёт: без неё узел * показывал бы её доставленной и голым кодом. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:HistoryColumnsTest.kt$HistoryColumnsTest.Companion$/** Признак по спецификации — uint32: не длиннее десяти цифр. */</ID>
-    <ID>SpacingBetweenDeclarationsWithComments:KkmModels.kt$Kkm$/** Касса работает автономно: есть неотправленное и отметка о начале. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:LiveWalkAnalyticsShots.kt$LiveWalkAnalyticsShots.Companion$/** Ширина окна сводки одной кассы: в нём полоса срока и не влезла. */</ID>
-    <ID>SpacingBetweenDeclarationsWithComments:Session.kt$Session$/** Когда узел открыл смену; по суткам открытой смены он блокирует кассу. */</ID>
     <ID>StringTemplate:AppLogTest.kt$AppLogTest$${KEEP}</ID>
-    <ID>ThrowsCount:CabinetClient.kt$CabinetClient$suspend inline fun &lt;reified T&gt; request( method: HttpMethod, path: String, body: Any? = null, token: String? = null, idempotencyKey: String? = null ): T</ID>
-    <ID>ThrowsCount:NcaExchange.kt$NcaExchange$private suspend fun exchange(request: JsonObject): JsonObject</ID>
-    <ID>ThrowsCount:NcaProtocol.kt$internal fun ncaSignatureOf(answer: JsonObject): String</ID>
-    <ID>TooGenericExceptionCaught:CabinetSession.kt$CabinetSession$failure: Exception</ID>
-    <ID>TooGenericExceptionCaught:NodeCalls.kt$NodeCalls$failure: Exception</ID>
-    <ID>TooManyFunctions:CabinetSession.kt$CabinetSession</ID>
     <ID>TooManyFunctions:MapProjection.kt$MapProjection</ID>
     <ID>TooManyFunctions:PaymentSplit.kt$PaymentSplit</ID>
-    <ID>TooManyFunctions:PrintDesk.kt$PrintDesk</ID>
     <ID>TooManyFunctions:Printing.kt$Printing</ID>
-    <ID>TooManyFunctions:Session.kt$Session</ID>
-    <ID>TooManyFunctions:WorkplaceSettings.kt$WorkplaceSettings</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$(</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("cashRegisters", JsonArray((0 until AnalyticsFixtures.KKMS).map { index -&gt; unit("kkm-$index", "Касса № ${index + 1} — кіреберістегі үлкен", index, "2609400${"%05d".format(index)}", AnalyticsFixtures.placeName(index % AnalyticsFixtures.PLACES)) }))</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("days", buildJsonArray { (0 until DAYS).forEach { back -&gt; add(buildJsonObject { put("date", TODAY.minusDays(DAYS - 1 - back).toString()) put("receiptCount", 1000 + back.toInt() * 10) put("revenue", JsonPrimitive(BigDecimal("1097744790.11").add(BigDecimal(back * 1_000_000)))) put("refunds", JsonPrimitive(BigDecimal("13717421.00"))) put("net", JsonPrimitive(BigDecimal("1084027369.11"))) }) } })</ID>
@@ -738,12 +321,7 @@
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("reports", buildJsonObject { put("total", 9_000) put("delivered", 8_000) put("queued", 900) put("unknown", 50) put("rejected", 50) })</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("retailPlaces", JsonArray((0 until AnalyticsFixtures.PLACES).map { place -&gt; unit("place-$place", AnalyticsFixtures.placeName(place), place, null, null) }))</ID>
     <ID>Wrapping:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$SalesChart(dayBars(view(days = MONTH).days, view(days = MONTH).range, sales), sales, Modifier.fillMaxSize())</ID>
-    <ID>Wrapping:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$</ID>
-    <ID>Wrapping:ApplicationSignWaitTest.kt$ApplicationSignWaitTest$ApplicationStepCard(session, cabinet, setup, started) {}</ID>
-    <ID>Wrapping:KassaSaleLookTest.kt$KassaSaleLookTest$;</ID>
-    <ID>Wrapping:KkmNameTest.kt$KkmNameTest$(</ID>
     <ID>Wrapping:PickerEscapeTest.kt$PickerEscapeTest$;</ID>
-    <ID>Wrapping:SaleChangesTest.kt$SaleChangesTest$;</ID>
     <ID>Wrapping:SettingsMeasure.kt$SettingsMeasure$;</ID>
     <ID>Wrapping:SettingsMeasure.kt$SettingsMeasure$SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null</ID>
   </CurrentIssues>

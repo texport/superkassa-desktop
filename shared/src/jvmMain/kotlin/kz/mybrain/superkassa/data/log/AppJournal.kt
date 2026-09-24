@@ -1,11 +1,11 @@
 package kz.mybrain.superkassa.data.log
 
-import kz.mybrain.superkassa.domain.journal.Journal
+import kz.mybrain.superkassa.domain.log.port.Journal
 
 /**
  * Журнал экранов, записанный в общий журнал рабочего места.
  *
- * Тот же файл и то же окно отладки, что у обмена с узлом и кабинетом:
+ * Тот же файл и то же окно отладки, что у обмена с кассой и кабинетом:
  * разбор отказа не должен складывать источники по времени руками.
  *
  * @param source чьи это записи; касса в процессе пишет как касса.

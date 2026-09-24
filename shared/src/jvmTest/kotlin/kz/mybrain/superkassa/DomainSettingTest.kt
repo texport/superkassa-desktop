@@ -1,35 +1,28 @@
 package kz.mybrain.superkassa
 
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.respond
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.content.TextContent
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.headersOf
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.data.local.Preferences
-import kz.mybrain.superkassa.data.node.ServerClient
-import kz.mybrain.superkassa.presentation.sale.Basket
-import kz.mybrain.superkassa.presentation.sale.DomainInput
-import kz.mybrain.superkassa.presentation.sale.DomainKind
-import kz.mybrain.superkassa.presentation.sale.Position
-import kz.mybrain.superkassa.presentation.sale.SaleForm
-import kz.mybrain.superkassa.presentation.sale.issueReceipt
-import kz.mybrain.superkassa.presentation.session.Session
-import kz.mybrain.superkassa.presentation.session.WorkplaceSettings
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.saleTextsRu
-import kz.mybrain.superkassa.presentation.strings.stringsOf
+import kz.mybrain.superkassa.domain.kassa.model.decimal
+import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
+import kz.mybrain.superkassa.domain.kassa.model.sale.DomainInput
+import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
+import kz.mybrain.superkassa.domain.kassa.model.sale.Position
+import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
+import kz.mybrain.superkassa.domain.kassa.model.tenge
+import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
+import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene.receipts
+import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
 import java.io.File
-import java.math.BigDecimal
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 /**
  * Отрасль как настройка кассы.
@@ -39,13 +32,12 @@ import kotlin.test.assertTrue
  * на рабочем месте и обязана доходить до запроса — протокол требует её
  * у каждого чека.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 class DomainSettingTest {
 
     @Test
     fun `по умолчанию касса работает в торговле`() {
-        val settings = WorkplaceSettings(Preferences(freshFile()))
-        assertEquals(DomainKind.Trading, settings.domainOf(TAXI_KKM))
-        assertEquals(DomainKind.Trading, settings.domainOf(null), "без выбранной кассы продавать нечем")
+        assertEquals(DomainKind.Trading, domainOf(Preferences(freshFile()), TAXI_KKM))
     }
 
     /**
@@ -57,103 +49,68 @@ class DomainSettingTest {
     fun `отрасль помнится за каждой кассой отдельно`() {
         val file = freshFile()
 
-        WorkplaceSettings(Preferences(file)).chooseDomain(TAXI_KKM, DomainKind.Taxi)
+        Preferences(file).chooseDomain(TAXI_KKM, DomainKind.Taxi.code)
 
-        val saved = WorkplaceSettings(Preferences(file))
-        assertEquals(DomainKind.Taxi, saved.domainOf(TAXI_KKM), "отрасль забылась")
-        assertEquals(DomainKind.Trading, saved.domainOf(SHOP_KKM), "отрасль такси перешла на другую кассу")
+        val saved = Preferences(file)
+        assertEquals(DomainKind.Taxi, domainOf(saved, TAXI_KKM), "отрасль забылась")
+        assertEquals(DomainKind.Trading, domainOf(saved, SHOP_KKM), "отрасль такси перешла на другую кассу")
 
-        WorkplaceSettings(Preferences(file)).chooseDomain(TAXI_KKM, DomainKind.Trading)
-        assertEquals(DomainKind.Trading, WorkplaceSettings(Preferences(file)).domainOf(TAXI_KKM))
+        Preferences(file).chooseDomain(TAXI_KKM, DomainKind.Trading.code)
+        assertEquals(DomainKind.Trading, domainOf(Preferences(file), TAXI_KKM))
     }
 
     /**
-     * Настройка доходит до запроса чека — до того самого, который уходит
-     * узлу, а не до промежуточного снимка экрана.
+     * Настройка доходит до чека — до того самого, который уходит кассе,
+     * а не до промежуточного снимка экрана. Отрасль ставят настройки,
+     * а читает продажа через память рабочего места.
      */
     @Test
-    fun `отрасль кассы уходит в запрос чека вместе с её реквизитами`() {
-        val sent = mutableListOf<String>()
-        val session = sessionThatTakesReceipts(sent)
-        session.chooseDomain(requireNotNull(session.selected).kkmId, DomainKind.Taxi)
-        val basket = Basket().apply { add(POSITION) }
-        val form = SaleForm().apply {
-            domain = DomainInput(carNumber = "777ABC", isOrder = true, currentFee = "350")
+    fun `отрасль кассы уходит в чек вместе с её реквизитами`() {
+        val preferences = Preferences(freshFile())
+        preferences.chooseDomain(CoreScene.kkm().kkmId, DomainKind.Taxi.code)
+        val core = SaleScene.core()
+        val receipts = core.receipts()
+        val app = CoreScene.app(core, SaleScene.signedIn(), memory = preferences)
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+        try {
+            val model = saleModel(app)
+            model.form.domain(DomainInput(carNumber = "777ABC", isOrder = true, currentFee = "350"))
+            model.entry.editDraft(PositionDraft(name = POSITION.name, price = "1500", measureUnitCode = "796"))
+            model.entry.addDraft()
+            model.issue()
+        } finally {
+            Dispatchers.resetMain()
         }
 
-        runBlocking {
-            issueReceipt(
-                session = session,
-                basket = basket,
-                input = form.input(basket, session.domain),
-                texts = stringsOf(Language.Ru),
-                extra = saleTextsRu
-            ) { "" }
-        }
-
-        val body = sent.single()
-        assertTrue(body.contains("\"type\":\"DOMAIN_TAXI\""), "в запросе нет вида отрасли: $body")
-        assertTrue(body.contains("\"carNumber\":\"777ABC\""), "в запросе нет номера машины: $body")
-        assertTrue(!body.contains("\"parking\""), "в запросе оказался второй подблок: $body")
+        val domain = assertNotNull(receipts.commands.single().domain)
+        assertEquals("DOMAIN_TAXI", domain.type, "в чеке нет вида отрасли")
+        assertEquals("777ABC", domain.taxi?.carNumber, "в чеке нет номера машины")
+        assertNull(domain.parking, "в чеке оказался второй подблок")
     }
 
     /** Чек, пробитый до смены настройки, не уносит её с собой в следующий. */
     @Test
     fun `набранные реквизиты забываются вместе с чеком`() {
-        val form = SaleForm().apply { domain = DomainInput(carNumber = "777ABC", currentFee = "350") }
+        val form = SaleForm(domain = DomainInput(carNumber = "777ABC", currentFee = "350"))
 
-        form.startNextReceipt()
-
-        assertEquals(DomainInput(), form.domain, "реквизиты покупателя ушли в следующий чек")
-    }
-
-    /**
-     * Узел, принимающий чеки и запоминающий их тело.
-     *
-     * Вход кассира не нужен: пин и касса ставятся рабочему месту прямо,
-     * а проверяется то, что уходит в запросе.
-     */
-    private fun sessionThatTakesReceipts(sent: MutableList<String>): Session {
-        val engine = MockEngine { request ->
-            if (request.method == HttpMethod.Post && request.url.encodedPath.contains(RECEIPT_PATH)) {
-                sent.add((request.body as TextContent).text)
-                respond(
-                    """{"documentId":"d-1","deliveryStatus":"ONLINE_OK"}""",
-                    HttpStatusCode.OK,
-                    headersOf(HttpHeaders.ContentType, JSON)
-                )
-            } else {
-                respond(
-                    """{"code":"NOT_FOUND","message":"RU: — | KK: — | EN: —"}""",
-                    HttpStatusCode.NotFound,
-                    headersOf(HttpHeaders.ContentType, JSON)
-                )
-            }
-        }
-        val http = HttpClient(engine) {
-            expectSuccess = false
-            install(ContentNegotiation) { json(ServerClient.lenientJson) }
-        }
-        val session = Session(ServerClient(http = http), Preferences(freshFile()))
-        session.adoptPin("1234")
-        session.selected = KassaScene.kkm()
-        return session
+        assertEquals(DomainInput(), form.next().domain, "реквизиты покупателя ушли в следующий чек")
     }
 
     /** Свой каталог настроек у каждой проверки: общий затёр бы рабочую кассу. */
     private fun freshFile(): File =
         File(Files.createTempDirectory("superkassa-domain").toFile(), "kkm")
 
+    /** Отрасль кассы так, как её прочтёт продажа: код из памяти рабочего места. */
+    private fun domainOf(memory: Preferences, kkmId: String): DomainKind = DomainKind.byCode(memory.domain(kkmId))
+
     private companion object {
         const val TAXI_KKM = "kkm-taxi"
         const val SHOP_KKM = "kkm-shop"
-        const val RECEIPT_PATH = "/receipt/"
-        const val JSON = "application/json"
 
         val POSITION = Position(
             name = "Поездка",
-            price = BigDecimal("1500.00"),
-            quantity = BigDecimal("1"),
+            price = tenge("1500.00"),
+            quantity = decimal("1"),
             vatGroup = "VAT_16",
             measureUnitCode = "796"
         )

@@ -12,13 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.components.LoadingState
-import kz.mybrain.superkassa.presentation.components.SearchField
-import kz.mybrain.superkassa.presentation.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.AppIcons
-import kz.mybrain.superkassa.presentation.theme.Sizes
-import kz.mybrain.superkassa.presentation.theme.Spacing
+import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
+import kz.mybrain.superkassa.presentation.common.field.SearchField
+import kz.mybrain.superkassa.presentation.common.state.LoadingState
+import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Вход в кассу.
@@ -32,12 +32,15 @@ import kz.mybrain.superkassa.presentation.theme.Spacing
  * не уезжают, сколько бы касс ни было в списке. Саму полосу рисует
  * каркас — [SignInSlot]: так снекбар отказа встаёт над ней, а не поверх
  * поля пина.
+ *
+ * @param doors двери, за которыми на этой платформе что-то есть.
  */
 @Composable
 fun LoginScreen(
     state: LoginUiState,
     actions: LoginActions,
     header: @Composable RowScope.() -> Unit,
+    doors: Set<Door>,
     door: @Composable (Door, close: () -> Unit) -> Unit
 ) {
     LaunchedEffect(Unit) { actions.reload() }
@@ -56,8 +59,8 @@ fun LoginScreen(
             LoginHeader(header)
             when {
                 state.kkms.isEmpty() && !state.answered -> LoadingState(Modifier.weight(1f))
-                state.kkms.isEmpty() -> EmptyKkms(state.listRead, actions)
-                else -> KkmChoice(state, actions, Modifier.weight(1f))
+                state.kkms.isEmpty() -> EmptyKkms(state.listRead, actions, doors)
+                else -> KkmChoice(state, actions, doors, Modifier.weight(1f))
             }
         }
     }
@@ -71,7 +74,7 @@ fun LoginScreen(
  * кассе не менял ничего, и кассир входил не туда, куда набрал.
  */
 @Composable
-private fun KkmChoice(state: LoginUiState, actions: LoginActions, modifier: Modifier) {
+private fun KkmChoice(state: LoginUiState, actions: LoginActions, doors: Set<Door>, modifier: Modifier) {
     val texts = LocalStrings.current
     SearchField(
         value = state.search,
@@ -84,9 +87,5 @@ private fun KkmChoice(state: LoginUiState, actions: LoginActions, modifier: Modi
     // Две двери рядом: кассир входит пином ниже, владелец — своей ЭЦП
     // в кабинет. Обе со значками и в рамке: кабинет для нового владельца —
     // единственный вход, пока нет ни кассы, ни компании.
-    WrapRow {
-        DoorButton(AppIcons.newKkm, texts.sections.register) { actions.open(Door.Register) }
-        DoorButton(AppIcons.cabinet, texts.sections.cabinet) { actions.open(Door.Cabinet) }
-        DoorButton(AppIcons.settings, texts.sections.settings) { actions.open(Door.Settings) }
-    }
+    WrapRow { DoorButtons(doors, listOf(Door.Register, Door.Cabinet, Door.Settings), actions) }
 }

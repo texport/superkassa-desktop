@@ -1,15 +1,17 @@
 package kz.mybrain.superkassa.data.local
 
-import kz.mybrain.superkassa.data.node.PrintKind
-import kz.mybrain.superkassa.domain.workplace.WorkplaceMemory
+import kz.mybrain.superkassa.domain.setup.port.SetupMemory
+import kz.mybrain.superkassa.domain.workplace.model.LookChoice
+import kz.mybrain.superkassa.domain.workplace.port.LookMemory
+import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 import java.io.File
 
 /**
  * То, что касса помнит между запусками.
  *
  * Здесь не хранится ничего само по себе: рабочее место спрашивает настройку
- * одним именем, а за каждым предметом стоит свой хранитель — узел и касса
- * [NodePreferences], кабинет [CabinetPreferences], вид окна [ViewPreferences],
+ * одним именем, а за каждым предметом стоит свой хранитель — касса
+ * [KkmPreferences], кабинет [CabinetPreferences], вид окна [ViewPreferences],
  * мастер подключения [SetupPreferences], согласие на определение места
  * [LocationPreferences], карта [MapPreferences], печать [PrintPreferences],
  * проверка обновлений [UpdatePreferences].
@@ -18,10 +20,10 @@ import java.io.File
  * Пин не хранится ни здесь, ни где-либо ещё на диске: он даёт право
  * на фискальные команды и живёт только в памяти запущенного приложения.
  */
-class Preferences(private val file: File = defaultFile()) : WorkplaceMemory {
+class Preferences(private val file: File = defaultFile()) : WorkplaceMemory, SetupMemory, LookMemory {
 
-    /** Узел, выбранная касса и её название на этом рабочем месте. */
-    val node = NodePreferences(file)
+    /** Выбранная касса, её отрасль и название на этом рабочем месте. */
+    val kkm = KkmPreferences(file)
 
     /** Адрес кабинета и личность для входа без ЭЦП. */
     val cabinet = CabinetPreferences(file.parentFile)
@@ -44,32 +46,23 @@ class Preferences(private val file: File = defaultFile()) : WorkplaceMemory {
     /** Проверять ли выпуски самой и когда проверяли в последний раз. */
     val updates = UpdatePreferences(file.parentFile)
 
-    var defaultKkmId: String?
-        get() = node.defaultKkmId
-        set(value) {
-            node.defaultKkmId = value
-        }
-
     override var rememberedKkmId: String?
-        get() = defaultKkmId
+        get() = kkm.defaultKkmId
         set(value) {
-            defaultKkmId = value
+            kkm.defaultKkmId = value
         }
 
-    var nodeUrl: String
-        get() = node.url
-        set(value) {
-            node.url = value
-        }
+    /** Адрес прежнего узла кассы: нужен только переносу его данных. */
+    val formerNodeAddress: String get() = kkm.formerNodeAddress
 
     /** Вид отрасли этой кассы; пусто — торговля. */
-    fun domain(kkmId: String): String? = node.domain(kkmId)
+    override fun domain(kkmId: String): String? = kkm.domain(kkmId)
 
-    fun chooseDomain(kkmId: String, code: String?) = node.chooseDomain(kkmId, code)
+    fun chooseDomain(kkmId: String, code: String?) = kkm.chooseDomain(kkmId, code)
 
-    override fun localName(kkmId: String): String? = node.localName(kkmId)
+    override fun localName(kkmId: String): String? = kkm.localName(kkmId)
 
-    fun rename(kkmId: String, name: String?) = node.rename(kkmId, name)
+    fun rename(kkmId: String, name: String?) = kkm.rename(kkmId, name)
 
     var cabinetUrl: String
         get() = cabinet.url
@@ -77,34 +70,24 @@ class Preferences(private val file: File = defaultFile()) : WorkplaceMemory {
             cabinet.url = value
         }
 
-    var language: String?
-        get() = view.language
+    override var look: LookChoice
+        get() = LookChoice(
+            language = view.language,
+            appearance = view.appearance,
+            accent = view.accent,
+            typeface = view.typeface,
+            textScale = view.textScale,
+            railCollapsed = view.railCollapsed,
+            placesCollapsed = view.placesCollapsed
+        )
         set(value) {
-            view.language = value
-        }
-
-    var appearance: String?
-        get() = view.appearance
-        set(value) {
-            view.appearance = value
-        }
-
-    var accent: String?
-        get() = view.accent
-        set(value) {
-            view.accent = value
-        }
-
-    var typeface: String?
-        get() = view.typeface
-        set(value) {
-            view.typeface = value
-        }
-
-    var textScale: String?
-        get() = view.textScale
-        set(value) {
-            view.textScale = value
+            view.language = value.language
+            view.appearance = value.appearance
+            view.accent = value.accent
+            view.typeface = value.typeface
+            view.textScale = value.textScale
+            view.railCollapsed = value.railCollapsed
+            view.placesCollapsed = value.placesCollapsed
         }
 
     var windowSize: Pair<Int, Int>?
@@ -113,22 +96,10 @@ class Preferences(private val file: File = defaultFile()) : WorkplaceMemory {
             view.windowSize = value
         }
 
-    var collapsedPanels: Set<String>
+    override var collapsedPanels: Set<String>
         get() = view.collapsedPanels
         set(value) {
             view.collapsedPanels = value
-        }
-
-    var railCollapsed: Boolean
-        get() = view.railCollapsed
-        set(value) {
-            view.railCollapsed = value
-        }
-
-    var placesCollapsed: Boolean
-        get() = view.placesCollapsed
-        set(value) {
-            view.placesCollapsed = value
         }
 
     var mapCardCollapsed: Boolean
@@ -149,23 +120,9 @@ class Preferences(private val file: File = defaultFile()) : WorkplaceMemory {
             location.allowed = value
         }
 
-    fun setupValue(name: String): String? = setup.value(name)
+    override fun setupValue(name: String): String? = setup.value(name)
 
-    fun setupValue(name: String, value: String?) = setup.remember(name, value)
-
-    fun printer(kkmId: String): String? = printing.printer(kkmId)
-
-    fun choosePrinter(kkmId: String, name: String?) = printing.choosePrinter(kkmId, name)
-
-    fun printKind(): PrintKind = printing.kind()
-
-    fun choosePrintKind(kind: PrintKind) = printing.chooseKind(kind)
-
-    var printCopies: Int
-        get() = printing.copies
-        set(value) {
-            printing.copies = value
-        }
+    override fun setupValue(name: String, value: String?) = setup.remember(name, value)
 
     companion object {
         fun defaultFile(): File = File(DataHome.directory(), "kkm")

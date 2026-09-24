@@ -1,14 +1,13 @@
 package kz.mybrain.superkassa
 
-import kz.mybrain.superkassa.data.cabinet.CabinetCashMovement
-import kz.mybrain.superkassa.data.cabinet.CabinetReceipt
-import kz.mybrain.superkassa.data.cabinet.CabinetReport
-import kz.mybrain.superkassa.data.node.Document
-import kz.mybrain.superkassa.presentation.cabinet.movementRow
-import kz.mybrain.superkassa.presentation.cabinet.receiptRow
-import kz.mybrain.superkassa.presentation.cabinet.reportRow
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.cabinetTexts
+import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovement
+import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
+import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
+import kz.mybrain.superkassa.presentation.cabinet.documents.movementRow
+import kz.mybrain.superkassa.presentation.cabinet.documents.receiptRow
+import kz.mybrain.superkassa.presentation.cabinet.documents.reportRow
+import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
+import kz.mybrain.superkassa.presentation.strings.common.Language
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -56,12 +55,5 @@ class RefusedDocumentPrintTest {
 
         assertTrue(receiptRow(delivered, texts).entry.printable)
         assertTrue(receiptRow(queued, texts).entry.printable)
-    }
-
-    /** Та же мера у своих документов узла: обе таблицы решают это одинаково. */
-    @Test
-    fun `свой отвергнутый документ печатным не считается`() {
-        assertFalse(Document(id = "d-1", ofdStatus = "FAILED").printable)
-        assertTrue(Document(id = "d-2", ofdStatus = "SENT").printable)
     }
 }

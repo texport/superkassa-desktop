@@ -1,6 +1,8 @@
 package kz.mybrain.superkassa.data.local
 
-import kz.mybrain.superkassa.data.node.PrintKind
+import kz.mybrain.superkassa.domain.print.model.PrintKind
+import kz.mybrain.superkassa.domain.print.port.PrintChoices
+import kz.mybrain.superkassa.domain.print.port.PrintChoices.Companion.MAX_COPIES
 import java.io.File
 
 /**
@@ -9,17 +11,17 @@ import java.io.File
  * У кассы свой принтер — чековый, а не тот, на котором в конторе печатают
  * договоры. Выбор хранится по кассе: за одним компьютером их бывает две.
  */
-class PrintPreferences(private val directory: File?) {
+class PrintPreferences(private val directory: File?) : PrintChoices {
 
-    fun printer(kkmId: String): String? = readSetting(printerFile(kkmId))
+    override fun printer(kkmId: String): String? = readSetting(printerFile(kkmId))
 
-    fun choosePrinter(kkmId: String, name: String?) = writeSetting(printerFile(kkmId), name)
+    override fun choosePrinter(kkmId: String, name: String?) = writeSetting(printerFile(kkmId), name)
 
     /** В каком виде сохранять печатную форму: `PNG`, `PDF` или `HTML`. */
-    fun kind(): PrintKind =
+    override fun kind(): PrintKind =
         PrintKind.entries.firstOrNull { it.name == readSetting(kindFile) } ?: PrintKind.Pdf
 
-    fun chooseKind(kind: PrintKind) = writeSetting(kindFile, kind.name)
+    override fun chooseKind(kind: PrintKind) = writeSetting(kindFile, kind.name)
 
     /**
      * Сколько копий печатать.
@@ -28,7 +30,7 @@ class PrintPreferences(private val directory: File?) {
      * и на корпоративных продажах. Больше трёх не бывает — это чек,
      * а не тираж.
      */
-    var copies: Int
+    override var copies: Int
         get() = readSetting(copiesFile)?.toIntOrNull()?.coerceIn(1, MAX_COPIES) ?: 1
         set(value) = writeSetting(copiesFile, value.coerceIn(1, MAX_COPIES).toString())
 
@@ -37,9 +39,4 @@ class PrintPreferences(private val directory: File?) {
     private val copiesFile = File(directory, "print-copies")
 
     private val kindFile = File(directory, "print-kind")
-
-    companion object {
-        /** Больше трёх копий чека не печатают: это чек, а не тираж. */
-        const val MAX_COPIES = 3
-    }
 }

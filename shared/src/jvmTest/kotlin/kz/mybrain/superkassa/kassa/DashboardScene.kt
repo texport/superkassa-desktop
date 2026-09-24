@@ -6,9 +6,8 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.DocumentTypeResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
 import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftResponse
-import kz.mybrain.superkassa.data.node.Document
-import kz.mybrain.superkassa.domain.shift.ShiftState
-import kz.mybrain.superkassa.presentation.dashboard.DashboardUiState
+import kz.mybrain.superkassa.domain.shift.model.ShiftState
+import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardUiState
 
 /**
  * Главный экран для снимков вида: состояние собрано руками, без модели.
@@ -29,15 +28,16 @@ object DashboardScene {
         kkm: KkmResponse? = CoreScene.kkm(),
         admin: Boolean = true,
         shift: ShiftResponse? = null,
-        documents: List<Document> = emptyList(),
+        documents: List<FiscalDocumentResponse> = emptyList(),
         cash: Long? = CASH
     ) = DashboardUiState(
         kkm = kkm,
         isAdmin = admin,
         shift = if (shift == null) ShiftState.Closed else ShiftState.Open,
         shiftNumber = shift?.shiftNo,
-        shiftOpenedAt = shift?.openedAt,
-        documents = documents.map(::core),
+        dayLimitAt = shift?.dayLimitAt,
+        dayLimitExceeded = shift?.dayLimitExceeded == true,
+        documents = documents,
         documentsRead = true,
         cashInDrawer = cash,
         documentTypes = TYPES
@@ -68,27 +68,6 @@ object DashboardScene {
         }
         on("getDocumentTypes") { TYPES.map { (code, name) -> DocumentTypeResponse(code, name) } }
     }
-
-    /** Документ снимка в типах ядра: те же поля, что у документа узла. */
-    fun core(document: Document) = FiscalDocumentResponse(
-        id = document.id,
-        cashboxId = "kkm-1",
-        shiftId = "shift-7",
-        docType = document.docType.orEmpty(),
-        docNo = document.docNo,
-        printedDocumentNumber = document.printedDocumentNumber,
-        shiftNo = document.shiftNo?.toLong(),
-        createdAt = document.createdAt ?: 0,
-        totalAmount = document.totalAmount,
-        currency = "KZT",
-        fiscalSign = document.fiscalSign,
-        autonomousSign = document.autonomousSign,
-        isAutonomous = document.isAutonomous == true,
-        ofdStatus = document.ofdStatus,
-        ofdErrorCode = document.ofdErrorCode,
-        ofdErrorText = document.ofdErrorText,
-        deliveredAt = document.deliveredAt
-    )
 
     /** Наличные в ящике снимка, в тиынах. */
     private const val CASH = 125_000L

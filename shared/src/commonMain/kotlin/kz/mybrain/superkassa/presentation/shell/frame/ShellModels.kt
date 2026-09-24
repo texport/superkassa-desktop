@@ -1,0 +1,13 @@
+package kz.mybrain.superkassa.presentation.shell.frame
+
+import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kz.mybrain.superkassa.presentation.shell.AppContainer
+
+/** Модель каркаса окна: одна на окно, живёт в хранилище моделей окна. */
+@Composable
+fun shellViewModel(app: AppContainer): ShellViewModel = viewModel { shellModel(app) }
+
+/** Модель каркаса со сценариями из портов окна; проверки зовут её без окна. */
+fun shellModel(app: AppContainer): ShellViewModel =
+    ShellViewModel(ShellCases(app.kassa, app.signIn, app.memory), app.talk)

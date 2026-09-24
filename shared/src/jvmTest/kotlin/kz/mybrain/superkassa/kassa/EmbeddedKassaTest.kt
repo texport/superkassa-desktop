@@ -1,8 +1,6 @@
 package kz.mybrain.superkassa.kassa
 
-import io.github.texport.superkassa.embedded.api.Superkassa
-import io.github.texport.superkassa.embedded.api.SuperkassaPlatform
-import io.github.texport.superkassa.embedded.api.createSuperkassa
+import io.github.texport.superkassa.testing.api.kassa.TestBench
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -11,13 +9,11 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
-import kz.mybrain.superkassa.domain.kassa.Answer
-import kz.mybrain.superkassa.domain.kassa.ask
-import kz.mybrain.superkassa.domain.signin.SignIn
-import kz.mybrain.superkassa.presentation.AppContainer
-import kz.mybrain.superkassa.presentation.login.LoginViewModel
-import kz.mybrain.superkassa.presentation.messages.Notices
-import kz.mybrain.superkassa.presentation.strings.Language
+import kz.mybrain.superkassa.domain.kassa.model.Answer
+import kz.mybrain.superkassa.domain.kassa.model.ask
+import kz.mybrain.superkassa.domain.signin.model.SignIn
+import kz.mybrain.superkassa.presentation.common.message.Notices
+import kz.mybrain.superkassa.presentation.login.loginModel
 import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest
@@ -30,42 +26,35 @@ import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
 /**
- * Касса в процессе приложения — настоящее ядро на временном каталоге.
+ * Касса в процессе приложения — настоящее ядро на временном каталоге,
+ * БФД — тестовый из оснастки ядра: касса заводится и работает без сети.
  *
- * Завести кассу без ОФД ядро не даёт, поэтому здесь то, что проверяется
- * без неё: чистый каталог, отказ ядра его словами и разбор итогов.
  * Каталог рабочего места не трогается: у каждой проверки свой временный.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class EmbeddedKassaTest {
     private val directory: File = createTempDirectory("kassa-").toFile()
-    private lateinit var core: Superkassa
+    private lateinit var bench: TestBench
 
     @BeforeTest
     fun open() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        core = createSuperkassa(SuperkassaPlatform(directory.path), EmbeddedKassa.config())
+        bench = appBench(directory)
     }
 
     @AfterTest
     fun close() {
-        core.close()
+        bench.close()
         directory.deleteRecursively()
         Dispatchers.resetMain()
     }
 
-    private fun app(notices: Notices = Notices(), signIn: SignIn = SignIn()) = AppContainer(
-        kassa = EmbeddedKassa(core.api, Dispatchers.Unconfined),
-        signIn = signIn,
-        notices = notices,
-        memory = MemoryWorkplace(),
-        journal = SilentJournal,
-        language = { Language.Ru }
-    )
+    private fun app(notices: Notices = Notices(), signIn: SignIn = SignIn()) =
+        CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices)
 
     @Test
     fun `на чистом каталоге список касс прочитан и пуст`() {
-        val model = LoginViewModel(app())
+        val model = loginModel(app())
 
         model.reload()
 
@@ -79,7 +68,7 @@ class EmbeddedKassaTest {
     fun `вход на незаведённую кассу — отказ ядра его кодом и словами`() {
         val notices = Notices()
         val signIn = SignIn()
-        val model = LoginViewModel(app(notices, signIn))
+        val model = loginModel(app(notices, signIn))
         model.reload()
         model.typePin("4821")
 
@@ -92,16 +81,30 @@ class EmbeddedKassaTest {
         assertFalse(signIn.state.value.signedIn, "вход без кассы в списке начат")
     }
 
+    @Test
+    fun `заведённая касса в списке входа, и её пином кассир входит`() {
+        val kassa = bench.registerKassa(appKassa(adminPin = "7391", cashierPin = "4826", name = "Касса у входа"))
+        val signIn = SignIn()
+        val model = loginModel(app(signIn = signIn))
+        model.reload()
+        model.pick(model.state.value.kkms.single())
+        model.typePin(kassa.cashierPin)
+
+        model.enter()
+
+        assertEquals(kassa.kkmId, signIn.state.value.kkm?.kkmId)
+        assertEquals("Касса у входа", signIn.state.value.kkm?.name)
+        assertTrue(signIn.state.value.signedIn, "пин кассира, заданный при заведении, не пустил")
+    }
+
     /** Второй экземпляр на том же каталоге не открывается: у кассы один владелец. */
     @Test
     fun `второй экземпляр на занятом каталоге отказывает`() {
-        assertFailsWith<IllegalStateException> {
-            createSuperkassa(SuperkassaPlatform(directory.path), EmbeddedKassa.config())
-        }
+        assertFailsWith<IllegalStateException> { appBench(directory) }
     }
 
     @Test
-    fun `сбой — не отказ, а отмена — не итог`() = runBlocking {
+    fun `сбой — не отказ, а отмена — не итог`(): Unit = runBlocking {
         val kassa = FakeCore().apply {
             on("getKkm") { error("disk is full") }
             on("listVatRates") { throw CancellationException("screen closed") }
@@ -109,6 +112,5 @@ class EmbeddedKassaTest {
 
         assertEquals(Answer.Failed("IllegalStateException"), kassa.ask { it.getKkm("kkm-1") })
         assertFailsWith<CancellationException> { kassa.ask { it.listVatRates() } }
-        Unit
     }
 }

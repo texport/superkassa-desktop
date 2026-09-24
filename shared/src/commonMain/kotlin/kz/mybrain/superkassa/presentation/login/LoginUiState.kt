@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.login
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
-import kz.mybrain.superkassa.domain.kkm.displayName
-import kz.mybrain.superkassa.domain.kkm.matches
+import kz.mybrain.superkassa.domain.kkm.model.displayName
+import kz.mybrain.superkassa.domain.kkm.model.matches
 
 /** Что открыто на входе: список касс или одна из дверей рядом с ним. */
 enum class Door { Kkms, Register, Cabinet, Settings }

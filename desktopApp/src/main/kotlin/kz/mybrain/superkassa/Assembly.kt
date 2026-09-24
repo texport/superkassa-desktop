@@ -4,23 +4,49 @@ import io.github.texport.superkassa.embedded.api.Superkassa
 import io.github.texport.superkassa.embedded.api.SuperkassaPlatform
 import io.github.texport.superkassa.embedded.api.createSuperkassa
 import io.github.texport.superkassa.importnode.api.NodeImportResult
+import kz.mybrain.superkassa.data.analytics.CabinetAnalytics
+import kz.mybrain.superkassa.data.cabinet.DeveloperEntry
+import kz.mybrain.superkassa.data.cabinet.RemoteCabinet
+import kz.mybrain.superkassa.data.cabinet.setup.CabinetSetup
+import kz.mybrain.superkassa.data.eds.NcaSigner
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
+import kz.mybrain.superkassa.data.kassa.NodeDataMove
+import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
+import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
 import kz.mybrain.superkassa.data.local.DataHome
+import kz.mybrain.superkassa.data.local.DialogFiles
+import kz.mybrain.superkassa.data.local.PreferenceChoices
 import kz.mybrain.superkassa.data.local.Preferences
 import kz.mybrain.superkassa.data.log.AppJournal
 import kz.mybrain.superkassa.data.log.AppLog
+import kz.mybrain.superkassa.data.log.AppLogBook
 import kz.mybrain.superkassa.data.log.LogLevel
 import kz.mybrain.superkassa.data.log.LogSource
-import kz.mybrain.superkassa.data.node.NodeHandover
-import kz.mybrain.superkassa.data.node.ServerClient
-import kz.mybrain.superkassa.domain.signin.SignIn
-import kz.mybrain.superkassa.presentation.AppContainer
-import kz.mybrain.superkassa.presentation.messages.Notices
-import kz.mybrain.superkassa.presentation.session.Session
-import kz.mybrain.superkassa.presentation.strings.CommonStrings
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.stringsOf
-import javax.swing.JOptionPane
+import kz.mybrain.superkassa.data.map.DiskTiles
+import kz.mybrain.superkassa.data.map.MacLocation
+import kz.mybrain.superkassa.data.map.MapAddresses
+import kz.mybrain.superkassa.data.map.OpenStreetMaps
+import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
+import kz.mybrain.superkassa.data.map.mapJournal
+import kz.mybrain.superkassa.data.print.SystemPrintOut
+import kz.mybrain.superkassa.data.releases.GithubUpdates
+import kz.mybrain.superkassa.domain.journal.port.JournalPorts
+import kz.mybrain.superkassa.domain.kassa.model.StartProblem
+import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
+import kz.mybrain.superkassa.domain.setup.port.SetupPorts
+import kz.mybrain.superkassa.domain.signin.model.SignIn
+import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
+import kz.mybrain.superkassa.integrations.bfdcabinet.BfdCabinet
+import kz.mybrain.superkassa.integrations.maps.OpenMaps
+import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
+import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
+import kz.mybrain.superkassa.presentation.common.message.Notices
+import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.settings.SettingsPorts
+import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.presentation.shell.AreaPorts
+import kz.mybrain.superkassa.presentation.strings.common.Language
+import java.io.File
 
 /**
  * Точка сборки настольной кассы — единственное место, знающее все три слоя.
@@ -30,71 +56,111 @@ import javax.swing.JOptionPane
  * в [assemble] — под своей областью, как и в самом контейнере.
  */
 
-/** Собранное приложение: сеанс разделов на узле и зависимости переведённых. */
-internal class Assembly(val session: Session, val app: AppContainer)
+/** Каталог плиток карты в каталоге данных рабочего места. */
+private const val TILES = "tiles"
 
 /** Собирает зависимости экранов: порты `domain` из реализаций `data`. */
-internal fun assemble(kassa: Superkassa, preferences: Preferences): Assembly {
-    val signIn = SignIn()
-    val notices = Notices()
-    // Адрес узла читается из настроек при каждом обращении: его меняют
-    // с экрана входа, и перезапуск ради этого не нужен.
-    val session = Session(ServerClient(address = { preferences.nodeUrl }), preferences, signIn, notices)
-    val app = AppContainer(
+internal fun assemble(kassa: Superkassa, preferences: Preferences, look: WorkplaceLook): AppContainer {
+    val language = { Language.byCode(look.state.value.language) }
+    // Кабинет и мастер заведения кассы: один кабинет на приложение и подпись владельца.
+    val cabinet = cabinet(preferences) { language().code }
+    return AppContainer(
         // Общее.
         kassa = EmbeddedKassa(kassa.api),
-        signIn = signIn,
-        notices = notices,
+        signIn = SignIn(),
         memory = preferences,
-        journal = AppJournal(),
-        language = { session.language },
-        // Касса: продажа, возврат, деньги.
-
-        // Журнал: история, очередь, печать.
-
-        // Настройки и кассиры.
-
-        // Кабинет и мастер заведения кассы.
-
-        // Аналитика.
-
+        look = look,
+        talk = Talk(Notices(), AppJournal(), language),
+        areas = AreaPorts(
+            journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
+            settings = settingsPorts(kassa, preferences),
+            analytics = analyticsPorts(cabinet.bfd, preferences) { language().code },
+            cabinet = cabinet,
+            setup = SetupPorts(memory = preferences, cabinet = CabinetSetup(cabinet))
+        )
     )
-    return Assembly(session, app)
 }
 
 /**
- * Поднимает кассу на каталоге данных рабочего места.
+ * Кабинет по адресу рабочего места с подписью NCALayer на языке кассира.
  *
- * Второй экземпляр на том же каталоге касса не откроет: кассиру говорится
- * об этом окном, а не трассой в консоли, которой он не видит.
+ * Вход разработчика заголовками — только явной настройкой машины, см. [DeveloperEntry].
  */
-internal fun openKassa(preferences: Preferences): Superkassa? {
+private fun cabinet(preferences: Preferences, language: () -> String): RemoteCabinet = RemoteCabinet.open(
+    preferences.cabinetUrl,
+    NcaSigner(locale = language),
+    DialogFiles(),
+    AppJournal(LogSource.Cabinet),
+    DeveloperEntry.fromEnvironment()
+)
+
+/** Порты настроек, печати, обновления и журнала отладки — из реализаций настольной кассы. */
+private fun settingsPorts(kassa: Superkassa, preferences: Preferences) = SettingsPorts(
+    logBook = AppLogBook(),
+    releases = GithubUpdates(),
+    updateMemory = preferences.updates,
+    printOut = SystemPrintOut(),
+    printChoices = preferences.printing,
+    coreSettings = EmbeddedSettings(kassa.settings),
+    workplace = PreferenceChoices(preferences)
+)
+
+/**
+ * Аналитика кабинета и службы карт; карта говорит на языке кассира.
+ *
+ * Аналитика ходит в тот же экземпляр кабинета, что и его разделы: доступ
+ * вошедшего модуль кабинета наружу не отдаёт, и второй экземпляр получил
+ * бы отказ.
+ */
+private fun analyticsPorts(bfd: BfdCabinet, preferences: Preferences, language: () -> String): AnalyticsPorts {
+    val maps = OpenMaps(
+        services = MapAddresses(preferences.maps)::services,
+        tiles = DiskTiles(File(DataHome.directory(), TILES).path),
+        journal = mapJournal(AppJournal(LogSource.App))
+    )
+    return AnalyticsPorts(
+        cabinet = CabinetAnalytics(bfd, AppJournal(LogSource.Cabinet)),
+        map = MapPorts(OpenStreetMaps(maps, language, MacLocation::locate), WorkplaceMapMemory(preferences))
+    )
+}
+
+/** Чем кончился запуск: касса открыта — или почему нет. */
+internal sealed interface KassaStart {
+    class Opened(val kassa: Superkassa) : KassaStart
+
+    class Refused(val problem: StartProblem) : KassaStart
+}
+
+/**
+ * Переносит данные прежнего узла и поднимает кассу на каталоге данных.
+ *
+ * Перенос идёт до кассы при каждом запуске: первый переносит, следующие
+ * отвечают, что всё уже перенесено. Несостоявшийся перенос останавливает
+ * запуск: пустая касса выглядела бы потерянными сменами и толкала бы
+ * к повторной регистрации. Второй экземпляр на том же каталоге касса
+ * не откроет — и об этом тоже говорится экраном.
+ */
+internal fun startKassa(preferences: Preferences): KassaStart {
     val directory = DataHome.kassa()
+    val moved = NodeDataMove.run(DataHome.directory(), directory, preferences.formerNodeAddress)
+    moved.exceptionOrNull()?.let { return refused("node data not moved", it, NodeDataMove.problemOf(it)) }
+    AppLog.state("node data: ${moved.getOrNull()?.let(::outcomeOf)}")
     return runCatching { createSuperkassa(SuperkassaPlatform(directory.path), EmbeddedKassa.config()) }
-        .onFailure { refuse(preferences, "kassa did not open", it) { kassaNotOpened.format(directory.path) } }
-        .getOrNull()
+        .fold(
+            onSuccess = { KassaStart.Opened(it) },
+            onFailure = { refused("kassa did not open", it, StartProblem(StartRefusal.KassaNotOpened, directory.path)) }
+        )
 }
 
-/**
- * Переносит данные узла в кассу процесса, если перенос включён.
- *
- * Несостоявшийся перенос останавливает запуск: пустая касса выглядела бы
- * потерянными сменами и толкала бы к повторной регистрации.
- */
-internal fun handOverNode(preferences: Preferences): Result<NodeImportResult?> =
-    runCatching { NodeHandover.run(DataHome.directory(), DataHome.kassa(), preferences.nodeUrl) }
-        .onFailure { failure ->
-            refuse(preferences, "node data not moved", failure) { nodeHandoverFailed.format(failure.message.orEmpty()) }
-        }
+/** Итог переноса для журнала: без токенов и документов — только что случилось. */
+private fun outcomeOf(result: NodeImportResult): String = when (result) {
+    is NodeImportResult.Imported -> "imported ${result.report.kkms.size} cash registers"
+    NodeImportResult.AlreadyImported -> "already imported"
+    NodeImportResult.NoNodeData -> "no node data"
+}
 
-/** Отказ запуска: в журнал — что и почему, кассиру — окном его словами. */
-private fun refuse(
-    preferences: Preferences,
-    what: String,
-    failure: Throwable,
-    words: CommonStrings.() -> String
-) {
-    AppLog.record(LogSource.Machine, LogLevel.Failure, "$what: ${failure::class.simpleName}")
-    val texts = stringsOf(Language.byCode(preferences.language)).common
-    JOptionPane.showMessageDialog(null, texts.words(), APP_NAME, JOptionPane.ERROR_MESSAGE)
+/** Отказ запуска: в журнал — что и почему, кассиру — экраном его словами. */
+private fun refused(what: String, failure: Throwable, problem: StartProblem): KassaStart.Refused {
+    AppLog.record(LogSource.Machine, LogLevel.Failure, "$what: ${failure::class.simpleName} ${problem.refusal}")
+    return KassaStart.Refused(problem)
 }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.defaultScrollbarStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
 
 /** Полоса прокрутки настольной кассы — внутри общей темы. */
 @Composable

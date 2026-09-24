@@ -4,10 +4,10 @@
 # на Windows, deb — на Linux, dmg — на macOS. Поэтому матрица, а не один
 # запуск.
 #
-# Узел едет внутри установщика, и собрать его надо здесь же. Ядро в Maven
-# Central отстаёт от того, что нужно узлу, поэтому оно собирается из
-# исходников и кладётся в локальное хранилище — публиковать ради сборки
-# ничего не требуется.
+# Установщик собирается только из того, что прошло проверку (ci.yml).
+#
+# Касса работает в процессе приложения: узла в установщике нет, и собирать
+# его не нужно.
 name: Установщики
 
 on:
@@ -19,74 +19,43 @@ permissions:
   contents: write
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   installers:
+    needs: ci
     strategy:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Касса
-        uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      # Касса собирается на 21, соседи — на 17; см. ci.yml.
+      - name: Set up Java
+        uses: actions/setup-java@v6
         with:
-          path: superkassa-desktop
+          java-version: |
+            17
+            21
+          distribution: 'temurin'
 
-      - name: Протокол
-        uses: actions/checkout@v4
+      # Кэш v6 — закрытый компонент gradle-actions-caching: пользуясь им,
+      # репозиторий принимает https://gradle.com/legal/terms-of-use/.
+      # Условия приняты; отказ от них — cache-provider: basic.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
         with:
-          repository: texport/ofd-kt-proto
-          path: ofd-kt-proto
+          cache-provider: enhanced
 
-      - name: Кодек протокола
-        uses: actions/checkout@v4
-        with:
-          repository: texport/ofd-proto-codec
-          path: ofd-proto-codec
-
-      - name: Ядро
-        uses: actions/checkout@v4
-        with:
-          repository: texport/superkassa-core
-          path: superkassa-core
-
-      - name: Узел
-        uses: actions/checkout@v4
-        with:
-          repository: texport/superkassa-server
-          path: superkassa-server
-
-      - name: Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'zulu'
-
-      # Цепочка версий, которых в Maven Central нет: протокол 2.0.4 →
-      # кодек → ядро. Каждое звено собирается из исходников и кладётся
-      # в локальное хранилище, публиковать ничего не требуется.
-      - name: Протокол в локальное хранилище
-        working-directory: ofd-kt-proto
-        run: ./gradlew publishToMavenLocal
-
-      - name: Кодек в локальное хранилище
-        working-directory: ofd-proto-codec
-        run: ./gradlew publishToMavenLocal
-
-      - name: Ядро в локальное хранилище
-        working-directory: superkassa-core
-        run: ./gradlew publishToMavenLocal
-
-      - name: Собрать узел
-        working-directory: superkassa-server
-        run: ./gradlew :server:bootJar
+      - name: Build Siblings from Sources
+        uses: ./.github/actions/siblings
 
       - name: Собрать установщик
-        working-directory: superkassa-desktop
         shell: bash
         run: |
-          jar=$(ls ../superkassa-server/server/build/libs/server-*.jar | grep -v plain | head -1)
-          # Без узла установщик поставится и молча не заработает.
-          test -s "$jar" || { echo "узел не собрался: $jar"; exit 1; }
           # По метке v1.0.2 установщик называется 1.0.2; без метки остаётся
           # значение по умолчанию из сборки.
           version="${GITHUB_REF_NAME#v}"
@@ -95,17 +64,16 @@ jobs:
             *) version="" ;;
           esac
           ./gradlew :desktopApp:packageDistributionForCurrentOS \
-            -PnodeJar="$(cd "$(dirname "$jar")" && pwd)/$(basename "$jar")" \
             ${version:+-PappVersion="$version"}
 
       - name: Выложить установщик
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: superkassa-${{ matrix.os }}
           path: |
-            superkassa-desktop/desktopApp/build/compose/binaries/main/msi/*.msi
-            superkassa-desktop/desktopApp/build/compose/binaries/main/deb/*.deb
-            superkassa-desktop/desktopApp/build/compose/binaries/main/dmg/*.dmg
+            desktopApp/build/compose/binaries/main/msi/*.msi
+            desktopApp/build/compose/binaries/main/deb/*.deb
+            desktopApp/build/compose/binaries/main/dmg/*.dmg
           if-no-files-found: error
 
   # Выпуск с готовыми установщиками.
@@ -119,8 +87,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Забрать установщики
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
+          pattern: superkassa-*
           path: installers
 
       # Выпуск мог быть заведён руками до сборки — с заметками о том,
@@ -139,6 +108,6 @@ jobs:
             gh release create "${GITHUB_REF_NAME}" \
               --repo "${GITHUB_REPOSITORY}" \
               --title "Суперкасса ${GITHUB_REF_NAME}" \
-              --notes "Установщики для Windows, Linux и macOS. Узел кассы едет внутри — ставить и запускать отдельно ничего не нужно." \
+              --notes "Установщики для Windows, Linux и macOS. Касса работает сама по себе — ставить и запускать отдельно ничего не нужно." \
               $built
           fi

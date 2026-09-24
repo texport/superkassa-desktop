@@ -9,5 +9,5 @@ class SuperkassaRules : RuleSetProvider {
 
     override val ruleSetId: String = "superkassa"
 
-    override fun instance(config: Config): RuleSet = RuleSet(ruleSetId, listOf(LongFile(config)))
+    override fun instance(config: Config): RuleSet = RuleSet(ruleSetId, listOf(LongFile(config), NoSuppress(config)))
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Адаптивный значок: фирменный фон, белый знак кассы. Монохромный слой —
+    тот же знак: Android 13+ перекрашивает его в цвета обоев для
+    тематических значков.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/brand" />
+    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+</adaptive-icon>

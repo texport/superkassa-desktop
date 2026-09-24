@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Имя приложения для лаунчера и списка приложений. Это марка, а не
+    надпись: на всех трёх языках одно. Надписи экранов — в
+    `presentation/strings`.
+-->
+<resources>
+    <string name="app_name" translatable="false">Superkassa</string>
+</resources>

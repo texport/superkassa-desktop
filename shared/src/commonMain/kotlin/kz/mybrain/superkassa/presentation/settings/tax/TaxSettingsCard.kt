@@ -1,0 +1,87 @@
+package kz.mybrain.superkassa.presentation.settings.tax
+
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
+import kz.mybrain.superkassa.presentation.common.picker.LabelledPicker
+import kz.mybrain.superkassa.presentation.common.picker.SwitchRow
+import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
+import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.settings.SettingRequirements
+import kz.mybrain.superkassa.presentation.settings.title
+import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
+import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.strings.common.of
+import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+
+/**
+ * Налоговый режим кассы, её ставка по умолчанию, автозакрытие и автоизъятие.
+ *
+ * Режим определяет, чем облагаются чеки этой кассы, а ставка по умолчанию —
+ * с какой начинается каждая новая позиция. У плательщика НДС неверная
+ * ставка по умолчанию занижает налог в каждом чеке, набранном руками.
+ */
+@Composable
+fun TaxSettingsCard(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
+    val texts = LocalStrings.current
+    tax.kkm ?: return
+    SectionCard(title = texts.settings.taxSettings, info = texts.settings.taxSettingsHint) {
+        TaxFields(tax, actions)
+        val core = coreSettingTexts(LocalLanguage.current)
+        // Переключатель и есть действие: уходит в кассу сразу. Касса меняет
+        // его только в режиме программирования; вне режима он погашен,
+        // а не отвечает отказом на каждое нажатие.
+        SwitchRow(
+            title = texts.settings.autoCashout,
+            checked = tax.kkm.autoCashout,
+            onSwitch = actions::switchAutoCashout,
+            enabled = tax.switchable,
+            hint = texts.settings.autoCashoutHint
+        )
+        SwitchRow(core.autoClose, tax.kkm.autoCloseShift, actions::switchAutoClose, tax.switchable, core.autoCloseHint)
+    }
+}
+
+/**
+ * Режим и ставка по умолчанию — из справочников кассы.
+ *
+ * Пока справочники не прочитаны, на их месте стоит отказ с повтором,
+ * а не два пустых поля: владелец видел бы рамки без значений и не понял бы,
+ * у кого ничего нет и что с этим делать.
+ */
+@Composable
+private fun ColumnScope.TaxFields(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
+    val texts = LocalStrings.current.settings
+    val trouble =
+        ScreenState.Trouble(texts.dictionariesMissing, texts.dictionariesMissingHint, actions::retryDictionaries)
+    ScreenSlot(if (tax.dictionariesMissing) trouble else ScreenState.Ready, dense = true) {
+        Picker(texts.taxRegime, tax.regimes.map { it.code to it.name }, tax.regime, actions::chooseRegime)
+        if (tax.vatChoosable) {
+            Picker(texts.defaultVatGroup, tax.vatRates.map { it.code to it.name }, tax.vatGroup, actions::chooseVat)
+        }
+        SettingRequirements(tax.needs, moneyTexts(LocalLanguage.current).kkm)
+        FilledTonalButton(enabled = tax.savable, onClick = actions::saveTax) { Text(texts.save) }
+    }
+}
+
+/** Выбор значения справочника кассы: коды на экране кассы недопустимы. */
+@Composable
+private fun Picker(
+    label: String,
+    entries: List<Pair<String, TrilingualMessageResponse>>,
+    selected: String?,
+    onSelect: (String) -> Unit
+) {
+    val language = LocalLanguage.current
+    LabelledPicker(
+        label = label,
+        options = entries,
+        selected = entries.firstOrNull { it.first == selected },
+        title = { entry -> entry?.second?.of(language) ?: selected.orEmpty() },
+        onSelect = { onSelect(it.first) }
+    )
+}

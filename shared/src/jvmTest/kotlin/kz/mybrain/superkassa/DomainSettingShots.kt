@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.sale.DomainKind
-import kz.mybrain.superkassa.presentation.sale.SaleScreen
-import kz.mybrain.superkassa.presentation.session.Session
-import kz.mybrain.superkassa.presentation.settings.TradeDomainCard
-import kz.mybrain.superkassa.presentation.theme.Spacing
+import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
+import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
+import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
+import kz.mybrain.superkassa.presentation.settings.workplace.TradeDomainCard
+import kz.mybrain.superkassa.presentation.settings.workplace.WorkplaceSettingsActions
+import kz.mybrain.superkassa.presentation.settings.workplace.WorkplaceSettingsUiState
+import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -28,10 +31,10 @@ class DomainSettingShots {
     @Test
     fun `экран продажи у кассы в торговле и у кассы такси`() {
         val trading = KassaScene.shot("domain-settings-sale-trading", height = TALL) {
-            SaleScreen(sellingIn(DomainKind.Trading, "domain-shot-trading"))
+            SaleContent(sellingState(DomainKind.Trading))
         }
         val taxi = KassaScene.shot("domain-settings-sale-taxi", height = TALL) {
-            SaleScreen(sellingIn(DomainKind.Taxi, "domain-shot-taxi"))
+            SaleContent(sellingState(DomainKind.Taxi))
         }
 
         assertTrue(trading.isNotEmpty() && taxi.isNotEmpty())
@@ -44,10 +47,10 @@ class DomainSettingShots {
     @Test
     fun `карточка настройки называет отрасль и её реквизиты`() {
         val trading = KassaScene.shot("domain-settings-card-trading", width = CARD, height = CARD_TALL) {
-            Card(sellingIn(DomainKind.Trading, "domain-card-trading"))
+            Card(DomainKind.Trading)
         }
         val parking = KassaScene.shot("domain-settings-card-parking", width = CARD, height = CARD_TALL) {
-            Card(sellingIn(DomainKind.Parking, "domain-card-parking"))
+            Card(DomainKind.Parking)
         }
 
         assertTrue(trading.isNotEmpty() && parking.isNotEmpty())
@@ -59,17 +62,18 @@ class DomainSettingShots {
 
     /** Карточка настройки — та же, что стоит на вкладке «Касса». */
     @Composable
-    private fun Card(session: Session) {
+    private fun Card(kind: DomainKind) {
+        val workplace = WorkplaceSettingsUiState(kkmId = KassaScene.kkm().kkmId, domainCode = kind.code)
         Surface(Modifier.fillMaxSize()) {
-            Column(modifier = Modifier.padding(Spacing.screen)) { TradeDomainCard(session) }
+            Column(modifier = Modifier.padding(Spacing.screen)) {
+                TradeDomainCard(workplace, object : WorkplaceSettingsActions {})
+            }
         }
     }
 
-    /** Рабочее место с открытой сменой и выбранной отраслью. */
-    private fun sellingIn(kind: DomainKind, folder: String): Session =
-        KassaScene.session(folder, shift = KassaScene.openShift()).also { session ->
-            session.selected?.let { session.chooseDomain(it.kkmId, kind) }
-        }
+    /** Продажа с открытой сменой в выбранной отрасли. */
+    private fun sellingState(kind: DomainKind) =
+        SaleUiState(kkm = CoreScene.kkm(), signedIn = true, shiftOpen = true, domainKind = kind)
 
     private companion object {
         /** Высота кадра, на которую входит кассовая колонка целиком. */

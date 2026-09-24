@@ -1,10 +1,10 @@
 package kz.mybrain.superkassa.data.local
 
-import kz.mybrain.superkassa.domain.version.BuildVersion
+import kz.mybrain.superkassa.domain.version.model.BuildVersion
 import java.io.File
 
 /**
- * Каталог данных рабочего места: настройки, журнал, узел и касса в процессе.
+ * Каталог данных рабочего места: настройки, журнал и касса в процессе.
  *
  * Выбирается один раз и для всех: переменной окружения [VARIABLE] или
  * свойством [PROPERTY]. Без них выпуск живёт в `~/.superkassa`, а сборка
@@ -17,7 +17,7 @@ object DataHome {
     /** Переменная окружения с каталогом данных. */
     const val VARIABLE = "SUPERKASSA_HOME"
 
-    /** Свойство машины Java с каталогом данных; его же получает узел. */
+    /** Свойство машины Java с каталогом данных. */
     const val PROPERTY = "superkassa.home"
 
     /** Каталог данных этого запуска. */

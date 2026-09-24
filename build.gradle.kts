@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform) apply false
@@ -12,6 +13,19 @@ plugins {
 }
 
 /**
+ * Предупреждение компилятора Kotlin — ошибка сборки.
+ *
+ * Действует на каждую компиляцию каждого модуля: общий код, платформы,
+ * проверки, инструменты. Предупреждение, которое можно пропустить мимо
+ * глаз, копится, и через месяц среди сотни старых не видно нового.
+ */
+subprojects {
+    tasks.withType<KotlinCompilationTask<*>>().configureEach {
+        compilerOptions.allWarningsAsErrors.set(true)
+    }
+}
+
+/**
  * detekt — одними правилами для всех модулей приложения.
  *
  * Разбор идёт по всем исходным наборам модуля — общему, платформенным
@@ -21,12 +35,12 @@ plugins {
  *
  * Прежние нарушения записаны в `config/detekt/baseline-<модуль>.xml`:
  * новое нарушение падает сразу, а старые снимаются при переводе своей
- * области. Правила свои лежат в `detekt-rules`.
+ * области. Правила свои лежат в `detekt-rules` и проверяют в том числе
+ * сам этот модуль.
  */
 val detektFormatting = libs.detekt.formatting
 
 subprojects {
-    if (name == "detekt-rules") return@subprojects
     apply(plugin = "io.gitlab.arturbosch.detekt")
     extensions.configure<DetektExtension> {
         buildUponDefaultConfig = true
@@ -38,6 +52,6 @@ subprojects {
     }
     dependencies {
         add("detektPlugins", detektFormatting)
-        add("detektPlugins", project(":detekt-rules"))
+        add("detektPlugins", dependencies.project(":detekt-rules"))
     }
 }

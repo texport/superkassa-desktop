@@ -5,9 +5,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
-import kz.mybrain.superkassa.data.node.Branding
-import kz.mybrain.superkassa.data.node.Kkm
-import kz.mybrain.superkassa.data.node.OrgInfo
+import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptBrandingResponse
+import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptLanguage
 
 /**
  * Замеры экрана по узлам смысла: поля, кнопки и поверхности.
@@ -97,26 +97,40 @@ internal object SettingsMeasure {
     val LONG_LINE = "Спасибо за покупку! Обмен и возврат товара — в течение 14 дней при наличии чека. ".repeat(2)
         .take(100)
 
-    /** Адрес службы, который не помещается в поле. */
+    /** Адрес плиток карты, который не помещается в поле. */
     const val LONG_URL = "https://tiles.maps.example-enterprise-provider.kz/styles/cashier-default/" +
         "{z}/{x}/{y}.png?access_token=placeholder"
 
+    /** Адрес кабинета БФД, который не помещается в поле. */
+    const val LONG_CABINET_URL = "https://cabinet.bfd-partner-enterprise-gateway.example.kz/api/v2/" +
+        "owners/workplaces/cashier-default"
+
+    /** Адрес поиска адреса на карте, который не помещается в поле. */
+    const val LONG_SEARCH_URL = "https://geocoder.maps.example-enterprise-provider.kz/search/v1/" +
+        "addresses?country=kz&limit=10"
+
     /** Касса в режиме программирования: все поля живые, и видно, как они стоят. */
-    fun extremeKkm(): Kkm = KassaScene.kkm(state = "PROGRAMMING", name = LONG_KKM).copy(
-        ofdServiceInfo = OrgInfo(orgTitle = LONG_ORG, orgAddress = LONG_ADDRESS),
-        branding = Branding(
-            language = "MIXED",
-            paperWidthMm = 80,
-            beforeHeaderMsg = LONG_LINE,
-            headerMsg = LONG_LINE,
-            afterHeaderMsg = LONG_LINE,
-            beforeItemsMsg = LONG_LINE,
-            afterItemsMsg = LONG_LINE,
-            beforeTotalsMsg = LONG_LINE,
-            afterTotalsMsg = LONG_LINE,
-            beforeQrMsg = LONG_LINE,
-            footerMsg = LONG_LINE
+    fun extremeKkm(): KkmResponse = KassaScene.kkm(state = "PROGRAMMING", name = LONG_KKM).let { kkm ->
+        kkm.copy(
+            ofdServiceInfo = kkm.ofdServiceInfo?.copy(orgTitle = LONG_ORG, orgAddress = LONG_ADDRESS),
+            branding = longBranding()
         )
+    }
+
+    /** Оформление чека, где каждая строка длиннее поля. */
+    private fun longBranding() = ReceiptBrandingResponse(
+        language = ReceiptLanguage.MIXED,
+        paperWidthMm = 80,
+        beforeHeaderMsg = LONG_LINE,
+        headerMsg = LONG_LINE,
+        afterHeaderMsg = LONG_LINE,
+        beforeItemsMsg = LONG_LINE,
+        afterItemsMsg = LONG_LINE,
+        beforeTotalsMsg = LONG_LINE,
+        afterTotalsMsg = LONG_LINE,
+        beforeQrMsg = LONG_LINE,
+        footerMsg = LONG_LINE,
+        printOfdTicketAds = true
     )
 
     private const val MIN_SURFACE = 200

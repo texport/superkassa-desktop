@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.theme
 
 import androidx.compose.ui.text.font.FontFamily
+import kz.mybrain.superkassa.presentation.theme.color.Accent
 
 /**
  * Шрифт кассы.

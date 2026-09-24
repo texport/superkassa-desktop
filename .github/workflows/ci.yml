@@ -1,0 +1,56 @@
+# Проверка каждого изменения. Её же вызывают установщики (installers.yml):
+# установщик собирается только из того, что прошло эту проверку.
+#
+# Шаги настройки (checkout, Java, Gradle, соседи) — те же, что у библиотек
+# и у узла; дальше — задачи самой кассы.
+#
+# macOS — потому что у интеграций есть iOS-цели, а компилируются и
+# проверяются они только там; Android SDK на раннере macOS уже стоит.
+name: CI Build
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ main ]
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      # Касса собирается на 21 (jvmToolchain), соседи — на 17: их Gradle
+      # берёт 17 сам, но с готовым JDK не тратит время на загрузку.
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          java-version: |
+            17
+            21
+          distribution: 'temurin'
+
+      # Кэш v6 — закрытый компонент gradle-actions-caching: пользуясь им,
+      # репозиторий принимает https://gradle.com/legal/terms-of-use/.
+      # Условия приняты; отказ от них — cache-provider: basic.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: enhanced
+
+      - name: Build Siblings from Sources
+        uses: ./.github/actions/siblings
+
+      # detekt, компиляция всех модулей и целей и все проверки — одной
+      # задачей `check`; предупреждение компилятора роняет сборку.
+      - name: Check
+        run: ./gradlew check
+
+      - name: Android
+        run: ./gradlew :androidApp:assembleDebug

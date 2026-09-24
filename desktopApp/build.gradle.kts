@@ -1,4 +1,3 @@
-import java.util.concurrent.Callable
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -8,7 +7,7 @@ plugins {
 }
 
 group = "kz.mybrain.superkassa"
-version = "1.0.0"
+version = libs.versions.appVersion.get()
 
 /**
  * Имя бренда: им названы пакет, группа меню и ярлык во всех трёх системах.
@@ -26,28 +25,30 @@ kotlin {
 /**
  * Инструменты разработчика — своим набором исходников.
  *
- * Значок и прогон полного цикла запускаются руками и кассиру не нужны:
- * из `main` они уезжали в установщик. Отдельный набор видит то же, что
- * приложение, а в упаковку не попадает.
+ * Значок рисуется руками и кассиру не нужен: из `main` он уезжал
+ * в установщик. Отдельный набор видит то же, что приложение, а в упаковку
+ * не попадает.
  */
-val tools: SourceSet by sourceSets.creating {
+val tools: SourceSet = sourceSets.create("tools") {
     compileClasspath += sourceSets.main.get().output + configurations.runtimeClasspath.get()
     runtimeClasspath += output + compileClasspath
 }
 
 dependencies {
     implementation(project(":shared"))
-    // Точка сборки знает итог переноса данных узла: по нему решает, поднимать ли узел.
+    // Точка сборки заводит клиентов внешних служб сама.
+    implementation(project(":integrations:maps"))
+    implementation(project(":integrations:bfd-cabinet"))
+    // Точка сборки переносит данные прежнего узла до того, как поднять кассу.
     implementation(libs.superkassa.core.import.node)
     implementation(compose.desktop.currentOs)
-    implementation(compose.material3)
+    implementation(libs.compose.material3)
     implementation(libs.kotlinx.coroutines.swing)
     testImplementation(libs.kotlin.test)
-    "toolsImplementation"(project(":shared"))
-    "toolsImplementation"(compose.desktop.currentOs)
-    "toolsImplementation"(compose.material3)
-    "toolsImplementation"(compose.materialIconsExtended)
-    "toolsImplementation"(libs.ktor.client.core)
+    add(tools.implementationConfigurationName, project(":shared"))
+    add(tools.implementationConfigurationName, compose.desktop.currentOs)
+    add(tools.implementationConfigurationName, libs.compose.material3)
+    add(tools.implementationConfigurationName, libs.compose.material.icons.extended)
 }
 
 compose.desktop {
@@ -55,12 +56,10 @@ compose.desktop {
         mainClass = "kz.mybrain.superkassa.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            // Узел едет внутри установщика: см. задачу `bundleNode`.
-            appResourcesRootDir.set(layout.buildDirectory.dir("appResources"))
-            // Рантайм приложения запускает ещё и узел, а тому нужны модули,
-            // которых кассе самой не надо: java.sql для базы, java.naming
-            // и java.management для Spring. Урезанный по касс�� рантайм
-            // узел не поднимал вовсе.
+            // Касса работает в процессе приложения: ядро и перенос данных
+            // прежнего узла тянут базу, сеть и журнал, и нужные им модули
+            // Java по зависимостям не угадать. Недостающий модуль всплыл бы
+            // у кассира отказом запуска, а не при сборке.
             includeAllModules = true
             // Имя бренда латиницей: так касса называется в строке меню,
             // в доке и в списке программ. macOS берёт его из имени пакета —
@@ -68,9 +67,9 @@ compose.desktop {
             packageName = appName
             // Версия установщика — из метки выпуска: файл обязан называть
             // себя сам. У выпуска v1.0.1 установщики звались 1.0.0,
-            // и отличить исправленную сборку от той, в которой узел
-            // не поднимался, можно было только по дате.
-            packageVersion = providers.gradleProperty("appVersion").getOrElse("1.0.0")
+            // и отличить исправленную сборку от прежней можно было
+            // только по дате.
+            packageVersion = providers.gradleProperty("appVersion").getOrElse(libs.versions.appVersion.get())
             macOS {
                 // Номер пакета для macOS остаётся прежним, хотя пакеты кода
                 // переименованы: по нему система узнаёт установленную кассу
@@ -188,136 +187,4 @@ tasks.register<JavaExec>("makeIcon") {
     mainClass.set("kz.mybrain.superkassa.tools.IconMakerKt")
     classpath = tools.runtimeClasspath
     workingDir = rootDir
-}
-
-/**
- * Кладёт узел в ресурсы приложения.
- *
- * Установщик обязан нести узел с собой: касса без него не работает,
- * а собирать его на машине проверяющего — полдня работы. Файл берётся
- * из `-PnodeJar=<путь>`, иначе из соседнего дерева узла, собранного
- * задачей `:server:bootJar`.
- *
- * Узла рядом может не быть — при разработке кассы он не нужен: узел там
- * свой, запущенный из Gradle, и приложение это видит по отсутствию
- * ресурса.
- */
-val nodeJar: Provider<RegularFile> = providers.gradleProperty("nodeJar")
-    .map { named ->
-        // Узел назвали, но его там нет — собирать установщик без узла
-        // нельзя: он поставится и молча не заработает. Пустая задача
-        // копирования об этом не скажет, поэтому проверка здесь.
-        require(File(named).isFile) { "узел не найден: $named" }
-        rootProject.layout.projectDirectory.file(named)
-    }
-    .orElse(provider { newestNodeJar()?.let(rootProject.layout.projectDirectory::file) })
-
-val bundleNode by tasks.registering(Copy::class) {
-    description = "Кладёт узел в ресурсы приложения"
-    onlyIf { nodeJar.isPresent }
-    // Источник берётся отложенно: без узла провайдер пуст, и обращение
-    // к нему при построении графа задач ломало сборку целиком — раньше
-    // самой проверки `requireNode`, с невнятным «has no value available».
-    from(Callable { nodeJar.orNull ?: emptyList<Any>() })
-    rename { "node.jar" }
-    into(layout.buildDirectory.dir("appResources/common"))
-}
-
-tasks.matching { it.name.startsWith("prepareAppResources") }.configureEach {
-    dependsOn(bundleNode)
-}
-
-// Собранное приложение не замечало нового узла: задача, пакующая его,
-// считала прежний результат годным, и в `Superkassa.app` оставался
-// узел от предыдущей сборки. Локально это молча подсовывало старое
-// поведение там, где его уже исправили. Узел объявлен входом, и смена
-// его содержимого заново пакует приложение.
-tasks.matching { it.name.startsWith("createDistributable") || it.name.startsWith("package") }
-    .configureEach {
-        inputs.files(bundleNode)
-            .withPropertyName("node")
-            .withPathSensitivity(PathSensitivity.RELATIVE)
-    }
-
-/** Самый свежий `server-*.jar` из соседнего дерева узла. */
-fun newestNodeJar(): String? = rootDir.resolveSibling("superkassa-server")
-    .resolve("server/build/libs")
-    .listFiles { file -> file.name.startsWith("server-") && file.name.endsWith(".jar") }
-    ?.filterNot { it.name.endsWith("-plain.jar") }
-    ?.maxByOrNull { it.lastModified() }
-    ?.absolutePath
-
-/** Куда собирается рантайм узла: рядом с самим узлом, в ресурсах приложения. */
-val nodeRuntimeDir: Provider<Directory> = layout.buildDirectory.dir("appResources/common/node-runtime")
-
-/**
- * Собирает рантайм, которым запускается узел.
- *
- * Свой рантайм приложению jpackage собирает сам, но кладёт его без
- * запускающего файла: в `runtime/.../Home` есть `conf`, `lib` и `legal`
- * и нет `bin`. Запустить узел им нельзя.
- *
- * Держать узел в одной машине с кассой тоже нельзя: касса закрывается
- * посреди смены, а узел обязан это пережить — на том и стоит разделение
- * на две программы. Поэтому узлу собирается свой рантайм, `jlink`
- * от той же Java, которой собрано всё остальное.
- *
- * Рантайм всегда для той системы, где идёт сборка: Windows-установщик
- * собирается на Windows, `deb` — на Linux. Кросс-сборки у `jlink` нет,
- * как и у `jpackage`.
- */
-val nodeRuntime by tasks.registering(Exec::class) {
-    description = "Собирает рантайм для узла"
-    onlyIf { nodeJar.isPresent }
-    val output = nodeRuntimeDir.get().asFile
-    outputs.dir(output)
-    executable = toolchainTool("jlink")
-    args(
-        "--add-modules", "java.se",
-        "--strip-debug", "--no-header-files", "--no-man-pages",
-        "--output", output.path
-    )
-    doFirst { output.deleteRecursively() }
-}
-
-/**
- * Не даёт собрать установщик без узла.
- *
- * Установщик без узла ставится и не работает: касса показывает «Узел
- * не на связи», и понять причину можно только по журналу. В чистом клоне
- * соседнего дерева узла нет, и молчаливый пропуск давал ровно такую сборку.
- *
- * Осознанная сборка без узла — `-PwithoutNode`.
- */
-val requireNode by tasks.registering {
-    description = "Проверяет, что узел есть"
-    doLast {
-        require(nodeJar.isPresent || providers.gradleProperty("withoutNode").isPresent) {
-            "узла нет: соберите его в ../superkassa-server (./gradlew :server:bootJar), " +
-                "укажите -PnodeJar=<путь> или соберите без узла с -PwithoutNode"
-        }
-    }
-}
-
-tasks.matching { it.name == "createDistributable" || it.name.startsWith("package") }.configureEach {
-    dependsOn(requireNode)
-}
-
-tasks.matching { it.name.startsWith("prepareAppResources") }.configureEach {
-    dependsOn(nodeRuntime)
-    // Раскладка ресурсов снимает право на запуск, и `jlink`-овский
-    // `bin/java` приезжает обычным файлом. Возвращаем его здесь; там,
-    // где установщик его всё равно потеряет, касса снимает свой список
-    // рантайма — см. `LocalNode.ownRuntime`.
-    (this as? Copy)?.eachFile {
-        if (path.startsWith("node-runtime/bin/")) permissions { unix("755") }
-    }
-}
-
-/** Путь до средства из той же Java, которой собрано приложение. */
-fun toolchainTool(name: String): String {
-    val toolchains = extensions.getByType<JavaToolchainService>()
-    val home = toolchains.launcherFor(java.toolchain).get().metadata.installationPath.asFile
-    val windows = File(home, "bin/$name.exe")
-    return if (windows.isFile) windows.path else File(home, "bin/$name").path
 }

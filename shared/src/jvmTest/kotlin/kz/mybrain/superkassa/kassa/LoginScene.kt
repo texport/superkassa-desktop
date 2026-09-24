@@ -8,12 +8,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import kz.mybrain.superkassa.presentation.AppContainer
-import kz.mybrain.superkassa.presentation.DoorShell
-import kz.mybrain.superkassa.presentation.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.WindowModels
-import kz.mybrain.superkassa.presentation.session.CabinetSession
-import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.KassaDesk
+import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.shell.WindowModels
+import kz.mybrain.superkassa.presentation.shell.frame.DoorShell
 
 /**
  * Вход в том самом окне, каким его собирает приложение, — поверх кассы процесса.
@@ -29,10 +28,10 @@ object LoginScene {
     }
 
     @Composable
-    fun Door(session: Session, app: AppContainer) {
+    fun Door(app: AppContainer) {
         val models = remember { WindowModels() }
         ProvideWindowModels(models) {
-            DoorShell(session, app, remember { CabinetSession() }, remember { SnackbarHostState() })
+            DoorShell(app, remember { KassaDesk(app).parts }, remember { SnackbarHostState() })
         }
     }
 }

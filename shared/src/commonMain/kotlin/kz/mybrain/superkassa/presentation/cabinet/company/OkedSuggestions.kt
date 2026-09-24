@@ -1,0 +1,112 @@
+package kz.mybrain.superkassa.presentation.cabinet.company
+
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.domain.cabinet.model.OkedEntry
+import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
+import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+
+/**
+ * Поле поиска по классификатору и найденное выпадающим списком.
+ *
+ * Отдельно от [OkedPicker]: тот держит состояние поиска — страницы,
+ * запрос и состояние «уже спрашивали», — а здесь только показ. Разделено
+ * потому, что вместе файл перестал читаться сверху вниз.
+ *
+ * Собрано так же, как подбор адреса: одно и то же дело в кабинете
+ * не должно выглядеть двумя разными полями.
+ *
+ * @param rest сколько классификатор держит сверх показанного; `null` —
+ *   продолжения нет, и просить его нечем.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun OkedSuggestionsField(
+    texts: CabinetTexts,
+    query: String,
+    found: List<OkedEntry>,
+    open: Boolean,
+    rest: Long?,
+    title: (OkedEntry) -> String,
+    onMore: () -> Unit,
+    onOpen: (Boolean) -> Unit,
+    onQuery: (String) -> Unit,
+    onPick: (OkedEntry) -> Unit
+) {
+    // Escape закрывает раскрытый список — тем же правилом, что и у всех
+    // выпадающих списков приложения: сам он нажатия не слышит.
+    val closing = Modifier.fillMaxWidth().onEscape {
+        if (open) onOpen(false)
+        open
+    }
+    ExposedDropdownMenuBox(expanded = open, onExpandedChange = onOpen, modifier = closing) {
+        OutlinedTextField(
+            value = query,
+            onValueChange = onQuery,
+            label = { Text(texts.okedSearch) },
+            singleLine = true,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .onFocusChanged { state -> if (state.isFocused) onOpen(true) }
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
+        )
+        ExposedDropdownMenu(expanded = open, onDismissRequest = { onOpen(false) }) {
+            val more = rest?.let { if (it > 0) "${texts.showMore}${Glyphs.SEPARATOR}$it" else texts.showMore }
+            OkedItems(found, more, title, onMore, onPick)
+        }
+    }
+}
+
+/**
+ * Строки раскрытого списка.
+ *
+ * Классификатор больше страницы, и список раскрыт внутрь меню: по прокрутке
+ * догружать некуда, поэтому продолжение просят последней строкой списка.
+ *
+ * @param more надпись строки продолжения; `null` — продолжения нет.
+ */
+@Composable
+private fun OkedItems(
+    found: List<OkedEntry>,
+    more: String?,
+    title: (OkedEntry) -> String,
+    onMore: () -> Unit,
+    onPick: (OkedEntry) -> Unit
+) {
+    found.forEach { entry ->
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = "${entry.code}${Glyphs.SEPARATOR}${title(entry)}",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            },
+            onClick = { onPick(entry) }
+        )
+    }
+    if (more != null) DropdownMenuItem(text = { Text(more) }, onClick = onMore)
+}
+
+/** Подсказка под полем: одна строка на все состояния, чтобы поле не прыгало. */
+@Composable
+internal fun OkedHint(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+}

@@ -5,19 +5,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import kz.mybrain.superkassa.data.cabinet.CabinetRegister
-import kz.mybrain.superkassa.data.cabinet.RetailPlace
+import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
+import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
+import kz.mybrain.superkassa.domain.cabinet.model.RetailPlaceRef
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.cabinet.ActionKind
-import kz.mybrain.superkassa.presentation.cabinet.ApplicationFields
-import kz.mybrain.superkassa.presentation.cabinet.DeregistrationReason
-import kz.mybrain.superkassa.presentation.cabinet.PlaceSieve
-import kz.mybrain.superkassa.presentation.cabinet.PlaceTree
-import kz.mybrain.superkassa.presentation.cabinet.placeRows
+import kz.mybrain.superkassa.presentation.cabinet.applications.ActionKind
+import kz.mybrain.superkassa.presentation.cabinet.applications.ApplicationFields
+import kz.mybrain.superkassa.presentation.cabinet.applications.DeregistrationReason
+import kz.mybrain.superkassa.presentation.cabinet.places.PlaceSieve
+import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
+import kz.mybrain.superkassa.presentation.cabinet.places.component.placeRows
 import kz.mybrain.superkassa.presentation.login.KkmList
 import kz.mybrain.superkassa.presentation.login.LoginUiState
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.cabinetTexts
+import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
+import kz.mybrain.superkassa.presentation.strings.common.Language
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -53,7 +54,7 @@ class BigListRenderTest {
                 internalName = "Касса $at, ${place.name}",
                 status = "REGISTERED",
                 registrationNumber = "%012d".format(place.id.drop(1).toInt() * PER_PLACE + at),
-                retailPlaceId = place.id
+                retailPlace = RetailPlaceRef(place.id)
             )
         }
     }

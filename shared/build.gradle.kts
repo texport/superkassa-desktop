@@ -17,13 +17,13 @@ plugins {
  *
  * Версия пишется в общий код: её знает касса на любой платформе.
  */
-val appVersion: String = providers.gradleProperty("appVersion").getOrElse("1.0.0-dev")
+val appVersion: String = providers.gradleProperty("appVersion").getOrElse("${libs.versions.appVersion.get()}-dev")
 
 val versionSourceDir: Provider<Directory> = layout.buildDirectory.dir("generated/version/kotlin")
 
-val generateVersion by tasks.registering {
+val generateVersion = tasks.register("generateVersion") {
     description = "Записывает версию приложения в исходный код"
-    val output = versionSourceDir.map { it.file("kz/mybrain/superkassa/domain/version/BuildVersion.kt") }
+    val output = versionSourceDir.map { it.file("kz/mybrain/superkassa/domain/version/model/BuildVersion.kt") }
     inputs.property("appVersion", appVersion)
     outputs.dir(versionSourceDir)
     doLast {
@@ -31,7 +31,7 @@ val generateVersion by tasks.registering {
             parentFile.mkdirs()
             writeText(
                 """
-                package kz.mybrain.superkassa.domain.version
+                package kz.mybrain.superkassa.domain.version.model
 
                 /** Версия этой сборки; записывается сборкой из `appVersion`. */
                 object BuildVersion {
@@ -53,8 +53,9 @@ kotlin {
 
     android {
         namespace = "kz.mybrain.superkassa.shared"
-        compileSdk = libs.versions.android.compileSdk.get().toInt()
-        minSdk = libs.versions.android.minSdk.get().toInt()
+        compileSdk = libs.versions.androidCompileSdk.get().toInt()
+        minSdk = libs.versions.androidMinSdk.get().toInt()
+        withHostTest {}
     }
 
     sourceSets {
@@ -63,30 +64,55 @@ kotlin {
             // сама ждёт записи файла, и отдельной зависимости не нужно.
             kotlin.srcDir(generateVersion)
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.ui)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.material.icons.extended)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.kotlinx.coroutines.core)
+                // Общий код без java.*: время, файлы и сеть — библиотеками
+                // Kotlin Multiplatform; движок сети у каждой платформы свой.
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.io.core)
+                implementation(libs.ktor.client.core)
+                // Внешние службы — модулями интеграций: слой `data` переводит
+                // их в порты областей.
+                implementation(project(":integrations:maps"))
                 api(libs.lifecycle.viewmodel.compose)
+                implementation(libs.lifecycle.runtime.compose)
+                implementation(libs.navigation.compose)
                 // Касса работает в процессе приложения: ядро — библиотека,
                 // а не узел за сетью. Типы его фасада — каноническая модель
                 // кассы, и наружу `shared` они выходят как есть: точка сборки
                 // в платформенном приложении поднимает ядро сама.
                 api(libs.superkassa.core.embedded)
+                // Кабинет БФД — модулем интеграции; экземпляр модуля открыт
+                // наружу `data` (`RemoteCabinet.bfd`), и точка сборки отдаёт
+                // его соседним адаптерам того же кабинета.
+                api(project(":integrations:bfd-cabinet"))
             }
         }
+        androidMain.dependencies {
+            implementation(libs.ktor.client.okhttp)
+            // «Назад» закрывает наложение так же, как Escape на настольной кассе.
+            implementation(libs.androidx.activity.compose)
+        }
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
         jvmMain.dependencies {
-            implementation(compose.desktop.common)
-            implementation(libs.ktor.client.core)
+            implementation(libs.compose.desktop)
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.client.websockets)
             implementation(libs.ktor.serialization.json)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.jna)
+            // Выпуски кассы: последний выпуск и установщик под систему.
+            implementation(project(":integrations:releases"))
+            // Подпись ЭЦП — NCALayer, только на настольных системах.
+            implementation(project(":integrations:ncalayer"))
             // Перенос данных узла в кассу процесса: узел живёт только
             // на настольных машинах, и перенос — тоже.
             implementation(libs.superkassa.core.import.node)
@@ -96,6 +122,9 @@ kotlin {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)
+            // Тестовый БФД и часы проверки из оснастки ядра: касса в процессе
+            // заводится и пробивает чеки без сети и без своего двойника БФД.
+            implementation(libs.superkassa.core.testing)
         }
     }
 }

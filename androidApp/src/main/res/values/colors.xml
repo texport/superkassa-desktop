@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Цвета, которые система рисует до первого кадра Compose: значок
+    и заставка. Экраны берут цвета из темы в `presentation/theme`;
+    здесь — только фирменный фон значка и заставки, тот же, что в `icon.png`.
+-->
+<resources>
+    <color name="brand">#4B4FBF</color>
+</resources>

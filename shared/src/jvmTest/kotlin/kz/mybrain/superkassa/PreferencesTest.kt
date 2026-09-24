@@ -17,16 +17,16 @@ class PreferencesTest {
         val file = File.createTempFile("prefs", ".kkm").also { it.delete() }
         val id = "4467c6f4-9366-4eda-a47d-247ec46d9c9a"
 
-        Preferences(file).defaultKkmId = id
+        Preferences(file).rememberedKkmId = id
 
-        assertEquals(id, Preferences(file).defaultKkmId)
+        assertEquals(id, Preferences(file).rememberedKkmId)
 
         val other = "0f2d1a7c-1111-2222-3333-444455556666"
-        Preferences(file).defaultKkmId = other
-        assertEquals(other, Preferences(file).defaultKkmId, "перезапись не должна оставлять огрызок")
+        Preferences(file).rememberedKkmId = other
+        assertEquals(other, Preferences(file).rememberedKkmId, "перезапись не должна оставлять огрызок")
 
-        Preferences(file).defaultKkmId = null
-        assertEquals(null, Preferences(file).defaultKkmId)
+        Preferences(file).rememberedKkmId = null
+        assertEquals(null, Preferences(file).rememberedKkmId)
         file.delete()
     }
 
@@ -41,13 +41,13 @@ class PreferencesTest {
         home.mkdirs()
         val file = File(home, "kkm")
 
-        assertEquals(false, Preferences(file).placesCollapsed, "по умолчанию колонка развёрнута")
+        assertEquals(false, Preferences(file).look.placesCollapsed, "по умолчанию колонка развёрнута")
 
-        Preferences(file).placesCollapsed = true
-        assertEquals(true, Preferences(file).placesCollapsed)
+        Preferences(file).let { it.look = it.look.copy(placesCollapsed = true) }
+        assertEquals(true, Preferences(file).look.placesCollapsed)
 
-        Preferences(file).placesCollapsed = false
-        assertEquals(false, Preferences(file).placesCollapsed)
+        Preferences(file).let { it.look = it.look.copy(placesCollapsed = false) }
+        assertEquals(false, Preferences(file).look.placesCollapsed)
         home.deleteRecursively()
     }
 }

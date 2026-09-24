@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.runBlocking
-import kz.mybrain.superkassa.presentation.theme.AppIcons
+import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skiko.MainUIDispatcher
 import java.io.File

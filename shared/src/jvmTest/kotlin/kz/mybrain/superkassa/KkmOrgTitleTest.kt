@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa
 
-import kz.mybrain.superkassa.data.node.Kkm
-import kz.mybrain.superkassa.data.node.OrgInfo
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.stringsOf
+import kz.mybrain.superkassa.domain.kkm.model.matches
+import kz.mybrain.superkassa.domain.kkm.model.orgTitle
+import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -20,12 +20,9 @@ import kotlin.test.assertTrue
  */
 class KkmOrgTitleTest {
 
-    private fun kkm(org: String? = null) = Kkm(
-        kkmId = "kkm-1",
-        kkmKgdId = "000000200042",
-        factoryNumber = "SK-000042",
-        ofdServiceInfo = org?.let { OrgInfo(orgTitle = it, orgAddress = "Алматы, Абая 150") }
-    )
+    private fun kkm(org: String? = null) = KassaScene.kkm().let { kkm ->
+        kkm.copy(ofdServiceInfo = org?.let { kkm.ofdServiceInfo?.copy(orgTitle = it) })
+    }
 
     @Test
     fun `у кассы без сведений об организации названия организации нет`() {
@@ -37,10 +34,13 @@ class KkmOrgTitleTest {
     @Test
     fun `поиск по организации не отбирает кассы без организации`() {
         assertFalse(
-            kkm().matches("Орг"),
+            kkm().matches("Орг", localName = null),
             "касса без сведений об организации отобралась набором «Орг»: искалась подставленная надпись"
         )
-        assertTrue(kkm(org = "ТОО «Органика»").matches("Орг"), "своя организация обязана находиться набором")
+        assertTrue(
+            kkm(org = "ТОО «Органика»").matches("Орг", localName = null),
+            "своя организация обязана находиться набором"
+        )
     }
 
     @Test

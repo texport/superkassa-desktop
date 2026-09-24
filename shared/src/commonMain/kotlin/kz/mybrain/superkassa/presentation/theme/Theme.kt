@@ -8,6 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import kz.mybrain.superkassa.presentation.theme.color.Appearance
+import kz.mybrain.superkassa.presentation.theme.color.DarkStatuses
+import kz.mybrain.superkassa.presentation.theme.color.LightStatuses
+import kz.mybrain.superkassa.presentation.theme.color.StatusPalette
+import kz.mybrain.superkassa.presentation.theme.color.schemeOf
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.presentation.theme.type.LocalTextScale
+import kz.mybrain.superkassa.presentation.theme.type.typographyOf
 
 /**
  * Оформление кассы.

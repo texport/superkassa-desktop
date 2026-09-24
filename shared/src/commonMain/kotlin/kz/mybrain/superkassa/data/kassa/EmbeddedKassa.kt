@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
-import kz.mybrain.superkassa.domain.kassa.Kassa
+import kz.mybrain.superkassa.domain.kassa.port.Kassa
 
 /**
  * Касса, поднятая в процессе приложения.

@@ -2,18 +2,17 @@ package kz.mybrain.superkassa.presentation.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmListParams
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kz.mybrain.superkassa.domain.kassa.ask
-import kz.mybrain.superkassa.domain.signin.Pin
-import kz.mybrain.superkassa.presentation.AppContainer
-import kz.mybrain.superkassa.presentation.messages.shown
-import kz.mybrain.superkassa.presentation.strings.stringsOf
+import kz.mybrain.superkassa.domain.kassa.model.Answer
+import kz.mybrain.superkassa.domain.signin.model.Pin
+import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.common.model.shown
+import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 
 /**
  * Вход кассира: список касс, выбор, пин и проверка пина кассой.
@@ -23,35 +22,35 @@ import kz.mybrain.superkassa.presentation.strings.stringsOf
  * Удачный вход записывается в держатель входа, и окно само переходит
  * к работе: экрану входа об этом знать незачем.
  */
-class LoginViewModel(private val app: AppContainer) : ViewModel() {
+class LoginViewModel(private val cases: LoginCases, private val talk: Talk) : ViewModel(), LoginActions {
     private val screen = MutableStateFlow(LoginUiState())
 
     val state: StateFlow<LoginUiState> = screen.asStateFlow()
 
     /** Перечитывает список касс. Итог прошлого действия перечитывание не стирает. */
-    fun reload() {
+    override fun reload() {
         viewModelScope.launch { read() }
     }
 
     /** Кассир набирает номер или название: прежний выбор мышью отменяется. */
-    fun search(text: String) {
+    override fun search(text: String) {
         screen.update { it.copy(search = text, pickedId = null) }
     }
 
-    fun pick(kkm: KkmResponse) {
+    override fun pick(kkm: KkmResponse) {
         screen.update { it.copy(pickedId = kkm.kkmId) }
     }
 
-    fun typePin(text: String) {
+    override fun typePin(text: String) {
         screen.update { it.copy(pin = Pin.digitsOf(text)) }
     }
 
-    fun open(door: Door) {
+    override fun open(door: Door) {
         screen.update { it.copy(door = door) }
     }
 
     /** Проверяет пин у кассы и начинает работу; неверный пин — отказ словами кассы. */
-    fun enter() {
+    override fun enter() {
         val now = screen.value
         val kkm = now.chosen ?: return
         if (now.entering || !Pin.enterable(now.pin)) return
@@ -59,38 +58,38 @@ class LoginViewModel(private val app: AppContainer) : ViewModel() {
         viewModelScope.launch { enterWith(kkm, now.pin) }
     }
 
+    /**
+     * Кассир уходит, касса остаётся.
+     *
+     * Строка сообщений снимается: отказ, оставшийся от ушедшего кассира,
+     * новому ни о чём не говорит.
+     */
+    fun signOut() {
+        viewModelScope.launch {
+            talk.clear()
+            cases.signOut()
+        }
+    }
+
     private suspend fun read() {
-        val texts = stringsOf(app.language())
-        val list = app.kassa.ask { it.listKkms(KkmListParams(limit = MAX_KKMS)) }
-            .shown(texts.login.reload, "read kkm list", app)
-        val kkms = list?.items ?: screen.value.kkms
+        val choice = cases.readKkms(screen.value.kkms)
+        val read = choice.answer.shown(stringsOf(talk.language()).login.reload, "read kkm list", talk) != null
         screen.update { now ->
             now.copy(
-                kkms = kkms,
-                localNames = kkms.mapNotNull { kkm -> app.memory.localName(kkm.kkmId)?.let { kkm.kkmId to it } }
-                    .toMap(),
+                kkms = choice.kkms,
+                localNames = choice.localNames,
                 answered = true,
-                listRead = list != null || now.listRead,
-                rememberedId = app.memory.rememberedKkmId,
-                selectedId = app.signIn.state.value.kkm?.kkmId
+                listRead = read || now.listRead,
+                rememberedId = choice.rememberedId,
+                selectedId = cases.observe().value.kkm?.kkmId
             )
         }
     }
 
     private suspend fun enterWith(kkm: KkmResponse, pin: String) {
-        app.notices.clear()
-        val texts = stringsOf(app.language())
-        val cashier = app.kassa.ask { it.authenticate(kkm.kkmId, pin) }
-            .shown(texts.login.enter, "sign in", app)
-        screen.update { it.copy(entering = false, pin = if (cashier == null) it.pin else "") }
-        cashier ?: return
-        app.memory.rememberedKkmId = kkm.kkmId
-        app.journal.info("signed in to kkm ${kkm.kkmId} as ${cashier.role}")
-        app.signIn.enter(kkm, cashier, pin)
-    }
-
-    private companion object {
-        /** Столько касс на одном рабочем месте не бывает; больше ядро не отдаёт за раз. */
-        const val MAX_KKMS = 1000
+        talk.clear()
+        val answer = cases.signInCashier(kkm, pin)
+        answer.shown(stringsOf(talk.language()).login.enter, "sign in", talk)
+        screen.update { it.copy(entering = false, pin = if (answer is Answer.Done) "" else it.pin) }
     }
 }

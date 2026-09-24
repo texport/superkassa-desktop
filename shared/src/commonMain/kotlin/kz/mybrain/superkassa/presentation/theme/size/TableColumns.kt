@@ -1,0 +1,81 @@
+package kz.mybrain.superkassa.presentation.theme.size
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kz.mybrain.superkassa.presentation.theme.type.LocalTextScale
+import kz.mybrain.superkassa.presentation.theme.type.scaled
+
+/**
+ * Наименьшие ширины столбцов таблиц.
+ *
+ * Уже этого столбец не сжимается: таблице, которой не хватает окна,
+ * достаётся прокрутка вбок, а не слово столбиком по букве и не кнопка,
+ * пропавшая до точки. Столбец одного смысла одной ширины во всех таблицах —
+ * журнал, аналитика и кабинет стоят рядом, и суммы в них читаются одинаково.
+ */
+object TableColumns {
+
+    /** Название товара, точки, кассы: растёт сильнее остальных. */
+    val name = 200.dp
+
+    /** Сумма до сотен миллионов тенге основной ступенью; больше — уменьшенной. */
+    val money = 150.dp
+
+    /** Счёт штук: чеки, кассы, позиции. */
+    val count = 88.dp
+
+    /** Номер документа, смены, номер КГД. */
+    val number = 120.dp
+
+    /** Дата и время. */
+    val moment = 150.dp
+
+    /** Плашка состояния: «Доставлен», «Отклонён». */
+    val status = 120.dp
+
+    /** Одна кнопка-значок в конце строки: печать, раскрыть. Кнопка 48 и поля ячейки. */
+    val action = 64.dp
+
+    /** Поле ячейки слева и справа: столбцы не слипаются. */
+    val cellPadding = Spacing.tight
+}
+
+/**
+ * Начертание чисел в таблицах.
+ *
+ * Номера и счёт — моноширинно и вправо, как суммы: столбец цифр читается
+ * сверху вниз одним движением, а пропорциональные цифры уводят разряды
+ * вбок. Размер — как у строки списка, чтобы строка таблицы не набиралась
+ * двумя кеглями. Растёт вместе с выбранным размером, как и суммы.
+ */
+object NumberStyle {
+
+    /** Число в ячейке таблицы; растёт вместе с выбранным размером шрифта. */
+    val cell: TextStyle
+        @Composable get() = cellBase.scaled(LocalTextScale.current)
+
+    private val cellBase = TextStyle(
+        fontFamily = FontFamily.Monospace,
+        fontSize = 15.sp,
+        lineHeight = 21.sp,
+        textAlign = TextAlign.End
+    )
+}
+
+/**
+ * Ступени суммы, которой не хватает места.
+ *
+ * Сумма не обрезается и не переносится посреди числа никогда: сначала
+ * она берёт свою ступень, потом — меньшую на заметный глаз шаг. Шагов
+ * немного и они крупные, чтобы уменьшение читалось как решение,
+ * а не как дрожание кегля от строки к строке.
+ */
+object MoneyFit {
+
+    /** Множители кегля по порядку: своя ступень, затем уменьшенные. */
+    val steps: List<Float> = listOf(1f, 0.85f, 0.72f)
+}

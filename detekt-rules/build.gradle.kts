@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-
 plugins {
     alias(libs.plugins.kotlin.jvm)
 }
@@ -7,16 +5,15 @@ plugins {
 /**
  * Свои правила detekt.
  *
- * detekt исполняет их своим компилятором Kotlin 2.0, поэтому и собираются
- * они под язык 2.0: код под более новую стандартную библиотеку мог бы
- * не найти в ней нужного при разборе.
+ * Правила — обычные классы, которые detekt находит через `ServiceLoader`
+ * и исполняет в своём процессе; собственным компилятором он разбирает
+ * только проверяемый код, а не их. Поэтому версия языка здесь та же,
+ * что у всей сборки. Стандартная библиотека новее той, с которой пришёл
+ * detekt, едет вместе с правилами: `detektPlugins` берёт их зависимости
+ * времени исполнения.
  */
 kotlin {
     jvmToolchain(21)
-    compilerOptions {
-        languageVersion.set(KotlinVersion.KOTLIN_2_0)
-        apiVersion.set(KotlinVersion.KOTLIN_2_0)
-    }
 }
 
 dependencies {

@@ -12,78 +12,86 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
-import kz.mybrain.superkassa.data.cabinet.CabinetClient
-import kz.mybrain.superkassa.data.cabinet.CabinetCompany
-import kz.mybrain.superkassa.data.cabinet.CabinetMe
-import kz.mybrain.superkassa.data.cabinet.CabinetUser
-import kz.mybrain.superkassa.data.local.Preferences
-import kz.mybrain.superkassa.data.node.ServerClient
-import kz.mybrain.superkassa.presentation.MessageEffect
-import kz.mybrain.superkassa.presentation.MessageHost
+import kz.mybrain.superkassa.domain.cabinet.model.CabinetCompany
+import kz.mybrain.superkassa.domain.cabinet.model.CabinetUser
+import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
+import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetMessage
-import kz.mybrain.superkassa.presentation.session.CabinetProblem
-import kz.mybrain.superkassa.presentation.session.CabinetSession
-import kz.mybrain.superkassa.presentation.session.Session
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.cabinetTexts
+import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.shell.WindowModels
+import kz.mybrain.superkassa.presentation.shell.frame.MessageEffect
+import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
+import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
+import kz.mybrain.superkassa.presentation.strings.common.Language
 import java.io.File
-import java.nio.file.Files
 
 /**
  * Сцена кабинета для снимков: владелец уже вошёл, а сети нет.
  *
- * Кабинет владельца и узел на этой машине — рабочие, и ходить в них
- * проверкой нельзя. Поэтому доступ выдаётся здесь же — той же записью,
- * какую кабинет отдаёт на вход без ЭЦП, — а ответы подставляет
- * [MockEngine] по пути запроса. Настройки читаются из своего временного
- * каталога: экраны кабинета их пишут, и общий каталог задел бы настройки
- * машины.
+ * Кабинет владельца — рабочий, и ходить в него проверкой нельзя. Поэтому
+ * доступ выдаётся здесь же — той же записью, какую кабинет отдаёт на вход
+ * без ЭЦП, — а ответы подставляет [MockEngine] по пути запроса. Память
+ * рабочего места — в памяти проверки: экраны кабинета её пишут.
  */
-internal class CabinetStage(private val reply: (String) -> CabinetReply) {
+internal class CabinetStage(private val reply: (String) -> StubReply) {
 
-    val session: Session = Session(
-        ServerClient(http = HttpClient(MockEngine { respond("{}", HttpStatusCode.OK, jsonHeader) })),
-        Preferences(File(Files.createTempDirectory("cabinet-shot").toFile(), "kkm"))
-    )
+    val app: AppContainer = CoreScene.app(FakeCore())
 
-    val cabinet: CabinetSession = CabinetSession(client())
+    private val rig = CabinetRig(client(), app)
+
+    val cabinet: CabinetWindow = rig.window
 
     val texts = cabinetTexts(Language.Ru)
 
+    /** Модели окна: разделы кабинета берут свои модели у окна, как в приложении. */
+    val models = WindowModels()
+
     init {
-        // Язык рабочего места ставится тот же, что подставляет сцена:
-        // по умолчанию у нового места он казахский, и экран выходил
-        // наполовину русским, наполовину казахским — из-за оснастки,
-        // а не из-за кабинета.
-        session.switchLanguage(Language.Ru)
-        cabinet.access.enter(ACCESS, CabinetMe(user = OWNER, company = COMPANY))
+        rig.enter(OWNER, COMPANY)
     }
 
-    private fun client(): CabinetClient {
+    /**
+     * Ждёт, пока кабинет прочтёт хозяйство вошедшего: чтение начинается само,
+     * как только владелец вошёл, и идёт своим чередом.
+     */
+    fun settled() {
+        val until = System.nanoTime() + SETTLE_NANOS
+        while (!cabinet.cabinet.state.value.placesRead && System.nanoTime() < until) Thread.sleep(SETTLE_STEP)
+    }
+
+    /** Содержимое в окне сцены: с его моделями. */
+    @Composable
+    fun Window(content: @Composable () -> Unit) = ProvideWindowModels(models, content)
+
+    private fun client(): CabinetWire {
         val engine = MockEngine { request ->
             val answer = reply(request.url.encodedPath)
             respond(answer.body, answer.status, jsonHeader)
         }
         val http = HttpClient(engine) {
             expectSuccess = false
-            install(ContentNegotiation) { json(CabinetClient.lenientJson) }
+            install(ContentNegotiation) { json(CabinetWire.json) }
         }
-        return CabinetClient(http = http)
+        return CabinetWire(http = http)
     }
 
     private companion object {
+        const val SETTLE_NANOS = 5_000_000_000L
+        const val SETTLE_STEP = 10L
         val jsonHeader = headersOf(HttpHeaders.ContentType, "application/json")
-        const val ACCESS = "shot-access"
         val OWNER = CabinetUser(id = "u-1", iin = "900101300000", fullName = "Курманов Азамат Бахытжанович")
         val COMPANY = CabinetCompany(id = "c-1", bin = "230140000000", name = "ТОО «Азик и Ко»")
     }
 }
 
 /** Ответ кабинета на один путь: тем же телом и тем же кодом, что по сети. */
-internal data class CabinetReply(val body: String, val status: HttpStatusCode = HttpStatusCode.OK)
+internal data class StubReply(val body: String, val status: HttpStatusCode = HttpStatusCode.OK)
 
 /** Отказ кабинета: код и слова, как в ответе по RFC 9457. */
-internal fun refusal(code: String, detail: String, status: HttpStatusCode) = CabinetReply(
+internal fun refusal(code: String, detail: String, status: HttpStatusCode) = StubReply(
     """{"code":"$code","detail":"$detail","status":${status.value},"title":"${status.description}"}""",
     status
 )

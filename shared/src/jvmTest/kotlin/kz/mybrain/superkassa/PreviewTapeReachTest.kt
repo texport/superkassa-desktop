@@ -7,11 +7,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerKeyboardModifiers
 import androidx.compose.ui.unit.Density
-import kz.mybrain.superkassa.presentation.components.ReceiptPreview
-import kz.mybrain.superkassa.presentation.components.ScreenState
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.stringsOf
+import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.print.preview.component.ReceiptPreview
+import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skia.Image
 import java.awt.Color

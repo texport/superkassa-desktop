@@ -5,7 +5,7 @@ import io.github.texport.superkassa.core.presentation.api.SuperkassaApi
 import io.github.texport.superkassa.core.string.api.TrilingualMessage
 import kotlinx.coroutines.Dispatchers
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
-import kz.mybrain.superkassa.domain.kassa.Kassa
+import kz.mybrain.superkassa.domain.kassa.port.Kassa
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Proxy
 
@@ -32,15 +32,25 @@ class FakeCore {
     fun refuse(method: String, code: String, ru: String = code, kk: String = code, en: String = code) =
         on(method) { throw ConflictException(TrilingualMessage(ru, kk, en), code) }
 
-    val api: SuperkassaApi = Proxy.newProxyInstance(
-        SuperkassaApi::class.java.classLoader,
-        arrayOf(SuperkassaApi::class.java),
-        InvocationHandler { _, method, args ->
-            calls += method.name
-            val answer = answers[method.name] ?: error("fake core has no answer for ${method.name}")
-            answer(args?.toList().orEmpty())
-        }
-    ) as SuperkassaApi
+    val api: SuperkassaApi = proxy(SuperkassaApi::class.java)
+
+    /**
+     * Этот же набор ответов под другим фасадом ядра.
+     *
+     * Очередь у ядра — свой фасад, `SuperkassaApi.queue`: проверка отдаёт
+     * его из `getQueue` таким же фасадом по заказу.
+     */
+    fun <T> proxy(type: Class<T>): T = type.cast(
+        Proxy.newProxyInstance(
+            type.classLoader,
+            arrayOf(type),
+            InvocationHandler { _, method, args ->
+                calls += method.name
+                val answer = answers[method.name] ?: error("fake core has no answer for ${method.name}")
+                answer(args?.toList().orEmpty())
+            }
+        )
+    )
 
     /** Касса поверх этого фасада; вызовы идут без смены потока. */
     fun kassa(): Kassa = EmbeddedKassa(api, Dispatchers.Unconfined)

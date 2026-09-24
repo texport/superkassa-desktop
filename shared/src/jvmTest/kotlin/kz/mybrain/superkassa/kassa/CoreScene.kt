@@ -8,20 +8,30 @@ import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftRespo
 import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftStatus
 import io.github.texport.superkassa.core.presentation.api.model.user.UserResponse
 import io.github.texport.superkassa.core.presentation.api.model.user.UserRole
-import kz.mybrain.superkassa.data.node.Kkm
-import kz.mybrain.superkassa.domain.journal.Journal
-import kz.mybrain.superkassa.domain.signin.SignIn
-import kz.mybrain.superkassa.domain.workplace.WorkplaceMemory
-import kz.mybrain.superkassa.presentation.AppContainer
-import kz.mybrain.superkassa.presentation.messages.Notices
-import kz.mybrain.superkassa.presentation.session.Session
-import kz.mybrain.superkassa.presentation.strings.Language
+import kz.mybrain.superkassa.domain.journal.port.JournalPorts
+import kz.mybrain.superkassa.domain.journal.port.NoDeliveries
+import kz.mybrain.superkassa.domain.kassa.port.Kassa
+import kz.mybrain.superkassa.domain.log.port.Journal
+import kz.mybrain.superkassa.domain.setup.port.SetupMemory
+import kz.mybrain.superkassa.domain.signin.model.SignIn
+import kz.mybrain.superkassa.domain.workplace.model.LookChoice
+import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
+import kz.mybrain.superkassa.domain.workplace.port.LookMemory
+import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
+import kz.mybrain.superkassa.presentation.analytics.analyticsPorts
+import kz.mybrain.superkassa.presentation.common.message.Notices
+import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.settings.SettingsPorts
+import kz.mybrain.superkassa.presentation.settings.settingsPorts
+import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.presentation.shell.AreaPorts
+import kz.mybrain.superkassa.presentation.strings.common.Language
 
 /**
  * Касса процесса для проверок: касса, кассир, смена и документы в типах ядра.
  *
- * Значения те же, что у снимков на узле ([kz.mybrain.superkassa.KassaScene]):
- * снимок экрана на ядре и снимок на узле рисуют одну и ту же кассу.
+ * Значения те же, что у снимков окна ([kz.mybrain.superkassa.KassaScene]):
+ * снимок экрана и проверка сценария говорят об одной и той же кассе.
  */
 object CoreScene {
     const val PIN = "1234"
@@ -44,22 +54,6 @@ object CoreScene {
         ofdServiceInfo = ORG,
         blockReasonCode = blockReasonCode
     )
-
-    /** Касса снимка на узле в типах ядра: те же номера, название и организация. */
-    fun of(kkm: Kkm) = kkm(
-        state = kkm.state ?: "ACTIVE",
-        kgd = kkm.kkmKgdId,
-        name = kkm.name,
-        id = kkm.kkmId,
-        blockReasonCode = kkm.blockReasonCode
-    ).let {
-        it.copy(
-            autonomousSince = kkm.autonomousSince,
-            offlineQueueCount = kkm.offlineQueueCount ?: 0,
-            factoryNumber = kkm.factoryNumber,
-            ofdServiceInfo = ORG.copy(orgTitle = kkm.orgTitle.orEmpty(), orgAddress = kkm.orgAddress)
-        )
-    }
 
     fun cashier(admin: Boolean = true) =
         UserResponse(userId = "u-1", name = "Айгүл Сәрсенова", role = if (admin) UserRole.ADMIN else UserRole.CASHIER)
@@ -97,28 +91,36 @@ object CoreScene {
         core: FakeCore,
         signIn: SignIn = SignIn(),
         notices: Notices = Notices(),
-        memory: WorkplaceMemory = MemoryWorkplace()
+        memory: WorkplaceMemory = MemoryWorkplace(),
+        settings: SettingsPorts = settingsPorts()
+    ) = app(core.kassa(), signIn, notices, memory, settings)
+
+    /** Зависимости экранов поверх кассы [kassa] — например, настоящего ядра на тестовом БФД. */
+    fun app(
+        kassa: Kassa,
+        signIn: SignIn = SignIn(),
+        notices: Notices = Notices(),
+        memory: WorkplaceMemory = MemoryWorkplace(),
+        settings: SettingsPorts = settingsPorts(),
+        journal: JournalPorts = JournalPorts(NoDeliveries)
     ) = AppContainer(
-        kassa = core.kassa(),
+        kassa = kassa,
         signIn = signIn,
-        notices = notices,
         memory = memory,
-        journal = SilentJournal,
-        language = { Language.Ru }
+        look = WorkplaceLook(MemoryLook()),
+        talk = Talk(notices, SilentJournal) { Language.Ru },
+        areas = AreaPorts(journal = journal, settings = settings, analytics = analyticsPorts())
     )
 
     /** Список касс, как его отдаёт касса: одна страница. */
     fun page(kkms: List<KkmResponse>) = KkmListResponse(items = kkms, total = kkms.size)
 
-    /** Зависимости экранов, делящие вход и строку сообщений с [session]. */
-    fun app(session: Session, core: FakeCore = FakeCore()) = app(core, session.signIn, session.notices)
-
     private val ORG = OfdServiceInfoResponse(
         orgTitle = "ТОО «Пример»",
         orgAddress = "Алматы, Абая 150",
         orgAddressKz = "Алматы, Абай 150",
-        orgInn = "000000000000",
-        orgOkved = "47111",
+        orgIinOrBin = "000000000000",
+        orgOked = "47111",
         geoLatitude = 0,
         geoLongitude = 0,
         geoSource = "MANUAL"
@@ -128,10 +130,23 @@ object CoreScene {
 /** Память рабочего места без диска: у каждой проверки своя. */
 class MemoryWorkplace(
     override var rememberedKkmId: String? = null,
-    private val names: Map<String, String> = emptyMap()
+    names: Map<String, String> = emptyMap(),
+    domains: Map<String, String> = emptyMap(),
+    override var collapsedPanels: Set<String> = emptySet()
 ) : WorkplaceMemory {
+    /** Свои названия касс; настройки пишут сюда же, откуда читает окно. */
+    val names: MutableMap<String, String> = names.toMutableMap()
+
+    /** Отрасли касс; настройки пишут сюда же, откуда читает продажа. */
+    val domains: MutableMap<String, String> = domains.toMutableMap()
+
     override fun localName(kkmId: String): String? = names[kkmId]
+
+    override fun domain(kkmId: String): String? = domains[kkmId]
 }
+
+/** Вид окна без диска: у каждой проверки свой. */
+class MemoryLook(override var look: LookChoice = LookChoice()) : LookMemory
 
 /** Журнал, которого нет: проверкам он не нужен, а файл рабочей машины трогать нельзя. */
 object SilentJournal : Journal {
@@ -140,4 +155,15 @@ object SilentJournal : Journal {
     override fun warn(text: String) = Unit
 
     override fun failure(text: String) = Unit
+}
+
+/** Пройденное мастера в памяти: у каждой проверки своё. */
+class MemorySetup : SetupMemory {
+    private val values = mutableMapOf<String, String>()
+
+    override fun setupValue(name: String): String? = values[name]
+
+    override fun setupValue(name: String, value: String?) {
+        if (value == null) values.remove(name) else values[name] = value
+    }
 }

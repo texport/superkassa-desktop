@@ -1,0 +1,91 @@
+package kz.mybrain.superkassa.presentation.cabinet.register
+
+import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
+import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
+import kz.mybrain.superkassa.domain.cabinet.model.onRecord
+import kz.mybrain.superkassa.domain.users.model.UserRules
+
+/**
+ * Работает ли касса кабинета на этой машине.
+ *
+ * Касса этой машины знает только свои кассы: заведена ли эта касса
+ * на соседней машине, ей неизвестно, и утверждать про неё нельзя ничего. Поэтому состояний
+ * ровно три, и второе с третьим различает не касса, а учёт в КГД.
+ */
+sealed interface NodeWork {
+
+    /** Заведена здесь: касса этой машины знает её под этим идентификатором ОФД. */
+    data class Here(val kkm: KkmResponse) : NodeWork
+
+    /** Не стоит на учёте в КГД: работать с неё нельзя ни на какой машине. */
+    data object NotOnRecord : NodeWork
+
+    /** На учёте, а на этой машине не заведена — единственное состояние с действием. */
+    data object Absent : NodeWork
+}
+
+/**
+ * В каком из трёх состояний касса кабинета на этой машине.
+ *
+ * Сверка идёт по идентификатору кассы у ОФД: в кабинете это `kkmId`,
+ * у кассы этой машины — `ofdSystemId`, и других общих ключей у них нет. Заводской
+ * номер сюда не годится: у кассы, поставленной на учёт по чужому номеру,
+ * он совпал бы с чужим.
+ */
+fun nodeWork(register: CabinetRegister, kkms: List<KkmResponse>): NodeWork {
+    val here = kkms.firstOrNull { it.ofdSystemId == register.kkmId.toString() }
+    return when {
+        here != null -> NodeWork.Here(here)
+        !onRecord(register) -> NodeWork.NotOnRecord
+        else -> NodeWork.Absent
+    }
+}
+
+/**
+ * Стоит ли касса на учёте.
+ *
+ * Номер и состояние проверяются оба: черновик с приписанным номером
+ * так же не годится, как стоящая в очереди на снятие касса без него.
+ */
+private fun onRecord(register: CabinetRegister): Boolean =
+    !register.registrationNumber.isNullOrBlank() && tokenAllowed(register)
+
+/**
+ * Слышал ли ОФД эту кассу.
+ *
+ * Признак того, что касса уже где-то работает: ОФД принимал от неё данные
+ * или держит на ней открытую смену. Перевыпуск токена такую кассу
+ * остановит, и владелец обязан это подтвердить отдельно.
+ */
+fun heardElsewhere(technical: TechnicalState?): Boolean =
+    !technical?.lastContactAt.isNullOrBlank() || technical?.shiftStatus == SHIFT_OPEN
+
+/** Заполненное владельцем в окне заведения. */
+data class AdoptForm(
+    /** Куда касса шлёт чеки, названо целиком: БФД подставлена, контур выбран. */
+    val ofdComplete: Boolean,
+    val adminPin: String,
+    val handoverNeeded: Boolean,
+    val handoverAccepted: Boolean
+)
+
+/** Подписи полей окна: они объявлены в наборах надписей, а не здесь. */
+data class AdoptLabels(val ofd: String, val adminPin: String, val handover: String)
+
+/**
+ * Чего не хватает, чтобы завести кассу на этой машине.
+ *
+ * Пустой список открывает действие. Отметка о последствии стоит в этом же
+ * перечне наравне с полями: без неё действие недоступно так же, как без
+ * пина, — касса, которую БФД сейчас слышит, работает на другой машине,
+ * и перевыпуск токена её остановит.
+ */
+fun adoptMissing(form: AdoptForm, labels: AdoptLabels): List<String> = listOfNotNull(
+    labels.ofd.takeUnless { form.ofdComplete },
+    labels.adminPin.takeUnless { UserRules.pinAccepted(form.adminPin) },
+    labels.handover.takeIf { form.handoverNeeded && !form.handoverAccepted }
+)
+
+/** Состояние открытой смены, каким его отдаёт сервер приёма данных. */
+private const val SHIFT_OPEN = "OPEN"

@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.unit.dp
-import kz.mybrain.superkassa.presentation.adaptive.ContentKind
-import kz.mybrain.superkassa.presentation.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.adaptive.contentWidth
-import kz.mybrain.superkassa.presentation.theme.ContentWidths
+import kz.mybrain.superkassa.presentation.common.adaptive.ContentKind
+import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
+import kz.mybrain.superkassa.presentation.common.adaptive.contentWidth
+import kz.mybrain.superkassa.presentation.theme.size.ContentWidths
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -87,7 +87,7 @@ class AdaptiveRowsTest {
     }
 
     @Test
-    fun `текст и форма встают от левого края и не шире читаемого`() {
+    fun `текст встаёт от левого края и не шире читаемого`() {
         var width = 0
         var left = -1f
         RenderProbe(width = WIDE_MONITOR, height = HEIGHT) {

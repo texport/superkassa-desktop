@@ -1,0 +1,195 @@
+package kz.mybrain.superkassa.presentation.common.mapview
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+
+/**
+ * Где сейчас карта и куда поставлена точка.
+ *
+ * Центр держится в градусах, а не в точках полотна: увеличение меняется,
+ * а место остаётся тем же — при пересчёте через точки карта уезжала бы
+ * на каждом приближении.
+ *
+ * @param latitude широта центра при открытии.
+ * @param longitude долгота центра при открытии.
+ */
+class MapState(latitude: Double = START_LATITUDE, longitude: Double = START_LONGITUDE, zoom: Int = CITY_ZOOM) {
+
+    var centerLatitude: Double by mutableDoubleStateOf(latitude)
+        private set
+
+    var centerLongitude: Double by mutableDoubleStateOf(longitude)
+        private set
+
+    var zoom: Int by mutableIntStateOf(zoom.coerceIn(MIN_ZOOM, MAX_ZOOM))
+        private set
+
+    var markerLatitude: Double? by mutableStateOf(null)
+        private set
+
+    var markerLongitude: Double? by mutableStateOf(null)
+        private set
+
+    var locationLatitude: Double? by mutableStateOf(null)
+        private set
+
+    var locationLongitude: Double? by mutableStateOf(null)
+        private set
+
+    /** Город, в котором нас определили: показывается подписью под картой. */
+    var locationCity: String by mutableStateOf("")
+        private set
+
+    /**
+     * Точное ли это место.
+     *
+     * Служба геопозиции самой машины указывает на дом, определение
+     * по адресу подключения — на город поставщика связи. Разница
+     * в километрах, и владелец должен знать, что перед ним.
+     */
+    var locationPrecise: Boolean by mutableStateOf(false)
+        private set
+
+    /**
+     * Куда карта едет сейчас; пусто — стоит на месте.
+     *
+     * Само движение отсюда не ведётся: состояние живёт вне композиции
+     * и ходом кадров не распоряжается. Оно только называет цель,
+     * а ведёт к ней `MapGlide` внутри показа карты.
+     */
+    var goal: MapGoal? by mutableStateOf(null)
+        private set
+
+    /**
+     * Распоряжался ли картой сам владелец.
+     *
+     * Перетаскивание, колесо и кнопки увеличения — его рука; переход
+     * к выбранной кассе и наведение на набор — работа показа. Разница
+     * нужна тому, кто карту наводит: наводить её поверх руки нельзя,
+     * а до первого прикосновения — можно и нужно.
+     */
+    var steered: Boolean by mutableStateOf(false)
+        private set
+
+    /** Выбрана ли точка. */
+    val marked: Boolean get() = markerLatitude != null && markerLongitude != null
+
+    /** Сдвигает карту на столько точек, на сколько владелец потянул. */
+    fun pan(dx: Float, dy: Float) {
+        // Рука владельца отменяет начатый переход: иначе карта уезжала бы
+        // из-под пальца обратно к кассе, выбранной секунду назад.
+        goal = null
+        steered = true
+        val x = MapProjection.xOf(centerLongitude, zoom) - dx
+        val y = MapProjection.yOf(centerLatitude, zoom) - dy
+        // Мир кончается и по долготе: за краем плиток нет, и карту утаскивало в пустоту без конца.
+        centerLongitude = MapProjection.longitudeOf(x.coerceIn(0.0, MapProjection.world(zoom)), zoom)
+        centerLatitude = MapProjection.latitudeOf(y.coerceIn(0.0, MapProjection.world(zoom)), zoom)
+    }
+
+    /** Приближает или отдаляет, оставляя центр на месте. */
+    fun zoomBy(steps: Int) {
+        steered = true
+        zoom = (zoom + steps).coerceIn(MIN_ZOOM, MAX_ZOOM)
+    }
+
+    /**
+     * Приближает или отдаляет к точке под указателем, а не к середине.
+     *
+     * Колесо крутят над домом, который хотят рассмотреть, и после шага
+     * он должен остаться под указателем: при приближении к середине дом
+     * уезжал за край, и владелец ловил его перетаскиванием.
+     *
+     * @param latitude широта под указателем.
+     * @param longitude долгота под указателем.
+     * @param dx на сколько точек указатель правее середины окна.
+     * @param dy на сколько точек указатель ниже середины окна.
+     */
+    fun zoomAt(latitude: Double, longitude: Double, dx: Double, dy: Double, steps: Int) {
+        val toZoom = (zoom + steps).coerceIn(MIN_ZOOM, MAX_ZOOM)
+        if (toZoom == zoom) return
+        // Колесо под рукой владельца отменяет начатый переход — как и перетаскивание.
+        goal = null
+        steered = true
+        zoom = toZoom
+        val x = MapProjection.xOf(longitude, zoom) - dx
+        val y = MapProjection.yOf(latitude, zoom) - dy
+        centerLongitude = MapProjection.longitudeOf(x.coerceIn(0.0, MapProjection.world(zoom)), zoom)
+        centerLatitude = MapProjection.latitudeOf(y.coerceIn(0.0, MapProjection.world(zoom)), zoom)
+    }
+
+    /** Ставит точку. Центр не двигается: карта под рукой владельца не должна прыгать. */
+    fun mark(latitude: Double, longitude: Double) {
+        markerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
+        markerLongitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
+    }
+
+    /**
+     * Показывает уже известную точку: и метка, и центр.
+     *
+     * Нужно при открытии карты у точки, которую уже переносили: иначе
+     * владелец видит середину страны вместо своего магазина.
+     */
+    fun show(latitude: Double, longitude: Double, toZoom: Int? = null) {
+        mark(latitude, longitude)
+        centerLatitude = markerLatitude ?: latitude
+        centerLongitude = markerLongitude ?: longitude
+        toZoom?.let { zoom = it.coerceIn(MIN_ZOOM, MAX_ZOOM) }
+    }
+
+    /**
+     * Отмечает, где мы, и ведёт туда карту.
+     *
+     * Своё место — не выбранная точка: оно определено до города и рисуется
+     * своим знаком — кружком третичной роли в ореоле, — а выбранная точка
+     * остаётся кружком главной роли. Прежде кнопка только двигала карту,
+     * и владелец не видел, произошло ли хоть что-нибудь.
+     */
+    fun showLocation(latitude: Double, longitude: Double, city: String, toZoom: Int, precise: Boolean = false) {
+        locationLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
+        locationLongitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
+        locationCity = city
+        locationPrecise = precise
+        centerLatitude = locationLatitude ?: latitude
+        centerLongitude = locationLongitude ?: longitude
+        zoom = toZoom.coerceIn(MIN_ZOOM, MAX_ZOOM)
+    }
+
+    /**
+     * Ведёт карту к кассе, не трогая метку.
+     *
+     * Метка — выбор места при заведении точки, а здесь переход по списку
+     * касс: ставить её значило бы обещать правку адреса там, где её нет.
+     */
+    fun centreOn(latitude: Double, longitude: Double, toZoom: Int? = null) {
+        centerLatitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE)
+        centerLongitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
+        toZoom?.let { zoom = it.coerceIn(MIN_ZOOM, MAX_ZOOM) }
+    }
+
+    /**
+     * Ведёт карту к месту плавно, а не прыжком.
+     *
+     * Выбор кассы в списке рядом с картой переставлял карту мгновенно,
+     * и владелец терял, откуда она приехала: на карте страны прыжок
+     * от Уральска к Алматы неотличим от новой загрузки. Переход в полсекунды
+     * показывает путь и сохраняет связь между списком и картой.
+     */
+    fun glideTo(latitude: Double, longitude: Double) {
+        goal = MapGoal(
+            latitude = latitude.coerceIn(-MapProjection.MAX_LATITUDE, MapProjection.MAX_LATITUDE),
+            longitude = longitude.coerceIn(-MapProjection.MAX_LONGITUDE, MapProjection.MAX_LONGITUDE)
+        )
+    }
+
+    /** Переход закончен: цель снята, и карта снова просто стоит где стоит. */
+    fun arrived() {
+        goal = null
+    }
+
+    /** Знаем ли, где мы. */
+    val located: Boolean get() = locationLatitude != null && locationLongitude != null
+}

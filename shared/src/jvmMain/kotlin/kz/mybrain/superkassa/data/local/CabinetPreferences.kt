@@ -1,14 +1,14 @@
 package kz.mybrain.superkassa.data.local
 
-import kz.mybrain.superkassa.data.cabinet.CabinetClient
+import kz.mybrain.superkassa.integrations.bfdcabinet.CabinetSettings
 import java.io.File
 
 /**
  * Чем рабочее место отвечает на вопрос «где кабинет и кем в него входить».
  *
- * Отдельный предмет от настроек узла: кабинет — служба владельца, а узел —
- * служба кассы. Они стоят на разных машинах, переезжают порознь, и общий
- * адрес на двоих однажды увёл бы кассу вслед за кабинетом.
+ * Отдельный предмет от настроек кассы: кабинет — служба владельца, а касса
+ * работает в процессе приложения. Адрес кабинета меняется вместе с его
+ * площадкой и ни на что в кассе не влияет.
  */
 class CabinetPreferences(private val directory: File?) {
 
@@ -20,7 +20,7 @@ class CabinetPreferences(private val directory: File?) {
      * приложение ради переезда службы.
      */
     var url: String
-        get() = readSetting(cabinetFile) ?: CabinetClient.DEFAULT_URL
+        get() = readSetting(cabinetFile) ?: CabinetSettings.DEFAULT_URL
         set(value) = writeSetting(cabinetFile, value.trim().takeIf { it.isNotBlank() })
 
     /** ИИН и БИН для входа в кабинет без ЭЦП; помнятся, чтобы не набирать перед каждым показом. */

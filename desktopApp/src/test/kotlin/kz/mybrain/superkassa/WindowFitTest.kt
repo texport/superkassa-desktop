@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa
 
-import kz.mybrain.superkassa.presentation.theme.Sizes
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

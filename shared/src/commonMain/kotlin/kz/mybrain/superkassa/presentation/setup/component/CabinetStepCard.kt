@@ -1,0 +1,121 @@
+package kz.mybrain.superkassa.presentation.setup.component
+
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
+import kz.mybrain.superkassa.domain.setup.model.KkmSetupDraft
+import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
+import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
+import kz.mybrain.superkassa.presentation.cabinet.enroll.AddRegisterDialog
+import kz.mybrain.superkassa.presentation.cabinet.enroll.FactoryStamp
+import kz.mybrain.superkassa.presentation.cabinet.places.AddPlaceCard
+import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
+import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
+import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
+import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
+import kz.mybrain.superkassa.presentation.strings.setup.SetupTexts
+import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
+
+/**
+ * Шаг 2: касса заводится в кабинете ОФД.
+ *
+ * Вход по ЭЦП здесь же: владелец не должен искать другой экран, чтобы
+ * продолжить начатое. Заводской номер в форму не вводится — он взят
+ * из первого шага, и ошибиться в нём негде.
+ *
+ * Формы — те же, что в разделах кабинета: заведение точки и заведение
+ * кассы. Своя копия каждой означала бы, что однажды поправят только одну.
+ */
+@Composable
+fun CabinetStepCard(
+    cabinet: CabinetWindow,
+    setup: SetupTexts,
+    draft: KkmSetupDraft,
+    onRegister: (id: String, kkmId: Int, name: String?) -> Unit
+) {
+    // Точки берутся у кабинета окна: список точек компании один, и заведённая
+    // здесь же появляется в нём сама.
+    val window by cabinet.cabinet.state.collectAsScreenState()
+    LaunchedEffect(window.access) { if (window.open) cabinet.cabinet.readPlaces() }
+
+    SetupStepCard(
+        title = setup.stepCabinet,
+        hint = setup.stepCabinetHint,
+        texts = setup,
+        done = draft.cabinetRegisterId != null,
+        ready = draft.factoryNumber != null,
+        summary = listOfNotNull(setup.addedToCabinet, draft.systemId).joinToString(Glyphs.SEPARATOR)
+    ) {
+        if (draft.cabinetRegisterId == null) CabinetStep(cabinet, window, setup, draft, onRegister)
+    }
+}
+
+/**
+ * Что делать в кабинете сейчас: войти, завести точку или завести кассу.
+ *
+ * Без торговой точки кассу не завести, а у владельца, который только начал,
+ * точек нет ни одной. Прежде мастер показывал пустой список и упирался:
+ * точку заводили в другом разделе и возвращались.
+ */
+@Composable
+private fun CabinetStep(
+    cabinet: CabinetWindow,
+    window: CabinetUiState,
+    setup: SetupTexts,
+    draft: KkmSetupDraft,
+    onRegister: (id: String, kkmId: Int, name: String?) -> Unit
+) {
+    val language = LocalLanguage.current
+    val texts = cabinetTexts(language)
+    when {
+        !window.open -> {
+            Text(setup.signInFirst)
+            SignInAction(cabinet = cabinet.cabinet, language = language, texts = texts, modifier = Modifier)
+        }
+
+        window.places.isEmpty() -> AddPlaceStep(cabinet, texts)
+        else -> AddRegisterStep(
+            cabinet = cabinet,
+            texts = texts,
+            known = FactoryStamp(draft.factoryNumber.orEmpty(), draft.manufactureYear.orEmpty())
+        ) { created -> onRegister(created.id, created.kkmId, created.internalName) }
+    }
+}
+
+/**
+ * Создание первой точки прямо в мастере.
+ *
+ * Форма открывается окном — тем же, что и в разделе кабинета: две формы
+ * заведения точки разошлись бы на первой правке.
+ */
+@Composable
+private fun AddPlaceStep(cabinet: CabinetWindow, texts: CabinetTexts) {
+    var adding by remember { mutableStateOf(false) }
+    FilledTonalButton(onClick = { adding = true }) { Text(texts.addPlace) }
+    if (adding) {
+        AddPlaceCard(cabinet, texts, onDismiss = { adding = false }, onAdded = { adding = false })
+    }
+}
+
+/** Создание кассы в мастере: то же окно, что и в разделе точек. */
+@Composable
+private fun AddRegisterStep(
+    cabinet: CabinetWindow,
+    texts: CabinetTexts,
+    known: FactoryStamp,
+    onAdded: (CabinetRegister) -> Unit
+) {
+    var adding by remember { mutableStateOf(false) }
+    FilledTonalButton(onClick = { adding = true }) { Text(texts.addRegister) }
+    if (adding) {
+        AddRegisterDialog(cabinet, texts, known, onDismiss = { adding = false }, onAdded = onAdded)
+    }
+}

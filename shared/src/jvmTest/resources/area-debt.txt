@@ -1,0 +1,53 @@
+# Импорты внутренностей чужой области, с которыми код пришёл к проверке границ.
+#
+# Долг, снимается при переводе области: строка вычёркивается, когда файл
+# перестаёт брать из чужой области. Проверка AreaBoundariesTest падает и на
+# новое нарушение, и на исправленное, но не вычеркнутое.
+#
+# Формат: <файл от kz/mybrain/superkassa> -> <слой>.<область>
+domain/analytics/model/AnalyticsKkm.kt -> domain.cabinet
+domain/analytics/model/RecordCount.kt -> domain.cabinet
+presentation/analytics/common/AnalyticsKkmChips.kt -> presentation.cabinet
+presentation/analytics/map/AnalyticsMapGroups.kt -> domain.cabinet
+presentation/analytics/map/AnalyticsMapSieve.kt -> domain.cabinet
+presentation/analytics/map/component/AnalyticsSieveBar.kt -> domain.cabinet
+presentation/analytics/map/component/AnalyticsSieveBar.kt -> presentation.cabinet
+presentation/analytics/record/AnalyticsRecordRegions.kt -> domain.cabinet
+presentation/analytics/record/AnalyticsRecordRegions.kt -> presentation.cabinet
+presentation/analytics/record/AnalyticsRecordTiles.kt -> domain.cabinet
+presentation/analytics/record/AnalyticsRecordTiles.kt -> presentation.cabinet
+presentation/analytics/record/RecordMeaning.kt -> domain.cabinet
+presentation/cabinet/CabinetDecimals.kt -> presentation.map
+presentation/cabinet/CabinetScreen.kt -> presentation.analytics
+presentation/cabinet/applications/CloseShiftBeforeDeregister.kt -> domain.users
+presentation/cabinet/documents/DocumentsScreen.kt -> presentation.print
+presentation/cabinet/documents/DocumentsViewModel.kt -> presentation.print
+presentation/cabinet/places/AddPlaceDialog.kt -> presentation.map
+presentation/cabinet/places/PlacesViewModel.kt -> presentation.map
+presentation/cabinet/places/component/PlacePoint.kt -> presentation.map
+presentation/cabinet/register/NodeWorkRules.kt -> domain.users
+presentation/cabinet/register/adopt/AdoptDraft.kt -> domain.setup
+presentation/cabinet/register/adopt/AdoptFields.kt -> domain.setup
+presentation/cabinet/register/adopt/AdoptFields.kt -> domain.users
+presentation/cabinet/register/adopt/AdoptFields.kt -> presentation.users
+presentation/cabinet/register/adopt/AdoptRegisterDialog.kt -> presentation.login
+presentation/journal/HistoryScreen.kt -> presentation.print
+presentation/journal/documents/JournalScreen.kt -> presentation.print
+presentation/journal/shifts/ShiftsScreen.kt -> presentation.print
+presentation/journal/shifts/ShiftDocuments.kt -> presentation.print
+presentation/map/MapPickerDialog.kt -> domain.cabinet
+presentation/map/MapPlaceNames.kt -> domain.cabinet
+presentation/map/MapPointAddress.kt -> domain.cabinet
+presentation/map/MapRegistryAddress.kt -> domain.cabinet
+presentation/map/MapRegistryAddress.kt -> presentation.cabinet
+presentation/map/MapRegistryWalk.kt -> domain.cabinet
+presentation/settings/SettingsPorts.kt -> domain.debug
+presentation/settings/SettingsPorts.kt -> domain.print
+presentation/settings/SettingsPorts.kt -> domain.update
+presentation/settings/workplace/PanelBehaviourCard.kt -> presentation.kassa
+presentation/setup/ConnectKkmScreen.kt -> presentation.cabinet
+presentation/setup/SetupUiState.kt -> domain.users
+presentation/setup/component/AdminStepCard.kt -> presentation.users
+presentation/setup/component/ApplicationStepCard.kt -> presentation.cabinet
+presentation/setup/component/CabinetStepCard.kt -> domain.cabinet
+presentation/setup/component/CabinetStepCard.kt -> presentation.cabinet

@@ -22,16 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import kz.mybrain.superkassa.domain.signin.Pin
-import kz.mybrain.superkassa.presentation.components.FieldButton
-import kz.mybrain.superkassa.presentation.components.FieldButtonKind
-import kz.mybrain.superkassa.presentation.components.fieldWidth
-import kz.mybrain.superkassa.presentation.components.onEnter
-import kz.mybrain.superkassa.presentation.components.underFieldLabel
-import kz.mybrain.superkassa.presentation.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.AppIcons
-import kz.mybrain.superkassa.presentation.theme.Sizes
-import kz.mybrain.superkassa.presentation.theme.Spacing
+import kz.mybrain.superkassa.domain.signin.model.Pin
+import kz.mybrain.superkassa.presentation.common.button.FieldButton
+import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
+import kz.mybrain.superkassa.presentation.common.button.underFieldLabel
+import kz.mybrain.superkassa.presentation.common.field.fieldWidth
+import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
+import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Пин и вход.
@@ -104,13 +104,10 @@ private fun ChosenKkm(state: LoginUiState, modifier: Modifier = Modifier) {
             text = chosen?.let(state::nameOf) ?: texts.login.noKkmChosen,
             style = MaterialTheme.typography.bodyMedium
         )
-        val under = chosen?.let { kkmNumber(it, texts.login) } ?: texts.login.pickHint
-        if (under != null) {
-            Text(
-                text = under,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        Text(
+            text = chosen?.let { kkmNumber(it, texts.login) } ?: texts.login.pickHint,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

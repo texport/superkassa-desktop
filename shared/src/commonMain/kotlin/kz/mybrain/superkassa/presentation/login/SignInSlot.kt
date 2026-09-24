@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.theme.Sizes
-import kz.mybrain.superkassa.presentation.theme.Spacing
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Пин и вход в нижнем слоте окна.

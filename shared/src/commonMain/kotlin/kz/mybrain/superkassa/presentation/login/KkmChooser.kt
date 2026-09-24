@@ -18,18 +18,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
-import kz.mybrain.superkassa.domain.kkm.isAutonomous
-import kz.mybrain.superkassa.domain.kkm.isBlocked
-import kz.mybrain.superkassa.domain.kkm.orgAddress
-import kz.mybrain.superkassa.domain.kkm.orgTitle
-import kz.mybrain.superkassa.presentation.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.components.Chip
-import kz.mybrain.superkassa.presentation.components.RecordRow
-import kz.mybrain.superkassa.presentation.components.ScrollableList
-import kz.mybrain.superkassa.presentation.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.LoginStrings
-import kz.mybrain.superkassa.presentation.theme.Glyphs
+import kz.mybrain.superkassa.domain.kkm.model.isAutonomous
+import kz.mybrain.superkassa.domain.kkm.model.isBlocked
+import kz.mybrain.superkassa.domain.kkm.model.orgAddress
+import kz.mybrain.superkassa.domain.kkm.model.orgTitle
+import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
+import kz.mybrain.superkassa.presentation.common.list.RecordRow
+import kz.mybrain.superkassa.presentation.common.list.ScrollableList
+import kz.mybrain.superkassa.presentation.common.status.Chip
+import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.strings.common.LoginStrings
 import kz.mybrain.superkassa.presentation.theme.StatusColors
+import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 
 /**
  * Список касс на экране входа: поиск, строки и подробности кассы.

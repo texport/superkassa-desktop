@@ -5,15 +5,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.Section
-import kz.mybrain.superkassa.presentation.SectionRail
-import kz.mybrain.superkassa.presentation.sale.SaleScreen
-import kz.mybrain.superkassa.presentation.session.Session
+import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
+import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
+import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.settings.SettingsScreen
-import kz.mybrain.superkassa.presentation.theme.Accent
-import kz.mybrain.superkassa.presentation.theme.Appearance
+import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
+import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
+import kz.mybrain.superkassa.presentation.theme.color.Accent
+import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -33,7 +35,7 @@ class LookScaleShots {
     @Test
     fun `крайние ступени размера собираются в низком окне`() {
         val frames = TextScale.entries.associateWith { scale ->
-            shot("settings-${scale.code}", Look(textScale = scale)) { session -> Rail(session, Section.Settings) }
+            shot("settings-${scale.code}", Look(textScale = scale)) { desk -> Rail(desk, Section.Settings) }
         }
         frames.forEach { (scale, frame) -> assertTrue(frame.isNotEmpty(), "пустой кадр настроек при $scale") }
         assertTrue(
@@ -45,8 +47,8 @@ class LookScaleShots {
     @Test
     fun `экран продажи собирается на крайних ступенях`() {
         TextScale.entries.forEach { scale ->
-            val frame = shot("sale-${scale.code}", Look(textScale = scale)) { session ->
-                Rail(session, Section.Sale)
+            val frame = shot("sale-${scale.code}", Look(textScale = scale)) { desk ->
+                Rail(desk, Section.Sale)
             }
             assertTrue(frame.isNotEmpty(), "пустой кадр продажи при $scale")
         }
@@ -61,7 +63,7 @@ class LookScaleShots {
                     name = "accent-${accent.code}-${appearance.code}",
                     look = Look(accent = accent),
                     appearance = appearance
-                ) { session -> Rail(session, Section.Settings) }
+                ) { desk -> Rail(desk, Section.Settings) }
                 assertTrue(frame.isNotEmpty(), "пустой кадр тона $accent при $appearance")
             }
         }
@@ -69,7 +71,7 @@ class LookScaleShots {
 
     /** Рельс и экран рядом — так, как это стоит в окне кассы. */
     @Composable
-    private fun Rail(session: Session, section: Section) {
+    private fun Rail(desk: KassaDesk, section: Section) {
         Row(modifier = Modifier.fillMaxSize()) {
             SectionRail(
                 sections = Section.entries,
@@ -79,8 +81,8 @@ class LookScaleShots {
                 footer = { Box(Modifier) }
             ) {}
             when (section) {
-                Section.Sale -> SaleScreen(session)
-                else -> SettingsScreen(session)
+                Section.Sale -> SaleContent(SaleUiState(kkm = CoreScene.kkm(), signedIn = true, shiftOpen = true))
+                else -> SettingsScreen(SettingsScene.board(desk))
             }
         }
     }
@@ -89,10 +91,10 @@ class LookScaleShots {
         name: String,
         look: Look,
         appearance: Appearance = Appearance.Light,
-        content: @Composable (Session) -> Unit
+        content: @Composable (KassaDesk) -> Unit
     ): ByteArray {
-        val session = KassaScene.session("look-$name", shift = KassaScene.openShift())
-        val frame = RenderProbe(WIDE, LOW, appearance, look) { content(session) }.use { probe ->
+        val desk = KassaScene.desk(KassaScene.kkm(shiftOpen = true))
+        val frame = RenderProbe(WIDE, LOW, appearance, look) { content(desk) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             probe.frame()
         }

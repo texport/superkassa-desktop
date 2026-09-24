@@ -10,21 +10,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
-import kz.mybrain.superkassa.domain.version.AppVersion
-import kz.mybrain.superkassa.presentation.UpdateDialog
-import kz.mybrain.superkassa.presentation.components.ConfirmDangerDialog
-import kz.mybrain.superkassa.presentation.components.FormDialog
-import kz.mybrain.superkassa.presentation.components.ReceiptPreview
-import kz.mybrain.superkassa.presentation.components.ScreenState
-import kz.mybrain.superkassa.presentation.session.AvailableUpdate
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.LocalStrings
-import kz.mybrain.superkassa.presentation.strings.moneyTexts
-import kz.mybrain.superkassa.presentation.strings.updateTexts
-import kz.mybrain.superkassa.presentation.theme.AppIcons
+import io.github.texport.superkassa.core.presentation.api.model.user.UserResponse
+import io.github.texport.superkassa.core.presentation.api.model.user.UserRole
+import kz.mybrain.superkassa.domain.update.model.AvailableUpdate
+import kz.mybrain.superkassa.domain.version.model.AppVersion
+import kz.mybrain.superkassa.presentation.common.dialog.ConfirmDangerDialog
+import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
+import kz.mybrain.superkassa.presentation.common.state.ScreenState
+import kz.mybrain.superkassa.presentation.print.preview.component.ReceiptPreview
+import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.presentation.strings.update.updateTexts
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.TextScale
+import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.presentation.update.check.UpdateDialog
 import kz.mybrain.superkassa.presentation.users.ChangePinDialog
+import kz.mybrain.superkassa.presentation.users.PinChange
+import kz.mybrain.superkassa.presentation.users.UsersActions
 import org.jetbrains.skia.Color
 import org.jetbrains.skia.Paint
 import org.jetbrains.skia.Rect
@@ -92,12 +96,13 @@ class AdaptiveDialogShots {
 
     @Test
     fun `предложение обновления`() = everywhere("update") { language ->
-        UpdateDialog(AvailableUpdate(AppVersion(1, 0, 7), "https://example.kz", null), updateTexts(language)) {}
+        UpdateDialog(AvailableUpdate(AppVersion(1, 0, 7), "https://example.kz", null), updateTexts(language), {}) {}
     }
 
     @Test
-    fun `смена пина с причиной под полем`() = everywhere("pin", type = "12") { language ->
-        ChangePinDialog(moneyTexts(language), SettingsMeasure.LONG_KKM, own = true, onDismiss = {}) { true }
+    fun `смена пина с причиной под полем`() = everywhere("pin") { language ->
+        val user = UserResponse(userId = "u-1", name = SettingsMeasure.LONG_KKM, role = UserRole.ADMIN)
+        ChangePinDialog(moneyTexts(language), PinChange(user, own = true, pin = "12"), "", object : UsersActions {})
     }
 
     @Test

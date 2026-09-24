@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -24,22 +25,17 @@ import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import kotlinx.coroutines.asCoroutineDispatcher
-import kz.mybrain.superkassa.presentation.MessageHost
-import kz.mybrain.superkassa.presentation.Section
-import kz.mybrain.superkassa.presentation.SectionRail
-import kz.mybrain.superkassa.presentation.ShellBar
-import kz.mybrain.superkassa.presentation.adaptive.ContentKind
-import kz.mybrain.superkassa.presentation.adaptive.WindowClassRoot
-import kz.mybrain.superkassa.presentation.adaptive.contentWidth
-import kz.mybrain.superkassa.presentation.cabinet.CabinetDocuments
-import kz.mybrain.superkassa.presentation.session.CabinetSession
-import kz.mybrain.superkassa.presentation.session.Session
-import kz.mybrain.superkassa.presentation.session.railCollapsed
-import kz.mybrain.superkassa.presentation.strings.Language
-import kz.mybrain.superkassa.presentation.strings.ProvideStrings
-import kz.mybrain.superkassa.presentation.theme.Appearance
+import kz.mybrain.superkassa.presentation.common.adaptive.WindowClassRoot
+import kz.mybrain.superkassa.presentation.shell.bar.ShellBar
+import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
+import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
+import kz.mybrain.superkassa.presentation.shell.section.Section
+import kz.mybrain.superkassa.presentation.shell.section.sectionWidth
+import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.presentation.strings.common.ProvideStrings
 import kz.mybrain.superkassa.presentation.theme.Look
 import kz.mybrain.superkassa.presentation.theme.SuperkassaTheme
+import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import java.io.File
 import java.util.concurrent.Executors
 
@@ -147,6 +143,18 @@ internal class KassaProbe(
         }
     }
 
+    /**
+     * Сжат ли текст узла по высоте: строки выше отведённого ему места.
+     *
+     * Такой текст не обрезан ни многоточием, ни краем — раскладка отдаёт
+     * ему полоску в несколько точек, и строка режется посреди себя.
+     */
+    fun squeezed(node: SemanticsNode): Boolean = onScene {
+        val layouts = mutableListOf<TextLayoutResult>()
+        node.config.getOrNull(SemanticsActions.GetTextLayoutResult)?.action?.invoke(layouts)
+        layouts.any { it.multiParagraph.height > node.size.height + 1 }
+    }
+
     /** Ширина набранного текста узла: у поля ввода — его строки целиком. */
     fun textWidth(node: SemanticsNode): Float? = onScene {
         val layouts = mutableListOf<TextLayoutResult>()
@@ -209,19 +217,21 @@ internal fun SemanticsNode.wholeOnScreen(width: Int, height: Int): Boolean {
  */
 @Composable
 internal fun KassaWindow(
-    session: Session,
+    desk: KassaDesk,
     section: Section,
     messages: SnackbarHostState? = null,
     content: @Composable () -> Unit
 ) {
+    val shell by desk.parts.shell.state.collectAsState()
+    val look by desk.look.state.collectAsState()
     Scaffold(
-        topBar = { ShellBar(session, CabinetSession(), CabinetDocuments(), section) },
+        topBar = { ShellBar(desk.parts, shell, section, onSignOut = {}) },
         snackbarHost = { messages?.let { MessageHost(it) } }
     ) { padding ->
         Row(modifier = Modifier.fillMaxSize().padding(padding)) {
-            SectionRail(Section.entries, section, session.railCollapsed, {}, { Text("1.0.6") }) {}
+            SectionRail(Section.entries, section, look.railCollapsed, {}, { Text("1.0.6") }) {}
             Box(modifier = Modifier.fillMaxSize()) {
-                Box(modifier = Modifier.contentWidth(ContentKind.Workspace).fillMaxHeight()) { content() }
+                Box(modifier = Modifier.sectionWidth(section).fillMaxHeight()) { content() }
             }
         }
     }
