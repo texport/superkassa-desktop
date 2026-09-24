@@ -10,8 +10,8 @@ import kz.mybrain.superkassa.domain.kassa.model.Percent
 import kz.mybrain.superkassa.domain.kassa.model.Tenge
 import kz.mybrain.superkassa.domain.kassa.model.sale.Adjustment
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
-import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.kassa.field.MoneyField
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.words.kassa.sign
 import kz.mybrain.superkassa.strings.api.fill

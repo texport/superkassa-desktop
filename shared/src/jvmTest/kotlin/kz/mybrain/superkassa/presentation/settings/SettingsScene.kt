@@ -40,7 +40,7 @@ internal object SettingsScene {
 
     /** Доска настроек для окна снимка: касса, права, налоги, оформление, машина. */
     fun board(desk: KassaDesk, queued: Int? = null): SettingsBoard {
-        val seat = desk.app.signIn.state.value
+        val seat = desk.app.services.signIn.state.value
         val kkm = seat.kkm?.let { kkm -> queued?.let { kkm.copy(offlineQueueCount = it) } ?: kkm }
         return SettingsBoard(
             look = desk.look,
@@ -79,7 +79,7 @@ internal object SettingsScene {
         val maps = MapServices(tiles = SettingsMeasure.LONG_URL, search = SettingsMeasure.LONG_SEARCH_URL)
         val machine = MemoryChoices(cabinetUrl = SettingsMeasure.LONG_CABINET_URL, maps = maps)
         val settings = settingsPorts().copy(workplace = machine)
-        return CoreScene.app(core, desk.app.signIn, desk.app.notices, settings = settings)
+        return CoreScene.app(core, desk.app.services.signIn, desk.app.services.talk.notices, settings = settings)
     }
 
     private fun words(ru: String) = TrilingualMessageResponse(ru = ru, kk = ru, en = ru)

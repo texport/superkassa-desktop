@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.MemoryCoreSettings
@@ -45,7 +45,7 @@ class CoreSettingsViewModelTest {
 
     private fun model(store: MemoryCoreSettings): CoreSettingsViewModel {
         val settings = settingsPorts().copy(coreSettings = store)
-        return coreSettingsModel(CoreScene.app(FakeCore(), notices = notices, settings = settings))
+        return coreSettingsModel(CoreScene.services(FakeCore(), notices = notices), settings.settings)
     }
 
     @Test

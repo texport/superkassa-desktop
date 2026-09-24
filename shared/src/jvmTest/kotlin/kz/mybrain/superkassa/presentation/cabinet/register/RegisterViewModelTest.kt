@@ -74,7 +74,7 @@ class RegisterViewModelTest {
         model.show(WAITING)
         reads.clear()
         model.rename("Касса у окна с очень длинным названием")
-        val refusal = assertIs<Message.Refusal>(scene.app.notices.last)
+        val refusal = assertIs<Message.Refusal>(scene.app.services.talk.notices.last)
         model.restamp("SN-ECC-172759")
         assertTrue(scene.cabinet.state.value.busy, "правка владельца не заняла окно")
 
@@ -83,7 +83,7 @@ class RegisterViewModelTest {
 
         assertTrue(reads.isNotEmpty(), "опроса не было")
         assertTrue(scene.cabinet.state.value.busy, "опрос снял занятость посреди действия владельца")
-        assertEquals(refusal, scene.app.notices.last, "опрос стёр показанный отказ")
+        assertEquals(refusal, scene.app.services.talk.notices.last, "опрос стёр показанный отказ")
         edited.complete(Unit)
         runCurrent()
         assertFalse(scene.cabinet.state.value.busy, "занятость осталась после правки")
@@ -99,7 +99,8 @@ class RegisterViewModelTest {
         advanceTimeBy(POLL)
         runCurrent()
 
-        assertEquals(null, scene.app.notices.last, "владельцу показана помеха опроса, которого он не просил")
+        val shown = scene.app.services.talk.notices.last
+        assertEquals(null, shown, "владельцу показана помеха опроса, которого он не просил")
         model.hide()
     }
 
@@ -111,7 +112,8 @@ class RegisterViewModelTest {
 
         model.show(WAITING.copy(status = "REGISTERED"))
 
-        assertEquals(textsOf(Language.Ru).cabinet.unreachable, assertIs<Message.Refusal>(scene.app.notices.last).text)
+        val refusal = assertIs<Message.Refusal>(scene.app.services.talk.notices.last)
+        assertEquals(textsOf(Language.Ru).cabinet.unreachable, refusal.text)
         assertFalse(scene.cabinet.state.value.busy)
     }
 

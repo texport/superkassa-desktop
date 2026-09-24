@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 class LoginCoreTest {
     private val desk = CoreDesk()
-    private val model = loginModel(desk.app)
+    private val model = loginModel(desk.app.services)
 
     @AfterTest
     fun close() = desk.close()

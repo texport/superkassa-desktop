@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.presentation.kassa.cash
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 
 /**
  * Модель денежного ящика окна.
@@ -11,7 +11,8 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
  * уход кассира в другой раздел.
  */
 @Composable
-fun cashViewModel(app: AppContainer): CashViewModel = viewModel { cashModel(app) }
+fun cashViewModel(services: WindowServices): CashViewModel = viewModel { cashModel(services) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun cashModel(app: AppContainer): CashViewModel = CashViewModel(CashCases(app.kassa, app.signIn), app.talk)
+fun cashModel(services: WindowServices): CashViewModel =
+    CashViewModel(CashCases(services.kassa, services.signIn), services.talk)

@@ -62,7 +62,7 @@ class SaleVatCoreTest {
         val cashier = bench.api.authenticate(kassa.kkmId, kassa.cashierPin)
         val signIn = SignIn().apply { enter(kassa.info(), cashier, kassa.cashierPin) }
         val app = CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices)
-        return saleModel(app).also { it.visit() }
+        return saleModel(app.services, app.areas.kassa).also { it.visit() }
     }
 
     /** Позиция руками; ставка — та, с которой начинается новая позиция, если не задана. */

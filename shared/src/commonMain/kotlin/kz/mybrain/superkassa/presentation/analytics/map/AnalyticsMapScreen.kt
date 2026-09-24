@@ -15,6 +15,7 @@ import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.Placement
 import kz.mybrain.superkassa.domain.analytics.model.placement
+import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.analytics.common.analyticsScreenState
 import kz.mybrain.superkassa.presentation.analytics.kkm.AnalyticsKkmDialog
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsKkmList
@@ -25,7 +26,6 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapFold
 import kz.mybrain.superkassa.presentation.common.mapview.MapLocating
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
@@ -50,7 +50,7 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  */
 @Composable
 fun AnalyticsMapScreen(
-    app: AppContainer,
+    ports: AnalyticsPorts,
     model: AnalyticsMapViewModel,
     tools: MapTools,
     access: String?,
@@ -76,7 +76,7 @@ fun AnalyticsMapScreen(
     }
     // Окно аналитики кассы живёт поверх карты: закрыв его, владелец
     // возвращается к тому же месту и тому же отбору.
-    state.opened?.let { kkm -> AnalyticsKkmDialog(app, kkm, access, words) { model.openSales(null) } }
+    state.opened?.let { kkm -> AnalyticsKkmDialog(ports, kkm, access, words) { model.openSales(null) } }
 }
 
 /**

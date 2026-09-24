@@ -8,7 +8,6 @@ import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.deliveryReport
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.words.common.of
-import kz.mybrain.superkassa.presentation.words.kassa.kassaRefusalWords
 import kz.mybrain.superkassa.strings.api.common.AppStrings
 import kz.mybrain.superkassa.strings.api.textsOf
 

@@ -45,7 +45,7 @@ class KkmSettingsOnCoreTest {
     @Test
     fun `новое название уходит в кассу и встаёт в шапку окна`() {
         val shell = shellModel(desk.app)
-        val model = kkmSettingsModel(desk.app)
+        val model = kkmSettingsModel(desk.app.services, desk.app.areas.settings)
 
         model.typeName("Касса у окна")
         model.saveName()
@@ -57,8 +57,8 @@ class KkmSettingsOnCoreTest {
 
     @Test
     fun `налог сохраняется в режиме программирования`() {
-        val kkm = kkmSettingsModel(desk.app)
-        val tax = taxSettingsModel(desk.app)
+        val kkm = kkmSettingsModel(desk.app.services, desk.app.areas.settings)
+        val tax = taxSettingsModel(desk.app.services)
         kkm.switchProgramming()
         assertTrue(desk.kassa.info().isProgrammingMode, "режим программирования не включён")
 
@@ -74,8 +74,8 @@ class KkmSettingsOnCoreTest {
     @Test
     fun `при открытой смене налог не принимается, и кнопка это знает до нажатия`() {
         desk.kassa.openShift()
-        kkmSettingsModel(desk.app).switchProgramming()
-        val tax = taxSettingsModel(desk.app)
+        kkmSettingsModel(desk.app.services, desk.app.areas.settings).switchProgramming()
+        val tax = taxSettingsModel(desk.app.services)
 
         tax.chooseRegime("VAT_PAYER")
         tax.chooseVat("VAT_16")
@@ -88,8 +88,8 @@ class KkmSettingsOnCoreTest {
 
     @Test
     fun `автозакрытие и автоизъятие уходят в кассу`() {
-        kkmSettingsModel(desk.app).switchProgramming()
-        val tax = taxSettingsModel(desk.app)
+        kkmSettingsModel(desk.app.services, desk.app.areas.settings).switchProgramming()
+        val tax = taxSettingsModel(desk.app.services)
 
         tax.switchAutoClose(true)
         tax.switchAutoCashout(true)
@@ -100,8 +100,8 @@ class KkmSettingsOnCoreTest {
 
     @Test
     fun `свои строки чека и ширина ленты уходят в кассу`() {
-        kkmSettingsModel(desk.app).switchProgramming()
-        val form = receiptFormModel(desk.app)
+        kkmSettingsModel(desk.app.services, desk.app.areas.settings).switchProgramming()
+        val form = receiptFormModel(desk.app.services)
 
         form.typeLine(ReceiptLine.Footer, "Спасибо за покупку")
         form.saveLines()
@@ -112,7 +112,7 @@ class KkmSettingsOnCoreTest {
 
     @Test
     fun `снятие с учёта после подтверждения удаляет кассу и уводит на выбор кассы`() {
-        val model = kkmSettingsModel(desk.app)
+        val model = kkmSettingsModel(desk.app.services, desk.app.areas.settings)
         model.switchProgramming()
 
         model.askDecommission()
@@ -128,14 +128,14 @@ class KkmSettingsOnCoreTest {
         val needs = KkmSettingRules.decommission(desk.kassa.info())
 
         assertFalse(KkmSettingRules.met(needs))
-        kkmSettingsModel(desk.app).decommission()
+        kkmSettingsModel(desk.app.services, desk.app.areas.settings).decommission()
         assertEquals(1, desk.bench.api.listKkms(KkmListParams()).items.size)
         assertIs<Message.Refusal>(desk.notices.last)
     }
 
     @Test
     fun `в журнале нет ни пина, ни имени кассира, ни названия кассы`() {
-        val model = kkmSettingsModel(desk.app)
+        val model = kkmSettingsModel(desk.app.services, desk.app.areas.settings)
         model.switchProgramming()
         model.typeName("Касса у окна")
         model.saveName()

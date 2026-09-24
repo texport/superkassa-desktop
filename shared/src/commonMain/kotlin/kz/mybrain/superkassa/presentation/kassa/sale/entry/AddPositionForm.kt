@@ -19,7 +19,7 @@ import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.entry.DraftField
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
-import kz.mybrain.superkassa.presentation.common.field.MoneyField
+import kz.mybrain.superkassa.presentation.kassa.field.MoneyField
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.component.AdjustmentField

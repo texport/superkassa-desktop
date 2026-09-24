@@ -6,9 +6,11 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.MemoryWorkplace
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene.receipts
 import kotlin.test.AfterTest
@@ -39,7 +41,8 @@ class SaleIssuedTest {
 
     private fun model(): SaleViewModel {
         val core = SaleScene.core().also { it.receipts() }
-        return saleModel(CoreScene.app(core, SaleScene.signedIn(), Notices(), memory)).also { it.visit() }
+        val services = CoreScene.services(core, SaleScene.signedIn(), Notices(), memory)
+        return saleModel(services, KassaPorts(FixedDeliverySetup())).also { it.visit() }
     }
 
     private fun SaleViewModel.bread() {

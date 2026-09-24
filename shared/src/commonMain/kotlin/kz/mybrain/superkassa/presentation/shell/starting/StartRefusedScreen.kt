@@ -22,7 +22,6 @@ import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
-import kz.mybrain.superkassa.presentation.words.shell.of
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

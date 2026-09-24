@@ -12,9 +12,9 @@ import kz.mybrain.superkassa.domain.document.model.printable
 import kz.mybrain.superkassa.domain.journal.model.zReportId
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import java.io.File
 import kotlin.io.path.createTempDirectory
@@ -49,7 +49,7 @@ class ShiftsCoreTest {
 
     private fun model(): ShiftsViewModel {
         signIn.enter(kassa.info(), bench.api.authenticate(kassa.kkmId, CASHIER), CASHIER)
-        return shiftsModel(CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, Notices()))
+        return shiftsModel(CoreScene.services(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, Notices()))
             .also { it.reload() }
     }
 

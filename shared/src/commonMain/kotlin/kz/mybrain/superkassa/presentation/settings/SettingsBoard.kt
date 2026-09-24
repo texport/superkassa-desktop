@@ -1,6 +1,9 @@
 package kz.mybrain.superkassa.presentation.settings
 
 import androidx.compose.runtime.Composable
+import kz.mybrain.superkassa.domain.settings.port.SettingsPorts
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsActions
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsUiState
@@ -11,7 +14,6 @@ import kz.mybrain.superkassa.presentation.settings.core.deliveryViewModel
 import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsActions
 import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.kkm.kkmSettingsViewModel
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.settings.ofd.OfdSettingsActions
 import kz.mybrain.superkassa.presentation.settings.ofd.OfdSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.ofd.ofdSettingsViewModel
@@ -24,7 +26,6 @@ import kz.mybrain.superkassa.presentation.settings.tax.taxSettingsViewModel
 import kz.mybrain.superkassa.presentation.settings.workplace.WorkplaceSettingsActions
 import kz.mybrain.superkassa.presentation.settings.workplace.WorkplaceSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.workplace.workplaceSettingsViewModel
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 
 /**
  * Из чего рисуются карточки настроек: состояния моделей и их действия.
@@ -78,14 +79,23 @@ class SettingsParts(
     val hasReleases: Boolean = true
 )
 
-/** Собирает доску настроек из моделей окна; [look] — вид окна, [parts] — карточки других областей. */
+/**
+ * Собирает доску настроек из моделей окна.
+ *
+ * @param look вид окна.
+ * @param parts карточки других областей.
+ */
 @Composable
-fun settingsBoard(app: AppContainer, look: LookViewModel, parts: SettingsParts): SettingsBoard {
-    val kkm = kkmSettingsViewModel(app)
-    val tax = taxSettingsViewModel(app)
-    val form = receiptFormViewModel(app)
-    val ofd = ofdSettingsViewModel(app)
-    val workplace = workplaceSettingsViewModel(app)
+fun settingsBoard(
+    services: WindowServices,
+    ports: SettingsPorts,
+    look: LookViewModel,
+    parts: SettingsParts
+): SettingsBoard {
+    val kkm = kkmSettingsViewModel(services, ports)
+    val tax = taxSettingsViewModel(services)
+    val form = receiptFormViewModel(services)
+    val ofd = ofdSettingsViewModel(services)
     return SettingsBoard(
         look = look,
         kkm = kkm.state.collectAsScreenState().value,
@@ -96,18 +106,19 @@ fun settingsBoard(app: AppContainer, look: LookViewModel, parts: SettingsParts):
         formActions = form,
         ofd = ofd.state.collectAsScreenState().value,
         ofdActions = ofd,
-        workplace = workplace.state.collectAsScreenState().value,
-        workplaceActions = workplace,
         parts = parts
-    ).withMachine(app)
+    ).withMachine(services, ports)
 }
 
-/** Настройки самой кассы на этой машине: сроки обмена с БФД и доставка чека. */
+/** Настройки самой машины и кассы на ней: рабочее место, сроки обмена с БФД и доставка чека. */
 @Composable
-private fun SettingsBoard.withMachine(app: AppContainer): SettingsBoard {
-    val core = coreSettingsViewModel(app)
-    val delivery = deliveryViewModel(app)
+private fun SettingsBoard.withMachine(services: WindowServices, ports: SettingsPorts): SettingsBoard {
+    val workplace = workplaceSettingsViewModel(services, ports)
+    val core = coreSettingsViewModel(services, ports)
+    val delivery = deliveryViewModel(services, ports)
     return copy(
+        workplace = workplace.state.collectAsScreenState().value,
+        workplaceActions = workplace,
         core = core.state.collectAsScreenState().value,
         coreActions = core,
         delivery = delivery.state.collectAsScreenState().value,

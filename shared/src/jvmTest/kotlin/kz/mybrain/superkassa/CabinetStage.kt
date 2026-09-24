@@ -20,10 +20,10 @@ import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetMessage
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
+import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.frame.MessageEffect
 import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
 import kz.mybrain.superkassa.strings.api.Language

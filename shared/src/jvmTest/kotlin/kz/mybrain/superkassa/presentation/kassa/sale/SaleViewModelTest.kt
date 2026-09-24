@@ -9,9 +9,11 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleBlock
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene.receipts
@@ -45,7 +47,8 @@ class SaleViewModelTest {
     @AfterTest
     fun restoreMain() = Dispatchers.resetMain()
 
-    private fun model(core: FakeCore) = saleModel(CoreScene.app(core, SaleScene.signedIn(), notices))
+    private fun model(core: FakeCore) =
+        saleModel(CoreScene.services(core, SaleScene.signedIn(), notices), KassaPorts(FixedDeliverySetup()))
 
     /** Позиция руками: хлеб за 450 ₸. */
     private fun SaleViewModel.bread() {
@@ -149,7 +152,7 @@ class SaleViewModelTest {
     @Test
     fun `другой кассир начинает с пустого чека и своего ключа`() {
         val signIn = SaleScene.signedIn()
-        val model = saleModel(CoreScene.app(SaleScene.core(), signIn, notices))
+        val model = saleModel(CoreScene.services(SaleScene.core(), signIn, notices), KassaPorts(FixedDeliverySetup()))
         model.bread()
         val key = model.state.value.attemptKey
 

@@ -6,10 +6,13 @@ import kotlinx.coroutines.Dispatchers
 import kz.kazakhtelecom.proto.v203.OperationTypeEnum
 import kz.kazakhtelecom.proto.v203.TicketRequest
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LosingKassa
 import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.kassa.tiyn
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.kassa.sale.add
@@ -34,7 +37,9 @@ class ReturnsCoreTest {
     fun close() = desk.close()
 
     /** Экран возврата с выбранным чеком-основанием — последним проданным. */
-    private fun chosen(model: ReturnsViewModel = returnsModel(desk.app)): ReturnsViewModel {
+    private fun chosen(
+        model: ReturnsViewModel = returnsModel(desk.app.services, desk.app.areas.kassa)
+    ): ReturnsViewModel {
         model.visit()
         model.choose(model.state.value.candidates.first())
         assertTrue(model.state.value.refund?.itemsRead == true, "строки основания не прочитаны")
@@ -60,7 +65,7 @@ class ReturnsCoreTest {
             add("Кумыс", "600")
             issue()
         }
-        val model = returnsModel(desk.app).also { it.visit() }
+        val model = returnsModel(desk.app.services, desk.app.areas.kassa).also { it.visit() }
         val number = assertNotNull(model.state.value.candidates.single().printedDocumentNumber)
         model.number(number.toString())
         val picked = chosen(model)
@@ -116,7 +121,8 @@ class ReturnsCoreTest {
     fun `ответ на возврат потерян — повтор тем же ключом не проводит второй возврат`() {
         val kassa = desk.seated().also { it.sell("500.00", "3") }
         val losing = LosingKassa(EmbeddedKassa(desk.bench.api, Dispatchers.Unconfined))
-        val model = chosen(returnsModel(CoreScene.app(losing, desk.signIn, desk.notices)))
+        val services = CoreScene.services(losing, desk.signIn, desk.notices)
+        val model = chosen(returnsModel(services, KassaPorts(FixedDeliverySetup())))
         model.refund.enter("300")
 
         model.refund.refund()

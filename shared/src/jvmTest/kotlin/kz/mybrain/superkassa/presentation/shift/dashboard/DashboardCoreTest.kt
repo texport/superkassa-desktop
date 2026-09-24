@@ -28,7 +28,7 @@ class DashboardCoreTest {
     fun `администратор открывает смену — смена открыта, в БФД ничего не ушло`() {
         val kassa = desk.register()
         desk.sit(kassa, admin = true)
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
         assertEquals(ShiftState.Closed, model.state.value.shift)
 
         model.openShift()
@@ -44,7 +44,7 @@ class DashboardCoreTest {
         val kassa = desk.seated()
         kassa.sell("500.00", "3")
         kassa.cashIn("2000.00")
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         model.xReport()
 
@@ -64,7 +64,7 @@ class DashboardCoreTest {
         val kassa = desk.register().also { it.openShift() }
         kassa.sell("500.00", "3")
         desk.sit(kassa, admin = true)
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         model.closeShift()
 
@@ -78,7 +78,7 @@ class DashboardCoreTest {
     @Test
     fun `кассир закрывает смену своим пином — кнопка Z-отчёта у него не ведёт к отказу`() {
         desk.seated()
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         model.closeShift()
 
@@ -90,7 +90,7 @@ class DashboardCoreTest {
     fun `отклонённый БФД чек виден на главном экране с именем кассира`() {
         val kassa = desk.seated()
         kassa.rejectedSale()
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         val refused = model.state.value.refused.single()
 
@@ -102,7 +102,7 @@ class DashboardCoreTest {
     fun `сутки смены прошли — экран говорит о пределе по часам кассы`() {
         val kassa = desk.seated()
         kassa.sell()
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
         assertNotNull(model.state.value.dayLimitAt, "предел не назван после первого чека")
 
         kassa.clock.move(DAY_AND_MINUTE)

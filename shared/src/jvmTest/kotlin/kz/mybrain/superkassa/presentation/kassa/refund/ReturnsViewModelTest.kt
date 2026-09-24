@@ -9,8 +9,10 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.kassa.model.Tenge
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
@@ -56,7 +58,7 @@ class ReturnsViewModelTest {
                 ReceiptResponse("ret-${sent.size}", deliveryStatus = DeliveryStatus.ONLINE_OK)
             }
         }
-        return returnsModel(CoreScene.app(core, SaleScene.signedIn(), notices))
+        return returnsModel(CoreScene.services(core, SaleScene.signedIn(), notices), KassaPorts(FixedDeliverySetup()))
     }
 
     @Test

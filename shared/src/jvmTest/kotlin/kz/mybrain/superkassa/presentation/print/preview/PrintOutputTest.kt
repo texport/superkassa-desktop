@@ -17,6 +17,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
@@ -65,7 +66,7 @@ class PrintOutputTest {
     fun `открытая по документу форма сохраняется под именем документа`() {
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
         core.on("getDocumentPrintPdf") { PDF }
-        val model = printModel(app)
+        val model = printModel(app.services, app.areas.print)
         val document = CoreScene.document("aae019ac-92e3").copy(shiftNo = 1, fiscalSign = "4178697373")
         model.actions().preview(document)
         model.saveShown()
@@ -79,7 +80,7 @@ class PrintOutputTest {
         val narrow = CoreScene.kkm(id = "kkm-1").copy(branding = ReceiptBrandingResponse(paperWidthMm = 58))
         signIn.enter(narrow, CoreScene.cashier(), CoreScene.PIN)
         app.areas.print.printChoices.choosePrinter("kkm-1", "Чековый у кассы")
-        val model = printModel(app)
+        val model = printModel(app.services, app.areas.print)
         model.preview(PrintSource.Journal("d-1"), file = null)
 
         model.printShown()
@@ -104,7 +105,7 @@ class PrintOutputTest {
             override suspend fun keep(bytes: ByteArray, name: String, title: String): Kept = Kept.Unavailable
         }
         val settings = settingsPorts().copy(printOut = nowhere)
-        val model = printModel(CoreScene.app(core, signIn, notices, settings = settings))
+        val model = printModel(CoreScene.services(core, signIn, notices), settings.print)
         model.preview(PrintSource.Journal("d-1"), "receipt")
         model.saveShown()
 
@@ -121,7 +122,7 @@ class PrintOutputTest {
     fun `без принтеров печать говорит, что печатать некуда`() {
         out.names = emptyList()
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
-        val model = printModel(app)
+        val model = printModel(app.services, app.areas.print)
 
         model.print(PrintSource.Journal("d-1"))
 
@@ -142,7 +143,7 @@ class PrintOutputTest {
             }
         }
         val settings = settingsPorts().copy(printOut = out)
-        val model = printModel(CoreScene.app(slow, signIn, notices, settings = settings))
+        val model = printModel(CoreScene.services(slow, signIn, notices), settings.print)
         model.preview(PrintSource.Journal("d-1"), file = null)
         assertTrue(model.state.value.drawing, "окно открывается по нажатию, а не по готовой форме")
 

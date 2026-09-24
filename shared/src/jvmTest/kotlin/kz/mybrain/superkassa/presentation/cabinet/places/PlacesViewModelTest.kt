@@ -84,8 +84,8 @@ class PlacesViewModelTest {
 
     /** Что сказано владельцу строкой сообщений, когда кабинет ответил. */
     private fun CabinetRig.said(): String {
-        waitFor { app.notices.last is Message.Refusal }
-        return (app.notices.last as? Message.Refusal)?.text.orEmpty()
+        waitFor { app.services.talk.notices.last is Message.Refusal }
+        return (app.services.talk.notices.last as? Message.Refusal)?.text.orEmpty()
     }
 
     private fun waitFor(done: () -> Boolean) {

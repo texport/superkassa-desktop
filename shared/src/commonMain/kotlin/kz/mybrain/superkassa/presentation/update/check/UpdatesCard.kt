@@ -14,8 +14,9 @@ import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.update.model.UpdateOutcome
+import kz.mybrain.superkassa.domain.update.port.UpdatePorts
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 
@@ -94,8 +95,8 @@ private fun OutcomeWords(outcome: UpdateOutcome?, texts: UpdateTexts) {
 
 /** Карточка обновлений со своей моделью — для настроек, которые о выпусках не знают. */
 @Composable
-fun UpdatesSetting(app: AppContainer) {
-    val model = updatesViewModel(app)
+fun UpdatesSetting(services: WindowServices, ports: UpdatePorts) {
+    val model = updatesViewModel(services, ports)
     val state by model.state.collectAsScreenState()
     UpdatesCard(state, model)
 }

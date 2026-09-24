@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.words.settings
+package kz.mybrain.superkassa.presentation.settings.core
 
 import kz.mybrain.superkassa.domain.settings.model.DeliveryChannel
 import kz.mybrain.superkassa.domain.settings.model.DeliveryField

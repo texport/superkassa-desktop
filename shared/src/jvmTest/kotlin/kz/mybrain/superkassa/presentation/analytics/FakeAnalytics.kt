@@ -16,7 +16,7 @@ fun analyticsPorts(cabinet: Analytics = FakeAnalytics(), maps: Maps = QuietMaps(
 
 /** Те же зависимости окна с аналитикой, которая ходит в [cabinet]. */
 fun AppContainer.analyzing(cabinet: Analytics): AppContainer =
-    AppContainer(kassa, signIn, memory, look, talk, areas.copy(analytics = analyticsPorts(cabinet)))
+    AppContainer(services, areas.copy(analytics = analyticsPorts(cabinet)))
 
 /** Модель карты касс на подставном кабинете и службах карт; память карты — своя у каждой проверки. */
 fun mapModel(cabinet: Analytics, maps: Maps = QuietMaps()): AnalyticsMapViewModel =

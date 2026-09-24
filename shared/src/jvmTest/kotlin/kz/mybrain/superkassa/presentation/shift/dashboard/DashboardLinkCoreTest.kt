@@ -26,7 +26,7 @@ class DashboardLinkCoreTest {
     @Test
     fun `связь есть — кассиру так и сказано`() {
         desk.seated()
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         model.checkLink()
 
@@ -37,7 +37,7 @@ class DashboardLinkCoreTest {
     fun `связи нет — кассиру сказано, что БФД молчит, а не «готово»`() {
         desk.seated()
         desk.bfd.disconnect()
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         model.checkLink()
 
@@ -48,7 +48,7 @@ class DashboardLinkCoreTest {
     fun `чек без связи — касса в автономном режиме, документ ждёт в очереди`() {
         val kassa = desk.seated()
         kassa.offlineSale()
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         val kkm = model.state.value.kkm
 
@@ -61,7 +61,7 @@ class DashboardLinkCoreTest {
     fun `кассиру при открытой смене досылку не предлагают — она ушла бы отказом «нет прав»`() {
         val kassa = desk.seated()
         kassa.offlineSale()
-        val state = dashboardModel(desk.app).state.value
+        val state = dashboardModel(desk.app.services).state.value
 
         val shown = RenderProbe(width = WIDE, height = TALL) { DashboardContent(state) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
@@ -78,7 +78,7 @@ class DashboardLinkCoreTest {
     fun `связь вернулась — накопленное уходит в БФД один раз, экран выходит из автономного режима`() {
         val kassa = desk.seated()
         kassa.offlineSale()
-        val model = dashboardModel(desk.app)
+        val model = dashboardModel(desk.app.services)
 
         kassa.resendQueue()
         model.refresh()

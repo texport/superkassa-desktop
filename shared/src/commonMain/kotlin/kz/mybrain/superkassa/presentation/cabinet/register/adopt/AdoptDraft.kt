@@ -7,7 +7,6 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnv
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
 import kz.mybrain.superkassa.domain.setup.port.SetupMemory
 import kz.mybrain.superkassa.presentation.cabinet.register.AdoptForm
-import kz.mybrain.superkassa.presentation.common.picker.OfdTarget
 
 /**
  * Заполняемое владельцем при заведении кассы на этой машине.

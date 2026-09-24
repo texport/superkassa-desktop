@@ -30,6 +30,7 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleScreen
 import kz.mybrain.superkassa.presentation.kassa.sale.saleViewModel
 import kz.mybrain.superkassa.presentation.print.preview.PrintDesk
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetSetting
+import kz.mybrain.superkassa.presentation.settings.SettingsBoard
 import kz.mybrain.superkassa.presentation.settings.SettingsParts
 import kz.mybrain.superkassa.presentation.settings.SettingsScreen
 import kz.mybrain.superkassa.presentation.settings.WorkplaceSettingsScreen
@@ -60,7 +61,7 @@ internal fun SectionContent(app: AppContainer, window: WindowParts, section: Sec
     // Печатная форма живёт над всеми разделами: кассир открывает её
     // из журнала и вправе уйти в продажу, не теряя окна. То же окно
     // стоит и над дверью в кабинет — оно одно на оба входа.
-    PrintDesk(app) {
+    PrintDesk(app.services, app.areas.print) {
         Box(modifier = Modifier.sectionFrame().fillMaxHeight()) {
             SectionScreen(app, window, section)
         }
@@ -72,19 +73,24 @@ internal fun SectionContent(app: AppContainer, window: WindowParts, section: Sec
 private fun SectionScreen(app: AppContainer, window: WindowParts, section: Section) {
     when (section) {
         Section.Dashboard -> LocalPrint.current.let { print ->
-            DashboardScreen(dashboardViewModel(app), print::preview) { print.print(it.id) }
+            DashboardScreen(dashboardViewModel(app.services), print::preview) { print.print(it.id) }
         }
         Section.Sale -> LocalPrint.current.let { print ->
-            SaleScreen(saleViewModel(app), ReceiptOutput(show = { print.preview(it) }, print = print::print))
+            val output = ReceiptOutput(show = { print.preview(it) }, print = print::print)
+            SaleScreen(saleViewModel(app.services, app.areas.kassa), output)
         }
-        Section.Returns -> ReturnsScreen(returnsViewModel(app))
-        Section.Cash -> CashScreen(cashViewModel(app))
-        Section.History -> HistoryScreen(journalViewModel(app), shiftsViewModel(app), LocalPrint.current)
-        Section.Queue -> QueueScreen(queueViewModel(app))
-        Section.Users -> UsersScreen(usersViewModel(app))
-        Section.Register -> ConnectKkm(app, window.steps)
+        Section.Returns -> ReturnsScreen(returnsViewModel(app.services, app.areas.kassa))
+        Section.Cash -> CashScreen(cashViewModel(app.services))
+        Section.History -> HistoryScreen(
+            journalViewModel(app.services, app.areas.journal),
+            shiftsViewModel(app.services),
+            LocalPrint.current
+        )
+        Section.Queue -> QueueScreen(queueViewModel(app.services))
+        Section.Users -> UsersScreen(usersViewModel(app.services))
+        Section.Register -> Connect(app, window)
         Section.Cabinet -> window.cabinet?.let { CabinetScreen(it) }
-        Section.Settings -> SettingsScreen(settingsBoard(app, window.look, settingsParts(app)))
+        Section.Settings -> SettingsScreen(settingsOf(app, window))
     }
 }
 
@@ -92,7 +98,7 @@ private fun SectionScreen(app: AppContainer, window: WindowParts, section: Secti
 @Composable
 internal fun SectionDoor(app: AppContainer, window: WindowParts, state: LoginUiState, actions: LoginActions) {
     // Форму владелец может открыть и отсюда — через дверь в кабинет.
-    PrintDesk(app) {
+    PrintDesk(app.services, app.areas.print) {
         LoginScreen(
             state = state,
             actions = actions,
@@ -120,9 +126,9 @@ private fun LoginDoor(app: AppContainer, window: WindowParts, door: Door, close:
     // «Назад» за дверью возвращает к списку касс — туда же, куда стрелка.
     SystemBack(enabled = true, onBack = close)
     when (door) {
-        Door.Register -> ConnectKkm(app, window.steps, close)
+        Door.Register -> Connect(app, window, close)
         Door.Cabinet -> window.cabinet?.let { CabinetDoor(it, close) }
-        Door.Settings -> WorkplaceSettingsScreen(settingsBoard(app, window.look, settingsParts(app)), close)
+        Door.Settings -> WorkplaceSettingsScreen(settingsOf(app, window), close)
         Door.Kkms -> Unit
     }
 }
@@ -146,6 +152,18 @@ private fun RowScope.LoginExtras(window: WindowParts) {
     LanguagePicker(window.look)
 }
 
+/** Мастер подключения окна; на платформе без мастера не рисуется ничего: двери к нему там нет. */
+@Composable
+private fun Connect(app: AppContainer, window: WindowParts, onBack: (() -> Unit)? = null) {
+    val ports = app.areas.setup ?: return
+    ConnectKkm(app.services, ports, window.steps, onBack)
+}
+
+/** Доска настроек окна: модели настроек, вид окна и карточки других областей. */
+@Composable
+private fun settingsOf(app: AppContainer, window: WindowParts): SettingsBoard =
+    settingsBoard(app.services, app.areas.settings, window.look, settingsParts(app))
+
 /**
  * Карточки других областей среди настроек: колонка продажи, принтер кассы, выпуски, журнал.
  *
@@ -153,10 +171,10 @@ private fun RowScope.LoginExtras(window: WindowParts) {
  * не знают и только ставят карточку на её место.
  */
 private fun settingsParts(app: AppContainer) = SettingsParts(
-    panels = { PanelBehaviourCard(app.memory) },
-    printTarget = { PrintTargetSetting(app) },
-    updates = { UpdatesSetting(app) },
-    debug = { DebugSetting(app) },
+    panels = { PanelBehaviourCard(app.services.memory) },
+    printTarget = { PrintTargetSetting(app.services, app.areas.print) },
+    updates = { UpdatesSetting(app.services, app.areas.update) },
+    debug = { DebugSetting(app.services, app.areas.debug) },
     hasCabinet = app.areas.cabinet != null,
     hasReleases = app.areas.update.releases.ownReleases
 )

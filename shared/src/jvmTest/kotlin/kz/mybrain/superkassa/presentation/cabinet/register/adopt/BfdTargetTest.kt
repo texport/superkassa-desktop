@@ -4,8 +4,6 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnv
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
 import kz.mybrain.superkassa.kassa.MemorySetup
-import kz.mybrain.superkassa.presentation.common.picker.BFD_PROVIDER
-import kz.mybrain.superkassa.presentation.common.picker.OfdTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse

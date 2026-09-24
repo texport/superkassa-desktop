@@ -71,12 +71,12 @@ class KassaCoreLookTest {
 
     private fun screens(): List<Screen> {
         val sale = saleOnBusyShift()
-        val dashboard = dashboardModel(desk.app).state.value
-        val returns = returnsModel(desk.app).apply {
+        val dashboard = dashboardModel(desk.app.services).state.value
+        val returns = returnsModel(desk.app.services, desk.app.areas.kassa).apply {
             visit()
             choose(state.value.candidates.last())
         }.state.value
-        val cash = cashModel(desk.app).apply { visit() }.state.value
+        val cash = cashModel(desk.app.services).apply { visit() }.state.value
         val closeAndRefused = { language: Language ->
             listOf(textsOf(language).common.dashboard.closeShift, refusedHead(language))
         }

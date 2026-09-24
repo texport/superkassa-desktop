@@ -81,7 +81,8 @@ class AnalyticsKkmShots {
     private fun dialog(name: String, cabinet: Analytics) {
         val app = CoreScene.app(FakeCore()).analyzing(cabinet)
         RenderProbe(WIDE, HIGH) {
-            AnalyticsKkmDialog(app, AnalyticsLook.kkm(1), OWNER, MapWords(AnalyticsLook.texts, Look.cabinet)) {}
+            val words = MapWords(AnalyticsLook.texts, Look.cabinet)
+            AnalyticsKkmDialog(app.areas.analytics, AnalyticsLook.kkm(1), OWNER, words) {}
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             Look.shot(name, probe.frame())

@@ -55,7 +55,7 @@ class KkmSettingsViewModelTest {
     @Test
     fun `название уходит в кассу, и касса зовётся им всюду`() {
         core.on("updateKkmName") { args -> CoreScene.kkm(id = args[0] as String, name = args[2] as String?) }
-        val model = kkmSettingsModel(app)
+        val model = kkmSettingsModel(app.services, app.areas.settings)
 
         model.typeName("Касса 2 на Достык")
         model.saveName()
@@ -70,7 +70,7 @@ class KkmSettingsViewModelTest {
     @Test
     fun `отказ кассы оставляет название на рабочем месте`() {
         core.refuse("updateKkmName", "USER_NOT_FOUND", ru = "Пользователь не найден")
-        val model = kkmSettingsModel(app)
+        val model = kkmSettingsModel(app.services, app.areas.settings)
 
         model.typeName("Вторая линия")
         model.saveName()
@@ -83,7 +83,7 @@ class KkmSettingsViewModelTest {
     @Test
     fun `вход в режим программирования виден сразу и объявлен`() {
         core.on("enterProgramming") { CoreScene.kkm(state = "PROGRAMMING") }
-        val model = kkmSettingsModel(app)
+        val model = kkmSettingsModel(app.services, app.areas.settings)
 
         model.switchProgramming()
 
@@ -96,7 +96,7 @@ class KkmSettingsViewModelTest {
     @Test
     fun `заблокированный пин называется словами кассы`() {
         core.on("enterProgramming") { throw PinLockedException(retryAfterSeconds = 120) }
-        val model = kkmSettingsModel(app)
+        val model = kkmSettingsModel(app.services, app.areas.settings)
 
         model.switchProgramming()
 
@@ -108,7 +108,7 @@ class KkmSettingsViewModelTest {
     @Test
     fun `снятая касса уводит на выбор кассы`() {
         core.on("deleteKkm") { true }
-        val model = kkmSettingsModel(app)
+        val model = kkmSettingsModel(app.services, app.areas.settings)
 
         model.askDecommission()
         model.decommission()
@@ -121,7 +121,7 @@ class KkmSettingsViewModelTest {
     @Test
     fun `сбой кассы при снятии оставляет кассу на месте`() {
         core.on("deleteKkm") { error("database is locked") }
-        val model = kkmSettingsModel(app)
+        val model = kkmSettingsModel(app.services, app.areas.settings)
 
         model.decommission()
 
@@ -132,7 +132,7 @@ class KkmSettingsViewModelTest {
     /** Набранное для одной кассы в настройках другой не показывается. */
     @Test
     fun `смена кассы забывает набранное название`() {
-        val model = kkmSettingsModel(app)
+        val model = kkmSettingsModel(app.services, app.areas.settings)
         model.typeName("Вторая линия")
 
         signIn.enter(CoreScene.kkm(id = "kkm-2", name = "Касса в зале"), CoreScene.cashier(), CoreScene.PIN)

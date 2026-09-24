@@ -40,7 +40,7 @@ class NextRequestOnCoreTest {
     @Test
     fun `администратор видит номер следующего запроса, который считает касса`() {
         desk.enter()
-        val model = ofdSettingsModel(desk.app)
+        val model = ofdSettingsModel(desk.app.services)
         assertTrue(model.state.value.admin, "администратору кнопка не показана")
 
         model.askNextRequest()
@@ -52,7 +52,7 @@ class NextRequestOnCoreTest {
     @Test
     fun `токен кассы не попадает ни в состояние экрана, ни в журнал`() {
         desk.enter()
-        val model = ofdSettingsModel(desk.app)
+        val model = ofdSettingsModel(desk.app.services)
 
         model.askNextRequest()
 
@@ -67,7 +67,7 @@ class NextRequestOnCoreTest {
     @Test
     fun `кассиру кнопки нет — номер касса отдаёт только администратору`() {
         desk.enter(SettingsBench.CASHIER_PIN)
-        val model = ofdSettingsModel(desk.app)
+        val model = ofdSettingsModel(desk.app.services)
 
         assertFalse(model.state.value.admin)
         assertNull(model.state.value.nextRequest)

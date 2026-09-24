@@ -56,7 +56,7 @@ class ReceiptFormViewModelTest {
 
     @Test
     fun `свои строки уходят вместе с прочим оформлением`() {
-        val model = receiptFormModel(app)
+        val model = receiptFormModel(app.services)
 
         model.typeLine(ReceiptLine.Header, "Магазин у дома")
         model.saveLines()
@@ -69,7 +69,7 @@ class ReceiptFormViewModelTest {
 
     @Test
     fun `полная страница уходит нулём ширины`() {
-        receiptFormModel(app).chooseLayout("FULLSCREEN")
+        receiptFormModel(app.services).chooseLayout("FULLSCREEN")
 
         assertEquals(0, sent?.paperWidthMm)
         assertEquals(ReceiptLanguage.KK, sent?.language)
@@ -78,7 +78,7 @@ class ReceiptFormViewModelTest {
     @Test
     fun `отказ кассы оставляет набранные строки`() {
         core.refuse("updateBrandingSettings", "KKM_NOT_PROGRAMMING", ru = "Касса не в режиме программирования")
-        val model = receiptFormModel(app)
+        val model = receiptFormModel(app.services)
 
         model.typeLine(ReceiptLine.Footer, "Спасибо")
         model.saveLines()
@@ -90,7 +90,7 @@ class ReceiptFormViewModelTest {
     /** Набранные строки прежде сбрасывались при смене кассы; теперь у каждой кассы свои. */
     @Test
     fun `набранные строки у каждой кассы свои и переживают смену кассы`() {
-        val model = receiptFormModel(app)
+        val model = receiptFormModel(app.services)
         model.typeLine(ReceiptLine.Header, "Магазин у дома")
 
         signIn.enter(branded.copy(kkmId = "kkm-2"), CoreScene.cashier(), CoreScene.PIN)

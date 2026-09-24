@@ -17,12 +17,12 @@ import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.presentation.common.picker.LanguageMenuItems
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeMenuItem
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
 import kz.mybrain.superkassa.presentation.common.status.KkmStatusChips
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.shell.frame.ShellUiState
 
 /**

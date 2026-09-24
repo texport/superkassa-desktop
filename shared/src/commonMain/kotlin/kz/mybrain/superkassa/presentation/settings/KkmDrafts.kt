@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.common.model
+package kz.mybrain.superkassa.presentation.settings
 
 /**
  * Набранное, но не сохранённое — у каждой кассы своё, по её `kkmId`.

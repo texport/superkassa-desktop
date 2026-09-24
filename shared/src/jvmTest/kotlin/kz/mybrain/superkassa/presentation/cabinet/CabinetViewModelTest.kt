@@ -37,7 +37,7 @@ class CabinetViewModelTest {
 
         scene.cabinet.signIn()
 
-        assertEquals(Message.Refusal("Подпись недействительна", "EDS_INVALID"), scene.app.notices.last)
+        assertEquals(Message.Refusal("Подпись недействительна", "EDS_INVALID"), scene.app.services.talk.notices.last)
         assertFalse(scene.cabinet.state.value.open)
         assertFalse(scene.cabinet.state.value.busy)
         assertNull(scene.cabinet.state.value.signingSince, "отсчёт остался после отказа")
@@ -59,7 +59,7 @@ class CabinetViewModelTest {
 
         scene.cabinet.signIn()
 
-        val shown = assertIs<Message.Refusal>(scene.app.notices.last)
+        val shown = assertIs<Message.Refusal>(scene.app.services.talk.notices.last)
         assertEquals(textsOf(Language.Ru).cabinet.noNcaLayer, shown.text)
         assertFalse(scene.cabinet.state.value.busy)
     }

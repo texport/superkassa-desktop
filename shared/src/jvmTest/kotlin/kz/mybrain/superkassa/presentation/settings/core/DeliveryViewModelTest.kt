@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.domain.settings.model.DeliveryField
 import kz.mybrain.superkassa.domain.settings.model.DeliveryRules
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.MemoryCoreSettings
@@ -46,7 +46,7 @@ class DeliveryViewModelTest {
 
     private fun model(store: MemoryCoreSettings): DeliveryViewModel {
         val settings = settingsPorts().copy(coreSettings = store)
-        return deliveryModel(CoreScene.app(FakeCore(), notices = notices, settings = settings))
+        return deliveryModel(CoreScene.services(FakeCore(), notices = notices), settings.settings)
     }
 
     private fun settings(allowChanges: Boolean = true, mode: CoreMode = CoreMode.DESKTOP) = CoreSettings(

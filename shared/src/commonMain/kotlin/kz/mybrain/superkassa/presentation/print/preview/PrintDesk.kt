@@ -7,10 +7,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.domain.print.port.PrintPorts
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.print.LocalPrint
 import kz.mybrain.superkassa.presentation.print.preview.component.PrintOverlay
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 
 /**
  * Стол печати: содержимое окна и печатная форма поверх него.
@@ -21,8 +22,8 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
  * и о модели печати не знают.
  */
 @Composable
-fun PrintDesk(app: AppContainer, content: @Composable () -> Unit) {
-    val model = printViewModel(app)
+fun PrintDesk(services: WindowServices, ports: PrintPorts, content: @Composable () -> Unit) {
+    val model = printViewModel(services, ports)
     val paper by model.state.collectAsScreenState()
     val print = remember(model) { model.actions() }
     val window = remember(model) { model.paperActions() }

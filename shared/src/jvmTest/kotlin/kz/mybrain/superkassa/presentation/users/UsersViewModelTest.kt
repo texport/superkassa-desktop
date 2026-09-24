@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kotlin.test.AfterTest
@@ -39,7 +39,7 @@ class UsersViewModelTest {
     @AfterTest
     fun restoreMain() = Dispatchers.resetMain()
 
-    private fun model(): UsersViewModel = usersModel(CoreScene.app(scene.core, scene.signIn, notices))
+    private fun model(): UsersViewModel = usersModel(CoreScene.services(scene.core, scene.signIn, notices))
 
     @Test
     fun `список прочитан пином работающего`() {

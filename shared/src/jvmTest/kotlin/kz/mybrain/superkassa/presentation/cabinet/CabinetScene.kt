@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
  */
 internal class CabinetScene(val ports: TestPorts = TestPorts(), val core: FakeCore = FakeCore()) {
     val app: AppContainer = CoreScene.app(core)
-    val cabinet: CabinetViewModel by lazy { CabinetViewModel(cabinetCases(app, ports), app.talk) }
+    val cabinet: CabinetViewModel by lazy { CabinetViewModel(cabinetCases(app, ports), app.services.talk) }
 }
 
 /** Проверка на часах проверки: модели окна работают в её главном потоке. */

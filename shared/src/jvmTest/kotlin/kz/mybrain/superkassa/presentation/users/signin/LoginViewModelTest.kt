@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemoryWorkplace
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kotlin.test.AfterTest
@@ -38,7 +38,7 @@ class LoginViewModelTest {
     private val second = CoreScene.kkm(id = "kkm-2", kgd = "000000200043", name = "Касса у окна")
 
     private fun model(): LoginViewModel =
-        loginModel(CoreScene.app(core, signIn, notices, memory))
+        loginModel(CoreScene.services(core, signIn, notices, memory))
 
     @BeforeTest
     fun inlineMain() = Dispatchers.setMain(UnconfinedTestDispatcher())

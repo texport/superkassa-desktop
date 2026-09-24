@@ -30,7 +30,6 @@ import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.settings.model.DeliveryChannel
 import kz.mybrain.superkassa.domain.settings.model.DeliveryField
-import kz.mybrain.superkassa.presentation.words.settings.of
 import kz.mybrain.superkassa.strings.api.settings.DeliveryTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 

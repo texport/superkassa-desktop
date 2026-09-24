@@ -22,9 +22,9 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
+import kz.mybrain.superkassa.presentation.common.look.lookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
-import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.bar.BusyLine
 import kz.mybrain.superkassa.presentation.shell.bar.WorkBar
@@ -57,9 +57,9 @@ fun ShellScreen(app: AppContainer) {
     // Кабинет живёт рядом с кассой, а не внутри неё: вход туда свой —
     // по ЭЦП владельца, — и переживает переходы между разделами.
     val shellModel = shellViewModel(app)
-    val look = lookViewModel(app)
+    val look = lookViewModel(app.services.look)
     // Кабинета нет на платформе, где его не собрали: там нет и его модели.
-    val cabinet = app.areas.cabinet?.let { cabinetViewModel(app) }
+    val cabinet = app.areas.cabinet?.let { cabinetViewModel(app.services, it) }
     val window = remember(app, shellModel, look, cabinet) {
         WindowParts(shellModel, look, cabinet?.let { CabinetWindow(it, cabinetLook(look), cabinetNeighbours(app)) })
     }
@@ -69,7 +69,7 @@ fun ShellScreen(app: AppContainer) {
     val messages = remember { SnackbarHostState() }
     // Проверка выпусков живёт, пока открыто окно, и начинается с него —
     // ещё до входа: модель окна сама ждёт своего часа и молчит без сети.
-    updatesViewModel(app)
+    updatesViewModel(app.services, app.areas.update)
     if (shell.seat.signedIn) {
         WorkShell(app, window, shell, messages)
     } else {
@@ -102,7 +102,7 @@ internal fun DoorShell(app: AppContainer, window: WindowParts, messages: Snackba
     // Набранное кассиром живёт в модели входа окна: список касс и полоса
     // пина читают одно и то же. Поле окна — то же, что у разделов, и сверху:
     // шапки над входом нет.
-    val login = loginViewModel(app)
+    val login = loginViewModel(app.services)
     val door by login.state.collectAsScreenState()
     Scaffold(
         topBar = { BusyLine(door.entering) },
@@ -124,7 +124,7 @@ internal fun DoorShell(app: AppContainer, window: WindowParts, messages: Snackba
  */
 @Composable
 private fun WorkShell(app: AppContainer, window: WindowParts, shell: ShellUiState, messages: SnackbarHostState) {
-    val updates = updatesViewModel(app)
+    val updates = updatesViewModel(app.services, app.areas.update)
     val release by updates.state.collectAsScreenState()
     val look by window.look.state.collectAsScreenState()
     var updateShown by rememberSaveable { mutableStateOf(false) }
@@ -187,6 +187,6 @@ private fun UpdateOffer(release: UpdatesUiState, updates: UpdatesViewModel, show
  */
 @Composable
 private fun ShellMessages(app: AppContainer, messages: SnackbarHostState) {
-    val message by app.notices.current.collectAsScreenState()
-    MessageEffect(message, messages) { app.notices.clear() }
+    val message by app.services.talk.notices.current.collectAsScreenState()
+    MessageEffect(message, messages) { app.services.talk.notices.clear() }
 }

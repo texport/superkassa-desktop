@@ -5,7 +5,7 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TaxRegimeResponse
 import kz.mybrain.superkassa.domain.settings.model.KkmNeed
 import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
-import kz.mybrain.superkassa.presentation.common.model.KkmDrafts
+import kz.mybrain.superkassa.presentation.settings.KkmDrafts
 
 /**
  * Налоги кассы, автозакрытие и автоизъятие.

@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.words.kassa
+package kz.mybrain.superkassa.presentation.kassa.contact
 
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.strings.api.kassa.contact.ContactFieldTexts

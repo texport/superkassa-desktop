@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.common.field
+package kz.mybrain.superkassa.presentation.kassa.field
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField

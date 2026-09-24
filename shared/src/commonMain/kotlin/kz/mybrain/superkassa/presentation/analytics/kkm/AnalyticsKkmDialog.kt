@@ -28,11 +28,11 @@ import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
+import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.analytics.common.shiftPlate
 import kz.mybrain.superkassa.presentation.analytics.map.MapWords
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSales
 import kz.mybrain.superkassa.presentation.analytics.sales.kkmSalesViewModel
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
@@ -52,7 +52,7 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  */
 @Composable
 fun AnalyticsKkmDialog(
-    app: AppContainer,
+    ports: AnalyticsPorts,
     kkm: AnalyticsKkm,
     access: String?,
     words: MapWords,
@@ -60,7 +60,7 @@ fun AnalyticsKkmDialog(
 ) {
     val texts = words.texts
     val cabinetTexts = words.cabinetTexts
-    val model = kkmSalesViewModel(app, kkm.cashRegisterId)
+    val model = kkmSalesViewModel(ports, kkm.cashRegisterId)
     LaunchedEffect(model, access) {
         model.follow(access)
         model.watch(Durations.whileWatching)

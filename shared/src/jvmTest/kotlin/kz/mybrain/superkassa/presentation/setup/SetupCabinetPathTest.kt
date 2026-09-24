@@ -13,7 +13,7 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -44,7 +44,7 @@ class SetupCabinetPathTest {
     fun restoreMain() = Dispatchers.resetMain()
 
     private fun model(): SetupViewModel =
-        setupModel(CoreScene.app(core), SetupPorts(memory, cabinet), DirectCalls()).apply { reload() }
+        setupModel(CoreScene.services(core), SetupPorts(memory, cabinet), DirectCalls()).apply { reload() }
 
     private fun connect(model: SetupViewModel, token: String?) {
         cabinet.token = token

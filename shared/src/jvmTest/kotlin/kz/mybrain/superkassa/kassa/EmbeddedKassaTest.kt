@@ -49,12 +49,12 @@ class EmbeddedKassaTest {
         Dispatchers.resetMain()
     }
 
-    private fun app(notices: Notices = Notices(), signIn: SignIn = SignIn()) =
-        CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices)
+    private fun services(notices: Notices = Notices(), signIn: SignIn = SignIn()) =
+        CoreScene.services(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices)
 
     @Test
     fun `на чистом каталоге список касс прочитан и пуст`() {
-        val model = loginModel(app())
+        val model = loginModel(services())
 
         model.reload()
 
@@ -68,11 +68,11 @@ class EmbeddedKassaTest {
     fun `вход на незаведённую кассу — отказ ядра его кодом и словами`() {
         val notices = Notices()
         val signIn = SignIn()
-        val model = loginModel(app(notices, signIn))
+        val model = loginModel(services(notices, signIn))
         model.reload()
         model.typePin("4821")
 
-        val answer = runBlocking { app().kassa.ask { it.authenticate("no-such-kkm", "4821") } }
+        val answer = runBlocking { services().kassa.ask { it.authenticate("no-such-kkm", "4821") } }
 
         val refused = assertIs<Answer.Refused>(answer)
         assertEquals("KKM_NOT_FOUND", refused.code)
@@ -85,7 +85,7 @@ class EmbeddedKassaTest {
     fun `заведённая касса в списке входа, и её пином кассир входит`() {
         val kassa = bench.registerKassa(appKassa(adminPin = "7391", cashierPin = "4826", name = "Касса у входа"))
         val signIn = SignIn()
-        val model = loginModel(app(signIn = signIn))
+        val model = loginModel(services(signIn = signIn))
         model.reload()
         model.pick(model.state.value.kkms.single())
         model.typePin(kassa.cashierPin)

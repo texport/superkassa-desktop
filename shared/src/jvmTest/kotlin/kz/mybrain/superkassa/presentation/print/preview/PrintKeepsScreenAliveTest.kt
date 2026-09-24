@@ -7,7 +7,7 @@ import kz.mybrain.superkassa.domain.print.port.PrintOut
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -67,7 +67,7 @@ class PrintKeepsScreenAliveTest {
         val out = object : PrintOut by printer {
             override suspend fun tape(png: ByteArray): ByteArray = SystemPrintOut().tape(png)
         }
-        return printModel(CoreScene.app(core, signIn, settings = settingsPorts().copy(printOut = out))) to printer
+        return printModel(CoreScene.services(core, signIn), settingsPorts().copy(printOut = out).print) to printer
     }
 
     /**

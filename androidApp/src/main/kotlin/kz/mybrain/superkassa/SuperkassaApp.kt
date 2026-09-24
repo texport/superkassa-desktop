@@ -37,6 +37,7 @@ import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
@@ -86,12 +87,14 @@ class SuperkassaApp : Application() {
         val look = WorkplaceLook(workplace)
         val log = LogcatBook(File(filesDir, LOG_DIRECTORY).path, screen)
         return AppContainer(
-            kassa = EmbeddedKassa(kassa.api),
-            signIn = SignIn(),
-            memory = workplace,
-            look = look,
-            // Слова кассиру — на языке окна, как на компьютере.
-            talk = Talk(Notices(), LogcatJournal(log)) { workplaceLanguage(look.state.value.language) },
+            services = WindowServices(
+                kassa = EmbeddedKassa(kassa.api),
+                signIn = SignIn(),
+                memory = workplace,
+                look = look,
+                // Слова кассиру — на языке окна, как на компьютере.
+                talk = Talk(Notices(), LogcatJournal(log)) { workplaceLanguage(look.state.value.language) }
+            ),
             areas = areaPorts(kassa, workplace, log)
         )
     }

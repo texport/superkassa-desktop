@@ -12,13 +12,13 @@ import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
+import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.kassa.cash.CashScreen
 import kz.mybrain.superkassa.presentation.kassa.cash.cashViewModel
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene.receipts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import java.io.IOException
 import kotlin.test.Test
@@ -70,8 +70,8 @@ class SaleSectionTest {
     private fun Window(app: AppContainer, models: WindowModels) {
         ProvideWindowModels(models) {
             when (section) {
-                Section.Sale -> SaleScreen(saleViewModel(app).also { seen += it })
-                else -> CashScreen(cashViewModel(app)).also { cashShown++ }
+                Section.Sale -> SaleScreen(saleViewModel(app.services, app.areas.kassa).also { seen += it })
+                else -> CashScreen(cashViewModel(app.services)).also { cashShown++ }
             }
         }
     }

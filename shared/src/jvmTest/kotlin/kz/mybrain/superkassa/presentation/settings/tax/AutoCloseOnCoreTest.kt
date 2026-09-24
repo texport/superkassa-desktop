@@ -79,9 +79,9 @@ class AutoCloseOnCoreTest {
      * в режиме программирования, а закрывает смену касса вне его.
      */
     private fun autoClose(on: Boolean) {
-        val kkm = kkmSettingsModel(desk.app)
+        val kkm = kkmSettingsModel(desk.app.services, desk.app.areas.settings)
         kkm.switchProgramming()
-        taxSettingsModel(desk.app).switchAutoClose(on)
+        taxSettingsModel(desk.app.services).switchAutoClose(on)
         kkm.switchProgramming()
         assertFalse(desk.kassa.info().isProgrammingMode, "касса осталась в режиме программирования")
     }

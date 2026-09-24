@@ -17,7 +17,7 @@ import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.LocalDarkTheme
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 
 /**
  * Переключатель светлой и тёмной темы — значком в шапке.

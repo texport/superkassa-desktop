@@ -11,7 +11,7 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -40,7 +40,7 @@ class SetupWithoutCabinetTest {
 
     @Test
     fun `без кабинета мастер начинает с ручного пути`() {
-        val model = setupModel(CoreScene.app(core), SetupPorts(MemorySetup()), WithoutCabinet)
+        val model = setupModel(CoreScene.services(core), SetupPorts(MemorySetup()), WithoutCabinet)
 
         assertEquals(SetupWay.ByHand, model.state.value.way)
     }
@@ -50,7 +50,7 @@ class SetupWithoutCabinetTest {
         var asked: List<Any?> = emptyList()
         core.on("initKkmSimple") { args -> CoreScene.kkm(id = "kkm-9").also { asked = args } }
         core.on("getKkm") { CoreScene.kkm(id = "kkm-9") }
-        val model = setupModel(CoreScene.app(core), SetupPorts(MemorySetup()), WithoutCabinet).apply { reload() }
+        val model = setupModel(CoreScene.services(core), SetupPorts(MemorySetup()), WithoutCabinet).apply { reload() }
         model.edit(KkmForm(systemId = "5000021", token = "3735928559", adminPin = "4821", adminPinRepeat = "4821"))
 
         var done = false

@@ -31,13 +31,13 @@ import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
+import kz.mybrain.superkassa.presentation.common.look.LookUiState
+import kz.mybrain.superkassa.presentation.common.look.lookViewModel
+import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.debug.log.LogWindow
 import kz.mybrain.superkassa.presentation.debug.log.logViewModel
-import kz.mybrain.superkassa.presentation.settings.look.LookUiState
-import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.frame.ShellScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartRefusedScreen
 import org.jetbrains.skia.Image
@@ -134,8 +134,8 @@ private fun ApplicationScope.SuperkassaApplication(app: AppContainer, preference
 private fun DebugWindow(app: AppContainer) {
     val debugMode by AppLog.debugModes.collectAsState()
     if (debugMode) {
-        val look by lookViewModel(app).state.collectAsState()
-        val journal = logViewModel(app)
+        val look by lookViewModel(app.services.look).state.collectAsState()
+        val journal = logViewModel(app.services, app.areas.debug)
         LogWindow(journal, look.language, look.appearance, look.look) { journal.switchDebugMode(false) }
     }
 }
@@ -143,7 +143,7 @@ private fun DebugWindow(app: AppContainer) {
 /** Тема, язык и класс окна — вокруг каркаса. */
 @Composable
 private fun WindowContent(app: AppContainer) {
-    val look by lookViewModel(app).state.collectAsState()
+    val look by lookViewModel(app.services.look).state.collectAsState()
     SuperkassaTheme(look.appearance, look.look) {
         ProvideStrings(look.language) {
             // Окно меряется здесь, один раз: класс окна знают все

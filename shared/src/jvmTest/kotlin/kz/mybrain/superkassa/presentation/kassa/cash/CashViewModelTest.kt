@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.domain.kassa.model.cash.CashMove
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScene
@@ -63,7 +63,7 @@ class CashViewModelTest {
         }
     }
 
-    private fun model(core: FakeCore) = cashModel(CoreScene.app(core, SaleScene.signedIn(), notices))
+    private fun model(core: FakeCore) = cashModel(CoreScene.services(core, SaleScene.signedIn(), notices))
 
     @Test
     fun `остаток и движения за сутки прочитаны целиком, а не первой страницей`() {

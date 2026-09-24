@@ -9,10 +9,12 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.designsystem.state.ScreenState
 import kz.mybrain.superkassa.domain.journal.model.DocumentPages
+import kz.mybrain.superkassa.domain.journal.port.JournalPorts
+import kz.mybrain.superkassa.domain.journal.port.NoDeliveries
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.document.shownNote
 import kz.mybrain.superkassa.presentation.journal.documents.journalModel
 import kz.mybrain.superkassa.presentation.journal.shifts.shiftsModel
@@ -70,15 +72,15 @@ class JournalPagingTest {
             on("listShifts") { args -> emptyList<Any>().also { limits += args[1] as Int } }
             on("listShiftDocuments") { args -> emptyList<Any>().also { limits += args[2] as Int } }
         }
-        journalModel(CoreScene.app(core, signIn))
-        shiftsModel(CoreScene.app(core, signIn)).open(shift(1))
+        journalModel(CoreScene.services(core, signIn), JournalPorts(NoDeliveries))
+        shiftsModel(CoreScene.services(core, signIn)).open(shift(1))
 
         assertTrue(limits.size == 3 && limits.all { it in 1..DocumentPages.CORE_LIMIT }, "страницы: $limits")
     }
 
     @Test
     fun `неудача дочитывания не объявляет оборванный срок показанным целиком`() {
-        val model = journalModel(CoreScene.app(core(answers = 1), signIn))
+        val model = journalModel(CoreScene.services(core(answers = 1), signIn), JournalPorts(NoDeliveries))
         val first = model.state.value.page
 
         model.more()
@@ -93,7 +95,7 @@ class JournalPagingTest {
 
     @Test
     fun `неудача дочитывания смен не объявляет историю кассы показанной целиком`() {
-        val model = shiftsModel(CoreScene.app(core(answers = 1), signIn))
+        val model = shiftsModel(CoreScene.services(core(answers = 1), signIn))
         val first = model.state.value.page
 
         model.more()
@@ -110,7 +112,8 @@ class JournalPagingTest {
      */
     @Test
     fun `дочитывание не удваивает строку, пришедшую дважды`() {
-        val model = journalModel(CoreScene.app(core(answers = 2, growing = true), signIn))
+        val services = CoreScene.services(core(answers = 2, growing = true), signIn)
+        val model = journalModel(services, JournalPorts(NoDeliveries))
 
         model.more()
 

@@ -18,10 +18,10 @@ import kz.mybrain.superkassa.designsystem.strings.ProvideStrings
 import kz.mybrain.superkassa.designsystem.theme.SuperkassaTheme
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
+import kz.mybrain.superkassa.presentation.common.look.lookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.debug.log.LogDialog
-import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.ShellScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartRefusedScreen
@@ -78,7 +78,7 @@ private fun KassaWindow(opening: Deferred<AppContainer>, onClose: () -> Unit) {
  * могли сменить в настройках системы, и активность пересоздана ради него.
  */
 private suspend fun Deferred<AppContainer>.opened(): Start = runCatching { await() }.fold(
-    onSuccess = { app -> Start.Opened(app.also { it.look.recall() }) },
+    onSuccess = { app -> Start.Opened(app.also { it.services.look.recall() }) },
     onFailure = { Start.Refused(StartProblem(StartRefusal.KassaNotOpened, it.javaClass.simpleName)) }
 )
 
@@ -91,7 +91,7 @@ private fun Bare(content: @Composable () -> Unit) {
 /** Тема, язык и класс окна — вокруг каркаса, как на компьютере. */
 @Composable
 private fun Window(app: AppContainer) {
-    val look by lookViewModel(app).state.collectAsScreenState()
+    val look by lookViewModel(app.services.look).state.collectAsScreenState()
     SuperkassaTheme(look.appearance, look.look) {
         ProvideStrings(look.language) {
             // Клавиатура сдвигает окно, а не ложится поверх: иначе поля
@@ -100,7 +100,7 @@ private fun Window(app: AppContainer) {
                 WindowClassRoot { ShellScreen(app) }
             }
             // Журнал в режиме отладки — поверх кассы: соседнего окна здесь нет.
-            LogDialog(app)
+            LogDialog(app.services, app.areas.debug)
         }
     }
 }

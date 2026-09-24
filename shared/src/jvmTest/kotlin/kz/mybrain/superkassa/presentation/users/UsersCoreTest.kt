@@ -12,9 +12,9 @@ import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import java.io.File
@@ -54,7 +54,7 @@ class UsersCoreTest {
     /** Экран кассиров под работающим с пином [pin]. */
     private fun model(pin: String = ADMIN): UsersViewModel {
         signIn.enter(kassa.info(), bench.api.authenticate(kassa.kkmId, pin), pin)
-        return usersModel(CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices))
+        return usersModel(CoreScene.services(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices))
             .also { it.reload() }
     }
 

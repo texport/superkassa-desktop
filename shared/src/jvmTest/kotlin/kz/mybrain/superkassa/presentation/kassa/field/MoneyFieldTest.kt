@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.common.field
+package kz.mybrain.superkassa.presentation.kassa.field
 
 import androidx.compose.ui.text.AnnotatedString
 import kotlin.test.Test

@@ -15,9 +15,9 @@ import kz.mybrain.superkassa.designsystem.theme.color.Accent
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.color.swatch
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.common.look.LookUiState
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.settings.look.LookUiState
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.settings.title
 import kz.mybrain.superkassa.strings.api.common.SettingStrings
 import kz.mybrain.superkassa.strings.api.settings.LookStrings

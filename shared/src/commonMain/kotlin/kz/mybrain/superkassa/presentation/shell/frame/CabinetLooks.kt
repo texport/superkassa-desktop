@@ -1,10 +1,10 @@
 package kz.mybrain.superkassa.presentation.shell.frame
 
 import kz.mybrain.superkassa.presentation.cabinet.CabinetLook
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 
 /**
  * Вид окна глазами кабинета: колонка точек и переключатели шапки.

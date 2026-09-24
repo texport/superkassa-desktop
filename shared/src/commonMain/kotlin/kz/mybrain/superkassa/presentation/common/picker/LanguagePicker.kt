@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.strings.api.Language
 
 /**

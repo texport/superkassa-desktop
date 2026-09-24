@@ -58,7 +58,7 @@ class DeliveryToGatewayTest {
 
     @Test
     fun `чек уходит на SMS-шлюз, настроенный с карточки`() {
-        val model = deliveryModel(desk.app)
+        val model = deliveryModel(desk.app.services, desk.app.areas.settings)
         model.switch(DeliveryChannel.Sms, true)
         model.type(DeliveryField.SmsUrl, "http://127.0.0.1:${gateway.address.port}/send?to={phone}&text={text}")
         model.type(DeliveryField.SmsKey, KEY)

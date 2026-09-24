@@ -23,8 +23,8 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.inlineMain
-import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.shell.WindowModels
+import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.KkmBarActions
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section

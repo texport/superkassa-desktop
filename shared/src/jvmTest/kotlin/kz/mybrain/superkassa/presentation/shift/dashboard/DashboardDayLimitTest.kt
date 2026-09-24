@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -37,7 +37,7 @@ class DashboardDayLimitTest {
     @AfterTest
     fun restoreMain() = Dispatchers.resetMain()
 
-    private fun read(core: FakeCore) = dashboardModel(CoreScene.app(core, signIn)).also {
+    private fun read(core: FakeCore) = dashboardModel(CoreScene.services(core, signIn)).also {
         signIn.enter(CoreScene.kkm(), CoreScene.cashier(), CoreScene.PIN)
     }
 

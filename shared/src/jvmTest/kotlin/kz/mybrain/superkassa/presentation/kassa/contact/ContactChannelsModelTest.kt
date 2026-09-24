@@ -20,7 +20,7 @@ import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScene
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsViewModel
 import kz.mybrain.superkassa.presentation.kassa.refund.returnsModel
@@ -56,11 +56,11 @@ class ContactChannelsModelTest {
     private fun ports(settings: DeliverySettings?) = KassaPorts(FixedDeliverySetup(settings))
 
     private fun sale(settings: DeliverySettings?) =
-        saleModel(CoreScene.app(SaleScene.core(), SaleScene.signedIn(), ports = ports(settings))).also { it.visit() }
+        saleModel(CoreScene.services(SaleScene.core(), SaleScene.signedIn()), ports(settings)).also { it.visit() }
 
     private fun returns(settings: DeliverySettings?): ReturnsViewModel {
-        val app = CoreScene.app(ReturnsScene.core(listOf(BASIS)), SaleScene.signedIn(), ports = ports(settings))
-        return returnsModel(app).also { it.visit() }.also { it.choose(BASIS) }
+        val services = CoreScene.services(ReturnsScene.core(listOf(BASIS)), SaleScene.signedIn())
+        return returnsModel(services, ports(settings)).also { it.visit() }.also { it.choose(BASIS) }
     }
 
     @Test

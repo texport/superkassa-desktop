@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.shell.starting
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
-import kz.mybrain.superkassa.presentation.words.shell.of
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File

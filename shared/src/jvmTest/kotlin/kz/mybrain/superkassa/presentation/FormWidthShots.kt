@@ -26,6 +26,8 @@ import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
+import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupContent
@@ -33,8 +35,6 @@ import kz.mybrain.superkassa.presentation.setup.SetupParts
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
-import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section

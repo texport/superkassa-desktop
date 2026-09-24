@@ -11,9 +11,9 @@ import kz.mybrain.superkassa.domain.journal.model.QueueState
 import kz.mybrain.superkassa.domain.journal.model.state
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.strings.api.Language
@@ -54,7 +54,7 @@ class QueueCoreTest {
 
     private fun model(): QueueViewModel {
         signIn.enter(kassa.info(), bench.api.authenticate(kassa.kkmId, ADMIN), ADMIN)
-        return queueModel(CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices))
+        return queueModel(CoreScene.services(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices))
             .also { it.refresh() }
     }
 

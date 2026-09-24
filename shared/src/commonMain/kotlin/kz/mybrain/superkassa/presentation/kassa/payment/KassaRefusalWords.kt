@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.words.kassa
+package kz.mybrain.superkassa.presentation.kassa.payment
 
 import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.strings.api.Language

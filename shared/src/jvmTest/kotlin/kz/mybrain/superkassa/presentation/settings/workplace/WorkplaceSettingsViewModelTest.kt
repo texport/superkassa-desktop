@@ -46,7 +46,7 @@ class WorkplaceSettingsViewModelTest {
     /** Адрес без схемы приложение не разберёт вовсе: такой не сохраняется. */
     @Test
     fun `негодный адрес кабинета не уходит в настройки`() {
-        val model = workplaceSettingsModel(app)
+        val model = workplaceSettingsModel(app.services, app.areas.settings)
 
         model.typeCabinet("192.168.50.35:17700")
         assertTrue(model.state.value.cabinetMalformed)
@@ -57,7 +57,7 @@ class WorkplaceSettingsViewModelTest {
 
     @Test
     fun `годный адрес сохраняется без краёв и черты на конце`() {
-        val model = workplaceSettingsModel(app)
+        val model = workplaceSettingsModel(app.services, app.areas.settings)
 
         model.typeCabinet("  http://192.168.50.35:17700/  ")
         model.saveCabinet()
@@ -68,7 +68,7 @@ class WorkplaceSettingsViewModelTest {
 
     @Test
     fun `службы карты сохраняются и возвращаются к общедоступным`() {
-        val model = workplaceSettingsModel(app)
+        val model = workplaceSettingsModel(app.services, app.areas.settings)
 
         model.typeMaps(MapServices(tiles = " https://tiles.example.kz/{z}/{x}/{y}.png ", search = ""))
         model.saveMaps()
@@ -83,7 +83,7 @@ class WorkplaceSettingsViewModelTest {
     @Test
     fun `отрасль помнится за каждой кассой`() {
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
-        val model = workplaceSettingsModel(app)
+        val model = workplaceSettingsModel(app.services, app.areas.settings)
         model.chooseDomain("DOMAIN_TAXI")
 
         signIn.enter(CoreScene.kkm(id = "kkm-2"), CoreScene.cashier(), CoreScene.PIN)

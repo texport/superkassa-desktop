@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.strings.api.Language
@@ -55,7 +55,7 @@ class SetupViewModelTest {
     fun restoreMain() = Dispatchers.resetMain()
 
     private fun model(): SetupViewModel =
-        setupModel(CoreScene.app(core, notices = notices), SetupPorts(memory, cabinet), DirectCalls())
+        setupModel(CoreScene.services(core, notices = notices), SetupPorts(memory, cabinet), DirectCalls())
             .apply { reload() }
 
     private fun byHand(model: SetupViewModel) {

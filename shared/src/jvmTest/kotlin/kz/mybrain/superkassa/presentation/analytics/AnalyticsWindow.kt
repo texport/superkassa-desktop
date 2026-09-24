@@ -31,9 +31,9 @@ import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetCompany
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetUser
-import kz.mybrain.superkassa.presentation.settings.look.lookModel
-import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.shell.WindowModels
+import kz.mybrain.superkassa.presentation.common.look.lookModel
+import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.KkmTopBar
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.frame.shellModel
@@ -66,7 +66,7 @@ internal class AnalyticsWindow(
     private val app = KassaScene.desk(KassaScene.kkm(shiftOpen = true)).app
         .analyzing(CabinetReplies.answering(reply).analytics)
 
-    private val windowLook = lookModel(app)
+    private val windowLook = lookModel(app.services.look)
 
     private val parts = WindowParts(shellModel(app), windowLook, CabinetRig(exchange, app).enter(OWNER, COMPANY).window)
 

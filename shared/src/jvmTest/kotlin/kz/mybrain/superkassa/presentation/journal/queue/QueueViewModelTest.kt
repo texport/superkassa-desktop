@@ -11,7 +11,7 @@ import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.strings.api.Language
@@ -49,7 +49,7 @@ class QueueViewModelTest {
     private fun model(state: String = "ACTIVE"): QueueViewModel {
         core.on("getKkm") { CoreScene.kkm(state = state) }
         signIn.enter(CoreScene.kkm(state = state), CoreScene.cashier(), CoreScene.PIN)
-        return queueModel(CoreScene.app(core, signIn, notices))
+        return queueModel(CoreScene.services(core, signIn, notices))
     }
 
     @Test

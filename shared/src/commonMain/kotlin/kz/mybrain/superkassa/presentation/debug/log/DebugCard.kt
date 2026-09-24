@@ -10,8 +10,9 @@ import kz.mybrain.superkassa.designsystem.section.PartTitle
 import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
+import kz.mybrain.superkassa.domain.debug.port.DebugPorts
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.words.debug.name
 import kz.mybrain.superkassa.strings.api.textsOf
 
@@ -56,8 +57,8 @@ private fun Note(text: String) {
 
 /** Карточка режима отладки со своей моделью — для настроек, которые о журнале не знают. */
 @Composable
-fun DebugSetting(app: AppContainer) {
-    val model = logViewModel(app)
+fun DebugSetting(services: WindowServices, ports: DebugPorts) {
+    val model = logViewModel(services, ports)
     val state by model.state.collectAsScreenState()
     DebugCard(state, model)
 }

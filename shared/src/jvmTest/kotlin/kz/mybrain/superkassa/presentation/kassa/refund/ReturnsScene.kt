@@ -9,9 +9,11 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.Paymen
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
 import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftResponse
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 
 /**
@@ -30,7 +32,7 @@ object ReturnsScene {
         payments: List<PaymentTypeResponse> = emptyList()
     ): ReturnsViewModel {
         val core = core(documents, items, drawer, payments)
-        return returnsModel(CoreScene.app(core, SaleScene.signedIn()))
+        return returnsModel(CoreScene.services(core, SaleScene.signedIn()), KassaPorts(FixedDeliverySetup()))
     }
 
     fun core(

@@ -41,7 +41,7 @@ class OfdSettingsOnCoreTest {
 
     @Test
     fun `сверка сведений с БФД — удача словами кассира`() {
-        ofdSettingsModel(desk.app).syncService()
+        ofdSettingsModel(desk.app.services).syncService()
 
         assertIs<Message.Done>(desk.notices.last)
     }
@@ -53,14 +53,14 @@ class OfdSettingsOnCoreTest {
      */
     @Test
     fun `сверка счётчиков, которую ядро не разобрало, удачей не названа`() {
-        ofdSettingsModel(desk.app).syncCounters()
+        ofdSettingsModel(desk.app.services).syncCounters()
 
         assertFalse(desk.notices.last is Message.Done, "неразобранная сверка названа удачей")
     }
 
     @Test
     fun `сверка без связи с БФД — не удача, а отказ или сбой на экране`() {
-        val model = ofdSettingsModel(desk.app)
+        val model = ofdSettingsModel(desk.app.services)
         desk.kassa.bfd.disconnect()
 
         model.syncService()
@@ -71,7 +71,7 @@ class OfdSettingsOnCoreTest {
 
     @Test
     fun `сведения о кассе у БФД читаются и видны на карточке`() {
-        val model = ofdSettingsModel(desk.app)
+        val model = ofdSettingsModel(desk.app.services)
 
         model.askInfo()
 
@@ -86,7 +86,7 @@ class OfdSettingsOnCoreTest {
         shellModel(desk.app).refresh()
         assertEquals("BLOCKED", desk.signIn.state.value.kkm?.state, "касса не встала после отказа БФД")
 
-        ofdSettingsModel(desk.app).askInfo()
+        ofdSettingsModel(desk.app.services).askInfo()
 
         assertEquals("ACTIVE", desk.kassa.info().state, "ядро не сняло блокировку ответом на запрос сведений")
         assertEquals("ACTIVE", desk.signIn.state.value.kkm?.state, "окно не узнало, что касса снова в строю")
@@ -95,8 +95,8 @@ class OfdSettingsOnCoreTest {
 
     @Test
     fun `новый токен принимается в режиме программирования и не остаётся в поле`() {
-        kkmSettingsModel(desk.app).switchProgramming()
-        val model = ofdSettingsModel(desk.app)
+        kkmSettingsModel(desk.app.services, desk.app.areas.settings).switchProgramming()
+        val model = ofdSettingsModel(desk.app.services)
 
         model.typeToken("12ab34 56")
         assertEquals("123456", model.state.value.token, "в поле токена попало не только цифры")
@@ -109,14 +109,14 @@ class OfdSettingsOnCoreTest {
 
     @Test
     fun `вне режима программирования поле токена закрыто`() {
-        val model = ofdSettingsModel(desk.app)
+        val model = ofdSettingsModel(desk.app.services)
 
         assertFalse(model.state.value.tokenEditable)
     }
 
     @Test
     fun `проверка связи с ОФД отвечает итогом, а не состоянием`() {
-        val model = ofdSettingsModel(desk.app)
+        val model = ofdSettingsModel(desk.app.services)
 
         model.checkLink()
         assertEquals(true, model.state.value.linkAlive)

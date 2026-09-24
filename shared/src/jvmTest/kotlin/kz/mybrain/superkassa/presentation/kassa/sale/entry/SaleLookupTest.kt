@@ -7,9 +7,11 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.kassa.model.entry.LookupProblem
 import kz.mybrain.superkassa.domain.kassa.model.tenge
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
@@ -47,7 +49,8 @@ class SaleLookupTest {
 
     private fun search(core: FakeCore, blockReason: Int? = null): SaleViewModel {
         val kkm = CoreScene.kkm(state = if (blockReason == null) "ACTIVE" else "BLOCKED", blockReasonCode = blockReason)
-        val model = saleModel(CoreScene.app(core, SaleScene.signedIn(kkm), notices))
+        val services = CoreScene.services(core, SaleScene.signedIn(kkm), notices)
+        val model = saleModel(services, KassaPorts(FixedDeliverySetup()))
         model.entry.typeBarcode(SaleScene.BARCODE)
         assertTrue(model.entry.search(), "набранный код ищется")
         return model

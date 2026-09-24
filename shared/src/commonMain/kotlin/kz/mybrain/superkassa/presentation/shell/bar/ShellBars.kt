@@ -14,8 +14,8 @@ import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
 import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.ShellUiState
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
@@ -48,7 +48,7 @@ internal fun ShellBar(window: WindowParts, shell: ShellUiState, section: Section
 /** Шапка рабочего окна: кассир уходит сценарием входа — вход и уход одна область, одна модель. */
 @Composable
 internal fun WorkBar(app: AppContainer, window: WindowParts, shell: ShellUiState, section: Section) =
-    ShellBar(window, shell, section, loginViewModel(app)::signOut)
+    ShellBar(window, shell, section, loginViewModel(app.services)::signOut)
 
 /**
  * Шапка приложения: какая касса и в каком она состоянии.

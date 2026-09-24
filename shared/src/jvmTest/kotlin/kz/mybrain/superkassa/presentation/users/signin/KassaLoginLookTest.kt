@@ -51,7 +51,7 @@ class KassaLoginLookTest {
      */
     private fun door(kkms: List<KkmResponse>?, refusal: Refusal? = null): AppContainer {
         val app = CoreScene.app(LoginScene.core(kkms))
-        refusal?.let { app.notices.show(Message.Refusal(it.words, it.code)) }
+        refusal?.let { app.services.talk.notices.show(Message.Refusal(it.words, it.code)) }
         return app
     }
 

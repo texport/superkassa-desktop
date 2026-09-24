@@ -20,8 +20,10 @@ import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.tenge
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleViewModel
@@ -57,7 +59,7 @@ class PriceAskPathTest {
 
     private fun model(found: NomenclatureLookupResponse): SaleViewModel {
         val core = SaleScene.core().apply { on("lookupNomenclature") { found } }
-        return saleModel(CoreScene.app(core, SaleScene.signedIn()))
+        return saleModel(CoreScene.services(core, SaleScene.signedIn()), KassaPorts(FixedDeliverySetup()))
     }
 
     @Test

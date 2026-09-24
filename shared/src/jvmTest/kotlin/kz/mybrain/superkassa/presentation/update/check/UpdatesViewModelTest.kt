@@ -13,13 +13,13 @@ import kz.mybrain.superkassa.domain.update.model.ReleaseAnswer
 import kz.mybrain.superkassa.domain.update.model.UpdateOutcome
 import kz.mybrain.superkassa.domain.update.port.FakeReleases
 import kz.mybrain.superkassa.domain.update.port.UpdateMemory
+import kz.mybrain.superkassa.domain.update.port.UpdatePorts
 import kz.mybrain.superkassa.domain.version.model.AppVersion
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.io.path.createTempDirectory
@@ -62,11 +62,8 @@ class UpdatesViewModelTest {
     }
 
     private fun model(installed: String, memory: UpdateMemory = UpdatePreferences(directory)) = updatesModel(
-        app = CoreScene.app(
-            FakeCore(),
-            notices = notices,
-            settings = settingsPorts().copy(releases = releases, updateMemory = memory)
-        ),
+        services = CoreScene.services(FakeCore(), notices = notices),
+        ports = UpdatePorts(releases, memory),
         installed = AppVersion.parse(installed)!!,
         now = { moment }
     )

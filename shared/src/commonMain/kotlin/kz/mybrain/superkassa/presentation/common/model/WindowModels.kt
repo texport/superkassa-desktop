@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.shell
+package kz.mybrain.superkassa.presentation.common.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider

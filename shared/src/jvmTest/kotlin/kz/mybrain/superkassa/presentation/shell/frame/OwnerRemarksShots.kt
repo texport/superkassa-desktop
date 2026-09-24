@@ -61,7 +61,7 @@ class OwnerRemarksShots {
     @Test
     fun `вход со снекбаром`() = each { width, height ->
         val app = CoreScene.app(LoginScene.core(listOf(KassaScene.kkm())))
-        app.notices.show(Message.Done(CONNECTED))
+        app.services.talk.notices.show(Message.Done(CONNECTED))
         save("door", width, height) { LoginScene.Door(app) }
     }
 

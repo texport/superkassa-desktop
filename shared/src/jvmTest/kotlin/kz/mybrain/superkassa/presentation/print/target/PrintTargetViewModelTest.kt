@@ -43,7 +43,7 @@ class PrintTargetViewModelTest {
     @Test
     fun `принтер выбирается за кассой, копии и вид — за машиной`() {
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
-        val model = printTargetModel(app)
+        val model = printTargetModel(app.services, app.areas.print)
 
         model.choosePrinter("Чековый у кассы")
         model.chooseCopies(2)
@@ -61,7 +61,7 @@ class PrintTargetViewModelTest {
         out.names = emptyList()
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
 
-        assertTrue(printTargetModel(app).state.value.noPrinters)
+        assertTrue(printTargetModel(app.services, app.areas.print).state.value.noPrinters)
     }
 
     /** Выбранный принтер отключили: карточка называет это там, где выбирают другой. */
@@ -71,14 +71,14 @@ class PrintTargetViewModelTest {
         out.names = listOf("Конторский A4")
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
 
-        assertTrue(printTargetModel(app).state.value.printerGone)
+        assertTrue(printTargetModel(app.services, app.areas.print).state.value.printerGone)
     }
 
     /** Другая касса — свой принтер: выбор прежней на неё не переносится. */
     @Test
     fun `смена кассы показывает её принтер`() {
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
-        val model = printTargetModel(app)
+        val model = printTargetModel(app.services, app.areas.print)
         model.choosePrinter("Чековый у кассы")
 
         signIn.enter(CoreScene.kkm(id = "kkm-2"), CoreScene.cashier(), CoreScene.PIN)

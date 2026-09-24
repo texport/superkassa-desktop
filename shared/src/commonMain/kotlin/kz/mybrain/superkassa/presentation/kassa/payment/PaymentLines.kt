@@ -18,8 +18,8 @@ import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.payment.PaymentSplit
-import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.kassa.field.MoneyField
 import kz.mybrain.superkassa.presentation.kassa.payment.component.PaymentPicker
 import kz.mybrain.superkassa.strings.api.textsOf
 

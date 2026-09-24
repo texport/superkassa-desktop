@@ -15,8 +15,10 @@ import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
@@ -26,26 +28,28 @@ import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationViewModel
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Мастер окна: модель — из портов мастера, обращения к кабинету — шагами кабинета окна.
  *
- * На платформе без мастера не рисуется ничего: двери к нему там нет.
  * Без кабинета мастер ведёт только ручной путь ([ConnectByHand]).
  *
  * @param cabinet шаги кабинета окна; `null` — на этой платформе кабинета нет.
  * @param onBack возврат туда, откуда пришли; `null` — возвращаться некуда.
  */
 @Composable
-fun ConnectKkm(app: AppContainer, cabinet: CabinetSteps?, onBack: (() -> Unit)? = null) {
-    val ports = app.areas.setup ?: return
+fun ConnectKkm(
+    services: WindowServices,
+    ports: SetupPorts,
+    cabinet: CabinetSteps?,
+    onBack: (() -> Unit)? = null
+) {
     if (cabinet == null || ports.cabinet == null) {
-        return ConnectByHand(setupViewModel(app, ports, WithoutCabinet), onBack)
+        return ConnectByHand(setupViewModel(services, ports, WithoutCabinet), onBack)
     }
     val calls = cabinet.calls
-    val models = SetupModels(setupViewModel(app, ports, calls), registrationViewModel(ports, calls))
+    val models = SetupModels(setupViewModel(services, ports, calls), registrationViewModel(ports, calls))
     ConnectKkmScreen(models, cabinet, onBack)
 }
 

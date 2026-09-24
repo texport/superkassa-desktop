@@ -30,17 +30,17 @@ class StaleMessageTest {
     @Test
     fun `ответ кабинета снимает его прежний отказ, а чужого не трогает`() {
         val app = CoreScene.app(FakeCore())
-        val work = CabinetWork(app.talk)
+        val work = CabinetWork(app.services.talk)
 
         runBlocking { work.run("probe") { error("кабинет молчит") } }
-        assertTrue(app.notices.last is Message.Refusal, "отказ кабинета не показан")
+        assertTrue(app.services.talk.notices.last is Message.Refusal, "отказ кабинета не показан")
         runBlocking { work.run("probe") { true } }
-        assertNull(app.notices.last, "ответ кабинета не снял его прежний отказ")
+        assertNull(app.services.talk.notices.last, "ответ кабинета не снял его прежний отказ")
 
         val kassa = Message.Refusal("Касса заблокирована", "KKM_BLOCKED")
-        app.notices.show(kassa)
+        app.services.talk.notices.show(kassa)
         runBlocking { work.run("probe") { true } }
-        assertEquals(kassa, app.notices.last, "ответ кабинета снял отказ кассы")
+        assertEquals(kassa, app.services.talk.notices.last, "ответ кабинета снял отказ кассы")
     }
 
     /**
@@ -53,16 +53,16 @@ class StaleMessageTest {
     @Test
     fun `удача соседнего обращения не снимает чужой отказ кабинета`() {
         val app = CoreScene.app(FakeCore())
-        val work = CabinetWork(app.talk)
+        val work = CabinetWork(app.services.talk)
 
         runBlocking { work.run("read register card") { error("кабинет молчит") } }
-        val card = app.notices.last
+        val card = app.services.talk.notices.last
         assertTrue(card is Message.Refusal, "отказ чтения карточки не показан")
         runBlocking { work.run("read register state") { true } }
-        assertEquals(card, app.notices.last, "удача чтения состояния сняла отказ чтения карточки")
+        assertEquals(card, app.services.talk.notices.last, "удача чтения состояния сняла отказ чтения карточки")
 
         runBlocking { work.run("read register card") { true } }
-        assertNull(app.notices.last, "удача того же чтения не сняла его отказ")
+        assertNull(app.services.talk.notices.last, "удача того же чтения не сняла его отказ")
     }
 
     /**

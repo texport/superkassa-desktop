@@ -12,8 +12,9 @@ import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.domain.debug.port.DebugPorts
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -25,8 +26,8 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * снова при каждом открытии кассы.
  */
 @Composable
-fun LogDialog(app: AppContainer) {
-    val model = logViewModel(app)
+fun LogDialog(services: WindowServices, ports: DebugPorts) {
+    val model = logViewModel(services, ports)
     val journal by model.state.collectAsScreenState()
     if (!journal.book.debugMode) return
     val texts = textsOf(LocalLanguage.current).debug

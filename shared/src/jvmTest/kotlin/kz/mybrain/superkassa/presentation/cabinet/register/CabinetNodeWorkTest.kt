@@ -3,7 +3,7 @@ package kz.mybrain.superkassa.presentation.cabinet.register
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.documents.TechnicalState
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.common.picker.OfdTarget
+import kz.mybrain.superkassa.presentation.cabinet.register.adopt.OfdTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

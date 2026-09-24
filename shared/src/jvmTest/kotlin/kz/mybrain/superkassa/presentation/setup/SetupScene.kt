@@ -17,7 +17,7 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationModel
@@ -61,7 +61,7 @@ internal class SetupScene(
     }
 
     /** Модель мастера, как её создаст окно; создаётся при подменённом главном потоке. */
-    fun model(): SetupViewModel = setupModel(CoreScene.app(core), SetupPorts(memory, cabinet), calls)
+    fun model(): SetupViewModel = setupModel(CoreScene.services(core), SetupPorts(memory, cabinet), calls)
 
     /** Модель шага постановки на учёт поверх того же кабинета. */
     fun registration(): RegistrationViewModel = registrationModel(SetupPorts(memory, cabinet), calls)

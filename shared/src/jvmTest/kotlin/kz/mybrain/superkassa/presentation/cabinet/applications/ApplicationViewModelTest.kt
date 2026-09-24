@@ -51,7 +51,7 @@ class ApplicationViewModelTest {
 
         val outcome = assertIs<ApplicationOutcome.Failed>(model.state.value.outcome)
         assertEquals(CabinetProblem.Refused("REGISTER_NOT_DRAFT", "Касса уже на учёте"), outcome.problem)
-        assertEquals("REGISTER_NOT_DRAFT", assertIs<Message.Refusal>(scene.app.notices.last).code)
+        assertEquals("REGISTER_NOT_DRAFT", assertIs<Message.Refusal>(scene.app.services.talk.notices.last).code)
         assertFalse(scene.cabinet.state.value.busy)
         assertNull(model.state.value.stage, "после отказа на экране остался шаг подачи")
     }

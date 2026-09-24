@@ -5,7 +5,7 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptBrand
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaperWidthResponse
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
 import kz.mybrain.superkassa.domain.settings.model.brandingRequest
-import kz.mybrain.superkassa.presentation.common.model.KkmDrafts
+import kz.mybrain.superkassa.presentation.settings.KkmDrafts
 
 /**
  * Печатная форма чека кассы: язык, ширина ленты, реклама ОФД и свои строки.

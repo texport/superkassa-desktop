@@ -21,11 +21,11 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWork
 import kz.mybrain.superkassa.presentation.cabinet.register.RegisterUiState
 import kz.mybrain.superkassa.presentation.cabinet.register.RegisterView
-import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
-import kz.mybrain.superkassa.presentation.settings.look.lookModel
+import kz.mybrain.superkassa.presentation.common.look.LookViewModel
+import kz.mybrain.superkassa.presentation.common.look.lookModel
+import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
+import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
-import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.frame.cabinetLook
 import kz.mybrain.superkassa.presentation.shell.frame.cabinetNeighbours
 
@@ -44,10 +44,10 @@ internal class CabinetRig(
     private val cabinet = SignedCabinet(client, signer)
     val files: KeptFiles get() = cabinet.files
     val ports: CabinetPorts get() = cabinet.ports
-    val model = CabinetViewModel(cabinetCases(app, ports), app.talk)
+    val model = CabinetViewModel(cabinetCases(app, ports), app.services.talk)
 
     /** Вид окна: кабинет получает от него только своё, а каркасу нужна сама модель. */
-    val look = lookModel(app)
+    val look = lookModel(app.services.look)
     val window = CabinetWindow(model, cabinetLook(look), cabinetNeighbours(app))
 
     /** Владелец вошёл. */
@@ -59,7 +59,7 @@ internal class CabinetRig(
 
 /** Сценарии кабинета над портами проверки и кассой её контейнера. */
 internal fun cabinetCases(app: AppContainer, ports: CabinetPorts) =
-    CabinetCases(app.kassa, app.signIn, app.memory, ports)
+    CabinetCases(app.services.kassa, app.services.signIn, app.services.memory, ports)
 
 /**
  * Кабинет, отвечающий заданным, — для снимков отказных состояний.
@@ -75,7 +75,10 @@ internal fun mockCabinet(body: String, status: HttpStatusCode = HttpStatusCode.O
 internal fun mockCabinet(client: CabinetWire): CabinetWindow = CabinetRig(client).enter().window
 
 /** Кабинет, в который никто не входил: окно кассы без владельца. */
-internal fun idleCabinet(app: AppContainer = CoreScene.app(FakeCore()), look: LookViewModel = lookModel(app)) =
+internal fun idleCabinet(
+    app: AppContainer = CoreScene.app(FakeCore()),
+    look: LookViewModel = lookModel(app.services.look)
+) =
     CabinetWindow(CabinetRig(app = app).model, cabinetLook(look), cabinetNeighbours(app))
 
 /**
@@ -89,7 +92,7 @@ internal class CabinetListsRig(client: CabinetWire, app: AppContainer = CoreScen
     // Порты без модели окна: модель, увидев вошедшего, читала бы хозяйство
     // сама, в своём потоке, — и её страницы смешивались с проверяемыми.
     private val ports = SignedCabinet(client).also { it.enter() }.ports
-    val lists = CabinetLists(app.talk, cabinetCases(app, ports), CabinetWork(app.talk), screen)
+    val lists = CabinetLists(app.services.talk, cabinetCases(app, ports), CabinetWork(app.services.talk), screen)
 
     val state: CabinetUiState get() = screen.value
 }

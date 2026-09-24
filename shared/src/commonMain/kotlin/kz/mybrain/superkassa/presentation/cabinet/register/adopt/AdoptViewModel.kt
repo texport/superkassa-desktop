@@ -17,7 +17,6 @@ import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.value
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.presentation.common.picker.BFD_PROVIDER
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

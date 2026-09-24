@@ -60,7 +60,7 @@ internal class DeliveryBench(ordered: Boolean = true) : AutoCloseable {
     fun model(): JournalViewModel {
         val deliveries = JournalPorts(EmbeddedDeliveries(bench.superkassa.delivery, Dispatchers.Unconfined))
         val app = CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices, journal = deliveries)
-        return journalModel(app)
+        return journalModel(app.services, app.areas.journal)
     }
 
     /** Заходы фоновой доставки, пока попытки не кончатся: доставка [receipt] становится окончательным отказом. */

@@ -7,7 +7,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -30,7 +30,7 @@ internal class UsersScene(val users: List<UserResponse> = listOf(ADMIN, CASHIER)
         core.on("deleteUser") { args -> true.also { asked += "deleteUser ${args[2]}" } }
     }
 
-    fun model(): UsersViewModel = usersModel(CoreScene.app(core, signIn))
+    fun model(): UsersViewModel = usersModel(CoreScene.services(core, signIn))
 
     companion object {
         val ADMIN = UserResponse(userId = "u-1", name = "Айгүл Сәрсенова", role = UserRole.ADMIN)

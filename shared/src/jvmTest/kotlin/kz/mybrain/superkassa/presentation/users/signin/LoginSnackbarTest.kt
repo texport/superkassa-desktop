@@ -30,7 +30,7 @@ class LoginSnackbarTest {
 
     private fun frame(name: String, refused: Boolean): BufferedImage {
         val app = CoreScene.app(LoginScene.core(listOf(KassaScene.kkm())))
-        if (refused) app.notices.show(Message.Refusal(WRONG_PIN, "USER_NOT_FOUND"))
+        if (refused) app.services.talk.notices.show(Message.Refusal(WRONG_PIN, "USER_NOT_FOUND"))
         val png = inlineMain {
             RenderProbe(
                 width = WIDE,

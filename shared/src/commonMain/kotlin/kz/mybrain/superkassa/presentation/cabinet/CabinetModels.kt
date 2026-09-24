@@ -2,7 +2,8 @@ package kz.mybrain.superkassa.presentation.cabinet
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.domain.cabinet.port.CabinetPorts
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 
 /**
  * Модель кабинета окна.
@@ -11,14 +12,13 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
  * на вход кассы и обратно.
  */
 @Composable
-fun cabinetViewModel(app: AppContainer): CabinetViewModel = viewModel { cabinetModel(app) }
+fun cabinetViewModel(services: WindowServices, ports: CabinetPorts): CabinetViewModel =
+    viewModel { cabinetModel(services, ports) }
 
 /** Модель кабинета над портами кабинета и кассой процесса — и в окне, и в проверке. */
-fun cabinetModel(app: AppContainer): CabinetViewModel = CabinetViewModel(cabinetCases(app), app.talk)
+fun cabinetModel(services: WindowServices, ports: CabinetPorts): CabinetViewModel =
+    CabinetViewModel(cabinetCases(services, ports), services.talk)
 
 /** Сценарии кабинета над портами точки сборки. */
-fun cabinetCases(app: AppContainer): CabinetCases =
-    CabinetCases(app.kassa, app.signIn, app.memory, requireNotNull(app.areas.cabinet) { NO_CABINET })
-
-/** Кабинета нет у точки сборки этой платформы, а раздел открыли. */
-private const val NO_CABINET = "cabinet ports are not assembled on this platform"
+fun cabinetCases(services: WindowServices, ports: CabinetPorts): CabinetCases =
+    CabinetCases(services.kassa, services.signIn, services.memory, ports)

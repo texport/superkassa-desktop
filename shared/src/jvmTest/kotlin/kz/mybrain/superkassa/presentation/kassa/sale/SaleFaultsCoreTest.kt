@@ -87,7 +87,7 @@ class SaleFaultsCoreTest {
         val kassa = desk.seated()
         val losing = LosingKassa(EmbeddedKassa(desk.bench.api, Dispatchers.Unconfined))
         val app = CoreScene.app(losing, desk.signIn, desk.notices)
-        val model = saleModel(app).also { it.visit() }
+        val model = saleModel(app.services, app.areas.kassa).also { it.visit() }
         model.add("Хлеб", "450")
         val key = model.state.value.attemptKey
 

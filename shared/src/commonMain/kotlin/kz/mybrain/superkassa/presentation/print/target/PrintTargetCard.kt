@@ -11,8 +11,9 @@ import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.print.model.PrintKind
+import kz.mybrain.superkassa.domain.print.port.PrintPorts
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -114,8 +115,8 @@ private data class Printer(val name: String?)
 
 /** Карточка принтера кассы со своей моделью — для настроек, которые о печати не знают. */
 @Composable
-fun PrintTargetSetting(app: AppContainer) {
-    val model = printTargetViewModel(app)
+fun PrintTargetSetting(services: WindowServices, ports: PrintPorts) {
+    val model = printTargetViewModel(services, ports)
     val state by model.state.collectAsScreenState()
     PrintTargetCard(state, model)
 }

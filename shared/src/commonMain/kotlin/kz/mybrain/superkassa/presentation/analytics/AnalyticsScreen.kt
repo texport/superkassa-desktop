@@ -26,7 +26,6 @@ import kz.mybrain.superkassa.presentation.analytics.record.AnalyticsRecordScreen
 import kz.mybrain.superkassa.presentation.analytics.record.analyticsRecordViewModel
 import kz.mybrain.superkassa.presentation.analytics.sales.AnalyticsSalesScreen
 import kz.mybrain.superkassa.presentation.analytics.sales.analyticsSalesViewModel
-import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -51,7 +50,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  *   и взглядам показывать нечего.
  */
 @Composable
-fun AnalyticsScreen(app: AppContainer, access: String?, cabinetTexts: CabinetTexts) {
+fun AnalyticsScreen(ports: AnalyticsPorts, access: String?, cabinetTexts: CabinetTexts) {
     val language = LocalLanguage.current
     val texts = remember(language) { textsOf(language).analytics }
     var page by remember { mutableStateOf(AnalyticsTab.Map) }
@@ -63,11 +62,11 @@ fun AnalyticsScreen(app: AppContainer, access: String?, cabinetTexts: CabinetTex
         when (page) {
             AnalyticsTab.Map -> {
                 val words = MapWords(texts, cabinetTexts)
-                AnalyticsMapScreen(app, analyticsMapViewModel(app), mapTools(app), access, words)
+                AnalyticsMapScreen(ports, analyticsMapViewModel(ports), mapTools(ports), access, words)
             }
-            AnalyticsTab.Record -> AnalyticsRecordScreen(analyticsRecordViewModel(app), access, texts)
-            AnalyticsTab.Exchange -> AnalyticsExchangeScreen(analyticsExchangeViewModel(app), access, texts)
-            AnalyticsTab.Sales -> AnalyticsSalesScreen(analyticsSalesViewModel(app), access, texts, cabinetTexts)
+            AnalyticsTab.Record -> AnalyticsRecordScreen(analyticsRecordViewModel(ports), access, texts)
+            AnalyticsTab.Exchange -> AnalyticsExchangeScreen(analyticsExchangeViewModel(ports), access, texts)
+            AnalyticsTab.Sales -> AnalyticsSalesScreen(analyticsSalesViewModel(ports), access, texts, cabinetTexts)
         }
     }
 }

@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.settings.look
+package kz.mybrain.superkassa.presentation.common.look
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -8,12 +8,12 @@ import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
+import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.settings.MemoryLogBook
-import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -48,7 +48,7 @@ class LogViewModelTest {
 
     @Test
     fun `отбор оставляет уровень не ниже выбранного и совпавшее со строкой`() {
-        val model = logModel(CoreScene.app(FakeCore(), settings = settingsPorts().copy(logBook = book)))
+        val model = logModel(CoreScene.services(FakeCore()), DebugPorts(book))
 
         assertEquals(4, model.state.value.shown.size, "окно открывается со всем журналом")
         model.filter(LogLevel.Warning)
@@ -59,7 +59,7 @@ class LogViewModelTest {
 
     @Test
     fun `порог записи и режим отладки уходят в журнал рабочего места`() {
-        val model = logModel(CoreScene.app(FakeCore(), settings = settingsPorts().copy(logBook = book)))
+        val model = logModel(CoreScene.services(FakeCore()), DebugPorts(book))
 
         model.chooseLevel(LogLevel.Debug)
         model.switchDebugMode(true)
@@ -73,7 +73,7 @@ class LogViewModelTest {
     /** В поддержку пересылают разбор одного отказа, а не всю смену. */
     @Test
     fun `сохраняется то, что видно после отбора`() {
-        val model = logModel(CoreScene.app(FakeCore(), settings = settingsPorts().copy(logBook = book)))
+        val model = logModel(CoreScene.services(FakeCore()), DebugPorts(book))
 
         model.filter(LogLevel.Failure)
         model.save()
@@ -83,7 +83,7 @@ class LogViewModelTest {
 
     @Test
     fun `очищенный журнал пуст и в окне`() {
-        val model = logModel(CoreScene.app(FakeCore(), settings = settingsPorts().copy(logBook = book)))
+        val model = logModel(CoreScene.services(FakeCore()), DebugPorts(book))
 
         model.clear()
 

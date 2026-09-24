@@ -16,9 +16,9 @@ import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashDecision
 import kz.mybrain.superkassa.domain.kassa.model.cash.CashMove
-import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.kassa.cash.CashActions
 import kz.mybrain.superkassa.presentation.kassa.cash.CashUiState
+import kz.mybrain.superkassa.presentation.kassa.field.MoneyField
 import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 
 /**

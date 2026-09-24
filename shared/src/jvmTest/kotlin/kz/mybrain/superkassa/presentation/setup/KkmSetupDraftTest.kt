@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.AfterTest
@@ -49,7 +49,7 @@ class KkmSetupDraftTest {
     }
 
     private fun wizard(preferences: Preferences) =
-        setupModel(CoreScene.app(core), SetupPorts(preferences, FakeSetupCabinet()), DirectCalls())
+        setupModel(CoreScene.services(core), SetupPorts(preferences, FakeSetupCabinet()), DirectCalls())
 
     @Test
     fun `номер и год переживают перезапуск`() {

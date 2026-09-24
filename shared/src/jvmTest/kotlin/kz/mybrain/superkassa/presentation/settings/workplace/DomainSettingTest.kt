@@ -74,7 +74,7 @@ class DomainSettingTest {
         val app = CoreScene.app(core, SaleScene.signedIn(), memory = preferences)
         Dispatchers.setMain(UnconfinedTestDispatcher())
         try {
-            val model = saleModel(app)
+            val model = saleModel(app.services, app.areas.kassa)
             model.form.domain(DomainInput(carNumber = "777ABC", isOrder = true, currentFee = "350"))
             model.entry.editDraft(PositionDraft(name = POSITION.name, price = "1500", measureUnitCode = "796"))
             model.entry.addDraft()

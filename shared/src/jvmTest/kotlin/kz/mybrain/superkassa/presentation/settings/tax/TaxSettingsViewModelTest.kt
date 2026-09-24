@@ -63,7 +63,7 @@ class TaxSettingsViewModelTest {
     @Test
     fun `режим и ставка уходят в кассу одним обращением`() {
         signIn.enter(programming(), CoreScene.cashier(), CoreScene.PIN)
-        val model = taxSettingsModel(app)
+        val model = taxSettingsModel(app.services)
 
         model.chooseRegime("VAT_PAYER")
         model.chooseVat("VAT_12")
@@ -81,7 +81,7 @@ class TaxSettingsViewModelTest {
     fun `без НДС ставка по умолчанию тоже без НДС`() {
         val payer = programming().copy(taxRegime = "VAT_PAYER", defaultVatGroup = "VAT_12")
         signIn.enter(payer, CoreScene.cashier(), CoreScene.PIN)
-        val model = taxSettingsModel(app)
+        val model = taxSettingsModel(app.services)
 
         model.chooseRegime(TaxRegime.NO_VAT.name)
 
@@ -92,7 +92,7 @@ class TaxSettingsViewModelTest {
     @Test
     fun `открытая смена и непустая очередь гасят сохранение`() {
         signIn.enter(programming().copy(isShiftOpen = true), CoreScene.cashier(), CoreScene.PIN)
-        val model = taxSettingsModel(app)
+        val model = taxSettingsModel(app.services)
         model.chooseRegime("VAT_PAYER")
         assertFalse(model.state.value.savable, "налоги предлагаются к сохранению при открытой смене")
 
@@ -105,7 +105,7 @@ class TaxSettingsViewModelTest {
     fun `непрочитанные справочники дочитываются повтором`() {
         core.on("getTaxRegimes") { error("database is locked") }
         signIn.enter(programming(), CoreScene.cashier(), CoreScene.PIN)
-        val model = taxSettingsModel(app)
+        val model = taxSettingsModel(app.services)
         assertTrue(model.state.value.dictionariesMissing)
 
         core.on("getTaxRegimes") { SettingsScene.REGIMES }
@@ -118,7 +118,7 @@ class TaxSettingsViewModelTest {
     fun `отказ кассы оставляет выбранное`() {
         core.refuse("updateTaxSettings", "SHIFT_OPEN", ru = "Сначала закройте смену")
         signIn.enter(programming(), CoreScene.cashier(), CoreScene.PIN)
-        val model = taxSettingsModel(app)
+        val model = taxSettingsModel(app.services)
 
         model.chooseRegime("VAT_PAYER")
         model.chooseVat("VAT_12")
@@ -136,7 +136,7 @@ class TaxSettingsViewModelTest {
             programming().copy(autoCloseShift = args[2] as Boolean, autoCashout = args[3] as Boolean)
         }
         signIn.enter(programming().copy(autoCashout = true), CoreScene.cashier(), CoreScene.PIN)
-        val model = taxSettingsModel(app)
+        val model = taxSettingsModel(app.services)
 
         model.switchAutoClose(true)
 
@@ -150,7 +150,7 @@ class TaxSettingsViewModelTest {
         val first = programming()
         val second = programming().copy(kkmId = "kkm-2")
         signIn.enter(first, CoreScene.cashier(), CoreScene.PIN)
-        val model = taxSettingsModel(app)
+        val model = taxSettingsModel(app.services)
         model.chooseRegime("VAT_PAYER")
         model.chooseVat("VAT_12")
 

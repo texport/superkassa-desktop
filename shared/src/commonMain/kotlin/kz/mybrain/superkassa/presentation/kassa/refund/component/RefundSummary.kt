@@ -28,8 +28,8 @@ import kz.mybrain.superkassa.domain.kassa.model.payment.SplitIssue
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundAmount
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundProblem
-import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.kassa.field.MoneyField
 import kz.mybrain.superkassa.presentation.kassa.refund.RefundActions
 import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
 import kz.mybrain.superkassa.strings.api.kassa.PaymentTexts

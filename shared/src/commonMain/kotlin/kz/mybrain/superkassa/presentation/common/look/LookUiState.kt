@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.settings.look
+package kz.mybrain.superkassa.presentation.common.look
 
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale

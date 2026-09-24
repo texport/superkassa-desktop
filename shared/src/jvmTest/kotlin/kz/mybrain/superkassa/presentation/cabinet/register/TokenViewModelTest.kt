@@ -26,7 +26,7 @@ class TokenViewModelTest {
         ports.registers = object : CabinetRegisters by unwired<CabinetRegisters>() {
             override suspend fun issueToken(id: String): TokenIssued = issue()
         }
-        app.signIn.enter(CoreScene.kkm(), CoreScene.cashier(), CoreScene.PIN)
+        app.services.signIn.enter(CoreScene.kkm(), CoreScene.cashier(), CoreScene.PIN)
     }
 
     @Test
@@ -38,7 +38,7 @@ class TokenViewModelTest {
         model.issue("r-1", CoreScene.kkm())
 
         assertEquals(IssuedToken("r-1", 3_000_000_001L), model.state.value)
-        assertIs<Message.Done>(scene.app.notices.last)
+        assertIs<Message.Done>(scene.app.services.talk.notices.last)
     }
 
     @Test
@@ -48,7 +48,7 @@ class TokenViewModelTest {
 
         model.issue("r-1", CoreScene.kkm())
 
-        assertEquals("PIN_LOCKED", assertIs<Message.Refusal>(scene.app.notices.last).code)
+        assertEquals("PIN_LOCKED", assertIs<Message.Refusal>(scene.app.services.talk.notices.last).code)
         assertEquals(3_000_000_001L, model.state.value?.token, "выданный токен пропал: другого способа его узнать нет")
     }
 
@@ -59,7 +59,7 @@ class TokenViewModelTest {
 
         model.issue("r-1", CoreScene.kkm())
 
-        assertEquals(Message.Refusal("Неверный пин", "INVALID_PIN"), scene.app.notices.last)
+        assertEquals(Message.Refusal("Неверный пин", "INVALID_PIN"), scene.app.services.talk.notices.last)
     }
 
     @Test
@@ -71,7 +71,7 @@ class TokenViewModelTest {
 
         assertNull(model.state.value)
         assertFalse("updateOfdToken" in scene.core.calls)
-        assertEquals("TOKEN_NOT_ALLOWED", assertIs<Message.Refusal>(scene.app.notices.last).code)
+        assertEquals("TOKEN_NOT_ALLOWED", assertIs<Message.Refusal>(scene.app.services.talk.notices.last).code)
     }
 
     /**
@@ -88,6 +88,6 @@ class TokenViewModelTest {
 
         assertNull(model.state.value)
         assertFalse("updateOfdToken" in scene.core.calls)
-        assertEquals("TOKEN_PENDING", assertIs<Message.Refusal>(scene.app.notices.last).code)
+        assertEquals("TOKEN_PENDING", assertIs<Message.Refusal>(scene.app.services.talk.notices.last).code)
     }
 }

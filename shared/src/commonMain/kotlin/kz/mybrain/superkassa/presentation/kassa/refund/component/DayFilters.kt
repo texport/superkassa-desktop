@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.common.period
+package kz.mybrain.superkassa.presentation.kassa.refund.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -20,6 +20,8 @@ import kotlinx.datetime.plus
 import kz.mybrain.superkassa.designsystem.format.Dates
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.common.period.text
+import kz.mybrain.superkassa.presentation.common.period.workplaceToday
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /** Перелистывание дня. Вперёд дальше сегодняшнего идти некуда. */

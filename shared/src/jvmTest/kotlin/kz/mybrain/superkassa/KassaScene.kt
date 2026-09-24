@@ -8,7 +8,7 @@ import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemoryWorkplace
 import kz.mybrain.superkassa.kassa.app
-import kz.mybrain.superkassa.presentation.settings.look.lookModel
+import kz.mybrain.superkassa.presentation.common.look.lookModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.frame.shellModel
@@ -96,6 +96,6 @@ internal object KassaScene {
  * Кабинет у окна есть, но в него никто не входил: окно кассы без владельца.
  */
 internal class KassaDesk(val app: AppContainer) {
-    val look = lookModel(app)
+    val look = lookModel(app.services.look)
     val parts = WindowParts(shellModel(app), look, idleCabinet(app, look))
 }

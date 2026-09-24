@@ -44,7 +44,7 @@ class DeliveryOnCoreTest {
 
     @Test
     fun `адрес и ключ SMS уходят в кассу, а на экране ключ скрыт`() {
-        val model = deliveryModel(desk.app)
+        val model = deliveryModel(desk.app.services, desk.app.areas.settings)
 
         model.type(DeliveryField.SmsUrl, "https://sms.example.kz/send")
         model.type(DeliveryField.SmsKey, SECRET)
@@ -60,10 +60,10 @@ class DeliveryOnCoreTest {
 
     @Test
     fun `ключ под знаком остаётся прежним, стёртый — снимается`() {
-        val first = deliveryModel(desk.app)
+        val first = deliveryModel(desk.app.services, desk.app.areas.settings)
         first.type(DeliveryField.TelegramToken, SECRET)
         first.save()
-        val again = deliveryModel(desk.app)
+        val again = deliveryModel(desk.app.services, desk.app.areas.settings)
 
         again.type(DeliveryField.SmsUrl, "https://sms.example.kz")
         again.save()
@@ -77,7 +77,7 @@ class DeliveryOnCoreTest {
 
     @Test
     fun `набор поверх знака — новый ключ без звёздочек`() {
-        val model = deliveryModel(desk.app)
+        val model = deliveryModel(desk.app.services, desk.app.areas.settings)
         model.type(DeliveryField.EmailHost, "smtp.example.kz")
         model.type(DeliveryField.EmailPassword, SECRET)
         model.save()
@@ -91,7 +91,7 @@ class DeliveryOnCoreTest {
 
     @Test
     fun `негодный порт и адрес названы до сохранения, и сохранить нельзя`() {
-        val model = deliveryModel(desk.app)
+        val model = deliveryModel(desk.app.services, desk.app.areas.settings)
 
         model.type(DeliveryField.EmailHost, "smtp.example.kz")
         model.type(DeliveryField.EmailPort, "99999")
@@ -106,8 +106,8 @@ class DeliveryOnCoreTest {
 
     @Test
     fun `доставка и сроки БФД не затирают друг друга`() {
-        val core = coreSettingsModel(desk.app)
-        val delivery = deliveryModel(desk.app)
+        val core = coreSettingsModel(desk.app.services, desk.app.areas.settings)
+        val delivery = deliveryModel(desk.app.services, desk.app.areas.settings)
 
         delivery.type(DeliveryField.TelegramToken, SECRET)
         delivery.save()
@@ -121,7 +121,7 @@ class DeliveryOnCoreTest {
 
     @Test
     fun `ключи каналов не попадают в журнал`() {
-        val model = deliveryModel(desk.app)
+        val model = deliveryModel(desk.app.services, desk.app.areas.settings)
         model.type(DeliveryField.WhatsAppToken, SECRET)
         model.type(DeliveryField.WhatsAppSender, "105000000000001")
         model.save()

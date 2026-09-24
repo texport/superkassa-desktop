@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.kassa.appKassa
 import kz.mybrain.superkassa.presentation.analytics.analyticsPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
 import kz.mybrain.superkassa.presentation.users.signin.loginModel
@@ -53,11 +54,13 @@ class SettingsBench : AutoCloseable {
     val coreSettings = EmbeddedSettings(bench.superkassa.settings, io = Dispatchers.Unconfined)
     private val machine = settingsPorts()
     val app = AppContainer(
-        kassa = EmbeddedKassa(bench.api, Dispatchers.Unconfined),
-        signIn = signIn,
-        memory = choices.memory,
-        look = WorkplaceLook(MemoryLook()),
-        talk = Talk(notices, journal) { Language.Ru },
+        services = WindowServices(
+            kassa = EmbeddedKassa(bench.api, Dispatchers.Unconfined),
+            signIn = signIn,
+            memory = choices.memory,
+            look = WorkplaceLook(MemoryLook()),
+            talk = Talk(notices, journal) { Language.Ru }
+        ),
         areas = AreaPorts(
             kassa = KassaPorts(EmbeddedDeliverySetup(bench.superkassa.settings, Dispatchers.Unconfined)),
             journal = JournalPorts(EmbeddedDeliveries(bench.superkassa.delivery, Dispatchers.Unconfined)),
@@ -71,7 +74,7 @@ class SettingsBench : AutoCloseable {
 
     /** Входит за кассу пином, как кассир на экране входа. */
     fun enter(pin: String = ADMIN_PIN): SettingsBench = apply {
-        val login = loginModel(app)
+        val login = loginModel(app.services)
         login.reload()
         login.pick(login.state.value.kkms.single())
         login.typePin(pin)

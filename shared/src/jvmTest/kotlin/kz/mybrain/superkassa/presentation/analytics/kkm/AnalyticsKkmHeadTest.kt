@@ -35,7 +35,7 @@ class AnalyticsKkmHeadTest {
     fun `окно кассы в наименьшем окне говорит о смене`() {
         val app = CoreScene.app(FakeCore()).analyzing(CabinetReplies.always(NOTHING).analytics)
         RenderProbe(NARROW, LOW) {
-            AnalyticsKkmDialog(app, kkm, OWNER, MapWords(AnalyticsLook.texts, Look.cabinet)) {}
+            AnalyticsKkmDialog(app.areas.analytics, kkm, OWNER, MapWords(AnalyticsLook.texts, Look.cabinet)) {}
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             Look.shot("qa-analytics-kkm-dialog-960", probe.frame())

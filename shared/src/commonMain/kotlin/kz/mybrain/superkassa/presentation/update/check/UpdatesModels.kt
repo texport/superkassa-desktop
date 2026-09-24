@@ -2,8 +2,9 @@ package kz.mybrain.superkassa.presentation.update.check
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kz.mybrain.superkassa.domain.update.port.UpdatePorts
 import kz.mybrain.superkassa.domain.version.model.AppVersion
-import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -14,7 +15,8 @@ import kotlin.time.Instant
  * версия видна и в углу рельса, и в настройках.
  */
 @Composable
-fun updatesViewModel(app: AppContainer): UpdatesViewModel = viewModel { updatesModel(app) }
+fun updatesViewModel(services: WindowServices, ports: UpdatePorts): UpdatesViewModel =
+    viewModel { updatesModel(services, ports) }
 
 /**
  * Модель со сценариями, собранными из портов окна; проверки зовут её без окна.
@@ -23,10 +25,11 @@ fun updatesViewModel(app: AppContainer): UpdatesViewModel = viewModel { updatesM
  * @param now часы — задаются проверками.
  */
 fun updatesModel(
-    app: AppContainer,
+    services: WindowServices,
+    ports: UpdatePorts,
     installed: AppVersion = AppVersion.current,
     now: () -> Instant = { Clock.System.now() }
 ): UpdatesViewModel {
-    val ports = app.areas.update
-    return UpdatesViewModel(UpdatesCases(ports.releases, ports.updateMemory, app.journal, installed, now), app.talk)
+    val cases = UpdatesCases(ports.releases, ports.updateMemory, services.talk.journal, installed, now)
+    return UpdatesViewModel(cases, services.talk)
 }

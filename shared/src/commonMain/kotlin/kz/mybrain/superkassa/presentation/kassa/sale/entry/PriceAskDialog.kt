@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.domain.kassa.model.entry.DEFAULT_QUANTITY
 import kz.mybrain.superkassa.domain.kassa.model.entry.DraftField
 import kz.mybrain.superkassa.domain.kassa.model.entry.PriceAsk
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
-import kz.mybrain.superkassa.presentation.common.field.MoneyField
+import kz.mybrain.superkassa.presentation.kassa.field.MoneyField
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.component.Hint
 import kz.mybrain.superkassa.presentation.kassa.sale.position.MeasureUnit

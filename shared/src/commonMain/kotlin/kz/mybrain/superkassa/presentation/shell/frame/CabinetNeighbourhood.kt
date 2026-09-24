@@ -13,8 +13,8 @@ import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
  * ни одной, и получает от них только готовое.
  */
 fun cabinetNeighbours(app: AppContainer): CabinetNeighbours = CabinetNeighbours(
-    analytics = { access, texts -> AnalyticsScreen(app, access, texts) },
+    analytics = { access, texts -> AnalyticsScreen(app.areas.analytics, access, texts) },
     points = MapPointPicker(app.areas.analytics.map),
     setupMemory = app.areas.setup?.memory,
-    kkmsReload = { loginViewModel(app)::reload }
+    kkmsReload = { loginViewModel(app.services)::reload }
 )

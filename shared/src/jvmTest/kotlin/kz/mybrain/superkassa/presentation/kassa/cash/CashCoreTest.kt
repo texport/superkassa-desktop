@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LosingKassa
 import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.kassa.tiyn
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kotlin.test.AfterTest
@@ -38,7 +39,7 @@ class CashCoreTest {
     @Test
     fun `внесение и изъятие — остаток ящика как у ядра, в БФД оба движения`() {
         desk.seated()
-        val model = cashModel(desk.app).also { it.visit() }
+        val model = cashModel(desk.app.services).also { it.visit() }
 
         desk.bench.clock.move(-2 * SECOND)
         model.move("5000", CashMove.Deposit)
@@ -60,7 +61,7 @@ class CashCoreTest {
     @Test
     fun `изъять больше, чем в ящике, экран не даёт — и в БФД ничего не уходит`() {
         desk.seated()
-        val model = cashModel(desk.app).also { it.visit() }
+        val model = cashModel(desk.app.services).also { it.visit() }
         model.enter("100")
 
         model.ask(CashMove.Withdraw)
@@ -73,7 +74,7 @@ class CashCoreTest {
     @Test
     fun `ящик опустел за спиной экрана — касса отказывает своими словами, сумма остаётся`() {
         val kassa = desk.seated().also { it.cashIn("5000.00") }
-        val model = cashModel(desk.app).also { it.visit() }
+        val model = cashModel(desk.app.services).also { it.visit() }
         kassa.cashOut("5000.00")
 
         model.move("1000", CashMove.Withdraw)
@@ -89,7 +90,7 @@ class CashCoreTest {
     fun `ответ на внесение потерян — повтор тем же ключом не вносит второй раз`() {
         val kassa = desk.seated()
         val losing = LosingKassa(EmbeddedKassa(desk.bench.api, Dispatchers.Unconfined))
-        val model = cashModel(CoreScene.app(losing, desk.signIn, desk.notices)).also { it.visit() }
+        val model = cashModel(CoreScene.services(losing, desk.signIn, desk.notices)).also { it.visit() }
 
         model.move("5000", CashMove.Deposit)
         assertIs<Message.NoAnswer>(desk.said, desk.saidText)

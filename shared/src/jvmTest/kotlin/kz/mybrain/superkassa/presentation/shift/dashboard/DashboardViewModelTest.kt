@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.strings.api.Language
@@ -40,7 +40,7 @@ class DashboardViewModelTest {
     private val texts = textsOf(Language.Ru).common
     private val blocked = CoreScene.kkm(state = "BLOCKED", blockReasonCode = 1015)
 
-    private fun model(core: FakeCore) = dashboardModel(CoreScene.app(core, signIn, notices))
+    private fun model(core: FakeCore) = dashboardModel(CoreScene.services(core, signIn, notices))
 
     private fun enter(admin: Boolean = true) = signIn.enter(CoreScene.kkm(), CoreScene.cashier(admin), CoreScene.PIN)
 

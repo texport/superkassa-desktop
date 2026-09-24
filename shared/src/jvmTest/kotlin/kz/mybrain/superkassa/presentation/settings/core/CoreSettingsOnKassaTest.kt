@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
@@ -56,7 +56,8 @@ class CoreSettingsOnKassaTest {
     fun `сохранённое ожидание читается обратно`() {
         val notices = Notices()
         val model = coreSettingsModel(
-            CoreScene.app(FakeCore(), notices = notices, settings = settingsPorts().copy(coreSettings = store()))
+            CoreScene.services(FakeCore(), notices = notices),
+            settingsPorts().copy(coreSettings = store()).settings
         )
 
         model.typeTimeout("9")

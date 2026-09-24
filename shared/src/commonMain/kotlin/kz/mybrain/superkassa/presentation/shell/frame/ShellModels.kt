@@ -10,4 +10,4 @@ fun shellViewModel(app: AppContainer): ShellViewModel = viewModel { shellModel(a
 
 /** Модель каркаса со сценариями из портов окна; проверки зовут её без окна. */
 fun shellModel(app: AppContainer): ShellViewModel =
-    ShellViewModel(ShellCases(app.kassa, app.signIn, app.memory), app.talk)
+    ShellViewModel(ShellCases(app.services.kassa, app.services.signIn, app.services.memory), app.services.talk)

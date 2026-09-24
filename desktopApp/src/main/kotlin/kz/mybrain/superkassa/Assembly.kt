@@ -48,6 +48,7 @@ import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
@@ -68,12 +69,13 @@ private const val TILES = "tiles"
 internal fun assemble(kassa: Superkassa, preferences: Preferences, look: WorkplaceLook): AppContainer {
     val language = { workplaceLanguage(look.state.value.language) }
     return AppContainer(
-        // Общее.
-        kassa = EmbeddedKassa(kassa.api),
-        signIn = SignIn(),
-        memory = preferences,
-        look = look,
-        talk = Talk(Notices(), AppJournal(), language),
+        services = WindowServices(
+            kassa = EmbeddedKassa(kassa.api),
+            signIn = SignIn(),
+            memory = preferences,
+            look = look,
+            talk = Talk(Notices(), AppJournal(), language)
+        ),
         areas = areaPorts(kassa, preferences) { language().code }
     )
 }

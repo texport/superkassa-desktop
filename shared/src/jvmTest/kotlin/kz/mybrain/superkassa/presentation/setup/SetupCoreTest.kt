@@ -57,7 +57,7 @@ class SetupCoreTest {
 
     private fun model(): SetupViewModel {
         val app = CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), notices = notices)
-        return setupModel(app, SetupPorts(memory, cabinet), DirectCalls()).also { it.reload() }
+        return setupModel(app.services, SetupPorts(memory, cabinet), DirectCalls()).also { it.reload() }
     }
 
     private fun SetupViewModel.byHand() {

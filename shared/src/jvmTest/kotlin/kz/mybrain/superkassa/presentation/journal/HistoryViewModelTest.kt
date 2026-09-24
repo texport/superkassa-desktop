@@ -9,10 +9,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kz.mybrain.superkassa.domain.journal.port.JournalPorts
+import kz.mybrain.superkassa.domain.journal.port.NoDeliveries
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.document.JournalQuery
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
@@ -54,7 +56,7 @@ class HistoryViewModelTest {
     private fun enter(pin: String = CoreScene.PIN, cashier: UserResponse = CoreScene.cashier()) =
         signIn.enter(CoreScene.kkm(), cashier, pin)
 
-    private fun journal() = journalModel(CoreScene.app(core, signIn, notices))
+    private fun journal() = journalModel(CoreScene.services(core, signIn, notices), JournalPorts(NoDeliveries))
 
     @Test
     fun `журнал читается у выбранной кассы пином кассира за сегодняшние сутки`() {
@@ -149,7 +151,7 @@ class HistoryViewModelTest {
         core.on("listShifts") { listOf(shift) }
         core.on("listShiftDocuments") { args -> listOf(CoreScene.document("d-7")).also { asked += args } }
         enter()
-        val model = shiftsModel(CoreScene.app(core, signIn, notices))
+        val model = shiftsModel(CoreScene.services(core, signIn, notices))
         assertEquals(listOf("s-1"), model.state.value.shifts.map { it.id })
         assertEquals(PageOutcome.page(more = false), model.state.value.page)
 
@@ -170,7 +172,7 @@ class HistoryViewModelTest {
         core.on("listShifts") { listOf(shift) }
         core.refuse("listShiftDocuments", "KKM_BLOCKED", ru = "Касса заблокирована")
         enter()
-        val model = shiftsModel(CoreScene.app(core, signIn, notices))
+        val model = shiftsModel(CoreScene.services(core, signIn, notices))
 
         model.open(shift)
 

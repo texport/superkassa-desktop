@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.common.picker
+package kz.mybrain.superkassa.presentation.cabinet.register.adopt
 
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
 

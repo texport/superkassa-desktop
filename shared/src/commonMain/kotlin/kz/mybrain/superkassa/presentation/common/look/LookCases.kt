@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.settings.look
+package kz.mybrain.superkassa.presentation.common.look
 
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.domain.workplace.usecase.ChooseLook

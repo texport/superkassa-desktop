@@ -55,7 +55,7 @@ class OfdSettingsViewModelTest {
     @Test
     fun `сверка сведений перечитывает кассу и объявляет итог`() {
         core.on("syncOfdServiceInfo") { OfdCommandResponse(status = OfdCommandStatus.OK) }
-        val model = ofdSettingsModel(app)
+        val model = ofdSettingsModel(app.services)
 
         model.syncService()
 
@@ -68,7 +68,7 @@ class OfdSettingsViewModelTest {
         core.on("syncOfdCounters") {
             OfdCommandResponse(OfdCommandStatus.FAILED, resultCode = 11, errorMessage = "Касса заблокирована в ОФД")
         }
-        val model = ofdSettingsModel(app)
+        val model = ofdSettingsModel(app.services)
 
         model.syncCounters()
 
@@ -79,7 +79,7 @@ class OfdSettingsViewModelTest {
     @Test
     fun `сбой кассы при сверке назван сбоем`() {
         core.on("syncOfdCounters") { error("socket closed") }
-        val model = ofdSettingsModel(app)
+        val model = ofdSettingsModel(app.services)
 
         model.syncCounters()
 
@@ -89,7 +89,7 @@ class OfdSettingsViewModelTest {
     @Test
     fun `сверку нельзя начать, пока очередь не пуста`() {
         signIn.refresh(CoreScene.kkm().copy(offlineQueueCount = 3))
-        val model = ofdSettingsModel(app)
+        val model = ofdSettingsModel(app.services)
 
         assertFalse(model.state.value.syncable)
         assertFalse(model.state.value.serviceSyncable)
@@ -103,7 +103,7 @@ class OfdSettingsViewModelTest {
             sent = args[2] as String
             true
         }
-        val model = ofdSettingsModel(app)
+        val model = ofdSettingsModel(app.services)
 
         model.typeToken("32 95-18")
         model.saveToken()
@@ -120,7 +120,7 @@ class OfdSettingsViewModelTest {
             val answer = buildJsonObject { put("protocolVersion", JsonPrimitive("204")) }
             OfdCommandResponse(status = OfdCommandStatus.OK, responseJson = answer)
         }
-        val model = ofdSettingsModel(app)
+        val model = ofdSettingsModel(app.services)
 
         model.checkLink()
         model.askInfo()
