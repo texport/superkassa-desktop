@@ -9,5 +9,5 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 fun queueViewModel(services: WindowServices): QueueViewModel = viewModel { queueModel(services) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun queueModel(services: WindowServices): QueueViewModel =
+internal fun queueModel(services: WindowServices): QueueViewModel =
     QueueViewModel(QueueCases(services.kassa, services.signIn), services.talk)

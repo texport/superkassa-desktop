@@ -31,7 +31,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * повтором туда, куда чек не дошёл.
  */
 @Composable
-fun JournalScreen(state: JournalUiState, actions: JournalActions, print: PrintActions) {
+internal fun JournalScreen(state: JournalUiState, actions: JournalActions, print: PrintActions) {
     val journal = textsOf(LocalLanguage.current).journal.history
     val (entries, types) = rowsOf(state)
     val printing = print.of(state.documents)

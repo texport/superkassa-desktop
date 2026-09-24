@@ -16,5 +16,5 @@ fun journalViewModel(services: WindowServices, ports: JournalPorts): JournalView
     viewModel { journalModel(services, ports) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun journalModel(services: WindowServices, ports: JournalPorts): JournalViewModel =
+internal fun journalModel(services: WindowServices, ports: JournalPorts): JournalViewModel =
     JournalViewModel(JournalCases(services.kassa, services.signIn, ports), services.talk)

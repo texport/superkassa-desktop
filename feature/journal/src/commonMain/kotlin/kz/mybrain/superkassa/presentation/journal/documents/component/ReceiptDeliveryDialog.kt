@@ -37,7 +37,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * Ждущее касса дошлёт сама, и кнопка над ним обещала бы то, чего не будет.
  */
 @Composable
-fun ReceiptDeliveryDialog(delivery: ReceiptDeliveryUi, actions: JournalActions) {
+internal fun ReceiptDeliveryDialog(delivery: ReceiptDeliveryUi, actions: JournalActions) {
     val texts = textsOf(LocalLanguage.current).journal.delivery
     CloseOnEscape { actions.closeDelivery() }
     AlertDialog(

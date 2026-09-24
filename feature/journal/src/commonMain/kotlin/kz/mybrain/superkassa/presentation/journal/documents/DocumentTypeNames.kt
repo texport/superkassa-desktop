@@ -13,7 +13,7 @@ import kz.mybrain.superkassa.strings.api.common.EnumStrings
  * встречаются виды, которых справочник не знает, — «CHECK», «REPORT_X», —
  * а голый код кассиру показывать нельзя.
  */
-fun documentTypeTitle(
+internal fun documentTypeTitle(
     code: String?,
     names: Map<String, TrilingualMessageResponse>,
     language: Language,
@@ -31,5 +31,5 @@ fun documentTypeTitle(
  * без объяснения. Вид, которого в справочнике нет, идёт в конец, но
  * не теряется.
  */
-fun documentTypesIn(codes: List<String>, order: List<String>): List<String> =
+internal fun documentTypesIn(codes: List<String>, order: List<String>): List<String> =
     codes.distinct().sortedWith(compareBy({ order.indexOf(it).takeIf { at -> at >= 0 } ?: order.size }, { it }))

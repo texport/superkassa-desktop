@@ -14,5 +14,5 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 fun shiftsViewModel(services: WindowServices): ShiftsViewModel = viewModel { shiftsModel(services) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun shiftsModel(services: WindowServices): ShiftsViewModel =
+internal fun shiftsModel(services: WindowServices): ShiftsViewModel =
     ShiftsViewModel(ShiftsCases(services.kassa, services.signIn), services.talk)

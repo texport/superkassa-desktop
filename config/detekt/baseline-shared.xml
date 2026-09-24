@@ -30,8 +30,6 @@
     <ID>ArgumentListWrapping:ShellAdaptiveTest.kt$ShellAdaptiveTest$("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
     <ID>CyclomaticComplexMethod:AppearanceCard.kt$private fun Accent.title(texts: LookStrings): String</ID>
     <ID>LongFile:BigListRenderTest.kt$kz.mybrain.superkassa.presentation.cabinet.places.BigListRenderTest.kt</ID>
-    <ID>LongFile:JournalSourcesTest.kt$kz.mybrain.superkassa.presentation.journal.JournalSourcesTest.kt</ID>
-    <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.presentation.journal.KassaJournalLookTest.kt</ID>
     <ID>LongMethod:AnalyticsKkmDialog.kt$@Composable private fun DialogHead( kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts, onClose: () -&gt; Unit )</ID>
     <ID>LongMethod:AnalyticsMapLayout.kt$@Composable internal fun HeadOverMap( modifier: Modifier = Modifier, head: @Composable () -&gt; Unit, body: @Composable () -&gt; Unit )</ID>
     <ID>LongMethod:AnalyticsMapWindow.kt$@Composable internal fun MapWindow( parts: MapParts, fullscreen: Boolean, onFullscreen: () -&gt; Unit, modifier: Modifier = Modifier )</ID>
@@ -45,8 +43,6 @@
     <ID>LongMethod:CabinetDoorShots.kt$CabinetDoorShots$@Test fun `отказные случаи входа показываются владельцу и все они разные`()</ID>
     <ID>LongMethod:DashboardAdaptiveTest.kt$DashboardAdaptiveTest$private fun check(probe: KassaProbe, case: Case): List&lt;String&gt;</ID>
     <ID>LongMethod:ExciseDialog.kt$@Composable fun ExciseDialog(stamps: List&lt;String&gt;, onChanged: (List&lt;String&gt;) -&gt; Unit, onDismiss: () -&gt; Unit)</ID>
-    <ID>LongMethod:KassaJournalLookTest.kt$KassaJournalLookTest$@Test fun `журнал собирается пустым, полным и с отказным документом`()</ID>
-    <ID>LongMethod:KassaJournalLookTest.kt$KassaJournalLookTest$private fun rowHeight(state: String): Int</ID>
     <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `набранный чек рисуется вместе с итогом и помехами`()</ID>
     <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `экран продажи собирается во всех отказных состояниях и они различимы`()</ID>
     <ID>LongMethod:KassaShiftLookTest.kt$KassaShiftLookTest$@Test fun `главный экран собирается во всех состояниях смены и они различимы`()</ID>

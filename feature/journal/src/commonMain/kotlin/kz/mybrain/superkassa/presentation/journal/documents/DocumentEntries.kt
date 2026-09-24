@@ -59,7 +59,7 @@ fun journalEntriesOf(
 }
 
 /** Виды документов, встретившиеся среди [documents], для отбора — в порядке справочника кассы. */
-fun journalTypesOf(
+internal fun journalTypesOf(
     texts: AppStrings,
     language: Language,
     names: Map<String, TrilingualMessageResponse>,

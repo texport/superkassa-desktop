@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongFile:JournalSourcesTest.kt$kz.mybrain.superkassa.presentation.journal.JournalSourcesTest.kt</ID>
+    <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.presentation.journal.KassaJournalLookTest.kt</ID>
+    <ID>LongMethod:KassaJournalLookTest.kt$KassaJournalLookTest$@Test fun `журнал собирается пустым, полным и с отказным документом`()</ID>
+    <ID>LongMethod:KassaJournalLookTest.kt$KassaJournalLookTest$private fun rowHeight(state: String): Int</ID>
+  </CurrentIssues>
+</SmellBaseline>

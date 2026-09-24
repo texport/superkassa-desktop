@@ -3,10 +3,6 @@ package kz.mybrain.superkassa.presentation.journal.documents
 import io.github.texport.superkassa.core.presentation.api.model.delivery.ReceiptDeliveryState
 import io.github.texport.superkassa.core.presentation.api.model.receipt.CustomerContactRequest
 import io.github.texport.superkassa.core.presentation.api.model.receipt.ReceiptResponse
-import io.github.texport.superkassa.delivery.api.model.DeliveryChannel
-import io.github.texport.superkassa.delivery.api.model.DeliveryRequest
-import io.github.texport.superkassa.delivery.api.model.DeliveryResult
-import io.github.texport.superkassa.delivery.api.port.DeliveryPort
 import io.github.texport.superkassa.testing.api.bfd.FakeBfd
 import io.github.texport.superkassa.testing.api.kassa.ReadyKassa
 import io.github.texport.superkassa.testing.api.kassa.TestBench
@@ -16,13 +12,13 @@ import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.TestSms
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
 import kz.mybrain.superkassa.kassa.orderDelivery
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import java.io.File
-import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.io.path.createTempDirectory
 import kotlin.time.Duration.Companion.hours
 
@@ -59,8 +55,8 @@ internal class DeliveryBench(ordered: Boolean = true) : AutoCloseable {
     /** Модель журнала, как её собирает окно: касса и доставка — порты приложения. */
     fun model(): JournalViewModel {
         val deliveries = JournalPorts(EmbeddedDeliveries(bench.superkassa.delivery, Dispatchers.Unconfined))
-        val app = CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices, journal = deliveries)
-        return journalModel(app.services, app.areas.journal)
+        val services = CoreScene.services(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices)
+        return journalModel(services, deliveries)
     }
 
     /** Заходы фоновой доставки, пока попытки не кончатся: доставка [receipt] становится окончательным отказом. */
@@ -90,24 +86,5 @@ internal class DeliveryBench(ordered: Boolean = true) : AutoCloseable {
 
         /** Контакт покупателя в чеке: по нему чек уходит по SMS. */
         val BUYER_CONTACT = CustomerContactRequest(phone = BUYER)
-    }
-}
-
-/** SMS проверки: отказывает причиной [failing] или доставляет, когда её нет. */
-internal class TestSms : DeliveryPort {
-    @Volatile
-    var failing: String? = "provider unreachable"
-    val sent: MutableList<DeliveryRequest> = CopyOnWriteArrayList()
-
-    override val channel: DeliveryChannel = DeliveryChannel.SMS
-
-    override fun send(request: DeliveryRequest): DeliveryResult {
-        sent += request
-        val reason = failing ?: return DeliveryResult(ok = true)
-        return DeliveryResult(ok = false, message = reason, code = FAILURE)
-    }
-
-    companion object {
-        const val FAILURE = "DELIVERY_SMS_FAILED"
     }
 }

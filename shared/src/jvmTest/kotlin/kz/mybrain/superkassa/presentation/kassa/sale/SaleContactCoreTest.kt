@@ -6,8 +6,8 @@ import io.github.texport.superkassa.testing.api.kassa.ReadyKassa
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleBlock
 import kz.mybrain.superkassa.kassa.CoreDesk
+import kz.mybrain.superkassa.kassa.TestSms
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.journal.documents.TestSms
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

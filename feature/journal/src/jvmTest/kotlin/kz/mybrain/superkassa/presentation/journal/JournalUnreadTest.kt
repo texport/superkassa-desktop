@@ -5,7 +5,6 @@ import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftStatu
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.designsystem.state.ScreenState
-import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.document.JournalEmpty
 import kz.mybrain.superkassa.presentation.common.document.journalState
 import kz.mybrain.superkassa.presentation.common.print.PrintActions
@@ -14,13 +13,10 @@ import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsScreen
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsUiState
 import kz.mybrain.superkassa.presentation.journal.shifts.shiftDocumentsState
 import kz.mybrain.superkassa.presentation.journal.shifts.shiftsState
-import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
-import kz.mybrain.superkassa.presentation.kassa.refund.component.basisState
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
@@ -35,19 +31,6 @@ import kotlin.test.assertTrue
 class JournalUnreadTest {
 
     private val texts = textsOf(Language.Ru).journal
-
-    @Test
-    fun `возврат называет непрочитанный день бедой чтения, а не отсутствием оснований`() {
-        val journal = texts.returns
-        val day = ReturnsUiState(kkm = CoreScene.kkm(), signedIn = true, shiftOpen = true, loading = false)
-
-        val unread = basisState(day.copy(dayRead = false), journal) {}
-        val empty = basisState(day.copy(dayRead = true), journal) {}
-
-        assertEquals(ScreenState.Trouble(journal.basisUnread, journal.basisUnreadHint), withoutRetry(unread))
-        assertNotNull((unread as ScreenState.Trouble).onRetry, "повторить чтение должно быть чем")
-        assertEquals(ScreenState.Empty(iconOf(empty), journal.noSaleBasis, journal.noBasisHint), empty)
-    }
 
     @Test
     fun `журнал называет непрочитанный срок бедой чтения, а не пустым сроком`() {
