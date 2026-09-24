@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.MemorySetup
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices

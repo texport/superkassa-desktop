@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

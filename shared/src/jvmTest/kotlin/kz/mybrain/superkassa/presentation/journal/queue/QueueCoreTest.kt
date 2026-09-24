@@ -11,6 +11,7 @@ import kz.mybrain.superkassa.domain.journal.model.QueueState
 import kz.mybrain.superkassa.domain.journal.model.state
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
 import kz.mybrain.superkassa.presentation.common.message.Message

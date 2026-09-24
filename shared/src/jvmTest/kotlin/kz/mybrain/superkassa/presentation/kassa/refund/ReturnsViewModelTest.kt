@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.kassa.model.Tenge
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene

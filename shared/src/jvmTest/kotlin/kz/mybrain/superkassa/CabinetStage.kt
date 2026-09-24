@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.CabinetCompany
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetUser
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetMessage

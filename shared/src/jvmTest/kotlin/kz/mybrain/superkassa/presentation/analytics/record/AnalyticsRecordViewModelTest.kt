@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsTrouble
 import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.PositionSource
-import kz.mybrain.superkassa.presentation.analytics.FakeAnalytics
+import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

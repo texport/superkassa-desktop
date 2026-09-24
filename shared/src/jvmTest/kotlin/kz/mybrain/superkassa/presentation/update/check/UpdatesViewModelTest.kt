@@ -11,13 +11,14 @@ import kz.mybrain.superkassa.domain.update.model.Installer
 import kz.mybrain.superkassa.domain.update.model.Release
 import kz.mybrain.superkassa.domain.update.model.ReleaseAnswer
 import kz.mybrain.superkassa.domain.update.model.UpdateOutcome
+import kz.mybrain.superkassa.domain.update.port.FakeReleases
 import kz.mybrain.superkassa.domain.update.port.UpdateMemory
 import kz.mybrain.superkassa.domain.version.model.AppVersion
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.settings.FakeReleases
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

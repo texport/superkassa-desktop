@@ -20,6 +20,7 @@ import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScene
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsViewModel
 import kz.mybrain.superkassa.presentation.kassa.refund.returnsModel

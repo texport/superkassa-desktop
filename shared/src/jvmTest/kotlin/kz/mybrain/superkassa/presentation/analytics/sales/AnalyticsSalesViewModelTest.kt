@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.domain.analytics.model.PlaceAddress
 import kz.mybrain.superkassa.domain.analytics.model.SalesDelivery
 import kz.mybrain.superkassa.domain.analytics.model.SalesFigures
 import kz.mybrain.superkassa.domain.analytics.model.SalesSummary
-import kz.mybrain.superkassa.presentation.analytics.FakeAnalytics
+import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
 import kz.mybrain.superkassa.presentation.common.period.JournalSpan
 import kotlin.test.AfterTest

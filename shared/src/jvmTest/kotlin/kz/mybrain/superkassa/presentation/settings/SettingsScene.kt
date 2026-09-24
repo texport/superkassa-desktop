@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.integrations.bfdcabinet.CabinetSettings
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemoryWorkplace
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.debug.log.DebugCard
 import kz.mybrain.superkassa.presentation.debug.log.LogActions
 import kz.mybrain.superkassa.presentation.debug.log.LogUiState

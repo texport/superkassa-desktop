@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.strings.api.Language

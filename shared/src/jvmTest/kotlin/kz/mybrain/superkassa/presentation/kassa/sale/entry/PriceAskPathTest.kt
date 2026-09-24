@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene

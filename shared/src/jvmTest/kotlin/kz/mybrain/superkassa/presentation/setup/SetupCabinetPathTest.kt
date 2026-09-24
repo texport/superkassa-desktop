@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
+import kz.mybrain.superkassa.kassa.app
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationModel

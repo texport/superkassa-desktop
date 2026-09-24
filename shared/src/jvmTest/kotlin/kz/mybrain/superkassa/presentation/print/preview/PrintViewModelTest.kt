@@ -7,12 +7,13 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.print.model.PrintSource
+import kz.mybrain.superkassa.domain.print.port.FakePrintOut
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.settings.FakePrintOut
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

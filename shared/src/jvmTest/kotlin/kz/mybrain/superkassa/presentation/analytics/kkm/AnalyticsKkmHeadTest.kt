@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.analytics.CabinetReplies
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
 import kz.mybrain.superkassa.presentation.analytics.analyzing
 import kz.mybrain.superkassa.presentation.analytics.common.shiftPlate

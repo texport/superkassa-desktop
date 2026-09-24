@@ -6,11 +6,12 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.print.model.PrintKind
+import kz.mybrain.superkassa.domain.print.port.FakePrintOut
+import kz.mybrain.superkassa.domain.print.port.MemoryPrintChoices
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.presentation.settings.FakePrintOut
-import kz.mybrain.superkassa.presentation.settings.MemoryPrintChoices
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

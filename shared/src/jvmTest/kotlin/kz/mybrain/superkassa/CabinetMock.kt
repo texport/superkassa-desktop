@@ -22,6 +22,7 @@ import kz.mybrain.superkassa.domain.cabinet.port.SavedFiles
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.cabinet.CabinetCases
 import kz.mybrain.superkassa.presentation.cabinet.CabinetLists
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState

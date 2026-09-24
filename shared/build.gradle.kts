@@ -6,54 +6,6 @@ plugins {
     alias(libs.plugins.compose)
 }
 
-/**
- * Версия приложения, известная ему самому.
- *
- * Установщик называет версию в имени файла, а само приложение её не знало:
- * кассир, звонивший в поддержку, не мог сказать, какая у него касса,
- * а проверка выпусков сравнивать была ни с чем. Метка выпуска приходит
- * в `-PappVersion`, как и для установщика; без неё — сборка разработчика,
- * и она так и называется, чтобы не выдавать себя за выпуск.
- *
- * Версия пишется в общий код: её знает касса на любой платформе.
- */
-val appVersion: String = providers.gradleProperty("appVersion").getOrElse("${libs.versions.appVersion.get()}-dev")
-
-/**
- * Версия ядра, с которым собрано приложение: её спрашивает поддержка
- * рядом с версией самого приложения, а ядро своей версии не сообщает.
- */
-val coreVersion: String = libs.versions.superkassa.core.get()
-
-val versionSourceDir: Provider<Directory> = layout.buildDirectory.dir("generated/version/kotlin")
-
-val generateVersion = tasks.register("generateVersion") {
-    description = "Записывает версию приложения в исходный код"
-    val output = versionSourceDir.map { it.file("kz/mybrain/superkassa/domain/version/model/BuildVersion.kt") }
-    inputs.property("appVersion", appVersion)
-    inputs.property("coreVersion", coreVersion)
-    outputs.dir(versionSourceDir)
-    doLast {
-        output.get().asFile.apply {
-            parentFile.mkdirs()
-            writeText(
-                """
-                package kz.mybrain.superkassa.domain.version.model
-
-                /** Версия этой сборки; записывается сборкой из `appVersion`. */
-                object BuildVersion {
-                    const val NAME: String = "$appVersion"
-
-                    /** Версия ядра, с которым собрана касса. */
-                    const val CORE: String = "$coreVersion"
-                }
-
-                """.trimIndent()
-            )
-        }
-    }
-}
-
 kotlin {
     jvmToolchain(21)
 
@@ -70,10 +22,11 @@ kotlin {
 
     sourceSets {
         commonMain {
-            // Каталог с версией объявлен задачей, а не путём: так компиляция
-            // сама ждёт записи файла, и отдельной зависимости не нужно.
-            kotlin.srcDir(generateVersion)
             dependencies {
+                // Предметная область — модулем `domain`: экраны берут его
+                // сценарии и модели, а точки сборки — ещё и порты. Открыт
+                // наружу: его типы стоят в открытых объявлениях `shared`.
+                api(project(":domain"))
                 implementation(libs.compose.runtime)
                 implementation(libs.compose.foundation)
                 implementation(libs.compose.ui)
@@ -115,6 +68,7 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation(project(":testing"))
         }
         jvmMain.dependencies {
             implementation(libs.compose.desktop)

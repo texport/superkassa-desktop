@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.cabinet
 import kotlinx.coroutines.runBlocking
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.Test

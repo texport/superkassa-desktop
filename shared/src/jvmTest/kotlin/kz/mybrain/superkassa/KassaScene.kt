@@ -7,6 +7,7 @@ import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemoryWorkplace
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.settings.look.lookModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts

@@ -11,6 +11,7 @@ import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.settings.MemoryLogBook
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kotlin.test.AfterTest

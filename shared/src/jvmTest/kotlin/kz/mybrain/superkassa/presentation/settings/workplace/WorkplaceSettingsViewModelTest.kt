@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.workplace.model.MapServices
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.settings.MemoryChoices
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kotlin.test.AfterTest

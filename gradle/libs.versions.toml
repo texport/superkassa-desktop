@@ -27,10 +27,17 @@ androidx-lifecycle = "2.11.0"
 core-splashscreen = "1.2.0"
 work = "2.11.2"
 superkassa-core = "1.5.0-SNAPSHOT"
+# Аннотации проверки, которыми ядро помечает свои типы. Ядро отдаёт их только
+# во время исполнения, а компилятор проверок на JVM видит их в выведенных
+# типах и требует класс аннотации; версия — та же, что у ядра.
+jakarta-validation = "3.1.1"
 
 [libraries]
 superkassa-core-embedded = { group = "io.github.texport", name = "superkassa-core-embedded", version.ref = "superkassa-core" }
+superkassa-core-presentation = { group = "io.github.texport", name = "superkassa-core-presentation", version.ref = "superkassa-core" }
+superkassa-core-domain = { group = "io.github.texport", name = "superkassa-core-domain", version.ref = "superkassa-core" }
 superkassa-core-import-node = { group = "io.github.texport", name = "superkassa-core-import-node", version.ref = "superkassa-core" }
+jakarta-validation-api = { group = "jakarta.validation", name = "jakarta.validation-api", version.ref = "jakarta-validation" }
 superkassa-core-testing = { group = "io.github.texport", name = "superkassa-core-testing", version.ref = "superkassa-core" }
 compose-runtime = { group = "org.jetbrains.compose.runtime", name = "runtime", version.ref = "compose" }
 compose-foundation = { group = "org.jetbrains.compose.foundation", name = "foundation", version.ref = "compose" }

@@ -11,6 +11,7 @@ import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftRespo
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 
 /**

@@ -5,8 +5,6 @@
 # новое нарушение, и на исправленное, но не вычеркнутое.
 #
 # Формат: <файл от kz/mybrain/superkassa> -> <слой>.<область>
-domain/analytics/model/AnalyticsKkm.kt -> domain.cabinet
-domain/analytics/model/RecordCount.kt -> domain.cabinet
 presentation/analytics/common/AnalyticsKkmChips.kt -> presentation.cabinet
 presentation/analytics/map/AnalyticsMapGroups.kt -> domain.cabinet
 presentation/analytics/map/AnalyticsMapSieve.kt -> domain.cabinet

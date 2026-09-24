@@ -11,6 +11,7 @@ import kz.mybrain.superkassa.domain.journal.model.DocumentPages
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.document.shownNote
 import kz.mybrain.superkassa.presentation.common.state.ScreenState
 import kz.mybrain.superkassa.presentation.journal.documents.journalModel

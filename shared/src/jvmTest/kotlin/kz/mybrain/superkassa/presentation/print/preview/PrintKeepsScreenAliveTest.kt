@@ -2,11 +2,12 @@ package kz.mybrain.superkassa.presentation.print.preview
 
 import kz.mybrain.superkassa.data.print.SystemPrintOut
 import kz.mybrain.superkassa.domain.print.model.PrintSource
+import kz.mybrain.superkassa.domain.print.port.FakePrintOut
 import kz.mybrain.superkassa.domain.print.port.PrintOut
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.presentation.settings.FakePrintOut
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import java.awt.Color
 import java.awt.image.BufferedImage

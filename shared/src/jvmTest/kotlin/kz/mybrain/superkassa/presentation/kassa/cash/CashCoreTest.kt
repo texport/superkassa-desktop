@@ -8,6 +8,7 @@ import kz.mybrain.superkassa.domain.kassa.model.cash.CashMove
 import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LosingKassa
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.tiyn
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kotlin.test.AfterTest

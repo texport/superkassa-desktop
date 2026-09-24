@@ -9,7 +9,7 @@ import kz.mybrain.superkassa.domain.analytics.model.AnalyticsAnswer
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsTrouble
 import kz.mybrain.superkassa.domain.analytics.model.ExchangeAddress
 import kz.mybrain.superkassa.domain.analytics.model.ExchangeAddresses
-import kz.mybrain.superkassa.presentation.analytics.FakeAnalytics
+import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test

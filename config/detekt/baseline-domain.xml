@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ReturnCount:AppVersion.kt$AppVersion.Companion$fun parse(text: String?): AppVersion?</ID>
+    <ID>ReturnCount:CashRules.kt$CashRules$fun check( text: String, move: CashMove, drawerTiyn: Long?, shiftOpen: Boolean, kkmBlocked: Boolean = false ): CashDecision</ID>
+    <ID>ReturnCount:PositionDraft.kt$PositionDraft$private fun tooBig(): Boolean</ID>
+    <ID>ReturnCount:SaleRules.kt$private fun takenTooSmall(state: SaleState): Boolean</ID>
+    <ID>ReturnCount:ServiceAddress.kt$ServiceAddress$fun valid(text: String): Boolean</ID>
+    <ID>TooManyFunctions:PaymentSplit.kt$PaymentSplit</ID>
+  </CurrentIssues>
+</SmellBaseline>

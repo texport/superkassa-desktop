@@ -11,10 +11,10 @@ import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsTrouble
 import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
+import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kz.mybrain.superkassa.domain.map.QuietMaps
 import kz.mybrain.superkassa.domain.map.model.MapPlace
 import kz.mybrain.superkassa.domain.map.port.Maps
-import kz.mybrain.superkassa.presentation.analytics.FakeAnalytics
 import kz.mybrain.superkassa.presentation.analytics.mapModel
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest

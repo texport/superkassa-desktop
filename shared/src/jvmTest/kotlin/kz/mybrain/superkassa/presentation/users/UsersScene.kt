@@ -7,6 +7,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**

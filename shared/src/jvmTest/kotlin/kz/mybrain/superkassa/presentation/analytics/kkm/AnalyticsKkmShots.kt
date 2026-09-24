@@ -8,10 +8,11 @@ import kz.mybrain.superkassa.domain.analytics.model.AnalyticsAnswer
 import kz.mybrain.superkassa.domain.analytics.model.SalesFigures
 import kz.mybrain.superkassa.domain.analytics.model.SalesFilter
 import kz.mybrain.superkassa.domain.analytics.port.Analytics
+import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
-import kz.mybrain.superkassa.presentation.analytics.FakeAnalytics
 import kz.mybrain.superkassa.presentation.analytics.analyzing
 import kz.mybrain.superkassa.presentation.analytics.map.MapLook
 import kz.mybrain.superkassa.presentation.analytics.map.MapSieve

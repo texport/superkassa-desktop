@@ -1,0 +1,9 @@
+# Импорты внутренностей чужой области, с которыми код пришёл к проверке границ.
+#
+# Долг, снимается при переводе области: строка вычёркивается, когда файл
+# перестаёт брать из чужой области. Проверка AreaBoundariesTest падает и на
+# новое нарушение, и на исправленное, но не вычеркнутое.
+#
+# Формат: <файл от kz/mybrain/superkassa> -> <слой>.<область>
+domain/analytics/model/AnalyticsKkm.kt -> domain.cabinet
+domain/analytics/model/RecordCount.kt -> domain.cabinet

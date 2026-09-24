@@ -1,19 +1,22 @@
 package kz.mybrain.superkassa
 
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Границы слоёв: кто кого не видит.
+ * Границы слоёв внутри этого модуля: кто кого не видит.
  *
- * - `domain` не знает ни `data`, ни `presentation`;
+ * Домен — свой модуль, и что он никого не знает, держит граф модулей.
+ * Здесь остались экраны и данные:
+ *
  * - `presentation` не знает `data`;
- * - `data` не знает `presentation`.
+ * - `data` не знает `presentation`;
+ * - файлов домена в модуле нет — они живут в `domain`, и положенный сюда
+ *   обходил бы границу модуля.
  *
- * Связывает слои только точка сборки — `Main.kt` настольной кассы
- * и `MainActivity` Android, — и её эта проверка не касается.
+ * Связывает слои только точка сборки — `Assembly.kt` настольной кассы
+ * и `SuperkassaApp` Android, — и её эта проверка не касается.
  *
  * Нарушения, с которыми код пришёл в три слоя, перечислены в
  * `layer-debt.txt`: это долг, и он снимается при переводе своей области.
@@ -24,64 +27,32 @@ class LayerBoundariesTest {
 
     @Test
     fun `no layer imports a layer it must not know`() {
-        val fresh = violations() - debt()
+        val fresh = violations() - SourceTree.debt(DEBT)
         assertTrue(fresh.isEmpty(), "new layer violations:\n" + fresh.sorted().joinToString("\n"))
     }
 
     @Test
     fun `debt lists only violations that still exist`() {
-        val paid = debt() - violations()
-        assertEquals(emptySet(), paid, "violations fixed, remove them from layer-debt.txt")
+        val paid = SourceTree.debt(DEBT) - violations()
+        assertEquals(emptySet(), paid, "violations fixed, remove them from $DEBT")
     }
 
-    private fun violations(): Set<String> {
-        val sources = sources()
-        val packages = sources.mapNotNull { it.pkg }.toSet()
-        return sources.flatMap { source ->
-            val forbidden = FORBIDDEN[layerOf(source.pkg)].orEmpty()
-            source.imports
-                .map { packageOf(it, packages) }
-                .filter { layerOf(it) in forbidden }
-                .map { "${source.path} -> ${it.removePrefix("$ROOT.")}" }
-        }.toSet()
+    @Test
+    fun `domain lives in its own module`() {
+        val strays = SourceTree.main().filter { SourceTree.layerOf(it.pkg) == "domain" }.map { it.path }
+        assertEquals(emptyList(), strays, "domain sources outside the domain module")
     }
 
-    private fun sources(): List<Source> = SOURCE_SETS
-        .map { File(it) }
-        .filter { it.isDirectory }
-        .flatMap { root -> root.walkTopDown().filter { it.extension == "kt" }.map { root to it } }
-        .map { (root, file) -> Source.of(file.relativeTo(root).invariantSeparatorsPath, file.readLines()) }
-
-    private fun layerOf(name: String?): String? =
-        name?.takeIf { it.startsWith("$ROOT.") }?.removePrefix("$ROOT.")?.substringBefore('.')
-
-    /** Пакет импорта: самый длинный известный пакет, с которого он начинается. */
-    private fun packageOf(import: String, packages: Set<String>): String =
-        packages.filter { import.startsWith("$it.") }.maxByOrNull { it.length } ?: import
-
-    private fun debt(): Set<String> = javaClass.getResource("/layer-debt.txt")!!.readText()
-        .lineSequence()
-        .map { it.trim() }
-        .filter { it.isNotEmpty() && !it.startsWith("#") }
-        .toSet()
-
-    private class Source(val path: String, val pkg: String?, val imports: List<String>) {
-        companion object {
-            fun of(path: String, lines: List<String>) = Source(
-                path = path,
-                pkg = lines.firstOrNull { it.startsWith("package ") }?.removePrefix("package ")?.trim(),
-                imports = lines.filter { it.startsWith("import $ROOT.") }
-                    .map { it.removePrefix("import ").substringBefore(" as ").trim() }
-            )
-        }
-    }
+    private fun violations(): Set<String> = SourceTree.main().flatMap { source ->
+        val forbidden = FORBIDDEN[SourceTree.layerOf(source.pkg)].orEmpty()
+        source.imports
+            .filter { SourceTree.layerOf(it) in forbidden }
+            .map { "${source.path} -> ${it.removePrefix("${SourceTree.ROOT}.")}" }
+    }.toSet()
 
     private companion object {
-        const val ROOT = "kz.mybrain.superkassa"
-        const val PREFIX = "kotlin/kz/mybrain/superkassa"
-        val SOURCE_SETS = listOf("src/commonMain/$PREFIX", "src/jvmMain/$PREFIX", "src/androidMain/$PREFIX")
+        const val DEBT = "layer-debt.txt"
         val FORBIDDEN = mapOf(
-            "domain" to setOf("data", "presentation"),
             "presentation" to setOf("data"),
             "data" to setOf("presentation")
         )

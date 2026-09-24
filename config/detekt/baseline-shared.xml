@@ -205,17 +205,12 @@
     <ID>PropertyWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
     <ID>ReturnCount:AnalyticsSalesGeometry.kt$internal fun barAt(x: Float, width: Int, count: Int): Int?</ID>
     <ID>ReturnCount:AnalyticsWalk.kt$AnalyticsWalk$fun kkmSalesReachable(): Boolean</ID>
-    <ID>ReturnCount:AppVersion.kt$AppVersion.Companion$fun parse(text: String?): AppVersion?</ID>
-    <ID>ReturnCount:CashRules.kt$CashRules$fun check( text: String, move: CashMove, drawerTiyn: Long?, shiftOpen: Boolean, kkmBlocked: Boolean = false ): CashDecision</ID>
     <ID>ReturnCount:JournalQuery.kt$private fun JournalQuery.accepts(entry: JournalEntry): Boolean</ID>
     <ID>ReturnCount:MacLocation.kt$MacLocation$private fun placeOf(manager: Pointer): MapPlace?</ID>
     <ID>ReturnCount:MacLocation.kt$MacLocation$suspend fun locate(): MapPlace?</ID>
     <ID>ReturnCount:MapRegistryWalk.kt$internal suspend fun matchPointPlace(steps: RegistrySteps, place: MapPointPlace): PointMatch</ID>
     <ID>ReturnCount:NcaFake.kt$NcaFake$private fun InputStream.readFrame(): String?</ID>
-    <ID>ReturnCount:PositionDraft.kt$PositionDraft$private fun tooBig(): Boolean</ID>
     <ID>ReturnCount:Printing.kt$Printing$fun trim(image: ByteArray): ByteArray</ID>
-    <ID>ReturnCount:SaleRules.kt$private fun takenTooSmall(state: SaleState): Boolean</ID>
-    <ID>ReturnCount:ServiceAddress.kt$ServiceAddress$fun valid(text: String): Boolean</ID>
     <ID>ReturnCount:VatRate.kt$fun vatTitle(rates: List&lt;VatRate&gt;, code: String): String</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsMapCrowdTest.kt$AnalyticsMapCrowdTest.Companion$/** Увеличение, на котором в окно попадает область, а не вся страна. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsSalesShots.kt$AnalyticsSalesShots.Companion$/** Куда наводится колесо: середина сводки. */</ID>
@@ -224,7 +219,6 @@
     <ID>SpacingBetweenDeclarationsWithComments:LiveWalkAnalyticsShots.kt$LiveWalkAnalyticsShots.Companion$/** Ширина окна сводки одной кассы: в нём полоса срока и не влезла. */</ID>
     <ID>StringTemplate:AppLogTest.kt$AppLogTest$${KEEP}</ID>
     <ID>TooManyFunctions:MapProjection.kt$MapProjection</ID>
-    <ID>TooManyFunctions:PaymentSplit.kt$PaymentSplit</ID>
     <ID>TooManyFunctions:Printing.kt$Printing</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$(</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("cashRegisters", JsonArray((0 until AnalyticsFixtures.KKMS).map { index -&gt; unit("kkm-$index", "Касса № ${index + 1} — кіреберістегі үлкен", index, "2609400${"%05d".format(index)}", AnalyticsFixtures.placeName(index % AnalyticsFixtures.PLACES)) }))</ID>

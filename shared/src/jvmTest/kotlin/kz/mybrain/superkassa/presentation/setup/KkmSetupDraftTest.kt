@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import java.io.File
 import java.nio.file.Files
 import kotlin.test.AfterTest

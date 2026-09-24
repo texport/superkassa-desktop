@@ -11,6 +11,7 @@ import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleBlock
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene.receipts

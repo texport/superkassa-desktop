@@ -15,6 +15,7 @@ import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.Windowed
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.mockCabinet
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook

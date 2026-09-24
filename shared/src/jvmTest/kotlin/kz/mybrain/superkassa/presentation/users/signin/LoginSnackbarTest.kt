@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
+import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.theme.Look
