@@ -48,6 +48,7 @@ include(":ui-common")
 include(":feature:debug")
 include(":feature:map")
 include(":feature:print")
+include(":feature:shift")
 include(":feature:update")
 include(":feature:users")
 

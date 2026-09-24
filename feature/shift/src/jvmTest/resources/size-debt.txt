@@ -1,0 +1,11 @@
+# Поэлементные размеры, с которыми код пришёл к проверке одной сетки.
+#
+# Долг, снимается при переводе экрана на раскладку: ширина из колонки
+# (fillMaxWidth) или доля ряда (weight). ModuleSourcesTest падает и на новое
+# место, и на исправленное, но не вычеркнутое.
+#
+# Формат: <файл от kz/mybrain/superkassa> -> <токен>
+presentation/shift/dashboard/DashboardScreen.kt -> KassaLayout.drawerTile
+presentation/shift/dashboard/DashboardScreen.kt -> KassaLayout.statTile
+presentation/shift/dashboard/component/DashboardPage.kt -> KassaLayout.dashboardListsMin
+presentation/shift/dashboard/component/ShiftActions.kt -> KassaLayout.mainAction

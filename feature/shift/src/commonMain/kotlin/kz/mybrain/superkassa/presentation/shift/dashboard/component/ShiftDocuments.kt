@@ -41,7 +41,7 @@ import kz.mybrain.superkassa.strings.api.common.DashboardStrings
  * в разделе истории, — кассир читает обе таблицы одинаково.
  */
 @Composable
-fun ShiftDocuments(state: DashboardUiState, actions: DashboardActions, modifier: Modifier = Modifier) {
+internal fun ShiftDocuments(state: DashboardUiState, actions: DashboardActions, modifier: Modifier = Modifier) {
     val texts = LocalStrings.current
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         Text(texts.dashboard.shiftDocuments, style = MaterialTheme.typography.titleMedium)

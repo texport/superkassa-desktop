@@ -31,7 +31,7 @@ interface DashboardActions {
 }
 
 /** Действия экрана, выполняемые этой моделью; печать — у того, кто её умеет. */
-fun DashboardViewModel.actions(
+internal fun DashboardViewModel.actions(
     preview: (FiscalDocumentResponse) -> Unit,
     print: (FiscalDocumentResponse) -> Unit
 ): DashboardActions {
