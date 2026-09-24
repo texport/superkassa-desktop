@@ -36,6 +36,8 @@ val tools: SourceSet = sourceSets.create("tools") {
 
 dependencies {
     implementation(project(":shared"))
+    // Адаптеры портов собирает точка сборки: экраны слоя данных не видят.
+    implementation(project(":data"))
     // Точка сборки заводит клиентов внешних служб сама.
     implementation(project(":integrations:maps"))
     implementation(project(":integrations:bfd-cabinet"))

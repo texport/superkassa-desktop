@@ -3,22 +3,12 @@ package kz.mybrain.superkassa
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.respond
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.headersOf
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.MutableStateFlow
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetCompany
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetUser
-import kz.mybrain.superkassa.domain.cabinet.model.EdsProblem
-import kz.mybrain.superkassa.domain.cabinet.model.EdsRefusal
 import kz.mybrain.superkassa.domain.cabinet.port.CabinetPorts
-import kz.mybrain.superkassa.domain.cabinet.port.SavedFiles
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
@@ -60,20 +50,11 @@ internal class CabinetRig(
     val window = CabinetWindow(app, model, cabinetLook(look))
 
     /** Владелец вошёл. */
-    fun enter(user: CabinetUser = OWNER, company: CabinetCompany = COMPANY): CabinetRig {
+    fun enter(user: CabinetUser = SignedCabinet.OWNER, company: CabinetCompany = SignedCabinet.COMPANY): CabinetRig {
         cabinet.enter(user, company)
         return this
     }
-
-    companion object {
-        /** ИИН владельца и БИН его компании: подставные, но казахстанского вида. */
-        val OWNER = CabinetUser(id = "u-1", iin = "870101300123", fullName = "Иванов Сергей")
-        val COMPANY = CabinetCompany(id = "c-1", bin = "180140000123", name = "ТОО «Пример»")
-    }
 }
-
-/** Порты кабинета поверх обмена проверки — от имени вошедшего владельца, без модели окна. */
-internal fun CabinetWire.signedPorts(): CabinetPorts = SignedCabinet(this).also { it.enter() }.ports
 
 /** Сценарии кабинета над портами проверки и кассой её контейнера. */
 internal fun cabinetCases(app: AppContainer, ports: CabinetPorts) =
@@ -110,32 +91,6 @@ internal class CabinetListsRig(client: CabinetWire, app: AppContainer = CoreScen
     val lists = CabinetLists(app.talk, cabinetCases(app, ports), CabinetWork(app.talk), screen)
 
     val state: CabinetUiState get() = screen.value
-}
-
-/** Обмен, отвечающий на всё одним и тем же. */
-internal fun replying(body: String, status: HttpStatusCode = HttpStatusCode.OK): HttpClient =
-    jsonHttp(MockEngine { respond(body, status, headersOf(HttpHeaders.ContentType, "application/json")) })
-
-/** Обмен поверх [engine] так, как его ведёт кабинет: отказ читается телом, а не исключением. */
-internal fun jsonHttp(engine: MockEngine): HttpClient = HttpClient(engine) {
-    expectSuccess = false
-    install(ContentNegotiation) { json(CabinetWire.json) }
-}
-
-/** Подписывающий, которого нет: в проверках без NCALayer подпись не получить. */
-internal object NoSigner : Signer {
-    override suspend fun sign(payload: String): String =
-        throw EdsRefusal(EdsProblem.Unreachable, Signer.NO_HANDSHAKE)
-}
-
-/** Сохранённые файлы — в памяти проверки, без окна выбора. */
-internal class KeptFiles : SavedFiles {
-    val saved = mutableMapOf<String, ByteArray>()
-
-    override suspend fun save(bytes: ByteArray, name: String): String {
-        saved[name] = bytes
-        return name
-    }
 }
 
 /** Содержимое с моделями окна: разделы кабинета берут свои модели у окна, как в приложении. */

@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ReturnCount:NcaFake.kt$NcaFake$private fun InputStream.readFrame(): String?</ID>
+  </CurrentIssues>
+</SmellBaseline>

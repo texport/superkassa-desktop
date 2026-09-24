@@ -49,9 +49,38 @@ object SourceTree {
         .filter { it.isNotEmpty() && !it.startsWith("#") }
         .toSet()
 
+    /**
+     * Открытые объявления верхнего уровня без описания: `файл:строка объявление`.
+     *
+     * Открытое — без `internal` и `private`; описание — KDoc над ним,
+     * аннотации между ними не в счёт. Модуль читают снаружи, не открывая
+     * его исходников.
+     */
+    fun undocumented(): List<String> = MAIN_SETS
+        .map { File("src/$it/kotlin") }
+        .filter { it.isDirectory }
+        .flatMap { root -> root.walkTopDown().filter { it.extension == "kt" } }
+        .flatMap { file ->
+            val lines = file.readLines()
+            lines.withIndex()
+                .filter { (_, line) -> DECLARATION.matches(line) }
+                .filterNot { (at, _) -> documented(lines, at) }
+                .map { (at, line) -> "${file.name}:${at + 1} $line" }
+        }
+
     /** Слой пакета: `domain`, `data`, `presentation`; `null` — не код приложения. */
     fun layerOf(name: String?): String? =
         name?.takeIf { it.startsWith("$ROOT.") }?.removePrefix("$ROOT.")?.substringBefore('.')
+
+    private fun documented(lines: List<String>, at: Int): Boolean =
+        lines.subList(0, at).lastOrNull { it.isNotBlank() && !it.trimStart().startsWith("@") }
+            ?.trim()?.endsWith("*/") == true
+
+    /** Открытое объявление верхнего уровня: без `internal` и `private`. */
+    private val DECLARATION = Regex(
+        """^((data|enum|sealed|abstract|open|value|fun|const|suspend|operator|inline) )*""" +
+            """(class|object|interface|fun|typealias|val)\b.*"""
+    )
 
     private fun of(path: String, lines: List<String>) = Source(
         path = path,

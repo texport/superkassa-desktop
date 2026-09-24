@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.KassaWindow
 import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
+import kz.mybrain.superkassa.kassa.state
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.textsOf

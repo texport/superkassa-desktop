@@ -9,6 +9,7 @@ import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
+import kz.mybrain.superkassa.kassa.state
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.theme.Look

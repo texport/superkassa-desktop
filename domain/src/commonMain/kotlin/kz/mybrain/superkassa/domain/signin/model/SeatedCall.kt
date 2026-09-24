@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.domain.signin.port.SignedKkm
  * обращения: экраны с командами без входа не открываются, и дойти сюда
  * можно только ошибкой.
  */
-suspend fun <T> Kassa.askSeated(signed: SignedKkm, request: (SuperkassaApi, Seat) -> T): Answer<T> {
+internal suspend fun <T> Kassa.askSeated(signed: SignedKkm, request: (SuperkassaApi, Seat) -> T): Answer<T> {
     val seat = signed.seat() ?: return Answer.Failed(NO_SEAT)
     return ask { request(it, seat) }
 }

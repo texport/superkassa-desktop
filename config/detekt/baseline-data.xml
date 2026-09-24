@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:CabinetContractTest.kt$CabinetContractTest$@Test fun `карточка и строка списка дают модель и точку одинаково`()</ID>
+    <ID>LongMethod:Printing.kt$Printing$private fun clearCorners(picture: BufferedImage, background: Int): BufferedImage</ID>
+    <ID>MagicNumber:TapePrintable.kt$16</ID>
+    <ID>MagicNumber:TapePrintable.kt$8</ID>
+    <ID>MaxLineLength:CabinetContractTest.kt$CabinetContractTest$status</ID>
+    <ID>MaximumLineLength:CabinetContractTest.kt$CabinetContractTest$ </ID>
+    <ID>ReturnCount:MacLocation.kt$MacLocation$private fun placeOf(manager: Pointer): MapPlace?</ID>
+    <ID>ReturnCount:MacLocation.kt$MacLocation$suspend fun locate(): MapPlace?</ID>
+    <ID>ReturnCount:Printing.kt$Printing$fun trim(image: ByteArray): ByteArray</ID>
+    <ID>TooManyFunctions:Printing.kt$Printing</ID>
+  </CurrentIssues>
+</SmellBaseline>

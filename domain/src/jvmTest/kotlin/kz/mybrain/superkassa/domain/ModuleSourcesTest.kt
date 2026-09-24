@@ -1,10 +1,8 @@
 package kz.mybrain.superkassa.domain
 
 import kz.mybrain.superkassa.SourceTree
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 /**
  * Устройство модуля по его исходникам: чистый Kotlin и только домен.
@@ -28,25 +26,8 @@ class ModuleSourcesTest {
         assertEquals(emptyList(), strangers, "файлы чужого слоя в модуле домена")
     }
 
-    /** Каждое открытое объявление верхнего уровня описано: домен читают снаружи. */
     @Test
     fun `открытые объявления описаны`() {
-        File("src/commonMain/kotlin").walkTopDown().filter { it.extension == "kt" }.forEach { file ->
-            val lines = file.readLines()
-            lines.forEachIndexed { at, line ->
-                if (DECLARATION.matches(line)) {
-                    val above = lines.subList(0, at).lastOrNull { it.isNotBlank() && !it.trimStart().startsWith("@") }
-                    assertTrue(above?.trim()?.endsWith("*/") == true, "${file.name}:${at + 1} без описания: $line")
-                }
-            }
-        }
-    }
-
-    private companion object {
-        /** Открытое объявление верхнего уровня: без `internal` и `private`. */
-        val DECLARATION = Regex(
-            """^((data|enum|sealed|abstract|open|value|fun|const|suspend|operator|inline) )*""" +
-                """(class|object|interface|fun|typealias|val)\b.*"""
-        )
+        assertEquals(emptyList(), SourceTree.undocumented(), "открытые объявления без описания")
     }
 }

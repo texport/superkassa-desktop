@@ -52,7 +52,6 @@
     <ID>LongMethod:AppTopBar.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AppTopBar( title: String, subtitle: String? = null, subtitleKept: String? = null, badge: ImageVector? = null, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, actions: @Composable RowScope.() -&gt; Unit )</ID>
     <ID>LongMethod:BasketView.kt$@Composable fun BasketCard( basket: Basket, modifier: Modifier = Modifier, onStorno: (Int) -&gt; Unit, onExcise: (Int) -&gt; Unit, onRemove: (Int) -&gt; Unit )</ID>
     <ID>LongMethod:BusyButton.kt$@Composable fun BusyButton( text: String, busy: Boolean, enabled: Boolean = true, modifier: Modifier = Modifier, kind: FieldButtonKind = FieldButtonKind.Filled, contentPadding: PaddingValues = PaddingValues(horizontal = Spacing.cardPadding, vertical = Spacing.fieldGap), onClick: () -&gt; Unit )</ID>
-    <ID>LongMethod:CabinetContractTest.kt$CabinetContractTest$@Test fun `карточка и строка списка дают модель и точку одинаково`()</ID>
     <ID>LongMethod:CabinetDocumentsTest.kt$CabinetDocumentsTest$@Test fun `пусто за срок и пусто вовсе названы по-разному`()</ID>
     <ID>LongMethod:CabinetDoorShots.kt$CabinetDoorShots$@Test fun `отказные случаи входа показываются владельцу и все они разные`()</ID>
     <ID>LongMethod:ConfirmDialog.kt$@Composable fun ConfirmDangerDialog( what: String, explain: String, action: String, cancel: String, onCancel: () -&gt; Unit, onConfirm: () -&gt; Unit )</ID>
@@ -70,7 +69,6 @@
     <ID>LongMethod:PlaceMapShots.kt$@Composable private fun PickerLook(address: RegisterAddress?, state: MapState)</ID>
     <ID>LongMethod:PlaceTree.kt$@Composable internal fun PlaceTree( texts: CabinetTexts, language: Language, collapsed: Boolean, onToggle: () -&gt; Unit, rows: List&lt;PlaceRow&gt;, total: Int, loading: Boolean, trouble: String?, onRetry: () -&gt; Unit, sieve: PlaceSieve, onSieve: (PlaceSieve) -&gt; Unit, locksKnown: Boolean, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, footer: @Composable ColumnScope.() -&gt; Unit, listState: LazyListState = rememberLazyListState(), modifier: Modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn) )</ID>
     <ID>LongMethod:PlaceTreeRows.kt$@Composable internal fun TreeRows( texts: CabinetTexts, language: Language, rows: List&lt;PlaceRow&gt;, state: ScreenState, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, listState: LazyListState, modifier: Modifier = Modifier, sieve: @Composable ColumnScope.() -&gt; Unit )</ID>
-    <ID>LongMethod:Printing.kt$Printing$private fun clearCorners(picture: BufferedImage, background: Int): BufferedImage</ID>
     <ID>LongMethod:ReceiptBreakdown.kt$@Composable fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetTexts)</ID>
     <ID>LongMethod:ReceiptPreview.kt$@Composable fun ReceiptPreview( image: ByteArray?, drawing: Boolean = false, trouble: ScreenState.Trouble? = null, onPrint: (() -&gt; Unit)? = null, onSave: (() -&gt; Unit)? = null, onDismiss: () -&gt; Unit )</ID>
     <ID>LongMethod:RecordRow.kt$@Composable fun RecordRow( title: String, modifier: Modifier = Modifier, subtitle: String? = null, amount: String? = null, support: @Composable (() -&gt; Unit)? = null, striped: Boolean = false, selected: Boolean = false, leading: @Composable (() -&gt; Unit)? = null, trailing: @Composable (() -&gt; Unit)? = null, titleLines: Int = 1, onClick: (() -&gt; Unit)? = null )</ID>
@@ -158,8 +156,6 @@
     <ID>MagicNumber:Palette.kt$0xFFFFFFFF</ID>
     <ID>MagicNumber:TableColumns.kt$MoneyFit$0.72f</ID>
     <ID>MagicNumber:TableColumns.kt$MoneyFit$0.85f</ID>
-    <ID>MagicNumber:TapePrintable.kt$16</ID>
-    <ID>MagicNumber:TapePrintable.kt$8</ID>
     <ID>MagicNumber:Theme.kt$AppColors$0xFF2B2B2E</ID>
     <ID>MagicNumber:TonalScheme.kt$0xFF410E0B</ID>
     <ID>MagicNumber:TonalScheme.kt$0xFF601410</ID>
@@ -179,7 +175,6 @@
     <ID>MaxLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$RenderProbe { SalesChart(dayBars(view(days = MONTH).days, view(days = MONTH).range, sales), sales, Modifier.fillMaxSize()) }</ID>
     <ID>MaxLineLength:AnalyticsSalesTable.kt$SalesColumn.Revenue, SalesColumn.Net -&gt; TableColumn(min = AnalyticsLayout.networkSum, weight = NUMBER_SHARE, numeric = true)</ID>
     <ID>MaxLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
-    <ID>MaxLineLength:CabinetContractTest.kt$CabinetContractTest$status</ID>
     <ID>MaxLineLength:CabinetMessageTest.kt$CabinetMessageTest$assertEquals(texts.sessionExpired, assertIs&lt;Message.Refusal&gt;(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)</ID>
     <ID>MaxLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$seenPath = request.url.encodedPath + (request.url.encodedQuery.takeIf { it.isNotEmpty() }?.let { "?$it" } ?: "")</ID>
     <ID>MaxLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
@@ -194,7 +189,6 @@
     <ID>MaximumLineLength:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$ </ID>
     <ID>MaximumLineLength:AnalyticsSalesTable.kt$ </ID>
     <ID>MaximumLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$ </ID>
-    <ID>MaximumLineLength:CabinetContractTest.kt$CabinetContractTest$ </ID>
     <ID>MaximumLineLength:CabinetMessageTest.kt$CabinetMessageTest$ </ID>
     <ID>MaximumLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$ </ID>
     <ID>MaximumLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$ </ID>
@@ -206,20 +200,14 @@
     <ID>ReturnCount:AnalyticsSalesGeometry.kt$internal fun barAt(x: Float, width: Int, count: Int): Int?</ID>
     <ID>ReturnCount:AnalyticsWalk.kt$AnalyticsWalk$fun kkmSalesReachable(): Boolean</ID>
     <ID>ReturnCount:JournalQuery.kt$private fun JournalQuery.accepts(entry: JournalEntry): Boolean</ID>
-    <ID>ReturnCount:MacLocation.kt$MacLocation$private fun placeOf(manager: Pointer): MapPlace?</ID>
-    <ID>ReturnCount:MacLocation.kt$MacLocation$suspend fun locate(): MapPlace?</ID>
     <ID>ReturnCount:MapRegistryWalk.kt$internal suspend fun matchPointPlace(steps: RegistrySteps, place: MapPointPlace): PointMatch</ID>
-    <ID>ReturnCount:NcaFake.kt$NcaFake$private fun InputStream.readFrame(): String?</ID>
-    <ID>ReturnCount:Printing.kt$Printing$fun trim(image: ByteArray): ByteArray</ID>
     <ID>ReturnCount:VatRate.kt$fun vatTitle(rates: List&lt;VatRate&gt;, code: String): String</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsMapCrowdTest.kt$AnalyticsMapCrowdTest.Companion$/** Увеличение, на котором в окно попадает область, а не вся страна. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsSalesShots.kt$AnalyticsSalesShots.Companion$/** Куда наводится колесо: середина сводки. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:ApplicationSignWaitTest.kt$ApplicationSignWaitTest.Companion$/** Шаг отсчёта в проверке: секунда не ловится под нагрузкой соседних прогонов. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:HistoryColumnsTest.kt$HistoryColumnsTest.Companion$/** Признак по спецификации — uint32: не длиннее десяти цифр. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:LiveWalkAnalyticsShots.kt$LiveWalkAnalyticsShots.Companion$/** Ширина окна сводки одной кассы: в нём полоса срока и не влезла. */</ID>
-    <ID>StringTemplate:AppLogTest.kt$AppLogTest$${KEEP}</ID>
     <ID>TooManyFunctions:MapProjection.kt$MapProjection</ID>
-    <ID>TooManyFunctions:Printing.kt$Printing</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$(</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("cashRegisters", JsonArray((0 until AnalyticsFixtures.KKMS).map { index -&gt; unit("kkm-$index", "Касса № ${index + 1} — кіреберістегі үлкен", index, "2609400${"%05d".format(index)}", AnalyticsFixtures.placeName(index % AnalyticsFixtures.PLACES)) }))</ID>
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("days", buildJsonArray { (0 until DAYS).forEach { back -&gt; add(buildJsonObject { put("date", TODAY.minusDays(DAYS - 1 - back).toString()) put("receiptCount", 1000 + back.toInt() * 10) put("revenue", JsonPrimitive(BigDecimal("1097744790.11").add(BigDecimal(back * 1_000_000)))) put("refunds", JsonPrimitive(BigDecimal("13717421.00"))) put("net", JsonPrimitive(BigDecimal("1084027369.11"))) }) } })</ID>

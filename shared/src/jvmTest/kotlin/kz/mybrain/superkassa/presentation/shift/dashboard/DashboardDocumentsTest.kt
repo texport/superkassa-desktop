@@ -3,6 +3,8 @@ package kz.mybrain.superkassa.presentation.shift.dashboard
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
+import kz.mybrain.superkassa.kassa.state
+import kz.mybrain.superkassa.kassa.unread
 import kotlin.test.Test
 import kotlin.test.assertFalse
 

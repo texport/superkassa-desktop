@@ -7,7 +7,8 @@ plugins {
 /**
  * Касса для Android: телефоны и планшеты.
  *
- * Модуль только запускает приложение — весь код живёт в `shared`.
+ * Модуль только запускает приложение и собирает его из модулей:
+ * экраны — `shared`, адаптеры портов — `data`.
  * Kotlin здесь встроен в AGP 9, отдельного плагина Kotlin не нужно.
  */
 android {
@@ -50,6 +51,8 @@ kotlin {
 
 dependencies {
     implementation(project(":shared"))
+    // Адаптеры портов собирает точка сборки: экраны слоя данных не видят.
+    implementation(project(":data"))
     implementation(libs.compose.material3)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.splashscreen)

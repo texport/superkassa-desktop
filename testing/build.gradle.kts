@@ -4,7 +4,8 @@ plugins {
 }
 
 /**
- * Оснастка проверок кассы: подделки портов домена, значения ядра
+ * Оснастка проверок кассы: подделки портов домена, значения ядра,
+ * касса поверх поддельного и настоящего ядра, подставной кабинет
  * и суммы, записанные словами денег.
  *
  * Проверки домена, данных и экранов живут в своих модулях, а говорят
@@ -32,9 +33,19 @@ kotlin {
             api(project(":domain"))
         }
         jvmMain.dependencies {
-            // Суммы кабинета в проверках переводит модуль кабинета — тем же
-            // правилом, что и живые ответы.
-            implementation(project(":integrations:bfd-cabinet"))
+            // Касса поверх поддельного фасада ядра и поверх настоящего ядра
+            // стенда — тем же адаптером, что в приложении. Проверкам домена
+            // адаптер не виден: они получают кассу портом домена.
+            implementation(project(":data"))
+            api(libs.superkassa.core.testing)
+            // Суммы кабинета и обмен с ним в проверках — модулем кабинета,
+            // тем же правилом, что и живые ответы.
+            api(project(":integrations:bfd-cabinet"))
+            api(project(":integrations:ncalayer"))
+            implementation(libs.ktor.client.mock)
+            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.serialization.json)
         }
     }
 }
