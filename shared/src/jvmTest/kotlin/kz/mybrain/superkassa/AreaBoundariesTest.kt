@@ -9,10 +9,8 @@ import kotlin.test.assertTrue
  *
  * Правило и общие полки — [AreaRules]; здесь оно проверяет исходники
  * этого модуля. Области домена проверяет модуль `domain` у себя.
- *
- * Нарушения, с которыми код пришёл к этой проверке, перечислены
- * в `area-debt.txt`: долг снимается при переводе своей области. Новое
- * нарушение падает сразу, а исправленное требует вычеркнуть строку.
+ * Долга у экранов нет: области берут друг у друга только через общие
+ * полки, контракты и слоты каркаса.
  *
  * Тем же порядком проверяется шаблон модели экрана: файл `*ViewModel.kt`
  * не видит ни контейнера окна, ни держателя входа, ни портов — только
@@ -23,14 +21,8 @@ class AreaBoundariesTest {
 
     @Test
     fun `no area imports the inside of another area`() {
-        val fresh = violations() - SourceTree.debt(AREA_DEBT)
-        assertTrue(fresh.isEmpty(), "new area violations:\n" + fresh.sorted().joinToString("\n"))
-    }
-
-    @Test
-    fun `debt lists only violations that still exist`() {
-        val paid = SourceTree.debt(AREA_DEBT) - violations()
-        assertEquals(emptySet(), paid, "violations fixed, remove them from $AREA_DEBT")
+        val found = violations()
+        assertTrue(found.isEmpty(), "area violations:\n" + found.sorted().joinToString("\n"))
     }
 
     @Test
@@ -57,7 +49,6 @@ class AreaBoundariesTest {
 
     private companion object {
         const val ROOT = SourceTree.ROOT
-        const val AREA_DEBT = "area-debt.txt"
         const val MODEL_DEBT = "model-debt.txt"
 
         /** Что модели экрана брать нельзя: весь контейнер окна, держатель входа, порты. */

@@ -27,6 +27,6 @@ fun updatesModel(
     installed: AppVersion = AppVersion.current,
     now: () -> Instant = { Clock.System.now() }
 ): UpdatesViewModel {
-    val ports = app.areas.settings
+    val ports = app.areas.update
     return UpdatesViewModel(UpdatesCases(ports.releases, ports.updateMemory, app.journal, installed, now), app.talk)
 }

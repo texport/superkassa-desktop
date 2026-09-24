@@ -21,9 +21,11 @@ import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.common.mapview.MapControls
 import kz.mybrain.superkassa.presentation.common.mapview.MapLocating
+import kz.mybrain.superkassa.presentation.common.mapview.MapPoint
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
 import kz.mybrain.superkassa.presentation.common.mapview.MapView
+import kz.mybrain.superkassa.presentation.common.mapview.cabinetDegrees
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

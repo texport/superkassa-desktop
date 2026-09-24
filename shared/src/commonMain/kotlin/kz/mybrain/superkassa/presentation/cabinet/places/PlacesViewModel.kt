@@ -18,8 +18,8 @@ import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.CabinetReply
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.value
+import kz.mybrain.superkassa.presentation.common.mapview.MapPoint
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.map.MapPoint
 
 /**
  * Выбор в колонке точек и отбор над ней.

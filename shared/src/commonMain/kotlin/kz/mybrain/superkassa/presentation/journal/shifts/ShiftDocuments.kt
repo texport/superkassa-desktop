@@ -21,10 +21,10 @@ import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.common.document.JournalTable
 import kz.mybrain.superkassa.presentation.common.period.text
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
 import kz.mybrain.superkassa.presentation.journal.documents.journalEntriesOf
 import kz.mybrain.superkassa.presentation.journal.documents.of
-import kz.mybrain.superkassa.presentation.print.preview.PrintActions
 import kz.mybrain.superkassa.strings.api.journal.ShiftJournalTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 

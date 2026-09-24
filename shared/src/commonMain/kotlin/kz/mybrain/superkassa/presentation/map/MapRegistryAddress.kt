@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
-import kz.mybrain.superkassa.presentation.cabinet.addressIn
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
+import kz.mybrain.superkassa.presentation.words.cabinet.addressIn
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.map.MapAddressTexts

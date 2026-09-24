@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.map
+package kz.mybrain.superkassa.presentation.common.mapview
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

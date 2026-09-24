@@ -8,6 +8,7 @@ import kz.mybrain.superkassa.designsystem.state.ScreenState
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.common.document.JournalEmpty
 import kz.mybrain.superkassa.presentation.common.document.journalState
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsActions
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsScreen
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsUiState
@@ -15,7 +16,6 @@ import kz.mybrain.superkassa.presentation.journal.shifts.shiftDocumentsState
 import kz.mybrain.superkassa.presentation.journal.shifts.shiftsState
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
 import kz.mybrain.superkassa.presentation.kassa.refund.component.basisState
-import kz.mybrain.superkassa.presentation.print.preview.PrintActions
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

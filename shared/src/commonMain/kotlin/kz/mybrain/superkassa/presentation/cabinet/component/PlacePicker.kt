@@ -7,7 +7,7 @@ import kz.mybrain.superkassa.designsystem.picker.PickerWords
 import kz.mybrain.superkassa.designsystem.picker.SearchablePicker
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
-import kz.mybrain.superkassa.presentation.cabinet.addressIn
+import kz.mybrain.superkassa.presentation.words.cabinet.addressIn
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

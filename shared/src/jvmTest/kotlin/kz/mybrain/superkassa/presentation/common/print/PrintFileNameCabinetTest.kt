@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.print.preview
+package kz.mybrain.superkassa.presentation.common.print
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

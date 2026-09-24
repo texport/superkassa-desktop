@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.setup
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetCalls
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 
 /**

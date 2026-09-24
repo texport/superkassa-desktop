@@ -10,6 +10,6 @@ fun printViewModel(app: AppContainer): PrintViewModel = viewModel { printModel(a
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
 fun printModel(app: AppContainer): PrintViewModel {
-    val ports = app.areas.settings
+    val ports = app.areas.print
     return PrintViewModel(PrintCases(app.kassa, app.signIn, ports.printOut, ports.printChoices, app.memory), app.talk)
 }

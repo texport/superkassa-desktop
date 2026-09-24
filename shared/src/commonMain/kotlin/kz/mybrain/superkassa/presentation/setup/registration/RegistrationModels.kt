@@ -3,7 +3,7 @@ package kz.mybrain.superkassa.presentation.setup.registration
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
-import kz.mybrain.superkassa.presentation.setup.CabinetCalls
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetCalls
 
 /** Модель шага постановки на учёт окна: поданное и прочитанное переживают уход с мастера. */
 @Composable

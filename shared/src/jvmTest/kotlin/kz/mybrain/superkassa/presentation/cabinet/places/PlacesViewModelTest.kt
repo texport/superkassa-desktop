@@ -12,8 +12,8 @@ import kz.mybrain.superkassa.CabinetWire
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.jsonHttp
 import kz.mybrain.superkassa.kassa.inlineMain
+import kz.mybrain.superkassa.presentation.common.mapview.MapPoint
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.map.MapPoint
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

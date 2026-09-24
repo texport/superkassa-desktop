@@ -20,8 +20,8 @@ import kz.mybrain.superkassa.domain.cabinet.model.CompanyProfile
 import kz.mybrain.superkassa.domain.cabinet.model.Oked
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
-import kz.mybrain.superkassa.presentation.cabinet.addressIn
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerIdentifier
+import kz.mybrain.superkassa.presentation.words.cabinet.addressIn
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

@@ -7,10 +7,10 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RowTarget
-import kz.mybrain.superkassa.presentation.cabinet.statusTitle
 import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalState
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.words.cabinet.statusTitle
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

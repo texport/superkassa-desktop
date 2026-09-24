@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.setup
+package kz.mybrain.superkassa.presentation.common.cabinet
 
 /**
  * Обращения мастера к кабинету — с занятостью и словами кабинета окна.
@@ -17,12 +17,4 @@ interface CabinetCalls {
      * @return значение; `null` — не удалось, и помеха уже показана.
      */
     suspend fun <T> run(action: String, block: suspend () -> T): T?
-}
-
-/**
- * Обращения там, где кабинета нет: на ручном пути мастер к кабинету
- * не обращается, и чужой занятости, которую нужно показать, нет.
- */
-internal object WithoutCabinet : CabinetCalls {
-    override suspend fun <T> run(action: String, block: suspend () -> T): T? = block()
 }

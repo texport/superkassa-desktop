@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.map
+package kz.mybrain.superkassa.presentation.common.mapview
 
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
 import kotlin.math.abs

@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.log.port.Journal
+import kz.mybrain.superkassa.domain.settings.port.SettingsPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.kassa.MemoryLook
@@ -50,6 +51,7 @@ class SettingsBench : AutoCloseable {
     val journal = RecordingJournal()
     val choices = MemoryChoices()
     val coreSettings = EmbeddedSettings(bench.superkassa.settings, io = Dispatchers.Unconfined)
+    private val machine = settingsPorts()
     val app = AppContainer(
         kassa = EmbeddedKassa(bench.api, Dispatchers.Unconfined),
         signIn = signIn,
@@ -59,7 +61,10 @@ class SettingsBench : AutoCloseable {
         areas = AreaPorts(
             kassa = KassaPorts(EmbeddedDeliverySetup(bench.superkassa.settings, Dispatchers.Unconfined)),
             journal = JournalPorts(EmbeddedDeliveries(bench.superkassa.delivery, Dispatchers.Unconfined)),
-            settings = settingsPorts().copy(coreSettings = coreSettings, workplace = choices),
+            settings = SettingsPorts(coreSettings, choices),
+            print = machine.print,
+            update = machine.update,
+            debug = machine.debug,
             analytics = analyticsPorts()
         )
     )

@@ -14,6 +14,7 @@ import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.debug.log.DebugCard
 import kz.mybrain.superkassa.presentation.debug.log.LogActions
 import kz.mybrain.superkassa.presentation.debug.log.LogUiState
+import kz.mybrain.superkassa.presentation.kassa.sale.PanelBehaviourCard
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetActions
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetCard
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetUiState
@@ -21,7 +22,6 @@ import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.ofd.OfdSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.receipt.ReceiptFormUiState
 import kz.mybrain.superkassa.presentation.settings.tax.TaxSettingsUiState
-import kz.mybrain.superkassa.presentation.settings.workplace.PanelBehaviourCard
 import kz.mybrain.superkassa.presentation.settings.workplace.WorkplaceSettingsUiState
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.update.check.UpdatesActions

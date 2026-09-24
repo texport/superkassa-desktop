@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.analytics.AnalyticsScreen
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.cabinet.documents.CabinetDocumentsScreen
 import kz.mybrain.superkassa.presentation.cabinet.documents.LocalRegisterDocuments
@@ -123,7 +122,7 @@ private fun CabinetPage(window: CabinetWindow, texts: CabinetTexts, page: Cabine
     when (page) {
         CabinetTab.Company -> CompanyScreen(window.cabinet, LocalLanguage.current, texts)
         CabinetTab.Places -> PlacesScreen(window, texts)
-        CabinetTab.Analytics -> AnalyticsScreen(window.app, access, texts)
+        CabinetTab.Analytics -> window.neighbours.analytics(access, texts)
     }
 }
 

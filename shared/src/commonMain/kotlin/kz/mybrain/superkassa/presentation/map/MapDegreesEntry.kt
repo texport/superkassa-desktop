@@ -15,7 +15,11 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.button.FieldButton
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
+import kz.mybrain.superkassa.presentation.common.mapview.MAX_LATITUDE
+import kz.mybrain.superkassa.presentation.common.mapview.MAX_LONGITUDE
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
+import kz.mybrain.superkassa.presentation.common.mapview.degrees
+import kz.mybrain.superkassa.presentation.common.mapview.degreesOf
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

@@ -27,8 +27,8 @@ import kz.mybrain.superkassa.presentation.common.document.journalTypesIn
 import kz.mybrain.superkassa.presentation.common.document.presentIn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
-import kz.mybrain.superkassa.presentation.print.preview.LocalPrint
-import kz.mybrain.superkassa.presentation.print.preview.PrintActions
+import kz.mybrain.superkassa.presentation.common.print.LocalPrint
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 import kz.mybrain.superkassa.strings.api.textsOf

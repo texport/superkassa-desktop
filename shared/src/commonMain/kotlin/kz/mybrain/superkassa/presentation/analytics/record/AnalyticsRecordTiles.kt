@@ -18,8 +18,8 @@ import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.RecordCount
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
-import kz.mybrain.superkassa.presentation.cabinet.recordTitle
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.words.cabinet.recordTitle
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsRecordTexts
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.fill

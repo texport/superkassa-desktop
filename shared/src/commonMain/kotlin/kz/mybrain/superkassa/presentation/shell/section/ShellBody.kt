@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetScreen
 import kz.mybrain.superkassa.presentation.cabinet.signin.CabinetDoor
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
+import kz.mybrain.superkassa.presentation.common.print.LocalPrint
 import kz.mybrain.superkassa.presentation.debug.log.DebugSetting
 import kz.mybrain.superkassa.presentation.journal.HistoryScreen
 import kz.mybrain.superkassa.presentation.journal.documents.journalViewModel
@@ -23,17 +24,16 @@ import kz.mybrain.superkassa.presentation.kassa.cash.CashScreen
 import kz.mybrain.superkassa.presentation.kassa.cash.cashViewModel
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScreen
 import kz.mybrain.superkassa.presentation.kassa.refund.returnsViewModel
+import kz.mybrain.superkassa.presentation.kassa.sale.PanelBehaviourCard
 import kz.mybrain.superkassa.presentation.kassa.sale.ReceiptOutput
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScreen
 import kz.mybrain.superkassa.presentation.kassa.sale.saleViewModel
-import kz.mybrain.superkassa.presentation.print.preview.LocalPrint
 import kz.mybrain.superkassa.presentation.print.preview.PrintDesk
 import kz.mybrain.superkassa.presentation.print.target.PrintTargetSetting
 import kz.mybrain.superkassa.presentation.settings.SettingsParts
 import kz.mybrain.superkassa.presentation.settings.SettingsScreen
 import kz.mybrain.superkassa.presentation.settings.WorkplaceSettingsScreen
 import kz.mybrain.superkassa.presentation.settings.settingsBoard
-import kz.mybrain.superkassa.presentation.settings.workplace.PanelBehaviourCard
 import kz.mybrain.superkassa.presentation.setup.ConnectKkm
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
@@ -82,7 +82,7 @@ private fun SectionScreen(app: AppContainer, window: WindowParts, section: Secti
         Section.History -> HistoryScreen(journalViewModel(app), shiftsViewModel(app), LocalPrint.current)
         Section.Queue -> QueueScreen(queueViewModel(app))
         Section.Users -> UsersScreen(usersViewModel(app))
-        Section.Register -> ConnectKkm(app, window.cabinet)
+        Section.Register -> ConnectKkm(app, window.steps)
         Section.Cabinet -> window.cabinet?.let { CabinetScreen(it) }
         Section.Settings -> SettingsScreen(settingsBoard(app, window.look, settingsParts(app)))
     }
@@ -120,7 +120,7 @@ private fun LoginDoor(app: AppContainer, window: WindowParts, door: Door, close:
     // «Назад» за дверью возвращает к списку касс — туда же, куда стрелка.
     SystemBack(enabled = true, onBack = close)
     when (door) {
-        Door.Register -> ConnectKkm(app, window.cabinet, close)
+        Door.Register -> ConnectKkm(app, window.steps, close)
         Door.Cabinet -> window.cabinet?.let { CabinetDoor(it, close) }
         Door.Settings -> WorkplaceSettingsScreen(settingsBoard(app, window.look, settingsParts(app)), close)
         Door.Kkms -> Unit
@@ -158,7 +158,7 @@ private fun settingsParts(app: AppContainer) = SettingsParts(
     updates = { UpdatesSetting(app) },
     debug = { DebugSetting(app) },
     hasCabinet = app.areas.cabinet != null,
-    hasReleases = app.areas.settings.releases.ownReleases
+    hasReleases = app.areas.update.releases.ownReleases
 )
 
 /**

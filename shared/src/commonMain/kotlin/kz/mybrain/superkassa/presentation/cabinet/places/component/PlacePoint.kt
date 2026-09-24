@@ -22,9 +22,8 @@ import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.address.AddressSearch
 import kz.mybrain.superkassa.presentation.cabinet.value
-import kz.mybrain.superkassa.presentation.map.MapPickerDialog
-import kz.mybrain.superkassa.presentation.map.MapPoint
-import kz.mybrain.superkassa.presentation.map.MapRegistry
+import kz.mybrain.superkassa.presentation.common.mapview.MapPoint
+import kz.mybrain.superkassa.presentation.common.mapview.MapRegistry
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
@@ -68,8 +67,7 @@ fun PlacePoint(
         FieldButton(text = texts.pickOnMap) { onMap = true }
     }
     if (onMap) {
-        MapPickerDialog(
-            services = cabinet.app.areas.analytics.map,
+        cabinet.neighbours.points.Show(
             registry = remember(cabinet) { CabinetRegistry(cabinet) },
             point = point,
             address = address,

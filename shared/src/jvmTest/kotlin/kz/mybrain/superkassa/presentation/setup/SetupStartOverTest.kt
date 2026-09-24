@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.Windowed
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.mockCabinet
+import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test
@@ -29,7 +30,7 @@ class SetupStartOverTest {
     fun `нажатие только спрашивает, а пройденное остаётся на месте`(): Unit = inlineMain {
         val scene = SetupScene().started()
         val model = scene.model()
-        val cabinet = mockCabinet(SetupScene.NO_PLACES)
+        val cabinet = mockCabinet(SetupScene.NO_PLACES).steps()
         val models = SetupModels(model, scene.registration())
         val screen = @Composable { Windowed { ConnectKkmScreen(models, cabinet) {} } }
         RenderProbe(width = WIDE, height = TALL, content = screen).use { probe ->
@@ -49,7 +50,7 @@ class SetupStartOverTest {
     fun `нетронутый мастер стирать нечем`(): Unit = inlineMain {
         val scene = SetupScene()
         val model = scene.model()
-        val cabinet = mockCabinet(SetupScene.NO_PLACES)
+        val cabinet = mockCabinet(SetupScene.NO_PLACES).steps()
         val models = SetupModels(model, scene.registration())
         val screen = @Composable { Windowed { ConnectKkmScreen(models, cabinet) {} } }
         RenderProbe(width = WIDE, height = TALL, content = screen).use { probe ->

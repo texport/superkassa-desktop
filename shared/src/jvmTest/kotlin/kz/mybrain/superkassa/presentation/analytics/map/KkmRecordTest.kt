@@ -9,7 +9,7 @@ import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.domain.cabinet.model.kkmRecord
-import kz.mybrain.superkassa.presentation.cabinet.statusColor
+import kz.mybrain.superkassa.presentation.common.status.statusColor
 import kz.mybrain.superkassa.refusal
 import kotlin.test.Test
 import kotlin.test.assertEquals

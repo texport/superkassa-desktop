@@ -1,10 +1,11 @@
-package kz.mybrain.superkassa.presentation.cabinet
+package kz.mybrain.superkassa.presentation.common.status
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.designsystem.status.Chip
 import kz.mybrain.superkassa.designsystem.status.StatusTone
 import kz.mybrain.superkassa.designsystem.status.toneColor
+import kz.mybrain.superkassa.presentation.words.cabinet.statusTitle
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

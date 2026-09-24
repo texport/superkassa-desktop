@@ -7,17 +7,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.setup.model.KkmSetupDraft
-import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
-import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
-import kz.mybrain.superkassa.presentation.cabinet.enroll.AddRegisterDialog
-import kz.mybrain.superkassa.presentation.cabinet.enroll.FactoryStamp
-import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
-import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -34,14 +29,14 @@ import kz.mybrain.superkassa.strings.api.textsOf
  */
 @Composable
 fun CabinetStepCard(
-    cabinet: CabinetWindow,
+    cabinet: CabinetSteps,
     setup: SetupTexts,
     draft: KkmSetupDraft,
     onRegister: (id: String, kkmId: Int, name: String?) -> Unit
 ) {
     // Точки мастер не читает: форма заведения кассы ищет точку у кабинета
     // сама, одной страницей, — обход всей сети на пути мастера не нужен.
-    val window by cabinet.cabinet.state.collectAsScreenState()
+    val session = cabinet.session()
 
     SetupStepCard(
         title = setup.stepCabinet,
@@ -51,7 +46,7 @@ fun CabinetStepCard(
         ready = draft.factoryNumber != null,
         summary = listOfNotNull(setup.addedToCabinet, draft.systemId).joinToString(Glyphs.SEPARATOR)
     ) {
-        if (draft.cabinetRegisterId == null) CabinetStep(cabinet, window, setup, draft, onRegister)
+        if (draft.cabinetRegisterId == null) CabinetStep(cabinet, session, setup, draft, onRegister)
     }
 }
 
@@ -65,24 +60,24 @@ fun CabinetStepCard(
  */
 @Composable
 private fun CabinetStep(
-    cabinet: CabinetWindow,
-    window: CabinetUiState,
+    cabinet: CabinetSteps,
+    session: CabinetSession,
     setup: SetupTexts,
     draft: KkmSetupDraft,
     onRegister: (id: String, kkmId: Int, name: String?) -> Unit
 ) {
-    val language = LocalLanguage.current
-    val texts = textsOf(language).cabinet
+    val texts = textsOf(LocalLanguage.current).cabinet
     when {
-        !window.open -> {
+        !session.open -> {
             Text(setup.signInFirst)
-            SignInAction(cabinet = cabinet.cabinet, language = language, texts = texts, modifier = Modifier)
+            cabinet.SignIn()
         }
 
         else -> AddRegisterStep(
             cabinet = cabinet,
             texts = texts,
-            known = FactoryStamp(draft.factoryNumber.orEmpty(), draft.manufactureYear.orEmpty())
+            factoryNumber = draft.factoryNumber.orEmpty(),
+            year = draft.manufactureYear.orEmpty()
         ) { created -> onRegister(created.id, created.kkmId, created.internalName) }
     }
 }
@@ -90,14 +85,15 @@ private fun CabinetStep(
 /** Создание кассы в мастере: то же окно, что и в разделе точек. */
 @Composable
 private fun AddRegisterStep(
-    cabinet: CabinetWindow,
+    cabinet: CabinetSteps,
     texts: CabinetTexts,
-    known: FactoryStamp,
+    factoryNumber: String,
+    year: String,
     onAdded: (CabinetRegister) -> Unit
 ) {
     var adding by remember { mutableStateOf(false) }
     FilledTonalButton(onClick = { adding = true }) { Text(texts.addRegister) }
     if (adding) {
-        AddRegisterDialog(cabinet, texts, known, onDismiss = { adding = false }, onAdded = onAdded)
+        cabinet.AddRegister(factoryNumber, year, onDismiss = { adding = false }, onAdded = onAdded)
     }
 }

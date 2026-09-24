@@ -9,23 +9,33 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
+import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.debug.port.LogBook
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
 import kz.mybrain.superkassa.domain.print.port.FakePrintOut
 import kz.mybrain.superkassa.domain.print.port.MemoryPrintChoices
+import kz.mybrain.superkassa.domain.print.port.PrintChoices
+import kz.mybrain.superkassa.domain.print.port.PrintOut
+import kz.mybrain.superkassa.domain.print.port.PrintPorts
 import kz.mybrain.superkassa.domain.settings.port.CoreSettingsStore
+import kz.mybrain.superkassa.domain.settings.port.SettingsPorts
 import kz.mybrain.superkassa.domain.update.port.FakeReleases
 import kz.mybrain.superkassa.domain.update.port.MemoryUpdates
+import kz.mybrain.superkassa.domain.update.port.Releases
+import kz.mybrain.superkassa.domain.update.port.UpdateMemory
+import kz.mybrain.superkassa.domain.update.port.UpdatePorts
 import kz.mybrain.superkassa.domain.workplace.model.MapServices
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceChoices
 import kz.mybrain.superkassa.kassa.MemoryWorkplace
 
 /**
- * Порты области настроек для проверок: в памяти, без диска, сети и окон.
+ * Порты машины для проверок: в памяти, без диска, сети и окон.
  *
- * Проверка, которой нужен свой порт, подменяет его копией набора.
+ * Одним набором — настройки, печать, выпуски и журнал, — как их
+ * раздаёт точка сборки по областям; проверка, которой нужен свой порт,
+ * подменяет его копией набора.
  */
-fun settingsPorts() = SettingsPorts(
+fun settingsPorts() = MachinePorts(
     logBook = MemoryLogBook(),
     releases = FakeReleases(),
     updateMemory = MemoryUpdates(),
@@ -34,6 +44,22 @@ fun settingsPorts() = SettingsPorts(
     coreSettings = MemoryCoreSettings(),
     workplace = MemoryChoices()
 )
+
+/** Порты машины одним набором; по областям их раскладывают [settings], [print], [update] и [debug]. */
+data class MachinePorts(
+    val logBook: LogBook,
+    val releases: Releases,
+    val updateMemory: UpdateMemory,
+    val printOut: PrintOut,
+    val printChoices: PrintChoices,
+    val coreSettings: CoreSettingsStore,
+    val workplace: WorkplaceChoices
+) {
+    val settings: SettingsPorts get() = SettingsPorts(coreSettings, workplace)
+    val print: PrintPorts get() = PrintPorts(printOut, printChoices)
+    val update: UpdatePorts get() = UpdatePorts(releases, updateMemory)
+    val debug: DebugPorts get() = DebugPorts(logBook)
+}
 
 /**
  * Журнал для проверок: книга в памяти, без файла и без окна выбора.

@@ -18,6 +18,12 @@ package kz.mybrain.superkassa
  *   приложения, правила кассы и фискального документа, смена, версия
  *   и рабочее место — то, о чём спрашивает каждая область.
  *
+ * Экраны области читают модель чужой области домена только там, где
+ * они о ней и есть ([READS]): аналитика и карта — об учёте и адресах
+ * кассы в кабинете, кабинет и мастер — о пине кассира и о кассе,
+ * заводимой через кабинет. Такое чтение объявлено здесь, а не зашито
+ * долгом: новое чтение чужого домена требует записи с причиной.
+ *
  * Правило одно на всё приложение, а проверяет его каждый модуль у себя:
  * `domain` — свои исходники, `shared` — экраны.
  */
@@ -25,12 +31,29 @@ object AreaRules {
     private val SHARED_PRESENTATION = setOf("common", "words", "shell")
     private val SHARED_DOMAINS = setOf("kassa", "signin", "log", "kkm", "document", "shift", "version", "workplace")
 
+    /**
+     * Чужие области домена, которые читают экраны области.
+     *
+     * - аналитика — учёт касс кабинета (`KkmRecord`): её взгляды и есть учёт;
+     * - карта — адресный регистр кабинета: место точки выбирается по нему;
+     * - кабинет — правила пина кассира (касса, заводимая здесь, получает
+     *   администратора) и память мастера (контур ОФД);
+     * - мастер — правила пина и касса, заведённая в кабинете.
+     */
+    private val READS = mapOf(
+        "analytics" to setOf("cabinet"),
+        "map" to setOf("cabinet"),
+        "cabinet" to setOf("users", "setup"),
+        "setup" to setOf("users", "cabinet")
+    )
+
     /** Импорты чужих областей в [sources]: `путь -> слой.область`. */
     fun violations(sources: List<Source>): Set<String> = sources.flatMap { source ->
         val own = areaOf(source.pkg) ?: return@flatMap emptyList()
         source.imports
             .mapNotNull { areaOf(it) }
             .filter { it.name != own.name }
+            .filterNot { own.layer == "presentation" && it.layer == "domain" && it.name in READS[own.name].orEmpty() }
             .map { "${source.path} -> ${it.layer}.${it.name}" }
     }.toSet()
 

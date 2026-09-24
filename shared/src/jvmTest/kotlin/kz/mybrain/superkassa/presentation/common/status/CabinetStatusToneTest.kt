@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.cabinet
+package kz.mybrain.superkassa.presentation.common.status
 
 import kz.mybrain.superkassa.designsystem.status.StatusTone
 import kotlin.test.Test

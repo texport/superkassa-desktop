@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.cabinet
+package kz.mybrain.superkassa.presentation.words.cabinet
 
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.strings.api.analytics.SieveTexts
@@ -6,10 +6,10 @@ import kz.mybrain.superkassa.strings.api.analytics.SieveTexts
 /**
  * Смысл учёта КГД словами — одними и теми же во всём приложении.
  *
- * Названо здесь, рядом с самим перечислением [KkmRecord], а не в разделе,
- * который спросил первым: смыслы учёта спрашивают карта аналитики,
- * плитки учёта и колонка торговых точек, и владелец обязан читать
- * в них одно и то же слово о одном и том же состоянии кассы.
+ * Названо на общей полке слов, а не в разделе, который спросил первым:
+ * смыслы учёта спрашивают карта аналитики, плитки учёта и колонка
+ * торговых точек кабинета, и владелец обязан читать в них одно и то же
+ * слово о одном и том же состоянии кассы.
  *
  * `null` — учёт не спрошен вовсе: это шестой пункт отбора, а не шестое
  * состояние кассы.

@@ -31,12 +31,16 @@ import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
 import kz.mybrain.superkassa.data.map.mapJournal
 import kz.mybrain.superkassa.data.print.SystemPrintOut
 import kz.mybrain.superkassa.data.releases.GithubUpdates
+import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
+import kz.mybrain.superkassa.domain.print.port.PrintPorts
+import kz.mybrain.superkassa.domain.settings.port.SettingsPorts
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
+import kz.mybrain.superkassa.domain.update.port.UpdatePorts
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.integrations.bfdcabinet.BfdCabinet
 import kz.mybrain.superkassa.integrations.maps.OpenMaps
@@ -45,7 +49,6 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
-import kz.mybrain.superkassa.presentation.settings.SettingsPorts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
 import java.io.File
@@ -64,8 +67,6 @@ private const val TILES = "tiles"
 /** Собирает зависимости экранов: порты `domain` из реализаций `data`. */
 internal fun assemble(kassa: Superkassa, preferences: Preferences, look: WorkplaceLook): AppContainer {
     val language = { workplaceLanguage(look.state.value.language) }
-    // Кабинет и мастер заведения кассы: один кабинет на приложение и подпись владельца.
-    val cabinet = cabinet(preferences) { language().code }
     return AppContainer(
         // Общее.
         kassa = EmbeddedKassa(kassa.api),
@@ -73,14 +74,27 @@ internal fun assemble(kassa: Superkassa, preferences: Preferences, look: Workpla
         memory = preferences,
         look = look,
         talk = Talk(Notices(), AppJournal(), language),
-        areas = AreaPorts(
-            kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
-            journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
-            settings = settingsPorts(kassa, preferences),
-            analytics = analyticsPorts(cabinet.bfd, preferences) { language().code },
-            cabinet = cabinet,
-            setup = SetupPorts(memory = preferences, cabinet = CabinetSetup(cabinet))
-        )
+        areas = areaPorts(kassa, preferences) { language().code }
+    )
+}
+
+/** Порты областей — по набору на область — из реализаций настольной кассы. */
+private fun areaPorts(kassa: Superkassa, preferences: Preferences, language: () -> String): AreaPorts {
+    // Кабинет и мастер заведения кассы: один кабинет на приложение и подпись владельца.
+    val cabinet = cabinet(preferences, language)
+    return AreaPorts(
+        kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
+        journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
+        settings = SettingsPorts(
+            coreSettings = EmbeddedSettings(kassa.settings, DataHome.kassa().path),
+            workplace = PreferenceChoices(preferences)
+        ),
+        print = PrintPorts(SystemPrintOut(), preferences.printing),
+        update = UpdatePorts(GithubUpdates(), preferences.updates),
+        debug = DebugPorts(AppLogBook()),
+        analytics = analyticsPorts(cabinet.bfd, preferences, language),
+        cabinet = cabinet,
+        setup = SetupPorts(memory = preferences, cabinet = CabinetSetup(cabinet))
     )
 }
 
@@ -95,17 +109,6 @@ private fun cabinet(preferences: Preferences, language: () -> String): RemoteCab
     DialogFiles(),
     AppJournal(LogSource.Cabinet),
     DeveloperEntry.fromEnvironment()
-)
-
-/** Порты настроек, печати, обновления и журнала отладки — из реализаций настольной кассы. */
-private fun settingsPorts(kassa: Superkassa, preferences: Preferences) = SettingsPorts(
-    logBook = AppLogBook(),
-    releases = GithubUpdates(),
-    updateMemory = preferences.updates,
-    printOut = SystemPrintOut(),
-    printChoices = preferences.printing,
-    coreSettings = EmbeddedSettings(kassa.settings, DataHome.kassa().path),
-    workplace = PreferenceChoices(preferences)
 )
 
 /**

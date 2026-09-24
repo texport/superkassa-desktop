@@ -14,7 +14,7 @@ import kz.mybrain.superkassa.presentation.analytics.common.CountCell
 import kz.mybrain.superkassa.presentation.analytics.common.HeadCell
 import kz.mybrain.superkassa.presentation.analytics.common.RowCell
 import kz.mybrain.superkassa.presentation.analytics.common.TableAcross
-import kz.mybrain.superkassa.presentation.cabinet.recordTitle
+import kz.mybrain.superkassa.presentation.words.cabinet.recordTitle
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

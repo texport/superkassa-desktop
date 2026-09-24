@@ -14,7 +14,7 @@ import kz.mybrain.superkassa.presentation.common.document.JournalType
 import kz.mybrain.superkassa.presentation.common.document.JournalView
 import kz.mybrain.superkassa.presentation.common.document.presentIn
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriodBar
-import kz.mybrain.superkassa.presentation.print.preview.PrintActions
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

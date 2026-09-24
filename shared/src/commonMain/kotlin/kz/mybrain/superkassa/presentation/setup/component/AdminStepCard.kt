@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.setup.KkmForm
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
-import kz.mybrain.superkassa.presentation.users.pinProblem
+import kz.mybrain.superkassa.presentation.words.users.pinProblem
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 

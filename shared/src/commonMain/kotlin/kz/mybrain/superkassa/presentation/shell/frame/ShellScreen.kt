@@ -20,6 +20,8 @@ import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
+import kz.mybrain.superkassa.presentation.cabinet.steps
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
@@ -59,7 +61,7 @@ fun ShellScreen(app: AppContainer) {
     // Кабинета нет на платформе, где его не собрали: там нет и его модели.
     val cabinet = app.areas.cabinet?.let { cabinetViewModel(app) }
     val window = remember(app, shellModel, look, cabinet) {
-        WindowParts(shellModel, look, cabinet?.let { CabinetWindow(app, it, cabinetLook(look)) })
+        WindowParts(shellModel, look, cabinet?.let { CabinetWindow(it, cabinetLook(look), cabinetNeighbours(app)) })
     }
     val shell by window.shell.state.collectAsScreenState()
     // Один хост сообщений на окно: снекбар лежит поверх содержимого
@@ -83,7 +85,11 @@ fun ShellScreen(app: AppContainer) {
  *
  * @property cabinet кабинет окна; `null` — на этой платформе кабинета нет.
  */
-class WindowParts(val shell: ShellViewModel, val look: LookViewModel, val cabinet: CabinetWindow?)
+class WindowParts(val shell: ShellViewModel, val look: LookViewModel, val cabinet: CabinetWindow?) {
+
+    /** Шаги кабинета для мастера подключения: те же вход и формы, что в разделах кабинета. */
+    val steps: CabinetSteps? = cabinet?.steps()
+}
 
 /**
  * Окно до входа: кассир видит только вход.

@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.print.LocalPrint
 import kz.mybrain.superkassa.presentation.print.preview.component.PrintOverlay
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 

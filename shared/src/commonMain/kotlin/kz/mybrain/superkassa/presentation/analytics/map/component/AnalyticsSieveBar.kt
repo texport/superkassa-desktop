@@ -20,7 +20,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.analytics.map.KkmMark
 import kz.mybrain.superkassa.presentation.analytics.map.MapSieve
 import kz.mybrain.superkassa.presentation.analytics.map.SievePlace
-import kz.mybrain.superkassa.presentation.cabinet.recordTitle
+import kz.mybrain.superkassa.presentation.words.cabinet.recordTitle
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 
 /**

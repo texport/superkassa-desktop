@@ -27,6 +27,7 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.frame.cabinetLook
+import kz.mybrain.superkassa.presentation.shell.frame.cabinetNeighbours
 
 /**
  * Кабинет окна для проверок — так же собранный, как в приложении:
@@ -47,7 +48,7 @@ internal class CabinetRig(
 
     /** Вид окна: кабинет получает от него только своё, а каркасу нужна сама модель. */
     val look = lookModel(app)
-    val window = CabinetWindow(app, model, cabinetLook(look))
+    val window = CabinetWindow(model, cabinetLook(look), cabinetNeighbours(app))
 
     /** Владелец вошёл. */
     fun enter(user: CabinetUser = SignedCabinet.OWNER, company: CabinetCompany = SignedCabinet.COMPANY): CabinetRig {
@@ -75,7 +76,7 @@ internal fun mockCabinet(client: CabinetWire): CabinetWindow = CabinetRig(client
 
 /** Кабинет, в который никто не входил: окно кассы без владельца. */
 internal fun idleCabinet(app: AppContainer = CoreScene.app(FakeCore()), look: LookViewModel = lookModel(app)) =
-    CabinetWindow(app, CabinetRig(app = app).model, cabinetLook(look))
+    CabinetWindow(CabinetRig(app = app).model, cabinetLook(look), cabinetNeighbours(app))
 
 /**
  * Чтение хозяйства кабинета без модели окна: вошедший владелец, списки

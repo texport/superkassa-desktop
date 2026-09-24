@@ -14,6 +14,7 @@ import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.presentation.journal.documents.HistoryView
 import kz.mybrain.superkassa.presentation.journal.documents.JournalActions
 import kz.mybrain.superkassa.presentation.journal.documents.JournalScreen
@@ -24,7 +25,6 @@ import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsActions
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsScreen
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsUiState
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsViewModel
-import kz.mybrain.superkassa.presentation.print.preview.PrintActions
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Журнал документов: состояние — из моделей, действия — им же. */

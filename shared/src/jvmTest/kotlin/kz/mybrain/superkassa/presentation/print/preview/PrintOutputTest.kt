@@ -78,7 +78,7 @@ class PrintOutputTest {
     fun `открытая форма печатается шириной ленты кассы на её принтер`() {
         val narrow = CoreScene.kkm(id = "kkm-1").copy(branding = ReceiptBrandingResponse(paperWidthMm = 58))
         signIn.enter(narrow, CoreScene.cashier(), CoreScene.PIN)
-        app.areas.settings.printChoices.choosePrinter("kkm-1", "Чековый у кассы")
+        app.areas.print.printChoices.choosePrinter("kkm-1", "Чековый у кассы")
         val model = printModel(app)
         model.preview(PrintSource.Journal("d-1"), file = null)
 

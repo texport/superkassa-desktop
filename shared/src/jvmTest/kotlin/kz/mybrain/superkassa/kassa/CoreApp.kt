@@ -11,7 +11,7 @@ import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 import kz.mybrain.superkassa.presentation.analytics.analyticsPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.settings.SettingsPorts
+import kz.mybrain.superkassa.presentation.settings.MachinePorts
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
@@ -30,7 +30,7 @@ fun CoreScene.app(
     signIn: SignIn = SignIn(),
     notices: Notices = Notices(),
     memory: WorkplaceMemory = MemoryWorkplace(),
-    settings: SettingsPorts = settingsPorts(),
+    settings: MachinePorts = settingsPorts(),
     ports: KassaPorts = KassaPorts(FixedDeliverySetup())
 ) = app(core.kassa(), signIn, notices, memory, settings, ports = ports)
 
@@ -40,7 +40,7 @@ fun CoreScene.app(
     signIn: SignIn = SignIn(),
     notices: Notices = Notices(),
     memory: WorkplaceMemory = MemoryWorkplace(),
-    settings: SettingsPorts = settingsPorts(),
+    settings: MachinePorts = settingsPorts(),
     journal: JournalPorts = JournalPorts(NoDeliveries),
     ports: KassaPorts = KassaPorts(FixedDeliverySetup())
 ) = AppContainer(
@@ -49,5 +49,13 @@ fun CoreScene.app(
     memory = memory,
     look = WorkplaceLook(MemoryLook()),
     talk = Talk(notices, SilentJournal) { Language.Ru },
-    areas = AreaPorts(kassa = ports, journal = journal, settings = settings, analytics = analyticsPorts())
+    areas = AreaPorts(
+        kassa = ports,
+        journal = journal,
+        settings = settings.settings,
+        print = settings.print,
+        update = settings.update,
+        debug = settings.debug,
+        analytics = analyticsPorts()
+    )
 )

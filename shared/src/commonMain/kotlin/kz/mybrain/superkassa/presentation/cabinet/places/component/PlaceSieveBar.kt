@@ -19,7 +19,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.cabinet.places.PlaceOrder
 import kz.mybrain.superkassa.presentation.cabinet.places.PlaceSieve
-import kz.mybrain.superkassa.presentation.cabinet.recordTitle
+import kz.mybrain.superkassa.presentation.words.cabinet.recordTitle
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

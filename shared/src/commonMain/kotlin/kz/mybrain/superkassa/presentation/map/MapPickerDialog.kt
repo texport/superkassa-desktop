@@ -20,9 +20,12 @@ import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapCases
 import kz.mybrain.superkassa.presentation.common.mapview.MapLocating
+import kz.mybrain.superkassa.presentation.common.mapview.MapPoint
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
+import kz.mybrain.superkassa.presentation.common.mapview.MapRegistry
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
+import kz.mybrain.superkassa.presentation.common.mapview.degrees
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf

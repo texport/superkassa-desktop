@@ -24,17 +24,20 @@ import kz.mybrain.superkassa.data.log.LogcatJournal
 import kz.mybrain.superkassa.data.print.AndroidPrintChoices
 import kz.mybrain.superkassa.data.print.SystemDialogPrintOut
 import kz.mybrain.superkassa.data.releases.StoreReleases
+import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
+import kz.mybrain.superkassa.domain.print.port.PrintPorts
+import kz.mybrain.superkassa.domain.settings.port.SettingsPorts
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
+import kz.mybrain.superkassa.domain.update.port.UpdatePorts
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
-import kz.mybrain.superkassa.presentation.settings.SettingsPorts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
 import java.io.File
@@ -79,8 +82,6 @@ class SuperkassaApp : Application() {
         .getOrThrow()
 
     private fun assemble(kassa: Superkassa): AppContainer {
-        // Настройки и кассиры: выпуски на Android приносит магазин приложений.
-        val updates = StoreReleases()
         val workplace = AndroidWorkplace(this)
         val look = WorkplaceLook(workplace)
         val log = LogcatBook(File(filesDir, LOG_DIRECTORY).path, screen)
@@ -91,33 +92,33 @@ class SuperkassaApp : Application() {
             look = look,
             // Слова кассиру — на языке окна, как на компьютере.
             talk = Talk(Notices(), LogcatJournal(log)) { workplaceLanguage(look.state.value.language) },
-            // Кабинета на Android нет: подписи ЭЦП здесь пока нет. Мастер
-            // подключения без кабинета ведёт ручной путь — идентификатор и токен.
-            areas = AreaPorts(
-                kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
-                journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
-                settings = settingsPorts(kassa, updates, workplace, log),
-                analytics = analyticsPorts(),
-                setup = SetupPorts(memory = workplace)
-            )
+            areas = areaPorts(kassa, workplace, log)
         )
     }
 
-    /** Настройки, печать, обновление и журнал отладки на Android. */
-    private fun settingsPorts(
-        kassa: Superkassa,
-        updates: StoreReleases,
-        workplace: AndroidWorkplace,
-        log: LogcatBook
-    ) = SettingsPorts(
-        logBook = log,
-        releases = updates,
-        updateMemory = updates,
-        printOut = SystemDialogPrintOut(screen),
-        printChoices = AndroidPrintChoices(this),
-        coreSettings = EmbeddedSettings(kassa.settings, KassaSource.directory(this).path),
-        workplace = AndroidChoices(workplace)
-    )
+    /**
+     * Порты областей на Android.
+     *
+     * Кабинета на Android нет: подписи ЭЦП здесь пока нет. Мастер подключения
+     * без кабинета ведёт ручной путь — идентификатор и токен.
+     */
+    private fun areaPorts(kassa: Superkassa, workplace: AndroidWorkplace, log: LogcatBook): AreaPorts {
+        // Выпуски на Android приносит магазин приложений.
+        val updates = StoreReleases()
+        return AreaPorts(
+            kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
+            journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
+            settings = SettingsPorts(
+                coreSettings = EmbeddedSettings(kassa.settings, KassaSource.directory(this).path),
+                workplace = AndroidChoices(workplace)
+            ),
+            print = PrintPorts(SystemDialogPrintOut(screen), AndroidPrintChoices(this)),
+            update = UpdatePorts(releases = updates, updateMemory = updates),
+            debug = DebugPorts(log),
+            analytics = analyticsPorts(),
+            setup = SetupPorts(memory = workplace)
+        )
+    }
 
     /** Аналитики кабинета и карты на Android пока нет: порты отвечают, что раздела нет. */
     private fun analyticsPorts() = AnalyticsPorts(

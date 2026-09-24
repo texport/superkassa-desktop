@@ -15,8 +15,6 @@ import kz.mybrain.superkassa.presentation.cabinet.register.RegisterView
 import kz.mybrain.superkassa.presentation.cabinet.register.adoptMissing
 import kz.mybrain.superkassa.presentation.cabinet.register.heardElsewhere
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.users.signin.LoginViewModel
-import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -44,8 +42,8 @@ fun AdoptRegisterDialog(
     val machine = textsOf(language).cabinet.machine
     val model = adoptViewModel(cabinet.cabinet)
     val adopt by model.state.collectAsScreenState()
-    val login = loginViewModel(cabinet.app)
-    val draft = remember(register.id) { AdoptDraft(cabinet.app.areas.setup?.memory) }
+    val reloadKkms = cabinet.neighbours.kkmsReload()
+    val draft = remember(register.id) { AdoptDraft(cabinet.neighbours.setupMemory) }
     // Справочник приходит позже первой отрисовки: подстановка делается
     // эффектом, иначе окно осталось бы с пустым выбором контура.
     LaunchedEffect(adopt.environments) { draft.preset(adopt.environments) }
@@ -57,7 +55,7 @@ fun AdoptRegisterDialog(
         busy = adopt.adopting,
         missing = adoptMissing(draft.form(heardElsewhere(view.state.state?.technicalState)), adoptLabels(machine)),
         onDismiss = onDismiss,
-        onAction = { adopt(model, register, draft, login, onDismiss) }
+        onAction = { adopt(model, register, draft, reloadKkms, onDismiss) }
     ) {
         AdoptFields(texts, draft, adopt, view)
     }
@@ -71,11 +69,11 @@ private fun adopt(
     model: AdoptViewModel,
     register: CabinetRegister,
     draft: AdoptDraft,
-    login: LoginViewModel,
+    reloadKkms: () -> Unit,
     onDone: () -> Unit
 ) = model.adopt(register, draft.target.environment, draft.adminPin) {
     draft.remember()
-    login.reload()
+    reloadKkms()
     onDone()
 }
 

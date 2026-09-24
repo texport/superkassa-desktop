@@ -13,8 +13,12 @@ import kotlinx.coroutines.awaitCancellation
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.setup.model.CabinetRecord
+import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.cabinet.applications.LocalSignTick
+import kz.mybrain.superkassa.presentation.cabinet.steps
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.strings.api.Language
@@ -40,7 +44,8 @@ class SetupLiveCheckTest {
         val scene = SetupScene().started(halfway = true)
         scene.cabinet.signer = { awaitCancellation() }
         val model = scene.registration()
-        RenderProbe(CARD, TALL) { Step(model, scene) }.use { probe ->
+        val steps = idleCabinet().steps()
+        RenderProbe(CARD, TALL) { Step(model, scene, steps) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             probe.tap { it.text == scene.texts.submit }
             repeat(SETTLE) { probe.frame() }
@@ -70,7 +75,8 @@ class SetupLiveCheckTest {
         val scene = SetupScene().started(halfway = true)
         scene.cabinet.record = record
         val model = scene.registration()
-        RenderProbe(CARD, TALL) { Step(model, scene) }.use { probe ->
+        val steps = idleCabinet().steps()
+        RenderProbe(CARD, TALL) { Step(model, scene, steps) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             File("/tmp/live-check-application-$name.png").writeBytes(probe.frame())
             probe.nodes().map { it.text }
@@ -79,12 +85,12 @@ class SetupLiveCheckTest {
 
     /** Шаг постановки на учёт так, как его собирает мастер: касса в кабинете прочитана. */
     @Composable
-    private fun Step(model: RegistrationViewModel, scene: SetupScene) {
+    private fun Step(model: RegistrationViewModel, scene: SetupScene, steps: CabinetSteps) {
         val state by model.state.collectAsState()
         LaunchedEffect(Unit) { model.readRecord(REGISTER) }
         CompositionLocalProvider(LocalSignTick provides TICK) {
             Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
-                ApplicationStepCard(REGISTER, state, model, scene.texts, open = true, busy = false)
+                ApplicationStepCard(REGISTER, state, model, scene.texts, steps, CabinetSession(open = true))
             }
         }
     }

@@ -12,10 +12,11 @@ import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.setup.model.CabinetRecord
-import kz.mybrain.superkassa.presentation.cabinet.applications.ApplicationSignWait
-import kz.mybrain.superkassa.presentation.cabinet.statusTitle
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
+import kz.mybrain.superkassa.presentation.words.cabinet.statusTitle
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -30,8 +31,9 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * им спрашивают, не дожидаясь очередного круга.
  *
  * @param registerId касса в кабинете, которую ставят на учёт; `null` — её ещё нет.
- * @param open владелец вошёл в кабинет: без входа подавать некому.
- * @param busy кабинет окна занят обращением: кнопка ждёт вместе с ним.
+ * @param cabinet шаги кабинета окна: ожидание подписи — то же, что на двери входа.
+ * @param session кабинет сейчас: без входа подавать некому, а занятый
+ *   обращением кабинет держит кнопку в ожидании.
  */
 @Composable
 fun ApplicationStepCard(
@@ -39,8 +41,8 @@ fun ApplicationStepCard(
     state: RegistrationUiState,
     actions: RegistrationActions,
     setup: SetupTexts,
-    open: Boolean,
-    busy: Boolean
+    cabinet: CabinetSteps,
+    session: CabinetSession
 ) {
     val record = state.recordOf(registerId)
     SetupStepCard(
@@ -48,19 +50,19 @@ fun ApplicationStepCard(
         hint = setup.stepApplicationHint,
         texts = setup,
         done = state.onRecord(registerId),
-        ready = registerId != null && open,
+        ready = registerId != null && session.open,
         summary = listOfNotNull(setup.registered, record?.registrationNumber).joinToString(Glyphs.SEPARATOR)
     ) {
         val id = registerId ?: return@SetupStepCard
         if (state.onRecord(id)) return@SetupStepCard
-        val cabinet = textsOf(LocalLanguage.current).cabinet
-        RecordStatus(record, setup, cabinet)
+        val texts = textsOf(LocalLanguage.current).cabinet
+        RecordStatus(record, setup, texts)
         // Пока NCALayer ждёт подпись, на месте кнопок идёт отсчёт срока
         // с отменой — тот же, что на двери входа и при подаче из кабинета.
         if (state.signing) {
-            ApplicationSignWait(LocalLanguage.current, cabinet, actions::cancelSubmit)
+            cabinet.SignWait(actions::cancelSubmit)
         } else {
-            SubmitButtons(setup, cabinet, busy, record?.awaiting == true, { actions.submit(id) }) {
+            SubmitButtons(setup, texts, session.busy, record?.awaiting == true, { actions.submit(id) }) {
                 actions.readRecord(id)
             }
         }

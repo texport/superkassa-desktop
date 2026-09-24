@@ -20,7 +20,9 @@ import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.kassa.CoreScene
-import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
+import kz.mybrain.superkassa.presentation.cabinet.steps
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.presentation.journal.HistoryStage.Mode
 import kz.mybrain.superkassa.presentation.journal.documents.JournalUiState
 import kz.mybrain.superkassa.presentation.journal.queue.QueueActions
@@ -29,7 +31,6 @@ import kz.mybrain.superkassa.presentation.journal.queue.QueueUiState
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsActions
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsScreen
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsUiState
-import kz.mybrain.superkassa.presentation.print.preview.PrintActions
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupContent
 import kz.mybrain.superkassa.presentation.setup.SetupParts
@@ -153,8 +154,8 @@ class HistoryScreensShots {
         actions = object : SetupActions {},
         registration = RegistrationUiState(),
         registrationActions = object : RegistrationActions {},
-        cabinet = idleCabinet(desk.app, desk.look),
-        window = CabinetUiState(),
+        cabinet = idleCabinet(desk.app, desk.look).steps(),
+        session = CabinetSession(),
         onBack = null
     )
 

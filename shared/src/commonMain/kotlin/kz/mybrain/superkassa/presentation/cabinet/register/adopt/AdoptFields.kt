@@ -26,7 +26,7 @@ import kz.mybrain.superkassa.domain.setup.model.OfdContours
 import kz.mybrain.superkassa.domain.users.model.UserRules
 import kz.mybrain.superkassa.presentation.cabinet.register.RegisterView
 import kz.mybrain.superkassa.presentation.cabinet.register.heardElsewhere
-import kz.mybrain.superkassa.presentation.users.pinProblem
+import kz.mybrain.superkassa.presentation.words.users.pinProblem
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts

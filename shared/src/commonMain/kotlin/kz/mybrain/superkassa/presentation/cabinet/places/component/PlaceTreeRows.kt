@@ -13,8 +13,8 @@ import kz.mybrain.superkassa.designsystem.list.ScrollableList
 import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.designsystem.state.ScreenState
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.presentation.cabinet.component.registerTitle
+import kz.mybrain.superkassa.presentation.common.status.CabinetStatusChip
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

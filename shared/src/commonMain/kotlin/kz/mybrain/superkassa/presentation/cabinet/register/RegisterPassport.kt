@@ -14,10 +14,10 @@ import kz.mybrain.superkassa.designsystem.section.DetailLine
 import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
-import kz.mybrain.superkassa.presentation.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.component.registerTitle
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.status.CabinetStatusChip
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

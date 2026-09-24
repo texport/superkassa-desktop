@@ -11,8 +11,8 @@ import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.presentation.analytics.map.KkmMark
-import kz.mybrain.superkassa.presentation.cabinet.CabinetStatusChip
-import kz.mybrain.superkassa.presentation.cabinet.statusWords
+import kz.mybrain.superkassa.presentation.common.status.CabinetStatusChip
+import kz.mybrain.superkassa.presentation.words.cabinet.statusWords
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 

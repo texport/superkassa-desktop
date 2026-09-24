@@ -7,7 +7,8 @@ import kz.mybrain.superkassa.Windowed
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.mockCabinet
-import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
+import kz.mybrain.superkassa.presentation.cabinet.steps
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
@@ -33,8 +34,8 @@ class SetupSignInTest {
 
     @Test
     fun `над шагами не стоит второй такой же вход`() {
-        val shut = look("sign-in-shut", idleCabinet())
-        val open = look("sign-in-open", mockCabinet(SetupScene.NO_PLACES))
+        val shut = look("sign-in-shut", idleCabinet().steps())
+        val open = look("sign-in-open", mockCabinet(SetupScene.NO_PLACES).steps())
 
         assertEquals(0, shut.aboveSteps, "над шагами мастера стоит вторая такая же кнопка входа")
         assertEquals(1, shut.everywhere, "вход в кабинет предложен не один раз: ${shut.everywhere}")
@@ -52,8 +53,8 @@ class SetupSignInTest {
      */
     @Test
     fun `на середине мастера вход предлагается над шагами`() {
-        val shut = look("sign-in-halfway-shut", idleCabinet(), halfway = true)
-        val open = look("sign-in-halfway-open", mockCabinet(SetupScene.NO_PLACES), halfway = true)
+        val shut = look("sign-in-halfway-shut", idleCabinet().steps(), halfway = true)
+        val open = look("sign-in-halfway-open", mockCabinet(SetupScene.NO_PLACES).steps(), halfway = true)
 
         assertEquals(1, shut.aboveSteps, "мастеру, продолженному назавтра, войти в кабинет нечем")
         assertTrue(open.everywhere == 0, "в открытый кабинет предлагают войти")
@@ -62,7 +63,7 @@ class SetupSignInTest {
     /** Сколько кнопок входа над первым шагом и всего, и кадр — для сравнения на глаз. */
     private class Look(val aboveSteps: Int, val everywhere: Int, val frame: ByteArray)
 
-    private fun look(name: String, cabinet: CabinetWindow, halfway: Boolean = false): Look = inlineMain {
+    private fun look(name: String, cabinet: CabinetSteps, halfway: Boolean = false): Look = inlineMain {
         val scene = SetupScene().started(halfway)
         val model = scene.model()
         val models = SetupModels(model, scene.registration())

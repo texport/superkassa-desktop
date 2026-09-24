@@ -9,4 +9,4 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
 fun logViewModel(app: AppContainer): LogViewModel = viewModel { logModel(app) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun logModel(app: AppContainer): LogViewModel = LogViewModel(LogCases(app.areas.settings.logBook), app.talk)
+fun logModel(app: AppContainer): LogViewModel = LogViewModel(LogCases(app.areas.debug.logBook), app.talk)

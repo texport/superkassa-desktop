@@ -20,6 +20,7 @@ import kz.mybrain.superkassa.designsystem.dialog.DialogTitle
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.words.users.pinProblem
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 

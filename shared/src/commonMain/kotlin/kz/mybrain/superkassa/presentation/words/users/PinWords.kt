@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.users
+package kz.mybrain.superkassa.presentation.words.users
 
 import kz.mybrain.superkassa.domain.users.model.PinRefusal
 import kz.mybrain.superkassa.domain.users.model.UserRules

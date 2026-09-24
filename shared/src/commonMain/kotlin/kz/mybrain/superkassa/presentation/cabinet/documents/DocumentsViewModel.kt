@@ -22,7 +22,7 @@ import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalQuery
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.period.JournalPeriod
-import kz.mybrain.superkassa.presentation.print.preview.PrintFileName
+import kz.mybrain.superkassa.presentation.common.print.PrintFileName
 
 /**
  * Документы кассы по данным ОФД: то, что принял сервер приёма данных.

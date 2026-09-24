@@ -23,9 +23,9 @@ import kz.mybrain.superkassa.SettingsMeasure
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.idleCabinet
-import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
-import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupContent
@@ -90,7 +90,7 @@ class FormWidthShots {
         Surface(Modifier.fillMaxSize()) {
             WithRail(screen.section) {
                 if (screen == Screen.Register) {
-                    Wizard(checkNotNull(parts.cabinet))
+                    Wizard(checkNotNull(parts.steps))
                 } else {
                     ProvideWindowModels(remember { WindowModels() }) { SectionContent(app, parts, screen.section) }
                 }
@@ -103,7 +103,7 @@ class FormWidthShots {
      * каркас: раздел целиком требует портов мастера, которых у сцены нет.
      */
     @Composable
-    private fun Wizard(cabinet: CabinetWindow) {
+    private fun Wizard(cabinet: CabinetSteps) {
         val contours = listOf("TEST", "PROD").map { OfdEnvironmentResponse(it, TrilingualMessageResponse(it, it, it)) }
         Box(modifier = Modifier.sectionFrame()) {
             SetupContent(
@@ -113,7 +113,7 @@ class FormWidthShots {
                     registration = RegistrationUiState(),
                     registrationActions = object : RegistrationActions {},
                     cabinet = cabinet,
-                    window = CabinetUiState(),
+                    session = CabinetSession(),
                     onBack = null
                 )
             )

@@ -24,7 +24,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegistrationCard
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
-import kz.mybrain.superkassa.presentation.cabinet.statusTitle
+import kz.mybrain.superkassa.presentation.words.cabinet.statusTitle
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

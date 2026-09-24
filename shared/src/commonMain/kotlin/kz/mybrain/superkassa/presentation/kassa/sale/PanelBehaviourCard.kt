@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.settings.workplace
+package kz.mybrain.superkassa.presentation.kassa.sale
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -6,9 +6,6 @@ import kz.mybrain.superkassa.designsystem.picker.SwitchRow
 import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
-import kz.mybrain.superkassa.presentation.kassa.sale.SalePanel
-import kz.mybrain.superkassa.presentation.kassa.sale.SalePanels
-import kz.mybrain.superkassa.presentation.settings.title
 
 /**
  * Каким кассир увидит экран продажи.

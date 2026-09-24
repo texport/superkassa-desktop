@@ -26,6 +26,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.AddressSuggestion
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.domain.map.usecase.NamePoint
+import kz.mybrain.superkassa.presentation.common.mapview.MapRegistry
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.strings.api.map.MapAddressTexts
 

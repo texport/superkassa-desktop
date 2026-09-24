@@ -25,6 +25,7 @@ import kz.mybrain.superkassa.presentation.analytics.map.groupsOf
 import kz.mybrain.superkassa.presentation.analytics.map.laidOut
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.cabinet.places.CabinetPlacesScene
+import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.settings.SettingsScreen
@@ -68,7 +69,7 @@ class OwnerRemarksShots {
     fun `мастер новой кассы`() = each { width, height ->
         val scene = inlineMain { SetupScene().started() }
         val models = inlineMain { SetupModels(scene.model(), scene.registration()) }
-        val cabinet = mockCabinet(SetupScene.NO_PLACES)
+        val cabinet = mockCabinet(SetupScene.NO_PLACES).steps()
         save("setup", width, height) { Windowed { ConnectKkmScreen(models, cabinet) {} } }
     }
 

@@ -8,8 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetCalls
 import kz.mybrain.superkassa.presentation.common.model.latest
-import kz.mybrain.superkassa.presentation.setup.CabinetCalls
 import kotlin.time.Duration
 
 /**

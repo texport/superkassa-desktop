@@ -16,12 +16,12 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovementD
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReportDetails
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
 import kz.mybrain.superkassa.domain.cabinet.model.documents.ShiftTotals
-import kz.mybrain.superkassa.presentation.cabinet.CabinetStatusChip
 import kz.mybrain.superkassa.presentation.cabinet.documents.cabinetState
 import kz.mybrain.superkassa.presentation.cabinet.documents.documentTitle
 import kz.mybrain.superkassa.presentation.common.document.JournalDelivery
 import kz.mybrain.superkassa.presentation.common.document.JournalDeliveryChip
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.common.status.CabinetStatusChip
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**

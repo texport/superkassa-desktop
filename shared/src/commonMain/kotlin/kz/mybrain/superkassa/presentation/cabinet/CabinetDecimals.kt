@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
-import kz.mybrain.superkassa.presentation.map.MapPoint
+import kz.mybrain.superkassa.presentation.common.mapview.MapPoint
 
 /**
  * Точка карты по координатам кабинета; без любой из них точки нет.

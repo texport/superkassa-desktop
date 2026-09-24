@@ -6,6 +6,7 @@ import kz.mybrain.superkassa.Windowed
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.mockCabinet
+import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.shot
 import java.io.File
 import kotlin.test.Test
@@ -36,7 +37,7 @@ class SetupNodeStepTest {
 
     private fun shot(name: String, scene: SetupScene): ByteArray = inlineMain {
         val model = scene.model()
-        val cabinet = mockCabinet(SetupScene.NO_PLACES)
+        val cabinet = mockCabinet(SetupScene.NO_PLACES).steps()
         val models = SetupModels(model, scene.registration())
         val screen = @Composable { Windowed { ConnectKkmScreen(models, cabinet) {} } }
         RenderProbe(width = WIDE, height = TALL, content = screen).use { probe ->

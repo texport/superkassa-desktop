@@ -15,11 +15,8 @@ import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
-import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
-import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
-import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
-import kz.mybrain.superkassa.presentation.cabinet.value
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
@@ -33,21 +30,21 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
- * Мастер окна: модель — из портов мастера, обращения к кабинету — через кабинет окна.
+ * Мастер окна: модель — из портов мастера, обращения к кабинету — шагами кабинета окна.
  *
  * На платформе без мастера не рисуется ничего: двери к нему там нет.
  * Без кабинета мастер ведёт только ручной путь ([ConnectByHand]).
  *
- * @param cabinet кабинет окна; `null` — на этой платформе кабинета нет.
+ * @param cabinet шаги кабинета окна; `null` — на этой платформе кабинета нет.
  * @param onBack возврат туда, откуда пришли; `null` — возвращаться некуда.
  */
 @Composable
-fun ConnectKkm(app: AppContainer, cabinet: CabinetWindow?, onBack: (() -> Unit)? = null) {
+fun ConnectKkm(app: AppContainer, cabinet: CabinetSteps?, onBack: (() -> Unit)? = null) {
     val ports = app.areas.setup ?: return
     if (cabinet == null || ports.cabinet == null) {
         return ConnectByHand(setupViewModel(app, ports, WithoutCabinet), onBack)
     }
-    val calls = cabinet.cabinet.calls()
+    val calls = cabinet.calls
     val models = SetupModels(setupViewModel(app, ports, calls), registrationViewModel(ports, calls))
     ConnectKkmScreen(models, cabinet, onBack)
 }
@@ -59,39 +56,34 @@ fun ConnectKkm(app: AppContainer, cabinet: CabinetWindow?, onBack: (() -> Unit)?
  * не в ту же минуту, а ключ ЭЦП бывает у владельца, который придёт завтра.
  * Пройденное хранит модель, токен туда не попадает.
  *
- * Вход в кабинет, точку и кассу в кабинете ведёт кабинет окна [cabinet]:
+ * Вход в кабинет, точку и кассу в кабинете ведут шаги кабинета окна [cabinet]:
  * его формы — те же, что в разделах кабинета, и своя копия каждой
  * разошлась бы с ними.
  *
  * @param onBack возврат туда, откуда пришли; `null` — возвращаться некуда.
  */
 @Composable
-fun ConnectKkmScreen(models: SetupModels, cabinet: CabinetWindow, onBack: (() -> Unit)? = null) {
+fun ConnectKkmScreen(models: SetupModels, cabinet: CabinetSteps, onBack: (() -> Unit)? = null) {
     val state by models.setup.state.collectAsScreenState()
     val registration by models.registration.state.collectAsScreenState()
     // Контуры и кассы читаются, как мастер открыт: справочник, не прочитанный
     // вчера, сегодня мог и ответить.
     LaunchedEffect(Unit) { models.setup.reload() }
-    val window by cabinet.cabinet.state.collectAsScreenState()
-    SetupContent(SetupParts(state, models.setup, registration, models.registration, cabinet, window, onBack))
+    val session = cabinet.session()
+    SetupContent(SetupParts(state, models.setup, registration, models.registration, cabinet, session, onBack))
 }
 
 /** Модели мастера: пройденное и заведение кассы — одна, заявление о постановке на учёт — другая. */
 class SetupModels(val setup: SetupViewModel, val registration: RegistrationViewModel)
 
-/** Обращения мастера идут работой кабинета окна: его занятость и его слова о помехах. */
-private fun CabinetViewModel.calls(): CabinetCalls = object : CabinetCalls {
-    override suspend fun <T> run(action: String, block: suspend () -> T): T? = work.run(action, block).value
-}
-
-/** Всё, из чего собран мастер: состояние, действия и кабинет окна для шагов в кабинете. */
+/** Всё, из чего собран мастер: состояние, действия и шаги кабинета окна. */
 class SetupParts(
     val state: SetupUiState,
     val actions: SetupActions,
     val registration: RegistrationUiState,
     val registrationActions: RegistrationActions,
-    val cabinet: CabinetWindow,
-    val window: CabinetUiState,
+    val cabinet: CabinetSteps,
+    val session: CabinetSession,
     val onBack: (() -> Unit)?
 )
 
@@ -156,11 +148,10 @@ internal fun SetupFrame(
 private fun ViaCabinet(parts: SetupParts) {
     val setup = textsOf(LocalLanguage.current).setup
     val draft = parts.state.draft
-    val open = parts.window.open
+    val open = parts.session.open
     if (!open && draft.cabinetRegisterId != null) {
         // Та же кнопка, что на двери кабинета: со сроком ожидания и отменой.
-        val language = LocalLanguage.current
-        SignInAction(parts.cabinet.cabinet, language, textsOf(language).cabinet, modifier = Modifier)
+        parts.cabinet.SignIn()
     }
     // Касса в кабинете перечитывается, пока номера КГД нет: оба последних
     // шага ждут его, и владелец не должен открывать мастер заново.
@@ -170,12 +161,12 @@ private fun ViaCabinet(parts: SetupParts) {
         parts.registrationActions.readRecord(registerId)
         parts.registrationActions.watchRecord(registerId, Durations.whileWatching)
     }
-    val busy = parts.window.busy
+    val session = parts.session
     val onRecord = parts.registration.onRecord(registerId)
     CardSequence(Modifier.fillMaxWidth()) {
         FactoryStepCard(parts.state, parts.actions, setup)
         CabinetStepCard(parts.cabinet, setup, draft, parts.actions::rememberRegister)
-        ApplicationStepCard(registerId, parts.registration, parts.registrationActions, setup, open, busy)
-        AdminStepCard(parts.state, parts.actions, setup, onRecord, busy) { parts.onBack?.invoke() }
+        ApplicationStepCard(registerId, parts.registration, parts.registrationActions, setup, parts.cabinet, session)
+        AdminStepCard(parts.state, parts.actions, setup, onRecord, session.busy) { parts.onBack?.invoke() }
     }
 }

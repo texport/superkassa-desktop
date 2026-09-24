@@ -22,6 +22,7 @@ import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.users.model.UserRules
+import kz.mybrain.superkassa.presentation.words.users.pinProblem
 import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
 
 /**

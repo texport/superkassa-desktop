@@ -18,9 +18,9 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.journal.model.zReportId
 import kz.mybrain.superkassa.presentation.common.document.color
 import kz.mybrain.superkassa.presentation.common.period.text
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
+import kz.mybrain.superkassa.presentation.common.print.PrintFileName
 import kz.mybrain.superkassa.presentation.journal.PageOutcome
-import kz.mybrain.superkassa.presentation.print.preview.PrintActions
-import kz.mybrain.superkassa.presentation.print.preview.PrintFileName
 import kz.mybrain.superkassa.strings.api.journal.ShiftJournalTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 

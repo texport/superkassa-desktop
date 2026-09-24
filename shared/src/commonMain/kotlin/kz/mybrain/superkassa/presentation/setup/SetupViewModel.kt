@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.domain.setup.model.EnrollOutcome
 import kz.mybrain.superkassa.domain.setup.model.KkmSetupDraft
 import kz.mybrain.superkassa.domain.signin.model.Pin
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetCalls
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.shown
