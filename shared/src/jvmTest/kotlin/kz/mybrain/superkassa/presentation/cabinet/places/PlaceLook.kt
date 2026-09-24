@@ -110,7 +110,7 @@ internal fun PlacesLook(
             )
             VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             val chosen = places.firstOrNull { it.id == open }
-            val pane = Modifier.weight(1f).padding(start = Spacing.screen)
+            val pane = Modifier.weight(1f).padding(start = Spacing.fieldGap)
             if (chosen == null) {
                 EmptyState(
                     icon = AppIcons.newKkm,

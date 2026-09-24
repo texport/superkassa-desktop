@@ -114,7 +114,7 @@ private fun SalesHead(
     sort: SalesSort,
     onSort: (SalesOrder) -> Unit
 ) {
-    TableLine(widths, Modifier.padding(vertical = Spacing.hairline)) { index ->
+    TableLine(widths, Modifier.padding(vertical = Spacing.inline)) { index ->
         val column = columns[index]
         val title = salesColumnTitle(column, kind, texts)
         val order = salesSortOrder(column)
@@ -129,7 +129,7 @@ private fun SalesHead(
 /** Строка сводки: чем торговали и когда эта касса выходила на связь. */
 @Composable
 private fun SalesRow(widths: TableWidths, columns: List<SalesColumn>, row: SalesUnit) {
-    TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { index ->
+    TableLine(widths, Modifier.padding(vertical = Spacing.itemGap)) { index ->
         val column = columns[index]
         val value = salesCellValue(column, row)
         when {
@@ -154,7 +154,7 @@ private fun tableColumn(column: SalesColumn, kind: SalesRows): TableColumn = whe
     SalesColumn.RetailPlace -> TableColumn(min = TableColumns.name)
     SalesColumn.RegistrationNumber -> TableColumn(min = TableColumns.number, weight = 0f, numeric = true)
     SalesColumn.Receipts -> TableColumn(min = TableColumns.count, weight = NUMBER_SHARE, numeric = true)
-    SalesColumn.Revenue, SalesColumn.Net -> TableColumn(min = AnalyticsLayout.networkSum, weight = NUMBER_SHARE, numeric = true)
+    SalesColumn.Revenue, SalesColumn.Net -> NETWORK_SUM
     SalesColumn.LastContact -> TableColumn(min = TableColumns.moment, weight = 0f)
 }
 
@@ -179,7 +179,7 @@ private fun SortCell(
     journal: HistoryJournalTexts,
     onSort: (SalesOrder) -> Unit
 ) {
-    TextButton(onClick = { onSort(column) }, contentPadding = PaddingValues(Spacing.hairline)) {
+    TextButton(onClick = { onSort(column) }, contentPadding = PaddingValues(Spacing.inline)) {
         Text(text = title, style = MaterialTheme.typography.labelMedium, maxLines = 2, textAlign = TextAlign.End)
         if (sort.by == column) {
             Icon(
@@ -193,3 +193,6 @@ private fun SortCell(
 
 /** Строк в одном показе таблицы. */
 private const val PAGE = 10
+
+/** Столбец суммы по сети: число в миллиарды тенге. */
+private val NETWORK_SUM = TableColumn(min = AnalyticsLayout.networkSum, weight = NUMBER_SHARE, numeric = true)

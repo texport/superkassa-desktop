@@ -14,15 +14,18 @@ import kz.mybrain.superkassa.data.analytics.MapsNotOnAndroid
 import kz.mybrain.superkassa.data.analytics.ProcessMapMemory
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
+import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
 import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
 import kz.mybrain.superkassa.data.local.AndroidChoices
 import kz.mybrain.superkassa.data.local.AndroidWorkplace
+import kz.mybrain.superkassa.data.local.ForegroundActivity
 import kz.mybrain.superkassa.data.log.LogcatBook
 import kz.mybrain.superkassa.data.log.LogcatJournal
 import kz.mybrain.superkassa.data.print.AndroidPrintChoices
-import kz.mybrain.superkassa.data.print.NoPrintOut
+import kz.mybrain.superkassa.data.print.SystemDialogPrintOut
 import kz.mybrain.superkassa.data.releases.StoreReleases
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
@@ -34,6 +37,7 @@ import kz.mybrain.superkassa.presentation.settings.SettingsPorts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
 import kz.mybrain.superkassa.presentation.strings.common.Language
+import java.io.File
 
 /**
  * Точка сборки кассы на Android — единственное место, знающее все три слоя.
@@ -58,8 +62,12 @@ class SuperkassaApp : Application() {
     lateinit var container: Deferred<AppContainer>
         private set
 
+    /** Активность на экране: над ней открываются диалог печати и окно «Сохранить». */
+    private lateinit var screen: ForegroundActivity
+
     override fun onCreate() {
         super.onCreate()
+        screen = ForegroundActivity(this)
         kassa = scope.async(Dispatchers.IO) { open() }
         container = scope.async(Dispatchers.IO) { assemble(kassa.await()) }
         BackgroundWork.schedule(this)
@@ -75,7 +83,7 @@ class SuperkassaApp : Application() {
         val updates = StoreReleases()
         val workplace = AndroidWorkplace(this)
         val look = WorkplaceLook(workplace)
-        val log = LogcatBook()
+        val log = LogcatBook(File(filesDir, LOG_DIRECTORY).path, screen)
         return AppContainer(
             kassa = EmbeddedKassa(kassa.api),
             signIn = SignIn(),
@@ -86,6 +94,7 @@ class SuperkassaApp : Application() {
             // Кабинета на Android нет: подписи ЭЦП здесь пока нет. Мастер
             // подключения без кабинета ведёт ручной путь — идентификатор и токен.
             areas = AreaPorts(
+                kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
                 journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
                 settings = settingsPorts(kassa, updates, workplace, log),
                 analytics = analyticsPorts(),
@@ -104,9 +113,9 @@ class SuperkassaApp : Application() {
         logBook = log,
         releases = updates,
         updateMemory = updates,
-        printOut = NoPrintOut(),
+        printOut = SystemDialogPrintOut(screen),
         printChoices = AndroidPrintChoices(this),
-        coreSettings = EmbeddedSettings(kassa.settings),
+        coreSettings = EmbeddedSettings(kassa.settings, KassaSource.directory(this).path),
         workplace = AndroidChoices(workplace)
     )
 
@@ -118,3 +127,6 @@ class SuperkassaApp : Application() {
 }
 
 private const val TAG = "Superkassa"
+
+/** Каталог файлов журнала в памяти приложения — как `log` рядом с настройками на компьютере. */
+private const val LOG_DIRECTORY = "log"

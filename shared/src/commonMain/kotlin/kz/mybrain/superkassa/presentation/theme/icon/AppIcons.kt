@@ -48,8 +48,10 @@ import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.BugReport
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Dialpad
 import androidx.compose.material.icons.outlined.EventAvailable
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.NewReleases
 import androidx.compose.material.icons.outlined.Password
@@ -199,6 +201,12 @@ object AppIcons {
 
     /** Акцизная марка на позиции чека. */
     val excise: ImageVector = Icons.Outlined.QrCodeScanner
+
+    /** Поле штрихкода: включить буквы — у маркировочного кода они бывают. */
+    val keyboardLetters: ImageVector = Icons.Outlined.Keyboard
+
+    /** Поле штрихкода: вернуть цифровую клавиатуру. */
+    val keyboardDigits: ImageVector = Icons.Outlined.Dialpad
 
     /** Доставка чека покупателю: SMS, мессенджер, почта. */
     val receiptDelivery: ImageVector = Icons.AutoMirrored.Outlined.Send

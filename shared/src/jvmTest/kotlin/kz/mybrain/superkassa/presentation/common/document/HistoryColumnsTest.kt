@@ -127,6 +127,7 @@ class HistoryColumnsTest {
         const val WIDE = 1600
         const val TALL = 200
         const val BILLIONS = 999_999_999_999L
+
         /** Признак по спецификации — uint32: не длиннее десяти цифр. */
         const val SIGN = "4294967295"
         const val NUMBER = "9999999999"

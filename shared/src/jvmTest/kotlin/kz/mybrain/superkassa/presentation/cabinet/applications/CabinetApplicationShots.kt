@@ -60,7 +60,7 @@ class CabinetApplicationShots {
         number: String? = "000000010001",
         here: KkmResponse? = null
     ) = stage.Window {
-        Column(Modifier.fillMaxWidth().padding(Spacing.screen), Arrangement.spacedBy(Spacing.snug)) {
+        Column(Modifier.fillMaxWidth().padding(Spacing.fieldGap), Arrangement.spacedBy(Spacing.fieldGap)) {
             val view = viewOf(register(status, number), here)
             RegistrationActionsBlock(stage.cabinet.cabinet, Language.Ru, stage.texts, view) {}
         }
@@ -96,7 +96,8 @@ class CabinetApplicationShots {
      */
     @Test
     fun `отказ по заявлению читается под кнопкой подачи`() {
-        val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))
+        val stage =
+            stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))
         RenderProbe(width = CARD_WIDTH, height = CARD_HEIGHT, content = {
             Block(stage, "DRAFT", number = null)
         }).use { probe ->
@@ -154,7 +155,7 @@ class CabinetApplicationShots {
     fun `регистрационной карты нет и карта с версиями`() {
         val missing = CabinetStage { StubReply("{}") }
         val absent = shot("card-missing", CARD_WIDTH, CARD_HEIGHT) {
-            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                 missing.Window {
                     RegistrationCardBlock(missing.cabinet.cabinet, missing.texts, register("DRAFT", number = null))
                 }
@@ -169,7 +170,7 @@ class CabinetApplicationShots {
             }
         }
         val present = shot("card-versions", CARD_WIDTH, CARD_HEIGHT) {
-            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                 issued.Window { RegistrationCardBlock(issued.cabinet.cabinet, issued.texts, register("REGISTERED")) }
             }
         }

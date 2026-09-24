@@ -87,8 +87,8 @@ private fun BasketSummary(basket: Basket) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = Spacing.normal, vertical = Spacing.snug),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            .padding(horizontal = Spacing.cardPadding, vertical = Spacing.fieldGap),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Сумма позиций стоит в денежном блоке справа и повторять её здесь

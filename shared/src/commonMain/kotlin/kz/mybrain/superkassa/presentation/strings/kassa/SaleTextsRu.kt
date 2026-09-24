@@ -81,5 +81,7 @@ internal val saleTextsRu = SaleTexts(
     positionSum = "Сумма",
     positionNtin = "НТИН",
     positionStornoMarked = "Строка отменена и уменьшит итог чека",
-    positionClose = "Закрыть"
+    positionClose = "Закрыть",
+    barcodeLetters = "Набрать буквы",
+    barcodeDigits = "Набрать цифры"
 )

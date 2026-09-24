@@ -35,7 +35,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 internal fun ReceiptVatFields(sale: SaleUiState, actions: VatActions) {
     val extra = LocalSaleTexts.current
     val scope = sale.form.vat.scopeAt(sale.vatPayer)
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         Text(LocalStrings.current.sale.vat, style = MaterialTheme.typography.labelLarge)
         ChoiceSegments(
             options = VatScope.entries,

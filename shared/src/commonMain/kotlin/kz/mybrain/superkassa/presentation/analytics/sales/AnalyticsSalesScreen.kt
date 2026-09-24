@@ -79,7 +79,7 @@ fun AnalyticsSales(
     val language = LocalLanguage.current
     val journal = remember(language) { journalTexts(language).history }
     val enums = remember(language) { stringsOf(language).enums }
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         SalesHead(state, texts, journal, model::choose, model::refresh)
         ScreenSlot(salesState(state.reading, texts, model::refresh), Modifier.weight(1f)) {
             val view = state.reading.value ?: return@ScreenSlot
@@ -124,7 +124,7 @@ private fun SalesHead(
     JournalPeriodBar(journal, state.period, state.reading.loading, onPeriod)
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         val span = state.reading.value?.range

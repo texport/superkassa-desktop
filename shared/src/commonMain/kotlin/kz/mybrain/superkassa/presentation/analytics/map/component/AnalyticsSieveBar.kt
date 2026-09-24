@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.presentation.analytics.map.MapSieve
 import kz.mybrain.superkassa.presentation.analytics.map.SievePlace
 import kz.mybrain.superkassa.presentation.cabinet.recordTitle
 import kz.mybrain.superkassa.presentation.common.field.SearchField
-import kz.mybrain.superkassa.presentation.common.field.fieldWidth
+import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
 import kz.mybrain.superkassa.presentation.common.picker.MenuChip
 import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
@@ -39,8 +39,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 fun AnalyticsSieveBar(sieve: MapSieve, places: List<SievePlace>, texts: AnalyticsTexts, onSieve: (MapSieve) -> Unit) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         // Плашки ниже строки поиска, и по верхнему краю они висели бы
         // над её подписью: ряд читается как один, а не как два уровня.
         itemVerticalAlignment = Alignment.CenterVertically
@@ -52,13 +52,15 @@ fun AnalyticsSieveBar(sieve: MapSieve, places: List<SievePlace>, texts: Analytic
             value = sieve.needle,
             label = texts.searchKkmLabel,
             onChange = { onSieve(sieve.copy(needle = it)) },
-            modifier = Modifier.fieldWidth(texts.searchKkmLabel, Sizes.fieldSearch),
+            // Поле и плашки делят строку: ряд отбора выходит одной ширины
+            // со строкой источника над ним, а поле не торчит шире плашек.
+            modifier = Modifier.weight(1f).fieldMinWidth(texts.searchKkmLabel, Sizes.fieldSearch),
             hint = texts.searchKkm,
             clearLabel = texts.sieve.clear
         )
         Marks(sieve, texts, onSieve)
-        Records(sieve, texts, onSieve)
-        if (places.isNotEmpty()) Places(sieve, places, texts, onSieve)
+        Records(sieve, texts, onSieve, Modifier.weight(1f))
+        if (places.isNotEmpty()) Places(sieve, places, texts, onSieve, Modifier.weight(1f))
         if (sieve.set) {
             TextButton(onClick = { onSieve(MapSieve()) }) { Text(texts.sieve.clear) }
         }
@@ -90,13 +92,14 @@ private fun Marks(sieve: MapSieve, texts: AnalyticsTexts, onSieve: (MapSieve) ->
  * обещали бы, что признаки складываются, а они друг друга исключают.
  */
 @Composable
-private fun Records(sieve: MapSieve, texts: AnalyticsTexts, onSieve: (MapSieve) -> Unit) {
+private fun Records(sieve: MapSieve, texts: AnalyticsTexts, onSieve: (MapSieve) -> Unit, modifier: Modifier) {
     val chosen = sieve.record
     MenuChip(
         value = recordTitle(chosen, texts.sieve),
         options = listOf(null) + KkmRecord.entries,
         title = { recordTitle(it, texts.sieve) },
         chosen = chosen != null,
+        modifier = modifier,
         onSelect = { onSieve(sieve.copy(record = it)) }
     )
 }
@@ -108,13 +111,20 @@ private fun Records(sieve: MapSieve, texts: AnalyticsTexts, onSieve: (MapSieve) 
  * из списка здесь тот же, что и у отбора по смене в журнале кассы.
  */
 @Composable
-private fun Places(sieve: MapSieve, places: List<SievePlace>, texts: AnalyticsTexts, onSieve: (MapSieve) -> Unit) {
+private fun Places(
+    sieve: MapSieve,
+    places: List<SievePlace>,
+    texts: AnalyticsTexts,
+    onSieve: (MapSieve) -> Unit,
+    modifier: Modifier
+) {
     val chosen = places.firstOrNull { it.id == sieve.place }
     MenuChip(
         value = chosen?.name ?: texts.allPlaces,
         options = listOf(null) + places,
         title = { it?.name ?: texts.allPlaces },
         chosen = chosen != null,
+        modifier = modifier,
         onSelect = { onSieve(sieve.copy(place = it?.id)) }
     )
 }

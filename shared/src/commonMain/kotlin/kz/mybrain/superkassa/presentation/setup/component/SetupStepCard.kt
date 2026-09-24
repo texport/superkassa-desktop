@@ -44,8 +44,8 @@ fun SetupStepCard(
 ) {
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
         ) {
             StepHeader(title, texts, done, ready)
             Text(
@@ -65,7 +65,7 @@ fun SetupStepCard(
 private fun StepHeader(title: String, texts: SetupTexts, done: Boolean, ready: Boolean) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (done) {

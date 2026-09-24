@@ -36,7 +36,7 @@ fun ShiftsScreen(state: ShiftsUiState, actions: ShiftsActions, print: PrintActio
     val opened = state.opened
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         Text(
             text = journal.hint,

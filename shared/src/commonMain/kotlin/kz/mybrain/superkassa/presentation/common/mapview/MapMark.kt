@@ -133,7 +133,7 @@ private fun MarkBody(count: Int) {
     Box(
         modifier = Modifier
             .defaultMinSize(minWidth = side, minHeight = side)
-            .padding(horizontal = Spacing.tight),
+            .padding(horizontal = Spacing.itemGap),
         contentAlignment = Alignment.Center
     ) {
         if (count <= 1) {

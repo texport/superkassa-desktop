@@ -103,7 +103,10 @@ class CabinetMessageTest {
 
     @Test
     fun `истёкший доступ и отказ подписи говорят по-русски`() {
-        assertEquals(texts.sessionExpired, assertIs<Message.Refusal>(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)
+        assertEquals(
+            texts.sessionExpired,
+            assertIs<Message.Refusal>(cabinetMessage(CabinetProblem.SessionExpired, texts)).text
+        )
         assertEquals(texts.noNcaLayer, assertIs<Message.Refusal>(cabinetMessage(CabinetProblem.NoNcaLayer, texts)).text)
     }
 

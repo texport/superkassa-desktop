@@ -127,6 +127,9 @@ data class SettingStrings(
     /** Хозяйства настроек: где именно изменится выбранное. */
     val householdWorkplace: String,
     val householdKkm: String,
+    val householdCabinet: String,
+    /** Обмен кассы с БФД на этой машине: сроки ожидания и доставка чека. */
+    val groupExchange: String,
     /** Как печатает эта касса: форма на узле, принтер на этой машине. */
     val groupPrinting: String,
     /** Настройки самой кассы: их принимает узел и только в режиме программирования. */

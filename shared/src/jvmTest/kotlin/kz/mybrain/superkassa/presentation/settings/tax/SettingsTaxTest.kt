@@ -85,7 +85,7 @@ class SettingsTaxTest {
         val tax = SettingsScene.board(desk, queued = queued).tax
         return KassaScene.shot(name, width = WIDTH, height = HEIGHT) {
             Surface(Modifier.fillMaxSize()) {
-                Column(Modifier.padding(Spacing.screen)) { TaxSettingsCard(tax, object : TaxSettingsActions {}) }
+                Column(Modifier.padding(Spacing.fieldGap)) { TaxSettingsCard(tax, object : TaxSettingsActions {}) }
             }
         }
     }

@@ -74,7 +74,7 @@ private fun LazyListScope.section(title: String, tasks: List<QueueItemResponse>,
             text = "$title: ${tasks.size}",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = Spacing.normal, vertical = Spacing.snug)
+            modifier = Modifier.padding(horizontal = Spacing.cardPadding, vertical = Spacing.fieldGap)
         )
     }
     itemsIndexed(tasks) { at, task -> QueueRow(task, words, stripedAt(at)) }
@@ -108,7 +108,7 @@ private fun QueueSupport(
     journal: QueueJournalTexts,
     language: String
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         Text(attemptsText(task, state, texts, journal), style = MaterialTheme.typography.bodySmall)
         // Причина — на языке кассира и в три строки, а не сплошной стеной:
         // с каждой неудачей касса заворачивает прежний текст в новый,

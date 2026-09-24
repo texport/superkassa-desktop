@@ -19,12 +19,8 @@ import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.unit.Dp
 import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
 import kz.mybrain.superkassa.presentation.common.list.ColumnScrollbar
@@ -37,9 +33,9 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 /**
  * Рельс разделов.
  *
- * Ширина считается по самой длинной подписи набора: у Material она
- * постоянная, и «Новая касса» упиралась в край окна. Считается так же,
- * как ширина сегментов, — одним правилом на весь интерфейс.
+ * Ширина постоянная, как у Material 3 ([Sizes.rail]): прежде она считалась
+ * по самой длинной подписи и плавала от роли и языка — содержимое раздела
+ * начиналось то со 110, то со 138 точек. Длинная подпись переносится.
  *
  * Разделы прокручиваются, а версия под ними стоит на месте: администратору
  * их десяток, а окно кассы бывает ростом в 700 точек — на ноутбуке и на
@@ -65,41 +61,21 @@ internal fun SectionRail(
     footer: @Composable ColumnScope.() -> Unit,
     onPick: (Section) -> Unit
 ) {
-    val texts = LocalStrings.current
     // В компактном окне рельс всегда свёрнут: подписи съели бы треть ширины.
     // Выбор кассира при этом не трогается — шире окно, и рельс снова такой,
     // каким его оставили.
     val compact = LocalWindowClass.current.width == WidthClass.Compact
     val folded = collapsed || compact
-    val railWidth = railWidthFor(sections.map { it.title(texts.sections) })
     NavigationRail(
         containerColor = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.width(if (folded) Sizes.rail else maxOf(railWidth, Sizes.rail)),
+        modifier = Modifier.width(Sizes.rail),
         header = { if (!compact) RailToggle(collapsed, onToggle) }
     ) {
         RailSections(sections, current, folded, onPick)
         // Прокрученные разделы кончаются над версией с зазором: вплотную
         // обрезанная подпись последнего раздела читалась наехавшей на номер.
-        Spacer(Modifier.height(Spacing.normal))
+        Spacer(Modifier.height(Spacing.cardGap))
         footer()
-    }
-}
-
-/**
- * Ширина развёрнутого рельса по самой длинной подписи.
- *
- * Подписи меряются один раз на набор и язык, а не на каждую перерисовку:
- * при растягивании окна разметка пересчитывается десятки раз в секунду,
- * и раскладка шрифта на каждый такой проход — работа впустую.
- */
-@Composable
-private fun railWidthFor(titles: List<String>): Dp {
-    val measurer = rememberTextMeasurer()
-    val labelStyle = MaterialTheme.typography.labelMedium
-    val density = LocalDensity.current
-    return remember(titles, labelStyle, density) {
-        val widest = titles.maxOfOrNull { measurer.measure(it, labelStyle).size.width } ?: 0
-        with(density) { widest.toDp() } + Spacing.roomy * 2
     }
 }
 
@@ -122,7 +98,7 @@ private fun ColumnScope.RailSections(
         Column(
             modifier = Modifier.fillMaxSize().verticalScroll(scroll),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             RailItems(sections, current, folded, onPick)
         }

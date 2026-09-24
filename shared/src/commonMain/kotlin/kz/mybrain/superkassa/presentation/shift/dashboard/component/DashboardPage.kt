@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -19,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
@@ -40,16 +39,16 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 internal fun DashboardPage(top: @Composable ColumnScope.() -> Unit, lists: @Composable (Modifier) -> Unit) {
     val density = LocalDensity.current
-    var topHeight by remember { mutableStateOf(0.dp) }
+    var topHeight by remember { mutableStateOf(Sizes.unmeasured) }
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val rest: Dp = maxHeight - Spacing.screen * 2 - Spacing.normal - topHeight
+        val rest: Dp = maxHeight - Spacing.cardGap - topHeight
         Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(Spacing.screen),
-            verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
         ) {
             Column(
                 modifier = Modifier.onSizeChanged { topHeight = with(density) { it.height.toDp() } },
-                verticalArrangement = Arrangement.spacedBy(Spacing.normal),
+                verticalArrangement = Arrangement.spacedBy(Spacing.cardGap),
                 content = top
             )
             lists(Modifier.fillMaxWidth().height(max(rest, KassaLayout.dashboardListsMin)))

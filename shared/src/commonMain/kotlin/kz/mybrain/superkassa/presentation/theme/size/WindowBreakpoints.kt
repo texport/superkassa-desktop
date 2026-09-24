@@ -1,7 +1,5 @@
 package kz.mybrain.superkassa.presentation.theme.size
 
-import androidx.compose.ui.unit.dp
-
 /**
  * Пороги классов окна по Material 3.
  *
@@ -16,20 +14,20 @@ import androidx.compose.ui.unit.dp
 object WindowBreakpoints {
 
     /** С этой ширины окно среднее: планшет стоймя, узкое окно рядом с другим. */
-    val mediumWidthFrom = 600.dp
+    val mediumWidthFrom = 150.steps
 
     /** С этой ширины окно расширенное: планшет лёжа, ноутбук, окно кассы по умолчанию. */
-    val expandedWidthFrom = 840.dp
+    val expandedWidthFrom = 210.steps
 
     /** С этой ширины окно большое: настольный монитор. */
-    val largeWidthFrom = 1200.dp
+    val largeWidthFrom = 300.steps
 
     /** С этой ширины окно очень большое: широкий и внешний монитор. */
-    val extraLargeWidthFrom = 1600.dp
+    val extraLargeWidthFrom = 400.steps
 
     /** С этой высоты окно среднее по высоте: ниже — телефон лёжа. */
-    val mediumHeightFrom = 480.dp
+    val mediumHeightFrom = 120.steps
 
     /** С этой высоты окно высокое: планшет стоймя, монитор. */
-    val expandedHeightFrom = 900.dp
+    val expandedHeightFrom = 225.steps
 }

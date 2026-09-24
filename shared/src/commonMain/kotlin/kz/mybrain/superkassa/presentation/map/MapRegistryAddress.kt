@@ -57,7 +57,7 @@ internal fun RegistryAddress(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         parts.registry.Search(
             query = pick.query,

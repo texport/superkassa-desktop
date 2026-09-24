@@ -5,8 +5,10 @@ import io.github.texport.superkassa.testing.api.kassa.TestBench
 import kotlinx.coroutines.Dispatchers
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
+import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
 import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.log.port.Journal
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
@@ -16,10 +18,10 @@ import kz.mybrain.superkassa.kassa.appKassa
 import kz.mybrain.superkassa.presentation.analytics.analyticsPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
-import kz.mybrain.superkassa.presentation.login.loginModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
 import kz.mybrain.superkassa.presentation.strings.common.Language
+import kz.mybrain.superkassa.presentation.users.signin.loginModel
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -47,7 +49,7 @@ class SettingsBench : AutoCloseable {
     val signIn = SignIn()
     val journal = RecordingJournal()
     val choices = MemoryChoices()
-    val coreSettings = EmbeddedSettings(bench.superkassa.settings, Dispatchers.Unconfined)
+    val coreSettings = EmbeddedSettings(bench.superkassa.settings, io = Dispatchers.Unconfined)
     val app = AppContainer(
         kassa = EmbeddedKassa(bench.api, Dispatchers.Unconfined),
         signIn = signIn,
@@ -55,6 +57,7 @@ class SettingsBench : AutoCloseable {
         look = WorkplaceLook(MemoryLook()),
         talk = Talk(notices, journal) { Language.Ru },
         areas = AreaPorts(
+            kassa = KassaPorts(EmbeddedDeliverySetup(bench.superkassa.settings, Dispatchers.Unconfined)),
             journal = JournalPorts(EmbeddedDeliveries(bench.superkassa.delivery, Dispatchers.Unconfined)),
             settings = settingsPorts().copy(coreSettings = coreSettings, workplace = choices),
             analytics = analyticsPorts()

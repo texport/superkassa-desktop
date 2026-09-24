@@ -41,11 +41,12 @@ class TaxSettingsViewModel(private val cases: TaxCases, private val talk: Talk) 
         follow(busy.active) { on -> screen.update { it.copy(busy = on) } }
     }
 
-    override fun chooseRegime(code: String) = screen.update {
-        it.copy(regimeDraft = code, vatDraft = if (code == TaxRegime.NO_VAT.name) VatGroup.NO_VAT.name else it.vatDraft)
+    override fun chooseRegime(code: String) = screen.update { now ->
+        val noVat = code == TaxRegime.NO_VAT.name
+        now.drafted { it.copy(regime = code, vat = if (noVat) VatGroup.NO_VAT.name else it.vat) }
     }
 
-    override fun chooseVat(code: String) = screen.update { it.copy(vatDraft = code) }
+    override fun chooseVat(code: String) = screen.update { now -> now.drafted { it.copy(vat = code) } }
 
     /**
      * Отправляет обе настройки одним обращением.
@@ -60,7 +61,7 @@ class TaxSettingsViewModel(private val cases: TaxCases, private val talk: Talk) 
         whileBusy(busy) {
             val texts = stringsOf(talk.language()).settings
             cases.save(regime, group).shown(texts.taxSettings, "update tax settings", talk) ?: return@whileBusy
-            screen.update { it.copy(regimeDraft = null, vatDraft = null) }
+            screen.update { it.saved() }
             talk.done(texts.settingsSaved)
         }
     }
@@ -85,10 +86,17 @@ class TaxSettingsViewModel(private val cases: TaxCases, private val talk: Talk) 
         }
     }
 
-    /** Касса сменилась: выбранное для прежней к новой не относится. */
+    /**
+     * Касса сменилась: выбранное для прежней к новой не относится, но
+     * и не теряется — вернувшись к ней, владелец видит своё выбранное.
+     */
     private suspend fun onKkm(kkm: KkmResponse?) {
         screen.update { now ->
-            if (now.kkm?.kkmId == kkm?.kkmId) now.copy(kkm = kkm) else TaxSettingsUiState(kkm = kkm, busy = busy.now)
+            if (now.kkm?.kkmId == kkm?.kkmId) {
+                now.copy(kkm = kkm)
+            } else {
+                TaxSettingsUiState(kkm = kkm, drafts = now.drafts, busy = busy.now)
+            }
         }
         if (kkm != null && !screen.value.dictionariesRead) readDictionaries()
     }

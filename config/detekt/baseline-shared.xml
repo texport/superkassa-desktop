@@ -36,7 +36,7 @@
     <ID>LargeClass:CabinetTexts.kt$CabinetTexts</ID>
     <ID>LongFile:AnalyticsTexts.kt$kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts.kt</ID>
     <ID>LongFile:AppIcons.kt$kz.mybrain.superkassa.presentation.theme.icon.AppIcons.kt</ID>
-    <ID>LongFile:BigListRenderTest.kt$kz.mybrain.superkassa.BigListRenderTest.kt</ID>
+    <ID>LongFile:BigListRenderTest.kt$kz.mybrain.superkassa.presentation.cabinet.places.BigListRenderTest.kt</ID>
     <ID>LongFile:CabinetTexts.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts.kt</ID>
     <ID>LongFile:CabinetTextsEn.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsEn.kt</ID>
     <ID>LongFile:CabinetTextsKk.kt$kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTextsKk.kt</ID>
@@ -45,7 +45,7 @@
     <ID>LongFile:JournalTexts.kt$kz.mybrain.superkassa.presentation.strings.journal.JournalTexts.kt</ID>
     <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.presentation.journal.KassaJournalLookTest.kt</ID>
     <ID>LongFile:KassaProbe.kt$kz.mybrain.superkassa.KassaProbe.kt</ID>
-    <ID>LongFile:PreviewTapeReachTest.kt$kz.mybrain.superkassa.PreviewTapeReachTest.kt</ID>
+    <ID>LongFile:PreviewTapeReachTest.kt$kz.mybrain.superkassa.presentation.print.preview.component.PreviewTapeReachTest.kt</ID>
     <ID>LongFile:RenderProbe.kt$kz.mybrain.superkassa.RenderProbe.kt</ID>
     <ID>LongFile:ServiceStringsEn.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsEn.kt</ID>
     <ID>LongFile:ServiceStringsKk.kt$kz.mybrain.superkassa.presentation.strings.common.ServiceStringsKk.kt</ID>
@@ -61,7 +61,7 @@
     <ID>LongMethod:AnalyticsUnplaced.kt$@Composable fun AnalyticsKkmList( placed: List&lt;PlacedKkm&gt;, unplaced: List&lt;UnplacedKkm&gt;, chosen: String?, source: PositionSource, texts: AnalyticsTexts, onChoose: (PlacedKkm) -&gt; Unit, modifier: Modifier = Modifier, sieved: Boolean = false )</ID>
     <ID>LongMethod:AppTopBar.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun AppTopBar( title: String, subtitle: String? = null, subtitleKept: String? = null, badge: ImageVector? = null, onBack: (() -&gt; Unit)? = null, backLabel: String? = null, actions: @Composable RowScope.() -&gt; Unit )</ID>
     <ID>LongMethod:BasketView.kt$@Composable fun BasketCard( basket: Basket, modifier: Modifier = Modifier, onStorno: (Int) -&gt; Unit, onExcise: (Int) -&gt; Unit, onRemove: (Int) -&gt; Unit )</ID>
-    <ID>LongMethod:BusyButton.kt$@Composable fun BusyButton( text: String, busy: Boolean, enabled: Boolean = true, modifier: Modifier = Modifier, kind: FieldButtonKind = FieldButtonKind.Filled, contentPadding: PaddingValues = PaddingValues(horizontal = Spacing.normal, vertical = Spacing.snug), onClick: () -&gt; Unit )</ID>
+    <ID>LongMethod:BusyButton.kt$@Composable fun BusyButton( text: String, busy: Boolean, enabled: Boolean = true, modifier: Modifier = Modifier, kind: FieldButtonKind = FieldButtonKind.Filled, contentPadding: PaddingValues = PaddingValues(horizontal = Spacing.cardPadding, vertical = Spacing.fieldGap), onClick: () -&gt; Unit )</ID>
     <ID>LongMethod:CabinetContractTest.kt$CabinetContractTest$@Test fun `карточка и строка списка дают модель и точку одинаково`()</ID>
     <ID>LongMethod:CabinetDocumentsTest.kt$CabinetDocumentsTest$@Test fun `пусто за срок и пусто вовсе названы по-разному`()</ID>
     <ID>LongMethod:CabinetDoorShots.kt$CabinetDoorShots$@Test fun `отказные случаи входа показываются владельцу и все они разные`()</ID>

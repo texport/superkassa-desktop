@@ -40,7 +40,7 @@ internal fun PlaceDetail(
     val window by cabinet.cabinet.state.collectAsScreenState()
     val chosen = window.registers.firstOrNull { it.id == selection.register }
     val chosenPlace = window.places.firstOrNull { it.id == selection.place }
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         if (onBack != null) BackToPlaces(texts, onBack)
         val pane = Modifier.weight(1f).fillMaxWidth()
         when {

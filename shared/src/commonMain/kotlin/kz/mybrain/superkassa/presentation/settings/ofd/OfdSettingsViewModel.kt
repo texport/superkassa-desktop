@@ -17,6 +17,7 @@ import kz.mybrain.superkassa.presentation.common.model.whileBusy
 import kz.mybrain.superkassa.presentation.settings.refusedByOfd
 import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
 
 /** Что владелец делает со связью кассы. Пустые действия — для снимков вида. */
 interface OfdSettingsActions {
@@ -31,6 +32,8 @@ interface OfdSettingsActions {
     fun checkLink() = Unit
 
     fun askInfo() = Unit
+
+    fun askNextRequest() = Unit
 }
 
 /**
@@ -52,6 +55,9 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
             screen.update {
                 if (it.kkm?.kkmId == kkm?.kkmId) it.copy(kkm = kkm) else OfdSettingsUiState(kkm = kkm, busy = busy.now)
             }
+        }
+        follow(cases.observe().map { it.isAdmin }.distinctUntilChanged()) { admin ->
+            screen.update { it.copy(admin = admin) }
         }
         follow(busy.active) { on -> screen.update { it.copy(busy = on) } }
     }
@@ -88,6 +94,15 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
             val texts = stringsOf(talk.language()).settings
             val summary = cases.info(talk.language().code).shown(texts.ofdInfo, "read ofd info", talk)
             if (summary != null) screen.update { it.copy(summary = summary) }
+        }
+    }
+
+    /** Номер следующего запроса к БФД: им сверяют расхождения счёта запросов. */
+    override fun askNextRequest() {
+        whileBusy(busy) {
+            val texts = kassaFactsTexts(talk.language())
+            val number = cases.nextRequest().shown(texts.ofdAuth, "read ofd request number", talk)
+            if (number != null) screen.update { it.copy(nextRequest = number) }
         }
     }
 

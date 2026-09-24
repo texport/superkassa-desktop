@@ -45,7 +45,7 @@ fun PlaceCard(
     val language = LocalLanguage.current
     val model = placesViewModel(cabinet.cabinet)
     val window by cabinet.cabinet.state.collectAsScreenState()
-    ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         // Удаление стоит в конце карточки, а не в её заголовке: в узком
         // окне на заголовок приходились два значка подсказки и кнопка,
         // и «Убрать» выходило как «Убр / ать».
@@ -73,7 +73,7 @@ private fun PlaceFacts(texts: CabinetTexts, language: Language, place: RetailPla
     )
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         // Прочерк, а не пропуск строки: у точки без адреса строка
         // исчезала целиком, и владелец не видел, что адреса нет.
@@ -94,7 +94,10 @@ private fun PlaceFacts(texts: CabinetTexts, language: Language, place: RetailPla
 @Composable
 private fun PlaceRemoval(texts: CabinetTexts, place: RetailPlace, busy: Boolean, onRemove: () -> Unit) {
     val held = place.cashRegisterCount > 0
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         if (held) InfoTip(texts.placeRemoveBlocked)
         OutlinedButton(enabled = !held && !busy, onClick = onRemove) { Text(texts.remove) }
     }

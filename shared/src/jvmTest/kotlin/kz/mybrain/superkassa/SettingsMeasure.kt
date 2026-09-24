@@ -57,7 +57,9 @@ internal object SettingsMeasure {
      * того, что в ней стоит, плюс поля карточки.
      */
     fun extent(nodes: List<SemanticsNode>, from: Box): Int =
-        nodes.filter { SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null }
+        nodes.filter {
+            SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null
+        }
             .map { it.box() }
             .filter { it.left >= from.left && it.top > from.bottom && it.width > 0 }
             .maxOfOrNull { it.right - from.left } ?: 0
@@ -77,7 +79,10 @@ internal object SettingsMeasure {
     /** Надпись узла, стоящего в этом прямоугольнике: чтобы назвать вылезшее. */
     fun label(nodes: List<SemanticsNode>, at: Box): String =
         nodes.filter { it.words().isNotEmpty() }
-            .firstOrNull { val b = it.box(); b.left >= at.left && b.right <= at.right && b.top >= at.top && b.bottom <= at.bottom }
+            .firstOrNull {
+                val b = it.box()
+                b.left >= at.left && b.right <= at.right && b.top >= at.top && b.bottom <= at.bottom
+            }
             ?.words() ?: "?"
 
     /** Ширины одним рядом, по возрастанию и без повторов: для строки отчёта. */

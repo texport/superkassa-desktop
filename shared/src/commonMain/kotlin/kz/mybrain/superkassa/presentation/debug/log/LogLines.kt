@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
+import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
+import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
 import kz.mybrain.superkassa.presentation.common.list.ScrollableList
 import kz.mybrain.superkassa.presentation.common.state.EmptyState
 import kz.mybrain.superkassa.presentation.strings.debug.DebugTexts
@@ -59,42 +61,53 @@ internal fun LogLines(entries: List<LogEntry>, texts: DebugTexts, modifier: Modi
  */
 @Composable
 private fun LogRow(entry: LogEntry, texts: DebugTexts) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.hairline)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = Spacing.inline)) {
         LogHead(entry, texts)
         entry.body?.let { body ->
             Text(
                 text = body,
                 style = LogStyle.body,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(start = Spacing.roomy)
+                modifier = Modifier.padding(start = Spacing.blockPadding)
             )
         }
     }
 }
 
-/** Шапка строки: время, уровень, источник и текст записи. */
+/**
+ * Шапка строки: время, уровень, источник и текст записи.
+ *
+ * В окне шире телефона — колонками: уровень и источник стоят ровно друг
+ * под другом, и глаз бежит по ним вниз. На телефоне колонки постоянной
+ * ширины съедали строку, и текст записи вытягивался в столбик по слову:
+ * там время, уровень и источник стоят строкой над текстом.
+ */
 @Composable
 private fun LogHead(entry: LogEntry, texts: DebugTexts) {
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
-        Text(
-            text = entry.time,
-            style = LogStyle.line,
-            color = MaterialTheme.colorScheme.outline
-        )
-        Text(
-            text = texts.name(entry.level),
-            style = LogStyle.line,
-            color = colorOf(entry.level),
-            modifier = Modifier.width(Sizes.logLevelColumn)
-        )
-        Text(
-            text = texts.name(entry.source),
-            style = LogStyle.line,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.width(Sizes.logSourceColumn)
-        )
-        Text(text = entry.text, style = LogStyle.line)
+    if (LocalWindowClass.current.width == WidthClass.Compact) {
+        Column {
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)) { LogMarks(entry, texts, Modifier) }
+            Text(text = entry.text, style = LogStyle.line)
+        }
+    } else {
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)) {
+            LogMarks(entry, texts, Modifier.width(Sizes.logLevelColumn), Modifier.width(Sizes.logSourceColumn))
+            Text(text = entry.text, style = LogStyle.line)
+        }
     }
+}
+
+/** Время, уровень и источник записи; ширины колонок задаёт строка. */
+@Composable
+private fun LogMarks(entry: LogEntry, texts: DebugTexts, level: Modifier, source: Modifier = level) {
+    Text(text = entry.time, style = LogStyle.line, color = MaterialTheme.colorScheme.outline)
+    Text(text = texts.name(entry.level), style = LogStyle.line, color = colorOf(entry.level), modifier = level)
+    Text(
+        text = texts.name(entry.source),
+        style = LogStyle.line,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = source
+    )
 }
 
 /** Цвет уровня: роль схемы по смыслу, а не свой оттенок. */

@@ -48,16 +48,15 @@ class AnalyticsSalesViewModelTest {
     fun restoreMain() = Dispatchers.resetMain()
 
     @Test
-    fun `неделя до сегодня уходит кабинету и с прошлой не сравнивается`() {
+    fun `неделя до сегодня уходит кабинету и сравнивается с прошлой неделей`() {
         val model = model()
 
         model.follow(OWNER)
 
         val view = assertNotNull(model.state.value.reading.value)
         assertTrue(analytics.asked.any { it.startsWith("sales") && "from=2026-09-17, to=2026-09-23" in it })
-        assertTrue(view.running, "идущая неделя не отмечена идущей")
-        assertNull(view.previous)
-        assertFalse(analytics.asked.any { it.startsWith("summary") }, "за идущий срок спрошен прошлый")
+        assertEquals(10, view.previous?.receiptCount, "сводка по умолчанию без сравнения")
+        assertTrue(analytics.asked.any { it.startsWith("summary") && "from=2026-09-10, to=2026-09-16" in it })
         assertEquals(listOf("p1"), view.retailPlaces.map { it.id })
     }
 
@@ -69,7 +68,6 @@ class AnalyticsSalesViewModelTest {
         model.choose(JournalPeriod.of(JournalSpan.Week, today).shiftedBy(-1))
 
         val view = assertNotNull(model.state.value.reading.value)
-        assertFalse(view.running)
         assertEquals(10, view.previous?.receiptCount)
         assertTrue(analytics.asked.any { it.startsWith("summary") && "from=2026-09-03, to=2026-09-09" in it })
         assertEquals(1, analytics.asked.count { it.startsWith("places") }, "справочник точек перечитан")

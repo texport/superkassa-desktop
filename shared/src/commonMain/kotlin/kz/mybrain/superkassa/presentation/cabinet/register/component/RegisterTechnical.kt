@@ -68,7 +68,7 @@ fun TechnicalHeader(texts: CabinetTexts, work: StateAnswer, disagree: Boolean) {
 private fun AnswerBlock(answer: StateAnswer, texts: CabinetTexts, technical: TechnicalState?) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         Text(
             text = texts.headlineWords(answer.headline),
@@ -91,8 +91,8 @@ private fun AnswerBlock(answer: StateAnswer, texts: CabinetTexts, technical: Tec
 private fun ClaimRow(answer: StateAnswer, texts: CabinetTexts, technical: TechnicalState?) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
         answer.claims.forEach { claim ->
@@ -150,8 +150,8 @@ private fun TroubleRow(technical: TechnicalState?, texts: CabinetTexts) {
     if (troubles.isEmpty()) return
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         troubles.forEach { (text, tone) -> Chip(text, toneColor(tone)) }
     }

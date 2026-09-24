@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.CardColumns
@@ -40,7 +40,7 @@ fun SettingsScreen(board: SettingsBoard) {
         Text(
             text = texts.title,
             style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(start = Spacing.screen, end = Spacing.screen, top = Spacing.screen)
+            modifier = Modifier.padding(bottom = Spacing.fieldGap)
         )
         SettingsCards(board, Modifier.weight(1f))
     }
@@ -64,13 +64,15 @@ fun SettingsScreen(board: SettingsBoard) {
 fun SettingsCards(board: SettingsBoard, modifier: Modifier = Modifier) {
     val texts = LocalStrings.current.settings
     val hasRegister = board.kkm.kkm != null
-    val shown = settingsCards.filter { it.visible(hasRegister, board.kkm.admin, board.parts.hasCabinet) }
+    val parts = board.parts
+    val shown = settingsCards.filter { it.visible(hasRegister, board.kkm.admin, parts.hasCabinet, parts.hasReleases) }
     val households = SettingsHousehold.entries.filter { household ->
         shown.any { it.group.household == household }
     }
     // Владелец с выбранной кассой приходит в настройки к ней: открывать
     // ему вид приложения значит заставлять нажимать вкладку каждый раз.
-    var wanted by remember(hasRegister) {
+    // Выбранная вкладка переживает поворот экрана: он пересоздаёт окно.
+    var wanted by rememberSaveable(hasRegister) {
         mutableStateOf(if (hasRegister) SettingsHousehold.Kkm else SettingsHousehold.Workplace)
     }
     val chosen = wanted.takeIf { it in households } ?: households.first()
@@ -93,11 +95,11 @@ fun SettingsCards(board: SettingsBoard, modifier: Modifier = Modifier) {
 @Composable
 private fun HouseholdCards(board: SettingsBoard, shown: List<SettingsCard>) {
     val texts = LocalStrings.current.settings
-    ScrollableColumn(modifier = Modifier.fillMaxSize().padding(Spacing.screen), spacing = Spacing.roomy) {
+    ScrollableColumn(modifier = Modifier.fillMaxSize().padding(top = Spacing.fieldGap), spacing = Spacing.sectionGap) {
         SettingsGroup.entries.forEach { group ->
             val cards = shown.filter { it.group == group }
             if (cards.isEmpty()) return@forEach
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
                 group.title(texts)?.let { GroupTitle(it) }
                 CardColumns(Modifier.fillMaxWidth()) { cards.forEach { it.card(board) } }
             }
@@ -117,7 +119,7 @@ private fun HouseholdTabs(
     // постоянные вкладки делят ширину содержимого поровну.
     PrimaryTabRow(
         selectedTabIndex = households.indexOf(chosen),
-        modifier = Modifier.padding(horizontal = Spacing.screen).fillMaxWidth()
+        modifier = Modifier.fillMaxWidth()
     ) {
         households.forEach { household ->
             // По гайдлайну выбранная вкладка несёт цвет `primary`, невыбранная —

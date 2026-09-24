@@ -86,6 +86,7 @@ interface VatActions {
  */
 class SaleActions(
     val issue: () -> Unit = {},
+    val next: () -> Unit = {},
     val toggle: (SalePanel) -> Unit = {},
     val basket: BasketActions = object : BasketActions {},
     val entry: EntryActions = object : EntryActions {},
@@ -95,4 +96,15 @@ class SaleActions(
 
 /** Действия экрана, выполняемые этой моделью. */
 fun SaleViewModel.actions(): SaleActions =
-    SaleActions(::issue, ::togglePanel, basket, entry, form, payments)
+    SaleActions(::issue, ::nextReceipt, ::togglePanel, basket, entry, form, payments)
+
+/**
+ * Что сделать с пробитым чеком: показать на экране и распечатать.
+ *
+ * Печать — чужая продаже область, её подаёт каркас окна; без неё
+ * кнопок нет, а итог чека остаётся.
+ *
+ * @property show открыть чек по документу кассы; `null` — показывать негде.
+ * @property print распечатать чек по документу кассы; `null` — печатать негде.
+ */
+class ReceiptOutput(val show: ((String) -> Unit)? = null, val print: ((String) -> Unit)? = null)

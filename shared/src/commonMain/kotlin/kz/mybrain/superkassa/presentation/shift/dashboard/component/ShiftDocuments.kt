@@ -43,7 +43,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 fun ShiftDocuments(state: DashboardUiState, actions: DashboardActions, modifier: Modifier = Modifier) {
     val texts = LocalStrings.current
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         Text(texts.dashboard.shiftDocuments, style = MaterialTheme.typography.titleMedium)
         ScreenSlot(documentsState(state, texts.dashboard, actions::refresh), dense = true) {
             OutlinedCard(modifier = Modifier.fillMaxWidth()) {
@@ -118,7 +118,7 @@ private fun DocumentRow(
         support = { DocumentFacts(document) },
         trailing = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // Два действия, а не одно: «просмотр» показывает форму

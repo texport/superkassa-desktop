@@ -91,7 +91,8 @@ class MapRegistryAddressTest {
     }
 
     private fun clientReturning(body: String): CabinetWire {
-        val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }
+        val engine =
+            MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }
         val http = HttpClient(engine) {
             expectSuccess = false
             install(ContentNegotiation) { json(CabinetWire.json) }

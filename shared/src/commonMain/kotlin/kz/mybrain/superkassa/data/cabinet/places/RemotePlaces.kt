@@ -16,6 +16,9 @@ internal class RemotePlaces(private val places: PlacesApi) : CabinetPlaces {
     override suspend fun all(onPart: (List<RetailPlace>, Long) -> Unit): List<RetailPlace> =
         cabinetCall { places.all { part, total -> onPart(part.map { it.place() }, total) } }.map { it.place() }
 
+    override suspend fun search(text: String): List<RetailPlace> =
+        cabinetCall { places.search(text) }.items.map { it.place() }
+
     override suspend fun add(place: RetailPlaceCreate): RetailPlace {
         val create = BfdCreate(place.name, place.addressRef, place.latitude.toCabinet(), place.longitude.toCabinet())
         return cabinetCall { places.add(create) }.place()

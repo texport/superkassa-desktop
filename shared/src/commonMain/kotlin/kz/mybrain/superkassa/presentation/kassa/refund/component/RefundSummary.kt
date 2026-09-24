@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.kassa.refund.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +18,6 @@ import kz.mybrain.superkassa.domain.kassa.model.payment.SplitIssue
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundAmount
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundProblem
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
 import kz.mybrain.superkassa.presentation.common.button.FieldButtonKind
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
@@ -26,12 +25,13 @@ import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.keyboard.SystemBack
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.refund.RefundActions
+import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.strings.journal.ReturnJournalTexts
 import kz.mybrain.superkassa.presentation.strings.kassa.PaymentTexts
+import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 
@@ -75,38 +75,42 @@ internal fun RefundSummary(basis: FiscalDocumentResponse, journal: ReturnJournal
 /**
  * Сумма возврата: моноширинно и вправо, как и всякая сумма в кассе.
  *
- * Поле тянется на остаток ряда, а «Весь чек» уходит под него, когда
- * кассе тесно, — не сжимается до обрывка.
+ * Поле тянется на остаток ряда панели, «Весь чек» стоит рядом: края поля
+ * совпадают с краями полей оплаты под ним.
  */
 @Composable
 internal fun RefundAmountRow(journal: ReturnJournalTexts, draft: RefundDraft, actions: RefundActions) {
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
+        // Под полем — то, что о сумме нужно знать сейчас: почему она не годится,
+        // а когда годится и меньше чека — что вернётся только часть. При
+        // возврате всего чека пояснять нечего, и строка не отнимает высоту
+        // у панели в малом окне.
+        val checked = draft.checked
+        val rejected = checked as? RefundAmount.Rejected
+        val partial = (checked as? RefundAmount.Ready)?.let { it.tiyn < draft.total } == true
         MoneyField(
             value = draft.entered,
             label = journal.amount,
-            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldAmount),
-            isError = draft.checked is RefundAmount.Rejected,
+            modifier = Modifier.weight(1f),
+            isError = rejected != null,
+            supportingText = rejected?.let { problemText(it.reason, journal) }
+                ?: checkoutTexts(LocalLanguage.current).refundPart.takeIf { partial },
             onValueChange = actions::enter
         )
         FieldButton(journal.wholeReceipt, FieldButtonKind.Text, onClick = actions::wholeReceipt)
     }
 }
 
-/** Пояснение о частичном возврате и, если есть, отказ по введённой сумме. */
+/**
+ * Чем не годится разбиение оплат возврата, если не годится.
+ *
+ * О сумме — частичный возврат и отказ по ней — сказано под самим полем
+ * суммы: прежде пояснение стояло под «Добавить оплату» и читалось
+ * как правило оплат.
+ */
 @Composable
-internal fun RefundHints(
-    journal: ReturnJournalTexts,
-    checked: RefundAmount,
-    split: SplitIssue?,
-    payment: PaymentTexts
-) {
-    Text(
-        text = journal.partialHint,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
+internal fun RefundHints(split: SplitIssue?, payment: PaymentTexts) {
     val problem = when {
-        checked is RefundAmount.Rejected -> problemText(checked.reason, journal)
         split == SplitIssue.Empty -> payment.splitEmpty
         split == SplitIssue.Excess -> payment.splitExcess
         else -> null

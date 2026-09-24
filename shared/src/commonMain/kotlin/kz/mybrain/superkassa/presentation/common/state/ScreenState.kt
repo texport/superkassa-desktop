@@ -129,7 +129,7 @@ private fun TroubleState(
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap, Alignment.CenterVertically)
     ) {
         EmptyState(AppIcons.warning, trouble.title, trouble.hint, dense = dense)
         FilledTonalButton(onClick = retry) { Text(LocalStrings.current.common.retry) }

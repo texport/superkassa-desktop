@@ -17,9 +17,12 @@ import kz.mybrain.superkassa.presentation.theme.size.CardGrid
  * как в разделе во всю ширину. Две карточки на очень большом окне делят
  * ширину пополам, а не оставляют третий столбец пустым.
  *
- * Каждая карточка встаёт в самый короткий на этот момент столбец: высоты
- * у карточек разные, и по очереди слева направо под короткой оставалась бы
- * пустота высотой в соседнюю.
+ * Столбцы заполняются по порядку, сверху вниз: первые карточки — первым
+ * столбцом, следующие — вторым. Сколько карточек в столбце, решает их
+ * число, а не высота: прежде карточка вставала в самый короткий столбец,
+ * порядок читался «1, 4 / 2, 3», а нажатие, менявшее высоту одной карточки,
+ * переставляло соседние. Последовательное — шаги мастера, разделы
+ * компании — ставится не сюда, а одним столбцом.
  */
 @Composable
 fun CardColumns(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
@@ -31,9 +34,10 @@ fun CardColumns(modifier: Modifier = Modifier, content: @Composable () -> Unit) 
         val columns = minOf(byWindow, measurables.size, fitting).coerceAtLeast(1)
         val column = ((width - gap * (columns - 1)) / columns).coerceAtLeast(0)
         val tops = IntArray(columns)
-        val placed = measurables.map { measurable ->
+        val perColumn = (measurables.size + columns - 1) / columns
+        val placed = measurables.mapIndexed { index, measurable ->
             val card = measurable.measure(Constraints.fixedWidth(column))
-            val at = tops.indices.minBy { tops[it] }
+            val at = index / perColumn
             Stacked(card, at * (column + gap), tops[at]).also { tops[at] += card.height + gap }
         }
         val height = ((tops.maxOrNull() ?: 0) - gap).coerceAtLeast(0)

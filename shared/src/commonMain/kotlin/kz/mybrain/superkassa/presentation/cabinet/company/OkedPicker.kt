@@ -40,7 +40,7 @@ fun OkedPicker(
     // Раскрыт ли список и брался ли владелец за поле — дело самого поля:
     // при показе раздела список не раскрывается сам поверх карточки.
     var open by remember { mutableStateOf(false) }
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         OkedSuggestionsField(
             texts = texts,
             query = search.query,

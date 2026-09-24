@@ -42,7 +42,7 @@ internal class CabinetPlacesScene(
 ) {
     val texts = cabinetTexts(language)
     private val stage = CabinetStage(::reply)
-    private val parts = WindowParts(shellModel(stage.app), stage.cabinet.look, stage.cabinet)
+    private val parts = WindowParts(shellModel(stage.app), stage.look, stage.cabinet)
 
     /** Раздел открыт на вкладке точек, список прочитан; кадр — в файл. */
     fun open(name: String, check: (RenderProbe) -> Unit) {

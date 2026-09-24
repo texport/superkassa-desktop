@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.print.target
 
 import kz.mybrain.superkassa.domain.print.model.PrintKind
+import kz.mybrain.superkassa.domain.print.model.PrintRoute
 import kz.mybrain.superkassa.domain.print.port.PrintChoices
 
 /**
@@ -16,8 +17,12 @@ data class PrintTargetUiState(
     val printersRead: Boolean = false,
     val printer: String? = null,
     val copies: Int = 1,
-    val kind: PrintKind = PrintKind.Pdf
+    val kind: PrintKind = PrintKind.Pdf,
+    val route: PrintRoute = PrintRoute.Printers
 ) {
+    /** Печать идёт системным диалогом: принтер и копии выбирают в нём, а не здесь. */
+    val systemDialog: Boolean get() = route == PrintRoute.SystemDialog
+
     /** Сколько копий можно выбрать. */
     val copyChoices: List<Int> get() = (1..PrintChoices.MAX_COPIES).toList()
 
@@ -27,7 +32,7 @@ data class PrintTargetUiState(
      * За прилавком это обычное дело до подключения чекового; молчание здесь
      * кончалось отказом печати на первом же чеке, при покупателе.
      */
-    val noPrinters: Boolean get() = printersRead && printers.isEmpty()
+    val noPrinters: Boolean get() = printersRead && !systemDialog && printers.isEmpty()
 
     /**
      * Выбранного принтера в системе больше нет: его отключили или удалили.

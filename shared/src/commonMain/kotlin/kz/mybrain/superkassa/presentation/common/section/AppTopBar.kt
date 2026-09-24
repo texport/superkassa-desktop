@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
+import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
@@ -64,14 +65,14 @@ fun AppTopBar(
             when {
                 onBack != null -> IconButton(
                     onClick = onBack,
-                    modifier = Modifier.padding(start = Spacing.snug)
+                    modifier = Modifier.padding(start = Spacing.fieldGap)
                 ) { Icon(AppIcons.back, contentDescription = backLabel) }
 
                 badge != null -> TopBarBadge(badge)
             }
         },
         title = {
-            val lead = if (badge == null && onBack == null) Spacing.roomy else Spacing.tight
+            val lead = if (badge == null && onBack == null) windowMargin else Spacing.itemGap
             Column(modifier = Modifier.padding(start = lead)) {
                 Text(
                     text = title,
@@ -84,9 +85,9 @@ fun AppTopBar(
         },
         actions = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = Spacing.roomy),
+                modifier = Modifier.padding(end = windowMargin),
                 content = actions
             )
         }
@@ -104,7 +105,7 @@ fun AppTopBar(
 private fun TopBarBadge(icon: ImageVector) {
     Box(
         modifier = Modifier
-            .padding(start = Spacing.roomy)
+            .padding(start = windowMargin)
             .size(Sizes.headerIcon)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.secondaryContainer),

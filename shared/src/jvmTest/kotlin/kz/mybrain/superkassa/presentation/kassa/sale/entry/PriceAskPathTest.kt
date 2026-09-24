@@ -105,7 +105,7 @@ class PriceAskPathTest {
             LocalVatRates provides state.vat(Language.Ru, LocalStrings.current.enums),
             LocalUnits provides measureUnits(Language.Ru)
         ) {
-            Box(Modifier.padding(Spacing.screen)) { BarcodeField(state, model.entry) }
+            Box(Modifier.padding(Spacing.fieldGap)) { BarcodeField(state, model.entry) }
         }
     }
 

@@ -8,7 +8,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.common.section.FactLines
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.status.Chip
 import kz.mybrain.superkassa.presentation.settings.title
@@ -19,11 +18,12 @@ import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 
 /**
- * Касса на этой машине: как она работает и сколько ждёт БФД.
+ * Касса на этой машине: сколько она ждёт БФД.
  *
- * Сведения — режим, протокол, хранилище — первое, что спрашивает
- * поддержка при разборе, и читаются они сами. Сроки обмена с БФД владелец
- * меняет здесь; закрытая правка видна плашкой до нажатия, а поля гаснут.
+ * Сроки обмена с БФД владелец меняет здесь; закрытая правка видна плашкой
+ * до нажатия, а поля гаснут. Сведения о кассе — версии, режим, протокол,
+ * хранилище — живут своей карточкой [KassaFactsCard]: их читают и до входа,
+ * а сроки меняет только администратор.
  */
 @Composable
 internal fun CoreSettingsCard(core: CoreSettingsUiState, actions: CoreSettingsActions) {
@@ -35,8 +35,10 @@ internal fun CoreSettingsCard(core: CoreSettingsUiState, actions: CoreSettingsAc
         info = texts.hint,
         trailing = { if (core.frozen) Chip(texts.frozen, StatusColors.pending) }
     ) {
-        FactLines(null, core.facts(texts, money), texts.unread)
-        if (core.settings == null) return@SectionCard
+        if (core.settings == null) {
+            Note(texts.unread)
+            return@SectionCard
+        }
         Note(texts.protocolFixed)
         if (core.frozen) Note(if (core.server) texts.serverHint else texts.frozenHint)
         SecondsField(money.bfdTimeout, core.timeout, core.timeoutValid, !core.frozen, actions::typeTimeout)

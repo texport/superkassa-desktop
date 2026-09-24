@@ -11,6 +11,7 @@ import kz.mybrain.superkassa.presentation.settings.core.deliveryViewModel
 import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsActions
 import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.kkm.kkmSettingsViewModel
+import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.settings.ofd.OfdSettingsActions
 import kz.mybrain.superkassa.presentation.settings.ofd.OfdSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.ofd.ofdSettingsViewModel
@@ -24,7 +25,6 @@ import kz.mybrain.superkassa.presentation.settings.workplace.WorkplaceSettingsAc
 import kz.mybrain.superkassa.presentation.settings.workplace.WorkplaceSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.workplace.workplaceSettingsViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.theme.choice.LookViewModel
 
 /**
  * Из чего рисуются карточки настроек: состояния моделей и их действия.
@@ -66,13 +66,16 @@ data class SettingsBoard(
  *
  * @property hasCabinet собран ли на платформе кабинет — это знает каркас
  *   окна: без кабинета адреса кабинета и служб карты настраивать незачем.
+ * @property hasReleases проверяет ли касса свои выпуски сама: на Android
+ *   приложение обновляет магазин, и карточки выпусков там нет.
  */
 class SettingsParts(
     val panels: @Composable () -> Unit = {},
     val printTarget: @Composable () -> Unit = {},
     val updates: @Composable () -> Unit = {},
     val debug: @Composable () -> Unit = {},
-    val hasCabinet: Boolean = true
+    val hasCabinet: Boolean = true,
+    val hasReleases: Boolean = true
 )
 
 /** Собирает доску настроек из моделей окна; [look] — вид окна, [parts] — карточки других областей. */

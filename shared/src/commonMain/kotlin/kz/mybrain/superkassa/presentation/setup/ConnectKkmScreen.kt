@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,7 +14,7 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
 import kz.mybrain.superkassa.presentation.cabinet.value
-import kz.mybrain.superkassa.presentation.common.adaptive.CardColumns
+import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
@@ -137,11 +136,11 @@ internal fun SetupFrame(
     val setup = setupTexts(LocalLanguage.current)
     if (state.startingOver) StartOverDialog(actions)
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
         SetupHeading(setup, state.draft.factoryNumber != null, actions, onBack)
-        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.snug, content = steps)
+        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.fieldGap, content = steps)
     }
 }
 
@@ -174,7 +173,7 @@ private fun ViaCabinet(parts: SetupParts) {
     }
     val busy = parts.window.busy
     val onRecord = parts.registration.onRecord(registerId)
-    CardColumns(Modifier.fillMaxWidth()) {
+    CardSequence(Modifier.fillMaxWidth()) {
         FactoryStepCard(parts.state, parts.actions, setup)
         CabinetStepCard(parts.cabinet, setup, draft, parts.actions::rememberRegister)
         ApplicationStepCard(registerId, parts.registration, parts.registrationActions, setup, open, busy)

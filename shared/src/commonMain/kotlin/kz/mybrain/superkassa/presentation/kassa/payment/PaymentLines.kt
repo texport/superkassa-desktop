@@ -2,10 +2,9 @@ package kz.mybrain.superkassa.presentation.kassa.payment
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRowScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaymentTypeResponse
 import kz.mybrain.superkassa.domain.kassa.model.payment.PaymentSplit
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.kassa.payment.component.PaymentPicker
@@ -23,8 +21,6 @@ import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.kassa.paymentTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
@@ -53,12 +49,9 @@ fun PaymentLines(
     val texts = paymentTexts(LocalLanguage.current)
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
-        // Сумма, вид и удаление делят строку, пока сумме хватает места
-        // целиком; нет — сумма занимает строку одна, а вид с удалением
-        // встают под ней. Постоянной ширины поле резало суммы от миллиарда
-        // даже в самом широком окне.
+        // Вид с удалением — строкой, сумма — под ними во всю ширину панели.
         split.entries.indices.forEach { at -> PaymentRow(split, at, entries, total, actions) }
         // Почему вид в списке погас — один раз под всеми строками,
         // и только когда погасшие виды в списке есть: без этого условия
@@ -74,7 +67,7 @@ fun PaymentLines(
         if (free.isNotEmpty()) {
             TextButton(onClick = { actions.addPayment(free.first().code) }) {
                 Icon(AppIcons.add, contentDescription = null)
-                Text(text = texts.addPayment, modifier = Modifier.padding(start = Spacing.tight))
+                Text(text = texts.addPayment, modifier = Modifier.padding(start = Spacing.itemGap))
             }
         }
     }
@@ -89,13 +82,15 @@ private fun PaymentRow(
     actions: PaymentActions
 ) {
     val texts = paymentTexts(LocalLanguage.current)
-    WrapRow(modifier = Modifier.fillMaxWidth()) {
-        if (split.mixed) AmountField(split, at, total, actions)
+    // Вид оплаты и его снятие — рядом, сумма — под ними во всю ширину:
+    // суммы от миллиона не помещались в половину узкой кассы, а края полей
+    // совпадают с краями прочих полей панели.
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         PaymentPicker(
             entries = entries,
             selectedCode = split.entries[at].type,
             onSelect = { actions.retypePayment(at, it) },
-            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldChoice)
+            modifier = Modifier.weight(1f)
         )
         if (split.mixed) {
             IconButton(onClick = { actions.removePayment(at) }) {
@@ -103,6 +98,7 @@ private fun PaymentRow(
             }
         }
     }
+    if (split.mixed) AmountField(split, at, total, actions)
 }
 
 /**
@@ -114,7 +110,7 @@ private fun PaymentRow(
  * минуса: отрицательный он был единственной суммой с дефисом и без разрядов.
  */
 @Composable
-private fun FlowRowScope.AmountField(split: PaymentSplit, at: Int, total: Long, actions: PaymentActions) {
+private fun AmountField(split: PaymentSplit, at: Int, total: Long, actions: PaymentActions) {
     val texts = paymentTexts(LocalLanguage.current)
     val line = split.entries[at]
     val takesRest = split.takesRest(at)
@@ -122,7 +118,7 @@ private fun FlowRowScope.AmountField(split: PaymentSplit, at: Int, total: Long, 
     MoneyField(
         value = if (takesRest) restShown(rest) else line.amount,
         label = if (takesRest) texts.rest else texts.amount,
-        modifier = Modifier.weight(1f).widthIn(min = KassaLayout.paymentAmount),
+        modifier = Modifier.fillMaxWidth(),
         isError = if (takesRest) rest <= 0L else line.amount.isNotBlank() && line.value == null,
         readOnly = takesRest,
         onValueChange = { actions.enterPayment(at, it) }

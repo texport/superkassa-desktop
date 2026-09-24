@@ -62,7 +62,7 @@ internal fun ShiftTable(
         columns = columns,
         // Таблица своей ширины и полосы прокрутки стоят у её края,
         // а не в тысяче точек от неё у края раздела.
-        modifier = modifier.widthIn(max = leastWidths(columns).total + Spacing.normal),
+        modifier = modifier.widthIn(max = leastWidths(columns).total + Spacing.scrollbarGutter),
         header = { widths -> ShiftHeader(journal, widths) },
         rows = { widths ->
             itemsIndexed(shifts) { at, shift ->
@@ -87,7 +87,7 @@ private fun ShiftHeader(journal: ShiftJournalTexts, widths: TableWidths) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(vertical = Spacing.tight)
+                    modifier = Modifier.padding(vertical = Spacing.itemGap)
                 )
             }
         }

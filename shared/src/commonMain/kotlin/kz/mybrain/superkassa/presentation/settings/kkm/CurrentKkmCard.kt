@@ -48,8 +48,8 @@ internal fun CurrentKkmCard(kkm: KkmSettingsUiState, actions: KkmSettingsActions
     val current = kkm.kkm ?: return
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             KkmHeading(kkm.displayName, actions)
             Text(
@@ -69,7 +69,7 @@ private fun KkmHeading(name: String, actions: KkmSettingsActions) {
     val texts = LocalStrings.current
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {

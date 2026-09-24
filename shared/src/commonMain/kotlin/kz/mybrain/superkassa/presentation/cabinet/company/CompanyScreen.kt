@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.addressIn
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerIdentifier
-import kz.mybrain.superkassa.presentation.common.adaptive.CardColumns
+import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
 import kz.mybrain.superkassa.presentation.common.state.ScreenSlot
@@ -66,11 +66,11 @@ fun CompanyContent(
     }
     val title: (Oked) -> String = { oked -> okedTitle(oked, state, language) }
     ScreenSlot(screen, Modifier.fillMaxWidth(), centered = true) {
-        // Реквизиты и виды деятельности — во всю ширину страницы: на широком
-        // окне карточки встают рядом, и крестик удаления вида деятельности
-        // не уезжает от его названия на другой край экрана.
-        ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
-            CardColumns(Modifier.fillMaxWidth()) {
+        // Реквизиты, виды деятельности и добавление вида читаются по порядку —
+        // одна карточка под другой: столбцами они переставлялись, когда
+        // высота одной менялась от набранного.
+        ScrollableColumn(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
+            CardSequence(Modifier.fillMaxWidth()) {
                 CompanyCard(window.owner, profile, texts)
                 OkedsCard(texts, state, window.busy, title, actions)
                 AddOkedCard(state.search, language, texts, actions)
@@ -107,7 +107,7 @@ private fun CompanyCard(owner: CabinetOwner?, profile: CompanyProfile?, texts: C
     SectionCard(title = texts.company, info = texts.companyFromEds) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             Text(
                 text = profile?.name ?: owner?.company?.name.orEmpty(),

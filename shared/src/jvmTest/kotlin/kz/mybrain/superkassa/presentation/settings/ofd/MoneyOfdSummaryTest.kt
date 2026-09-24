@@ -6,11 +6,13 @@ import io.github.texport.superkassa.core.domain.api.model.settings.StorageSettin
 import io.github.texport.superkassa.core.presentation.api.model.ofd.OfdCommandResponse
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
+import kz.mybrain.superkassa.domain.settings.model.KassaFacts
 import kz.mybrain.superkassa.domain.settings.model.OfdSummary
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsUiState
 import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
 import kz.mybrain.superkassa.presentation.strings.settings.coreSettingTexts
+import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -102,7 +104,7 @@ class MoneyOfdSummaryTest {
 
     @Test
     fun `о кассе показывается режим, протокол и хранилище`() {
-        val facts = CoreSettingsUiState(settings).facts(core, texts).toMap()
+        val facts = CoreSettingsUiState(settings).facts(about, core, texts).toMap()
 
         assertEquals(core.modeDesktop, facts[core.mode])
         assertEquals("2.0.4", facts[texts.bfdProtocol], "версия протокола — как в документах")
@@ -111,10 +113,29 @@ class MoneyOfdSummaryTest {
 
     @Test
     fun `путь к базе и учётные данные хранилища на экран не попадают`() {
-        val shown = CoreSettingsUiState(settings).facts(core, texts).joinToString(" ") { "${it.first} ${it.second}" }
+        val state = CoreSettingsUiState(settings, KassaFacts("1.5.0", "1.5.0", "/home/kassa/.superkassa/kassa", 2))
+        val shown = state.facts(about, core, texts).joinToString(" ") { "${it.first} ${it.second}" }
 
         assertFalse(shown.contains("jdbc"), "на экране оказался путь к базе: $shown")
         assertFalse(shown.contains("4821"), "на экране оказался пароль хранилища: $shown")
+    }
+
+    @Test
+    fun `о кассе показываются версии, каталог данных и число касс, как прежде у узла`() {
+        val state = CoreSettingsUiState(settings, KassaFacts("1.4.2", "1.5.0-SNAPSHOT", "/data/kassa", 3))
+        val facts = state.facts(about, core, texts).toMap()
+
+        assertEquals("1.4.2", facts[about.appVersion])
+        assertEquals("1.5.0-SNAPSHOT", facts[about.coreVersion])
+        assertEquals("/data/kassa", facts[about.dataDirectory])
+        assertEquals("3", facts[about.kkmCount])
+    }
+
+    @Test
+    fun `версии видны, даже когда касса не отдала настройки и число касс`() {
+        val facts = CoreSettingsUiState(about = KassaFacts("1.4.2", "1.5.0", null, null)).facts(about, core, texts)
+
+        assertEquals(listOf(about.appVersion, about.coreVersion), facts.map { it.first })
     }
 
     /** Ответ ОФД так, как его отдаёт касса: разобранный JSON внутри результата команды. */
@@ -124,6 +145,8 @@ class MoneyOfdSummaryTest {
     private val lenient = Json { ignoreUnknownKeys = true }
 
     private val core = coreSettingTexts(Language.Ru)
+
+    private val about = kassaFactsTexts(Language.Ru)
 
     private val settings = CoreSettings(
         mode = CoreMode.DESKTOP,

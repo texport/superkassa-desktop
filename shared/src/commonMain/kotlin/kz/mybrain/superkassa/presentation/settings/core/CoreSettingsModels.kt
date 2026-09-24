@@ -10,4 +10,4 @@ fun coreSettingsViewModel(app: AppContainer): CoreSettingsViewModel = viewModel 
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
 fun coreSettingsModel(app: AppContainer): CoreSettingsViewModel =
-    CoreSettingsViewModel(CoreSettingsCases(app.areas.settings.coreSettings), app.talk)
+    CoreSettingsViewModel(CoreSettingsCases(app.areas.settings.coreSettings, app.kassa), app.talk)

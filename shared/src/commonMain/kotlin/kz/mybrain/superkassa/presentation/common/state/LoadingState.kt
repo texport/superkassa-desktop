@@ -51,10 +51,10 @@ fun LoadingState(modifier: Modifier = Modifier, dense: Boolean = false) {
     val texts = LocalStrings.current
     val shown = waitedLongEnough(true)
     Column(
-        modifier = modifier.fillMaxWidth().padding(Spacing.roomy),
+        modifier = modifier.fillMaxWidth().padding(Spacing.blockPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(
-            if (dense) Spacing.tight else Spacing.snug,
+            if (dense) Spacing.itemGap else Spacing.fieldGap,
             Alignment.CenterVertically
         )
     ) {

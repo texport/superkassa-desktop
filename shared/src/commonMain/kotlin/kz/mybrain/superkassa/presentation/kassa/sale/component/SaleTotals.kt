@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +21,9 @@ import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
+import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
+import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 
@@ -37,8 +38,8 @@ import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 fun PaymentCard(state: SaleUiState, actions: PaymentActions, expanded: Boolean, onToggle: () -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             SectionHeader(LocalSaleTexts.current.payment, expanded, onToggle)
             Collapsible(expanded) { PaymentPanel(state, actions) }
@@ -49,7 +50,8 @@ fun PaymentCard(state: SaleUiState, actions: PaymentActions, expanded: Boolean, 
 /**
  * Итог чека и сдача.
  *
- * Внизу кассы, без рамки: итог — самым крупным начертанием денег на экране.
+ * Внизу кассы, в блоке оплаты ([CheckoutPanel]): «К оплате» — самым
+ * крупным начертанием денег на экране.
  * Сдача показана так же крупно и вторичной ролью схемы: кассир считает её
  * в уме под взглядом очереди, и ошибка здесь стоит живых денег. Суммы
  * набраны целиком одной строкой: от миллиарда они переносились посреди
@@ -68,15 +70,14 @@ fun ReceiptTotals(form: SaleForm, total: Long, expanded: Boolean, onTaken: (Stri
     val taken = amount(form.taken).tiyn
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-        SumLine(texts.sale.total, total, MaterialTheme.colorScheme.onSurface)
+        SumLine(checkoutTexts(LocalLanguage.current).toPay, total, MaterialTheme.colorScheme.onSurface)
         // Принятые деньги и сдача — часть денежного итога, а не оплаты:
         // кассир вводит их, глядя на сумму к оплате, и обе цифры должны
         // стоять рядом.
         Collapsible(expanded && form.split.hasCash) {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
                 val cash = form.split.cashSum(total)
                 TakenField(form.taken, short = taken != null && taken < cash, onTaken)
                 if (taken != null) ChangeLine(taken, cash)

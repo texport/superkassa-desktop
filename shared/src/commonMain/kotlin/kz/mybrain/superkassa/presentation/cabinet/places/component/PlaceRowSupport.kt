@@ -26,7 +26,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 internal fun PointSupport(texts: CabinetTexts, language: Language, place: RetailPlace) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         val address = addressIn(language, place.address, place.addressKz)
         if (address.isNotBlank()) {
             SupportLine(address, MaterialTheme.typography.bodySmall, ADDRESS_LINES)

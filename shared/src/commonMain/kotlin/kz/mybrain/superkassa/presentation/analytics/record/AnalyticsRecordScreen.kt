@@ -62,7 +62,7 @@ fun AnalyticsRecordScreen(model: AnalyticsRecordViewModel, access: String?, text
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         RecordHead(texts, model::refresh)
         ScreenSlot(recordState(reading, texts, model::refresh), Modifier.weight(1f)) {
@@ -90,7 +90,7 @@ internal fun recordState(reading: Reading<KkmMapView>, texts: AnalyticsTexts, on
 private fun RecordHead(texts: AnalyticsTexts, onRefresh: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         SectionTitle(texts.record.title)
@@ -137,7 +137,7 @@ private fun RecordSections(
     // Таблицы меряют место под собой сами: строки живут в общем списке
     // вкладки, и ширину им назначает он, за вычетом поля под полосу.
     BoxWithConstraints(modifier = modifier) {
-        val room = maxWidth - Spacing.normal
+        val room = maxWidth - Spacing.scrollbarGutter
         val refusals = rememberTableAcross(REFUSAL_COLUMNS, room)
         val areas = rememberTableAcross(REGION_COLUMNS, room)
         ScrollableList(Modifier.fillMaxSize()) {
@@ -178,8 +178,8 @@ private fun LazyListScope.regionItems(regions: List<RecordRegion>, table: TableA
 @Composable
 private fun RecordSectionHead(title: String, hint: String) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = Spacing.roomy, bottom = Spacing.tight),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        modifier = Modifier.fillMaxWidth().padding(top = Spacing.blockPadding, bottom = Spacing.itemGap),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         SectionTitle(title)

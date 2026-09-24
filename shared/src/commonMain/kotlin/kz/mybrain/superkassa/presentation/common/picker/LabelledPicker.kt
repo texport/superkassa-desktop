@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import kz.mybrain.superkassa.presentation.common.field.fieldWidth
 import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
@@ -62,7 +61,7 @@ fun <T> LabelledPicker(
     var open by remember { mutableStateOf(false) }
     // Ширину поля меряет сама разметка: поле бывает и во всю ширину формы,
     // и заданной ширины, а список под ним идёт с ним по одному краю.
-    var fieldWidth by remember { mutableStateOf(width ?: 0.dp) }
+    var fieldWidth by remember { mutableStateOf(width ?: Sizes.unmeasured) }
     val density = LocalDensity.current
     val sized = if (width == null) modifier.fillMaxWidth() else modifier.width(width)
     ExposedDropdownMenuBox(

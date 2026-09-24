@@ -37,24 +37,12 @@ import kotlin.math.abs
  */
 @Composable
 fun SalesOverviewTiles(overview: SalesOverview, texts: AnalyticsSalesTexts, modifier: Modifier = Modifier) {
-    val line = ChangeLine(texts, overview.running)
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
-        // Идущий срок не сравнивается ни по одному числу — сказано один раз
-        // над рядом, а не прочерком под каждым из шести.
-        if (overview.running) {
-            Text(
-                text = texts.periodRunning,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        OverviewTiles(overview, texts, line)
-    }
+    OverviewTiles(overview, texts, ChangeLine(texts), modifier)
 }
 
 @Composable
-private fun OverviewTiles(overview: SalesOverview, texts: AnalyticsSalesTexts, line: ChangeLine) {
-    OverviewRow(Modifier) {
+private fun OverviewTiles(overview: SalesOverview, texts: AnalyticsSalesTexts, line: ChangeLine, modifier: Modifier) {
+    OverviewRow(modifier) {
         OverviewTile(texts.revenue, line.of(overview.revenueChange), Modifier.weight(1f)) {
             HeroNumber(Money.formatTiyn(overview.revenue))
         }
@@ -82,14 +70,12 @@ private fun OverviewTiles(overview: SalesOverview, texts: AnalyticsSalesTexts, l
  *
  * Строка изменения стоит, даже когда сравнивать не с чем: без неё
  * плитки в ряду вышли бы разной высоты, и ряд читался бы сломанным.
- * Нет её только у идущего срока — у всех плиток сразу, и о сроке сказано
- * над рядом.
  */
 @Composable
 private fun OverviewTile(label: String, change: Change, modifier: Modifier = Modifier, value: @Composable () -> Unit) {
     Column(
         modifier = modifier.widthIn(min = Sizes.salesTile),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         value()
         change.text?.let {
@@ -110,8 +96,8 @@ private fun OverviewTile(label: String, change: Change, modifier: Modifier = Mod
 private fun OverviewRow(modifier: Modifier, content: @Composable FlowRowScope.() -> Unit) {
     FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         maxItemsInEachRow = OVERVIEW_IN_ROW,
         content = content
     )
@@ -127,19 +113,18 @@ private class Change(val value: Int?, val text: String?)
 /**
  * Как читается изменение под числом.
  *
- * Срок, который ещё идёт, не сравнивается вовсе: строки под числом нет,
- * а сказано об этом один раз над рядом. Прочерк «к прошлому сроку»
- * читался бы как «прошлого срока не было».
+ * Сравнивать не с чем — кабинет о прошлом сроке не ответил — прочерк:
+ * строка стоит, и ряд не ломается.
  *
  * `points` — изменение меряется процентными пунктами, а не процентами:
  * так считается изменение доли — процент от процента был бы другой
  * величиной и обманывал бы читающего.
  */
-private class ChangeLine(private val texts: AnalyticsSalesTexts, private val running: Boolean) {
+private class ChangeLine(private val texts: AnalyticsSalesTexts) {
     fun of(change: Int?, points: Boolean = false): Change = Change(change, text(change, points))
 
     private fun text(change: Int?, points: Boolean): String? {
-        if (change == null) return if (running) null else "${Glyphs.DASH}${Glyphs.SEPARATOR}${texts.versusPrevious}"
+        if (change == null) return "${Glyphs.DASH}${Glyphs.SEPARATOR}${texts.versusPrevious}"
         val arrow = when {
             change > 0 -> "${Glyphs.RISE}${Glyphs.NBSP}"
             change < 0 -> "${Glyphs.FALL}${Glyphs.NBSP}"

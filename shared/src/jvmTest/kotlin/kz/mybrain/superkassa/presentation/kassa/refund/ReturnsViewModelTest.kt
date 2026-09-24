@@ -18,6 +18,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
@@ -65,6 +66,8 @@ class ReturnsViewModelTest {
 
         model.refund.refund()
 
+        model.refund.confirm()
+
         val command = sent.single()
         val refund = command.payments.sumOf { Tenge.of(it.sum) }
         assertEquals(90_000L, refund, "возврат по отметкам больше, чем заплатил покупатель")
@@ -80,10 +83,14 @@ class ReturnsViewModelTest {
         model.choose(basis)
 
         model.refund.refund()
+
+        model.refund.confirm()
         assertIs<Message.NoAnswer>(notices.last)
         model.refund.refund()
+        model.refund.confirm()
         model.refund.enter("100")
         model.refund.refund()
+        model.refund.confirm()
 
         assertEquals(3, sent.size)
         assertEquals(sent[0].idempotencyKey, sent[1].idempotencyKey, "повтор того же возврата ушёл с новым ключом")
@@ -100,5 +107,34 @@ class ReturnsViewModelTest {
         assertEquals(listOf("sale-42"), state.candidates.map { it.id })
         assertEquals(3, state.refund?.items?.size)
         assertEquals(1_000_000L, state.cashInDrawer)
+    }
+
+    /** Возврат, как и деньги из ящика, уходит только после вопроса с суммой. */
+    @Test
+    fun `возврат спрашивает подтверждение, отмена ничего не отправляет`() {
+        val model = model()
+        model.choose(basis)
+
+        model.refund.refund()
+        assertTrue(model.state.value.confirming, "возврат не спросил подтверждения")
+        assertTrue(sent.isEmpty(), "возврат ушёл без подтверждения")
+        model.refund.cancel()
+
+        assertFalse(model.state.value.confirming)
+        assertTrue(sent.isEmpty(), "отменённый возврат ушёл в кассу")
+        assertEquals(basis.id, model.state.value.refund?.basis?.id, "отмена сбросила выбранный чек")
+    }
+
+    /** Итог возврата — «Возврат продажи на 900,00 ₸: …», а не «оформлен, состояние 900,00 ₸». */
+    @Test
+    fun `итог возврата называет сумму`() {
+        val model = model()
+        model.choose(basis)
+
+        model.refund.refund()
+        model.refund.confirm()
+
+        val said = (notices.last as Message.Done).text
+        assertTrue(said.startsWith("Возврат продажи на 900,00"), said)
     }
 }

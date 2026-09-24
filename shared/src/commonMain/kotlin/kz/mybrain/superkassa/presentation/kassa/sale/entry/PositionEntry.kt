@@ -35,8 +35,8 @@ fun PositionEntryCard(state: SaleUiState, actions: EntryActions, expanded: Boole
     val extra = LocalSaleTexts.current
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             CollapsibleSection(
                 title = extra.positionEntry,

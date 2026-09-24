@@ -32,7 +32,7 @@ import kz.mybrain.superkassa.presentation.theme.size.TableColumns
  */
 @Composable
 internal fun RecordRegionsHead(table: TableAcross, texts: AnalyticsTexts) {
-    AcrossLine(table, Modifier.padding(vertical = Spacing.tight)) { column ->
+    AcrossLine(table, Modifier.padding(vertical = Spacing.itemGap)) { column ->
         when (column) {
             NAME -> HeadCell(texts.sales.region)
             PLACES -> HeadCell(texts.sales.placeCount, MEANING_LINES, numeric = true)
@@ -46,7 +46,7 @@ internal fun RecordRegionsHead(table: TableAcross, texts: AnalyticsTexts) {
 @Composable
 internal fun RecordRegionRow(table: TableAcross, region: RecordRegion) {
     val count = region.count
-    AcrossLine(table, Modifier.padding(vertical = Spacing.tight)) { column ->
+    AcrossLine(table, Modifier.padding(vertical = Spacing.itemGap)) { column ->
         when (column) {
             NAME -> RowCell(region.title)
             PLACES -> CountCell(count.places)

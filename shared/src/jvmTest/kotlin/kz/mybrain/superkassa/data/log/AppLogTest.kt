@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.data.log
 
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.debug.model.matching
@@ -121,14 +122,15 @@ class AppLogTest {
     fun `файл журнала не растёт бесконечно`() {
         val directory = File.createTempFile("log", "").also { it.delete() }
         directory.mkdirs()
-        val file = LogFile(directory, maxBytes = MAX_BYTES, keep = KEEP)
+        val file = LogFile(Path(directory.path), maxBytes = MAX_BYTES, keep = KEEP)
 
         repeat(TIMES) { at -> file.append("2026-09-19 12:30:15.000 INFO node GET /kkm -> 200 ($at)") }
 
-        assertTrue(file.current.length() <= MAX_BYTES, "текущий файл: ${file.current.length()} байт")
-        assertEquals(KEEP + 1, file.files().size, "текущий файл и ${KEEP} прошлых")
+        val current = File(file.current.toString())
+        assertTrue(current.length() <= MAX_BYTES, "текущий файл: ${current.length()} байт")
+        assertEquals(KEEP + 1, file.files().size, "текущий файл и $KEEP прошлых")
         assertEquals(KEEP + 1, directory.listFiles().orEmpty().size, "лишних файлов в папке нет")
-        val total = file.files().sumOf { it.length() }
+        val total = file.files().sumOf { File(it.toString()).length() }
         assertTrue(total <= MAX_BYTES * (KEEP + 1), "весь журнал: $total байт")
         directory.deleteRecursively()
     }
@@ -138,11 +140,11 @@ class AppLogTest {
     fun `строка файла начинается со времени, уровня и источника`() {
         val directory = File.createTempFile("log-line", "").also { it.delete() }
         directory.mkdirs()
-        val file = LogFile(directory)
+        val file = LogFile(Path(directory.path))
 
         journal(file = file).record(LogSource.Cabinet, LogLevel.Warning, "POST /registers -> 409")
 
-        val line = file.current.readText().trim()
+        val line = File(file.current.toString()).readText().trim()
         assertEquals("2026-09-19 12:30:15.000 WARNING cabinet POST /registers -> 409", line)
         directory.deleteRecursively()
     }

@@ -30,12 +30,15 @@ internal object KassaSource {
 
     /** Открывает стенд и заводит на нём две кассы: без НДС и плательщика НДС. */
     fun open(context: Context): Superkassa {
-        val directory = File(context.noBackupFilesDir, BENCH).apply { deleteRecursively() }
+        val directory = directory(context).apply { deleteRecursively() }
         val bench = TestBench.open(SuperkassaPlatform(context, directory.path))
         bench.registerKassa(KassaSetup(ADMIN_PIN, CASHIER_PIN, VatMode.NotPayer, name = "Касса у входа"))
         bench.registerKassa(KassaSetup(ADMIN_PIN, CASHIER_PIN, VatMode.Payer(VatGroup.VAT_16), name = "Касса с НДС"))
         return bench.superkassa
     }
+
+    /** Каталог стенда — свой, отдельный от каталога кассы выпуска. */
+    fun directory(context: Context): File = File(context.noBackupFilesDir, BENCH)
 
     private const val BENCH = "bench"
     private const val ADMIN_PIN = "7391"

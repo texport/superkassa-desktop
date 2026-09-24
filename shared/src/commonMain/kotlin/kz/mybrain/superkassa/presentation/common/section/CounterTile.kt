@@ -22,7 +22,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 fun CounterTile(value: String, label: String, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.widthIn(min = Sizes.counterTile),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         Text(text = value, style = MaterialTheme.typography.headlineSmall)
         Text(

@@ -61,7 +61,7 @@ internal fun PointAddress(
 
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         PickRow(notices.byPoint, state.marked && !busy, pointNotice(state.marked, busy, match, notices)) {
             scope.launch {
@@ -83,7 +83,7 @@ internal fun PointAddress(
 private fun PickRow(label: String, enabled: Boolean, notice: String?, onPick: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         FilledTonalButton(enabled = enabled, onClick = onPick) { Text(label) }
@@ -113,8 +113,8 @@ private fun HouseChoice(
     val scope = rememberCoroutineScope()
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         houses.forEach { house ->
             SuggestionChip(

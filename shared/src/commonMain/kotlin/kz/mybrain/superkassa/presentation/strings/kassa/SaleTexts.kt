@@ -166,7 +166,16 @@ data class SaleTexts(
     val positionSum: String,
     val positionNtin: String,
     val positionStornoMarked: String,
-    val positionClose: String
+    val positionClose: String,
+
+    /**
+     * Переключатель клавиатуры поля штрихкода на телефоне и планшете.
+     *
+     * Штрихкод — цифры, и клавиатура открывается цифровой; маркировочный
+     * код товара бывает с буквами, и буквы включаются этим значком.
+     */
+    val barcodeLetters: String,
+    val barcodeDigits: String
 )
 
 /** Надписи области на выбранном языке. */

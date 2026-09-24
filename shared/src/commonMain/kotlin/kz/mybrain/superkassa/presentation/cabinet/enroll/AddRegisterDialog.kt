@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.KkmModel
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
+import kz.mybrain.superkassa.presentation.cabinet.component.PlaceOptions
 import kz.mybrain.superkassa.presentation.cabinet.places.AddPlaceCard
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
@@ -56,9 +57,8 @@ fun AddRegisterDialog(
         onDismiss = onDismiss,
         onAction = { model.add(draft, known) { created -> onAdded(created).also { onDismiss() } } }
     ) {
-        // Точки берутся у кабинета окна, а не читаются окном заново: список точек
-        // компании один, и своя копия здесь расходилась с ним — только что
-        // созданная точка появлялась в окне, но не в заявлении.
+        // Точки — найденные кабинетом по набранному и те, что окно уже знает:
+        // только что заведённая точка есть в окне раньше, чем в поиске кабинета.
         Fields(texts, model, draft, window.places, known != null) { addingPlace = true }
     }
     if (addingPlace) {
@@ -81,20 +81,20 @@ private fun Fields(
     texts: CabinetTexts,
     model: AddRegisterViewModel,
     draft: RegisterDraft,
-    places: List<RetailPlace>,
+    known: List<RetailPlace>,
     stamped: Boolean,
     onCreatePlace: () -> Unit
 ) {
-    val models by model.state.collectAsScreenState()
+    val found by model.state.collectAsScreenState()
+    val places = found.places + known.filter { place -> found.places.none { it.id == place.id } }
     RegisterFields(
         texts = texts,
         language = LocalLanguage.current,
         draft = draft,
-        places = places,
-        models = models,
+        places = PlaceOptions(places, onQuery = model::findPlaces, onCreate = onCreatePlace),
+        models = found.models,
         stamped = stamped,
-        issued = ourModel(draft.model),
-        onCreatePlace = onCreatePlace
+        issued = ourModel(draft.model)
     )
 }
 

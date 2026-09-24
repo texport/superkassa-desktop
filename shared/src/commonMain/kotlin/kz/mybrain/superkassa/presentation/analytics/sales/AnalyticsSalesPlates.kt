@@ -27,9 +27,10 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  * от числа касс компании, чтобы касса, не приславшая ни одного
  * документа, не исчезала из счёта вместе со своей строкой.
  *
- * Смен и доставки документов здесь нет. Открытые смены — свойство касс,
- * и число их одно на раздел: оно стоит в учёте, а у одной кассы — в шапке
- * её окна; сводка кабинета называла третье. Документы в очереди и без
+ * Открытые смены — свойство касс, и число их одно на раздел: считается
+ * по кассам, как в учёте, а не берётся из сводки кабинета — та называла
+ * третье. У одной кассы смена стоит в шапке её окна, и плашки здесь нет.
+ * Доставки документов здесь нет: документы в очереди и без
  * сведений считаются по всем видам чеков и по отчётам, и рядом с «Чеков»
  * продаж их число читалось как противоречие — оно стоит в карточке
  * доставки, с объяснением. Автономные документы остались: работа мимо
@@ -57,13 +58,14 @@ fun SalesNetworkPlates(
     val silent = silentRegisters(view.summary, view.registers)
     FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         if (register == null) {
             val selling = sellingRegisters(view.registers)
             Plate(selling, texts.online, good(selling))
             Plate(silent, texts.silent, MaterialTheme.colorScheme.onSurfaceVariant)
+            view.openShifts?.let { Plate(it, texts.openShifts, MaterialTheme.colorScheme.onSurface) }
         }
         Plate(view.delivery.offline, texts.offline, attention(view.delivery.offline))
     }

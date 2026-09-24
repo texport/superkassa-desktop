@@ -129,7 +129,7 @@ private fun HandoverConsent(
     DetailLine(machine.heardByOfd, Dates.momentOf(technical?.lastContactAt))
     DetailLine(texts.shift, technical?.shiftNumber?.toString())
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Checkbox(
@@ -144,7 +144,7 @@ private fun HandoverConsent(
 @Composable
 private fun WarningRow(text: String) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.Top
     ) {
         Icon(

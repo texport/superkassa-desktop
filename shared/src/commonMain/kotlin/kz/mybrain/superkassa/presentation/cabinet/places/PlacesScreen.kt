@@ -50,14 +50,14 @@ import kz.mybrain.superkassa.presentation.theme.size.CabinetPanes
  */
 @Composable
 fun PlacesScreen(cabinet: CabinetWindow, texts: CabinetTexts) {
-    val look by cabinet.look.state.collectAsScreenState()
+    val collapsed = cabinet.look.placesCollapsed()
     val model = placesViewModel(cabinet.cabinet)
     val chosen by model.state.collectAsScreenState()
     var detailShown by remember { mutableStateOf(false) }
     var listShown by remember { mutableStateOf(true) }
     val listState = rememberLazyListState()
     TwoPane(
-        split = if (look.placesCollapsed) CabinetPanes.railAndCard else CabinetPanes.placesAndCard,
+        split = if (collapsed) CabinetPanes.railAndCard else CabinetPanes.placesAndCard,
         modifier = Modifier.fillMaxSize(),
         narrow = NarrowPanes.Switched(showSecond = detailShown && (chosen.place != null || chosen.register != null)),
         first = {
@@ -95,8 +95,8 @@ private fun PlacesColumn(
     PlaceTree(
         texts = texts,
         language = LocalLanguage.current,
-        collapsed = cabinet.look.state.collectAsScreenState().value.placesCollapsed,
-        onToggle = cabinet.look::togglePlaces,
+        collapsed = cabinet.look.placesCollapsed(),
+        onToggle = cabinet.look.togglePlaces,
         rows = rememberRows(window, chosen),
         // Сколько точек у компании — по словам кабинета: пока список
         // дочитывается, прочитано меньше, и колонка об этом говорит.

@@ -47,8 +47,8 @@ fun DomainCard(kind: DomainKind, input: DomainInput, onChange: (DomainInput) -> 
     val extra = LocalSaleTexts.current
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             SectionTitle(kind.title(texts.enums))
             DomainFields(kind, input, onChange)
@@ -88,7 +88,7 @@ private fun DomainFields(kind: DomainKind, input: DomainInput, onChange: (Domain
 @Composable
 private fun OrderChip(input: DomainInput, onChange: (DomainInput) -> Unit) {
     val texts = LocalSaleTexts.current
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         FilterChip(
             selected = input.isOrder,
             onClick = { onChange(input.copy(isOrder = !input.isOrder)) },

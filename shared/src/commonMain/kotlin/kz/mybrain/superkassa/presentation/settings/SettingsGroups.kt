@@ -11,17 +11,16 @@ import kz.mybrain.superkassa.presentation.strings.common.SettingStrings
  * по всему экрану, а вход в режим программирования и выход из него
  * оказались в разных местах столбца — войти удавалось, а выйти уже нет.
  *
- * Хозяйство отвечает на вопрос «где это изменится»: [Workplace] —
- * на этой машине, [Kkm] — в самой кассе.
- *
- * Третьим стояло хозяйство кабинета БФД, и в нём лежал один адрес.
- * Адрес кабинета меняется здесь же, на этой машине, — у БФД от него
- * не меняется ничего, — так что хозяйство называло владельца неверно,
- * а вкладка открывалась карточкой в поле высотой в экран.
+ * Разделы — «Приложение», «Касса», «Кабинет БФД» — отвечают на вопрос,
+ * о чём настройка: о программе на этой машине, о кассе и её обмене с БФД
+ * или о кабинете и его картах. В двух хозяйствах адреса кабинета и карты
+ * стояли вперемешку с оформлением и журналом, и владелец читал экран
+ * настроек одной кучей.
  */
 internal enum class SettingsHousehold(val title: (SettingStrings) -> String) {
     Workplace({ it.householdWorkplace }),
-    Kkm({ it.householdKkm })
+    Kkm({ it.householdKkm }),
+    Cabinet({ it.householdCabinet })
 }
 
 /**
@@ -43,11 +42,11 @@ internal enum class SettingsGroup(
      */
     Look(SettingsHousehold.Workplace, { null }),
 
-    /** Адреса служб, с которыми говорит рабочее место: кабинет и карта. */
-    Addresses(SettingsHousehold.Workplace, { it.groupServices }),
-
-    /** Программа на этой машине: касса и доставка чека, выпуски, журнал. */
+    /** Программа на этой машине: сведения о ней, выпуски, журнал. */
     Program(SettingsHousehold.Workplace, { it.groupProgram }),
+
+    /** Адреса служб кабинета: сам кабинет и его карты. */
+    Addresses(SettingsHousehold.Cabinet, { null }),
 
     /** Сама касса и её режим: заголовка нет, речь о ней и так. */
     Current(SettingsHousehold.Kkm, { null }),
@@ -68,6 +67,12 @@ internal enum class SettingsGroup(
 
     /** То, что хранит касса и принимает только в режиме программирования. */
     Service(SettingsHousehold.Kkm, { it.groupService }),
+
+    /**
+     * Обмен кассы с БФД на этой машине: сроки ожидания и доставка чека.
+     * Одни на все кассы рабочего места и меняются администратором.
+     */
+    Exchange(SettingsHousehold.Kkm, { it.groupExchange }),
 
     Irreversible(SettingsHousehold.Kkm, { it.groupIrreversible })
 }

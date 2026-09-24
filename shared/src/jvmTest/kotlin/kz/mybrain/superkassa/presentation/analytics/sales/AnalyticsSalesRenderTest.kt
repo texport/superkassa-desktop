@@ -87,7 +87,11 @@ class AnalyticsSalesRenderTest {
         places = (1..rows).map(::unit),
         delivery = SalesDelivery(
             receipts = SalesDeliveryCounts(
-                total = 312, delivered = 300, queued = 5, unknown = 5, rejected = 2
+                total = 312,
+                delivered = 300,
+                queued = 5,
+                unknown = 5,
+                rejected = 2
             ),
             offlineCount = 7
         )
@@ -112,9 +116,21 @@ class AnalyticsSalesRenderTest {
     @Test
     fun `столбики рисуются и за месяц, и за сутки, и без единой продажи`() {
         val sales = texts.sales
-        RenderProbe { SalesChart(dayBars(view(days = MONTH).days, view(days = MONTH).range, sales), sales, Modifier.fillMaxSize()) }
+        RenderProbe {
+            SalesChart(
+                dayBars(view(days = MONTH).days, view(days = MONTH).range, sales),
+                sales,
+                Modifier.fillMaxSize()
+            )
+        }
             .use { assertTrue(it.frame().isNotEmpty()) }
-        RenderProbe { SalesChart(dayBars(view(days = 1).days, view(days = 1).range, sales), sales, Modifier.fillMaxSize()) }
+        RenderProbe {
+            SalesChart(
+                dayBars(view(days = 1).days, view(days = 1).range, sales),
+                sales,
+                Modifier.fillMaxSize()
+            )
+        }
             .use { assertTrue(it.frame().isNotEmpty()) }
         RenderProbe { SalesChart(hourBars(emptyList(), sales), sales, Modifier.fillMaxSize()) }
             .use { assertTrue(it.frame().isNotEmpty()) }

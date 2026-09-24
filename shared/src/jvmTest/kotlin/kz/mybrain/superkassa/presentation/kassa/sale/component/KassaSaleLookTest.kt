@@ -78,11 +78,11 @@ class KassaSaleLookTest {
     private fun Receipt(state: SaleUiState) {
         Till(state) {
             Row(
-                modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.roomy)
+                modifier = Modifier.fillMaxSize().padding(Spacing.fieldGap),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sectionGap)
             ) {
                 BasketCard(state.basket, Modifier.weight(1f), {}, {}, {})
-                Column(modifier = Modifier.width(TILL), verticalArrangement = Arrangement.spacedBy(Spacing.normal)) {
+                Column(modifier = Modifier.width(TILL), verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)) {
                     ReceiptChangesCard(state, NO_FORM, expanded = true, onToggle = {})
                     PaymentCard(state, NO_PAYMENTS, expanded = true, onToggle = {})
                     ReceiptTotals(state.form, state.total, expanded = true, onTaken = {})
@@ -138,7 +138,7 @@ class KassaSaleLookTest {
     @Composable
     private fun Changes(state: SaleUiState) {
         Till(state) {
-            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.fieldGap)) {
                 ReceiptChangesCard(state, NO_FORM, expanded = true, onToggle = {})
             }
         }

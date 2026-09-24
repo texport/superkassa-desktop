@@ -39,8 +39,8 @@ internal fun MapLegend(legend: MapFold, texts: AnalyticsTexts, modifier: Modifie
         shadowElevation = Sizes.mapMarkLift
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = Spacing.snug, vertical = Spacing.tight),
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            modifier = Modifier.padding(horizontal = Spacing.fieldGap, vertical = Spacing.itemGap),
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             SectionHeader(texts.mapLegend, legend.expanded, legend::toggle)
             Collapsible(legend.expanded) { LegendLines(texts) }
@@ -54,7 +54,7 @@ internal fun MapLegend(legend: MapFold, texts: AnalyticsTexts, modifier: Modifie
  */
 @Composable
 private fun LegendLines(texts: AnalyticsTexts) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         LegendLine(toneColor(StatusTone.Good), texts.legendGood)
         LegendLine(toneColor(StatusTone.Idle), texts.legendIdle)
         LegendLine(toneColor(StatusTone.Waiting), texts.legendSomeTrouble)
@@ -68,7 +68,7 @@ private fun LegendLines(texts: AnalyticsTexts) {
 @Composable
 private fun LegendLine(tone: Color, words: String) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(

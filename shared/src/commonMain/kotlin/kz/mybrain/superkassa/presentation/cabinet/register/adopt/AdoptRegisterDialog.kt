@@ -12,14 +12,14 @@ import kz.mybrain.superkassa.presentation.cabinet.register.adoptMissing
 import kz.mybrain.superkassa.presentation.cabinet.register.heardElsewhere
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.login.LoginViewModel
-import kz.mybrain.superkassa.presentation.login.loginViewModel
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.strings.cabinet.MachineTexts
 import kz.mybrain.superkassa.presentation.strings.cabinet.machineTexts
 import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
+import kz.mybrain.superkassa.presentation.users.signin.LoginViewModel
+import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
 
 /**
  * Заведение кассы кабинета на этой машине — одним действием владельца.

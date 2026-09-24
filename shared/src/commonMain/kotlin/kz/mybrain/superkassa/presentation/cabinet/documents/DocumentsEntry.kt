@@ -41,7 +41,7 @@ fun RegisterDocumentsCard(language: Language, register: CabinetRegister) {
     SectionCard(title = journal.registerDocuments, info = journal.registerDocumentsHint) {
         FilledTonalButton(onClick = { open(register) }) {
             Icon(AppIcons.history, contentDescription = null)
-            Text(journal.openDocuments, modifier = Modifier.padding(start = Spacing.tight))
+            Text(journal.openDocuments, modifier = Modifier.padding(start = Spacing.itemGap))
         }
     }
 }

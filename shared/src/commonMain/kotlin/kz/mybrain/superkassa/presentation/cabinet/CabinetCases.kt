@@ -29,6 +29,7 @@ import kz.mybrain.superkassa.domain.cabinet.usecase.places.ReadRegisters
 import kz.mybrain.superkassa.domain.cabinet.usecase.places.RemovePlace
 import kz.mybrain.superkassa.domain.cabinet.usecase.places.RenamePlace
 import kz.mybrain.superkassa.domain.cabinet.usecase.places.ResolveAddress
+import kz.mybrain.superkassa.domain.cabinet.usecase.places.SearchPlaces
 import kz.mybrain.superkassa.domain.cabinet.usecase.register.EnrollKkmHere
 import kz.mybrain.superkassa.domain.cabinet.usecase.register.IssueToken
 import kz.mybrain.superkassa.domain.cabinet.usecase.register.ReadKkmStates
@@ -65,6 +66,7 @@ class CabinetCases(kassa: Kassa, signIn: SignIn, memory: WorkplaceMemory, ports:
     val address = ReadCabinetAddress(ports.account)
 
     val readPlaces = ReadPlaces(ports.places)
+    val searchPlaces = SearchPlaces(ports.places)
     val readRegisters = ReadRegisters(ports.registers)
     val readBlocked = ReadBlockedRegisters(ports.registers)
     val nameKkm = NameKkmFromCabinet(kassa, signIn)

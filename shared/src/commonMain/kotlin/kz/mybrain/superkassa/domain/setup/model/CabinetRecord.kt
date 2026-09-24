@@ -5,8 +5,10 @@ package kz.mybrain.superkassa.domain.setup.model
  *
  * @property status код состояния учёта со слов кабинета: `DRAFT`, `REGISTERED`.
  * @property registrationNumber номер КГД; `null` — касса ещё не на учёте.
+ * @property awaiting заявление подано и ждёт ответа КГД: подавать второе
+ *   незачем, ждут ответа и перечитывают кассу.
  */
-data class CabinetRecord(val status: String, val registrationNumber: String?) {
+data class CabinetRecord(val status: String, val registrationNumber: String?, val awaiting: Boolean = false) {
 
     /** Касса встала на учёт: КГД выдал ей номер. */
     val onRecord: Boolean get() = !registrationNumber.isNullOrBlank()

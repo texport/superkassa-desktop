@@ -17,6 +17,14 @@ interface CabinetPlaces {
     /** Все точки; [onPart] получает прочитанное после каждой страницы и сколько их всего. */
     suspend fun all(onPart: (List<RetailPlace>, Long) -> Unit = { _, _ -> }): List<RetailPlace>
 
+    /**
+     * Первые точки, найденные кабинетом по набранному; пусто — первые точки компании.
+     *
+     * Для выбора точки в форме: полный обход сети ради одной точки — десятки
+     * обращений к кабинету на пути мастера.
+     */
+    suspend fun search(text: String): List<RetailPlace>
+
     suspend fun add(place: RetailPlaceCreate): RetailPlace
 
     suspend fun rename(id: String, name: String): RetailPlace

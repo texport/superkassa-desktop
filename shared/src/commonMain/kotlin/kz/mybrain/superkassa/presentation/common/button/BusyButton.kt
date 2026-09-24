@@ -44,12 +44,12 @@ fun BusyButton(
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
     kind: FieldButtonKind = FieldButtonKind.Filled,
-    contentPadding: PaddingValues = PaddingValues(horizontal = Spacing.normal, vertical = Spacing.snug),
+    contentPadding: PaddingValues = PaddingValues(horizontal = Spacing.cardPadding, vertical = Spacing.fieldGap),
     onClick: () -> Unit
 ) {
     val body: @Composable () -> Unit = {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (busy) {

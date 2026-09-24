@@ -51,12 +51,12 @@ fun CashContent(state: CashUiState, actions: CashActions = object : CashActions 
     val money = moneyTexts(LocalLanguage.current)
     // Экран во всю ширину раздела: на широком окне остаток с формой стоят
     // слева, проведённое — справа, и половина экрана не пустует.
-    ScrollableColumn(modifier = Modifier.fillMaxSize().padding(Spacing.screen), spacing = Spacing.normal) {
+    ScrollableColumn(modifier = Modifier.fillMaxSize(), spacing = Spacing.cardGap) {
         // Заголовок — имя раздела, как у продажи и возврата: «В денежном
         // ящике» стояло и заголовком, и подписью остатка под ним.
         ScreenTitle(LocalStrings.current.sections.cash)
         CardColumns(Modifier.fillMaxWidth()) {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.normal)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)) {
                 DrawerCard(state.cashInDrawer, money.drawer)
                 CashForm(state, actions, money)
             }
@@ -77,8 +77,8 @@ fun CashContent(state: CashUiState, actions: CashActions = object : CashActions 
 private fun DrawerCard(cashInDrawer: Long?, drawer: DrawerTexts) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.blockPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
         ) {
             DrawerLabel(drawer)
             // Тем же начертанием, что плитка на главном экране: одно число
@@ -102,7 +102,7 @@ private fun DrawerCard(cashInDrawer: Long?, drawer: DrawerTexts) {
 private fun DrawerLabel(drawer: DrawerTexts) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

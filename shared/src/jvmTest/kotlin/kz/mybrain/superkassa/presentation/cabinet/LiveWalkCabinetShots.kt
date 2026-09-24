@@ -68,7 +68,7 @@ class LiveWalkCabinetShots {
         val stage = stage()
         val shot = fix("5-place-not-chosen", CARD, TALL) {
             stage.Window {
-                Column(Modifier.fillMaxWidth().padding(Spacing.screen), Arrangement.spacedBy(Spacing.snug)) {
+                Column(Modifier.fillMaxWidth().padding(Spacing.fieldGap), Arrangement.spacedBy(Spacing.fieldGap)) {
                     RegistrationActionsBlock(stage.cabinet.cabinet, Language.Ru, stage.texts, viewOf(onRecord())) {}
                 }
             }
@@ -98,7 +98,7 @@ class LiveWalkCabinetShots {
             stage.Window {
                 val model = companyViewModel(stage.cabinet.cabinet)
                 val state by model.state.collectAsState()
-                Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                     AddOkedCard(state.search, Language.Ru, stage.texts, model.actions())
                 }
             }
@@ -118,8 +118,8 @@ class LiveWalkCabinetShots {
         val texts = stage().texts
         val shot = fix("8-section-hints", CARD, CHIPS) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(Spacing.screen),
-                verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+                modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap),
+                verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
             ) {
                 CollapsibleCard(texts.card, expanded = false, onToggle = {}, info = texts.hints.card) {}
                 val journal = texts.actionsJournal
@@ -136,7 +136,7 @@ class LiveWalkCabinetShots {
         val added = Oked(code = "56.10", name = "Рестораны и услуги по доставке еды")
         val profile = CompanyProfile(id = "c-1", bin = "230140000000", name = "ТОО «Азик и Ко»", okeds = saved)
         val state = CompanyUiState(profile = profile, okeds = if (changed) saved + added else saved)
-        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
             OkedsCard(texts, state, busy = false, title = { it.name.orEmpty() }, actions = object : CompanyActions {})
         }
     }

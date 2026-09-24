@@ -49,7 +49,7 @@ class HistoryAdaptiveTest {
             }
         }
         val workspace = minOf(place.width.toFloat(), ContentWidths.workspace.value)
-        val left = place.left + (place.width - workspace) / 2 + Spacing.screen.value + EDGE
+        val left = place.left + (place.width - workspace) / 2 + Spacing.fieldGap.value + EDGE
         val rows = HistoryStage.stripes(frame, left.toInt(), tint) * 2
         println("журнал $width×$height ${mode.tag}: видно строк ≈ $rows")
         return rows

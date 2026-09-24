@@ -1,15 +1,17 @@
 package kz.mybrain.superkassa.presentation.kassa.refund.component
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.datetime.LocalDate
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
-import kz.mybrain.superkassa.presentation.common.field.fieldWidth
 import kz.mybrain.superkassa.presentation.common.period.DayBar
 import kz.mybrain.superkassa.presentation.strings.journal.HistoryJournalTexts
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
@@ -29,16 +31,17 @@ internal fun BasisSearch(
     onNumber: (String) -> Unit,
     onDay: (LocalDate) -> Unit
 ) {
-    // Ряд переносится: на узком окне поле номера уходит под перелистывание
-    // дня, а не сжимается.
-    WrapRow(spacing = Spacing.normal) {
+    // Номер тянется на остаток ряда: его края — края списка чеков под ним.
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.cardGap), verticalAlignment = Alignment.CenterVertically) {
         DayBar(history, day, loading, onDay)
         OutlinedTextField(
             value = number,
             onValueChange = onNumber,
             label = { Text(history.colNumber) },
             singleLine = true,
-            modifier = Modifier.fieldWidth(history.colNumber, Sizes.fieldPin)
+            // Номер чека — цифры: на планшете открывается цифровая клавиатура.
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.weight(1f)
         )
     }
 }

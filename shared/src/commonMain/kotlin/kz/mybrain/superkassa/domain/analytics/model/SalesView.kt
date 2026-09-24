@@ -8,10 +8,9 @@ package kz.mybrain.superkassa.domain.analytics.model
  * те сутки, в которые торговали.
  *
  * @param previous итоги прошлого срока такой же длины; `null` — сравнивать
- *   не с чем: кабинет о нём не ответил или срок ещё идёт.
- * @param running срок кончается сегодня или позже: сегодняшний день
- *   неполон, и сравнение с прошлым сроком не делается вовсе — см.
- *   [SalesSpan.finished].
+ *   не с чем: кабинет о нём не ответил.
+ * @param openShifts открытых смен в сети сейчас — по кассам, как в учёте;
+ *   `null` — у сводки одной кассы или кабинет о кассах не ответил.
  * @param retailPlaces торговые точки компании. Нужны своду по регионам:
  *   регион стоит в адресе точки, а в строках сводки адреса нет.
  */
@@ -25,7 +24,7 @@ data class SalesView(
     val delivery: SalesDelivery,
     val previous: SalesSummary? = null,
     val retailPlaces: List<PlaceAddress> = emptyList(),
-    val running: Boolean = false
+    val openShifts: Int? = null
 ) {
     /**
      * Ни одного чека за срок.

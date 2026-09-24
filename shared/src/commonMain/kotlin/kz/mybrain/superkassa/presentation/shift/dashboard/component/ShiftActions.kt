@@ -53,7 +53,7 @@ internal fun ShiftActions(state: DashboardUiState, actions: DashboardActions) {
             confirmed = false
         }
     }
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         ShiftButtons(state, actions) { asking = true }
         ShiftNote(state)
     }
@@ -78,7 +78,7 @@ internal fun ShiftActions(state: DashboardUiState, actions: DashboardActions) {
 private fun ShiftButtons(state: DashboardUiState, actions: DashboardActions, onClose: () -> Unit) {
     val texts = LocalStrings.current
     val offer = !state.blocked && state.known
-    WrapRow(spacing = Spacing.snug) {
+    WrapRow(spacing = Spacing.fieldGap) {
         val main = Modifier.heightIn(min = KassaLayout.mainAction)
         if (offer && state.shift == ShiftState.Open) {
             // Z-отчёт не отменяется, и до вопроса он снимался с одного нажатия.

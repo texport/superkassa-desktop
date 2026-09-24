@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -26,6 +25,7 @@ import kz.mybrain.superkassa.presentation.cabinet.mapPointOf
 import kz.mybrain.superkassa.presentation.cabinet.places.placesViewModel
 import kz.mybrain.superkassa.presentation.common.button.BusyButton
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
+import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
 import kz.mybrain.superkassa.presentation.common.status.Chip
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.strings.common.Language
@@ -59,8 +59,8 @@ fun PlaceEditRow(
 ) {
     val model = placesViewModel(cabinet.cabinet)
     Column(
-        modifier = Modifier.fillMaxWidth().padding(top = Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        modifier = Modifier.fillMaxWidth().padding(top = Spacing.itemGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         PlaceRename(texts, place, busy) { model.rename(place, it) }
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -73,8 +73,9 @@ fun PlaceEditRow(
 private fun PlaceRename(texts: CabinetTexts, place: RetailPlace, busy: Boolean, onRename: (String) -> Unit) {
     var name by remember(place.id) { mutableStateOf(place.name) }
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         itemVerticalAlignment = Alignment.Top
     ) {
         OutlinedTextField(
@@ -82,7 +83,9 @@ private fun PlaceRename(texts: CabinetTexts, place: RetailPlace, busy: Boolean, 
             onValueChange = { name = it },
             label = { Text(texts.placeName) },
             singleLine = true,
-            modifier = Modifier.width(Sizes.fieldForm)
+            // Поле тянется до кнопки: ряд занимает всю ширину карточки,
+            // и края поля совпадают с краями полей над ним.
+            modifier = Modifier.weight(1f).fieldMinWidth(texts.placeName, Sizes.fieldForm)
         )
         FieldButton(
             text = texts.rename,

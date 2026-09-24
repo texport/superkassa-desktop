@@ -50,7 +50,7 @@ fun OfdSyncCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
 @Composable
 private fun SyncAction(title: String, hint: String, enabled: Boolean, onClick: () -> Unit) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedButton(onClick = onClick, enabled = enabled) { Text(title) }

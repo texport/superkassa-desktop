@@ -33,7 +33,7 @@ import kz.mybrain.superkassa.presentation.setup.SetupUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.shell.section.sectionWidth
+import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
 import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.strings.setup.setupTexts
@@ -91,10 +91,10 @@ class AreaQaShots {
         }
     }
 
-    /** Место раздела [section] в окне — то же, что ставит каркас. */
+    /** Место раздела в окне — то же, что ставит каркас. */
     @Composable
-    private fun Place(section: Section, content: @Composable () -> Unit) {
-        Box(modifier = Modifier.sectionWidth(section).fillMaxHeight()) { content() }
+    private fun Place(content: @Composable () -> Unit) {
+        Box(modifier = Modifier.sectionFrame().fillMaxHeight()) { content() }
     }
 
     @Test
@@ -108,7 +108,7 @@ class AreaQaShots {
             form = CashierForm(name = users.last().name, role = UserRole.CASHIER, pin = "1234567890")
         )
         everywhere("users-list", { stringsOf(it).users.create }) {
-            Place(Section.Users) { UsersContent(state, object : UsersActions {}) }
+            Place { UsersContent(state, object : UsersActions {}) }
         }
     }
 
@@ -118,7 +118,7 @@ class AreaQaShots {
             .map { OfdEnvironmentResponse(it, TrilingualMessageResponse(it, it, it)) }
         everywhere("setup-factory", { setupTexts(it).getFactory }) {
             val desk = KassaScene.desk()
-            Place(Section.Register) {
+            Place {
                 SetupContent(
                     SetupParts(
                         state = SetupUiState(contours = contours),
@@ -139,7 +139,7 @@ class AreaQaShots {
         val kkm = CoreScene.kkm(state = "PROGRAMMING")
         val queue = QueueUiState(kkm = kkm, tasks = HistoryStage.tasks(TASKS), read = true)
         everywhere("queue-failed", { stringsOf(it).queue.retryFailed }) {
-            Place(Section.Queue) { QueueContent(queue, object : QueueActions {}) }
+            Place { QueueContent(queue, object : QueueActions {}) }
         }
     }
 
@@ -155,7 +155,7 @@ class AreaQaShots {
             documentsPage = PageOutcome.page(more = true)
         )
         everywhere("journal-shift-documents", null) {
-            Column(modifier = Modifier.contentWidth(ContentKind.Workspace).fillMaxSize().padding(Spacing.screen)) {
+            Column(modifier = Modifier.contentWidth(ContentKind.Workspace).fillMaxSize().padding(Spacing.fieldGap)) {
                 ShiftsScreen(opened, object : ShiftsActions {}, object : PrintActions {})
             }
         }

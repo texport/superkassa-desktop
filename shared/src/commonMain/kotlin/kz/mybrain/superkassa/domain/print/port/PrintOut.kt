@@ -2,6 +2,8 @@ package kz.mybrain.superkassa.domain.print.port
 
 import kz.mybrain.superkassa.domain.print.model.Kept
 import kz.mybrain.superkassa.domain.print.model.PrintKind
+import kz.mybrain.superkassa.domain.print.model.PrintRoute
+import kz.mybrain.superkassa.domain.print.model.Printed
 
 /**
  * Куда уходит готовая печатная форма: на принтер рабочего места или в файл.
@@ -10,6 +12,9 @@ import kz.mybrain.superkassa.domain.print.model.PrintKind
  * здесь только принтер, лента и диск этой машины.
  */
 interface PrintOut {
+
+    /** Как машина печатает: принтерами по имени или системным диалогом. */
+    val route: PrintRoute get() = PrintRoute.Printers
 
     /** Принтеры, которые видит эта машина; пусто — принтера нет вовсе. */
     suspend fun printers(): List<String>
@@ -24,13 +29,14 @@ interface PrintOut {
     suspend fun tape(png: ByteArray): ByteArray
 
     /**
-     * Печатает ленту: своей шириной, а длинную — по страницам.
+     * Печатает форму: своей шириной, а длинную — по страницам.
      *
+     * @param tape форма в виде [route]: лента картинкой или документ PDF.
      * @param printer имя принтера; `null` — принтер системы по умолчанию.
      * @param widthMm ширина ленты в миллиметрах; ноль — по ширине страницы.
-     * @return ушло ли задание на принтер.
+     * @return ушло ли задание, отказано или кассир передумал.
      */
-    suspend fun print(tape: ByteArray, printer: String?, widthMm: Int, copies: Int): Boolean
+    suspend fun print(tape: ByteArray, printer: String?, widthMm: Int, copies: Int): Printed
 
     /**
      * Спрашивает, куда положить файл, и кладёт его туда.

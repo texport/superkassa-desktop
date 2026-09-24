@@ -51,7 +51,7 @@ fun SalesChart(bars: List<SalesBar>, texts: AnalyticsSalesTexts, modifier: Modif
     var hovered: Int? by remember(bars) { mutableStateOf(null) }
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         // Ряд из одного столбика подписан сразу, без наведения: искать
         // глазами единственный столбик незачем, а сумма за этот день и есть

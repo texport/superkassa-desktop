@@ -73,10 +73,8 @@ fun JournalTable(
 /** Подписи столбцов: мельче и тише строки, иначе шапка спорит с данными. */
 @Composable
 fun JournalHeader(journal: HistoryJournalTexts, widths: TableWidths = leastWidths(journalColumns())) {
-    val titles = listOf(
-        journal.colTime, journal.colType, journal.colNumber, journal.colShift,
-        journal.colAmount, journal.colFiscalSign, LocalStrings.current.dashboard.state
-    )
+    val titles = with(journal) { listOf(colTime, colType, colNumber, colShift, colAmount, colFiscalSign) } +
+        LocalStrings.current.dashboard.state
     Column {
         TableLine(widths, Modifier.background(MaterialTheme.colorScheme.surfaceContainer)) { column ->
             // Над кнопками подписи нет: значки говорят за себя, а слово
@@ -90,7 +88,7 @@ fun JournalHeader(journal: HistoryJournalTexts, widths: TableWidths = leastWidth
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = HEADER_LINES,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(vertical = Spacing.tight)
+                    modifier = Modifier.padding(vertical = Spacing.itemGap)
                 )
             }
         }

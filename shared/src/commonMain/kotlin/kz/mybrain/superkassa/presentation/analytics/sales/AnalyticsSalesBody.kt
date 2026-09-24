@@ -51,9 +51,9 @@ fun AnalyticsSalesBody(
     register: String? = null
 ) {
     val sales = texts.sales
-    ScrollableColumn(modifier = modifier, spacing = Spacing.snug) {
+    ScrollableColumn(modifier = modifier, spacing = Spacing.fieldGap) {
         SectionCard(sales.overview, info = sales.overviewHint) {
-            SalesOverviewTiles(overviewOf(view.summary, view.previous, view.running), sales)
+            SalesOverviewTiles(overviewOf(view.summary, view.previous), sales)
             SalesNetworkPlates(view, sales, register = register)
             // Возвраты стоят здесь же, а не карточкой ниже: одна плитка
             // во всю ширину читалась как ещё один главный ряд, хотя это

@@ -59,8 +59,8 @@ internal fun AddCashier(state: UsersUiState, actions: UsersActions, money: Money
 private fun CashierFields(state: UsersUiState, actions: UsersActions, money: MoneyTexts) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         itemVerticalAlignment = Alignment.Top
     ) {
         NameField(state.form, actions, money, Modifier.weight(1f))

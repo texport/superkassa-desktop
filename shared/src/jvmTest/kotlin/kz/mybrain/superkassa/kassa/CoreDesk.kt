@@ -12,6 +12,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.kazakhtelecom.proto.v203.Money
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
+import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
@@ -52,7 +54,8 @@ class CoreDesk(channels: List<DeliveryPort> = emptyList()) : AutoCloseable {
 
     /** Зависимости экранов окна поверх кассы процесса. */
     val app: AppContainer by lazy {
-        CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices, memory)
+        val delivery = KassaPorts(EmbeddedDeliverySetup(bench.superkassa.settings, Dispatchers.Unconfined))
+        CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices, memory, ports = delivery)
     }
 
     /** Заводит кассу с пинами [ADMIN_PIN] и [CASHIER_PIN]. */

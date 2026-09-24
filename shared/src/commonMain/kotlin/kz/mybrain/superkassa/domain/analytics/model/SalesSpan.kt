@@ -18,16 +18,6 @@ data class SalesSpan(val from: LocalDate, val to: LocalDate) {
     /** Суток в сроке. */
     val days: Int get() = from.daysUntil(to) + 1
 
-    /**
-     * Можно ли сравнивать срок с прошлым.
-     *
-     * Срок, который кончается сегодня или позже, ещё идёт: сегодняшний
-     * день неполон, и «к прошлому сроку» днём всегда показывало падение —
-     * половина сегодняшнего дня против целого вчерашнего. Сравнивается
-     * только закончившийся срок.
-     */
-    fun finished(today: LocalDate): Boolean = to < today
-
     /** Тот же срок перед этим: столько же суток, вплотную. */
     fun previous(): SalesSpan = SalesSpan(from.minus(DatePeriod(days = days)), to.minus(DatePeriod(days = days)))
 

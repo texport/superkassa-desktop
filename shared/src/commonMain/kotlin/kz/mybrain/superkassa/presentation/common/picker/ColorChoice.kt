@@ -55,8 +55,8 @@ fun <T> ColorChoice(
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+            verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
             maxItemsInEachRow = evenRow(options.size, maxWidth)
         ) {
             Circles(options, selected, swatch, label, onSelect)
@@ -72,7 +72,7 @@ fun <T> ColorChoice(
  * делятся между ними поровну: семь и семь, а не тринадцать и один.
  */
 private fun evenRow(count: Int, width: Dp): Int {
-    val fit = ((width + Spacing.tight) / (Sizes.accentSwatch + Spacing.tight)).toInt().coerceAtLeast(1)
+    val fit = ((width + Spacing.itemGap) / (Sizes.accentSwatch + Spacing.itemGap)).toInt().coerceAtLeast(1)
     val rows = (count + fit - 1) / fit
     return ((count + rows - 1) / rows).coerceAtLeast(1)
 }

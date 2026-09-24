@@ -56,7 +56,7 @@ class CabinetCompanyShots {
         return shot(name) {
             val body = @androidx.compose.runtime.Composable {
                 stage.Window {
-                    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                         CompanyScreen(stage.cabinet.cabinet, Language.Ru, stage.texts)
                     }
                 }
@@ -118,7 +118,7 @@ class CabinetCompanyShots {
             stage.Window {
                 val model = companyViewModel(stage.cabinet.cabinet)
                 val state by model.state.collectAsState()
-                Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                     OkedPicker(state.search, Language.Ru, stage.texts, model.actions()) { _, _ -> }
                 }
             }

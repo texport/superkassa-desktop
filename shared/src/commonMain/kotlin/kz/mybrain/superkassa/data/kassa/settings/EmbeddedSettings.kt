@@ -13,9 +13,12 @@ import kz.mybrain.superkassa.domain.settings.port.CoreSettingsStore
  *
  * Фасад настроек блокирующий — он читает и пишет файл, — поэтому вызов
  * уходит в [io], как и у [EmbeddedKassa].
+ *
+ * @param directory каталог данных, на котором точка сборки подняла кассу.
  */
 class EmbeddedSettings(
     private val api: SettingsApi,
+    override val directory: String? = null,
     private val io: CoroutineDispatcher = Dispatchers.IO
 ) : CoreSettingsStore {
 

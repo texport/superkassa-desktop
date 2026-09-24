@@ -39,6 +39,10 @@ class CoreSettingsViewModel(
 
     override fun reload() {
         viewModelScope.launch {
+            val facts = cases.facts()
+            screen.update { it.copy(about = facts) }
+        }
+        viewModelScope.launch {
             val texts = coreSettingTexts(talk.language())
             val settings = cases.read().shown(texts.title, "read core settings", talk)
             if (settings != null) screen.update { it.copy(settings = settings) }

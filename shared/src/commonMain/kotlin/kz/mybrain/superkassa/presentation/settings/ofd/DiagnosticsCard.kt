@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.strings.kassa.KkmSetupTexts
 import kz.mybrain.superkassa.presentation.strings.kassa.moneyTexts
+import kz.mybrain.superkassa.presentation.strings.settings.kassaFactsTexts
 import kz.mybrain.superkassa.presentation.theme.StatusColors
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
@@ -26,8 +27,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  * двумя разделами выше, и кассир, вошедший в режим, искал выход по всему
  * экрану. И то и другое живёт теперь под самой кассой, в [ProgrammingCard].
  *
- * Настройки самой кассы — режим, протокол, хранилище — показывает карточка
- * «Касса на этой машине»: они не о связи, а о том, как касса работает.
+ * Сведения о самой кассе — версии, режим, протокол, хранилище — показывает
+ * карточка «Сведения о кассе»: они не о связи, а о том, как касса работает.
  */
 @Composable
 fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
@@ -41,7 +42,8 @@ fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
         // проверки: он и остаётся здесь, в строке заголовка.
         trailing = { ofd.linkAlive?.let { LinkChip(it) } }
     ) {
-        Checks(ofd.busy, actions)
+        Checks(ofd, actions)
+        NextRequest(ofd.nextRequest)
         val summary = ofd.summary
         if (summary == null) {
             Text(
@@ -55,18 +57,36 @@ fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
     }
 }
 
-/** Проверки: связь с ОФД и его сведения о кассе. Ничего в кассе не меняют. */
+/**
+ * Проверки: связь с ОФД, его сведения о кассе и номер следующего запроса.
+ * Ничего в кассе не меняют. Номер касса отдаёт только администратору —
+ * кассиру кнопка не показывается, чтобы не вести его к отказу.
+ */
 @Composable
-private fun Checks(busy: Boolean, actions: OfdSettingsActions) {
+private fun Checks(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
     val texts = LocalStrings.current.settings
+    val busy = ofd.busy
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedButton(enabled = !busy, onClick = actions::checkLink) { Text(texts.checkOfdLink) }
         OutlinedButton(enabled = !busy, onClick = actions::askInfo) { Text(texts.ofdInfo) }
+        if (ofd.admin) {
+            OutlinedButton(enabled = !busy, onClick = actions::askNextRequest) {
+                Text(kassaFactsTexts(LocalLanguage.current).ofdAuth)
+            }
+        }
     }
+}
+
+/** Номер следующего запроса к БФД, если его спросили; токена рядом нет намеренно. */
+@Composable
+private fun NextRequest(number: Int?) {
+    number ?: return
+    val facts = kassaFactsTexts(LocalLanguage.current)
+    FactLines(facts.ofdAuth, listOf(facts.nextRequest to number.toString()), facts.unread)
 }
 
 /** Ответил ли ОФД на проверку связи. */

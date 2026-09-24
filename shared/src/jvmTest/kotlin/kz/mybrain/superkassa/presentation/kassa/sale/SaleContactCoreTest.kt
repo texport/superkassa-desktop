@@ -19,6 +19,11 @@ import kotlin.test.assertTrue
  * приложения, тестовом БФД и подменном SMS: чек с контактом ставит доставку
  * на этот контакт и доставляется, чек без контакта доставки не ставит,
  * а набранный с ошибкой контакт чек не пробивает.
+ *
+ * Доставка необязательна: продажа начинается с «не отправлять», и такой
+ * чек задач доставки не ставит, даже если телефон уже набирали. Вид,
+ * чей канал в настройках ядра не настроен, не выбирается; без каналов
+ * выбирать нечего вовсе.
  */
 class SaleContactCoreTest {
     private val sms = TestSms().apply { failing = null }
@@ -63,10 +68,42 @@ class SaleContactCoreTest {
     }
 
     @Test
+    fun `«не отправлять» — чек без задач доставки, хотя телефон набирали`() {
+        val kassa = desk.seated()
+        val model = desk.sale()
+        assertEquals(ContactKind.None, model.state.value.form.contact.kind, "продажа началась не с «не отправлять»")
+        model.add("Кумыс", "600")
+        model.form.contact.kind(ContactKind.Phone)
+        model.form.contact.text("8 (701) 765-43-21")
+        model.form.contact.kind(ContactKind.None)
+
+        model.issue()
+        assertIs<Message.Done>(desk.said, desk.saidText)
+        kassa.deliverReceipts()
+
+        assertTrue(kassa.lastDeliveries().isEmpty(), "«не отправлять» поставило доставку")
+        assertTrue(sms.sent.isEmpty(), "«не отправлять» отправило SMS")
+    }
+
+    @Test
+    fun `вид с ненастроенным каналом не выбирается`() {
+        desk.seated()
+        val model = desk.sale()
+
+        model.form.contact.kind(ContactKind.Email)
+        model.form.contact.kind(ContactKind.Telegram)
+
+        val state = model.state.value
+        assertEquals(setOf(ContactKind.Phone), state.channels.ready, "настроен только SMS — только телефон")
+        assertEquals(ContactKind.None, state.form.contact.kind, "выбрался вид без настроенного канала")
+    }
+
+    @Test
     fun `контакт с ошибкой — кнопка молчит, в БФД ничего не ушло`() {
         desk.seated()
         val model = desk.sale()
         model.add("Кумыс", "600")
+        model.form.contact.kind(ContactKind.Phone)
         model.form.contact.text("8 701 000")
 
         model.issue()

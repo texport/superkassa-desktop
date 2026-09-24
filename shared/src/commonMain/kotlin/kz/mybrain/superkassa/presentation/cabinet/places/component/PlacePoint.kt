@@ -57,7 +57,7 @@ fun PlacePoint(
     // оставляла координатам столбик в букву шириной, и «Широта» читалась
     // сверху вниз. Строка уступает кнопке место, пока не станет уже
     // прежнего поля формы, и тогда кнопка уходит под неё.
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         Text(
             text = point?.let { "${texts.latitude}: ${it.latitude}${Glyphs.SEPARATOR}${texts.longitude}: ${it.longitude}" }
                 ?: texts.pointNotChosen,

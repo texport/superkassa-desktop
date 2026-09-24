@@ -18,4 +18,4 @@ fun ReturnsViewModel.actions(): ReturnsActions = ReturnsActions(this, refund, pa
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
 fun returnsModel(app: AppContainer): ReturnsViewModel =
-    ReturnsViewModel(RefundCases(app.kassa, app.signIn, app.memory), app.talk)
+    ReturnsViewModel(RefundCases(app.kassa, app.signIn, app.memory, app.areas.kassa), app.talk)

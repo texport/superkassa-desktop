@@ -67,8 +67,8 @@ fun AnalyticsPinCard(
             return@OutlinedCard
         }
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
         ) {
             MapCardTitle(kkm?.title ?: texts.pickPin, expanded, onToggle)
             MapCardBody(expanded) {
@@ -93,7 +93,7 @@ fun AnalyticsPinCard(
 @Composable
 private fun PickHint(texts: AnalyticsTexts) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

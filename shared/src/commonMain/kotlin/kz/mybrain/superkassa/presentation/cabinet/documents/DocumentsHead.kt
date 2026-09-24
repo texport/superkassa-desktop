@@ -31,7 +31,7 @@ internal fun DocumentCounters(overview: DocumentsOverview?, texts: CabinetTexts,
     val counts = overview ?: return
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         Text(
             text = allTime,
@@ -40,8 +40,8 @@ internal fun DocumentCounters(overview: DocumentsOverview?, texts: CabinetTexts,
         )
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sectionGap),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             CounterTile(counts.receiptsCount.toString(), texts.receipts)
             CounterTile(counts.shiftsCount.toString(), texts.shifts)

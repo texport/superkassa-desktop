@@ -43,6 +43,7 @@ class ReturnsCoreTest {
     /** Оформляет возврат и отдаёт то, что учёл БФД. */
     private fun ReturnsViewModel.refunded(): TicketRequest {
         refund.refund()
+        refund.confirm()
         assertIs<Message.Done>(desk.said, "возврат не проведён: ${desk.saidText}")
         assertNull(state.value.refund, "проведённый возврат остался выбранным")
         return desk.bfd.countedTickets().last().also {
@@ -118,8 +119,11 @@ class ReturnsCoreTest {
         model.refund.enter("300")
 
         model.refund.refund()
+
+        model.refund.confirm()
         assertIs<Message.NoAnswer>(desk.said, desk.saidText)
         model.refund.refund()
+        model.refund.confirm()
 
         assertIs<Message.Done>(desk.said, desk.saidText)
         val returns = kassa.api.listFiscalDocumentsByPeriod(kassa.kkmId, 0, Long.MAX_VALUE, PAGE, 0, kassa.adminPin)

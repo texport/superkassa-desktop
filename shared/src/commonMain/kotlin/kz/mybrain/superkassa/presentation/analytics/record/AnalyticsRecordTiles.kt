@@ -41,7 +41,7 @@ fun RecordTiles(count: RecordCount, texts: AnalyticsTexts, modifier: Modifier = 
     val record = texts.record
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
         TileRow {
             MainTile(count.total, record.total)
@@ -64,8 +64,8 @@ fun RecordTiles(count: RecordCount, texts: AnalyticsTexts, modifier: Modifier = 
 private fun TileRow(content: @Composable FlowRowScope.() -> Unit) {
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.normal),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.cardGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         content = content
     )
 }
@@ -105,7 +105,7 @@ private fun TradingTile(count: RecordCount, texts: AnalyticsRecordTexts) {
 private fun Tile(value: String, label: String, style: TextStyle, tone: Color) {
     Column(
         modifier = Modifier.widthIn(min = Sizes.counterTile),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         Text(text = value, style = style, color = tone, maxLines = 1)
         Text(

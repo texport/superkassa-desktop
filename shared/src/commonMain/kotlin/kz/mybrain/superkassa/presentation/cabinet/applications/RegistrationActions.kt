@@ -86,8 +86,8 @@ private fun KindChoice(
     onEdit: (ApplicationForm) -> Unit
 ) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         ActionKind.entries.forEach { kind ->
             val chosen = kind == form.kind

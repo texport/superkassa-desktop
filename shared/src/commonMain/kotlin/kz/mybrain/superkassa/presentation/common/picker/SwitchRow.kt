@@ -36,13 +36,13 @@ fun SwitchRow(
         modifier = Modifier
             .fillMaxWidth()
             .toggleable(value = checked, enabled = enabled, role = Role.Switch, onValueChange = onSwitch),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Значок объяснения держится за подписью, а не уезжает к переключателю.
         Row(
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f, fill = false))

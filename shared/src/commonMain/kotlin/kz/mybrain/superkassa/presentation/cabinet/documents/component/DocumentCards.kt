@@ -75,7 +75,7 @@ fun ShiftCard(shift: CabinetShift, texts: CabinetTexts, onClose: () -> Unit) {
         info = texts.hints.shiftCard,
         trailing = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 CabinetStatusChip(shift.state, texts)
@@ -124,7 +124,7 @@ fun CashMovementCard(movement: CabinetCashMovementDetails, texts: CabinetTexts, 
 @Composable
 private fun CardTail(delivery: JournalDelivery?, texts: CabinetTexts, onClose: () -> Unit) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         JournalDeliveryChip(delivery)

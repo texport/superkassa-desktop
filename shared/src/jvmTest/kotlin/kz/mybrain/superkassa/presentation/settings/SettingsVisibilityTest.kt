@@ -25,6 +25,7 @@ class SettingsVisibilityTest {
                 Setting.PanelBehaviour,
                 Setting.CabinetAddress,
                 Setting.MapServices,
+                Setting.Facts,
                 Setting.Updates,
                 Setting.Debug
             ),
@@ -42,6 +43,24 @@ class SettingsVisibilityTest {
         assertTrue(Setting.Debug in visibleSettings(hasRegister = false, admin = false))
         assertTrue(Setting.Debug in visibleSettings(hasRegister = true, admin = false))
         assertTrue(Setting.Debug in visibleSettings(hasRegister = true, admin = true))
+    }
+
+    /**
+     * Сведения о кассе — версии, каталог данных — нужны поддержке до входа:
+     * когда касса не открылась или не пускает.
+     */
+    @Test
+    fun `сведения о кассе видны до входа и кассиру`() {
+        assertTrue(Setting.Facts in visibleSettings(hasRegister = false, admin = false))
+        assertTrue(Setting.Facts in visibleSettings(hasRegister = true, admin = false))
+        assertTrue(Setting.Core !in visibleSettings(hasRegister = true, admin = false), "сроки БФД показаны кассиру")
+    }
+
+    /** На Android приложение обновляет магазин: карточки выпусков там нет. */
+    @Test
+    fun `без своих выпусков карточки обновлений нет`() {
+        assertTrue(Setting.Updates !in visibleSettings(hasRegister = true, admin = true, hasReleases = false))
+        assertTrue(Setting.Facts in visibleSettings(hasRegister = true, admin = true, hasReleases = false))
     }
 
     /** Без кабинета — на Android — адреса кабинета и служб карты настраивать незачем. */
@@ -81,6 +100,7 @@ class SettingsVisibilityTest {
                 Setting.PanelBehaviour,
                 Setting.CabinetAddress,
                 Setting.MapServices,
+                Setting.Facts,
                 Setting.Updates,
                 Setting.Debug,
                 Setting.CurrentKkm,

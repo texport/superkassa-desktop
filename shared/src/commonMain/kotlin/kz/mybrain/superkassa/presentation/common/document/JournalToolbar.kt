@@ -34,7 +34,7 @@ fun JournalToolbar(journal: HistoryJournalTexts, query: JournalQuery, onQuery: (
     // Поле тянется до конца строки, пока ему хватает наименьшей ширины;
     // не хватает — порядок уходит на строку ниже, а не сжимает поле
     // до слова столбиком.
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         SearchField(
             value = query.search,
             label = journal.search,
@@ -46,7 +46,7 @@ fun JournalToolbar(journal: HistoryJournalTexts, query: JournalQuery, onQuery: (
         // Плашки порядка стоят на высоте рамки поля, а не по центру всей
         // его высоты: поле держит над рамкой место под поднятую подпись.
         // В узком окне они переносятся по одной, а не рвут надпись плашки.
-        WrapRow(modifier = Modifier.padding(top = fieldLabelReserve()), spacing = Spacing.tight) {
+        WrapRow(modifier = Modifier.padding(top = fieldLabelReserve()), spacing = Spacing.buttonGap) {
             SortChips(journal, query, onQuery)
         }
     }

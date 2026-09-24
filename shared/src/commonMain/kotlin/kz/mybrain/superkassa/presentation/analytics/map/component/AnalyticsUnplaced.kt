@@ -50,7 +50,7 @@ fun AnalyticsKkmList(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         SectionTitle("${texts.kkmCount} · ${Money.count(placed.size + unplaced.size)}")
         if (placed.isEmpty() && unplaced.isEmpty()) {

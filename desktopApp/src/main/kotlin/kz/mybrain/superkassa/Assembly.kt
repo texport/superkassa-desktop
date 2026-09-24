@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.data.eds.NcaSigner
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.data.kassa.NodeDataMove
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
+import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
 import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
 import kz.mybrain.superkassa.data.local.DataHome
 import kz.mybrain.superkassa.data.local.DialogFiles
@@ -33,6 +34,7 @@ import kz.mybrain.superkassa.data.releases.GithubUpdates
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
@@ -72,6 +74,7 @@ internal fun assemble(kassa: Superkassa, preferences: Preferences, look: Workpla
         look = look,
         talk = Talk(Notices(), AppJournal(), language),
         areas = AreaPorts(
+            kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
             journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
             settings = settingsPorts(kassa, preferences),
             analytics = analyticsPorts(cabinet.bfd, preferences) { language().code },
@@ -101,7 +104,7 @@ private fun settingsPorts(kassa: Superkassa, preferences: Preferences) = Setting
     updateMemory = preferences.updates,
     printOut = SystemPrintOut(),
     printChoices = preferences.printing,
-    coreSettings = EmbeddedSettings(kassa.settings),
+    coreSettings = EmbeddedSettings(kassa.settings, DataHome.kassa().path),
     workplace = PreferenceChoices(preferences)
 )
 

@@ -29,6 +29,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.analytics.CabinetReplies
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetCompany
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetUser
+import kz.mybrain.superkassa.presentation.settings.look.lookModel
 import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.shell.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.KkmTopBar
@@ -39,7 +40,6 @@ import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.theme.Look
-import kz.mybrain.superkassa.presentation.theme.choice.lookModel
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import java.io.File
 

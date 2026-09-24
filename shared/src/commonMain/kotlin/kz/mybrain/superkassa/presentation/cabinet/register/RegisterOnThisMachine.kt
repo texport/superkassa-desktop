@@ -86,8 +86,8 @@ private fun WorksHere(machine: MachineTexts, kkm: KkmResponse, name: String, sta
     Explanation(machine.worksHere)
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = name, style = MaterialTheme.typography.bodyMedium)

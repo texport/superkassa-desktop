@@ -61,7 +61,7 @@ private fun NewPinField(money: MoneyTexts, change: PinChange, actions: UsersActi
     // набирает пин в пустоту и не понимает, почему кнопка не оживает.
     val focus = remember { FocusRequester() }
     LaunchedEffect(Unit) { focus.requestFocus() }
-    DialogBody(spacing = Spacing.tight) {
+    DialogBody(spacing = Spacing.itemGap) {
         OutlinedTextField(
             value = change.pin,
             onValueChange = actions::typeNewPin,

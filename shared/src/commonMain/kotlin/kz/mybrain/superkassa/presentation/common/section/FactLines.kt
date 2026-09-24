@@ -23,7 +23,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 fun FactLines(title: String?, rows: List<Pair<String, String>>, empty: String) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         title?.let {
             Text(
                 text = it,
@@ -42,7 +42,7 @@ fun FactLines(title: String?, rows: List<Pair<String, String>>, empty: String) {
 /** Подпись слева по одной ширине, значение справа. */
 @Composable
 private fun FactLine(label: String, value: String) {
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,

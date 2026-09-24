@@ -104,7 +104,7 @@ fun ScrollingTable(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val across = rememberScrollState()
-        val room = maxWidth - Spacing.normal
+        val room = maxWidth - Spacing.scrollbarGutter
         val sized = tableWidths(columns, room)
         if (pinned > 0) {
             PinnedBody(TableWidths(columns, sized, pinned, across, room), state, header, rows)
@@ -130,7 +130,7 @@ private fun TableBody(
     header: @Composable (TableWidths) -> Unit,
     rows: LazyListScope.(TableWidths) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().horizontalScroll(across).padding(end = Spacing.normal)) {
+    Column(modifier = Modifier.fillMaxSize().horizontalScroll(across).padding(end = Spacing.scrollbarGutter)) {
         Box(modifier = Modifier.width(widths.total)) { header(widths) }
         LazyColumn(
             state = state,

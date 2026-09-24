@@ -15,4 +15,4 @@ fun saleViewModel(app: AppContainer): SaleViewModel = viewModel { saleModel(app)
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
 fun saleModel(app: AppContainer): SaleViewModel =
-    SaleViewModel(SaleCases(app.kassa, app.signIn, app.memory), app.talk)
+    SaleViewModel(SaleCases(app.kassa, app.signIn, app.memory, app.areas.kassa), app.talk)

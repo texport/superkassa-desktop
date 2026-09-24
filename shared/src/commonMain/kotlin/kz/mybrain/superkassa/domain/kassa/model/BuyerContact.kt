@@ -8,23 +8,35 @@ import io.github.texport.superkassa.core.presentation.api.model.receipt.Customer
  * Вид выбирает кассир, а не угадывает касса: номер чата в Telegram —
  * такие же десять цифр, что и телефон без кода страны, и по одной строке
  * их не различить.
+ *
+ * Доставка чека необязательна: [None] — чек покупателю не отправляется,
+ * его показывают или печатают. С него начинается каждая продажа.
+ *
+ * @property channels каналы доставки ядра, которыми уходит чек на контакт
+ *   этого вида: телефон — SMS или WhatsApp, почта — почта, Telegram — Telegram.
  */
-enum class ContactKind { Phone, Email, Telegram }
+enum class ContactKind(val channels: List<String>) {
+    None(emptyList()),
+    Phone(listOf("SMS", "WHATSAPP")),
+    Email(listOf("EMAIL")),
+    Telegram(listOf("TELEGRAM"))
+}
 
 /**
  * Контакт покупателя, как его набрал кассир.
  *
- * Необязателен: без контакта чек покупателю не уходит, и это обычный чек.
+ * Необязателен: без контакта чек покупателю не уходит, и это обычный чек;
+ * по умолчанию вид — «не отправлять».
  * Набранный — должен разбираться: касса отправила бы чек на «8 701» и
  * отчиталась бы о доставке в никуда.
  *
  * @property kind вид контакта.
  * @property text набранное, как есть.
  */
-data class BuyerContact(val kind: ContactKind = ContactKind.Phone, val text: String = "") {
+data class BuyerContact(val kind: ContactKind = ContactKind.None, val text: String = "") {
 
-    /** Контакт не набран: чек покупателю не отправляется. */
-    val empty: Boolean get() = text.isBlank()
+    /** Контакт не набран или отправлять не нужно: чек покупателю не отправляется. */
+    val empty: Boolean get() = kind == ContactKind.None || text.isBlank()
 
     /** Набранное приведено к виду, в котором по нему шлют; `null` — не разобрано или пусто. */
     val normalized: String? get() = if (empty) null else normalize(kind, text.trim())
@@ -40,6 +52,7 @@ data class BuyerContact(val kind: ContactKind = ContactKind.Phone, val text: Str
     /** Контакт для кассы: только разобранный и только нужного вида. */
     fun toRequest(): CustomerContactRequest? = normalized?.let { value ->
         when (kind) {
+            ContactKind.None -> null
             ContactKind.Phone -> CustomerContactRequest(phone = value)
             ContactKind.Email -> CustomerContactRequest(email = value)
             ContactKind.Telegram -> CustomerContactRequest(telegram = value)
@@ -71,6 +84,7 @@ data class BuyerContact(val kind: ContactKind = ContactKind.Phone, val text: Str
         const val EMAIL_MAX = 254
 
         fun normalize(kind: ContactKind, text: String): String? = when (kind) {
+            ContactKind.None -> null
             ContactKind.Phone -> phone(text)
             ContactKind.Email -> text.takeIf { it.length <= EMAIL_MAX && EMAIL.matches(it) }
             ContactKind.Telegram -> text.takeIf { TELEGRAM.matches(it) }

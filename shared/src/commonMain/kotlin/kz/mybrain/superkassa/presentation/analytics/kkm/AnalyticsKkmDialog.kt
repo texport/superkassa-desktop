@@ -83,7 +83,7 @@ fun AnalyticsKkmDialog(
 private fun KkmSalesSurface(onClose: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
     Surface(
         modifier = Modifier
-            .padding(Spacing.roomy)
+            .padding(Spacing.blockPadding)
             .sizeIn(maxWidth = Sizes.kkmSalesWidth, maxHeight = Sizes.kkmSalesHeight)
             .fillMaxSize()
             .onEscape {
@@ -94,8 +94,8 @@ private fun KkmSalesSurface(onClose: () -> Unit, content: @Composable ColumnScop
         tonalElevation = Sizes.dialogElevation
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug),
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
             content = content
         )
     }
@@ -111,7 +111,7 @@ private fun DialogHead(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {

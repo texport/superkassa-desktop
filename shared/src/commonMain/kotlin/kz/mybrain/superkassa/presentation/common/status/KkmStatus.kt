@@ -81,8 +81,8 @@ fun EnumStrings.kkmState(code: String): String = when (KkmState.entries.firstOrN
 fun KkmStatusChips(kkm: KkmResponse?) {
     val chips = kkmStatusChips(kkm, statusWords(kkm))
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
         chips.forEach { chip -> Chip(chip.text, toneColor(chip.tone)) }

@@ -17,10 +17,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
+import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
 import kz.mybrain.superkassa.presentation.common.keyboard.SystemBack
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.login.SignInSlot
-import kz.mybrain.superkassa.presentation.login.loginViewModel
+import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
+import kz.mybrain.superkassa.presentation.settings.look.lookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.bar.BusyLine
 import kz.mybrain.superkassa.presentation.shell.bar.WorkBar
@@ -34,13 +35,12 @@ import kz.mybrain.superkassa.presentation.shell.section.SectionTrailSaver
 import kz.mybrain.superkassa.presentation.shell.section.sectionsFor
 import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.update.updateTexts
-import kz.mybrain.superkassa.presentation.theme.choice.LookViewModel
-import kz.mybrain.superkassa.presentation.theme.choice.lookViewModel
 import kz.mybrain.superkassa.presentation.update.check.RailVersion
 import kz.mybrain.superkassa.presentation.update.check.UpdateDialog
 import kz.mybrain.superkassa.presentation.update.check.UpdatesUiState
 import kz.mybrain.superkassa.presentation.update.check.UpdatesViewModel
 import kz.mybrain.superkassa.presentation.update.check.updatesViewModel
+import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
 
 /**
  * Каркас окна.
@@ -59,7 +59,7 @@ fun ShellScreen(app: AppContainer) {
     // Кабинета нет на платформе, где его не собрали: там нет и его модели.
     val cabinet = app.areas.cabinet?.let { cabinetViewModel(app) }
     val window = remember(app, shellModel, look, cabinet) {
-        WindowParts(shellModel, look, cabinet?.let { CabinetWindow(app, it, look) })
+        WindowParts(shellModel, look, cabinet?.let { CabinetWindow(app, it, cabinetLook(look)) })
     }
     val shell by window.shell.state.collectAsScreenState()
     // Один хост сообщений на окно: снекбар лежит поверх содержимого
@@ -93,21 +93,17 @@ class WindowParts(val shell: ShellViewModel, val look: LookViewModel, val cabine
  */
 @Composable
 internal fun DoorShell(app: AppContainer, window: WindowParts, messages: SnackbarHostState) {
-    // Набранное кассиром живёт в модели входа окна: полоса пина стоит
-    // нижним слотом каркаса, а список касс — его содержимым, и оба
-    // читают одно и то же.
+    // Набранное кассиром живёт в модели входа окна: список касс и полоса
+    // пина читают одно и то же. Поле окна — то же, что у разделов, и сверху:
+    // шапки над входом нет.
     val login = loginViewModel(app)
     val door by login.state.collectAsScreenState()
     Scaffold(
         topBar = { BusyLine(door.entering) },
-        // Полоса пина — слот каркаса, а не последний блок экрана: Material 3
-        // кладёт снекбар над нижней полосой, и отказ входа перестал закрывать
-        // ровно то, что кассир должен исправить, — поле пина и «Войти».
-        bottomBar = { SignInSlot(door, login) },
         snackbarHost = { MessageHost(messages) }
     ) { padding ->
         ShellMessages(app, messages)
-        Row(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Row(modifier = Modifier.fillMaxSize().padding(padding).padding(windowMargin)) {
             SectionDoor(app, window, door, login)
         }
     }

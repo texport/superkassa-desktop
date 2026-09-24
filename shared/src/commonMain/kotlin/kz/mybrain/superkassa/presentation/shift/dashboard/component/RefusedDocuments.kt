@@ -50,8 +50,8 @@ internal fun RefusedDocuments(state: DashboardUiState) {
 
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
         ) {
             RefusedHead(refused.size)
             // Отказы приходят пачкой, и перечень прокручивается внутри
@@ -61,8 +61,8 @@ internal fun RefusedDocuments(state: DashboardUiState) {
             // или под ним, но не больше его доли.
             ScrollableColumn(
                 modifier = Modifier.weight(1f, fill = false),
-                spacing = Spacing.tight,
-                gutter = Spacing.snug
+                spacing = Spacing.itemGap,
+                gutter = Spacing.fieldGap
             ) {
                 refused.forEach { document ->
                     RefusedRow(state, document, state.operators[document.id])
@@ -83,7 +83,7 @@ internal fun RefusedSummary(state: DashboardUiState) {
     val refused = state.refused
     if (refused.isEmpty()) return
     OutlinedCard(modifier = Modifier.fillMaxWidth()) {
-        Box(modifier = Modifier.padding(Spacing.normal)) { RefusedHead(refused.size) }
+        Box(modifier = Modifier.padding(Spacing.cardPadding)) { RefusedHead(refused.size) }
     }
 }
 
@@ -91,7 +91,10 @@ internal fun RefusedSummary(state: DashboardUiState) {
 @Composable
 private fun RefusedHead(count: Int) {
     val texts = LocalStrings.current
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(
             text = "${texts.dashboard.refused}: $count",
             style = MaterialTheme.typography.titleMedium,
@@ -106,11 +109,11 @@ private fun RefusedHead(count: Int) {
 private fun RefusedRow(state: DashboardUiState, document: FiscalDocumentResponse, operator: String?) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         // Сумма и код переносятся под вид документа, когда карточке тесно,
         // а не сжимают его до многоточия.
-        WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+        WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
             Text(
                 text = listOfNotNull(documentTitle(state, document.docType), operator).joinToString(Glyphs.SEPARATOR),
                 style = MaterialTheme.typography.bodyMedium,

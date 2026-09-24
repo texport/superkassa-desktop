@@ -65,7 +65,7 @@ private fun AdminForm(
     cabinetBusy: Boolean,
     onDone: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         ContourPicker(state.contours, state.contour) { actions.edit(state.form.copy(contour = it)) }
         AdminPinField(state.form.adminPin) { actions.edit(state.form.copy(adminPin = it)) }
         RepeatPinField(state.form) { actions.edit(state.form.copy(adminPinRepeat = it)) }

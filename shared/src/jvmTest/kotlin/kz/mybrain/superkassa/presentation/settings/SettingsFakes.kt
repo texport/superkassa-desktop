@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.domain.debug.port.LogBook
 import kz.mybrain.superkassa.domain.debug.port.LogBookState
 import kz.mybrain.superkassa.domain.print.model.Kept
 import kz.mybrain.superkassa.domain.print.model.PrintKind
+import kz.mybrain.superkassa.domain.print.model.Printed
 import kz.mybrain.superkassa.domain.print.port.PrintChoices
 import kz.mybrain.superkassa.domain.print.port.PrintOut
 import kz.mybrain.superkassa.domain.settings.port.CoreSettingsStore
@@ -116,9 +117,9 @@ class FakePrintOut(var names: List<String> = listOf("Чековый у касс�
 
     override suspend fun tape(png: ByteArray): ByteArray = png
 
-    override suspend fun print(tape: ByteArray, printer: String?, widthMm: Int, copies: Int): Boolean {
+    override suspend fun print(tape: ByteArray, printer: String?, widthMm: Int, copies: Int): Printed {
         printed += Job(tape, printer, widthMm, copies)
-        return accepts
+        return if (accepts) Printed.Sent else Printed.Refused
     }
 
     override suspend fun keep(bytes: ByteArray, name: String, title: String): Kept {
@@ -150,7 +151,8 @@ class MemoryPrintChoices(override var copies: Int = 1, private var kind: PrintKi
  * @property saves сколько раз настройки сохраняли.
  */
 open class MemoryCoreSettings(
-    var settings: CoreSettings = CoreSettings(CoreMode.DESKTOP, STORAGE, allowChanges = true)
+    var settings: CoreSettings = CoreSettings(CoreMode.DESKTOP, STORAGE, allowChanges = true),
+    override val directory: String? = DIRECTORY
 ) : CoreSettingsStore {
     var saves = 0
         private set
@@ -167,6 +169,9 @@ open class MemoryCoreSettings(
     private companion object {
         val STORAGE = StorageSettings(engine = "SQLITE", jdbcUrl = "jdbc:sqlite:superkassa.db", password = "secret")
         val FROZEN = TrilingualMessage("заморожено", "бұғатталған", "frozen")
+
+        /** Каталог данных, как его назвала бы точка сборки. */
+        const val DIRECTORY = "/home/kassa/.superkassa/kassa"
     }
 }
 

@@ -36,8 +36,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
-    spacing: Dp = Spacing.normal,
-    gutter: Dp = Spacing.normal,
+    spacing: Dp = Spacing.cardGap,
+    gutter: Dp = Spacing.scrollbarGutter,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scroll = rememberScrollState()

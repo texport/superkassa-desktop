@@ -39,10 +39,13 @@ fun <T> MenuChip(
     options: List<T>,
     title: (T) -> String,
     chosen: Boolean,
+    modifier: Modifier = Modifier,
     onSelect: (T) -> Unit
 ) {
     var open by remember { mutableStateOf(false) }
-    Box {
+    // Ширину, заданную рядом (доля строки отбора), плашка берёт целиком,
+    // а без неё — по своей подписи.
+    Box(modifier = modifier, propagateMinConstraints = true) {
         FilterChip(
             selected = chosen,
             onClick = { open = true },

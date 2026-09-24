@@ -49,16 +49,16 @@ internal fun FullScreenPreviewBar(actions: PreviewActions) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
         navigationIcon = {
-            IconButton(onClick = actions.onDismiss, modifier = Modifier.padding(start = Spacing.tight)) {
+            IconButton(onClick = actions.onDismiss, modifier = Modifier.padding(start = Spacing.itemGap)) {
                 Icon(AppIcons.close, contentDescription = texts.close)
             }
         },
         title = { Text(texts.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         actions = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(end = Spacing.normal)
+                modifier = Modifier.padding(end = Spacing.scrollbarGutter)
             ) {
                 ZoomButtons(actions)
                 NamedActions(actions)
@@ -75,7 +75,7 @@ private fun NamedActions(actions: PreviewActions) {
     actions.onPrint?.let { print ->
         Button(onClick = print) {
             Icon(AppIcons.print, contentDescription = null)
-            Text(texts.print, modifier = Modifier.padding(start = Spacing.tight))
+            Text(texts.print, modifier = Modifier.padding(start = Spacing.itemGap))
         }
     }
 }

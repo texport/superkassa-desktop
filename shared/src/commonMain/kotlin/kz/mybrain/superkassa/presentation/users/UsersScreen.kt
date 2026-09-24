@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.presentation.users
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,8 +48,8 @@ fun UsersContent(state: UsersUiState, actions: UsersActions) {
     val language = LocalLanguage.current
     val money = moneyTexts(language)
     ScrollableColumn(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-        spacing = Spacing.normal
+        modifier = Modifier.fillMaxSize(),
+        spacing = Spacing.cardGap
     ) {
         ScreenTitle(texts.users.title)
         CardColumns(Modifier.fillMaxWidth()) {

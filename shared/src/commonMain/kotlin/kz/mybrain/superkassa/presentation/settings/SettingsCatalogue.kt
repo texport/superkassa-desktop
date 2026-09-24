@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.settings
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsCard
 import kz.mybrain.superkassa.presentation.settings.core.DeliveryCard
+import kz.mybrain.superkassa.presentation.settings.core.KassaFactsCard
 import kz.mybrain.superkassa.presentation.settings.kkm.CurrentKkmCard
 import kz.mybrain.superkassa.presentation.settings.kkm.DecommissionCard
 import kz.mybrain.superkassa.presentation.settings.kkm.ProgrammingCard
@@ -26,7 +27,7 @@ import kz.mybrain.superkassa.presentation.settings.workplace.TradeDomainCard
 internal enum class Setting {
     Appearance, PanelBehaviour,
     CabinetAddress, MapServices,
-    Core, Delivery, Updates, Debug,
+    Facts, Core, Delivery, Updates, Debug,
     CurrentKkm, Programming, PrintForm, PrintTarget,
     Domain,
     Tax, OfdSync, OfdToken, Diagnostics, Decommission
@@ -39,6 +40,8 @@ internal enum class Setting {
  * @param adminOnly касса отвечает по ней только администратору.
  * @param needsCabinet настройка служит кабинету: без него — на Android —
  *   ей нечего настраивать.
+ * @param needsReleases настройка служит выпускам кассы: там, где приложение
+ *   обновляет магазин, — на Android — ей нечего проверять.
  */
 internal class SettingsCard(
     val setting: Setting,
@@ -46,15 +49,21 @@ internal class SettingsCard(
     val needsRegister: Boolean = false,
     val adminOnly: Boolean = false,
     val needsCabinet: Boolean = false,
+    val needsReleases: Boolean = false,
     val card: @Composable (SettingsBoard) -> Unit
 ) {
-    fun visible(hasRegister: Boolean, admin: Boolean, hasCabinet: Boolean = true): Boolean =
-        (!needsRegister || hasRegister) && (!adminOnly || admin) && (!needsCabinet || hasCabinet)
+    fun visible(hasRegister: Boolean, admin: Boolean, hasCabinet: Boolean = true, hasReleases: Boolean = true) =
+        (!needsRegister || hasRegister) && (!adminOnly || admin) && (!needsCabinet || hasCabinet) &&
+            (!needsReleases || hasReleases)
 }
 
-/** Что видно при таком месте, таких правах и кабинете. */
-internal fun visibleSettings(hasRegister: Boolean, admin: Boolean, hasCabinet: Boolean = true): List<Setting> =
-    settingsCards.filter { it.visible(hasRegister, admin, hasCabinet) }.map { it.setting }
+/** Что видно при таком месте, таких правах, кабинете и выпусках. */
+internal fun visibleSettings(
+    hasRegister: Boolean,
+    admin: Boolean,
+    hasCabinet: Boolean = true,
+    hasReleases: Boolean = true
+): List<Setting> = settingsCards.filter { it.visible(hasRegister, admin, hasCabinet, hasReleases) }.map { it.setting }
 
 /**
  * Весь список настроек приложения.
@@ -81,15 +90,19 @@ internal val settingsCards = listOf(
         MapServicesCard(it.workplace, it.workplaceActions)
     },
 
+    // Сведения о кассе — версии, режим, протокол, хранилище — видны всем
+    // и до входа: поддержке они нужны, когда касса не открылась или не пускает.
+    SettingsCard(Setting.Facts, SettingsGroup.Program) { KassaFactsCard(it.core) },
     // Настройки самой кассы на этой машине — сроки обмена с БФД и доставка —
     // одни на все её кассы и меняются только администратором.
-    SettingsCard(Setting.Core, SettingsGroup.Program, adminOnly = true) { CoreSettingsCard(it.core, it.coreActions) },
-    SettingsCard(Setting.Delivery, SettingsGroup.Program, adminOnly = true) {
+    SettingsCard(Setting.Core, SettingsGroup.Exchange, adminOnly = true) { CoreSettingsCard(it.core, it.coreActions) },
+    SettingsCard(Setting.Delivery, SettingsGroup.Exchange, adminOnly = true) {
         DeliveryCard(it.delivery, it.deliveryActions)
     },
     // Версия кассы и выпуски не зависят ни от кассы, ни от прав: узнать,
-    // что стоит и что вышло, можно с экрана входа.
-    SettingsCard(Setting.Updates, SettingsGroup.Program) { it.parts.updates() },
+    // что стоит и что вышло, можно с экрана входа. На Android приложение
+    // обновляет магазин: проверять там нечего, а версия стоит в сведениях.
+    SettingsCard(Setting.Updates, SettingsGroup.Program, needsReleases = true) { it.parts.updates() },
     // Отладка нужна ровно тогда, когда войти нельзя: касса не открылась,
     // список касс пуст. Условий у неё нет намеренно, а место — за тем,
     // что кассир читает каждый день.

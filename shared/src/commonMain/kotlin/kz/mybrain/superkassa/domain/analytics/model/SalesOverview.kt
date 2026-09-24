@@ -29,12 +29,7 @@ data class SalesOverview(
     val averageChange: Int?,
     val taxChange: Int?,
     val cashlessChange: Int?,
-    val netChange: Int?,
-    /**
-     * Срок ещё идёт, и сравнения нет вовсе: сегодняшний день неполон,
-     * и половина сегодня против целого вчера всегда показывала падение.
-     */
-    val running: Boolean = false
+    val netChange: Int?
 ) {
     /**
      * Начислялся ли за срок НДС.
@@ -46,12 +41,8 @@ data class SalesOverview(
     val taxCharged: Boolean get() = tax != 0L
 }
 
-/**
- * Итоги срока рядом с прошлым сроком; прошлого нет — только сами числа.
- *
- * @param running срок ещё идёт: прошлого срока для сравнения нет намеренно.
- */
-fun overviewOf(current: SalesSummary, previous: SalesSummary? = null, running: Boolean = false): SalesOverview {
+/** Итоги срока рядом с прошлым сроком; прошлого нет — только сами числа. */
+fun overviewOf(current: SalesSummary, previous: SalesSummary? = null): SalesOverview {
     val cashless = cashlessShare(current.payments)
     val cashlessWas = previous?.let { cashlessShare(it.payments) }
     return SalesOverview(
@@ -66,8 +57,7 @@ fun overviewOf(current: SalesSummary, previous: SalesSummary? = null, running: B
         averageChange = changeOf(current.average, previous?.average),
         taxChange = changeOf(current.tax.orZero(), previous?.tax.orZero()),
         cashlessChange = if (cashless == null || cashlessWas == null) null else cashless - cashlessWas,
-        netChange = changeOf(current.net, previous?.net),
-        running = running
+        netChange = changeOf(current.net, previous?.net)
     )
 }
 

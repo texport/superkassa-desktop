@@ -92,7 +92,7 @@ class DeliveryStateTest {
     /** Кадр одной плашки; остаётся в `/tmp/loose-ends-delivery-*.png`, чтобы смотреть глазами. */
     private fun chip(status: String?): ByteArray {
         val frame = RenderProbe(width = CHIP_WIDE, height = CHIP_TALL) {
-            Box(modifier = Modifier.fillMaxSize().padding(Spacing.roomy)) {
+            Box(modifier = Modifier.fillMaxSize().padding(Spacing.blockPadding)) {
                 DocumentDeliveryChip(document(status))
             }
         }.use { probe ->

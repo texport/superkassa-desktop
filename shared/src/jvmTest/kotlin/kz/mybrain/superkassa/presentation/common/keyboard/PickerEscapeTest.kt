@@ -39,7 +39,11 @@ class PickerEscapeTest {
         var closed = false
         RenderProbe(width = SIDE, height = SIDE) {
             val focus = FocusRequester()
-            Box(modifier = Modifier.onEscape { closed = true; true }) {
+            val escape = Modifier.onEscape {
+                closed = true
+                true
+            }
+            Box(modifier = escape) {
                 Box(modifier = Modifier.size(FIELD.dp).focusRequester(focus).focusable())
             }
             LaunchedEffect(Unit) { focus.requestFocus() }
@@ -55,7 +59,11 @@ class PickerEscapeTest {
         var seen = false
         RenderProbe(width = SIDE, height = SIDE) {
             val focus = FocusRequester()
-            Box(modifier = Modifier.onEscape { seen = true; false }) {
+            val escape = Modifier.onEscape {
+                seen = true
+                false
+            }
+            Box(modifier = escape) {
                 Box(modifier = Modifier.size(FIELD.dp).focusRequester(focus).focusable())
             }
             LaunchedEffect(Unit) { focus.requestFocus() }

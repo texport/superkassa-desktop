@@ -13,7 +13,8 @@ import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
  * Сумма и отметки возврата по выбранному чеку.
  *
  * Пока возврат оформляется, набранное не правится: в кассу уходит ровно
- * то, что кассир видел, нажимая кнопку.
+ * то, что кассир видел, нажимая кнопку. Сам возврат уходит только после
+ * подтверждения с суммой — как внесение и изъятие денег.
  *
  * @param submit оформить возврат: это делает модель экрана.
  */
@@ -31,9 +32,16 @@ class RefundEditor(
 
     override fun contact(text: String) = edit { it.copy(contact = it.contact.enter(text)) }
 
-    override fun contactKind(kind: ContactKind) = edit { it.copy(contact = it.contact.switchTo(kind)) }
+    override fun contactKind(kind: ContactKind) = screen.update { if (busy.now) it else it.chooseContact(kind) }
 
-    override fun refund() = submit()
+    override fun refund() = screen.update { if (it.canRefund) it.copy(confirming = true) else it }
+
+    override fun confirm() {
+        screen.update { it.copy(confirming = false) }
+        submit()
+    }
+
+    override fun cancel() = screen.update { it.copy(confirming = false) }
 
     private fun edit(change: (RefundDraft) -> RefundDraft) =
         screen.update { now -> if (busy.now) now else now.copy(refund = now.refund?.let(change)) }

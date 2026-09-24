@@ -46,7 +46,15 @@ class PrintTargetViewModel(private val cases: PrintTargetCases) : ViewModel(), P
     private suspend fun onKkm(kkmId: String?) {
         val target = cases.read(kkmId)
         screen.update {
-            PrintTargetUiState(kkmId, target.printers, printersRead = true, target.printer, target.copies, target.kind)
+            PrintTargetUiState(
+                kkmId,
+                target.printers,
+                printersRead = true,
+                target.printer,
+                target.copies,
+                target.kind,
+                target.route
+            )
         }
     }
 }

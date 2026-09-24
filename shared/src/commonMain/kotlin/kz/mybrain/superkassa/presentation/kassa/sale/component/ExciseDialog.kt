@@ -2,12 +2,13 @@ package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -22,14 +23,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.domain.kassa.model.sale.ExciseRules
+import kz.mybrain.superkassa.presentation.common.dialog.formDialogWidth
 import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.strings.kassa.words
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 
@@ -60,13 +63,13 @@ fun ExciseDialog(stamps: List<String>, onChanged: (List<String>) -> Unit, onDism
     AlertDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.width(Sizes.formDialog),
+        modifier = Modifier.formDialogWidth(),
         icon = { Icon(AppIcons.excise, contentDescription = null) },
         title = { Text(texts.excise) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+                verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
             ) {
                 ScanField(scanned, refusal ?: texts.exciseHint, refusal != null, ::accept) {
                     scanned = it
@@ -96,6 +99,9 @@ private fun ScanField(
         supportingText = { Text(hint) },
         isError = rejected,
         singleLine = true,
+        // Марка буквенно-цифровая: клавиатура обычная, «Готово» принимает марку, как Enter сканера.
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { onEnter() }),
         modifier = Modifier.fillMaxWidth().onEnter {
             onEnter()
             true
@@ -105,7 +111,7 @@ private fun ScanField(
 
 /** Считанные марки: моноширинно и по одной в строке — их сверяют глазами. */
 @Composable
-private fun StampList(stamps: List<String>, onRemove: (Int) -> Unit) {
+private fun ColumnScope.StampList(stamps: List<String>, onRemove: (Int) -> Unit) {
     val texts = LocalSaleTexts.current
     if (stamps.isEmpty()) {
         Text(
@@ -115,7 +121,9 @@ private fun StampList(stamps: List<String>, onRemove: (Int) -> Unit) {
         )
         return
     }
-    LazyColumn(modifier = Modifier.fillMaxWidth().heightIn(max = Sizes.stampList)) {
+    // Перечень берёт остаток высоты окна и прокручивается в нём: окно
+    // Material ограничено высотой экрана, и кнопка «Готово» остаётся на месте.
+    LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f, fill = false)) {
         itemsIndexed(stamps) { at, stamp ->
             Row(
                 modifier = Modifier.fillMaxWidth(),

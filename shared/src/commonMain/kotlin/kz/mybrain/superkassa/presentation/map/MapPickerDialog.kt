@@ -139,8 +139,8 @@ private fun PickerBody(
     val state = parts.state
     val notices = remember(language) { mapAddressTexts(language) }
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.normal),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        modifier = Modifier.fillMaxSize().padding(Spacing.cardPadding),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         MapHeader(texts, onDismiss)
         RegistryAddress(parts, address, onAddress)

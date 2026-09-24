@@ -13,10 +13,10 @@ private val analyticsSalesTextsKk = AnalyticsSalesTexts(
     vatNone = "ҚҚС есептелмеген",
     cashless = "Қолма-қол ақшасыз үлесі",
     versusPrevious = "алдыңғы мерзімге",
-    periodRunning = "Мерзім әлі жүріп жатыр: ол аяқталғанда алдыңғы мерзіммен салыстырылады",
     percentPoints = "п. т.",
     online = "Сатылымы бар кассалар",
     silent = "Мерзімде чексіз",
+    openShifts = "Ашық ауысымдар",
 
     revenue = "Түсім",
     receipts = "Чектер",

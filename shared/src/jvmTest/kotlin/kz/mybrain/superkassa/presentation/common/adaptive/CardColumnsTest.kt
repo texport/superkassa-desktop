@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.presentation.theme.size.CardGrid
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Карточки во всю ширину: столбцов столько, сколько позволяют класс окна,
@@ -72,11 +73,21 @@ class CardColumnsTest {
         assertEquals(2, cards.map { it.first }.distinct().size, "в панели $room: $cards")
     }
 
+    /**
+     * Порядок читается по столбцам сверху вниз и не зависит от высоты.
+     *
+     * Прежде карточка вставала в самый короткий столбец: шаги читались
+     * «1, 4 / 2, 3», а нажатие, менявшее высоту одной карточки,
+     * переставляло соседние.
+     */
     @Test
-    fun `карточка встаёт в самый короткий столбец`() {
-        // Первая карточка высокая: вторая встаёт рядом, третья — под второй, а не под первой.
-        val cards = layout(window = MEDIUM_WIDE, room = ROOM, count = 3, heights = listOf(TALL, CARD, CARD))
-        assertEquals(cards[1].first, cards[2].first, "третья карточка не встала под короткую: $cards")
+    fun `карточки идут по столбцам по порядку, и высота их не переставляет`() {
+        val tall = layout(window = MEDIUM_WIDE, room = ROOM, count = 3, heights = listOf(TALL, CARD, CARD))
+        val even = layout(window = MEDIUM_WIDE, room = ROOM, count = 3, heights = listOf(CARD, CARD, CARD))
+
+        assertEquals(tall.map { it.first }, even.map { it.first }, "высота переставила карточки по столбцам")
+        assertEquals(tall[0].first, tall[1].first, "вторая карточка ушла из первого столбца: $tall")
+        assertTrue(tall[2].first > tall[1].first, "третья карточка не во втором столбце: $tall")
     }
 
     private companion object {

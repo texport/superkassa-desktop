@@ -56,8 +56,8 @@ class DeliveryCardShots {
         val appearance = if (dark) Appearance.Dark else Appearance.Light
         RenderProbe(width, height, appearance, Look(textScale = scale), language) {
             Surface(Modifier.fillMaxSize()) {
-                ScrollableColumn(modifier = Modifier.fillMaxSize().padding(Spacing.screen)) {
-                    Column(Modifier.contentWidth(ContentKind.Reading), Arrangement.spacedBy(Spacing.roomy)) {
+                ScrollableColumn(modifier = Modifier.fillMaxSize().padding(Spacing.fieldGap)) {
+                    Column(Modifier.contentWidth(ContentKind.Reading), Arrangement.spacedBy(Spacing.sectionGap)) {
                         DeliveryCard(delivery, object : DeliveryActions {})
                         PrintTargetCard(GONE, object : PrintTargetActions {})
                         CoreSettingsCard(CoreSettingsUiState(settings = core), object : CoreSettingsActions {})

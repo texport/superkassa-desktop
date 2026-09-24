@@ -39,7 +39,7 @@ internal fun UpdatesCard(updates: UpdatesUiState, actions: UpdatesActions) {
         // Итог проверки переносится под кнопку целиком, когда ему не хватает
         // строки: «Сервер выпусков недоступен» по-казахски рядом с кнопкой
         // сжимался в узкий столбик.
-        WrapRow(spacing = Spacing.snug) {
+        WrapRow(spacing = Spacing.fieldGap) {
             BusyButton(
                 text = if (updates.checking) texts.checking else texts.checkNow,
                 busy = updates.checking,

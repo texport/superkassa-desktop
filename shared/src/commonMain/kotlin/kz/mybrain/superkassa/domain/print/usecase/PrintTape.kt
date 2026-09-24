@@ -1,6 +1,9 @@
 package kz.mybrain.superkassa.domain.print.usecase
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import kz.mybrain.superkassa.domain.print.model.PrintKind
+import kz.mybrain.superkassa.domain.print.model.PrintRoute
+import kz.mybrain.superkassa.domain.print.model.Printed
 import kz.mybrain.superkassa.domain.print.port.PrintChoices
 import kz.mybrain.superkassa.domain.print.port.PrintOut
 
@@ -32,7 +35,10 @@ class PrintTape(private val printOut: PrintOut, private val choices: PrintChoice
          * конторский принтер, и чек на листе A4 кассир принял бы за сбой
          * чекового, а не за свою настройку.
          */
-        PrinterGone
+        PrinterGone,
+
+        /** Кассир закрыл системный диалог печати: он передумал. */
+        Cancelled
     }
 
     /**
@@ -41,16 +47,32 @@ class PrintTape(private val printOut: PrintOut, private val choices: PrintChoice
      * Спрашивается до рисования: рисовать форму ради отказа «принтера нет»
      * незачем — на Android рисование идёт через WebView и занимает секунды.
      */
-    suspend fun hasPrinter(): Boolean = printOut.printers().isNotEmpty()
+    suspend fun hasPrinter(): Boolean = printOut.route == PrintRoute.SystemDialog || printOut.printers().isNotEmpty()
 
+    /** В каком виде форму рисовать для печати: ленту картинкой или документ для системного диалога. */
+    val kind: PrintKind get() = printOut.route.kind
+
+    /**
+     * @param tape форма в виде [kind].
+     *
+     * Системный диалог выбирает принтер и копии сам: принтера кассы и копий
+     * у него не спрашивают.
+     */
     suspend operator fun invoke(kkm: KkmResponse, tape: ByteArray): Result {
+        val width = kkm.branding?.paperWidthMm ?: 0
+        if (printOut.route == PrintRoute.SystemDialog) return resultOf(printOut.print(tape, null, width, 1))
         val printers = printOut.printers()
         val printer = choices.printer(kkm.kkmId)
         return when {
             printers.isEmpty() -> Result.NoPrinter
             printer != null && printer !in printers -> Result.PrinterGone
-            printOut.print(tape, printer, kkm.branding?.paperWidthMm ?: 0, choices.copies) -> Result.Sent
-            else -> Result.Refused
+            else -> resultOf(printOut.print(tape, printer, width, choices.copies))
         }
+    }
+
+    private fun resultOf(printed: Printed): Result = when (printed) {
+        Printed.Sent -> Result.Sent
+        Printed.Refused -> Result.Refused
+        Printed.Cancelled -> Result.Cancelled
     }
 }

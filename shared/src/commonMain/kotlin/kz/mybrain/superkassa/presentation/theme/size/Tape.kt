@@ -4,7 +4,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 /**
  * Показ печатной ленты.
@@ -15,15 +14,15 @@ import androidx.compose.ui.unit.dp
  */
 object Tape {
     /** Ширина ленты при открытии. */
-    val defaultWidth = 520.dp
+    val defaultWidth = 130.steps
 
     /** Пределы и шаг переключения ширины. */
-    val minWidth = 320.dp
-    val maxWidth = 1140.dp
-    val widthStep = 100.dp
+    val minWidth = 80.steps
+    val maxWidth = 285.steps
+    val widthStep = 25.steps
 
     /** Поле сверху и снизу ленты внутри окна. */
-    val margin = 24.dp
+    val margin = Spacing.sectionGap
 }
 
 /**

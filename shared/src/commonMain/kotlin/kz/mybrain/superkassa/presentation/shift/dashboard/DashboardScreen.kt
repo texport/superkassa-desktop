@@ -62,8 +62,8 @@ fun DashboardContent(state: DashboardUiState, actions: DashboardActions = object
     val texts = LocalStrings.current
     if (state.kkm == null) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-            verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
         ) {
             Text(texts.shell.noKkm, style = MaterialTheme.typography.titleMedium)
             Text(texts.login.pickHint, style = MaterialTheme.typography.bodyMedium)
@@ -91,7 +91,7 @@ fun DashboardContent(state: DashboardUiState, actions: DashboardActions = object
 @Composable
 private fun StatTiles(state: DashboardUiState) {
     val texts = LocalStrings.current
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.normal) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.cardGap) {
         val tile = Modifier.weight(1f).widthIn(min = KassaLayout.statTile).fillMaxRowHeight()
         val drawer = Modifier.weight(KassaLayout.DRAWER_TILE_WEIGHT).widthIn(min = KassaLayout.drawerTile)
         // Состояние кассы и смены стоит в шапке и повторено здесь не будет:
@@ -134,7 +134,7 @@ private fun ShiftBody(state: DashboardUiState, actions: DashboardActions, modifi
     }
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         if (maxHeight < KassaLayout.refusedListRoom) {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.normal)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)) {
                 RefusedSummary(state)
                 ShiftDocuments(state, actions, Modifier.weight(1f))
             }
@@ -164,8 +164,8 @@ private fun shiftValue(state: DashboardUiState): String {
 private fun StatCard(caption: String, modifier: Modifier, value: @Composable () -> Unit) {
     Card(modifier = modifier) {
         Column(
-            modifier = Modifier.padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            modifier = Modifier.padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             Text(
                 caption,

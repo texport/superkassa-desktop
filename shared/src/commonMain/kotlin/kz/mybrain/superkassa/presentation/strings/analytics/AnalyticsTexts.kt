@@ -197,9 +197,6 @@ data class AnalyticsSalesTexts(
     /** Чем мерится изменение: прошлым сроком такой же длины. */
     val versusPrevious: String,
 
-    /** Срок ещё идёт, и с прошлым он не сравнивается: сегодняшний день неполон. */
-    val periodRunning: String,
-
     /** Процентные пункты: ими меряется изменение доли, а не процентами от процента. */
     val percentPoints: String,
 
@@ -217,6 +214,9 @@ data class AnalyticsSalesTexts(
      * исправных машин посылало владельца искать поломку, которой нет.
      */
     val silent: String,
+
+    /** Открытых смен в сети сейчас — по кассам, как в учёте. */
+    val openShifts: String,
 
     val revenue: String,
     val receipts: String,

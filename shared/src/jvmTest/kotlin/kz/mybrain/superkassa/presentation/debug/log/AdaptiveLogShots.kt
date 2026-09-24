@@ -59,7 +59,9 @@ class AdaptiveLogShots {
             File("/tmp/adaptive-settings-log-$name.png").writeBytes(probe.frame())
             val controls = SettingsMeasure.controls(probe.semantics())
             val right = controls.maxOfOrNull { it.right }
-            println("журнал $name: правый край кнопок $right из $width, за краем ${controls.count { it.right > width }}")
+            println(
+                "журнал $name: правый край кнопок $right из $width, за краем ${controls.count { it.right > width }}"
+            )
         }
     }
 

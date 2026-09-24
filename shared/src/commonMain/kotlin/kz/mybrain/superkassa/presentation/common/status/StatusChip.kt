@@ -33,7 +33,7 @@ fun Chip(text: String, color: Color, style: TextStyle = MaterialTheme.typography
         modifier = Modifier
             .clip(MaterialTheme.shapes.extraSmall)
             .background(color.copy(alpha = CHIP_TINT))
-            .padding(horizontal = Spacing.tight, vertical = Spacing.hairline)
+            .padding(horizontal = Spacing.itemGap, vertical = Spacing.inline)
     )
 }
 

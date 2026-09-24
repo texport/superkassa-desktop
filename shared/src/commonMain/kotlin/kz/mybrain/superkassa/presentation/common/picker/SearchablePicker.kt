@@ -23,9 +23,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import kz.mybrain.superkassa.presentation.common.field.fieldWidth
 import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
+import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
@@ -41,48 +41,38 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  * не набрано, в списке весь набор — сужать его по уже выбранному
  * значению значило бы спрятать остальные.
  *
- * @param title как назвать значение в поле и в списке.
- * @param keys по чему искать: название и код — владелец набирает то, что
- *   помнит, а помнит он либо одно, либо другое.
- * @param notFound строка о том, что по набранному ничего нет.
+ * @param words как назвать значение и по чему его искать — см. [PickerWords].
+ * @param onQuery набранное — для набора, который ищет служба: список точек
+ *   сети кабинет ищет сам, а не отдаёт целиком.
  */
 @Composable
 fun <T> SearchablePicker(
     label: String,
     options: List<T>,
     selected: T?,
-    title: (T) -> String,
-    keys: (T) -> List<String>,
-    notFound: String,
+    words: PickerWords<T>,
+    onQuery: (String) -> Unit = {},
     onSelect: (T) -> Unit
 ) {
-    var query by remember(selected) { mutableStateOf(selected?.let(title).orEmpty()) }
-    var typed by remember(selected) { mutableStateOf(false) }
-    var open by remember { mutableStateOf(false) }
-    val found = if (typed) narrowed(options, query, keys) else options
+    val typing = remember(selected) { PickerTyping(selected?.let(words.title).orEmpty()) }
+    val found = if (typing.typed) narrowed(options, typing.query, words.keys) else options
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         Picker(
             label = label,
-            query = query,
+            query = typing.query,
             found = found,
-            open = open,
-            title = title,
-            onOpen = { open = it },
-            onQuery = {
-                query = it
-                typed = true
-                open = true
-            }
+            open = typing.open,
+            title = words.title,
+            onOpen = { typing.open = it },
+            onQuery = { text -> typing.type(text).also { onQuery(text) } }
         ) { picked ->
-            open = false
-            typed = false
-            query = title(picked)
+            typing.pick(words.title(picked))
             onSelect(picked)
         }
-        if (typed && found.isEmpty()) NotFoundLine(notFound)
+        if (typing.typed && found.isEmpty()) NotFoundLine(words.notFound)
     }
 }
 
@@ -110,7 +100,7 @@ private fun <T> Picker(
     }
     // Ширина поля нужна списку под ним: строки собираются по мере показа,
     // а такой список меряется не содержимым, а числом.
-    var fieldWidth by remember { mutableStateOf(0.dp) }
+    var fieldWidth by remember { mutableStateOf(Sizes.unmeasured) }
     ExposedDropdownMenuBox(expanded = shown, onExpandedChange = onOpen, modifier = closing) {
         PickerField(
             label = label,

@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 internal fun PartTitle(title: String, info: String? = null) {
     Row(
         modifier = Modifier.heightIn(min = LocalMinimumInteractiveComponentSize.current),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(

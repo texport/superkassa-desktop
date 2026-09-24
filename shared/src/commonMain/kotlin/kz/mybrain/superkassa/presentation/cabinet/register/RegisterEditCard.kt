@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.cabinet.register
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -17,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.presentation.common.button.FieldButton
+import kz.mybrain.superkassa.presentation.common.field.fieldMinWidth
 import kz.mybrain.superkassa.presentation.common.message.InfoTip
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
@@ -113,8 +113,8 @@ private fun EditRow(
     // столько, что «Сохранить» разрывалось на «Сохрани» и «ть».
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline),
         itemVerticalAlignment = Alignment.Top
     ) {
         OutlinedTextField(
@@ -124,7 +124,8 @@ private fun EditRow(
             trailingIcon = { InfoTip(field.hint) },
             singleLine = true,
             enabled = enabled,
-            modifier = Modifier.width(Sizes.fieldForm)
+            // Поле тянется до кнопки: края полей карточки совпадают.
+            modifier = Modifier.weight(1f).fieldMinWidth(field.label, Sizes.fieldForm)
         )
         val changed = value.trim() != field.initial && value.isNotBlank()
         FieldButton(text = save, enabled = enabled && !busy && changed) { onSave(value.trim()) }

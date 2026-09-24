@@ -19,12 +19,19 @@ plugins {
  */
 val appVersion: String = providers.gradleProperty("appVersion").getOrElse("${libs.versions.appVersion.get()}-dev")
 
+/**
+ * Версия ядра, с которым собрано приложение: её спрашивает поддержка
+ * рядом с версией самого приложения, а ядро своей версии не сообщает.
+ */
+val coreVersion: String = libs.versions.superkassa.core.get()
+
 val versionSourceDir: Provider<Directory> = layout.buildDirectory.dir("generated/version/kotlin")
 
 val generateVersion = tasks.register("generateVersion") {
     description = "Записывает версию приложения в исходный код"
     val output = versionSourceDir.map { it.file("kz/mybrain/superkassa/domain/version/model/BuildVersion.kt") }
     inputs.property("appVersion", appVersion)
+    inputs.property("coreVersion", coreVersion)
     outputs.dir(versionSourceDir)
     doLast {
         output.get().asFile.apply {
@@ -36,6 +43,9 @@ val generateVersion = tasks.register("generateVersion") {
                 /** Версия этой сборки; записывается сборкой из `appVersion`. */
                 object BuildVersion {
                     const val NAME: String = "$appVersion"
+
+                    /** Версия ядра, с которым собрана касса. */
+                    const val CORE: String = "$coreVersion"
                 }
 
                 """.trimIndent()

@@ -48,15 +48,15 @@ internal fun PlaceSieveBar(
     FlowRow(
         // Поле под полосу прокрутки даёт список, в котором ряд стоит.
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline),
         // Плашки и значок стороны читаются одним рядом, а не двумя
         // уровнями: по верхнему краю значок висел бы над плашками.
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
-        RecordChip(texts, sieve, onSieve)
-        BlockedChip(texts, sieve, locksKnown, onSieve)
-        OrderChip(texts, sieve, onSieve)
+        RecordChip(texts, sieve, onSieve, Modifier)
+        BlockedChip(texts, sieve, locksKnown, onSieve, Modifier)
+        OrderChip(texts, sieve, onSieve, Modifier)
         DirectionButton(texts, sieve, onSieve)
         if (sieve.set) {
             // Порядок сбросом не трогается: владелец выстроил список под
@@ -70,12 +70,13 @@ internal fun PlaceSieveBar(
 
 /** Учёт КГД: пять смыслов, и выбирается один — они исключают друг друга. */
 @Composable
-private fun RecordChip(texts: CabinetTexts, sieve: PlaceSieve, onSieve: (PlaceSieve) -> Unit) {
+private fun RecordChip(texts: CabinetTexts, sieve: PlaceSieve, onSieve: (PlaceSieve) -> Unit, modifier: Modifier) {
     MenuChip(
         value = recordTitle(sieve.record, texts.sieve),
         options = listOf(null) + KkmRecord.entries,
         title = { recordTitle(it, texts.sieve) },
         chosen = sieve.record != null,
+        modifier = modifier,
         onSelect = { onSieve(sieve.copy(record = it)) }
     )
 }
@@ -86,25 +87,28 @@ private fun BlockedChip(
     texts: CabinetTexts,
     sieve: PlaceSieve,
     locksKnown: Boolean,
-    onSieve: (PlaceSieve) -> Unit
+    onSieve: (PlaceSieve) -> Unit,
+    modifier: Modifier
 ) {
     FilterChip(
+        modifier = modifier,
         selected = sieve.blocked,
         enabled = locksKnown,
         onClick = { onSieve(sieve.copy(blocked = !sieve.blocked)) },
-        label = { Text(texts.sieve.blocked) },
+        label = { Text(texts.sieve.blocked, maxLines = 1) },
         leadingIcon = { if (sieve.blocked) Icon(AppIcons.chosen, contentDescription = null) }
     )
 }
 
 /** По чему выстроен список: признаков четыре, и выбирается один. */
 @Composable
-private fun OrderChip(texts: CabinetTexts, sieve: PlaceSieve, onSieve: (PlaceSieve) -> Unit) {
+private fun OrderChip(texts: CabinetTexts, sieve: PlaceSieve, onSieve: (PlaceSieve) -> Unit, modifier: Modifier) {
     MenuChip(
         value = sieve.order.title(texts),
         options = PlaceOrder.entries,
         title = { it.title(texts) },
         chosen = sieve.order != PlaceOrder.Name,
+        modifier = modifier,
         onSelect = { onSieve(sieve.copy(order = it)) }
     )
 }

@@ -29,8 +29,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 internal fun SettingRequirements(needs: List<KkmNeed>, texts: KkmSetupTexts) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
         needs.forEach { need ->

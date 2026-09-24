@@ -142,4 +142,25 @@ class TaxSettingsViewModelTest {
         assertEquals(listOf("kkm-1", CoreScene.PIN, true, true), sent)
         assertTrue(signIn.state.value.kkm?.autoCloseShift == true)
     }
+
+    /** Выбранное, но не сохранённое, прежде сбрасывалось при смене кассы; теперь у каждой кассы своё. */
+    @Test
+    fun `выбранное у каждой кассы своё и переживает смену кассы`() {
+        val first = programming()
+        val second = programming().copy(kkmId = "kkm-2")
+        signIn.enter(first, CoreScene.cashier(), CoreScene.PIN)
+        val model = taxSettingsModel(app)
+        model.chooseRegime("VAT_PAYER")
+        model.chooseVat("VAT_12")
+
+        signIn.enter(second, CoreScene.cashier(), CoreScene.PIN)
+        assertNull(model.state.value.regimeDraft, "выбранное для первой кассы видно у второй")
+        model.chooseVat("VAT_16")
+        signIn.enter(first, CoreScene.cashier(), CoreScene.PIN)
+
+        assertEquals("VAT_PAYER", model.state.value.regimeDraft, "выбранное для кассы потерялось")
+        assertEquals("VAT_12", model.state.value.vatDraft)
+        signIn.enter(second, CoreScene.cashier(), CoreScene.PIN)
+        assertEquals("VAT_16", model.state.value.vatDraft)
+    }
 }

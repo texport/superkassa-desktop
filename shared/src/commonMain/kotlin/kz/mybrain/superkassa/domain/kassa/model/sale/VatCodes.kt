@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.domain.kassa.model.sale
 
 import io.github.texport.superkassa.core.presentation.api.model.common.VatRateResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import io.github.texport.superkassa.core.presentation.api.model.kkm.VatGroup
 import kz.mybrain.superkassa.domain.kassa.model.paysVat
 
 /** Ставка по умолчанию: касса не додумывает налог за кассира. */
@@ -27,3 +28,16 @@ fun defaultVatOf(kkm: KkmResponse?, read: List<VatRateResponse>): String =
 /** Коды ставок, которые касса примет у позиции: справочник в пределах режима. */
 fun vatCodesOf(kkm: KkmResponse?, read: List<VatRateResponse>): List<String> =
     if (paysVat(kkm)) read.map { it.code }.ifEmpty { FALLBACK_VAT_CODES } else listOf(NO_VAT)
+
+/**
+ * Код отказа, который касса приложения ставит сама, до ядра: в чеке ставка
+ * НДС, которой нет в перечне ставок ядра.
+ *
+ * Ядро на такую ставку отвечает не отказом, а сбоем разбора запроса,
+ * и кассир читал бы «касса не ответила — проверьте журнал», хотя чек
+ * не пробивался. Слова отказа даёт экран по этому коду.
+ */
+const val UNKNOWN_VAT: String = "VAT_GROUP_UNKNOWN"
+
+/** Первая ставка, которой нет в перечне ставок ядра; `null` — все знакомы. */
+fun unknownVatIn(codes: List<String>): String? = codes.firstOrNull { code -> VatGroup.entries.none { it.name == code } }

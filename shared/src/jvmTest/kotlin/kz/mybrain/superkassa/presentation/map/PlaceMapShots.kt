@@ -117,8 +117,8 @@ private fun PickerLook(address: RegisterAddress?, state: MapState) {
         tonalElevation = Sizes.dialogElevation
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            modifier = Modifier.fillMaxSize().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             MapHeader(Look.cabinet) {}
             RegistryAddress(parts, address) {}

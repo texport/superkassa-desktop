@@ -86,7 +86,7 @@ class MapLookShots {
         val groups = kkmGroups((1..3).map { PlacedKkm(kkm(it), LATITUDE, LONGITUDE) }, ZOOM)
         val view = KkmMapView(placed = (1..3).map { kkm(it) })
         RenderProbe(WIDTH, HEIGHT) {
-            Column(Modifier.fillMaxSize().padding(Spacing.normal)) {
+            Column(Modifier.fillMaxSize().padding(Spacing.cardPadding)) {
                 AnalyticsSieveBar(model.sieve, sievePlaces(view), texts) {}
                 AnalyticsSpotCard(groups.single(), texts, cabinetWords, onChoose = {})
                 AnalyticsPinCard(

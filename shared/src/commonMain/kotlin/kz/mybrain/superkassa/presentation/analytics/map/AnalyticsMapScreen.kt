@@ -64,7 +64,7 @@ fun AnalyticsMapScreen(
     HeadOverMap(
         modifier = Modifier.fillMaxSize(),
         head = {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
                 AnalyticsSourceBar(state, parts.placement, texts, model)
                 AnalyticsSieveBar(state.sieve, sievePlaces(state.reading.value), texts, model::sift)
             }

@@ -3,8 +3,6 @@ package kz.mybrain.superkassa.presentation.kassa.sale.position
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
@@ -17,12 +15,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
+import kz.mybrain.superkassa.presentation.common.dialog.formDialogWidth
 import kz.mybrain.superkassa.presentation.common.list.ScrollableList
 import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.strings.kassa.saleTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
@@ -56,7 +54,7 @@ fun PositionDetailsDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
-        modifier = Modifier.width(Sizes.formDialog),
+        modifier = Modifier.formDialogWidth(),
         icon = { Icon(AppIcons.receiptLine, contentDescription = null) },
         title = { Text(texts.positionDetails) },
         text = { DetailRows(rows) },
@@ -74,7 +72,7 @@ fun PositionDetailsDialog(
  */
 @Composable
 private fun DetailRows(rows: List<Pair<String, String>>) {
-    ScrollableList(modifier = Modifier.fillMaxWidth().heightIn(max = Sizes.detailList)) {
+    ScrollableList(modifier = Modifier.fillMaxWidth()) {
         items(rows) { (label, value) ->
             ListItem(
                 overlineContent = { Text(label) },
@@ -96,7 +94,7 @@ private fun DetailRows(rows: List<Pair<String, String>>) {
 @Composable
 private fun LineActions(storno: Boolean, onStorno: (() -> Unit)?, onRemove: (() -> Unit)?) {
     val labels = LocalStrings.current.sale
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)) {
         if (onStorno != null) {
             TextButton(onClick = onStorno) {
                 Text(if (storno) labels.stornoUndo else labels.storno)

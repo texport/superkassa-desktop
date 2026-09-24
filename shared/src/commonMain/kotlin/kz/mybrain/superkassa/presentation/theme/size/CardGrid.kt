@@ -1,7 +1,5 @@
 package kz.mybrain.superkassa.presentation.theme.size
 
-import androidx.compose.ui.unit.dp
-
 /**
  * Карточки и формы столбцами.
  *
@@ -13,14 +11,14 @@ import androidx.compose.ui.unit.dp
 object CardGrid {
 
     /** Зазор между столбцами и между карточками в столбце: тот же, что между блоками экрана. */
-    val gap = Spacing.normal
+    val gap = Spacing.cardGap
 
     /**
      * Уже этого столбец не бывает: в нём должно помещаться поле формы
      * с подписью и кнопка рядом. Узкая панель получает меньше столбцов,
      * чем позволил бы класс окна.
      */
-    val columnMin = 440.dp
+    val columnMin = 110.steps
 
     /** Столбцов у компактного и среднего окна: телефон, планшет стоймя. */
     const val NARROW_COLUMNS: Int = 1

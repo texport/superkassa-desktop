@@ -21,6 +21,17 @@ class PlacesApi internal constructor(private val link: CabinetLink) {
         link.get(BASE + query("page" to page, "size" to CABINET_PAGE_SIZE))
 
     /**
+     * Первая страница точек, найденных кабинетом по названию или адресу.
+     *
+     * Для выбора точки в форме: кабинет ищет сам, и приложению не нужно
+     * читать ради одной точки все сорок страниц сети.
+     *
+     * @param text что набрано; пусто — первые точки компании.
+     */
+    suspend fun search(text: String): CabinetPage<RetailPlace> =
+        link.get(BASE + query("query" to text.trim(), "page" to 0, "size" to CABINET_PAGE_SIZE))
+
+    /**
      * Все точки компании, страница за страницей.
      *
      * @param onPart прочитанное на сейчас и сколько точек всего: у сети их

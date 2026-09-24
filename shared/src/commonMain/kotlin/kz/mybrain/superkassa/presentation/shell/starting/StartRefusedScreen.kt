@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.presentation.common.adaptive.ContentKind
 import kz.mybrain.superkassa.presentation.common.adaptive.contentWidth
+import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
 import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.shell.startTexts
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
@@ -37,8 +38,8 @@ fun StartRefusedScreen(problem: StartProblem, onClose: () -> Unit) {
     val words = texts.of(problem.refusal)
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(Spacing.screen).contentWidth(ContentKind.Reading),
-            verticalArrangement = Arrangement.spacedBy(Spacing.normal, Alignment.CenterVertically)
+            modifier = Modifier.fillMaxSize().padding(windowMargin).contentWidth(ContentKind.Reading),
+            verticalArrangement = Arrangement.spacedBy(Spacing.cardGap, Alignment.CenterVertically)
         ) {
             Icon(
                 imageVector = AppIcons.warning,

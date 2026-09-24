@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.presentation.analytics.map.component.UnderMap
+import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
 import kz.mybrain.superkassa.presentation.common.keyboard.CloseOnEscape
 import kz.mybrain.superkassa.presentation.strings.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
@@ -46,13 +47,15 @@ internal fun AnalyticsMapFullscreen(parts: MapParts, onClose: () -> Unit) {
     Dialog(onDismissRequest = onClose, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(modifier = Modifier.fillMaxSize()) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-                verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+                modifier = Modifier.fillMaxSize().padding(windowMargin),
+                verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
             ) {
                 FullscreenHead(parts.texts, parts.cabinetTexts, onClose)
-                Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(Spacing.normal)) {
-                    KkmColumn(parts)
+                Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(Spacing.cardGap)) {
+                    // Список справа от карты, как и в разделе: карта читается
+                    // первой, и место списка не меняется при раскрытии.
                     MapWindow(parts, fullscreen = true, onFullscreen = onClose, Modifier.weight(1f).fillMaxHeight())
+                    KkmColumn(parts)
                 }
             }
         }
@@ -64,7 +67,7 @@ internal fun AnalyticsMapFullscreen(parts: MapParts, onClose: () -> Unit) {
 private fun FullscreenHead(texts: AnalyticsTexts, cabinet: CabinetTexts, onClose: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(AppIcons.place, contentDescription = null, tint = MaterialTheme.colorScheme.primary)

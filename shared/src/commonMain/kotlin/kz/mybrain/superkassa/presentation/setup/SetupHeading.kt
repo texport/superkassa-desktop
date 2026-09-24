@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 internal fun SetupHeading(setup: SetupTexts, started: Boolean, actions: SetupActions, onBack: (() -> Unit)?) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         onBack?.let { back ->

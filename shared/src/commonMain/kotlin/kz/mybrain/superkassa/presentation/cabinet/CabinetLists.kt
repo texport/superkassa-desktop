@@ -89,9 +89,14 @@ internal class CabinetLists(
         if (now.places.any { it.id == place.id }) now else now.copy(places = now.places + place)
     }
 
-    /** Заменяет в списке одну перечитанную кассу — без обращения к кабинету. */
+    /**
+     * Заменяет в списке одну перечитанную кассу, а только что заведённую —
+     * ставит в него; без обращения к кабинету.
+     */
     fun registerChanged(register: CabinetRegister) = screen.update { now ->
-        now.copy(registers = now.registers.map { if (it.id == register.id) register else it })
+        val known = now.registers.any { it.id == register.id }
+        val replaced = now.registers.map { if (it.id == register.id) register else it }
+        now.copy(registers = if (known) replaced else now.registers + register)
     }
 
     /** Прочитанное выкладывается, только пока оно не короче показанного. */

@@ -63,7 +63,7 @@ class AppearanceShots {
     private fun card(appearance: Appearance, desk: KassaDesk): ByteArray =
         RenderProbe(width = WIDTH, height = HEIGHT, appearance = appearance, look = desk.look.state.value.look) {
             Surface(Modifier.fillMaxSize()) {
-                Column(Modifier.padding(Spacing.screen)) { AppearanceCard(desk.look) }
+                Column(Modifier.padding(Spacing.fieldGap)) { AppearanceCard(desk.look) }
             }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }

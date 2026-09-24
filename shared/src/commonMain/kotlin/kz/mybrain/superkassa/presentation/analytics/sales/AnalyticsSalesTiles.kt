@@ -50,8 +50,8 @@ fun SalesTiles(summary: SalesSummary, texts: AnalyticsTexts, modifier: Modifier 
     // за внимание.
     FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         MinorTile(sales.refunds, Modifier.weight(1f)) { MinorSum(Money.formatTiyn(summary.refunds)) }
     }
@@ -78,8 +78,8 @@ fun SalesPurchaseTiles(
 ) {
     FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         MinorTile(texts.receipts, Modifier.weight(1f)) { MinorCount(summary.purchaseCount) }
         MinorTile(texts.paidOut, Modifier.weight(1f)) { MinorSum(Money.formatTiyn(summary.purchases)) }
@@ -100,8 +100,8 @@ fun SalesPurchaseTiles(
 fun SalesDeliveryTiles(delivery: SalesDelivery, texts: AnalyticsSalesTexts, modifier: Modifier = Modifier) {
     FlowRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         StateTile(delivery.delivered, texts.delivered, StatusColors.delivered, Modifier.weight(1f))
         StateTile(delivery.queued, texts.queued, StatusColors.pending, Modifier.weight(1f))
@@ -161,8 +161,8 @@ private fun Tile(label: String, modifier: Modifier, value: @Composable () -> Uni
         color = MaterialTheme.colorScheme.surfaceContainerHigh
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.snug),
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap),
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             value()
             Text(

@@ -68,7 +68,7 @@ class PolishShots {
         val sections = nodes.filter { it.scrolls }.minBy { it.at.x }
         val version = nodes.single { it.text == VERSION }
         val gap = version.at.y - sections.visible.bottom
-        assertTrue(gap >= Spacing.tight.value, "разделы кончаются в $gap от версии")
+        assertTrue(gap >= Spacing.itemGap.value, "разделы кончаются в $gap от версии")
     }
 
     @Test
@@ -89,19 +89,20 @@ class PolishShots {
     }
 
     @Test
-    fun `идущий срок назван над итогами один раз, а не под каждым числом`() {
+    fun `без прошлого срока под каждым числом стоит прочерк, и ряд не ломается`() {
         val texts = analyticsTexts(Language.Ru).sales
-        val nodes = shoot("sales-overview-running", OVERVIEW_W, OVERVIEW_H) {
-            Column(Modifier.fillMaxWidth().padding(Spacing.screen)) { SalesOverviewTiles(RUNNING, texts) }
+        val nodes = shoot("sales-overview-no-previous", OVERVIEW_W, OVERVIEW_H) {
+            Column(Modifier.fillMaxWidth().padding(Spacing.fieldGap)) { SalesOverviewTiles(NO_PREVIOUS, texts) }
         }
-        assertEquals(1, nodes.count { it.text.contains(texts.periodRunning) }, "о сроке сказано не один раз")
+        val lines = nodes.count { it.text.contains(texts.versusPrevious) }
+        assertEquals(OVERVIEW_NUMBERS, lines, "строка сравнения пропала")
     }
 
     @Test
     fun `заголовок карточки кассы по-казахски на крупном шрифте переносится, а не обрывается`() {
         val texts = cabinetTexts(Language.Kk)
         val nodes = shoot("cabinet-technical-kk-larger", CARD_W, CARD_H, Language.Kk, TextScale.Larger) {
-            Column(Modifier.width(CARD_PANE.dp).padding(Spacing.screen)) {
+            Column(Modifier.width(CARD_PANE.dp).padding(Spacing.fieldGap)) {
                 CollapsibleCard(
                     title = texts.technicalState,
                     expanded = false,
@@ -136,7 +137,10 @@ class PolishShots {
         const val OVERVIEW_W = 1180
         const val OVERVIEW_H = 480
 
-        val RUNNING = SalesOverview(
+        /** Главных чисел в итогах срока: у каждого своя строка сравнения. */
+        const val OVERVIEW_NUMBERS = 6
+
+        val NO_PREVIOUS = SalesOverview(
             revenue = 98_797_031_200L,
             receiptCount = 12_408,
             average = 7_962_500L,
@@ -148,8 +152,7 @@ class PolishShots {
             averageChange = null,
             taxChange = null,
             cashlessChange = null,
-            netChange = null,
-            running = true
+            netChange = null
         )
     }
 }

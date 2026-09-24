@@ -13,7 +13,7 @@ import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.domain.kassa.model.ask
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.login.loginModel
+import kz.mybrain.superkassa.presentation.users.signin.loginModel
 import java.io.File
 import kotlin.io.path.createTempDirectory
 import kotlin.test.AfterTest

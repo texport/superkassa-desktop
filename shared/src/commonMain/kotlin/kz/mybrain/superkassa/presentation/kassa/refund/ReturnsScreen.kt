@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,8 +63,8 @@ fun ReturnsContent(state: ReturnsUiState, actions: ReturnsActions = ReturnsActio
     val journal = texts.returns
     val chosen = state.basis
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
         ReturnHeader(journal, state.kind, actions.basis::kind)
         BasisSearch(texts.history, state.day, state.number, state.loading, actions.basis::number, actions.basis::day)
@@ -102,7 +101,7 @@ private fun ColumnScope.ReturnHeader(
     val texts = LocalStrings.current
     // Ряд переносится, а не сжимается: сегменты в узком окне обрезали
     // подпись до «Сатып а» без многоточия.
-    WrapRow(spacing = Spacing.normal) {
+    WrapRow(spacing = Spacing.cardGap) {
         ScreenTitle(texts.returns.title)
         // В сегменте стоит только направление: «Возврат» уже написано
         // заголовком слева.

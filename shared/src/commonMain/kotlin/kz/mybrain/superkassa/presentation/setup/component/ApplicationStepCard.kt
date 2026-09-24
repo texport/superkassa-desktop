@@ -60,7 +60,9 @@ fun ApplicationStepCard(
         if (state.signing) {
             ApplicationSignWait(LocalLanguage.current, cabinet, actions::cancelSubmit)
         } else {
-            SubmitButtons(setup, cabinet, busy, { actions.submit(id) }) { actions.readRecord(id) }
+            SubmitButtons(setup, cabinet, busy, record?.awaiting == true, { actions.submit(id) }) {
+                actions.readRecord(id)
+            }
         }
     }
 }
@@ -84,17 +86,33 @@ private fun RecordStatus(record: CabinetRecord?, setup: SetupTexts, cabinet: Cab
     )
 }
 
-/** Подать заявление и перечитать кассу, не дожидаясь очередного круга. */
+/**
+ * Подать заявление и перечитать кассу, не дожидаясь очередного круга.
+ *
+ * Пока заявление у КГД, второе подавать незачем: главное действие —
+ * «Обновить», а подачи нет вовсе. Прежде «Подать заявление» оставалась
+ * главной и живой, и владелец подавал то же заявление второй раз.
+ *
+ * @param awaiting заявление подано и ждёт ответа КГД.
+ */
 @Composable
 private fun SubmitButtons(
     setup: SetupTexts,
     cabinet: CabinetTexts,
     busy: Boolean,
+    awaiting: Boolean,
     onSubmit: () -> Unit,
     onRefresh: () -> Unit
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight), verticalAlignment = Alignment.CenterVertically) {
-        BusyButton(text = setup.submit, busy = busy, onClick = onSubmit)
-        TextButton(onClick = onRefresh) { Text(cabinet.refresh) }
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (awaiting) {
+            BusyButton(text = cabinet.refresh, busy = busy, onClick = onRefresh)
+        } else {
+            BusyButton(text = setup.submit, busy = busy, onClick = onSubmit)
+            TextButton(onClick = onRefresh) { Text(cabinet.refresh) }
+        }
     }
 }

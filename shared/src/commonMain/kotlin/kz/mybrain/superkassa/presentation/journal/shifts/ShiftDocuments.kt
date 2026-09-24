@@ -63,7 +63,7 @@ internal fun ColumnScope.ShiftDocuments(
 @Composable
 private fun ShiftHeading(journal: ShiftJournalTexts, state: ShiftsUiState, actions: ShiftsActions) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = { actions.open(null) }) {

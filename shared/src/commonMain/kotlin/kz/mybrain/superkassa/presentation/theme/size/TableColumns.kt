@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import kz.mybrain.superkassa.presentation.theme.type.AppTypography
 import kz.mybrain.superkassa.presentation.theme.type.LocalTextScale
 import kz.mybrain.superkassa.presentation.theme.type.scaled
 
@@ -20,28 +19,25 @@ import kz.mybrain.superkassa.presentation.theme.type.scaled
 object TableColumns {
 
     /** Название товара, точки, кассы: растёт сильнее остальных. */
-    val name = 200.dp
+    val name = 50.steps
 
     /** Сумма до сотен миллионов тенге основной ступенью; больше — уменьшенной. */
-    val money = 150.dp
+    val money = 150.fine
 
     /** Счёт штук: чеки, кассы, позиции. */
-    val count = 88.dp
+    val count = 22.steps
 
     /** Номер документа, смены, номер КГД. */
-    val number = 120.dp
+    val number = 30.steps
 
     /** Дата и время. */
-    val moment = 150.dp
-
-    /** Плашка состояния: «Доставлен», «Отклонён». */
-    val status = 120.dp
+    val moment = 150.fine
 
     /** Одна кнопка-значок в конце строки: печать, раскрыть. Кнопка 48 и поля ячейки. */
-    val action = 64.dp
+    val action = 16.steps
 
     /** Поле ячейки слева и справа: столбцы не слипаются. */
-    val cellPadding = Spacing.tight
+    val cellPadding = Spacing.itemGap
 }
 
 /**
@@ -60,8 +56,10 @@ object NumberStyle {
 
     private val cellBase = TextStyle(
         fontFamily = FontFamily.Monospace,
-        fontSize = 15.sp,
-        lineHeight = 21.sp,
+        // Кегль и интерлиньяж — основного текста шкалы: число в ячейке
+        // читается в строку с названием рядом, и своих размеров у него нет.
+        fontSize = AppTypography.bodyMedium.fontSize,
+        lineHeight = AppTypography.bodyMedium.lineHeight,
         textAlign = TextAlign.End
     )
 }

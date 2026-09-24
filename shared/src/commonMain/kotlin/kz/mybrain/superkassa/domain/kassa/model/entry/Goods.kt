@@ -32,3 +32,13 @@ fun positionOf(item: NomenclatureItemResponse, kkm: KkmResponse?, vatRates: List
         ntin = item.ntin?.takeIf { it.isNotBlank() },
         barcode = item.barcode.takeIf { it.isNotBlank() }
     )
+
+/**
+ * Код товара, как его набрали или прислал сканер.
+ *
+ * Справочник ищет и по штрихкоду — цифрам, — и по маркировочному коду
+ * товара, в котором бывают буквы: прежде поле пропускало только цифры,
+ * и код с буквами до справочника не доходил. Отбрасываются только
+ * пробелы и переводы строк: сканер дописывает их к коду сам.
+ */
+fun barcodeOf(typed: String): String = typed.filterNot(Char::isWhitespace)

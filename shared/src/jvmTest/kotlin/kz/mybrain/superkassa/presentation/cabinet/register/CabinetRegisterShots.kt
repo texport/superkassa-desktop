@@ -80,7 +80,7 @@ class CabinetRegisterShots {
             val body = @Composable {
                 stage.Window {
                     val model = registerViewModel(stage.cabinet.cabinet)
-                    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+                    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                         val view = RegisterView(register, register, known)
                         RegisterPassport(stage.cabinet, stage.texts, view, model)
                     }

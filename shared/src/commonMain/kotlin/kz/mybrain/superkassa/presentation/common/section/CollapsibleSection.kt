@@ -51,12 +51,12 @@ fun CollapsibleSection(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         SectionHeader(title, expanded, onToggle, info, trailing)
         always()
         Collapsible(expanded) {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug), content = content)
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap), content = content)
         }
     }
 }
@@ -80,14 +80,14 @@ fun SectionHeader(
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
     ) {
         // Название и значок объяснения идут вместе: значок, отданный
         // правому краю, читался бы как подсказка к тому, что стоит справа.
         Row(
             modifier = Modifier.weight(1f),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
         ) {
             SectionTitle(title, Modifier.weight(1f, fill = false))
             info?.let { InfoTip(it) }

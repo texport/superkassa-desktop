@@ -79,7 +79,7 @@ internal fun PlaceTree(
 ) {
     Column(
         modifier = modifier.fillMaxHeight(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         val state = when {
             loading -> ScreenState.Working

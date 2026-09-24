@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
+import kz.mybrain.superkassa.presentation.cabinet.component.PlaceOptions
 import kz.mybrain.superkassa.presentation.cabinet.component.PlacePicker
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
@@ -46,7 +47,7 @@ internal fun ApplicationFields(
             label = texts.newPlace,
             texts = texts,
             language = language,
-            places = places,
+            options = PlaceOptions(places),
             selected = places.firstOrNull { it.id == placeId },
             onSelect = { onPlace(it.id) }
         )
@@ -64,7 +65,7 @@ private fun DeregistrationFields(
     onComment: (String) -> Unit
 ) {
     // Причина и пояснение — строками во всю ширину карточки, одна под другой.
-    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         WideChoiceSegments(
             options = DeregistrationReason.entries,
             selected = reason,

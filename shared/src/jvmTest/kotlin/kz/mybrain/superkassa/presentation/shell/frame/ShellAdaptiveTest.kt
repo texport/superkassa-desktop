@@ -61,7 +61,7 @@ class ShellAdaptiveTest {
                 subtitleKept = shell.cashier
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                     modifier = Modifier.onGloballyPositioned { measured.actions = it.size.width }
                 ) { KkmBarActions(shell, desk.look, onSignOut = {}, onRefresh = {}) }
             }
@@ -92,7 +92,9 @@ class ShellAdaptiveTest {
                 }
         }
         val title = width - measured.actions - BAR_INSETS
-        println("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")
+        println(
+            "окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}"
+        )
         assertTrue(title >= ContentWidths.topBarTitle.value, "в окне $width×$height названию кассы осталось $title")
         assertTrue(measured.rail >= Sizes.rail.value, "в окне $width×$height рельса нет")
     }
@@ -119,6 +121,6 @@ class ShellAdaptiveTest {
          * Поля шапки вокруг названия и действий: отступ названия и действий
          * от краёв окна и внутренние поля строки заголовка Material 3.
          */
-        val BAR_INSETS = (Spacing.roomy * 2).value.toInt() + 24
+        val BAR_INSETS = (Spacing.sectionGap * 2).value.toInt() + 24
     }
 }

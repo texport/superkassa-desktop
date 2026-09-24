@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.presentation.theme.size
 
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 /**
  * Пределы ширины содержимого.
@@ -21,7 +20,7 @@ object ContentWidths {
      * Около семидесяти знаков основного шрифта — предел строки, которую
      * читают, не теряя начала следующей.
      */
-    val reading = 640.dp
+    val reading = 160.steps
 
     /**
      * Рабочий экран целиком: чек с кассой, журнал, кабинет, аналитика.
@@ -29,7 +28,7 @@ object ContentWidths {
      * Упирается в него только большое и очень большое окно; до этого
      * рабочий экран занимает всё, что оставил рельс.
      */
-    val workspace = 1440.dp
+    val workspace = 360.steps
 
     /**
      * Шапка отдаёт названию кассы не меньше этого.
@@ -37,7 +36,7 @@ object ContentWidths {
      * Кассир узнаёт свою кассу по имени; действия, которым не хватает
      * места, уходят в меню, а не отнимают у названия последние буквы.
      */
-    val topBarTitle = 240.dp
+    val topBarTitle = 60.steps
 }
 
 /**
@@ -67,7 +66,7 @@ data class PaneSplit(
 object Panes {
 
     /** Зазор между панелями: тот же, что между блоками экрана. */
-    val gap = Spacing.normal
+    val gap = Spacing.paneGap
 
     /**
      * Сколько высоты при раскладке одна над другой отдаётся второй панели
@@ -76,7 +75,7 @@ object Panes {
     const val STACKED_SECOND_SHARE = 0.6f
 
     /** Список слева, подробности выбранного справа: журнал, возврат, очередь. */
-    val listDetail = PaneSplit(firstShare = 0.4f, firstMin = 320.dp, secondMin = 400.dp)
+    val listDetail = PaneSplit(firstShare = 0.4f, firstMin = 80.steps, secondMin = 100.steps)
 
     /**
      * Чек слева, касса справа: итог, оплата и «Пробить чек».
@@ -86,14 +85,19 @@ object Panes {
      */
     val receiptAndTill = PaneSplit(
         firstShare = 0.62f,
-        firstMin = 360.dp,
-        secondMin = 320.dp,
-        secondMax = 440.dp
+        firstMin = 90.steps,
+        secondMin = 80.steps,
+        secondMax = 110.steps
     )
 
     /** Дерево точек и касс слева, карточка выбранного справа: кабинет. */
-    val placesAndCard = PaneSplit(firstShare = 0.34f, firstMin = 300.dp, secondMin = 420.dp)
+    val placesAndCard = PaneSplit(firstShare = 0.34f, firstMin = 75.steps, secondMin = 105.steps)
 
     /** Карта и сведения о выбранном месте: аналитика. */
-    val mapAndDetails = PaneSplit(firstShare = 0.62f, firstMin = 420.dp, secondMin = 320.dp, secondMax = 480.dp)
+    val mapAndDetails = PaneSplit(
+        firstShare = 0.62f,
+        firstMin = 105.steps,
+        secondMin = 80.steps,
+        secondMax = 120.steps
+    )
 }

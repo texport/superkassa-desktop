@@ -66,7 +66,7 @@ fun SalesRegions(regions: List<SalesRegion>, texts: AnalyticsSalesTexts, modifie
 /** Подписи столбцов свода. */
 @Composable
 private fun RegionsHead(widths: TableWidths, texts: AnalyticsSalesTexts) {
-    TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column ->
+    TableLine(widths, Modifier.padding(vertical = Spacing.itemGap)) { column ->
         when (column) {
             NAME -> HeadCell(texts.region)
             PLACES -> HeadCell(texts.placeCount, numeric = true)
@@ -81,7 +81,7 @@ private fun RegionsHead(widths: TableWidths, texts: AnalyticsSalesTexts) {
 /** Строка свода: регион, его числа и доля сети полоской. */
 @Composable
 private fun RegionRow(widths: TableWidths, region: SalesRegion) {
-    TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column ->
+    TableLine(widths, Modifier.padding(vertical = Spacing.itemGap)) { column ->
         when (column) {
             NAME -> RowCell(region.title)
             PLACES -> CountCell(region.placeCount)
@@ -123,7 +123,7 @@ private const val NAME_SHARE = 2f
 private fun RegionShare(percent: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(

@@ -37,7 +37,7 @@ fun JournalFilters(
     query: JournalQuery,
     onQuery: (JournalQuery) -> Unit
 ) {
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         TypeChips(journal, types, query, onQuery)
         DeliveryChips(journal, deliveries, query, onQuery)
         ShiftChip(journal, shifts, query, onQuery)
@@ -147,9 +147,9 @@ internal fun shiftLabel(shift: Long?, journal: HistoryJournalTexts): String =
  */
 @Composable
 private fun ChipGroup(title: String, first: @Composable () -> Unit, chips: @Composable () -> Unit = {}) {
-    WrapRow(spacing = Spacing.tight) {
+    WrapRow(spacing = Spacing.buttonGap) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(

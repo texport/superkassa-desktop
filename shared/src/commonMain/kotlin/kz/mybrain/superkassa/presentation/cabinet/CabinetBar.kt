@@ -8,14 +8,11 @@ import androidx.compose.runtime.getValue
 import kz.mybrain.superkassa.presentation.cabinet.component.cabinetHead
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerLine
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
-import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
 import kz.mybrain.superkassa.presentation.common.section.AppTopBar
 import kz.mybrain.superkassa.presentation.strings.cabinet.cabinetTexts
 import kz.mybrain.superkassa.presentation.strings.common.LocalLanguage
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.strings.journal.journalTexts
-import kz.mybrain.superkassa.presentation.theme.choice.LookViewModel
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
 
 /**
@@ -32,7 +29,7 @@ import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
  * @param onExit выход из кабинета — только у двери с экрана входа.
  */
 @Composable
-fun CabinetBar(model: CabinetViewModel, look: LookViewModel, onExit: (() -> Unit)? = null) {
+fun CabinetBar(model: CabinetViewModel, look: CabinetLook, onExit: (() -> Unit)? = null) {
     val state by model.state.collectAsScreenState()
     val language = LocalLanguage.current
     val texts = cabinetTexts(language)
@@ -63,9 +60,8 @@ fun CabinetBar(model: CabinetViewModel, look: LookViewModel, onExit: (() -> Unit
  * вправе читать экран входа по-казахски.
  */
 @Composable
-private fun RowScope.CabinetBarActions(look: LookViewModel, open: Boolean, signOut: String, onSignOut: () -> Unit) {
-    ThemeSwitch(look)
-    LanguagePicker(look)
+private fun RowScope.CabinetBarActions(look: CabinetLook, open: Boolean, signOut: String, onSignOut: () -> Unit) {
+    look.switches(this)
     if (open) {
         TextButton(onClick = onSignOut) { Text(signOut) }
     }

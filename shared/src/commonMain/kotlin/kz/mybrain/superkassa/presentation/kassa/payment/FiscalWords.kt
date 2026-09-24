@@ -11,6 +11,7 @@ import kz.mybrain.superkassa.presentation.strings.common.AppStrings
 import kz.mybrain.superkassa.presentation.strings.common.of
 import kz.mybrain.superkassa.presentation.strings.journal.ofdRefusalWords
 import kz.mybrain.superkassa.presentation.strings.kassa.paymentTexts
+import kz.mybrain.superkassa.presentation.strings.kassa.refusal.kassaRefusalWords
 
 /**
  * Как фискальная операция названа кассиру и журналу.
@@ -32,7 +33,8 @@ class FiscalWords(val what: String, val done: String, val action: String)
  * зелёной строкой «Продажа. состояние доставки: Отклонён», корзина
  * очищалась, и кассир отпускал покупателя с чеком, которого в БФД нет.
  * Отказ кассы — её словами на языке кассира, в том числе запертый пин
- * с оставшимся временем. Нет ответа — документ мог пройти: кассиру
+ * с оставшимся временем; где её слова кассиру не годятся — своими
+ * по коду отказа (правило — [kassaRefusalWords]). Нет ответа — документ мог пройти: кассиру
  * сказано проверить журнал, а повтор с тем же ключом второго документа
  * не создаст.
  */
@@ -43,7 +45,10 @@ fun Talk.fiscal(answer: Answer<Fiscal>, words: FiscalWords, texts: AppStrings): 
         } else {
             done(deliveryReport(words.done, answer.value.delivery, texts), words.action)
         }
-        is Answer.Refused -> shown(answer, words.what, words.action)
+        is Answer.Refused -> {
+            journal.warn("${words.action}: refused ${answer.code}")
+            say(words.action, Message.Refusal(kassaRefusalWords(answer, language()), answer.code))
+        }
         is Answer.Failed -> {
             journal.failure("${words.action}: no answer ${answer.reason}")
             notices.show(Message.NoAnswer(texts.common.noAnswer))

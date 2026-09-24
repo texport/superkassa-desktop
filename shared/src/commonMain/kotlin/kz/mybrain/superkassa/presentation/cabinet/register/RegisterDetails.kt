@@ -60,7 +60,7 @@ fun RegisterDetails(
     // регистрационной карты и последнее действие, которых в строке нет.
     val card = state.card?.takeIf { it.id == register.id } ?: register
     val view = RegisterView(register, card, state)
-    ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         RegisterPassport(cabinet, texts, view, model)
         RegisterLiveBlocks(cabinet.cabinet, language, texts, view, model)
         // Документы кассы живут своим экраном: в карточке остаётся переход

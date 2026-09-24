@@ -10,7 +10,9 @@ import io.github.texport.superkassa.core.presentation.api.model.user.UserRespons
 import io.github.texport.superkassa.core.presentation.api.model.user.UserRole
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.journal.port.NoDeliveries
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
 import kz.mybrain.superkassa.domain.kassa.port.Kassa
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.log.port.Journal
 import kz.mybrain.superkassa.domain.setup.port.SetupMemory
 import kz.mybrain.superkassa.domain.signin.model.SignIn
@@ -92,8 +94,9 @@ object CoreScene {
         signIn: SignIn = SignIn(),
         notices: Notices = Notices(),
         memory: WorkplaceMemory = MemoryWorkplace(),
-        settings: SettingsPorts = settingsPorts()
-    ) = app(core.kassa(), signIn, notices, memory, settings)
+        settings: SettingsPorts = settingsPorts(),
+        ports: KassaPorts = KassaPorts(FixedDeliverySetup())
+    ) = app(core.kassa(), signIn, notices, memory, settings, ports = ports)
 
     /** Зависимости экранов поверх кассы [kassa] — например, настоящего ядра на тестовом БФД. */
     fun app(
@@ -102,14 +105,15 @@ object CoreScene {
         notices: Notices = Notices(),
         memory: WorkplaceMemory = MemoryWorkplace(),
         settings: SettingsPorts = settingsPorts(),
-        journal: JournalPorts = JournalPorts(NoDeliveries)
+        journal: JournalPorts = JournalPorts(NoDeliveries),
+        ports: KassaPorts = KassaPorts(FixedDeliverySetup())
     ) = AppContainer(
         kassa = kassa,
         signIn = signIn,
         memory = memory,
         look = WorkplaceLook(MemoryLook()),
         talk = Talk(notices, SilentJournal) { Language.Ru },
-        areas = AreaPorts(journal = journal, settings = settings, analytics = analyticsPorts())
+        areas = AreaPorts(kassa = ports, journal = journal, settings = settings, analytics = analyticsPorts())
     )
 
     /** Список касс, как его отдаёт касса: одна страница. */

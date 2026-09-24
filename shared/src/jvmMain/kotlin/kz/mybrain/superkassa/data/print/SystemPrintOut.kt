@@ -7,6 +7,7 @@ import kz.mybrain.superkassa.data.local.askWhereToSave
 import kz.mybrain.superkassa.data.log.AppLog
 import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.print.model.Kept
+import kz.mybrain.superkassa.domain.print.model.Printed
 import kz.mybrain.superkassa.domain.print.port.PrintOut
 
 /**
@@ -25,11 +26,12 @@ class SystemPrintOut(private val io: CoroutineDispatcher = Dispatchers.IO) : Pri
 
     override suspend fun tape(png: ByteArray): ByteArray = withContext(io) { Printing.trim(png) }
 
-    override suspend fun print(tape: ByteArray, printer: String?, widthMm: Int, copies: Int): Boolean =
+    override suspend fun print(tape: ByteArray, printer: String?, widthMm: Int, copies: Int): Printed =
         withContext(io) {
-            runCatching { Printing.print(tape, printer, widthMm, copies) }
+            val sent = runCatching { Printing.print(tape, printer, widthMm, copies) }
                 .onFailure { AppLog.warn(LogSource.App, "print job refused: ${it::class.simpleName}") }
                 .getOrDefault(false)
+            if (sent) Printed.Sent else Printed.Refused
         }
 
     override suspend fun keep(bytes: ByteArray, name: String, title: String): Kept = withContext(io) {

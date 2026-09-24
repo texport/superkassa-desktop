@@ -130,8 +130,8 @@ class KassaJournalLookTest {
             // Поля раздела и место под полосу прокрутки — те же, что
             // на экране: от них зависит, сколько ширины достаётся столбцам.
             content = {
-                Column(modifier = Modifier.fillMaxSize().padding(Spacing.screen)) {
-                    Column(modifier = Modifier.padding(end = Spacing.normal)) {
+                Column(modifier = Modifier.fillMaxSize().padding(Spacing.fieldGap)) {
+                    Column(modifier = Modifier.padding(end = Spacing.scrollbarGutter)) {
                         JournalRow(entry = entry, striped = true)
                     }
                 }

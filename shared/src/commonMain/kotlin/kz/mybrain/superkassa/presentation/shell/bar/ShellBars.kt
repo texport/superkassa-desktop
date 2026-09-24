@@ -13,14 +13,14 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.section.AppTopBar
 import kz.mybrain.superkassa.presentation.common.state.waitedLongEnough
-import kz.mybrain.superkassa.presentation.login.loginViewModel
+import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.ShellUiState
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
-import kz.mybrain.superkassa.presentation.theme.choice.LookViewModel
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
+import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
 
 /**
  * Шапка окна: одна на всё приложение.
@@ -31,11 +31,11 @@ import kz.mybrain.superkassa.presentation.theme.size.Sizes
  */
 @Composable
 internal fun ShellBar(window: WindowParts, shell: ShellUiState, section: Section, onSignOut: () -> Unit) {
-    val cabinet = window.cabinet?.cabinet
-    val office = cabinet?.state?.collectAsScreenState()?.value
+    val door = window.cabinet
+    val office = door?.cabinet?.state?.collectAsScreenState()?.value
     Column {
-        if (cabinet != null && section == Section.Cabinet && office?.open == true) {
-            CabinetBar(cabinet, window.look)
+        if (door != null && section == Section.Cabinet && office?.open == true) {
+            CabinetBar(door.cabinet, door.look)
         } else {
             KkmTopBar(shell, window.look, onSignOut = onSignOut, onRefresh = window.shell::refresh)
         }

@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.presentation.cabinet.CabinetProblem
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetMessage
+import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.shell.WindowModels
@@ -43,6 +44,9 @@ internal class CabinetStage(private val reply: (String) -> StubReply) {
     private val rig = CabinetRig(client(), app)
 
     val cabinet: CabinetWindow = rig.window
+
+    /** Вид окна, из которого собран [cabinet]: каркасу окна нужна модель целиком. */
+    val look: LookViewModel get() = rig.look
 
     val texts = cabinetTexts(Language.Ru)
 

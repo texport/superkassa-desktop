@@ -49,7 +49,7 @@ internal fun HeadOverMap(
                 Box { body() }
             }
         ) { measurables, constraints ->
-            val gap = Spacing.snug.roundToPx()
+            val gap = Spacing.fieldGap.roundToPx()
             val width = constraints.maxWidth
             val top = measurables[0].measure(Constraints(minWidth = width, maxWidth = width))
             val rest = maxOf(room - top.height - gap, AnalyticsLayout.mapLeast.roundToPx())
@@ -108,7 +108,7 @@ internal fun ListOverCard(
         modifier = modifier.fillMaxSize(),
         content = {
             Box { list() }
-            Box(modifier = Modifier.verticalScroll(scroll).padding(end = Spacing.normal)) { card() }
+            Box(modifier = Modifier.verticalScroll(scroll).padding(end = Spacing.scrollbarGutter)) { card() }
             ColumnScrollbar(scroll, Modifier)
         }
     ) { measurables, constraints ->
@@ -116,7 +116,7 @@ internal fun ListOverCard(
         val height = constraints.maxHeight
         val cap = (height * Panes.STACKED_SECOND_SHARE).toInt()
         val lower = measurables[1].measure(Constraints(minWidth = width, maxWidth = width, maxHeight = cap))
-        val gap = if (lower.height > 0) Spacing.snug.roundToPx() else 0
+        val gap = if (lower.height > 0) Spacing.fieldGap.roundToPx() else 0
         val upper = measurables[0].measure(Constraints.fixed(width, (height - lower.height - gap).coerceAtLeast(0)))
         val bar = measurables[2].measure(Constraints.fixedHeight(lower.height))
         layout(width, height) {

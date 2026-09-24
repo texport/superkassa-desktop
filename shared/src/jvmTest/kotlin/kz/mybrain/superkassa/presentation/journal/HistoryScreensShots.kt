@@ -80,7 +80,7 @@ class HistoryScreensShots {
     @Composable
     private fun HistoryPlace(content: @Composable ColumnScope.() -> Unit) {
         Column(
-            modifier = Modifier.contentWidth(ContentKind.Workspace).fillMaxSize().padding(Spacing.screen),
+            modifier = Modifier.contentWidth(ContentKind.Workspace).fillMaxSize().padding(Spacing.fieldGap),
             content = content
         )
     }

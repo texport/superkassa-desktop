@@ -115,7 +115,7 @@ class PositionDetailsShots {
             LocalVatRates provides rates,
             LocalUnits provides units
         ) {
-            Box(Modifier.fillMaxSize().padding(Spacing.screen)) {
+            Box(Modifier.fillMaxSize().padding(Spacing.fieldGap)) {
                 BasketCard(basket, Modifier.fillMaxSize(), onStorno = {}, onExcise = {}, onRemove = onRemove)
             }
         }

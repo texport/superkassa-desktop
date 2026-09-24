@@ -47,7 +47,7 @@ fun JournalPeriodBar(
     // Переносится полоса только целыми частями: подпись, сегменты
     // и листание со стрелками и датой. Стрелка, уехавшая на другую строку
     // от даты, которую она листает, читалась как отдельная кнопка.
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         Text(
             text = journal.period,
             style = MaterialTheme.typography.labelMedium,
@@ -62,7 +62,7 @@ fun JournalPeriodBar(
             onSelect = { onPeriod(JournalPeriod.of(it)) }
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
             verticalAlignment = Alignment.CenterVertically
         ) {
             PeriodShift(journal, period, loading, onPeriod)
@@ -93,6 +93,6 @@ private fun PeriodShift(
         Icon(AppIcons.today, contentDescription = null)
         // Надпись не переносится по буквам ни при какой ширине: перенос
         // ряда — дело полосы, а не отдельной кнопки внутри неё.
-        Text(journal.today, modifier = Modifier.padding(start = Spacing.tight), softWrap = false)
+        Text(journal.today, modifier = Modifier.padding(start = Spacing.itemGap), softWrap = false)
     }
 }

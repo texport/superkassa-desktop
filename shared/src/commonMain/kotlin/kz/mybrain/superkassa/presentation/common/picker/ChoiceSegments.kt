@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import kz.mybrain.superkassa.presentation.theme.size.Sizes
 
@@ -105,7 +106,10 @@ private fun <T> SegmentRow(
                 onClick = { onSelect(option) },
                 shape = SegmentedButtonDefaults.itemShape(at, options.size),
                 modifier = segment(),
-                label = { Text(text = label(option), softWrap = false, maxLines = 1) }
+                // Подпись, которой не хватило сегмента, кончается многоточием,
+                // а не обрывается посреди слова: «Предупреждени» читалось
+                // как опечатка.
+                label = { Text(text = label(option), softWrap = false, maxLines = 1, overflow = TextOverflow.Ellipsis) }
             )
         }
     }

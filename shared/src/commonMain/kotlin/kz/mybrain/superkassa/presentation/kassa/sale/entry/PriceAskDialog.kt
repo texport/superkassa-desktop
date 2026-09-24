@@ -23,6 +23,7 @@ import kz.mybrain.superkassa.domain.kassa.model.entry.PriceAsk
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.presentation.common.dialog.FormDialog
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
+import kz.mybrain.superkassa.presentation.common.keyboard.EnterSubmits
 import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
 import kz.mybrain.superkassa.presentation.common.keyboard.onEscape
 import kz.mybrain.superkassa.presentation.common.section.DetailLine
@@ -93,7 +94,7 @@ private class AskedInput {
 private fun FoundItem(found: Position, units: List<MeasureUnit>) {
     val texts = LocalStrings.current
     val extra = LocalSaleTexts.current
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         DetailLine(texts.sale.name, found.name)
         DetailLine(extra.priceAskCode, found.ntin)
         DetailLine(texts.sale.measureUnit, unitTitle(units, found.measureUnitCode))
@@ -122,13 +123,15 @@ private fun AskedAmounts(
             onDismiss()
             true
         },
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
-        AskedField(ask, DraftField.Price, typed.price, texts.sale.price, Modifier.focusRequester(focus)) {
-            typed.price = it
-        }
-        AskedField(ask, DraftField.Quantity, typed.counted, texts.sale.quantity, Modifier) {
-            typed.counted = it
+        EnterSubmits(onAdd) {
+            AskedField(ask, DraftField.Price, typed.price, texts.sale.price, Modifier.focusRequester(focus)) {
+                typed.price = it
+            }
+            AskedField(ask, DraftField.Quantity, typed.counted, texts.sale.quantity, Modifier) {
+                typed.counted = it
+            }
         }
     }
 }

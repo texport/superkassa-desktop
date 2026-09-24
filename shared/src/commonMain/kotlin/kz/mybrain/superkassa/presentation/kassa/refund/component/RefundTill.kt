@@ -37,7 +37,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 internal fun RefundTill(content: @Composable ColumnScope.() -> Unit) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         content = content
     )
 }
@@ -51,6 +51,7 @@ internal fun RefundButton(kind: ReturnKind, enabled: Boolean, onClick: () -> Uni
     Button(
         enabled = enabled,
         onClick = onClick,
+        // Цель нажатия кассы — выше обычной кнопки, как «Пробить чек».
         modifier = Modifier.fillMaxWidth().heightIn(min = KassaLayout.mainAction)
     ) {
         Text(kind.action(LocalStrings.current.returns))
@@ -86,5 +87,5 @@ internal fun RefundMoney(
         drawerShortage(state.kind, state.cashInDrawer, draft.split.cashSum(draft.readyTiyn))
             ?.let { journal.drawerShort.fill(Money.formatTiyn(it)) }
     )
-    RefundHints(journal, draft.checked, draft.split.issue(draft.readyTiyn), paymentTexts(language))
+    RefundHints(draft.split.issue(draft.readyTiyn), paymentTexts(language))
 }

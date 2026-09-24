@@ -74,7 +74,7 @@ internal fun MapWindow(
             state = model.map,
             texts = parts.cabinetTexts,
             locating = parts.tools.locating,
-            modifier = Modifier.align(Alignment.TopEnd).padding(Spacing.snug)
+            modifier = Modifier.align(Alignment.TopEnd).padding(Spacing.fieldGap)
         ) {
             IconButton(onClick = onFullscreen) {
                 Icon(
@@ -107,8 +107,8 @@ private fun MapOverlay(parts: MapParts, canvas: IntSize) {
         parts.actions.open(parts.groups.first { it.id == mark.id })
     }
     Column(
-        modifier = Modifier.padding(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        modifier = Modifier.padding(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         MapTally(
             shown = mapCount(shown, parts.placement.placed.size, parts.whole),

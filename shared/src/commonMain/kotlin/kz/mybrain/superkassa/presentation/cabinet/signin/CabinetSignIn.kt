@@ -60,14 +60,14 @@ fun CabinetSignIn(
     actions: CabinetActions
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.roomy),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal, Alignment.CenterVertically)
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap, Alignment.CenterVertically)
     ) {
         ElevatedCard(modifier = Modifier.widthIn(max = Sizes.loginColumn)) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(Spacing.roomy),
-                verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+                modifier = Modifier.fillMaxWidth().padding(Spacing.blockPadding),
+                verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
             ) {
                 DoorTitle(texts)
                 SignInAction(state, language, texts, actions)
@@ -92,7 +92,7 @@ private fun DoorTitle(texts: CabinetTexts) {
     )
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
     ) {
         Text(texts.title, style = MaterialTheme.typography.headlineSmall)
         InfoTip(texts.hints.signIn)

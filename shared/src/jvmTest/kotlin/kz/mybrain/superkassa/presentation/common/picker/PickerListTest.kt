@@ -31,7 +31,7 @@ class PickerListTest {
     @Composable
     private fun Picker(count: Int) {
         val options = (1..count).map { "Торговая точка $it" }
-        Box(modifier = Modifier.fillMaxSize().padding(Spacing.roomy)) {
+        Box(modifier = Modifier.fillMaxSize().padding(Spacing.blockPadding)) {
             LabelledPicker(
                 label = "Торговая точка",
                 options = options,

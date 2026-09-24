@@ -89,7 +89,7 @@ private fun CashRow(document: FiscalDocumentResponse, type: TrilingualMessageRes
         },
         support = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(Dates.shortMoment(document.createdAt), style = MaterialTheme.typography.bodySmall)

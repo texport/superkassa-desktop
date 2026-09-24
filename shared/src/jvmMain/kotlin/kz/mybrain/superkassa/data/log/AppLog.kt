@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.data.log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
 import java.io.File
 
@@ -48,7 +49,7 @@ object AppLog {
     /** Поднимает журнал рабочего места: уровень, файл и режим отладки с диска. */
     fun start(loaded: LogSettings = LogSettings()) {
         settings = loaded
-        journal = LogJournal(file = LogFile(loaded.directory), level = loaded.level)
+        journal = LogJournal(file = LogFile(Path(loaded.directory.path)), level = loaded.level)
         debug.value = loaded.debugMode
     }
 

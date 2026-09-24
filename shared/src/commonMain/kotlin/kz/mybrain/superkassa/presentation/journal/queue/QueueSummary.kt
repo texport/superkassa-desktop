@@ -46,7 +46,7 @@ internal fun QueueSummary(state: QueueUiState, actions: QueueActions, journal: Q
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         // Кнопки переносятся под объяснение целиком, а не сжимают его
         // в столбик по два слова: карточка стоит в ширину читаемого текста.
-        WrapRow(modifier = Modifier.fillMaxWidth().padding(Spacing.normal), spacing = Spacing.roomy) {
+        WrapRow(modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding), spacing = Spacing.sectionGap) {
             WaitingCount(state, texts.queue.waiting)
             Text(
                 text = summaryNote(state, journal),
@@ -64,7 +64,7 @@ internal fun QueueSummary(state: QueueUiState, actions: QueueActions, journal: Q
 private fun SummaryButtons(state: QueueUiState, actions: QueueActions) {
     val texts = LocalStrings.current
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.roomy),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.sectionGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         FilledTonalButton(enabled = state.canRetry, onClick = actions::retryFailed) { Text(texts.queue.retryFailed) }

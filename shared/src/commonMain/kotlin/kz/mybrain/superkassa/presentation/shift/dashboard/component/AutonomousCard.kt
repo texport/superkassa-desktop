@@ -34,8 +34,8 @@ internal fun AutonomousCard(state: DashboardUiState, actions: DashboardActions) 
     if (!kkm.isAutonomous) return
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+            modifier = Modifier.padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
         ) {
             AutonomousHead(kkm.offlineQueueCount)
             Text(texts.autonomous.explain, style = MaterialTheme.typography.bodySmall)
@@ -53,7 +53,7 @@ internal fun AutonomousCard(state: DashboardUiState, actions: DashboardActions) 
 @Composable
 private fun QueueActions(state: DashboardUiState, actions: DashboardActions) {
     val texts = LocalStrings.current
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         TextButton(onClick = actions::checkLink) { Text(texts.autonomous.checkLink) }
         if (state.canSendQueued) {
             TextButton(onClick = actions::sendQueued) { Text(texts.autonomous.sendQueued) }
@@ -73,7 +73,7 @@ private fun QueueActions(state: DashboardUiState, actions: DashboardActions) {
 private fun AutonomousHead(waiting: Int) {
     val texts = LocalStrings.current
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Chip(texts.autonomous.title, StatusColors.pending)

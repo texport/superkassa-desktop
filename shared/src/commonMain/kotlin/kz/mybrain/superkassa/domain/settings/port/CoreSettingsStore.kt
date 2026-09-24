@@ -12,6 +12,12 @@ import io.github.texport.superkassa.core.domain.api.model.settings.CoreSettings
  */
 interface CoreSettingsStore {
 
+    /**
+     * Каталог данных кассы: база, настройки ядра, замок владельца; `null` —
+     * платформа его не назвала. Поддержка ищет там базу и журнал ядра.
+     */
+    val directory: String?
+
     /** Действующие настройки. */
     suspend fun read(): CoreSettings
 

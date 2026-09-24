@@ -37,6 +37,6 @@ internal fun MapCardTitle(title: String, expanded: Boolean, onToggle: (() -> Uni
 @Composable
 internal fun MapCardBody(expanded: Boolean, content: @Composable ColumnScope.() -> Unit) {
     Collapsible(expanded) {
-        Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight), content = content)
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap), content = content)
     }
 }

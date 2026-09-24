@@ -9,14 +9,14 @@ import kz.mybrain.superkassa.presentation.common.picker.ColorChoice
 import kz.mybrain.superkassa.presentation.common.picker.WideChoiceSegments
 import kz.mybrain.superkassa.presentation.common.section.PartTitle
 import kz.mybrain.superkassa.presentation.common.section.SectionCard
+import kz.mybrain.superkassa.presentation.settings.look.LookUiState
+import kz.mybrain.superkassa.presentation.settings.look.LookViewModel
 import kz.mybrain.superkassa.presentation.settings.title
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.strings.common.SettingStrings
 import kz.mybrain.superkassa.presentation.strings.settings.LookStrings
 import kz.mybrain.superkassa.presentation.theme.TextScale
 import kz.mybrain.superkassa.presentation.theme.Typeface
-import kz.mybrain.superkassa.presentation.theme.choice.LookUiState
-import kz.mybrain.superkassa.presentation.theme.choice.LookViewModel
 import kz.mybrain.superkassa.presentation.theme.color.Accent
 import kz.mybrain.superkassa.presentation.theme.color.Appearance
 import kz.mybrain.superkassa.presentation.theme.color.swatch
@@ -52,7 +52,7 @@ fun AppearanceCard(actions: LookViewModel) {
 /** Название части и под ним выбор: части карточки стоят одним ритмом. */
 @Composable
 private fun Choice(title: String, info: String? = null, content: @Composable () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         PartTitle(title, info)
         content()
     }

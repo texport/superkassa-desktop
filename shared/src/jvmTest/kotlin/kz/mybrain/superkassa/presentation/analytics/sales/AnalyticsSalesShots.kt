@@ -171,6 +171,7 @@ class AnalyticsSalesShots {
 
     private companion object {
         const val SETTLE = 24
+
         /** Куда наводится колесо: середина сводки. */
         val MIDDLE = Offset(WIDE / 2f, HIGH / 2f)
 

@@ -1,11 +1,13 @@
 package kz.mybrain.superkassa.presentation.settings.core
 
 import io.github.texport.superkassa.core.domain.api.model.settings.CoreSettings
+import kz.mybrain.superkassa.domain.settings.model.KassaFacts
 import kz.mybrain.superkassa.domain.settings.model.frozen
 import kz.mybrain.superkassa.domain.settings.model.secondsOf
 import kz.mybrain.superkassa.domain.settings.model.server
 import kz.mybrain.superkassa.presentation.strings.kassa.KkmSetupTexts
 import kz.mybrain.superkassa.presentation.strings.settings.CoreSettingTexts
+import kz.mybrain.superkassa.presentation.strings.settings.KassaFactsTexts
 
 /**
  * Настройки кассы на этой машине, как их видит владелец.
@@ -13,9 +15,11 @@ import kz.mybrain.superkassa.presentation.strings.settings.CoreSettingTexts
  * @property settings действующие настройки; `null` — ещё не прочитаны.
  * @property timeoutDraft набранное ожидание ответа БФД, секунды.
  * @property reconnectDraft набранный повтор связи с БФД, секунды.
+ * @property about версии, каталог данных и число касс; `null` — ещё не прочитаны.
  */
 data class CoreSettingsUiState(
     val settings: CoreSettings? = null,
+    val about: KassaFacts? = null,
     val timeoutDraft: String? = null,
     val reconnectDraft: String? = null,
     val busy: Boolean = false
@@ -50,17 +54,24 @@ data class CoreSettingsUiState(
     val savable: Boolean get() = settings != null && !frozen && !busy && changed
 
     /**
-     * Что касса рассказывает о себе: режим, протокол, хранилище.
+     * Что касса рассказывает о себе: версии, режим, протокол, хранилище,
+     * каталог данных и число касс — то, что прежде показывала карточка узла.
      *
-     * Путь к базе и учётные данные хранилища на экран не выводятся: экран
+     * Адрес сервера базы и его учётные данные на экран не выводятся: экран
      * настроек показывают и снимают, и строка с ними уехала бы в чужой снимок.
+     * Каталог данных — путь на этой машине: секрета в нём нет, а поддержка
+     * ищет там базу.
      */
-    fun facts(texts: CoreSettingTexts, kkm: KkmSetupTexts): List<Pair<String, String>> {
-        val now = settings ?: return emptyList()
-        return listOf(
-            texts.mode to if (now.server) texts.modeServer else texts.modeDesktop,
-            kkm.bfdProtocol to protocolLabel(now.ofdProtocolVersion),
-            kkm.kassaStorage to storageLabel(now.storage.engine, kkm)
+    fun facts(about: KassaFactsTexts, texts: CoreSettingTexts, kkm: KkmSetupTexts): List<Pair<String, String>> {
+        val now = settings
+        return listOfNotNull(
+            this.about?.let { about.appVersion to it.appVersion },
+            this.about?.let { about.coreVersion to it.coreVersion },
+            now?.let { texts.mode to if (it.server) texts.modeServer else texts.modeDesktop },
+            now?.let { kkm.bfdProtocol to protocolLabel(it.ofdProtocolVersion) },
+            now?.let { kkm.kassaStorage to storageLabel(it.storage.engine, kkm) },
+            this.about?.directory?.let { about.dataDirectory to it },
+            this.about?.kkmCount?.let { about.kkmCount to it.toString() }
         )
     }
 }

@@ -2,10 +2,9 @@ package kz.mybrain.superkassa.presentation.kassa.sale.entry
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -15,8 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.domain.kassa.model.entry.DraftField
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.field.MoneyField
+import kz.mybrain.superkassa.presentation.common.keyboard.EnterSubmits
+import kz.mybrain.superkassa.presentation.common.keyboard.enterKeyboardActions
 import kz.mybrain.superkassa.presentation.common.keyboard.onEnter
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
@@ -27,18 +27,16 @@ import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.kassa.sale.position.MeasureUnit
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.strings.kassa.text
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
  * Ввод позиции чека руками.
  *
- * Поля стоят столбцом по ширине кассовой колонки, а не в одну длинную
- * строку: строка из шести полей на узкой колонке не помещается, и кассир
- * искал бы «Количество» за краем экрана.
+ * Поля стоят столбцом по ширине кассовой колонки: строка из шести полей
+ * на узкой колонке не помещается, и кассир искал бы «Количество» за краем.
  *
- * Enter добавляет позицию из любого поля формы: за кассой руки заняты
- * товаром, и тянуться к мыши ради каждой строки чека — потерянное время.
+ * Enter (и «Готово» экранной клавиатуры) добавляет позицию из любого поля формы:
+ * за кассой руки заняты товаром, и тянуться к мыши за каждой строкой некогда.
  * Кнопка недоступна ровно тогда, когда введённое ещё не образует позицию,
  * и строка над ней всегда называет, чего не хватает. Добавление —
  * второстепенное действие экрана, поэтому кнопка тональная: главное
@@ -50,11 +48,11 @@ fun AddPositionForm(draft: PositionDraft, actions: EntryActions) {
     val extra = LocalSaleTexts.current
     Column(
         modifier = Modifier.fillMaxWidth().onEnter { actions.addDraft() },
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
-        DraftFields(draft, LocalUnits.current, actions::editDraft)
+        EnterSubmits({ actions.addDraft() }) { DraftFields(draft, LocalUnits.current, actions::editDraft) }
         Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
             verticalAlignment = Alignment.CenterVertically
         ) {
             FilledTonalButton(
@@ -80,10 +78,9 @@ internal fun DraftFields(
 ) {
     val texts = LocalStrings.current
     DraftName(draft, onChange)
-    // Цена и количество делят строку, пока подписи помещаются целиком;
-    // в узкой кассе они встают друг под другом, а не рвут «Количество»
-    // на две строки.
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    // Цена и количество делят строку поровну: края полей совпадают с краями
+    // наименования и скидки над и под ними — одна сетка на всю форму.
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         DraftAmountField(draft, DraftField.Price, texts.sale.price) {
             onChange(draft.copy(price = it))
         }
@@ -115,6 +112,7 @@ private fun DraftName(draft: PositionDraft, onChange: (PositionDraft) -> Unit) {
         // кнопкой на кассовой колонке уезжает за сгиб, и кассир, набравший
         // цену без названия, видел лишь серую кнопку «Добавить».
         supportingText = nameProblem?.let { { Text(it.text(extra)) } },
+        keyboardActions = enterKeyboardActions(),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -129,13 +127,13 @@ private fun DraftChoices(draft: PositionDraft, units: List<MeasureUnit>, onChang
     //
     // Ставка есть только у плательщика НДС: у кассы без НДС выбирать
     // нечего, и тогда единица занимает строку целиком сама.
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         UnitPicker(
             selected = draft.measureUnitCode,
             units = units,
-            modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldPrice)
+            modifier = Modifier.weight(1f)
         ) { onChange(draft.copy(measureUnitCode = it)) }
-        VatPicker(draft.vatGroup, Modifier.weight(1f).widthIn(min = Sizes.fieldPrice)) {
+        VatPicker(draft.vatGroup, Modifier.weight(1f)) {
             onChange(draft.copy(vatGroup = it))
         }
     }
@@ -172,7 +170,7 @@ private fun DraftDiscountField(draft: PositionDraft, onChange: (PositionDraft) -
  * при открытии смены не должна выглядеть набором ошибок.
  */
 @Composable
-private fun FlowRowScope.DraftAmountField(
+private fun RowScope.DraftAmountField(
     draft: PositionDraft,
     field: DraftField,
     label: String,
@@ -184,7 +182,7 @@ private fun FlowRowScope.DraftAmountField(
     MoneyField(
         value = value,
         label = label,
-        modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldPrice),
+        modifier = Modifier.weight(1f),
         isError = problem != null,
         // Помеха стоит под своим полем, а не только строкой под кнопкой:
         // на окне кассира форма позиции не влезает целиком, и строка под

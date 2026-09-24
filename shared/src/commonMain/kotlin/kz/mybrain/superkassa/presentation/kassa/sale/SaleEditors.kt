@@ -57,7 +57,7 @@ class FormEditor(private val screen: MutableStateFlow<SaleUiState>) : FormAction
 
 /** Контакт покупателя: вид и набранное. */
 class ContactEditor(private val screen: MutableStateFlow<SaleUiState>) : ContactActions {
-    override fun kind(kind: ContactKind) = edit { it.chooseContactKind(kind) }
+    override fun kind(kind: ContactKind) = screen.update { if (it.issuing) it else it.chooseContact(kind) }
 
     override fun text(text: String) = edit { it.enterContact(text) }
 

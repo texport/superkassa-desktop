@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.setup.component
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,7 +14,6 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.enroll.AddRegisterDialog
 import kz.mybrain.superkassa.presentation.cabinet.enroll.FactoryStamp
-import kz.mybrain.superkassa.presentation.cabinet.places.AddPlaceCard
 import kz.mybrain.superkassa.presentation.cabinet.signin.SignInAction
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
@@ -41,10 +39,9 @@ fun CabinetStepCard(
     draft: KkmSetupDraft,
     onRegister: (id: String, kkmId: Int, name: String?) -> Unit
 ) {
-    // Точки берутся у кабинета окна: список точек компании один, и заведённая
-    // здесь же появляется в нём сама.
+    // Точки мастер не читает: форма заведения кассы ищет точку у кабинета
+    // сама, одной страницей, — обход всей сети на пути мастера не нужен.
     val window by cabinet.cabinet.state.collectAsScreenState()
-    LaunchedEffect(window.access) { if (window.open) cabinet.cabinet.readPlaces() }
 
     SetupStepCard(
         title = setup.stepCabinet,
@@ -59,11 +56,12 @@ fun CabinetStepCard(
 }
 
 /**
- * Что делать в кабинете сейчас: войти, завести точку или завести кассу.
+ * Что делать в кабинете сейчас: войти или завести кассу.
  *
  * Без торговой точки кассу не завести, а у владельца, который только начал,
- * точек нет ни одной. Прежде мастер показывал пустой список и упирался:
- * точку заводили в другом разделе и возвращались.
+ * точек нет ни одной. Точка заводится из той же формы кассы — кнопкой под
+ * выбором точки, — поэтому мастер не читает точки сети, чтобы решить,
+ * какую кнопку показать: это был обход всех страниц сети на пути мастера.
  */
 @Composable
 private fun CabinetStep(
@@ -81,27 +79,11 @@ private fun CabinetStep(
             SignInAction(cabinet = cabinet.cabinet, language = language, texts = texts, modifier = Modifier)
         }
 
-        window.places.isEmpty() -> AddPlaceStep(cabinet, texts)
         else -> AddRegisterStep(
             cabinet = cabinet,
             texts = texts,
             known = FactoryStamp(draft.factoryNumber.orEmpty(), draft.manufactureYear.orEmpty())
         ) { created -> onRegister(created.id, created.kkmId, created.internalName) }
-    }
-}
-
-/**
- * Создание первой точки прямо в мастере.
- *
- * Форма открывается окном — тем же, что и в разделе кабинета: две формы
- * заведения точки разошлись бы на первой правке.
- */
-@Composable
-private fun AddPlaceStep(cabinet: CabinetWindow, texts: CabinetTexts) {
-    var adding by remember { mutableStateOf(false) }
-    FilledTonalButton(onClick = { adding = true }) { Text(texts.addPlace) }
-    if (adding) {
-        AddPlaceCard(cabinet, texts, onDismiss = { adding = false }, onAdded = { adding = false })
     }
 }
 

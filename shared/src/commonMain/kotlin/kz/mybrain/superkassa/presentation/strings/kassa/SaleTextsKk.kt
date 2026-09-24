@@ -81,5 +81,7 @@ internal val saleTextsKk = SaleTexts(
     positionSum = "Сомасы",
     positionNtin = "НТИН коды",
     positionStornoMarked = "Жол жойылды және чек жиынын азайтады",
-    positionClose = "Жабу"
+    positionClose = "Жабу",
+    barcodeLetters = "Әріп теру",
+    barcodeDigits = "Цифр теру"
 )

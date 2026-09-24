@@ -74,7 +74,7 @@ private fun PassportFacts(texts: CabinetTexts, register: CabinetRegister) {
     )
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         DetailLine(texts.registrationNumber, register.registrationNumber)
         DetailLine(texts.factoryNumber, register.factoryNumber)

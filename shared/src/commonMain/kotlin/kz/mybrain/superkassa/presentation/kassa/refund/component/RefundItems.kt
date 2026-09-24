@@ -58,7 +58,7 @@ internal fun RefundItems(
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         items.forEachIndexed { at, item ->
             if (!item.isStorno) {
                 SoldRow(item.name, at in draft.chosen, draft.shares[at], onOpen = { detailed = at }) { onToggle(at) }
@@ -78,7 +78,7 @@ private fun SoldRow(name: String, chosen: Boolean, share: Long, onOpen: () -> Un
     Row(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onOpen),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
     ) {
         Checkbox(checked = chosen, onCheckedChange = { onToggle() })
         Text(

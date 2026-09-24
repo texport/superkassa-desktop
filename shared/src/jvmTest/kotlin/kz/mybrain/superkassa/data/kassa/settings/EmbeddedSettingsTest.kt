@@ -55,7 +55,7 @@ class EmbeddedSettingsTest {
         Dispatchers.resetMain()
     }
 
-    private fun store() = EmbeddedSettings(bench.superkassa.settings, Dispatchers.Unconfined)
+    private fun store() = EmbeddedSettings(bench.superkassa.settings, io = Dispatchers.Unconfined)
 
     @Test
     fun `касса рабочего места открыта для правки и работает по протоколу запуска`(): Unit = runBlocking {

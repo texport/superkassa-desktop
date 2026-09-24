@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.domain.kassa.model.entry.LookupProblem
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
+import kz.mybrain.superkassa.domain.kassa.model.entry.barcodeOf
 import kz.mybrain.superkassa.domain.kassa.model.entry.lookupProblemOf
 import kz.mybrain.superkassa.domain.kassa.model.entry.positionOf
 import kz.mybrain.superkassa.domain.kassa.model.entry.priceMissing
@@ -36,7 +37,7 @@ class EntryEditor(
 ) : EntryActions {
 
     override fun typeBarcode(text: String) =
-        screen.update { it.copy(search = it.search.copy(barcode = text.filter(Char::isDigit), problem = null)) }
+        screen.update { it.copy(search = it.search.copy(barcode = barcodeOf(text), problem = null)) }
 
     override fun search(): Boolean {
         val barcode = screen.value.search.barcode
@@ -77,5 +78,5 @@ class EntryEditor(
     }
 
     private fun added(state: SaleUiState, position: Position): SaleUiState =
-        state.copy(basket = state.basket.add(position), search = BarcodeSearch())
+        state.copy(basket = state.basket.add(position), search = BarcodeSearch()).toBarcode()
 }

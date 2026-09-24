@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.kassa.sale
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,10 +19,12 @@ import kz.mybrain.superkassa.presentation.common.adaptive.TwoPane
 import kz.mybrain.superkassa.presentation.common.list.ScrollableColumn
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.kassa.sale.component.BasketCard
+import kz.mybrain.superkassa.presentation.kassa.sale.component.CheckoutPanel
 import kz.mybrain.superkassa.presentation.kassa.sale.component.CustomerDataCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.DomainCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ExciseDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.component.IssueRow
+import kz.mybrain.superkassa.presentation.kassa.sale.component.IssuedCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.PaymentCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ReceiptChangesCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ReceiptTotals
@@ -51,18 +54,18 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  * и покупки одинаковый, различается только направление денег.
  */
 @Composable
-fun SaleScreen(model: SaleViewModel) {
+fun SaleScreen(model: SaleViewModel, output: ReceiptOutput = ReceiptOutput()) {
     val state by model.state.collectAsScreenState()
     val actions = remember(model) { model.actions() }
     // Смену открывают на главном, отрасль выбирают в настройках: экран,
     // открытый снова, узнаёт их заново, а корзину не трогает.
     LaunchedEffect(model) { model.visit() }
-    SaleContent(state, actions)
+    SaleContent(state, actions, output)
 }
 
 /** Экран продажи по готовому состоянию: снимки вида рисуют его без модели. */
 @Composable
-fun SaleContent(state: SaleUiState, actions: SaleActions = SaleActions()) {
+fun SaleContent(state: SaleUiState, actions: SaleActions = SaleActions(), output: ReceiptOutput = ReceiptOutput()) {
     val texts = LocalStrings.current
     val language = LocalLanguage.current
     CompositionLocalProvider(
@@ -72,8 +75,8 @@ fun SaleContent(state: SaleUiState, actions: SaleActions = SaleActions()) {
     ) {
         TwoPane(
             split = Panes.receiptAndTill,
-            modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-            first = { ReceiptColumn(state, actions) },
+            modifier = Modifier.fillMaxSize(),
+            first = { ReceiptColumn(state, actions, output) },
             second = { TillColumn(state, actions) }
         )
     }
@@ -83,10 +86,11 @@ fun SaleContent(state: SaleUiState, actions: SaleActions = SaleActions()) {
  * Левая колонка — сам чек.
  *
  * Список позиций забирает всю оставшуюся высоту: кассир смотрит в него
- * чаще, чем во всё остальное вместе взятое.
+ * чаще, чем во всё остальное вместе взятое. Пока следующий чек пуст,
+ * над ним стоит итог пробитого: сумма, сдача, показ и печать.
  */
 @Composable
-private fun ReceiptColumn(state: SaleUiState, actions: SaleActions) {
+private fun ReceiptColumn(state: SaleUiState, actions: SaleActions, output: ReceiptOutput) {
     // Какой позиции считывают марки: окно открывается поверх листа чека
     // и живёт, пока кассир подносит к сканеру одну бутылку за другой —
     // и после поворота экрана тоже.
@@ -94,9 +98,10 @@ private fun ReceiptColumn(state: SaleUiState, actions: SaleActions) {
     stamping?.let { at -> StampDialog(state.basket, at, actions.basket) { stamping = null } }
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
         SaleHeader(state.form.operation, state.basket.positions.isNotEmpty(), actions)
+        state.shownIssued?.let { IssuedCard(it, output, actions.next) }
         BasketCard(
             basket = state.basket,
             modifier = Modifier.weight(1f),
@@ -135,7 +140,7 @@ private fun TillColumn(state: SaleUiState, actions: SaleActions) {
     val toggle = actions.toggle
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
         ScrollableColumn(modifier = Modifier.weight(1f), gutter = KassaLayout.tillGutter) {
             // Штрихкод стоит первым: сканер вводит код в поле, которое
@@ -149,12 +154,11 @@ private fun TillColumn(state: SaleUiState, actions: SaleActions) {
             TillExtras(state, actions)
         }
         // Прибитое стоит в тех же полях, что и прокручиваемое над ним.
-        Column(
-            modifier = Modifier.padding(end = KassaLayout.tillGutter),
-            verticalArrangement = Arrangement.spacedBy(Spacing.normal)
-        ) {
-            ReceiptTotals(state.form, state.total, state.expanded(SalePanel.Money), actions.form::taken)
-            IssueRow(state, actions.issue)
+        Box(modifier = Modifier.padding(end = KassaLayout.tillGutter)) {
+            CheckoutPanel {
+                ReceiptTotals(state.form, state.total, state.expanded(SalePanel.Money), actions.form::taken)
+                IssueRow(state, actions.issue)
+            }
         }
     }
 }
@@ -165,7 +169,7 @@ private fun TillExtras(state: SaleUiState, actions: SaleActions) {
     ReceiptChangesCard(state, actions.form, state.expanded(SalePanel.ReceiptChanges)) {
         actions.toggle(SalePanel.ReceiptChanges)
     }
-    CustomerDataCard(state.form, actions.form, state.expanded(SalePanel.CustomerData)) {
+    CustomerDataCard(state.form, state.channels, actions.form, state.expanded(SalePanel.CustomerData)) {
         actions.toggle(SalePanel.CustomerData)
     }
 }

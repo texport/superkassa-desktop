@@ -39,7 +39,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 internal fun MapHeader(texts: CabinetTexts, onDismiss: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(AppIcons.place, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
@@ -66,7 +66,7 @@ internal fun MapArea(
     Box(modifier = modifier.fillMaxWidth()) {
         // Нажатие по карте ставит место точки: за этим окно и открыто.
         MapView(state, tiles, texts.map, Modifier.fillMaxSize(), onTap = state::mark)
-        MapControls(state, texts, locating, Modifier.align(Alignment.TopEnd).padding(Spacing.snug))
+        MapControls(state, texts, locating, Modifier.align(Alignment.TopEnd).padding(Spacing.fieldGap))
     }
 }
 
@@ -77,7 +77,7 @@ internal fun MapFooter(state: MapState, texts: CabinetTexts, onDismiss: () -> Un
     val longitude = state.markerLongitude
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         MarkerWords(state, texts, Modifier.weight(1f))

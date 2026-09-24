@@ -74,6 +74,11 @@ data class SaleReceipt(
         )
     }
 
+    /** Ставки НДС, которые уйдут в кассу: у строк и на весь чек. */
+    val vatCodes: List<String>
+        get() = basket.toItems { own -> form.vat.positionRate(vatPayer, own) }.mapNotNull { it.vatGroup } +
+            listOfNotNull(receiptVat)
+
     /**
      * Чек для кассы.
      *

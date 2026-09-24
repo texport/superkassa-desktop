@@ -40,7 +40,7 @@ fun MoreRow(
         return
     }
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(enabled = !loading, onClick = onMore) { Text(showMore) }

@@ -47,6 +47,10 @@ internal fun appKassa(
  * заказ делается до открытия стенда: касса открывается раз, чтобы завести
  * файл, и он дополняется каналами. Получателя у канала нет: чек уходит
  * на контакт покупателя из самого чека.
+ *
+ * У каждого канала записан и провайдер — адрес или ключ, как их задаёт
+ * владелец в настройках: без них экран продажи счёл бы канал ненастроенным
+ * и не дал бы выбрать контакт. Отправляет всё равно подменный канал.
  */
 internal fun orderDelivery(directory: File, bfd: FakeBfd, channels: List<DeliveryPort>) {
     appBench(directory, bfd).close()
@@ -63,7 +67,23 @@ internal fun orderDelivery(directory: File, bfd: FakeBfd, channels: List<Deliver
             )
         }
     }
-    file.writeText(JsonObject(settings + ("delivery" to buildJsonObject { put("channels", routes) })).toString())
+    val delivery = buildJsonObject {
+        put("channels", routes)
+        channels.forEach { port -> providerOf(port.channel.name)?.let { (key, value) -> put(key, value) } }
+    }
+    file.writeText(JsonObject(settings + ("delivery" to delivery)).toString())
+}
+
+/** Провайдер канала в настройках ядра: имя поля и то, без чего канал не настроен. */
+private fun providerOf(channel: String): Pair<String, JsonObject>? = when (channel) {
+    "SMS" -> "sms" to buildJsonObject { put("providerUrl", "https://sms.example.kz/send?to={phone}&text={text}") }
+    "TELEGRAM" -> "telegram" to buildJsonObject { put("botToken", "test-bot") }
+    "WHATSAPP" -> "whatsapp" to buildJsonObject {
+        put("accessToken", "test-token")
+        put("phoneNumberId", "77010000000")
+    }
+    "EMAIL" -> "email" to buildJsonObject { put("host", "smtp.example.kz") }
+    else -> null
 }
 
 /** Файл настроек ядра в каталоге данных. */

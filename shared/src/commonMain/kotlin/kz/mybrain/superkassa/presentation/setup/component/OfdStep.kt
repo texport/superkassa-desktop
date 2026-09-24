@@ -31,8 +31,8 @@ fun OfdStep(state: SetupUiState, actions: SetupActions) {
     val texts = LocalStrings.current.settings
     val form = state.byHand
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         itemVerticalAlignment = Alignment.Top
     ) {
         ContourPicker(state.contours, state.contour) { actions.edit(form.copy(contour = it)) }

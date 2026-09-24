@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.journal
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -71,10 +70,10 @@ fun HistoryContent(parts: HistoryParts) {
     val texts = LocalStrings.current
     val journal = journalTexts(LocalLanguage.current).history
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
-        WrapRow(spacing = Spacing.normal) {
+        WrapRow(spacing = Spacing.cardGap) {
             ScreenTitle(texts.sections.history)
             ChoiceSegments(
                 options = HistoryView.entries,

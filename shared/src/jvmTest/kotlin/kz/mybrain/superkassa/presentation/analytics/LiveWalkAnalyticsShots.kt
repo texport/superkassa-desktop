@@ -42,8 +42,8 @@ class LiveWalkAnalyticsShots {
     fun `неизвестная смена не показывается кодом`() {
         val shot = fix("1-shift-unknown", CARD, CHIPS_HIGH) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(Spacing.screen),
-                verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+                modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap),
+                verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
             ) {
                 KkmChips(AnalyticsLook.kkm(1), AnalyticsLook.texts, Look.cabinet)
                 KkmChips(draft(), AnalyticsLook.texts, Look.cabinet)
@@ -76,7 +76,7 @@ class LiveWalkAnalyticsShots {
 
     @Composable
     private fun PeriodBar() {
-        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.normal)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding)) {
             JournalPeriodBar(journal, JournalPeriod.of(JournalSpan.Week).shiftedBy(-1), false) {}
         }
     }
@@ -110,6 +110,7 @@ class LiveWalkAnalyticsShots {
         const val HIGH = 820
         const val CARD = 720
         const val CHIPS_HIGH = 160
+
         /** Ширина окна сводки одной кассы: в нём полоса срока и не влезла. */
         const val DIALOG = 900
         const val NARROW = 520

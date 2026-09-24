@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.presentation.shell.bar.ShellBar
 import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.shell.section.sectionWidth
+import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
 import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.strings.common.ProvideStrings
 import kz.mybrain.superkassa.presentation.theme.Look
@@ -231,7 +231,7 @@ internal fun KassaWindow(
         Row(modifier = Modifier.fillMaxSize().padding(padding)) {
             SectionRail(Section.entries, section, look.railCollapsed, {}, { Text("1.0.6") }) {}
             Box(modifier = Modifier.fillMaxSize()) {
-                Box(modifier = Modifier.sectionWidth(section).fillMaxHeight()) { content() }
+                Box(modifier = Modifier.sectionFrame().fillMaxHeight()) { content() }
             }
         }
     }

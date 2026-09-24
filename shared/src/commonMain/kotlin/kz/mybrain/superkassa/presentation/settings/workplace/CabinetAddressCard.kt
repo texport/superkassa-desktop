@@ -32,7 +32,7 @@ fun CabinetAddressCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSe
         // адрес службы длиннее любой заданной ширины поля. Негодный адрес
         // назван до сохранения: по адресу без схемы входа в кабинет не будет
         // вовсе, а на экране это выходило как «кабинет не отвечает».
-        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight), verticalAlignment = Alignment.Top) {
+        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap), verticalAlignment = Alignment.Top) {
             OutlinedTextField(
                 value = workplace.cabinetField,
                 onValueChange = actions::typeCabinet,

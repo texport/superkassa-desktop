@@ -62,7 +62,7 @@ internal fun UserRow(
 private fun RowActions(user: UserResponse, deletable: Boolean, actions: UsersActions) {
     val texts = LocalStrings.current
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(onClick = { actions.askPin(user) }) { Text(texts.users.newPin) }
@@ -92,9 +92,9 @@ internal fun RemoveDialog(money: MoneyTexts, user: UserResponse, actions: UsersA
 /** Роль кассира и, если удалить его нельзя, — почему. */
 @Composable
 private fun WhoIs(money: CashierTexts, roleTitle: String, deletable: Boolean) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(roleTitle)

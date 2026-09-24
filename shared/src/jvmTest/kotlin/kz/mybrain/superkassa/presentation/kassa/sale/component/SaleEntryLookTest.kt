@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
+import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.entry.PositionEntryCard
@@ -50,7 +52,7 @@ class SaleEntryLookTest {
     @Composable
     private fun Entry(state: SaleUiState) {
         Till(state) {
-            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
+            Column(modifier = Modifier.width(TILL).padding(Spacing.fieldGap)) {
                 PositionEntryCard(state, NO_ENTRY, expanded = true, onToggle = {})
             }
         }
@@ -66,7 +68,7 @@ class SaleEntryLookTest {
     @Test
     fun `скидка позиции набирается и суммой, и долей`() {
         val frame = KassaScene.shot("sale-trim-position-discount", width = PAIR_WIDE, height = ENTRY_TALL) {
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.roomy)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sectionGap)) {
                 Entry(open().copy(draft = DISCOUNT_TENGE))
                 Entry(open().copy(draft = DISCOUNT_PERCENT))
             }
@@ -95,8 +97,8 @@ class SaleEntryLookTest {
     private fun Neighbours(state: SaleUiState) {
         Till(state) {
             Column(
-                modifier = Modifier.width(TILL).padding(Spacing.screen),
-                verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+                modifier = Modifier.width(TILL).padding(Spacing.fieldGap),
+                verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
             ) {
                 PositionEntryCard(state, NO_ENTRY, expanded = true, onToggle = {})
                 ReceiptChangesCard(state, NO_FORM, expanded = true, onToggle = {})
@@ -119,7 +121,8 @@ class SaleEntryLookTest {
         val typed = listOf("empty" to "", "wrong" to "8 701 000", "phone" to "8 (701) 765-43-21")
         val frames = typed.map { (name, text) ->
             KassaScene.shot("sale-customer-contact-$name", width = ENTRY_WIDE, height = ENTRY_TALL) {
-                open().let { Customer(it.copy(form = it.form.enterContact(text))) }
+                open().withChannels(PHONE_READY).chooseContact(ContactKind.Phone)
+                    .let { Customer(it.copy(form = it.form.enterContact(text))) }
             }
         }
         assertTrue(frames.all { it.isNotEmpty() })
@@ -131,9 +134,12 @@ class SaleEntryLookTest {
     @Composable
     private fun Customer(state: SaleUiState) {
         Till(state) {
-            Column(modifier = Modifier.width(TILL).padding(Spacing.screen)) {
-                CustomerDataCard(state.form, NO_FORM, expanded = true, onToggle = {})
+            Column(modifier = Modifier.width(TILL).padding(Spacing.fieldGap)) {
+                CustomerDataCard(state.form, state.channels, NO_FORM, expanded = true, onToggle = {})
             }
         }
     }
 }
+
+/** Настроен только телефон: поле контакта стоит, почта и Telegram погашены. */
+private val PHONE_READY = ContactChannels(setOf(ContactKind.Phone))

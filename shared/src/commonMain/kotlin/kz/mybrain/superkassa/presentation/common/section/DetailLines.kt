@@ -25,7 +25,7 @@ import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 @Composable
 fun DetailLine(title: String, value: String?) {
     if (value.isNullOrBlank()) return
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)) {
         Text(
             text = title,
             style = MaterialTheme.typography.bodySmall,
@@ -38,7 +38,7 @@ fun DetailLine(title: String, value: String?) {
 /** Слагаемое суммы: подпись слева, деньги справа, оба приглушены. */
 @Composable
 fun MinorSumLine(title: String, amount: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)) {
         Text(
             text = title,
             style = MaterialTheme.typography.bodyMedium,
@@ -67,7 +67,7 @@ fun HeroSumLine(title: String, amount: String, color: Color) {
 /** Строка списка: название слева, сумма справа в денежном столбце. */
 @Composable
 fun NamedSumRow(name: String, note: String? = null, amount: String) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)) {
         Text(
             text = name,
             style = MaterialTheme.typography.bodyMedium,

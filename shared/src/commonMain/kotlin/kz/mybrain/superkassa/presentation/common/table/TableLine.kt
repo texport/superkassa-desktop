@@ -27,7 +27,7 @@ internal fun PinnedBody(
     header: @Composable (TableWidths) -> Unit,
     rows: LazyListScope.(TableWidths) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(end = Spacing.normal)) {
+    Column(modifier = Modifier.fillMaxSize().padding(end = Spacing.scrollbarGutter)) {
         header(widths)
         LazyColumn(
             state = state,

@@ -42,14 +42,17 @@ fun AnalyticsExchangeList(rows: List<ExchangeAddress>, texts: AnalyticsTexts, mo
         columns = exchangeColumns(rows),
         modifier = modifier,
         header = { widths ->
-            TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column ->
+            TableLine(widths, Modifier.padding(vertical = Spacing.itemGap)) { column ->
                 HeadCell(headTitle(column, texts))
             }
         },
         rows = { widths ->
             items(rows, key = { "${it.cashRegisterId}/${it.address}" }) { row ->
                 HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                TableLine(widths, Modifier.padding(vertical = Spacing.tight)) { column -> RowCell(cellText(column, row)) }
+                TableLine(
+                    widths,
+                    Modifier.padding(vertical = Spacing.itemGap)
+                ) { column -> RowCell(cellText(column, row)) }
             }
         }
     )

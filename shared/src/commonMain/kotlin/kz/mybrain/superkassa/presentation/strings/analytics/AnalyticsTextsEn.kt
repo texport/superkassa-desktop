@@ -13,10 +13,10 @@ private val analyticsSalesTextsEn = AnalyticsSalesTexts(
     vatNone = "No VAT charged",
     cashless = "Cashless share",
     versusPrevious = "vs the previous period",
-    periodRunning = "The period is still running: it is compared with the previous one once it ends",
     percentPoints = "pp",
     online = "Registers with sales",
     silent = "No receipts in the period",
+    openShifts = "Open shifts",
 
     revenue = "Revenue",
     receipts = "Receipts",

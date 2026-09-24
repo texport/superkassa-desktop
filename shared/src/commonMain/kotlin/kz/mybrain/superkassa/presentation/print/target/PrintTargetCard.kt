@@ -30,19 +30,11 @@ import kz.mybrain.superkassa.presentation.strings.print.printTexts
 internal fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetActions) {
     val texts = LocalStrings.current
     SectionCard(title = texts.settings.printer, info = texts.settings.printerHint) {
-        // Принтеров на машине может не быть вовсе — за прилавком это
-        // обычное дело до подключения чекового. Молчание здесь кончалось
-        // отказом печати на первом же чеке, при покупателе.
-        if (target.noPrinters) Warning(texts.settings.printerNone)
-        if (target.printerGone) Warning(printTexts(LocalLanguage.current).printerGone)
-        PrinterPicker(target, actions)
-        PartTitle(texts.settings.printCopies)
-        WideChoiceSegments(
-            options = target.copyChoices,
-            selected = target.copies,
-            label = { it.toString() },
-            onSelect = actions::chooseCopies
-        )
+        if (target.systemDialog) {
+            SystemDialogNote()
+        } else {
+            PrinterChoice(target, actions)
+        }
         PartTitle(texts.settings.printKind)
         WideChoiceSegments(
             options = PrintKind.entries,
@@ -51,6 +43,44 @@ internal fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetAct
             onSelect = actions::chooseKind
         )
     }
+}
+
+/**
+ * Принтер и копии кассы — там, где машина видит принтеры по имени.
+ *
+ * Принтеров на машине может не быть вовсе — за прилавком это обычное дело
+ * до подключения чекового. Молчание здесь кончалось отказом печати на первом
+ * же чеке, при покупателе.
+ */
+@Composable
+private fun PrinterChoice(target: PrintTargetUiState, actions: PrintTargetActions) {
+    val texts = LocalStrings.current
+    if (target.noPrinters) Warning(texts.settings.printerNone)
+    if (target.printerGone) Warning(printTexts(LocalLanguage.current).printerGone)
+    PrinterPicker(target, actions)
+    PartTitle(texts.settings.printCopies)
+    WideChoiceSegments(
+        options = target.copyChoices,
+        selected = target.copies,
+        label = { it.toString() },
+        onSelect = actions::chooseCopies
+    )
+}
+
+/**
+ * Печать системным диалогом — на Android.
+ *
+ * Принтера по имени здесь нет: печать открывает диалог системы, и принтер,
+ * копии и «Сохранить как PDF» выбирают в нём. Выбор принтера и копий на
+ * карточке ни на что бы не влиял — вместо них сказано, как печать идёт.
+ */
+@Composable
+private fun SystemDialogNote() {
+    Text(
+        text = printTexts(LocalLanguage.current).systemDialog,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /**

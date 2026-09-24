@@ -88,7 +88,7 @@ fun RecordRow(
 private fun RowTail(amount: String?, trailing: @Composable (() -> Unit)?) {
     if (amount == null && trailing == null) return
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (amount != null) {

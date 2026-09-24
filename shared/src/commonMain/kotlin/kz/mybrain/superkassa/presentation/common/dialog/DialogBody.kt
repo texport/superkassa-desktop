@@ -36,7 +36,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  * @param spacing промежуток между частями тела.
  */
 @Composable
-fun DialogBody(spacing: Dp = Spacing.snug, content: @Composable ColumnScope.() -> Unit) {
+fun DialogBody(spacing: Dp = Spacing.fieldGap, content: @Composable ColumnScope.() -> Unit) {
     val scroll = rememberScrollState()
     val keys = if (scroll.maxValue > 0) Modifier.scrolledByKeys(scroll) { scroll.viewportSize } else Modifier
     Box {
@@ -45,7 +45,7 @@ fun DialogBody(spacing: Dp = Spacing.snug, content: @Composable ColumnScope.() -
                 .fillMaxWidth()
                 .verticalScroll(scroll)
                 .then(keys)
-                .padding(end = Spacing.normal),
+                .padding(end = Spacing.scrollbarGutter),
             verticalArrangement = Arrangement.spacedBy(spacing),
             content = content
         )

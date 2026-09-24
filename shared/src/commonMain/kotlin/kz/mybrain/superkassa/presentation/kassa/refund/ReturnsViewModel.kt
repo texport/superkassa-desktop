@@ -15,6 +15,7 @@ import kz.mybrain.superkassa.domain.kassa.model.refund.span
 import kz.mybrain.superkassa.domain.signin.model.SignInState
 import kz.mybrain.superkassa.domain.signin.model.sameSeat
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.common.format.fill
 import kz.mybrain.superkassa.presentation.common.model.Busy
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow
@@ -28,6 +29,7 @@ import kz.mybrain.superkassa.presentation.kassa.payment.SplitEditor
 import kz.mybrain.superkassa.presentation.kassa.payment.fiscal
 import kz.mybrain.superkassa.presentation.strings.common.AppStrings
 import kz.mybrain.superkassa.presentation.strings.common.stringsOf
+import kz.mybrain.superkassa.presentation.strings.kassa.checkout.checkoutTexts
 import kz.mybrain.superkassa.presentation.strings.kassa.title
 
 /**
@@ -64,8 +66,17 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
         }
     }
 
-    /** Экран открыт: день перечитывается — чек могли пробить только что. */
-    fun visit() = rereadDay()
+    /**
+     * Экран открыт: день перечитывается — чек могли пробить только что;
+     * каналы доставки — их могли настроить в другом разделе.
+     */
+    fun visit() {
+        rereadDay()
+        viewModelScope.launch {
+            val channels = cases.channels()
+            screen.update { it.withChannels(channels) }
+        }
+    }
 
     override fun kind(kind: ReturnKind) = screen.update { it.copy(kind = kind, refund = null) }
 
@@ -118,7 +129,8 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
         screen.update { it.copy(refund = it.refund?.copy(attempt = attempt)) }
         whileBusy(busy) {
             val what = plan.kind.title(texts.returns)
-            val words = FiscalWords(what, "$what ${texts.returns.done} ${Money.formatTiyn(plan.refundTiyn)}", "refund")
+            val done = checkoutTexts(talk.language()).refundDone.fill(what, Money.formatTiyn(plan.refundTiyn))
+            val words = FiscalWords(what, done, "refund")
             val outcome = talk.fiscal(cases.issue(plan, attempt.key), words, texts)
             screen.update { it.copy(refund = it.refund?.after(outcome)) }
             read()
@@ -128,7 +140,9 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
     /** За кассой сел другой: день и выбранный чек принадлежали прежнему. */
     private fun reseat(signIn: SignInState) {
         reading.cancel()
-        screen.update { ReturnsUiState(signIn.kkm, signIn.signedIn).withReference(it.reference) }
+        screen.update {
+            ReturnsUiState(signIn.kkm, signIn.signedIn, channels = it.channels).withReference(it.reference)
+        }
         rereadDay()
     }
 

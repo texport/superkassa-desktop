@@ -69,7 +69,7 @@ internal fun AcrossLine(
 @Composable
 internal fun AcrossBar(table: TableAcross) {
     if (!table.wide) return
-    RowScrollbar(table.across, Modifier.fillMaxWidth().padding(vertical = Spacing.hairline))
+    RowScrollbar(table.across, Modifier.fillMaxWidth().padding(vertical = Spacing.inline))
 }
 
 /** Черта между строками — во всю ширину таблицы, а не только видимой части. */

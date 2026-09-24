@@ -2,9 +2,12 @@ package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -35,12 +38,13 @@ fun IssueRow(state: SaleUiState, onIssue: () -> Unit) {
     val texts = LocalStrings.current
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         BusyButton(
             text = if (state.issuing) texts.sale.issuing else state.form.operation.action(texts.sale),
             busy = state.issuing,
             enabled = block == null,
+            // Цель нажатия кассы — выше обычной кнопки: её жмут не глядя, под очередью.
             modifier = Modifier.fillMaxWidth().heightIn(min = KassaLayout.mainAction),
             onClick = onIssue
         )
@@ -57,4 +61,27 @@ private fun BlockReason(block: SaleBlock?, missingField: DomainField?) {
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.error
     )
+}
+
+/**
+ * Блок оплаты: сумма к оплате, принятое, сдача и «Пробить чек».
+ *
+ * Выделен контейнером другого тона: это место, ради которого кассир
+ * пришёл на экран, и на одной плашке с вводом позиции и скидками оно
+ * терялось. Главное число — «К оплате» — самым крупным начертанием
+ * денег, кнопка — единственная залитая на экране.
+ */
+@Composable
+fun CheckoutPanel(content: @Composable ColumnScope.() -> Unit) {
+    Surface(
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+        shape = MaterialTheme.shapes.large,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+            content = content
+        )
+    }
 }

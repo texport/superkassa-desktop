@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +55,8 @@ fun CabinetScreen(window: CabinetWindow) {
         CabinetSignIn(state, language, texts, model.actions())
         return
     }
+    // Вошли из мастера — хозяйство не читалось: раздел читает его сам.
+    LaunchedEffect(state.owner) { if (!state.placesRead) model.reload() }
     Box(modifier = Modifier.fillMaxSize()) {
         // Документы кассы открываются экраном поверх кабинета, а не вместо
         // него: выбранная точка и выбранная касса остаются выбранными, и по
@@ -84,9 +86,8 @@ private fun CabinetTabsBody(window: CabinetWindow, texts: CabinetTexts) {
     var page by remember { mutableStateOf(CabinetTab.Company) }
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(start = Spacing.screen, end = Spacing.screen, bottom = Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         CabinetTabs(page, LocalLanguage.current) { page = it }
         CabinetPage(window, texts, page)

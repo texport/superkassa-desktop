@@ -59,11 +59,10 @@ class ReceiptFormViewModel(
 
     override fun switchOfdAds(on: Boolean) = save(screen.value.branding.copy(printOfdTicketAds = on))
 
-    override fun typeLine(line: ReceiptLine, text: String) =
-        screen.update { it.copy(lineDrafts = it.lineDrafts + (line to text)) }
+    override fun typeLine(line: ReceiptLine, text: String) = screen.update { it.typed(line, text) }
 
     /** Набранное забывается только после согласия кассы: иначе девять строк набирали бы заново. */
-    override fun saveLines() = save(screen.value.edited) { screen.update { it.copy(lineDrafts = emptyMap()) } }
+    override fun saveLines() = save(screen.value.edited) { screen.update { it.saved() } }
 
     private fun save(changed: ReceiptBrandingRequest, onSaved: () -> Unit = {}) {
         whileBusy(busy) {
@@ -74,13 +73,16 @@ class ReceiptFormViewModel(
         }
     }
 
-    /** Касса сменилась: строки, набранные для прежней, к новой не относятся. */
+    /**
+     * Касса сменилась: строки, набранные для прежней, к новой не относятся,
+     * но и не теряются — вернувшись к ней, владелец видит набранное.
+     */
     private suspend fun onKkm(kkm: KkmResponse?) {
         screen.update { now ->
             if (now.kkm?.kkmId == kkm?.kkmId) {
                 now.copy(kkm = kkm)
             } else {
-                ReceiptFormUiState(kkm = kkm, paperWidths = now.paperWidths, busy = busy.now)
+                ReceiptFormUiState(kkm = kkm, paperWidths = now.paperWidths, drafts = now.drafts, busy = busy.now)
             }
         }
         if (kkm == null || screen.value.paperWidths.isNotEmpty()) return

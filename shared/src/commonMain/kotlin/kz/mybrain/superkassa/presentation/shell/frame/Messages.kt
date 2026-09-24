@@ -12,6 +12,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.presentation.common.adaptive.LocalWindowClass
+import kz.mybrain.superkassa.presentation.common.adaptive.WidthClass
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.strings.common.AppStrings
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
@@ -30,15 +32,24 @@ import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
  * снекбар лежит поверх содержимого, и оставленный навсегда отказ закрывал
  * нижний край экрана до тех пор, пока его не заметят и не нажмут «Скрыть».
  *
- * Снекбар встаёт у левого края окна, как велит Material 3 для больших
- * экранов, а не посередине. Посередине он ложился на кассу продажи —
- * на «Пробить чек» и «Принято», — и кассир не мог нажать кнопку, пока
- * читал, почему её нажатие не прошло. Касса стоит справа, и слева
- * снекбар закрывает рельс и край чека, а не действие.
+ * Снекбар встаёт внизу окна по центру, как велит Material 3, и не шире
+ * своего предела. Прежде он стоял у левого края над нижней полосой входа,
+ * то есть посреди экрана слева, и закрывал двери «Новая касса» и «Кабинет
+ * БФД». Экран входа оставляет под ним запас у нижнего края.
+ *
+ * В окне уже большого класса ([WidthClass.Large]) по центру он ложится на
+ * кассу продажи — на «Пробить чек» и «Принято», — и кассир не может нажать
+ * кнопку, пока читает, почему её нажатие не прошло. Там снекбар встаёт
+ * у начального края: касса стоит справа, а слева он закрывает рельс
+ * и край чека, а не действие.
  */
 @Composable
 fun MessageHost(state: SnackbarHostState) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomStart) {
+    val centered = LocalWindowClass.current.width >= WidthClass.Large
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = if (centered) Alignment.BottomCenter else Alignment.BottomStart
+    ) {
         SnackbarHost(hostState = state) { data ->
             Snackbar(snackbarData = data)
         }

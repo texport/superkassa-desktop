@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.presentation.common.adaptive.CardColumns
+import kz.mybrain.superkassa.presentation.common.adaptive.CardSequence
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.setup.component.FactoryStepCard
 import kz.mybrain.superkassa.presentation.setup.component.OfdStep
@@ -31,7 +31,7 @@ fun ByHand(state: SetupUiState, actions: SetupActions) {
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
-    CardColumns(Modifier.fillMaxWidth()) {
+    CardSequence(Modifier.fillMaxWidth()) {
         FactoryStepCard(state, actions, setup)
         SetupStepCard(title = setup.stepAdmin, hint = setup.stepAdminHint, texts = setup, done = false, ready = true) {
             OfdStep(state, actions)

@@ -41,12 +41,12 @@ fun RegistrationCardBlock(cabinet: CabinetViewModel, texts: CabinetTexts, regist
     val window by cabinet.state.collectAsState()
     LaunchedEffect(register.id, register.registrationCardAvailable) { model.show(register) }
     val issued = state.card?.takeIf { state.registerId == register.id }
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         ScreenSlot(cardState(issued, register, state, texts), dense = true) {
             if (issued == null) return@ScreenSlot
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 DetailLine(statusTitle(issued.status ?: register.status, texts), Dates.momentOf(issued.updatedAt))

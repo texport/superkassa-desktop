@@ -33,7 +33,7 @@ import kz.mybrain.superkassa.presentation.theme.size.TableColumns
  */
 @Composable
 internal fun RecordRefusalsHead(table: TableAcross, texts: AnalyticsTexts) {
-    AcrossLine(table, Modifier.padding(vertical = Spacing.tight)) { column ->
+    AcrossLine(table, Modifier.padding(vertical = Spacing.itemGap)) { column ->
         when (column) {
             KKM -> HeadCell(texts.kkmColumn)
             NUMBER -> HeadCell(texts.registrationNumber, numeric = true)
@@ -51,7 +51,7 @@ internal fun RecordRefusalsHead(table: TableAcross, texts: AnalyticsTexts) {
  */
 @Composable
 internal fun RecordRefusalRow(table: TableAcross, kkm: AnalyticsKkm) {
-    AcrossLine(table, Modifier.padding(vertical = Spacing.tight)) { column ->
+    AcrossLine(table, Modifier.padding(vertical = Spacing.itemGap)) { column ->
         when (column) {
             KKM -> RowCell(kkm.title, toneColor(StatusTone.Bad))
             NUMBER -> NumberText(kkm.registrationNumber ?: Glyphs.DASH)

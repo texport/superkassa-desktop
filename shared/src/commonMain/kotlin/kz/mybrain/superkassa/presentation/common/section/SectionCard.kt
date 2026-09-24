@@ -39,13 +39,13 @@ fun SectionCard(
 ) {
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
             ) {
                 SectionTitle(title)
                 // Объяснение раздела живёт под значком у заголовка, а не
@@ -82,7 +82,7 @@ fun CollapsibleCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
-        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.normal)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding)) {
             CollapsibleSection(
                 title = title,
                 expanded = expanded,

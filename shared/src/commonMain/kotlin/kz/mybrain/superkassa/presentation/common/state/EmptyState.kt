@@ -39,9 +39,9 @@ fun EmptyState(
     dense: Boolean = false,
     centered: Boolean = false
 ) {
-    val spacing = if (dense) Spacing.tight else Spacing.snug
+    val spacing = if (dense) Spacing.itemGap else Spacing.fieldGap
     Column(
-        modifier = modifier.fillMaxWidth().padding(Spacing.roomy),
+        modifier = modifier.fillMaxWidth().padding(Spacing.blockPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = if (centered) {
             Arrangement.spacedBy(spacing, Alignment.CenterVertically)

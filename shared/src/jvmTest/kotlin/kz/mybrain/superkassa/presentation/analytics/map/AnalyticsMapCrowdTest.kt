@@ -114,6 +114,7 @@ class AnalyticsMapCrowdTest {
         const val ASTANA_LONGITUDE = 71.446000
         const val WINDOW_WIDE = 840
         const val WINDOW_HIGH = 560
+
         /** Увеличение, на котором в окно попадает область, а не вся страна. */
         const val REGION_ZOOM = 6
 

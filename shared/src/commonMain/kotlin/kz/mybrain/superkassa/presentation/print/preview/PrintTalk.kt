@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.presentation.strings.print.printTexts
  *
  * Не ушедшее на принтер — отказ, а не итог: «на машине нет принтера»,
  * показанное как сделанное, кассир принимал за напечатанный чек.
+ * Закрытый системный диалог — не отказ: кассир передумал сам.
  */
 internal fun Talk.printed(result: PrintTape.Result, action: String) {
     val texts = stringsOf(language()).preview
@@ -20,6 +21,7 @@ internal fun Talk.printed(result: PrintTape.Result, action: String) {
         PrintTape.Result.Refused -> refuse(action, texts.printFailed, PRINTER_REFUSED)
         PrintTape.Result.NoPrinter -> refuse(action, texts.printerMissing, NO_PRINTER)
         PrintTape.Result.PrinterGone -> refuse(action, printTexts(language()).printerGone, PRINTER_GONE)
+        PrintTape.Result.Cancelled -> Unit
     }
 }
 

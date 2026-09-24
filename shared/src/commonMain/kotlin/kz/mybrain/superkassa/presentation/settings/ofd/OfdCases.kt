@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.settings.ofd
 
 import kz.mybrain.superkassa.domain.kassa.port.Kassa
+import kz.mybrain.superkassa.domain.settings.usecase.ReadNextRequest
 import kz.mybrain.superkassa.domain.settings.usecase.ReadOfdInfo
 import kz.mybrain.superkassa.domain.settings.usecase.ReplaceOfdToken
 import kz.mybrain.superkassa.domain.settings.usecase.SyncWithBfd
@@ -15,4 +16,5 @@ class OfdCases(kassa: Kassa, signIn: SignIn) {
     val token = ReplaceOfdToken(kassa, signIn)
     val link = CheckOfdLink(kassa, signIn)
     val info = ReadOfdInfo(kassa, signIn)
+    val nextRequest = ReadNextRequest(kassa, signIn)
 }

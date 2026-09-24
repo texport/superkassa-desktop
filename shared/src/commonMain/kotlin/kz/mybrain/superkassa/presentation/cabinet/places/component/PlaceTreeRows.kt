@@ -48,8 +48,8 @@ internal fun TreeRows(
     ScrollableList(modifier = modifier, state = listState) {
         item(key = SIEVE_KEY) {
             Column(
-                modifier = Modifier.padding(bottom = Spacing.tight),
-                verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+                modifier = Modifier.padding(bottom = Spacing.itemGap),
+                verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
                 content = sieve
             )
         }
@@ -74,7 +74,7 @@ internal fun TreeRows(
                     title = registerTitle(row.register),
                     subtitle = row.register.registrationNumber,
                     selected = row.id == register,
-                    modifier = Modifier.padding(start = Spacing.normal),
+                    modifier = Modifier.padding(start = Spacing.cardPadding),
                     onClick = { onRegister(row.id) },
                     trailing = { CabinetStatusChip(row.register.status, texts) }
                 )

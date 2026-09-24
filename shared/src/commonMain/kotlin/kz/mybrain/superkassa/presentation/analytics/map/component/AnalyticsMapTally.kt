@@ -48,8 +48,8 @@ internal fun MapTally(
         shadowElevation = Sizes.mapMarkLift
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = Spacing.snug, vertical = Spacing.tight),
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            modifier = Modifier.padding(horizontal = Spacing.fieldGap, vertical = Spacing.itemGap),
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             Text(text = texts.mapShown, style = MaterialTheme.typography.labelMedium)
             Text(

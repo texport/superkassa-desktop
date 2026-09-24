@@ -66,7 +66,7 @@ fun SectionTitle(title: String, modifier: Modifier = Modifier) {
 fun SubsectionTitle(title: String, info: String? = null) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
     ) {
         Text(
             text = title,

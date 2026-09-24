@@ -143,6 +143,6 @@ private fun TapeView(bitmap: BitmapPainter, width: Dp, title: String, onZoom: (D
                 modifier = Modifier.padding(vertical = Tape.margin).width(width)
             )
         }
-        ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(Spacing.hairline))
+        ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight().padding(Spacing.inline))
     }
 }

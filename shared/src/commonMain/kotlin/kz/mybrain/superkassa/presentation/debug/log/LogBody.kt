@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.presentation.common.adaptive.windowMargin
 import kz.mybrain.superkassa.presentation.strings.debug.DebugTexts
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
@@ -20,8 +21,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 internal fun LogBody(journal: LogUiState, actions: LogActions, texts: DebugTexts) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        modifier = Modifier.fillMaxSize().padding(windowMargin),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         LogFilters(texts, journal, actions)
         LogLines(journal.shown, texts, Modifier.weight(1f))

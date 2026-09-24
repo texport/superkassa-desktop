@@ -47,11 +47,11 @@ fun SignWait(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Spacing.tight)
+            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
         ) {
             CircularProgressIndicator(modifier = Modifier.size(Sizes.busyCircle))
             Text(texts.signing, style = MaterialTheme.typography.titleMedium)

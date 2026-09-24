@@ -65,7 +65,7 @@ fun AddressSearch(
     val chosen = chosenAddress(LocalLanguage.current, onQuery, onChoose)
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         if (query.isNotBlank()) {
             // Адрес подобран: шаги спрятаны, иначе список регионов раскрывался бы

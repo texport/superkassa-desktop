@@ -49,8 +49,8 @@ fun AnalyticsSpotCard(
 ) {
     OutlinedCard(modifier = modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
         ) {
             MapCardTitle("${texts.kkmsHere} · ${group.size}", expanded, onToggle)
             MapCardBody(expanded) {

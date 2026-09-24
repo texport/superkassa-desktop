@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.common.keyboard.enterKeyboardActions
 import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.theme.type.MoneyStyle
 
@@ -65,6 +66,7 @@ fun MoneyField(
         trailingIcon = trailing,
         visualTransformation = GroupedAmount,
         keyboardOptions = AmountKeys,
+        keyboardActions = enterKeyboardActions(),
         modifier = modifier
     )
 }
@@ -95,6 +97,7 @@ fun MoneyField(
         supportingText = supportingText?.let { { Text(it) } },
         visualTransformation = GroupedAmount,
         keyboardOptions = AmountKeys,
+        keyboardActions = enterKeyboardActions(),
         modifier = modifier
     )
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
@@ -13,6 +14,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
+import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
 import kz.mybrain.superkassa.domain.kassa.model.sale.BIN_LENGTH
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
@@ -47,8 +50,8 @@ fun SaleHeader(operation: SaleOperation, filled: Boolean, actions: SaleActions) 
     val texts = LocalStrings.current
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
         ScreenTitle(texts.sale.receipt, Modifier.weight(1f, fill = false))
@@ -78,19 +81,25 @@ private fun OperationChoice(operation: SaleOperation, onSelect: (SaleOperation) 
  * заполняются они не в каждом чеке, а штрихкод, оплата и итог нужны всегда.
  */
 @Composable
-fun CustomerDataCard(form: SaleForm, actions: FormActions, expanded: Boolean, onToggle: () -> Unit) {
+fun CustomerDataCard(
+    form: SaleForm,
+    channels: ContactChannels,
+    actions: FormActions,
+    expanded: Boolean,
+    onToggle: () -> Unit
+) {
     val extra = LocalSaleTexts.current
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             CollapsibleSection(
                 title = extra.customerData,
                 expanded = expanded,
                 onToggle = onToggle
             ) {
-                BuyerContactFields(form.contact, actions.contact::kind, actions.contact::text)
+                BuyerContactFields(form.contact, channels, actions.contact::kind, actions.contact::text)
                 CustomerBinField(form.customerBin, actions::customerBin)
             }
         }
@@ -107,6 +116,8 @@ private fun CustomerBinField(bin: String, onBin: (String) -> Unit) {
         onValueChange = onBin,
         label = { Text(texts.sale.customerBin) },
         singleLine = true,
+        // ИИН и БИН — двенадцать цифр: клавиатура цифровая.
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         isError = !binAccepted(bin),
         supportingText = { Text(if (bin.isEmpty()) extra.binHint else "${bin.length} / $BIN_LENGTH") },
         modifier = Modifier.fillMaxWidth()

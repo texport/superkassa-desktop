@@ -37,7 +37,7 @@ fun SalesShares(shares: List<SalesShare>, texts: AnalyticsSalesTexts, modifier: 
     val colors = ChartColors.shares
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         ShareBar(shares, colors)
         shares.forEachIndexed { at, share -> ShareRow(share, colors[at % colors.size]) }
@@ -86,7 +86,7 @@ private fun ShareBar(shares: List<SalesShare>, colors: List<Color>) {
 private fun ShareRow(share: SalesShare, color: Color) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Swatch(color)

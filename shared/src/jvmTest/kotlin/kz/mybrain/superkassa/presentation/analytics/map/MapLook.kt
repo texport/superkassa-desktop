@@ -35,7 +35,7 @@ internal fun MapLook(
     val tools = remember { AnalyticsLook.tools() }
     val parts = MapParts(model, actions, tools, MapLaid(laid, whole, groups), AnalyticsLook.words)
     val head = @Composable {
-        Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
             AnalyticsSourceBar(model, laid, AnalyticsLook.texts, actions)
             AnalyticsSieveBar(model.sieve, sievePlaces(view), AnalyticsLook.texts) {}
         }

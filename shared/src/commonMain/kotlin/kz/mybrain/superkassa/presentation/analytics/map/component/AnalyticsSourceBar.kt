@@ -49,7 +49,7 @@ fun AnalyticsSourceBar(
     texts: AnalyticsTexts,
     actions: AnalyticsMapActions
 ) {
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.normal) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.cardGap) {
         ChoiceSegments(
             options = PositionSource.entries,
             selected = model.source,

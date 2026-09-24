@@ -94,18 +94,27 @@ class PrintViewModel(private val cases: PrintCases, private val talk: Talk) : Vi
         viewModelScope.launch {
             // Принтера нет вовсе — отказ сразу, а не после того, как касса нарисует форму.
             if (!cases.print.hasPrinter()) return@launch talk.printed(PrintTape.Result.NoPrinter, PRINT)
-            val drawn = drawer.render(source, PrintKind.Png) { print(source) }
+            val drawn = drawer.render(source, cases.print.kind) { print(source) }
             asked()
             val done = drawn?.shown(stringsOf(talk.language()).preview.print, PRINT, talk) ?: return@launch
             talk.printed(cases.print(done.kkm, done.bytes), PRINT)
         }
     }
 
-    /** Печатает то, что открыто в просмотре: касса для этого уже не нужна. */
+    /**
+     * Печатает то, что открыто в просмотре.
+     *
+     * Ленту на принтер кассы касса второй раз не рисует: она уже на экране.
+     * Системному диалогу нужен документ, и форма рисуется для него заново.
+     */
     fun printShown() {
-        val image = screen.value.image ?: return
-        val kkm = drawnBy ?: return
-        viewModelScope.launch { talk.printed(cases.print(kkm, image), PRINT) }
+        val image = screen.value.image
+        val kkm = drawnBy
+        when {
+            image == null || kkm == null -> Unit
+            cases.print.kind != PrintKind.Png -> shown?.let(::print)
+            else -> viewModelScope.launch { talk.printed(cases.print(kkm, image), PRINT) }
+        }
     }
 
     /**

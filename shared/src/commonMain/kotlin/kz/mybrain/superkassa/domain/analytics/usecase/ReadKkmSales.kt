@@ -17,7 +17,7 @@ class ReadKkmSales(private val analytics: Analytics, private val today: () -> Lo
 
     /** @param register касса, по которой сводка. */
     suspend operator fun invoke(register: String, from: LocalDate?, to: LocalDate?): AnalyticsAnswer<SalesView> {
-        val now = today()
-        return readSpan(analytics, SalesSpan.of(from, to, now), now, register) { emptyList() }
+        val span = SalesSpan.of(from, to, today())
+        return readSpan(analytics, span, register, places = { emptyList() }, shifts = { null })
     }
 }

@@ -39,7 +39,7 @@ internal fun BasisList(
             text = "${journal.basisColumn}: ${candidates.size}",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = Spacing.normal, vertical = Spacing.snug)
+            modifier = Modifier.padding(horizontal = Spacing.cardPadding, vertical = Spacing.fieldGap)
         )
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         LazyColumn {

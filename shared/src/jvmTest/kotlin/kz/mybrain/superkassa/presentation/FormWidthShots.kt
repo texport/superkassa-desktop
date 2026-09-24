@@ -38,7 +38,7 @@ import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
-import kz.mybrain.superkassa.presentation.shell.section.sectionWidth
+import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
 import kz.mybrain.superkassa.presentation.strings.common.Language
 import kz.mybrain.superkassa.presentation.strings.common.stringsOf
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
@@ -105,7 +105,7 @@ class FormWidthShots {
     @Composable
     private fun Wizard(cabinet: CabinetWindow) {
         val contours = listOf("TEST", "PROD").map { OfdEnvironmentResponse(it, TrilingualMessageResponse(it, it, it)) }
-        Box(modifier = Modifier.sectionWidth(Section.Register)) {
+        Box(modifier = Modifier.sectionFrame()) {
             SetupContent(
                 SetupParts(
                     state = SetupUiState(contours = contours),
@@ -158,7 +158,7 @@ class FormWidthShots {
             Surface(Modifier.fillMaxSize()) {
                 WithRail(Section.Cabinet) {
                     stage.Window {
-                        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                             CompanyScreen(stage.cabinet.cabinet, Language.Ru, stage.texts)
                         }
                     }

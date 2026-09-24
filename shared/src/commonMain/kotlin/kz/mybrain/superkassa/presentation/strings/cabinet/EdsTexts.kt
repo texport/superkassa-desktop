@@ -30,16 +30,16 @@ fun edsTexts(language: Language): EdsTexts = when (language) {
 }
 
 private val edsTextsRu = EdsTexts(
-    remaining = "Осталось %1\$s",
+    remaining = "Осталось %s",
     cancelWait = "Отменить ожидание"
 )
 
 private val edsTextsKk = EdsTexts(
-    remaining = "%1\$s қалды",
+    remaining = "%s қалды",
     cancelWait = "Күтуді тоқтату"
 )
 
 private val edsTextsEn = EdsTexts(
-    remaining = "%1\$s left",
+    remaining = "%s left",
     cancelWait = "Stop waiting"
 )

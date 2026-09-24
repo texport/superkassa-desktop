@@ -102,9 +102,9 @@ class EdsWaitLookTest {
     @Test
     fun `остаток срока виден до последних секунд`() {
         val shot = RenderProbe(width = WIDTH, height = HEIGHT) {
-            Column(modifier = Modifier.fillMaxSize().padding(Spacing.roomy)) {
+            Column(modifier = Modifier.fillMaxSize().padding(Spacing.blockPadding)) {
                 ElevatedCard(modifier = Modifier.widthIn(max = Sizes.loginColumn)) {
-                    Column(modifier = Modifier.padding(Spacing.roomy)) {
+                    Column(modifier = Modifier.padding(Spacing.blockPadding)) {
                         SignWait(left = 7.seconds, window = Signer.SIGN_WINDOW, texts = texts, eds = eds) {}
                     }
                 }

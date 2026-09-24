@@ -119,7 +119,7 @@ fun MapView(
     ) {
         MapGlide(state)
         MapCanvas(state, tiles, canvas, paint)
-        if (blank) BlankNotice(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.snug))
+        if (blank) BlankNotice(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.fieldGap))
         overlay(canvas)
     }
 }
@@ -163,7 +163,7 @@ private fun BlankNotice(notice: String, modifier: Modifier = Modifier) {
             text = notice,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = Spacing.snug, vertical = Spacing.tight)
+            modifier = Modifier.padding(horizontal = Spacing.fieldGap, vertical = Spacing.itemGap)
         )
     }
 }

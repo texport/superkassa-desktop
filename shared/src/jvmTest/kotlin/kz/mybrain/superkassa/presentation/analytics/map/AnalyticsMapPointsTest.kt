@@ -107,7 +107,11 @@ class AnalyticsMapPointsTest {
                 kkm("c1", address = "г. Алматы, пр. Абая, 10"),
                 kkm("c2", address = " г. Алматы, пр. Абая, 10 "),
                 kkm("c3", address = "г. Актобе, ул. Абилкайыр хана, 40"),
-                kkm("c4", address = "Есть свои", position = KkmPosition(latitude = degrees(43.2), longitude = degrees(76.8)))
+                kkm(
+                    "c4",
+                    address = "Есть свои",
+                    position = KkmPosition(latitude = degrees(43.2), longitude = degrees(76.8))
+                )
             )
         )
         assertEquals(

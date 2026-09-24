@@ -5,22 +5,36 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptBrand
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaperWidthResponse
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
 import kz.mybrain.superkassa.domain.settings.model.brandingRequest
+import kz.mybrain.superkassa.presentation.common.model.KkmDrafts
 
 /**
  * Печатная форма чека кассы: язык, ширина ленты, реклама ОФД и свои строки.
  *
  * @property paperWidths макеты из справочника кассы: свой список не узнал
  *   бы о новой ширине ленты, пока приложение не перевыпустят.
- * @property lineDrafts набранные, но не сохранённые свои строки. Нетронутая
- *   строка остаётся как есть: касса отдаёт ненабранную пустотой, и пустая
- *   строка поверх неё зажигала бы «Сохранить» там, где ничего не меняли.
+ * @property drafts набранные, но не сохранённые свои строки — у каждой
+ *   кассы свои: уход к другой кассе их не стирает.
  */
 data class ReceiptFormUiState(
     val kkm: KkmResponse? = null,
     val paperWidths: List<PaperWidthResponse> = emptyList(),
-    val lineDrafts: Map<ReceiptLine, String> = emptyMap(),
+    val drafts: KkmDrafts<Map<ReceiptLine, String>> = KkmDrafts(),
     val busy: Boolean = false
 ) {
+    /**
+     * Набранные строки этой кассы. Нетронутая строка остаётся как есть:
+     * касса отдаёт ненабранную пустотой, и пустая строка поверх неё
+     * зажигала бы «Сохранить» там, где ничего не меняли.
+     */
+    val lineDrafts: Map<ReceiptLine, String> get() = drafts.of(kkm?.kkmId).orEmpty()
+
+    /** Строка этой кассы набрана. */
+    fun typed(line: ReceiptLine, text: String): ReceiptFormUiState =
+        copy(drafts = drafts.with(kkm?.kkmId, lineDrafts + (line to text)))
+
+    /** Строки этой кассы сохранены: черновик забыт. */
+    fun saved(): ReceiptFormUiState = copy(drafts = drafts.with(kkm?.kkmId, null))
+
     /** Оформление, как оно у кассы сейчас. */
     val branding: ReceiptBrandingRequest get() = kkm?.brandingRequest ?: ReceiptBrandingRequest()
 

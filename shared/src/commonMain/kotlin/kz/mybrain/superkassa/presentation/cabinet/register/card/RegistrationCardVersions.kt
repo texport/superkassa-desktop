@@ -43,10 +43,10 @@ fun RegistrationCardVersions(
     model: RegistrationCardViewModel
 ) {
     val rows = state.versions.orEmpty().sortedByDescending { it.version }
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         SectionTitle(texts.cardVersions)
         ScreenSlot(versionsState(state.versions != null, rows, texts), dense = true) {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+            Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
                 rows.forEach { version ->
                     val chosen = state.opened == version.version
                     VersionRow(
@@ -99,7 +99,7 @@ private fun VersionRow(texts: CabinetTexts, line: VersionLine, onOpen: () -> Uni
         support = { VersionFacts(version, texts) },
         trailing = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (version.open) Chip(texts.cardCurrentVersion, StatusColors.delivered)
@@ -127,8 +127,8 @@ private fun VersionCard(texts: CabinetTexts, version: Int, cards: Map<Int, Regis
     ScreenSlot(state, dense = true) {
         if (shown == null) return@ScreenSlot
         Column(
-            modifier = Modifier.padding(start = Spacing.roomy),
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            modifier = Modifier.padding(start = Spacing.blockPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             DetailLine(texts.registrationNumber, shown.registrationNumber)
             DetailLine(texts.placeName, shown.retailPlaceName)
@@ -142,7 +142,7 @@ private fun VersionCard(texts: CabinetTexts, version: Int, cards: Map<Int, Regis
 /** Когда версия действовала, чем открыта и закрыта и что в ней стало другим. */
 @Composable
 private fun VersionFacts(version: RegistrationCardVersion, texts: CabinetTexts) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.hairline)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
         // Первой строкой и без подписи: диапазон дат говорит сам за себя.
         Text(
             text = versionPeriod(version),

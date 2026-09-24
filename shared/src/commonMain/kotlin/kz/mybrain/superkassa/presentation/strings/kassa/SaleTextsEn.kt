@@ -80,5 +80,7 @@ internal val saleTextsEn = SaleTexts(
     positionSum = "Amount",
     positionNtin = "NTIN",
     positionStornoMarked = "The line is cancelled and lowers the receipt total",
-    positionClose = "Close"
+    positionClose = "Close",
+    barcodeLetters = "Type letters",
+    barcodeDigits = "Type digits"
 )

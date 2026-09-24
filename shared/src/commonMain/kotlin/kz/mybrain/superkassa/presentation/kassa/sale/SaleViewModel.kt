@@ -7,6 +7,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.domain.kassa.model.Answer
+import kz.mybrain.superkassa.domain.kassa.model.Fiscal
 import kz.mybrain.superkassa.domain.kassa.model.FiscalOutcome
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
 import kz.mybrain.superkassa.domain.kassa.model.sale.defaultVatOf
@@ -61,12 +63,13 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
     }
 
     /**
-     * Экран открыт: смену, отрасль и свёрнутые разделы меняют в других
-     * разделах, и они перечитываются. Корзина остаётся как была.
+     * Экран открыт: смену, отрасль, свёрнутые разделы и каналы доставки
+     * меняют в других разделах, и они перечитываются. Корзина остаётся как была.
      */
     fun visit() {
-        screen.update { it.copy(collapsed = panelsOf(cases.panels())) }
+        screen.update { it.copy(collapsed = panelsOf(cases.panels())).withEntryOpen() }
         reading.restart { readSeat() }
+        viewModelScope.launch { readChannels() }
     }
 
     /** Сворачивает раздел кассовой колонки; выбор помнится между запусками. */
@@ -89,18 +92,22 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
         if (busy.now || now.block != null || now.kkm == null) return
         screen.update { it.copy(issuing = true) }
         whileBusy(busy) {
-            val outcome = issued(now)
-            screen.update { it.after(outcome) }
+            val answer = cases.issue(now.receipt)
+            val outcome = said(now, answer)
+            screen.update { it.after(outcome).withIssued(now.receipt, answer) }
             readSeat()
         }
     }
 
-    /** Чек — в кассу; итог назван кассиру. */
-    private suspend fun issued(state: SaleUiState): FiscalOutcome {
+    /** Итог чека назван кассиру. */
+    private fun said(state: SaleUiState, answer: Answer<Fiscal>): FiscalOutcome {
         val title = state.form.operation.title(texts.sale)
         val words = FiscalWords(what = title, done = title, action = "issue receipt")
-        return talk.fiscal(cases.issue(state.receipt), words, texts)
+        return talk.fiscal(answer, words, texts)
     }
+
+    /** Итог пробитого чека прочитан: кассир начинает следующий. */
+    fun nextReceipt() = screen.update { it.copy(issued = null) }
 
     /** За кассой сел другой: чек прежнего кассира новому не достаётся. */
     private fun reseat(signIn: SignInState) {
@@ -113,7 +120,8 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
                 paymentTypes = it.paymentTypes,
                 vatRates = it.vatRates,
                 issuing = busy.now,
-                collapsed = it.collapsed
+                collapsed = it.collapsed,
+                channels = it.channels
             )
         }
         reading.restart { readSeat() }
@@ -128,6 +136,12 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
         screen.update {
             it.copy(shiftOpen = seat.shiftOpen, domainKind = DomainKind.byCode(seat.domainCode)).withDefaultVat()
         }
+    }
+
+    /** Какими видами контакта можно отправить чек: молча, без них чек не отправляется. */
+    private suspend fun readChannels() {
+        val read = cases.channels()
+        screen.update { it.withChannels(read) }
     }
 
     /** Справочники кассы: виды оплаты и ставки. Молча: без них экран берёт свои. */

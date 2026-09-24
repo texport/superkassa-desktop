@@ -42,11 +42,11 @@ fun JournalFrame(
     Layout(
         contents = listOf(
             { Head(head) },
-            { Column(verticalArrangement = Arrangement.spacedBy(Spacing.snug), content = body) }
+            { Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap), content = body) }
         ),
         modifier = modifier
     ) { (heads, bodies), constraints ->
-        val gap = Spacing.snug.roundToPx()
+        val gap = Spacing.fieldGap.roundToPx()
         val cap = (constraints.maxHeight * HistoryLayout.HEAD_SHARE).roundToInt()
         val top = heads.first().measure(constraints.copy(minHeight = 0, maxHeight = cap))
         val rest = (constraints.maxHeight - top.height - gap).coerceAtLeast(0)
@@ -74,8 +74,8 @@ private fun Head(content: @Composable ColumnScope.() -> Unit) {
                 .fillMaxWidth()
                 .verticalScroll(scroll)
                 .scrolledByKeys(scroll) { scroll.viewportSize }
-                .padding(end = Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug),
+                .padding(end = Spacing.scrollbarGutter),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
             content = content
         )
         Box(modifier = Modifier.matchParentSize()) {

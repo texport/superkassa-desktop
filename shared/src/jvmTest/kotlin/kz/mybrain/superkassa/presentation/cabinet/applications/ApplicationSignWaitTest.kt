@@ -82,7 +82,7 @@ class ApplicationSignWaitTest {
     private fun Actions(cabinet: CabinetRig) {
         CompositionLocalProvider(LocalSignTick provides TICK) {
             ProvideWindowModels(remember { WindowModels() }) {
-                Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+                Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                     RegistrationActionsBlock(cabinet.model, Language.Ru, texts, viewOf(draft())) {}
                 }
             }

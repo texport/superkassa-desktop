@@ -16,13 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
-import kz.mybrain.superkassa.presentation.common.adaptive.WrapRow
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.text.MoneyText
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.strings.common.LocalStrings
 import kz.mybrain.superkassa.presentation.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.theme.size.KassaLayout
 import kz.mybrain.superkassa.presentation.theme.size.TableColumns
 
 /**
@@ -92,10 +90,10 @@ private fun positionColors(storno: Boolean) = if (storno) {
 /**
  * Состав строки, её сумма и действия.
  *
- * Состав тянется на остаток ряда; не помещается он рядом с суммой —
- * сумма и действия переносятся вместе, целиком. Сумма прижата к правому
- * краю, не уже столбца сумм и набрана одной строкой: от миллиарда она
- * переносилась посреди числа.
+ * Состав тянется на остаток ряда и обрезается многоточием; сумма
+ * и действия стоят справа целиком. Сумма прижата к правому краю, шириной
+ * столбца сумм — одного на весь чек, чтобы суммы строк стояли столбцом, —
+ * и набрана одной строкой: от миллиарда она переносилась посреди числа.
  */
 @Composable
 private fun PositionFigures(
@@ -104,13 +102,13 @@ private fun PositionFigures(
     onExcise: () -> Unit,
     onRemove: () -> Unit
 ) {
-    WrapRow(modifier = Modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = positionDetail(position),
             style = MaterialTheme.typography.bodyMedium,
             maxLines = DETAIL_LINES,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f).widthIn(min = KassaLayout.positionDetail)
+            modifier = Modifier.weight(1f)
         )
         Row(verticalAlignment = Alignment.CenterVertically) {
             MoneyText(Money.formatTiyn(position.total), Modifier.widthIn(min = TableColumns.money))

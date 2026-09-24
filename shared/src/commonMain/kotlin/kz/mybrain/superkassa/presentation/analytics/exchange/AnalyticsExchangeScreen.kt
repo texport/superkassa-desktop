@@ -47,7 +47,7 @@ fun AnalyticsExchangeScreen(model: AnalyticsExchangeViewModel, access: String?, 
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         ExchangeHead(state, texts, model::refresh)
         ExchangeFilters(state, texts, model::search, model::pick)
@@ -67,7 +67,7 @@ fun AnalyticsExchangeScreen(model: AnalyticsExchangeViewModel, access: String?, 
 @Composable
 private fun ExchangeHead(state: AnalyticsExchangeUiState, texts: AnalyticsTexts, onRefresh: () -> Unit) {
     val all = state.all
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.normal) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.cardGap) {
         SectionTitle(texts.exchangeTitle)
         InfoTip(texts.exchangeHint)
         Spacer(Modifier.weight(1f))
@@ -98,7 +98,7 @@ private fun ExchangeFilters(
     onPick: (String?) -> Unit
 ) {
     val registers = exchangeRegisters(state.all)
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         SearchField(
             value = state.query,
             label = texts.searchLabel,

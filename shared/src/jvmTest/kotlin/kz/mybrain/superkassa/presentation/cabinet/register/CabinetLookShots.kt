@@ -56,7 +56,7 @@ class CabinetLookShots {
         stage.Window {
             val model = registerViewModel(stage.cabinet.cabinet)
             val view = RegisterView(register, register, RegisterUiState(card = register))
-            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                 RegisterPassport(stage.cabinet, stage.texts, view, model)
             }
         }
@@ -99,7 +99,7 @@ class CabinetLookShots {
 
     @Composable
     private fun Company(stage: CabinetStage) = stage.Window {
-        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+        Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
             CompanyScreen(stage.cabinet.cabinet, Language.Ru, stage.texts)
         }
     }

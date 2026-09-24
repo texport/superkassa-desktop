@@ -57,7 +57,7 @@ fun AnalyticsScreen(app: AppContainer, access: String?, cabinetTexts: CabinetTex
     var page by remember { mutableStateOf(AnalyticsTab.Map) }
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         AnalyticsTabs(page, texts) { page = it }
         when (page) {

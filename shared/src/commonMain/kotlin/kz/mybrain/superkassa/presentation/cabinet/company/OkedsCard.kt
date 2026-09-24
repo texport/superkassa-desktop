@@ -126,7 +126,7 @@ private fun OkedRow(
         striped = striped,
         trailing = {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 // У основного — пометка, у прочих — действие. Прежде рядом

@@ -64,21 +64,22 @@ private fun RefundForm(
     journal: ReturnJournalTexts
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.normal),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        modifier = Modifier.fillMaxSize().padding(Spacing.cardPadding),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
-        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.snug) {
+        ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.fieldGap) {
             RefundSummary(draft.basis, journal, actions.basis::back)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             RefundTill {
                 RefundNote(journal.itemsIgnored.takeIf { draft.chosen.isNotEmpty() && !draft.byLines })
                 RefundAmountRow(journal, draft, actions.refund)
                 RefundMoney(state, draft, actions.payments, journal)
-                BuyerContactFields(draft.contact, actions.refund::contactKind, actions.refund::contact)
+                BuyerContactFields(draft.contact, state.channels, actions.refund::contactKind, actions.refund::contact)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             RefundItems(state, draft, journal, actions.refund::toggle)
         }
         RefundButton(state.kind, enabled = state.canRefund, onClick = actions.refund::refund)
+        if (state.confirming) RefundConfirm(state.kind, draft, state.working, actions.refund)
     }
 }

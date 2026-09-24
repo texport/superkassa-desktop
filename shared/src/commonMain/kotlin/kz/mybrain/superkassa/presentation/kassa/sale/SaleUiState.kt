@@ -3,6 +3,10 @@ package kz.mybrain.superkassa.presentation.kassa.sale
 import io.github.texport.superkassa.core.presentation.api.model.common.VatRateResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaymentTypeResponse
+import kz.mybrain.superkassa.domain.kassa.model.Answer
+import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
+import kz.mybrain.superkassa.domain.kassa.model.ContactKind
+import kz.mybrain.superkassa.domain.kassa.model.Fiscal
 import kz.mybrain.superkassa.domain.kassa.model.FiscalOutcome
 import kz.mybrain.superkassa.domain.kassa.model.attemptKey
 import kz.mybrain.superkassa.domain.kassa.model.entry.LookupProblem
@@ -10,12 +14,14 @@ import kz.mybrain.superkassa.domain.kassa.model.entry.PIECE
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
+import kz.mybrain.superkassa.domain.kassa.model.sale.IssuedReceipt
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleBlock
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleReceipt
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleState
 import kz.mybrain.superkassa.domain.kassa.model.sale.blockOf
+import kz.mybrain.superkassa.domain.kassa.model.sale.issued
 import kz.mybrain.superkassa.presentation.kassa.sale.position.VatRate
 import kz.mybrain.superkassa.presentation.kassa.sale.position.vatRatesOf
 import kz.mybrain.superkassa.presentation.strings.common.EnumStrings
@@ -39,6 +45,12 @@ import kz.mybrain.superkassa.presentation.strings.common.Language
  *   второй чек.
  * @property issuing чек пробивается: кнопка не принимает второго нажатия.
  * @property collapsed свёрнутые разделы кассовой колонки.
+ * @property channels какими видами контакта можно отправить чек покупателю.
+ * @property barcodeTurn счёт возвратов фокуса в поле штрихкода: растёт,
+ *   когда позиция встала в чек и когда чек пробит, — следующий скан идёт
+ *   в штрихкод, а не в «Принято» или в поле цены.
+ * @property issued последний пробитый чек: его сумму, сдачу и кнопки показа
+ *   и печати видно, пока кассир не начал следующий чек.
  */
 data class SaleUiState(
     val kkm: KkmResponse? = null,
@@ -53,8 +65,14 @@ data class SaleUiState(
     val search: BarcodeSearch = BarcodeSearch(),
     val attemptKey: String = newAttemptKey(),
     val issuing: Boolean = false,
-    val collapsed: Set<SalePanel> = emptySet()
+    val collapsed: Set<SalePanel> = emptySet(),
+    val channels: ContactChannels = ContactChannels(),
+    val issued: IssuedReceipt? = null,
+    val barcodeTurn: Int = 0
 ) {
+    /** Фокус — в поле штрихкода: следующий скан пойдёт туда. */
+    fun toBarcode(): SaleUiState = copy(barcodeTurn = barcodeTurn + 1)
+
     /** Чек, как он уйдёт в кассу: корзина, набранное поверх неё и ключ попытки. */
     val receipt: SaleReceipt get() = SaleReceipt(basket, form, domainKind, kkm, vatRates, attemptKey)
 
@@ -87,6 +105,34 @@ data class SaleUiState(
     /** Ставки у позиции: при НДС на весь чек у позиций ставок нет, и выбирать их незачем. */
     fun positionVat(language: Language, texts: EnumStrings): List<VatRate> =
         if (vatOnReceipt) emptyList() else vat(language, texts)
+
+    /** Итог пробитого чека на экране: только пока корзина следующего пуста. */
+    val shownIssued: IssuedReceipt? get() = issued?.takeIf { basket.positions.isEmpty() }
+
+    /**
+     * Ручной ввод позиции раскрыт, пока чек пуст.
+     *
+     * Подсказка пустого чека зовёт ввести позицию вручную, а свёрнутая
+     * кассиром в прошлом чеке карточка прятала поля: подсказка лгала.
+     * Каждый новый чек начинается с раскрытого ввода; свернуть его можно
+     * снова, и выбор помнится как прежде.
+     */
+    fun withEntryOpen(): SaleUiState =
+        if (basket.positions.isEmpty()) copy(collapsed = collapsed - SalePanel.PositionEntry) else this
+
+    /** Принятый чек становится итогом на экране; прочий исход прежний итог не трогает. */
+    fun withIssued(receipt: SaleReceipt, answer: Answer<Fiscal>): SaleUiState {
+        val fiscal = (answer as? Answer.Done)?.value?.takeUnless { it.rejected } ?: return this
+        return copy(issued = receipt.issued(fiscal)).withEntryOpen().toBarcode()
+    }
+
+    /** Каналы доставки перечитаны: вид контакта, чей канал пропал, становится «не отправлять». */
+    fun withChannels(read: ContactChannels): SaleUiState =
+        copy(channels = read, form = form.copy(contact = read.fit(form.contact)))
+
+    /** Другой вид контакта покупателя; вид с ненастроенным каналом не выбирается. */
+    fun chooseContact(kind: ContactKind): SaleUiState =
+        copy(form = form.copy(contact = channels.choose(form.contact, kind)))
 
     /** Чек принят: корзина и набранное поверх неё забываются, у следующего чека свой ключ. */
     fun next(): SaleUiState = copy(basket = Basket(), form = form.next(), attemptKey = newAttemptKey())

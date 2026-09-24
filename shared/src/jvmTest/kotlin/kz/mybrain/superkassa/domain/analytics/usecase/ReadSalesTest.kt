@@ -3,7 +3,9 @@ package kz.mybrain.superkassa.domain.analytics.usecase
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsAnswer
+import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsTrouble
+import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.PlaceAddress
 import kz.mybrain.superkassa.domain.analytics.model.SALES_MOST_DAYS
 import kz.mybrain.superkassa.domain.analytics.model.SalesDelivery
@@ -32,14 +34,39 @@ class ReadSalesTest {
     }
 
     @Test
-    fun `идущий срок с прошлым не сравнивается`() {
+    fun `идущий срок сравнивается с тем же отрезком прошлого`() {
         val answer = runBlocking { ReadSales(analytics) { today }(LocalDate(2026, 9, 17), null) }
         val view = assertNotNull(answer.valueOrNull())
-        assertTrue(view.running)
-        assertNull(view.previous)
-        assertFalse(analytics.asked.any { it.startsWith("summary") })
+        assertEquals(10, view.previous?.receiptCount, "идущая неделя не сравнена с прошлой")
+        assertTrue(analytics.asked.any { it.startsWith("summary") && "from=2026-09-10, to=2026-09-16" in it })
         assertTrue(analytics.asked.any { it.startsWith("sales") && "from=2026-09-17, to=2026-09-23" in it })
     }
+
+    @Test
+    fun `открытые смены сети считаются по кассам, как в учёте`() {
+        val kkms = listOf(open("a"), open("b"), closed("c"))
+        analytics.kkms = { AnalyticsAnswer.Done(KkmMapView(withoutPosition = kkms)) }
+        val view = assertNotNull(runBlocking { ReadSales(analytics) { today }(null, null) }.valueOrNull())
+        assertEquals(2, view.openShifts)
+    }
+
+    @Test
+    fun `кабинет не ответил о кассах — сводка есть, числа смен нет`() {
+        val view = assertNotNull(runBlocking { ReadSales(analytics) { today }(null, null) }.valueOrNull())
+        assertNull(view.openShifts)
+        assertEquals(10, view.previous?.receiptCount)
+    }
+
+    @Test
+    fun `у одной кассы числа смен сети нет и кассы не спрашиваются`() {
+        val view = assertNotNull(runBlocking { ReadKkmSales(analytics) { today }("r1", null, null) }.valueOrNull())
+        assertNull(view.openShifts)
+        assertFalse(analytics.asked.any { it.startsWith("kkms") })
+    }
+
+    private fun open(id: String) = AnalyticsKkm(cashRegisterId = id, shiftStatus = "OPEN")
+
+    private fun closed(id: String) = AnalyticsKkm(cashRegisterId = id, shiftStatus = "CLOSED")
 
     @Test
     fun `закончившийся срок сравнивается с прошлым той же длины`() {

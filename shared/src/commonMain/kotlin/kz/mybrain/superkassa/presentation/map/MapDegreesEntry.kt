@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.map
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +16,6 @@ import kz.mybrain.superkassa.presentation.common.button.FieldButton
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
-import kz.mybrain.superkassa.presentation.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.theme.size.Spacing
 
 /**
@@ -34,11 +32,11 @@ internal fun DegreesEntry(state: MapState, texts: CabinetTexts) {
     var longitude by remember { mutableStateOf("") }
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        DegreeField(texts.latitude, latitude, MAX_LATITUDE) { latitude = it }
-        DegreeField(texts.longitude, longitude, MAX_LONGITUDE) { longitude = it }
+        DegreeField(texts.latitude, latitude, MAX_LATITUDE, Modifier.weight(1f)) { latitude = it }
+        DegreeField(texts.longitude, longitude, MAX_LONGITUDE, Modifier.weight(1f)) { longitude = it }
         // Пара собирается целиком или не собирается вовсе: половина точки
         // на карту не ставится, и проверять её потом второй раз незачем.
         val point = degreesOf(latitude, MAX_LATITUDE)?.let { north ->
@@ -52,13 +50,13 @@ internal fun DegreesEntry(state: MapState, texts: CabinetTexts) {
 
 /** Поле градусов: отмечает недопустимое значение до нажатия. */
 @Composable
-private fun DegreeField(label: String, value: String, limit: String, onChange: (String) -> Unit) {
+private fun DegreeField(label: String, value: String, limit: String, modifier: Modifier, onChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
         onValueChange = onChange,
         label = { Text(label) },
         isError = value.isNotBlank() && degreesOf(value, limit) == null,
         singleLine = true,
-        modifier = Modifier.width(Sizes.fieldChoice)
+        modifier = modifier
     )
 }

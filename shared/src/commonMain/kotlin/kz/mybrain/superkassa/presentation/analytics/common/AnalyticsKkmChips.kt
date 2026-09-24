@@ -28,8 +28,8 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 internal fun KkmChips(kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts) {
     FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
-        verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         CabinetStatusChip(kkm.status, cabinet)
         if (kkm.blocked) Chip(text = texts.blocked, color = StatusColors.refused)

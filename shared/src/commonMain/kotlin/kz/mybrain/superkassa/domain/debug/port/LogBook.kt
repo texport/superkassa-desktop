@@ -39,13 +39,10 @@ interface LogBook {
  *
  * @property entries строки от старой к новой.
  * @property file путь к файлу журнала; до запуска журнала файла нет.
- * @property savable можно ли сохранить показанное в файл: на Android
- *   выбирать файл некуда, и сохранения там нет.
  */
 data class LogBookState(
     val entries: List<LogEntry> = emptyList(),
     val level: LogLevel = LogLevel.Info,
     val debugMode: Boolean = false,
-    val file: String? = null,
-    val savable: Boolean = true
+    val file: String? = null
 )

@@ -85,4 +85,20 @@ class ReceiptFormViewModelTest {
         assertEquals(Message.Refusal("Касса не в режиме программирования", "KKM_NOT_PROGRAMMING"), notices.last)
         assertEquals("Спасибо", model.state.value.lineDrafts[ReceiptLine.Footer])
     }
+
+    /** Набранные строки прежде сбрасывались при смене кассы; теперь у каждой кассы свои. */
+    @Test
+    fun `набранные строки у каждой кассы свои и переживают смену кассы`() {
+        val model = receiptFormModel(app)
+        model.typeLine(ReceiptLine.Header, "Магазин у дома")
+
+        signIn.enter(branded.copy(kkmId = "kkm-2"), CoreScene.cashier(), CoreScene.PIN)
+        assertTrue(model.state.value.lineDrafts.isEmpty(), "строки первой кассы видны у второй")
+        model.typeLine(ReceiptLine.Footer, "Сау болыңыз")
+        signIn.enter(branded, CoreScene.cashier(), CoreScene.PIN)
+
+        assertEquals(mapOf(ReceiptLine.Header to "Магазин у дома"), model.state.value.lineDrafts)
+        signIn.enter(branded.copy(kkmId = "kkm-2"), CoreScene.cashier(), CoreScene.PIN)
+        assertEquals(mapOf(ReceiptLine.Footer to "Сау болыңыз"), model.state.value.lineDrafts)
+    }
 }

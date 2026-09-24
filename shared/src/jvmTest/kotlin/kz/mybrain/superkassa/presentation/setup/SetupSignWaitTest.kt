@@ -75,7 +75,7 @@ class SetupSignWaitTest {
         val state by model.state.collectAsState()
         LaunchedEffect(Unit) { model.readRecord(REGISTER) }
         CompositionLocalProvider(LocalSignTick provides TICK) {
-            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
                 ApplicationStepCard(REGISTER, state, model, scene.texts, open = true, busy = false)
             }
         }

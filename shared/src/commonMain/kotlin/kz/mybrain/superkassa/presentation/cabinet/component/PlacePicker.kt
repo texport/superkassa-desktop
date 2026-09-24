@@ -5,6 +5,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.addressIn
+import kz.mybrain.superkassa.presentation.common.picker.PickerWords
 import kz.mybrain.superkassa.presentation.common.picker.SearchablePicker
 import kz.mybrain.superkassa.presentation.strings.cabinet.CabinetTexts
 import kz.mybrain.superkassa.presentation.strings.common.Language
@@ -24,33 +25,42 @@ import kz.mybrain.superkassa.presentation.theme.icon.Glyphs
  * адрес стоит рядом с названием и в самом списке: три магазина одной сети
  * различаются только им.
  *
- * @param onCreate чем завести точку, которой ещё нет; `null` — нечем.
- *   Кнопка стоит под полем, а не строкой внутри списка: среди двух тысяч
- *   строк её пришлось бы искать.
+ * Точки — [PlaceOptions]: найденные и чем искать дальше и заводить новую.
  */
 @Composable
 internal fun PlacePicker(
     label: String,
     texts: CabinetTexts,
     language: Language,
-    places: List<RetailPlace>,
+    options: PlaceOptions,
     selected: RetailPlace?,
-    onSelect: (RetailPlace) -> Unit,
-    onCreate: (() -> Unit)? = null
+    onSelect: (RetailPlace) -> Unit
 ) {
     SearchablePicker(
         label = label,
-        options = places,
+        options = options.places,
         selected = selected,
-        title = { placeTitle(language, it) },
-        keys = { placeSearchKeys(it) },
-        notFound = texts.placeNotFound,
+        words = PickerWords({ placeTitle(language, it) }, ::placeSearchKeys, texts.placeNotFound),
+        onQuery = options.onQuery,
         onSelect = onSelect
     )
-    if (onCreate != null) {
-        TextButton(onClick = onCreate) { Text(texts.addPlace) }
-    }
+    options.onCreate?.let { create -> TextButton(onClick = create) { Text(texts.addPlace) } }
 }
+
+/**
+ * Торговые точки для выбора.
+ *
+ * @property places точки, из которых выбирают: весь список или найденные кабинетом.
+ * @property onQuery набранное — кабинету, если точки ищет он.
+ * @property onCreate чем завести точку, которой ещё нет; `null` — нечем.
+ *   Кнопка стоит под полем, а не строкой внутри списка: среди двух тысяч
+ *   строк её пришлось бы искать.
+ */
+internal class PlaceOptions(
+    val places: List<RetailPlace>,
+    val onQuery: (String) -> Unit = {},
+    val onCreate: (() -> Unit)? = null
+)
 
 /** Как названа точка в поле и в списке: своё название, а за ним адрес. */
 private fun placeTitle(language: Language, place: RetailPlace): String =

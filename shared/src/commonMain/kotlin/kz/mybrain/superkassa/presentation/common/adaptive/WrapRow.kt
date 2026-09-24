@@ -26,7 +26,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
 @Composable
 fun WrapRow(
     modifier: Modifier = Modifier,
-    spacing: Dp = Spacing.tight,
+    spacing: Dp = Spacing.itemGap,
     content: @Composable FlowRowScope.() -> Unit
 ) {
     FlowRow(

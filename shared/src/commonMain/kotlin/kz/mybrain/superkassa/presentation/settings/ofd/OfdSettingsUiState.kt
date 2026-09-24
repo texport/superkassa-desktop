@@ -10,12 +10,16 @@ import kz.mybrain.superkassa.domain.settings.model.OfdSummary
  * @property token набранный новый токен ОФД; уходит в кассу и не хранится.
  * @property linkAlive ответил ли ОФД на последнюю проверку; `null` — не проверяли.
  * @property summary сведения ОФД о кассе, сведённые к тому, что читает кассир.
+ * @property nextRequest номер следующего запроса кассы к БФД; `null` — не спрашивали.
+ * @property admin за кассой администратор: номер запроса касса отдаёт только ему.
  */
 data class OfdSettingsUiState(
     val kkm: KkmResponse? = null,
     val token: String = "",
     val linkAlive: Boolean? = null,
     val summary: OfdSummary? = null,
+    val nextRequest: Int? = null,
+    val admin: Boolean = false,
     val busy: Boolean = false
 ) {
     /** Можно сверять: касса не занята и её очередь отправки пуста. */

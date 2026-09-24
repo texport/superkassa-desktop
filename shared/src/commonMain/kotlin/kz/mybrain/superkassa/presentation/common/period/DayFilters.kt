@@ -32,7 +32,7 @@ internal fun DayBar(
 ) {
     val today = workplaceToday()
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -49,7 +49,7 @@ internal fun DayBar(
         }
         TextButton(enabled = !loading && day != today, onClick = { onDay(today) }) {
             Icon(AppIcons.today, contentDescription = null)
-            Text(journal.today, modifier = Modifier.padding(start = Spacing.tight))
+            Text(journal.today, modifier = Modifier.padding(start = Spacing.itemGap))
         }
     }
 }

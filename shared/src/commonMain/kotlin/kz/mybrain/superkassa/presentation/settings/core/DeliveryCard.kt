@@ -74,7 +74,7 @@ private fun ChannelFields(
     actions: DeliveryActions,
     texts: DeliveryTexts
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.tight)) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         ChannelHead(channel, delivery, actions, texts)
         WrapRow {
             DeliveryField.of(channel).forEach { field -> DeliveryInput(field, delivery, actions, texts) }
@@ -91,7 +91,10 @@ private fun ChannelHead(
     texts: DeliveryTexts
 ) {
     val name = texts.channels.getValue(channel)
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.tight), verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(text = name, style = MaterialTheme.typography.titleSmall)
         if (channel in delivery.configured) {
             Chip(texts.configured, StatusColors.delivered)

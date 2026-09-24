@@ -32,7 +32,7 @@ class PrintTargetCardTest {
         RenderProbe(width = WIDTH, height = HEIGHT) {
             val target = PrintTargetUiState(kkmId = "kkm-1", printers = printers, printersRead = true)
             Surface(Modifier.fillMaxSize()) {
-                Column(Modifier.padding(Spacing.screen)) { PrintTargetCard(target, object : PrintTargetActions {}) }
+                Column(Modifier.padding(Spacing.fieldGap)) { PrintTargetCard(target, object : PrintTargetActions {}) }
             }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }

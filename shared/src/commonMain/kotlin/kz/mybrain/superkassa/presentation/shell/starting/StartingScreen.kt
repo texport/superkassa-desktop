@@ -25,7 +25,7 @@ fun StartingScreen() {
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(Spacing.roomy, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.spacedBy(Spacing.sectionGap, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CircularProgressIndicator()

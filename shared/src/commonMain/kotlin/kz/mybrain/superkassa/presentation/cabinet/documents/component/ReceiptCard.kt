@@ -57,7 +57,7 @@ fun ReceiptCard(receipt: CabinetReceiptDetails, texts: CabinetTexts, onClose: ()
 @Composable
 private fun ReceiptTail(receipt: CabinetReceiptDetails, texts: CabinetTexts, onClose: () -> Unit) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.tight),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         JournalDeliveryChip(cabinetState(receipt.deliveryStatus, receipt.sendStatus))

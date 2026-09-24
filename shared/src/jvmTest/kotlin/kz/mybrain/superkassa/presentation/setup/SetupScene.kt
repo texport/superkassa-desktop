@@ -79,7 +79,7 @@ internal class SetupScene(
 internal fun AdminStepAlone(model: SetupViewModel, scene: SetupScene) {
     val state by model.state.collectAsState()
     LaunchedEffect(Unit) { model.reload() }
-    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.screen)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
         AdminStepCard(state, model, scene.texts, onRecord = true, cabinetBusy = false) {}
     }
 }

@@ -13,10 +13,10 @@ private val analyticsSalesTextsRu = AnalyticsSalesTexts(
     vatNone = "НДС не начислялся",
     cashless = "Доля безналичных",
     versusPrevious = "к прошлому сроку",
-    periodRunning = "Срок ещё идёт: с прошлым сроком он сравнится, когда закончится",
     percentPoints = "п. п.",
     online = "Касс с продажами",
     silent = "Без чеков за срок",
+    openShifts = "Открытых смен",
 
     revenue = "Выручка",
     receipts = "Чеков",

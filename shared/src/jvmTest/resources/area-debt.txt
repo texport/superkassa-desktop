@@ -30,7 +30,7 @@ presentation/cabinet/register/adopt/AdoptDraft.kt -> domain.setup
 presentation/cabinet/register/adopt/AdoptFields.kt -> domain.setup
 presentation/cabinet/register/adopt/AdoptFields.kt -> domain.users
 presentation/cabinet/register/adopt/AdoptFields.kt -> presentation.users
-presentation/cabinet/register/adopt/AdoptRegisterDialog.kt -> presentation.login
+presentation/cabinet/register/adopt/AdoptRegisterDialog.kt -> presentation.users
 presentation/journal/HistoryScreen.kt -> presentation.print
 presentation/journal/documents/JournalScreen.kt -> presentation.print
 presentation/journal/shifts/ShiftsScreen.kt -> presentation.print

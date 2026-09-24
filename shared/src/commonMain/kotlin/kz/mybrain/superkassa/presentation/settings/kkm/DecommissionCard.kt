@@ -42,8 +42,8 @@ fun DecommissionCard(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
         border = CardDefaults.outlinedCardBorder().copy(brush = errorEdge())
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.normal),
-            verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
+            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             DecommissionHeading()
             SettingRequirements(needs, money)

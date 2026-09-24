@@ -31,15 +31,14 @@ class AnalyticsNumbersTest {
     }
 
     @Test
-    fun `117 идущий срок с прошлым не сравнивается`() {
+    fun `117 идущий срок сравнивается с тем же отрезком прошлого`() {
         val day = SalesSpan.of(today, today, today)
         val week = SalesSpan.of(today.minus(6, DateTimeUnit.DAY), today, today)
-        val lastWeek = week.previous()
 
-        assertFalse(day.finished(today), "сегодняшний день считается закончившимся")
-        assertFalse(week.finished(today))
-        assertTrue(lastWeek.finished(today))
-        assertTrue(overviewOf(SalesSummary(), running = true).running)
+        assertEquals(SalesSpan(today.minus(1, DateTimeUnit.DAY), today.minus(1, DateTimeUnit.DAY)), day.previous())
+        assertEquals(SalesSpan(today.minus(13, DateTimeUnit.DAY), today.minus(7, DateTimeUnit.DAY)), week.previous())
+        val change = overviewOf(SalesSummary(receiptCount = 12), SalesSummary(receiptCount = 10)).receiptsChange
+        assertEquals(20, change, "изменение к прошлому сроку не посчитано")
     }
 
     @Test

@@ -37,7 +37,7 @@ fun PaymentPanel(state: SaleUiState, actions: PaymentActions) {
     val extra = LocalSaleTexts.current
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.tight)
+        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
     ) {
         PaymentLines(
             split = state.form.split,

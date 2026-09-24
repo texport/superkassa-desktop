@@ -50,7 +50,7 @@ class PlaceScaleShots {
 
     @Composable
     private fun Picker(count: Int) {
-        Column(modifier = Modifier.fillMaxSize().padding(Spacing.screen)) {
+        Column(modifier = Modifier.fillMaxSize().padding(Spacing.fieldGap)) {
             ApplicationFields(
                 kind = ActionKind.Reregistration,
                 texts = texts,

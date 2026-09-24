@@ -5,6 +5,7 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TaxRegimeResponse
 import kz.mybrain.superkassa.domain.settings.model.KkmNeed
 import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
+import kz.mybrain.superkassa.presentation.common.model.KkmDrafts
 
 /**
  * Налоги кассы, автозакрытие и автоизъятие.
@@ -13,18 +14,30 @@ import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
  * @property vatRates ставки НДС из справочника кассы.
  * @property dictionariesRead справочники прочитаны; пустые непрочитанные
  *   и пустые прочитанные — разные беды.
- * @property regimeDraft выбранный, но не сохранённый режим.
- * @property vatDraft выбранная, но не сохранённая ставка.
+ * @property drafts выбранные, но не сохранённые режим и ставка — у каждой
+ *   кассы свои: уход к другой кассе их не стирает.
  */
 data class TaxSettingsUiState(
     val kkm: KkmResponse? = null,
     val regimes: List<TaxRegimeResponse> = emptyList(),
     val vatRates: List<VatRateResponse> = emptyList(),
     val dictionariesRead: Boolean = false,
-    val regimeDraft: String? = null,
-    val vatDraft: String? = null,
+    val drafts: KkmDrafts<TaxDraft> = KkmDrafts(),
     val busy: Boolean = false
 ) {
+    /** Выбранный, но не сохранённый режим этой кассы. */
+    val regimeDraft: String? get() = drafts.of(kkm?.kkmId)?.regime
+
+    /** Выбранная, но не сохранённая ставка этой кассы. */
+    val vatDraft: String? get() = drafts.of(kkm?.kkmId)?.vat
+
+    /** Выбор этой кассы с правкой [change]. */
+    fun drafted(change: (TaxDraft) -> TaxDraft): TaxSettingsUiState =
+        copy(drafts = drafts.with(kkm?.kkmId, change(drafts.of(kkm?.kkmId) ?: TaxDraft())))
+
+    /** Выбор этой кассы сохранён: черновик забыт. */
+    fun saved(): TaxSettingsUiState = copy(drafts = drafts.with(kkm?.kkmId, null))
+
     /** Режим в поле: выбранный, иначе тот, что у кассы. */
     val regime: String? get() = regimeDraft ?: kkm?.taxRegime?.takeIf { it.isNotBlank() }
 
@@ -52,6 +65,9 @@ data class TaxSettingsUiState(
     /** Автозакрытие и автоизъятие касса меняет только в режиме программирования. */
     val switchable: Boolean get() = kkm?.let { KkmSettingRules.met(KkmSettingRules.branding(it)) } == true && !busy
 }
+
+/** Выбранные, но не сохранённые режим и ставка одной кассы. */
+data class TaxDraft(val regime: String? = null, val vat: String? = null)
 
 /** Что владелец меняет в налогах кассы. Пустые действия — для снимков вида. */
 interface TaxSettingsActions {

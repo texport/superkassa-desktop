@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.presentation.theme.size
 
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 
 /**
  * Размеры кассовых экранов: продажи, возврата, денег, входа и главного.
@@ -27,13 +26,13 @@ object KassaLayout {
      * Уже него сумма строки и её действия уходят на следующую строку:
      * прежде они стояли справа всегда и оставляли наименованию одну букву.
      */
-    val positionDetail: Dp = 200.dp
+    val positionDetail: Dp = 50.steps
 
     /**
      * Поле суммы одной оплаты не уже этого: в него помещается сумма
      * в сотни миллиардов тенге с тиынами основной ступенью.
      */
-    val paymentAmount: Dp = 220.dp
+    val paymentAmount: Dp = 55.steps
 
     /**
      * Поле под полосой прокрутки кассы.
@@ -42,13 +41,13 @@ object KassaLayout {
      * сколько прокручиваемая часть над ними: иначе правые края колонки
      * стояли вразнобой.
      */
-    val tillGutter: Dp = Spacing.normal
+    val tillGutter: Dp = Spacing.scrollbarGutter
 
     /**
      * Плитка остатка ящика не уже этого: в неё помещается остаток
      * в миллиарды тенге малой ступенью главного числа на крупнейшем шрифте.
      */
-    val drawerTile: Dp = 380.dp
+    val drawerTile: Dp = 95.steps
 
     /** Во сколько раз плитка остатка шире соседних: в ней главное число экрана. */
     const val DRAWER_TILE_WEIGHT = 2f
@@ -75,8 +74,8 @@ object KassaLayout {
      */
     val refusedAndDocuments = PaneSplit(
         firstShare = 0.4f,
-        firstMin = 320.dp,
-        secondMin = 560.dp
+        firstMin = 80.steps,
+        secondMin = 140.steps
     )
 
     /**
@@ -86,12 +85,12 @@ object KassaLayout {
      * шрифтом карточке отказов доставалась полоска в восемь точек: заголовок
      * резался посреди строки. Каждый отказ помечен и в списке смены.
      */
-    val refusedListRoom: Dp = 300.dp
+    val refusedListRoom: Dp = 75.steps
 
     /**
      * Столько высоты главный экран отдаёт спискам смены, даже когда верх
      * съел остальное: строка отказов, заголовок и первая строка документов.
      * Не помещается — экран прокручивается целиком, а не сжимает список в ноль.
      */
-    val dashboardListsMin: Dp = 220.dp
+    val dashboardListsMin: Dp = 55.steps
 }

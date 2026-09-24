@@ -48,7 +48,7 @@ internal fun RailVersion(updates: UpdatesUiState, onOpenUpdate: () -> Unit) {
                 text = updates.version.label,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(Spacing.snug)
+                modifier = Modifier.padding(Spacing.fieldGap)
             )
         } else {
             UpdateMark(updates.version.label, tip, onOpenUpdate)
@@ -74,7 +74,7 @@ private fun UpdateMark(current: String, description: String, onOpen: () -> Unit)
     TextButton(onClick = onOpen) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Spacing.hairline)
+            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             Icon(
                 imageVector = AppIcons.update,

@@ -1,7 +1,9 @@
 package kz.mybrain.superkassa.data.cabinet.setup
 
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetApplication
+import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.domain.cabinet.model.documents.SignRequest
+import kz.mybrain.superkassa.domain.cabinet.model.kkmRecord
 import kz.mybrain.superkassa.domain.cabinet.port.CabinetPorts
 import kz.mybrain.superkassa.domain.setup.model.CabinetRecord
 import kz.mybrain.superkassa.domain.setup.model.RegistrationToSign
@@ -17,7 +19,9 @@ import kz.mybrain.superkassa.domain.setup.port.SetupCabinet
 class CabinetSetup(private val cabinet: CabinetPorts) : SetupCabinet {
 
     override suspend fun record(registerId: String): CabinetRecord =
-        cabinet.registers.one(registerId).let { CabinetRecord(it.status, it.registrationNumber) }
+        cabinet.registers.one(registerId).let {
+            CabinetRecord(it.status, it.registrationNumber, awaiting = kkmRecord(it.status) == KkmRecord.Applied)
+        }
 
     override suspend fun prepareRegistration(registerId: String): RegistrationToSign =
         cabinet.applications.prepare(CabinetApplication.Registration(registerId))

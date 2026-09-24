@@ -33,6 +33,9 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
     private val lists = CabinetLists(talk, useCases, work, screen)
     private var signing: Job? = null
 
+    /** Читать ли хозяйство сразу после входа: мастер подключения его не читает. */
+    private var listsOnEnter = true
+
     val state: StateFlow<CabinetUiState> = screen.asStateFlow()
 
     init {
@@ -47,8 +50,15 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
      * исходе: иначе отмена или отказ оставили бы на экране отсчёт, за которым
      * уже никто не ждёт.
      */
-    fun signIn() {
+    /**
+     * @param lists читать ли хозяйство сети сразу после входа. Мастер
+     *   подключения входит ради одной кассы и не читает: обход всех касс
+     *   и точек сети — сотни обращений к кабинету подряд. Раздел кабинета,
+     *   открытый потом, читает хозяйство сам.
+     */
+    fun signIn(lists: Boolean = true) {
         if (signing?.isActive == true) return
+        listsOnEnter = lists
         screen.update { it.copy(signingSince = TimeSource.Monotonic.markNow()) }
         signing = viewModelScope.launch {
             try {
@@ -110,7 +120,7 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
             return
         }
         screen.update { it.copy(owner = owner) }
-        if (before == null) viewModelScope.launch { lists.readAll() }
+        if (before == null && listsOnEnter) viewModelScope.launch { lists.readAll() }
     }
 
     /** Слова кабинета на языке кассира сейчас. */

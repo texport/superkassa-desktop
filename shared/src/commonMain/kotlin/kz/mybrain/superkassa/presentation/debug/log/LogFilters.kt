@@ -39,7 +39,7 @@ import kz.mybrain.superkassa.presentation.theme.size.Spacing
  */
 @Composable
 internal fun LogFilters(texts: DebugTexts, journal: LogUiState, actions: LogActions) {
-    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.snug) {
+    WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         ChoiceSegments(
             options = LogLevel.entries,
             selected = journal.filter,
@@ -55,7 +55,7 @@ internal fun LogFilters(texts: DebugTexts, journal: LogUiState, actions: LogActi
             // іздеу» ломалась в две строки, а справа пустовала половина окна.
             modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldSearch)
         )
-        LogCommands(texts, journal.shown.size, journal.book.savable, actions)
+        LogCommands(texts, journal.shown.size, actions)
     }
 }
 
@@ -67,18 +67,18 @@ internal fun LogFilters(texts: DebugTexts, journal: LogUiState, actions: LogActi
  * показанным. Счётчик набран в одну строку — переносить «Строк: 160»
  * по знакам нечего.
  *
- * Там, где сохранять некуда, — на Android — кнопки сохранения нет:
- * кнопка, которая ничего не делает, хуже отсутствующей.
+ * Сохранение открывает окно выбора файла системы: на компьютере — окно
+ * «Сохранить как», на Android — системное окно «Сохранить».
  */
 @Composable
-private fun LogCommands(texts: DebugTexts, shown: Int, savable: Boolean, actions: LogActions) {
+private fun LogCommands(texts: DebugTexts, shown: Int, actions: LogActions) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.snug),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         LogShownCount(texts, shown)
         TextButton(onClick = actions::clear) { Text(texts.clear) }
-        if (savable) FilledTonalButton(onClick = actions::save) { Text(texts.save) }
+        FilledTonalButton(onClick = actions::save) { Text(texts.save) }
     }
 }
 

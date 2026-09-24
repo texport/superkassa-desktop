@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -64,8 +63,8 @@ fun CabinetDocumentsScreen(
     val journal = journalTexts(language).history
     val print = LocalPrint.current
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.snug)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         DocumentCounters(state.overview, texts, journal.spanAll)
         ChoiceSegments(

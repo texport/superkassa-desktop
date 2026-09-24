@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.journal.queue
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,8 +44,8 @@ fun QueueContent(state: QueueUiState, actions: QueueActions) {
     val journal = journalTexts(LocalLanguage.current).queue
     // Очередь — перечень во всю ширину раздела, как любой список Material 3.
     Column(
-        modifier = Modifier.fillMaxSize().padding(Spacing.screen),
-        verticalArrangement = Arrangement.spacedBy(Spacing.normal)
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
         ScreenTitle(texts.queue.title)
         QueueSummary(state, actions, journal)

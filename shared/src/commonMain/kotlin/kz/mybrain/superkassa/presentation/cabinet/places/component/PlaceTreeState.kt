@@ -35,7 +35,7 @@ internal fun PlaceCount(texts: CabinetTexts, rows: List<PlaceRow>, total: Int, m
         text = if (shown == total) "${texts.places}: $total" else texts.shownOf.fill(shown, total),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = modifier.padding(start = Spacing.tight, end = Spacing.screen)
+        modifier = modifier.padding(start = Spacing.itemGap, end = Spacing.fieldGap)
     )
 }
 
