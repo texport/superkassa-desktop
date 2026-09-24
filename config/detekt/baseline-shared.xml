@@ -27,8 +27,6 @@
     <ID>ArgumentListWrapping:CabinetMessageTest.kt$CabinetMessageTest$(CabinetProblem.SessionExpired, texts)</ID>
     <ID>ArgumentListWrapping:CabinetMessageTest.kt$CabinetMessageTest$(cabinetMessage(CabinetProblem.SessionExpired, texts))</ID>
     <ID>ArgumentListWrapping:CabinetMessageTest.kt$CabinetMessageTest$(texts.sessionExpired, assertIs&lt;Message.Refusal&gt;(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)</ID>
-    <ID>ArgumentListWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$(HttpHeaders.ContentType, "application/json")</ID>
-    <ID>ArgumentListWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))</ID>
     <ID>ArgumentListWrapping:ShellAdaptiveTest.kt$ShellAdaptiveTest$("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
     <ID>CyclomaticComplexMethod:AppearanceCard.kt$private fun Accent.title(texts: LookStrings): String</ID>
     <ID>LongFile:BigListRenderTest.kt$kz.mybrain.superkassa.presentation.cabinet.places.BigListRenderTest.kt</ID>
@@ -54,7 +52,6 @@
     <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `экран продажи собирается во всех отказных состояниях и они различимы`()</ID>
     <ID>LongMethod:KassaShiftLookTest.kt$KassaShiftLookTest$@Test fun `главный экран собирается во всех состояниях смены и они различимы`()</ID>
     <ID>LongMethod:PlaceLook.kt$@Composable internal fun PlacesLook( places: List&lt;RetailPlace&gt;, registers: List&lt;CabinetRegister&gt;, open: String? = null, sieve: PlaceSieve = PlaceSieve(), loading: Boolean = false, collapsed: Boolean = false, /** Кассы, заблокированные по словам кабинета, и знает ли он о них. */ locked: Set&lt;String&gt; = emptySet(), locksKnown: Boolean = true, /** Кабинет списка не отдал — его словами; `null` — отдал. */ trouble: String? = null )</ID>
-    <ID>LongMethod:PlaceMapShots.kt$@Composable private fun PickerLook(address: RegisterAddress?, state: MapState)</ID>
     <ID>LongMethod:PlaceTree.kt$@Composable internal fun PlaceTree( texts: CabinetTexts, language: Language, collapsed: Boolean, onToggle: () -&gt; Unit, rows: List&lt;PlaceRow&gt;, total: Int, loading: Boolean, trouble: String?, onRetry: () -&gt; Unit, sieve: PlaceSieve, onSieve: (PlaceSieve) -&gt; Unit, locksKnown: Boolean, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, footer: @Composable ColumnScope.() -&gt; Unit, listState: LazyListState = rememberLazyListState(), modifier: Modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn) )</ID>
     <ID>LongMethod:PlaceTreeRows.kt$@Composable internal fun TreeRows( texts: CabinetTexts, language: Language, rows: List&lt;PlaceRow&gt;, state: ScreenState, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, listState: LazyListState, modifier: Modifier = Modifier, sieve: @Composable ColumnScope.() -&gt; Unit )</ID>
     <ID>LongMethod:ReceiptBreakdown.kt$@Composable fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetTexts)</ID>
@@ -83,7 +80,6 @@
     <ID>MaxLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
     <ID>MaxLineLength:CabinetMessageTest.kt$CabinetMessageTest$assertEquals(texts.sessionExpired, assertIs&lt;Message.Refusal&gt;(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)</ID>
     <ID>MaxLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$seenPath = request.url.encodedPath + (request.url.encodedQuery.takeIf { it.isNotEmpty() }?.let { "?$it" } ?: "")</ID>
-    <ID>MaxLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
     <ID>MaxLineLength:PlacePoint.kt$text</ID>
     <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$.</ID>
     <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$nodes.filter { SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null }</ID>
@@ -96,15 +92,12 @@
     <ID>MaximumLineLength:CabinetApplicationShots.kt$CabinetApplicationShots$ </ID>
     <ID>MaximumLineLength:CabinetMessageTest.kt$CabinetMessageTest$ </ID>
     <ID>MaximumLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$ </ID>
-    <ID>MaximumLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$ </ID>
     <ID>MaximumLineLength:PlacePoint.kt$ </ID>
     <ID>MaximumLineLength:SettingsMeasure.kt$SettingsMeasure$ </ID>
     <ID>MaximumLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$ </ID>
     <ID>PropertyWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
-    <ID>PropertyWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
     <ID>ReturnCount:AnalyticsSalesGeometry.kt$internal fun barAt(x: Float, width: Int, count: Int): Int?</ID>
     <ID>ReturnCount:AnalyticsWalk.kt$AnalyticsWalk$fun kkmSalesReachable(): Boolean</ID>
-    <ID>ReturnCount:MapRegistryWalk.kt$internal suspend fun matchPointPlace(steps: RegistrySteps, place: MapPointPlace): PointMatch</ID>
     <ID>ReturnCount:VatRate.kt$fun vatTitle(rates: List&lt;VatRate&gt;, code: String): String</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsMapCrowdTest.kt$AnalyticsMapCrowdTest.Companion$/** Увеличение, на котором в окно попадает область, а не вся страна. */</ID>
     <ID>SpacingBetweenDeclarationsWithComments:AnalyticsSalesShots.kt$AnalyticsSalesShots.Companion$/** Куда наводится колесо: середина сводки. */</ID>

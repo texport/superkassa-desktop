@@ -97,7 +97,7 @@ private fun rememberLookup(parts: MapPickerParts, shown: String, addressRef: Str
  *
  * @param address адрес, с которым окно открылось.
  */
-internal class MapAddressPick(address: RegisterAddress?, language: Language) {
+class MapAddressPick(address: RegisterAddress?, language: Language) {
 
     /** Подпись выбранного адреса: пока она пуста, шаги регистра раскрыты. */
     var query: String by mutableStateOf(addressIn(language, address?.address, address?.addressKz))

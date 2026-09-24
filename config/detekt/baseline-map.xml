@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$(HttpHeaders.ContentType, "application/json")</ID>
+    <ID>ArgumentListWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json"))</ID>
+    <ID>LongMethod:PlaceMapShots.kt$@Composable private fun PickerLook(address: RegisterAddress?, state: MapState)</ID>
+    <ID>MaxLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
+    <ID>MaximumLineLength:MapRegistryAddressTest.kt$MapRegistryAddressTest$ </ID>
+    <ID>PropertyWrapping:MapRegistryAddressTest.kt$MapRegistryAddressTest$val engine = MockEngine { respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "application/json")) }</ID>
+    <ID>ReturnCount:MapRegistryWalk.kt$internal suspend fun matchPointPlace(steps: RegistrySteps, place: MapPointPlace): PointMatch</ID>
+  </CurrentIssues>
+</SmellBaseline>

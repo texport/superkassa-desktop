@@ -1,10 +1,6 @@
 package kz.mybrain.superkassa.presentation.map
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
@@ -14,7 +10,6 @@ import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
@@ -23,7 +18,6 @@ import kz.mybrain.superkassa.presentation.common.mapview.CITY_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
 
 /**
@@ -105,7 +99,6 @@ class PlaceMapShots {
 @Composable
 private fun PickerLook(address: RegisterAddress?, state: MapState) {
     val registry = remember { CabinetRegistry(idleCabinet()) }
-    val notices = textsOf(Language.Ru).map.address
     val cases = remember { AnalyticsLook.mapCases() }
     val parts = remember {
         val pick = MapAddressPick(address, Language.Ru)
@@ -116,16 +109,6 @@ private fun PickerLook(address: RegisterAddress?, state: MapState) {
         shape = RoundedCornerShape(Sizes.corner),
         tonalElevation = Sizes.dialogElevation
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
-        ) {
-            MapHeader(Look.cabinet) {}
-            RegistryAddress(parts, address) {}
-            MapArea(state, parts.tiles, Look.cabinet, parts.locating, Modifier.weight(1f))
-            PointAddress(registry, state, cases.namePoint, notices) {}
-            DegreesEntry(state, Look.cabinet)
-            MapFooter(state, Look.cabinet, {}) {}
-        }
+        MapPickerBody(Look.cabinet, parts, address, onAddress = {}, onDismiss = {}, onPicked = {})
     }
 }

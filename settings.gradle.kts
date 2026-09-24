@@ -46,6 +46,7 @@ include(":ui-common")
 // дизайн-систему, тексты и домен, но ни одной соседней области. Области
 // собирает каркас окна — модуль `shared`.
 include(":feature:debug")
+include(":feature:map")
 include(":feature:print")
 include(":feature:update")
 

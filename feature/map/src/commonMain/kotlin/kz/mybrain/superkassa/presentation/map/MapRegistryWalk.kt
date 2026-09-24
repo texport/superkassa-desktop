@@ -20,10 +20,10 @@ internal interface RegistrySteps {
 }
 
 /** На каком шаге подбор по метке остановился: об этом владельцу и говорят. */
-enum class PointStep { Place, Region, Locality, Street, House }
+internal enum class PointStep { Place, Region, Locality, Street, House }
 
 /** Чем кончился подбор адреса по метке. */
-sealed interface PointMatch {
+internal sealed interface PointMatch {
 
     /** Дома регистра, отвечающие месту под меткой: выбирает из них владелец. */
     data class Houses(val items: List<AddressSuggestion>) : PointMatch

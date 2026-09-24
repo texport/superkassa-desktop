@@ -23,8 +23,6 @@ presentation/journal/queue/QueueSummary.kt -> HistoryLayout.summaryNote
 presentation/journal/shifts/ShiftRow.kt -> HistoryLayout.row
 presentation/kassa/refund/component/RefundTill.kt -> KassaLayout.mainAction
 presentation/kassa/sale/component/SaleIssue.kt -> KassaLayout.mainAction
-presentation/map/MapPickerDialog.kt -> Sizes.mapDialogHeight
-presentation/map/MapPickerDialog.kt -> Sizes.mapWidth
 presentation/settings/core/DeliveryCard.kt -> Sizes.fieldForm
 presentation/setup/component/OfdStep.kt -> Sizes.fieldChoice
 presentation/shift/dashboard/DashboardScreen.kt -> KassaLayout.drawerTile

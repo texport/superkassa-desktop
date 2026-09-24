@@ -54,7 +54,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  *   он один и тот же.
  */
 @Composable
-fun MapPickerDialog(
+internal fun MapPickerDialog(
     services: MapPorts,
     registry: MapRegistry,
     point: MapPoint?,
@@ -76,7 +76,7 @@ fun MapPickerDialog(
             shape = RoundedCornerShape(Sizes.corner),
             tonalElevation = Sizes.dialogElevation
         ) {
-            PickerBody(texts, parts, address, onAddress, onDismiss, onPicked)
+            MapPickerBody(texts, parts, address, onAddress, onDismiss, onPicked)
         }
     }
 }
@@ -115,7 +115,7 @@ private fun rememberPickerParts(
  * Собраны вместе потому, что живут одну жизнь с окном и нужны всем
  * его рядам: по отдельности они протягивались бы семью параметрами.
  */
-internal class MapPickerParts(
+class MapPickerParts(
     val cases: MapCases,
     val tiles: MapTiles,
     val locating: MapLocating,
@@ -127,9 +127,12 @@ internal class MapPickerParts(
 /**
  * Ряды окна сверху вниз: шаги регистра, карта, подбор по метке,
  * градусы руками и подвал с выбранным.
+ *
+ * Окно ставит их на свою поверхность; снимки окна у каркаса ставят их
+ * на свою — с заданным состоянием карты и регистром кабинета.
  */
 @Composable
-private fun PickerBody(
+fun MapPickerBody(
     texts: CabinetTexts,
     parts: MapPickerParts,
     address: RegisterAddress?,
