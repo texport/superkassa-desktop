@@ -9,10 +9,6 @@ import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.users.UsersActions
-import kz.mybrain.superkassa.presentation.users.UsersContent
-import kz.mybrain.superkassa.presentation.users.UsersScene
-import kz.mybrain.superkassa.presentation.users.UsersUiState
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -23,7 +19,7 @@ import kotlin.test.assertTrue
  * состояния, и на экране они обязаны выглядеть по-разному: во втором
  * случае утверждать, что касс нет, приложению нечем.
  *
- * Снимки остаются в `/tmp/kassa-login-*.png` и `/tmp/kassa-users-*.png`:
+ * Снимки остаются в `/tmp/kassa-login-*.png`:
  * по ним видно, объяснён ли отказ словами, видно ли главное действие
  * и не обрублена ли строка кассы. Проверка же следит за тем, что случаи
  * собираются и отличаются друг от друга: одинаково непонятная картинка
@@ -84,35 +80,7 @@ class KassaLoginLookTest {
         assertTrue(frames.values.map { it.toList() }.distinct().size == frames.size, "состояния входа неотличимы")
     }
 
-    /**
-     * Кассиры кассы: пустой список, список с кассирами и молчащая касса.
-     *
-     * Пустой список — это не пустота: у кассы без кассиров работать нельзя,
-     * и экран обязан сказать, что делать. Отказ кассы — третье состояние,
-     * и оно не должно выглядеть пустым списком.
-     */
-    @Test
-    fun `список кассиров рисуется и пустым, и заполненным`() {
-        val none = object : UsersActions {}
-        val me = UsersScene.ADMIN
-        val empty = KassaScene.shot("users-empty") {
-            UsersContent(UsersUiState(answered = true, kkmChosen = true, me = me), none)
-        }
-        val filled = KassaScene.shot("users-two") {
-            UsersContent(UsersUiState(users = CASHIERS, answered = true, kkmChosen = true, me = me), none)
-        }
-        val silent = KassaScene.shot("users-node-silent") {
-            UsersContent(UsersUiState(unreadable = true, kkmChosen = true, me = me), none)
-        }
-
-        val frames = listOf(empty, filled, silent)
-        frames.forEach { assertTrue(it.isNotEmpty()) }
-        assertTrue(frames.map { it.toList() }.distinct().size == 3, "состояния списка кассиров неотличимы")
-    }
-
     private companion object {
-        val CASHIERS = listOf(UsersScene.ADMIN, UsersScene.CASHIER)
-
         val WRONG_PIN = Refusal("INVALID_PIN", "Неверный пин")
         val LOCKED_CASHIER = Refusal("USER_BLOCKED", "Кассир заблокирован, позовите администратора")
         val SHIFT_OF_ANOTHER = Refusal("SHIFT_ALREADY_OPEN", "Смена уже открыта другим кассиром")

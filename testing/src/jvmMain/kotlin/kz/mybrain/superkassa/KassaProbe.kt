@@ -1,21 +1,12 @@
 package kz.mybrain.superkassa
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ImageComposeScene
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.semantics.SemanticsActions
@@ -30,11 +21,6 @@ import kz.mybrain.superkassa.designsystem.strings.ProvideStrings
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.SuperkassaTheme
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
-import kz.mybrain.superkassa.presentation.shell.bar.ShellBar
-import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
-import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
 import kz.mybrain.superkassa.strings.api.Language
 import java.io.File
 import java.util.concurrent.Executors
@@ -51,7 +37,7 @@ import java.util.concurrent.Executors
  * сцен на проверку исчерпывала память всего прогона. Сочетание ставится
  * [show] — содержимое собирается заново, с чистым состоянием.
  */
-internal class KassaProbe(
+class KassaProbe(
     val width: Int,
     val height: Int,
     appearance: Appearance = Appearance.Light,
@@ -197,44 +183,18 @@ internal class KassaProbe(
 }
 
 /** Надпись узла: текст, описание значка и набранное в поле. */
-internal fun SemanticsNode.label(): String = listOfNotNull(
+fun SemanticsNode.label(): String = listOfNotNull(
     config.getOrNull(SemanticsProperties.Text)?.joinToString(" "),
     config.getOrNull(SemanticsProperties.ContentDescription)?.joinToString(" "),
     config.getOrNull(SemanticsProperties.EditableText)?.text
 ).joinToString(" ")
 
 /** Виден ли узел целиком: не срезан ни прокруткой, ни краем окна. */
-internal fun SemanticsNode.wholeOnScreen(width: Int, height: Int): Boolean {
+fun SemanticsNode.wholeOnScreen(width: Int, height: Int): Boolean {
     val shown = boundsInRoot
     return size.width > 0 && size.height > 0 &&
         shown.width.toInt() == size.width && shown.height.toInt() == size.height &&
         shown.left >= 0 && shown.top >= 0 && shown.right <= width && shown.bottom <= height
-}
-
-/**
- * Рабочее окно: шапка, рельс и раздел в пределе рабочего экрана — как
- * в `WorkShell`, но раздел подаётся готовым, с набранным чеком.
- */
-@Composable
-internal fun KassaWindow(
-    desk: KassaDesk,
-    section: Section,
-    messages: SnackbarHostState? = null,
-    content: @Composable () -> Unit
-) {
-    val shell by desk.parts.shell.state.collectAsState()
-    val look by desk.look.state.collectAsState()
-    Scaffold(
-        topBar = { ShellBar(desk.parts, shell, section, onSignOut = {}) },
-        snackbarHost = { messages?.let { MessageHost(it) } }
-    ) { padding ->
-        Row(modifier = Modifier.fillMaxSize().padding(padding)) {
-            SectionRail(Section.entries, section, look.railCollapsed, {}, { Text("1.0.6") }) {}
-            Box(modifier = Modifier.fillMaxSize()) {
-                Box(modifier = Modifier.sectionFrame().fillMaxHeight()) { content() }
-            }
-        }
-    }
 }
 
 /**
@@ -243,7 +203,7 @@ internal fun KassaWindow(
  * @param check готовит сочетание и проверяет его; возвращает найденные
  *   нарушения.
  */
-internal fun eachWindow(
+fun eachWindow(
     cases: List<KassaExtremes.Case> = KassaExtremes.CASES,
     appearance: Appearance = Appearance.Light,
     check: (KassaProbe, KassaExtremes.Case) -> List<String>

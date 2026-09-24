@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.strings.api.common.UserStrings
  * Сначала слова кассы, потом свои: справочник ролей приходит отдельным
  * обращением, и до ответа в строке кассира стоял бы код «ADMIN» латиницей.
  */
-fun roleWord(
+internal fun roleWord(
     role: UserRole,
     texts: UserStrings,
     names: Map<String, TrilingualMessageResponse>,

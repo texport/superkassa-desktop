@@ -8,7 +8,6 @@ import kz.mybrain.superkassa.domain.kassa.model.cash.CashMove
 import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LosingKassa
-import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.kassa.tiyn
 import kz.mybrain.superkassa.presentation.common.message.Message
@@ -39,7 +38,7 @@ class CashCoreTest {
     @Test
     fun `внесение и изъятие — остаток ящика как у ядра, в БФД оба движения`() {
         desk.seated()
-        val model = cashModel(desk.app.services).also { it.visit() }
+        val model = cashModel(desk.services).also { it.visit() }
 
         desk.bench.clock.move(-2 * SECOND)
         model.move("5000", CashMove.Deposit)
@@ -61,7 +60,7 @@ class CashCoreTest {
     @Test
     fun `изъять больше, чем в ящике, экран не даёт — и в БФД ничего не уходит`() {
         desk.seated()
-        val model = cashModel(desk.app.services).also { it.visit() }
+        val model = cashModel(desk.services).also { it.visit() }
         model.enter("100")
 
         model.ask(CashMove.Withdraw)
@@ -74,7 +73,7 @@ class CashCoreTest {
     @Test
     fun `ящик опустел за спиной экрана — касса отказывает своими словами, сумма остаётся`() {
         val kassa = desk.seated().also { it.cashIn("5000.00") }
-        val model = cashModel(desk.app.services).also { it.visit() }
+        val model = cashModel(desk.services).also { it.visit() }
         kassa.cashOut("5000.00")
 
         model.move("1000", CashMove.Withdraw)

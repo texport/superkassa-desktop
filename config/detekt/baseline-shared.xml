@@ -32,7 +32,6 @@
     <ID>LongFile:BigListRenderTest.kt$kz.mybrain.superkassa.presentation.cabinet.places.BigListRenderTest.kt</ID>
     <ID>LongFile:JournalSourcesTest.kt$kz.mybrain.superkassa.presentation.journal.JournalSourcesTest.kt</ID>
     <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.presentation.journal.KassaJournalLookTest.kt</ID>
-    <ID>LongFile:KassaProbe.kt$kz.mybrain.superkassa.KassaProbe.kt</ID>
     <ID>LongMethod:AnalyticsKkmDialog.kt$@Composable private fun DialogHead( kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts, onClose: () -&gt; Unit )</ID>
     <ID>LongMethod:AnalyticsMapLayout.kt$@Composable internal fun HeadOverMap( modifier: Modifier = Modifier, head: @Composable () -&gt; Unit, body: @Composable () -&gt; Unit )</ID>
     <ID>LongMethod:AnalyticsMapWindow.kt$@Composable internal fun MapWindow( parts: MapParts, fullscreen: Boolean, onFullscreen: () -&gt; Unit, modifier: Modifier = Modifier )</ID>
@@ -81,8 +80,6 @@
     <ID>MaxLineLength:CabinetMessageTest.kt$CabinetMessageTest$assertEquals(texts.sessionExpired, assertIs&lt;Message.Refusal&gt;(cabinetMessage(CabinetProblem.SessionExpired, texts)).text)</ID>
     <ID>MaxLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$seenPath = request.url.encodedPath + (request.url.encodedQuery.takeIf { it.isNotEmpty() }?.let { "?$it" } ?: "")</ID>
     <ID>MaxLineLength:PlacePoint.kt$text</ID>
-    <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$.</ID>
-    <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$nodes.filter { SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null }</ID>
     <ID>MaxLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$println("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
     <ID>MaximumLineLength:AdaptiveDialogShots.kt$AdaptiveDialogShots$ </ID>
     <ID>MaximumLineLength:AnalyticsExchangeList.kt$ </ID>
@@ -93,7 +90,6 @@
     <ID>MaximumLineLength:CabinetMessageTest.kt$CabinetMessageTest$ </ID>
     <ID>MaximumLineLength:CabinetRegistrationCardTest.kt$CabinetRegistrationCardTest$ </ID>
     <ID>MaximumLineLength:PlacePoint.kt$ </ID>
-    <ID>MaximumLineLength:SettingsMeasure.kt$SettingsMeasure$ </ID>
     <ID>MaximumLineLength:ShellAdaptiveTest.kt$ShellAdaptiveTest$ </ID>
     <ID>PropertyWrapping:CabinetApplicationShots.kt$CabinetApplicationShots$val stage = stage(refusal("OKED_REQUIRED", "Primary OKED is required for registration", HttpStatusCode.BadRequest))</ID>
     <ID>ReturnCount:AnalyticsSalesGeometry.kt$internal fun barAt(x: Float, width: Int, count: Int): Int?</ID>
@@ -113,7 +109,5 @@
     <ID>Wrapping:AnalyticsExtremeSales.kt$AnalyticsExtremeSales$("retailPlaces", JsonArray((0 until AnalyticsFixtures.PLACES).map { place -&gt; unit("place-$place", AnalyticsFixtures.placeName(place), place, null, null) }))</ID>
     <ID>Wrapping:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$SalesChart(dayBars(view(days = MONTH).days, view(days = MONTH).range, sales), sales, Modifier.fillMaxSize())</ID>
     <ID>Wrapping:PickerEscapeTest.kt$PickerEscapeTest$;</ID>
-    <ID>Wrapping:SettingsMeasure.kt$SettingsMeasure$;</ID>
-    <ID>Wrapping:SettingsMeasure.kt$SettingsMeasure$SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null</ID>
   </CurrentIssues>
 </SmellBaseline>

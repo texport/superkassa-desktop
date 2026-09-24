@@ -29,5 +29,3 @@ presentation/shift/dashboard/DashboardScreen.kt -> KassaLayout.drawerTile
 presentation/shift/dashboard/DashboardScreen.kt -> KassaLayout.statTile
 presentation/shift/dashboard/component/DashboardPage.kt -> KassaLayout.dashboardListsMin
 presentation/shift/dashboard/component/ShiftActions.kt -> KassaLayout.mainAction
-presentation/users/AddCashier.kt -> Sizes.fieldAmount
-presentation/users/signin/SignInBar.kt -> Sizes.fieldPin

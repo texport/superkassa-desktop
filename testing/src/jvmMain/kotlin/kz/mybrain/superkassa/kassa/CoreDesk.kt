@@ -17,14 +17,14 @@ import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.shell.AppContainer
+import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
 /**
  * Рабочее место кассира на настоящем ядре и тестовом БФД.
  *
- * Экраны собираются той же точкой сборки, что в окне ([CoreScene.app]),
+ * Модели экранов собираются из тех же общих служб окна, что в приложении,
  * а касса заводится через фасад, как у владельца. Итог сценария
  * сверяется и с ядром — [kassa] и его документы, — и с тем, что ушло
  * в БФД, — [bfd]. Каталог временный: рабочее место машины не трогается.
@@ -52,10 +52,14 @@ class CoreDesk(channels: List<DeliveryPort> = emptyList()) : AutoCloseable {
 
     val bfd: FakeBfd get() = bench.bfd
 
-    /** Зависимости экранов окна поверх кассы процесса. */
-    val app: AppContainer by lazy {
-        val delivery = KassaPorts(EmbeddedDeliverySetup(bench.superkassa.settings, Dispatchers.Unconfined))
-        CoreScene.app(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices, memory, ports = delivery)
+    /** Общие службы окна поверх кассы процесса. */
+    val services: WindowServices by lazy {
+        CoreScene.services(EmbeddedKassa(bench.api, Dispatchers.Unconfined), signIn, notices, memory)
+    }
+
+    /** Порты кассы окна: настройки доставки чека той же кассы процесса. */
+    val kassaPorts: KassaPorts by lazy {
+        KassaPorts(EmbeddedDeliverySetup(bench.superkassa.settings, Dispatchers.Unconfined))
     }
 
     /** Заводит кассу с пинами [ADMIN_PIN] и [CASHIER_PIN]. */

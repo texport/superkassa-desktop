@@ -71,12 +71,12 @@ class KassaCoreLookTest {
 
     private fun screens(): List<Screen> {
         val sale = saleOnBusyShift()
-        val dashboard = dashboardModel(desk.app.services).state.value
-        val returns = returnsModel(desk.app.services, desk.app.areas.kassa).apply {
+        val dashboard = dashboardModel(desk.services).state.value
+        val returns = returnsModel(desk.services, desk.kassaPorts).apply {
             visit()
             choose(state.value.candidates.last())
         }.state.value
-        val cash = cashModel(desk.app.services).apply { visit() }.state.value
+        val cash = cashModel(desk.services).apply { visit() }.state.value
         val closeAndRefused = { language: Language ->
             listOf(textsOf(language).common.dashboard.closeShift, refusedHead(language))
         }
@@ -93,7 +93,7 @@ class KassaCoreLookTest {
     }
 
     private fun check(probe: KassaProbe, screen: Screen, look: Look, language: Language, tag: String): List<String> {
-        val window = KassaDesk(desk.app)
+        val window = KassaDesk(desk.app())
         probe.show(look, language) { KassaWindow(window, screen.section) { screen.content() } }
         File("/tmp/qa-kassa-${screen.name}-$tag.png").writeBytes(probe.frame(KassaProbe.SETTLE))
         val failures = mutableListOf<String>()

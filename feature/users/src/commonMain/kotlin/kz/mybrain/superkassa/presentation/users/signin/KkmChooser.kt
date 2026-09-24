@@ -47,7 +47,7 @@ import kz.mybrain.superkassa.strings.api.common.LoginStrings
  * каждой строки делает десяток касс похожим на десяток разных разделов.
  */
 @Composable
-internal fun KkmList(state: LoginUiState, modifier: Modifier = Modifier, onPick: (KkmResponse) -> Unit) {
+fun KkmList(state: LoginUiState, modifier: Modifier = Modifier, onPick: (KkmResponse) -> Unit) {
     val kkms = state.shown
     val chosenId = state.chosen?.kkmId
     val list = rememberChosenInView(kkms, chosenId)

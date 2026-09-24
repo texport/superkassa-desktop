@@ -2,7 +2,13 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>LongFile:KassaProbe.kt$kz.mybrain.superkassa.KassaProbe.kt</ID>
     <ID>LongFile:RenderProbe.kt$kz.mybrain.superkassa.RenderProbe.kt</ID>
+    <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$.</ID>
+    <ID>MaxLineLength:SettingsMeasure.kt$SettingsMeasure$nodes.filter { SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null }</ID>
+    <ID>MaximumLineLength:SettingsMeasure.kt$SettingsMeasure$ </ID>
     <ID>ReturnCount:NcaFake.kt$NcaFake$private fun InputStream.readFrame(): String?</ID>
+    <ID>Wrapping:SettingsMeasure.kt$SettingsMeasure$;</ID>
+    <ID>Wrapping:SettingsMeasure.kt$SettingsMeasure$SemanticsProperties.Text in it.config || SemanticsProperties.EditableText in it.config || it.role() != null</ID>
   </CurrentIssues>
 </SmellBaseline>

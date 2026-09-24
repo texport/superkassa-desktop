@@ -11,7 +11,6 @@ import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LosingKassa
-import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.kassa.tiyn
 import kz.mybrain.superkassa.presentation.common.message.Message
@@ -38,7 +37,7 @@ class ReturnsCoreTest {
 
     /** Экран возврата с выбранным чеком-основанием — последним проданным. */
     private fun chosen(
-        model: ReturnsViewModel = returnsModel(desk.app.services, desk.app.areas.kassa)
+        model: ReturnsViewModel = returnsModel(desk.services, desk.kassaPorts)
     ): ReturnsViewModel {
         model.visit()
         model.choose(model.state.value.candidates.first())
@@ -65,7 +64,7 @@ class ReturnsCoreTest {
             add("Кумыс", "600")
             issue()
         }
-        val model = returnsModel(desk.app.services, desk.app.areas.kassa).also { it.visit() }
+        val model = returnsModel(desk.services, desk.kassaPorts).also { it.visit() }
         val number = assertNotNull(model.state.value.candidates.single().printedDocumentNumber)
         model.number(number.toString())
         val picked = chosen(model)

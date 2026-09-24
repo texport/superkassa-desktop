@@ -14,5 +14,5 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 fun usersViewModel(services: WindowServices): UsersViewModel = viewModel { usersModel(services) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun usersModel(services: WindowServices): UsersViewModel =
+internal fun usersModel(services: WindowServices): UsersViewModel =
     UsersViewModel(UsersCases(services.kassa, services.signIn), services.talk)

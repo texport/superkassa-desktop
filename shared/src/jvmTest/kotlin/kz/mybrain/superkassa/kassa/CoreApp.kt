@@ -40,15 +40,22 @@ fun CoreScene.app(
     settings: MachinePorts = settingsPorts(),
     journal: JournalPorts = JournalPorts(NoDeliveries),
     ports: KassaPorts = KassaPorts(FixedDeliverySetup())
-) = AppContainer(
-    services = services(kassa, signIn, notices, memory),
-    areas = AreaPorts(
-        kassa = ports,
-        journal = journal,
-        settings = settings.settings,
-        print = settings.print,
-        update = settings.update,
-        debug = settings.debug,
-        analytics = analyticsPorts()
-    )
+) = AppContainer(services(kassa, signIn, notices, memory), areaPorts(settings, journal, ports))
+
+/** Порты областей для проверок: машина в памяти, доставки нет, аналитика без сети. */
+fun areaPorts(
+    settings: MachinePorts = settingsPorts(),
+    journal: JournalPorts = JournalPorts(NoDeliveries),
+    kassa: KassaPorts = KassaPorts(FixedDeliverySetup())
+) = AreaPorts(
+    kassa = kassa,
+    journal = journal,
+    settings = settings.settings,
+    print = settings.print,
+    update = settings.update,
+    debug = settings.debug,
+    analytics = analyticsPorts()
 )
+
+/** Контейнер окна над кассой рабочего места [CoreDesk] — для снимков окна с каркасом. */
+fun CoreDesk.app(): AppContainer = AppContainer(services, areaPorts(kassa = kassaPorts))

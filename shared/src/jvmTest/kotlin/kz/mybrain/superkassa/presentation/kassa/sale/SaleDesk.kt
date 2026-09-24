@@ -8,7 +8,7 @@ import kz.mybrain.superkassa.kassa.CoreDesk
 import kotlin.test.assertTrue
 
 /** Продажа окна на кассе рабочего места [CoreDesk]: экран открыт, как у кассира. */
-internal fun CoreDesk.sale(): SaleViewModel = saleModel(app.services, app.areas.kassa).also { it.visit() }
+internal fun CoreDesk.sale(): SaleViewModel = saleModel(services, kassaPorts).also { it.visit() }
 
 /**
  * Позиция руками, как её набирает кассир: наименование, цена, количество,

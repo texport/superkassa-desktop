@@ -35,7 +35,7 @@ import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
  * @param roleTitle как назвать кассира, если имени у него нет.
  */
 @Composable
-internal fun ChangePinDialog(money: MoneyTexts, change: PinChange, roleTitle: String, actions: UsersActions) {
+fun ChangePinDialog(money: MoneyTexts, change: PinChange, roleTitle: String, actions: UsersActions) {
     val texts = LocalStrings.current
     AlertDialog(
         onDismissRequest = { if (!change.busy) actions.askPin(null) },

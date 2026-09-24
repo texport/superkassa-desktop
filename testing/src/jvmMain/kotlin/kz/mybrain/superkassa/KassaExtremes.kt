@@ -23,7 +23,7 @@ import java.math.BigDecimal
  * на тысячу строк. Всё это собрано здесь один раз, чтобы экраны проверялись
  * на одном и том же.
  */
-internal object KassaExtremes {
+object KassaExtremes {
 
     /** Наименование на двести знаков — формулировка классификатора целиком. */
     val LONG_NAME = (

@@ -49,6 +49,7 @@ include(":feature:debug")
 include(":feature:map")
 include(":feature:print")
 include(":feature:update")
+include(":feature:users")
 
 // Слой данных — реализации портов домена: ядро в процессе, интеграции,
 // хранение на устройстве. Экраны его не видят; собирают точки сборки.
