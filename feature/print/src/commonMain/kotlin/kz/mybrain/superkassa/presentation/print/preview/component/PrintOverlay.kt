@@ -34,7 +34,7 @@ import kz.mybrain.superkassa.presentation.print.preview.PrintUiState
  * к ней по пину, а кассир мог и не входить.
  */
 @Composable
-fun PrintOverlay(paper: PrintUiState, actions: PaperActions) {
+internal fun PrintOverlay(paper: PrintUiState, actions: PaperActions) {
     val texts = LocalStrings.current.preview
     ReceiptPreview(
         image = paper.image,

@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * в бухгалтерию, картинка повторяет экран.
  */
 @Composable
-internal fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetActions) {
+fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetActions) {
     val texts = LocalStrings.current
     SectionCard(title = texts.settings.printer, info = texts.settings.printerHint) {
         if (target.systemDialog) {

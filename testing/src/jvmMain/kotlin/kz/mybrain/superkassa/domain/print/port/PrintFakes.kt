@@ -47,3 +47,6 @@ class MemoryPrintChoices(override var copies: Int = 1, private var kind: PrintKi
         this.kind = kind
     }
 }
+
+/** Порты печати для проверок: принтер и диск в памяти, выбор принтера в памяти. */
+fun printPorts(out: PrintOut = FakePrintOut(), choices: PrintChoices = MemoryPrintChoices()) = PrintPorts(out, choices)

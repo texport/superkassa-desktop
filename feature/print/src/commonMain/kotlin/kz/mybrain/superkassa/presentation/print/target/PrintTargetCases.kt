@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.signin.usecase.ObserveSignIn
 
 /** Сценарии принтера кассы: чей принтер показан, что на машине и что выбрано. */
-class PrintTargetCases(signIn: SignIn, printOut: PrintOut, choices: PrintChoices) {
+internal class PrintTargetCases(signIn: SignIn, printOut: PrintOut, choices: PrintChoices) {
     val observe = ObserveSignIn(signIn)
     val read = ReadPrintTarget(printOut, choices)
     val printer = ChoosePrinter(choices)

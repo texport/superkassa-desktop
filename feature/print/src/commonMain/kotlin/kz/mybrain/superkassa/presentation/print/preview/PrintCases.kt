@@ -22,7 +22,13 @@ import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
  * с экрана входа, — поэтому поиску нужен сам держатель входа, а рисованию
  * — только касса и пин того, кто за ней сидит.
  */
-class PrintCases(kassa: Kassa, signIn: SignIn, printOut: PrintOut, choices: PrintChoices, memory: WorkplaceMemory) {
+internal class PrintCases(
+    kassa: Kassa,
+    signIn: SignIn,
+    printOut: PrintOut,
+    choices: PrintChoices,
+    memory: WorkplaceMemory
+) {
     val observe = ObserveSignIn(signIn)
     val findDrawer = FindDrawer(kassa, signIn)
     val asksPin = AsksPin(signIn)

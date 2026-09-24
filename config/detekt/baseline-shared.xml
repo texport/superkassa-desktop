@@ -35,7 +35,6 @@
     <ID>LongFile:JournalSourcesTest.kt$kz.mybrain.superkassa.presentation.journal.JournalSourcesTest.kt</ID>
     <ID>LongFile:KassaJournalLookTest.kt$kz.mybrain.superkassa.presentation.journal.KassaJournalLookTest.kt</ID>
     <ID>LongFile:KassaProbe.kt$kz.mybrain.superkassa.KassaProbe.kt</ID>
-    <ID>LongFile:PreviewTapeReachTest.kt$kz.mybrain.superkassa.presentation.print.preview.component.PreviewTapeReachTest.kt</ID>
     <ID>LongMethod:AnalyticsKkmDialog.kt$@Composable private fun DialogHead( kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts, onClose: () -&gt; Unit )</ID>
     <ID>LongMethod:AnalyticsMapLayout.kt$@Composable internal fun HeadOverMap( modifier: Modifier = Modifier, head: @Composable () -&gt; Unit, body: @Composable () -&gt; Unit )</ID>
     <ID>LongMethod:AnalyticsMapWindow.kt$@Composable internal fun MapWindow( parts: MapParts, fullscreen: Boolean, onFullscreen: () -&gt; Unit, modifier: Modifier = Modifier )</ID>
@@ -59,7 +58,6 @@
     <ID>LongMethod:PlaceTree.kt$@Composable internal fun PlaceTree( texts: CabinetTexts, language: Language, collapsed: Boolean, onToggle: () -&gt; Unit, rows: List&lt;PlaceRow&gt;, total: Int, loading: Boolean, trouble: String?, onRetry: () -&gt; Unit, sieve: PlaceSieve, onSieve: (PlaceSieve) -&gt; Unit, locksKnown: Boolean, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, footer: @Composable ColumnScope.() -&gt; Unit, listState: LazyListState = rememberLazyListState(), modifier: Modifier = Modifier.width(if (collapsed) Sizes.rail else Sizes.registerColumn) )</ID>
     <ID>LongMethod:PlaceTreeRows.kt$@Composable internal fun TreeRows( texts: CabinetTexts, language: Language, rows: List&lt;PlaceRow&gt;, state: ScreenState, place: String?, register: String?, onPlace: (String) -&gt; Unit, onRegister: (String) -&gt; Unit, listState: LazyListState, modifier: Modifier = Modifier, sieve: @Composable ColumnScope.() -&gt; Unit )</ID>
     <ID>LongMethod:ReceiptBreakdown.kt$@Composable fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetTexts)</ID>
-    <ID>LongMethod:ReceiptPreview.kt$@Composable fun ReceiptPreview( image: ByteArray?, drawing: Boolean = false, trouble: ScreenState.Trouble? = null, onPrint: (() -&gt; Unit)? = null, onSave: (() -&gt; Unit)? = null, onDismiss: () -&gt; Unit )</ID>
     <ID>LongMethod:RegisterFields.kt$@Composable internal fun RegisterFields( texts: CabinetTexts, language: Language, draft: RegisterDraft, places: List&lt;RetailPlace&gt;, models: List&lt;KkmModel&gt;, stamped: Boolean, issued: Boolean, onCreatePlace: () -&gt; Unit )</ID>
     <ID>LongMethod:ReturnsAdaptiveTest.kt$ReturnsAdaptiveTest$private fun check(probe: KassaProbe, case: Case): List&lt;String&gt;</ID>
     <ID>LongMethod:SearchablePicker.kt$@Composable fun &lt;T&gt; SearchablePicker( label: String, options: List&lt;T&gt;, selected: T?, title: (T) -&gt; String, keys: (T) -&gt; List&lt;String&gt;, notFound: String, onSelect: (T) -&gt; Unit )</ID>

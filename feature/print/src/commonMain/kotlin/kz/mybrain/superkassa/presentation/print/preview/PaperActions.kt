@@ -8,7 +8,7 @@ import kz.mybrain.superkassa.presentation.common.print.PrintActions
  *
  * Действия по умолчанию пустые — для снимков вида.
  */
-interface PaperActions {
+internal interface PaperActions {
 
     /** Печать открытой формы: касса для этого уже не нужна. */
     fun printShown() = Unit
@@ -28,7 +28,7 @@ interface PaperActions {
 }
 
 /** Действия печати, выполняемые этой моделью. */
-fun PrintViewModel.actions(): PrintActions {
+internal fun PrintViewModel.actions(): PrintActions {
     val model = this
     return object : PrintActions {
         override fun preview(documentId: String?, file: String?) =
@@ -44,7 +44,7 @@ fun PrintViewModel.actions(): PrintActions {
 }
 
 /** Действия окна печатной формы, выполняемые этой моделью. */
-fun PrintViewModel.paperActions(): PaperActions {
+internal fun PrintViewModel.paperActions(): PaperActions {
     val model = this
     return object : PaperActions {
         override fun printShown() = model.printShown()

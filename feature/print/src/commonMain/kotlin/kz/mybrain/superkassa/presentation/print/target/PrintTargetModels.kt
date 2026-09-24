@@ -7,9 +7,9 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 
 /** Модель принтера кассы окна. */
 @Composable
-fun printTargetViewModel(services: WindowServices, ports: PrintPorts): PrintTargetViewModel =
+internal fun printTargetViewModel(services: WindowServices, ports: PrintPorts): PrintTargetViewModel =
     viewModel { printTargetModel(services, ports) }
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
-fun printTargetModel(services: WindowServices, ports: PrintPorts): PrintTargetViewModel =
+internal fun printTargetModel(services: WindowServices, ports: PrintPorts): PrintTargetViewModel =
     PrintTargetViewModel(PrintTargetCases(services.signIn, ports.printOut, ports.printChoices))

@@ -7,14 +7,13 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.print.model.PrintSource
-import kz.mybrain.superkassa.domain.print.port.FakePrintOut
+import kz.mybrain.superkassa.domain.print.port.printPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
@@ -38,8 +37,8 @@ class PrintViewModelTest {
     private val core = FakeCore()
     private val signIn = SignIn()
     private val notices = Notices()
-    private val out = FakePrintOut()
-    private val app = CoreScene.app(core, signIn, notices, settings = settingsPorts().copy(printOut = out))
+    private val ports = printPorts()
+    private val services = CoreScene.services(core, signIn, notices)
     private val texts = textsOf(Language.Ru).common.preview
 
     /** Какими пинами касса рисовала форму, по порядку. */
@@ -64,7 +63,7 @@ class PrintViewModelTest {
 
     @Test
     fun `без вошедшего кассира рисует первая касса и спрашивает её пин`() {
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
 
         model.preview(PrintSource.Journal("d-1"), file = null)
 
@@ -79,7 +78,7 @@ class PrintViewModelTest {
     @Test
     fun `выбранная касса сильнее первой в списке`() {
         signIn.enter(CoreScene.kkm(id = "b2", name = "Касса в зале"), CoreScene.cashier(), CoreScene.PIN)
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
 
         model.preview(PrintSource.Journal("d-1"), file = null)
 
@@ -91,7 +90,7 @@ class PrintViewModelTest {
     @Test
     fun `касс нет — об этом сказано словами`() {
         core.on("listKkms") { CoreScene.page(emptyList()) }
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
 
         model.preview(PrintSource.Journal("d-1"), file = null)
 
@@ -101,7 +100,7 @@ class PrintViewModelTest {
 
     @Test
     fun `введённый пин не считается входом кассира`() {
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
         model.preview(PrintSource.Journal("d-1"), file = null)
         model.enterPin("4827")
 
@@ -112,7 +111,7 @@ class PrintViewModelTest {
     @Test
     fun `отказ по пину спрашивает его заново, а не повторяет неверный`() {
         core.refuse("getDocumentPrintPng", "USER_NOT_FOUND", ru = "Пользователь не найден")
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
         model.preview(PrintSource.Journal("d-1"), file = null)
         model.enterPin("0000")
 
@@ -130,7 +129,7 @@ class PrintViewModelTest {
      */
     @Test
     fun `отказ не по пину оставляет введённый пин при себе`() {
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
         model.preview(PrintSource.Journal("d-1"), file = null)
         model.enterPin("4827")
         core.refuse("getDocumentPrintPng", "DOCUMENT_NOT_FOUND", ru = "Документ не найден")
@@ -147,7 +146,7 @@ class PrintViewModelTest {
     /** Касса не смогла ответить — отказа по пину не было, и спрашивать его незачем. */
     @Test
     fun `сбой кассы не превращается в вопрос о пине`() {
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
         model.preview(PrintSource.Journal("d-1"), file = null)
         model.enterPin("4827")
         core.on("getDocumentPrintPng") { error("database is locked") }
@@ -163,7 +162,7 @@ class PrintViewModelTest {
     /** Пин набирали неверно слишком часто: касса ждёт, и спрашивать сразу незачем. */
     @Test
     fun `заблокированный пин забывается, но заново сразу не спрашивается`() {
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
         model.preview(PrintSource.Journal("d-1"), file = null)
         model.enterPin("4827")
         core.on("getDocumentPrintPng") { throw PinLockedException(retryAfterSeconds = 60) }
@@ -181,7 +180,7 @@ class PrintViewModelTest {
     fun `выход кассира забывает пин рисовальщика`() {
         signIn.enter(CoreScene.kkm(id = "a1"), CoreScene.cashier(), CoreScene.PIN)
         signIn.signOut()
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
         model.preview(PrintSource.Journal("d-1"), file = null)
         model.enterPin("4827")
 

@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * экран, его уход обрывал работу — полоска ожидания гасла, а форма
  * не открывалась.
  */
-class PrintViewModel(private val cases: PrintCases, private val talk: Talk) : ViewModel() {
+internal class PrintViewModel(private val cases: PrintCases, private val talk: Talk) : ViewModel() {
     private val screen = MutableStateFlow(PrintUiState())
 
     val state: StateFlow<PrintUiState> = screen.asStateFlow()

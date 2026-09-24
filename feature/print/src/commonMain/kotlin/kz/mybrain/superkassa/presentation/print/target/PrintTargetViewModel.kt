@@ -17,7 +17,7 @@ import kz.mybrain.superkassa.presentation.common.model.follow
  * их бывает две, и чековая лента у каждой своя. Выбор действует сразу —
  * отдельной кнопки у него нет, и говорить кассиру не о чем.
  */
-class PrintTargetViewModel(private val cases: PrintTargetCases) : ViewModel(), PrintTargetActions {
+internal class PrintTargetViewModel(private val cases: PrintTargetCases) : ViewModel(), PrintTargetActions {
     private val screen = MutableStateFlow(PrintTargetUiState())
 
     val state: StateFlow<PrintTargetUiState> = screen.asStateFlow()

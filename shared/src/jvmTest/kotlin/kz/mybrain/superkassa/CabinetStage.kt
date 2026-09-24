@@ -28,7 +28,6 @@ import kz.mybrain.superkassa.presentation.shell.frame.MessageEffect
 import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
-import java.io.File
 
 /**
  * Сцена кабинета для снимков: владелец уже вошёл, а сети нет.
@@ -114,21 +113,5 @@ internal fun WithCabinetMessage(problem: CabinetProblem, content: @Composable ()
     Scaffold(snackbarHost = { MessageHost(messages) }) {
         MessageEffect(cabinetMessage(problem, textsOf(Language.Ru).cabinet), messages) {}
         content()
-    }
-}
-
-/**
- * Снимок экрана в файл.
- *
- * Кадров нужно много: списки и карточки кабинета приходят отложенным
- * эффектом, и на первом кадре экран ещё пуст. Сцена отдаёт кадры только
- * по запросу, поэтому очередь обращений докручивается вручную.
- */
-internal fun shot(name: String, width: Int = 1180, height: Int = 820, content: @Composable () -> Unit): ByteArray {
-    RenderProbe(width = width, height = height, content = content).use { probe ->
-        var frame = probe.frame()
-        repeat(60) { frame = probe.frame() }
-        File("/tmp/cabinet-$name.png").writeBytes(frame)
-        return frame
     }
 }

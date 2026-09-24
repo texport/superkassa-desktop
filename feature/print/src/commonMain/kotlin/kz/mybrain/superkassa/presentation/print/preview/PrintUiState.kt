@@ -12,7 +12,7 @@ package kz.mybrain.superkassa.presentation.print.preview
  *   не спрашивают. Пин у касс разный, и владелец должен видеть, к какой.
  * @property savingName как назовётся файл, если открытую форму сохранят.
  */
-data class PrintUiState(
+internal data class PrintUiState(
     val image: ByteArray? = null,
     val drawing: Boolean = false,
     val trouble: PrintTrouble? = null,
@@ -27,4 +27,4 @@ data class PrintUiState(
  * скрыла бы причину. Их может не быть вовсе — касса не ответила, — тогда
  * в окне стоит одно название беды.
  */
-data class PrintTrouble(val words: String?)
+internal data class PrintTrouble(val words: String?)

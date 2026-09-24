@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongFile:PreviewTapeReachTest.kt$kz.mybrain.superkassa.presentation.print.preview.component.PreviewTapeReachTest.kt</ID>
+    <ID>LongMethod:ReceiptPreview.kt$@Composable fun ReceiptPreview( image: ByteArray?, drawing: Boolean = false, trouble: ScreenState.Trouble? = null, onPrint: (() -&gt; Unit)? = null, onSave: (() -&gt; Unit)? = null, onDismiss: () -&gt; Unit )</ID>
+  </CurrentIssues>
+</SmellBaseline>

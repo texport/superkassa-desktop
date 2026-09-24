@@ -13,14 +13,13 @@ import kz.mybrain.superkassa.domain.print.model.Kept
 import kz.mybrain.superkassa.domain.print.model.PrintSource
 import kz.mybrain.superkassa.domain.print.port.FakePrintOut
 import kz.mybrain.superkassa.domain.print.port.PrintOut
+import kz.mybrain.superkassa.domain.print.port.printPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
-import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
-import kz.mybrain.superkassa.presentation.settings.settingsPorts
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.AfterTest
@@ -44,7 +43,8 @@ class PrintOutputTest {
     private val signIn = SignIn()
     private val notices = Notices()
     private val out = FakePrintOut()
-    private val app = CoreScene.app(core, signIn, notices, settings = settingsPorts().copy(printOut = out))
+    private val ports = printPorts(out)
+    private val services = CoreScene.services(core, signIn, notices)
     private val texts = textsOf(Language.Ru).common.preview
 
     @BeforeTest
@@ -66,7 +66,7 @@ class PrintOutputTest {
     fun `открытая по документу форма сохраняется под именем документа`() {
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
         core.on("getDocumentPrintPdf") { PDF }
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
         val document = CoreScene.document("aae019ac-92e3").copy(shiftNo = 1, fiscalSign = "4178697373")
         model.actions().preview(document)
         model.saveShown()
@@ -79,8 +79,8 @@ class PrintOutputTest {
     fun `открытая форма печатается шириной ленты кассы на её принтер`() {
         val narrow = CoreScene.kkm(id = "kkm-1").copy(branding = ReceiptBrandingResponse(paperWidthMm = 58))
         signIn.enter(narrow, CoreScene.cashier(), CoreScene.PIN)
-        app.areas.print.printChoices.choosePrinter("kkm-1", "Чековый у кассы")
-        val model = printModel(app.services, app.areas.print)
+        ports.printChoices.choosePrinter("kkm-1", "Чековый у кассы")
+        val model = printModel(services, ports)
         model.preview(PrintSource.Journal("d-1"), file = null)
 
         model.printShown()
@@ -104,8 +104,7 @@ class PrintOutputTest {
         val nowhere = object : PrintOut by out {
             override suspend fun keep(bytes: ByteArray, name: String, title: String): Kept = Kept.Unavailable
         }
-        val settings = settingsPorts().copy(printOut = nowhere)
-        val model = printModel(CoreScene.services(core, signIn, notices), settings.print)
+        val model = printModel(CoreScene.services(core, signIn, notices), printPorts(nowhere))
         model.preview(PrintSource.Journal("d-1"), "receipt")
         model.saveShown()
 
@@ -122,7 +121,7 @@ class PrintOutputTest {
     fun `без принтеров печать говорит, что печатать некуда`() {
         out.names = emptyList()
         signIn.enter(CoreScene.kkm(id = "kkm-1"), CoreScene.cashier(), CoreScene.PIN)
-        val model = printModel(app.services, app.areas.print)
+        val model = printModel(services, ports)
 
         model.print(PrintSource.Journal("d-1"))
 
@@ -142,8 +141,7 @@ class PrintOutputTest {
                 return request(core.api)
             }
         }
-        val settings = settingsPorts().copy(printOut = out)
-        val model = printModel(CoreScene.services(slow, signIn, notices), settings.print)
+        val model = printModel(CoreScene.services(slow, signIn, notices), printPorts(out))
         model.preview(PrintSource.Journal("d-1"), file = null)
         assertTrue(model.state.value.drawing, "окно открывается по нажатию, а не по готовой форме")
 
