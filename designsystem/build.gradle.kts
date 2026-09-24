@@ -42,10 +42,9 @@ kotlin {
             implementation(libs.kotlin.test)
         }
         jvmTest.dependencies {
-            implementation(compose.desktop.currentOs)
             implementation(libs.kotlin.test)
-            // Сцена отрисовки, правила размеров и устройства модуля — общие
-            // с проверками экранов.
+            // Сцена отрисовки со средой Compose этой машины, правила размеров
+            // и устройства модуля — общие с проверками экранов.
             implementation(project(":testing"))
         }
     }

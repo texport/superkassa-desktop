@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.settings.SettingsScreen
 import kz.mybrain.superkassa.shot

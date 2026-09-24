@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.presentation.journal.HistoryContent
 import kz.mybrain.superkassa.presentation.journal.HistoryParts
 import kz.mybrain.superkassa.presentation.journal.HistoryStage

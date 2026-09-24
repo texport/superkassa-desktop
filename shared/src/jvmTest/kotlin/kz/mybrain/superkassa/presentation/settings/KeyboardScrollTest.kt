@@ -1,8 +1,9 @@
 package kz.mybrain.superkassa.presentation.settings
 
 import androidx.compose.ui.input.key.Key
-import kz.mybrain.superkassa.Look
+import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.desk
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -22,7 +23,7 @@ class KeyboardScrollTest {
 
     @Test
     fun `настройки прокручиваются PageDown`() {
-        RenderProbe(WIDE, HIGH) { SettingsScreen(SettingsScene.board(Look.desk())) }.use { probe ->
+        RenderProbe(WIDE, HIGH) { SettingsScreen(SettingsScene.board(KassaScene.desk())) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             val top = probe.frame()
             File("/tmp/fix-9-settings-top.png").writeBytes(top)
@@ -38,7 +39,7 @@ class KeyboardScrollTest {
 
     @Test
     fun `настройки прокручиваются стрелкой вниз`() {
-        RenderProbe(WIDE, HIGH) { SettingsScreen(SettingsScene.board(Look.desk())) }.use { probe ->
+        RenderProbe(WIDE, HIGH) { SettingsScreen(SettingsScene.board(KassaScene.desk())) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             val top = probe.frame()
             probe.key(Key.Tab)

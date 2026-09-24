@@ -14,6 +14,7 @@ import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.presentation.journal.HistoryStage.Mode
 import kz.mybrain.superkassa.presentation.journal.documents.JournalUiState
 import kz.mybrain.superkassa.presentation.shell.section.Section

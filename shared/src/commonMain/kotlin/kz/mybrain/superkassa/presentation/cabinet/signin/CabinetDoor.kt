@@ -6,12 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.state.BusyLine
 import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
 import kz.mybrain.superkassa.presentation.cabinet.CabinetScreen
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.presentation.shell.bar.BusyLine
-import kz.mybrain.superkassa.presentation.shell.section.LocalSectionSwitch
+import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
 
 /**
  * Кабинет ОФД, открытый с экрана входа.
@@ -37,7 +37,7 @@ fun CabinetDoor(window: CabinetWindow, onBack: () -> Unit) {
     // просьба уходила в пустоту, и «Перейти к кассе» с виду не делала
     // ничего — ровно после переноса кассы на эту машину, когда владелец
     // приходит в кабинет именно отсюда.
-    CompositionLocalProvider(LocalSectionSwitch provides { onBack() }) {
+    CompositionLocalProvider(LocalToKassa provides onBack) {
         Column(modifier = Modifier.fillMaxSize()) {
             CabinetBar(window.cabinet, window.look, onExit = onBack)
             BusyLine(state.busy)

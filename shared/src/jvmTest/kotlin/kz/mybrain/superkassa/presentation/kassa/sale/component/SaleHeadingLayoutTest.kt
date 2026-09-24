@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.section.SectionTitle
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleActions

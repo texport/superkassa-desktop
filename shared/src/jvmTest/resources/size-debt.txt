@@ -19,8 +19,6 @@ presentation/analytics/sales/chart/AnalyticsSalesChart.kt -> Sizes.chartHeight
 presentation/analytics/sales/chart/AnalyticsSalesShares.kt -> Sizes.shareBar
 presentation/cabinet/places/component/PlacePoint.kt -> Sizes.fieldForm
 presentation/cabinet/places/component/PlaceTree.kt -> Sizes.registerColumn
-presentation/common/document/JournalTable.kt -> HistoryLayout.row
-presentation/common/document/JournalToolbar.kt -> Sizes.fieldSearch
 presentation/debug/log/LogFilters.kt -> Sizes.fieldSearch
 presentation/debug/log/LogLines.kt -> Sizes.logLevelColumn
 presentation/debug/log/LogLines.kt -> Sizes.logSourceColumn

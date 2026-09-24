@@ -6,6 +6,7 @@ import kz.mybrain.superkassa.KassaExtremes.Case
 import kz.mybrain.superkassa.KassaProbe
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.KassaWindow
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene

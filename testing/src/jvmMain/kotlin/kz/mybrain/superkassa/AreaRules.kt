@@ -57,6 +57,27 @@ object AreaRules {
             .map { "${source.path} -> ${it.layer}.${it.name}" }
     }.toSet()
 
+    /**
+     * Модели экранов, которые берут больше своих сценариев: `путь -> импорт`.
+     *
+     * Файл `*ViewModel.kt` не видит ни контейнера окна, ни держателя входа,
+     * ни портов — только сценарии своей области и разговор с кассиром: модель
+     * без окна и без кассы проверяется подделкой сценария.
+     */
+    fun modelViolations(sources: List<Source>): Set<String> = sources
+        .filter { it.path.startsWith("presentation/") && it.path.endsWith("ViewModel.kt") }
+        .flatMap { source ->
+            source.imports.filter { import -> MODEL_FORBIDDEN.any { it.matches(import) } }
+                .map { "${source.path} -> ${it.removePrefix("${SourceTree.ROOT}.")}" }
+        }.toSet()
+
+    /** Что модели экрана брать нельзя: весь контейнер окна, держатель входа, порты. */
+    private val MODEL_FORBIDDEN = listOf(
+        Regex("""\Q${SourceTree.ROOT}.presentation.shell.AppContainer\E"""),
+        Regex("""\Q${SourceTree.ROOT}.domain.signin.model.SignIn\E"""),
+        Regex("""\Q${SourceTree.ROOT}.domain.\E\w+\.port\..+""")
+    )
+
     /** Область пакета или импорта; `null` — общая полка или не область вовсе. */
     private fun areaOf(name: String?): Area? {
         val parts = name?.takeIf { it.startsWith("${SourceTree.ROOT}.") }

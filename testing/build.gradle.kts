@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 plugins {
     id("superkassa.ios")
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose)
 }
 
 /**
@@ -38,10 +39,19 @@ kotlin {
             implementation(libs.ktor.client.cio)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.json)
+            // Правила устройства модулей экранов — набор проверок, который
+            // модуль наследует; кадр снимка проверяется тем же утверждением,
+            // что и сами проверки. Проверки идут на JUnit 5.
+            implementation(libs.kotlin.test.junit5)
             // Сцена отрисовки без окна — в теме, надписях и классе окна
             // дизайн-системы, как в окне кассы. Ею проверяют и компоненты
-            // дизайн-системы, и экраны приложения.
+            // дизайн-системы, и экраны приложения; рисует её настольный
+            // Compose этой машины, и набор проверок получает его отсюда.
             api(project(":designsystem"))
+            api(compose.desktop.currentOs)
+            // Общие службы окна и карта для сцен экранов — общим экранов,
+            // как в окне кассы.
+            api(project(":ui-common"))
         }
     }
 }

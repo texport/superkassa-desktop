@@ -14,6 +14,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.Windowed
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
 import kz.mybrain.superkassa.kassa.app

@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.KassaProbe
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.KassaWindow
 import kz.mybrain.superkassa.designsystem.theme.size.CardGrid
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.eachWindow
 import kz.mybrain.superkassa.kassa.CoreScene

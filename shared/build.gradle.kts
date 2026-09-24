@@ -31,6 +31,10 @@ kotlin {
             // Открыт наружу: тема, выбор оформления и компоненты стоят
             // в открытых объявлениях `shared` и в точках сборки.
             api(project(":designsystem"))
+            // Общее экранов — модулем `ui-common`: помощники моделей, общие
+            // службы окна, слова домена, контракты между областями. Открыт
+            // наружу: его типы стоят в открытых объявлениях каркаса.
+            api(project(":ui-common"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.ui)
@@ -53,7 +57,6 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
         }
         jvmTest.dependencies {
-            implementation(compose.desktop.currentOs)
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
             implementation(libs.ktor.client.mock)

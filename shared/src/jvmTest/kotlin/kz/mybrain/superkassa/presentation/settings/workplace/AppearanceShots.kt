@@ -6,13 +6,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaDesk
-import kz.mybrain.superkassa.Look
+import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.Typeface
 import kz.mybrain.superkassa.designsystem.theme.color.Accent
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.desk
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -29,7 +30,7 @@ class AppearanceShots {
     @Test
     fun `карточка оформления в двух темах`() {
         listOf(Appearance.Light, Appearance.Dark).forEach { appearance ->
-            val desk = Look.desk().apply {
+            val desk = KassaScene.desk().apply {
                 look.chooseAccent(Accent.Teal)
                 look.chooseTypeface(Typeface.Serif)
                 look.chooseTextScale(TextScale.Large)
@@ -52,7 +53,7 @@ class AppearanceShots {
     @Test
     fun `карточка оформления на крайних ступенях размера`() {
         listOf(TextScale.Dense, TextScale.Larger).forEach { scale ->
-            val desk = Look.desk().apply { look.chooseTextScale(scale) }
+            val desk = KassaScene.desk().apply { look.chooseTextScale(scale) }
             val frame = card(Appearance.Light, desk)
             val file = File("/tmp/kassa-appearance-${scale.code}.png")
             file.writeBytes(frame)

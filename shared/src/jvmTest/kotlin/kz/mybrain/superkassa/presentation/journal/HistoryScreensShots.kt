@@ -18,6 +18,7 @@ import kz.mybrain.superkassa.designsystem.adaptive.ContentKind
 import kz.mybrain.superkassa.designsystem.adaptive.contentWidth
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.cabinet.steps

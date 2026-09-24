@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels

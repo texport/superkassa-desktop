@@ -49,6 +49,10 @@ object SourceTree {
         .filter { it.isNotEmpty() && !it.startsWith("#") }
         .toSet()
 
+    /** То же, что [debt], но модуль без такого списка долга не должен ничего. */
+    fun debtOrEmpty(name: String): Set<String> =
+        if (javaClass.getResource("/$name") == null) emptySet() else debt(name)
+
     /**
      * Открытые объявления верхнего уровня без описания: `файл:строка объявление`.
      *

@@ -11,6 +11,7 @@ import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftRespo
 import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaExtremes
 import kz.mybrain.superkassa.KassaScene
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind

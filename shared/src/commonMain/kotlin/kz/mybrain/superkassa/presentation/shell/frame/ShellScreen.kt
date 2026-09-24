@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
 import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
+import kz.mybrain.superkassa.designsystem.state.BusyLine
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
@@ -25,11 +26,10 @@ import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.presentation.common.look.lookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
 import kz.mybrain.superkassa.presentation.shell.AppContainer
-import kz.mybrain.superkassa.presentation.shell.bar.BusyLine
 import kz.mybrain.superkassa.presentation.shell.bar.WorkBar
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
-import kz.mybrain.superkassa.presentation.shell.section.LocalSectionSwitch
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.presentation.shell.section.SectionDoor
@@ -144,7 +144,7 @@ private fun WorkShell(app: AppContainer, window: WindowParts, shell: ShellUiStat
         Row(modifier = Modifier.fillMaxSize().padding(it)) {
             val footer: @Composable ColumnScope.() -> Unit = { RailVersion(release) { updateShown = true } }
             SectionRail(sections, section, look.railCollapsed, window.look::toggleRail, footer, pick)
-            CompositionLocalProvider(LocalSectionSwitch provides { asked -> trail = trail.open(asked) }) {
+            CompositionLocalProvider(LocalToKassa provides { trail = trail.open(Section.Dashboard) }) {
                 SectionContent(app, window, section)
             }
         }

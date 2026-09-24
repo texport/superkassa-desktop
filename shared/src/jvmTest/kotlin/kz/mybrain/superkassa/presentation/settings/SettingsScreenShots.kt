@@ -8,6 +8,7 @@ import androidx.compose.ui.geometry.Offset
 import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.desk
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue

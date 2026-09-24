@@ -26,9 +26,8 @@ import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.register.adopt.AdoptRegisterDialog
 import kz.mybrain.superkassa.presentation.cabinet.register.adopt.adoptViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
 import kz.mybrain.superkassa.presentation.common.status.kkmStateColor
-import kz.mybrain.superkassa.presentation.shell.section.LocalSectionSwitch
-import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
@@ -82,7 +81,7 @@ fun RegisterOnThisMachine(cabinet: CabinetWindow, texts: CabinetTexts, view: Reg
  */
 @Composable
 private fun WorksHere(machine: MachineTexts, kkm: KkmResponse, name: String, state: String, onWork: () -> Unit) {
-    val switchTo = LocalSectionSwitch.current
+    val toKassa = LocalToKassa.current
     Explanation(machine.worksHere)
     FlowRow(
         modifier = Modifier.fillMaxWidth(),
@@ -95,7 +94,7 @@ private fun WorksHere(machine: MachineTexts, kkm: KkmResponse, name: String, sta
     }
     FilledTonalButton(onClick = {
         onWork()
-        switchTo(Section.Dashboard)
+        toKassa()
     }) { Text(machine.goToKkm) }
 }
 

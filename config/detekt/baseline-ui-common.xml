@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ArgumentListWrapping:JournalTable.kt$( journal.colTime, journal.colType, journal.colNumber, journal.colShift, journal.colAmount, journal.colFiscalSign, LocalStrings.current.dashboard.state )</ID>
+    <ID>LongMethod:MapView.kt$@Composable fun MapView( state: MapState, tiles: MapTiles, texts: MapTexts, modifier: Modifier = Modifier, // Что значит нажатие по карте, решает вызывающий: в окне выбора места // оно ставит метку, на карте касс — снимает выбор ярлычка. onTap: ((Double, Double) -&gt; Unit)? = null, // Ярлычки поверх карты. Стоят внутри её окна, а не рядом: место // каждого считается от размера этого окна, и знать его должен тот, // кто им владеет. overlay: @Composable (IntSize) -&gt; Unit = {} )</ID>
+    <ID>LongParameterList:JournalView.kt$( journal: HistoryJournalTexts, entries: List&lt;JournalEntry&gt;, shown: List&lt;JournalEntry&gt;, loading: Boolean, more: Boolean, onMore: () -&gt; Unit, onOpen: ((JournalEntry) -&gt; Unit)?, onPreview: ((JournalEntry) -&gt; Unit)?, onPrint: ((JournalEntry) -&gt; Unit)? )</ID>
+    <ID>LongParameterList:JournalView.kt$( journal: HistoryJournalTexts, entries: List&lt;JournalEntry&gt;, types: List&lt;JournalType&gt;, query: JournalQuery, loading: Boolean, more: Boolean, empty: JournalEmpty, unread: Boolean = false, onQuery: (JournalQuery) -&gt; Unit, onMore: () -&gt; Unit, onRetry: (() -&gt; Unit)? = null, onOpen: ((JournalEntry) -&gt; Unit)? = null, onPreview: ((JournalEntry) -&gt; Unit)? = null, onPrint: ((JournalEntry) -&gt; Unit)? = null, head: @Composable () -&gt; Unit = {} )</ID>
+    <ID>ReturnCount:JournalQuery.kt$private fun JournalQuery.accepts(entry: JournalEntry): Boolean</ID>
+    <ID>SpacingBetweenDeclarationsWithComments:HistoryColumnsTest.kt$HistoryColumnsTest.Companion$/** Признак по спецификации — uint32: не длиннее десяти цифр. */</ID>
+    <ID>TooManyFunctions:MapProjection.kt$MapProjection</ID>
+  </CurrentIssues>
+</SmellBaseline>

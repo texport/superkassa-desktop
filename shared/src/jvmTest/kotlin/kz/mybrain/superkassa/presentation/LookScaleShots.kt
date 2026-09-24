@@ -12,6 +12,7 @@ import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Accent
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState

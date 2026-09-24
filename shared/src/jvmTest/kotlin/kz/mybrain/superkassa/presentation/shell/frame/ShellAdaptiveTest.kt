@@ -20,6 +20,7 @@ import kz.mybrain.superkassa.designsystem.section.AppTopBar
 import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.inlineMain

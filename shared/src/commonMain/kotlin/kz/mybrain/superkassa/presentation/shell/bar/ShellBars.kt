@@ -1,17 +1,11 @@
 package kz.mybrain.superkassa.presentation.shell.bar
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
-import kz.mybrain.superkassa.designsystem.state.waitedLongEnough
+import kz.mybrain.superkassa.designsystem.state.BusyLine
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
 import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
 import kz.mybrain.superkassa.presentation.common.look.LookViewModel
@@ -72,23 +66,5 @@ internal fun KkmTopBar(
         subtitleKept = shell.cashier
     ) {
         KkmBarActions(shell, look, onSignOut, onRefresh)
-    }
-}
-
-/**
- * Полоска ожидания под шапкой.
- *
- * Один индикатор на всё окно, а не свой у каждой кнопки: обращение к кассе
- * идёт из любого раздела, и кассир должен видеть, что касса занята,
- * не гадая, какая кнопка сейчас работает. Место постоянное — полоска
- * не сдвигает содержимое, когда появляется.
- */
-@Composable
-internal fun BusyLine(busy: Boolean) {
-    Box(modifier = Modifier.fillMaxWidth().height(Sizes.busyLine)) {
-        // Пауза перед показом — та же, что у ожидания на месте содержимого:
-        // касса в процессе отвечает за десятки миллисекунд, и полоска
-        // мигала бы на каждом нажатии.
-        if (waitedLongEnough(busy)) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
     }
 }

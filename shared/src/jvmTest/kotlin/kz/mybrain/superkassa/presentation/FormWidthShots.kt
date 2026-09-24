@@ -22,6 +22,7 @@ import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.SettingsMeasure
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
@@ -128,12 +129,10 @@ class FormWidthShots {
         nodes.filter { it.at.x > rail && it.visible.width > 0f && (it.text.isNotBlank() || it.role != null) }
             .maxOf { it.visible.right }
 
-    /** Правый край раздела-формы: всё окно правее рельса. */
-    private fun workspaceRight(width: Int): Float = width.toFloat()
-
     private fun measure(name: String, width: Int, probe: RenderProbe): String? {
         val right = contentRight(probe.nodes())
-        val edge = workspaceRight(width)
+        // Правый край раздела-формы: всё окно правее рельса.
+        val edge = width.toFloat()
         val filled = (right - rail) / (edge - rail)
         println("ширина $name: содержимое до $right, рабочее место до $edge, занято ${(filled * PERCENT).toInt()}%")
         return "$name: занято ${(filled * PERCENT).toInt()}% ширины раздела".takeIf { filled < FILLED }

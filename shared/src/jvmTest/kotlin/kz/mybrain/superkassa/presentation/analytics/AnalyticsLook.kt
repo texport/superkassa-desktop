@@ -1,11 +1,10 @@
 package kz.mybrain.superkassa.presentation.analytics
 
 import kz.mybrain.superkassa.Look
+import kz.mybrain.superkassa.MapScene
 import kz.mybrain.superkassa.domain.analytics.model.AnalyticsKkm
 import kz.mybrain.superkassa.domain.analytics.model.KkmMapView
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
-import kz.mybrain.superkassa.domain.map.MemoryMapMemory
-import kz.mybrain.superkassa.domain.map.QuietMaps
 import kz.mybrain.superkassa.presentation.analytics.map.AnalyticsMapUiState
 import kz.mybrain.superkassa.presentation.analytics.map.FIT_HEIGHT
 import kz.mybrain.superkassa.presentation.analytics.map.FIT_WIDTH
@@ -14,7 +13,6 @@ import kz.mybrain.superkassa.presentation.analytics.map.MapWords
 import kz.mybrain.superkassa.presentation.analytics.map.fitting
 import kz.mybrain.superkassa.presentation.common.mapview.MapCases
 import kz.mybrain.superkassa.presentation.common.mapview.MapFold
-import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -34,8 +32,8 @@ internal object AnalyticsLook {
     val words = MapWords(texts, cabinet)
 
     /** Середина Алматы: с неё начинается карта приложения. */
-    const val LATITUDE = 43.238949
-    const val LONGITUDE = 76.889709
+    const val LATITUDE = MapScene.LATITUDE
+    const val LONGITUDE = MapScene.LONGITUDE
 
     /** Увеличение, на котором виден город. */
     const val CITY_ZOOM = 12
@@ -44,10 +42,10 @@ internal object AnalyticsLook {
     const val APART = 0.01
 
     /** Сценарии карты без сети и со своей памятью: чужие настройки не трогать. */
-    fun mapCases(): MapCases = MapPorts(QuietMaps(), MemoryMapMemory()).cases()
+    fun mapCases(): MapCases = MapScene.cases()
 
     /** Плитки, которых не будет: ни сети, ни чужого кэша. */
-    fun tiles(): MapTiles = mapCases().tiles()
+    fun tiles(): MapTiles = MapScene.tiles()
 
     /** Состояние карты касс, с которого начинается раздел. */
     fun model(): AnalyticsMapUiState = AnalyticsMapUiState()
