@@ -36,7 +36,7 @@ import kz.mybrain.superkassa.strings.api.update.UpdateTexts
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun RailVersion(updates: UpdatesUiState, onOpenUpdate: () -> Unit) {
+fun RailVersion(updates: UpdatesUiState, onOpenUpdate: () -> Unit) {
     val tip = versionTip(updates, textsOf(LocalLanguage.current).update)
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),

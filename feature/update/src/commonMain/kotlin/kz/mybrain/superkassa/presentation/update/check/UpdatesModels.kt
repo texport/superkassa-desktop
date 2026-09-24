@@ -24,7 +24,7 @@ fun updatesViewModel(services: WindowServices, ports: UpdatePorts): UpdatesViewM
  * @param installed установленная версия — задаётся проверками.
  * @param now часы — задаются проверками.
  */
-fun updatesModel(
+internal fun updatesModel(
     services: WindowServices,
     ports: UpdatePorts,
     installed: AppVersion = AppVersion.current,

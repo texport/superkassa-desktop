@@ -35,6 +35,10 @@ kotlin {
             // службы окна, слова домена, контракты между областями. Открыт
             // наружу: его типы стоят в открытых объявлениях каркаса.
             api(project(":ui-common"))
+            // Области — по модулю на область; каркас собирает их все и
+            // открывает наружу: точки сборки и зонтичная библиотека iOS
+            // видят разделы через каркас.
+            api(project(":feature:update"))
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.ui)

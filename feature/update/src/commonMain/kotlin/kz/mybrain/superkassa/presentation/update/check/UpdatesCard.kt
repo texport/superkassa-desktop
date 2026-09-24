@@ -32,7 +32,7 @@ import kz.mybrain.superkassa.strings.api.update.UpdateTexts
  * на месте, пока он читает.
  */
 @Composable
-internal fun UpdatesCard(updates: UpdatesUiState, actions: UpdatesActions) {
+fun UpdatesCard(updates: UpdatesUiState, actions: UpdatesActions) {
     val texts = textsOf(LocalLanguage.current).update
     SectionCard(title = texts.title, info = texts.hint) {
         SwitchRow(texts.automatic, updates.automatic, actions::switchAutomatic)

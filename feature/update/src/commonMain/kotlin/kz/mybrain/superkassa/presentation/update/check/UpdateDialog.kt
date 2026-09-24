@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.strings.api.update.UpdateTexts
  * не забывает: угол рельса остаётся подсвеченным до установки.
  */
 @Composable
-internal fun UpdateDialog(
+fun UpdateDialog(
     update: AvailableUpdate,
     texts: UpdateTexts,
     onInstall: (AvailableUpdate) -> Unit,
