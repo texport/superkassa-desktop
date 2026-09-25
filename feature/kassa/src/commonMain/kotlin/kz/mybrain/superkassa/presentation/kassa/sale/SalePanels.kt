@@ -16,7 +16,8 @@ enum class SalePanel(val title: (SettingsScreenTexts) -> String) {
     PositionEntry({ it.panelPositionEntry }),
     ReceiptChanges({ it.panelReceiptChanges }),
     CustomerData({ it.panelCustomerData }),
-    Money({ it.panelMoney })
+    Money({ it.panelMoney }),
+    Till({ it.panelTill })
 }
 
 /**

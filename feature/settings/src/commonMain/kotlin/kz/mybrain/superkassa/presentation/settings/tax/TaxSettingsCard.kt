@@ -5,6 +5,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
+import kz.mybrain.superkassa.designsystem.list.ListRows
 import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
 import kz.mybrain.superkassa.designsystem.section.SettingGroup
@@ -34,14 +35,22 @@ fun TaxSettingsCard(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
         // Переключатель и есть действие: уходит в кассу сразу. Касса меняет
         // его только в режиме программирования; вне режима он погашен,
         // а не отвечает отказом на каждое нажатие.
-        SwitchRow(
-            title = texts.settingsScreen.autoCashout,
-            checked = tax.kkm.autoCashout,
-            onSwitch = actions::switchAutoCashout,
-            enabled = tax.switchable,
-            hint = texts.settingsScreen.autoCashoutHint
-        )
-        SwitchRow(core.autoClose, tax.kkm.autoCloseShift, actions::switchAutoClose, tax.switchable, core.autoCloseHint)
+        ListRows {
+            SwitchRow(
+                title = texts.settingsScreen.autoCashout,
+                checked = tax.kkm.autoCashout,
+                onSwitch = actions::switchAutoCashout,
+                enabled = tax.switchable,
+                hint = texts.settingsScreen.autoCashoutHint
+            )
+            SwitchRow(
+                core.autoClose,
+                tax.kkm.autoCloseShift,
+                actions::switchAutoClose,
+                tax.switchable,
+                core.autoCloseHint
+            )
+        }
     }
 }
 

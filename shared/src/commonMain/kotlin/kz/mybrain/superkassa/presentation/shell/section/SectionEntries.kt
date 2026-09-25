@@ -14,13 +14,16 @@ import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
  * Разделы собирает каркас: им нужны службы окна, порты областей
  * и соседи, которых сами области не видят, — печать, кабинет, карта.
  */
-internal fun EntryProviderScope<NavKey>.sectionEntries(app: AppContainer, window: WindowParts) {
+/**
+ * @param step переход шага вглубь и обратно — метаданные записей шагов.
+ */
+internal fun EntryProviderScope<NavKey>.sectionEntries(app: AppContainer, window: WindowParts, step: Map<String, Any>) {
     Section.entries.forEach { section ->
         addEntryProvider(section.key, section.key.toString(), { emptyMap() }) { SectionContent(app, window, section) }
     }
     // Подробности поверх списка — на узком окне; на широком они стоят
     // рядом со списком и шагом истории не бывают.
-    entry<SettingsSectionKey> { SectionContent(app, window, Section.Settings, it) }
-    entry<ReturnBasisKey> { SectionContent(app, window, Section.Returns, it) }
-    entry<PlaceCardKey> { SectionContent(app, window, Section.Cabinet, it) }
+    entry<SettingsSectionKey>(metadata = step) { SectionContent(app, window, Section.Settings, it) }
+    entry<ReturnBasisKey>(metadata = step) { SectionContent(app, window, Section.Returns, it) }
+    entry<PlaceCardKey>(metadata = step) { SectionContent(app, window, Section.Cabinet, it) }
 }

@@ -2,12 +2,14 @@ package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.designsystem.section.Collapsible
@@ -63,16 +65,26 @@ internal fun PaymentCard(state: SaleUiState, actions: PaymentActions, expanded: 
  * вовсе — к безналичному расчёту они отношения не имеют. Свёрнутая оплата
  * прячет их вместе с собой, а итог остаётся: сумму к оплате кассир
  * должен видеть всегда.
+ *
+ * @param trailing в конце строки подписи — например, кнопка «свернуть /
+ *   развернуть кассу»: сумма и поле под подписью остаются во всю ширину.
  */
 @Composable
-internal fun ReceiptTotals(form: SaleForm, total: Long, expanded: Boolean, onTaken: (String) -> Unit) {
+internal fun ReceiptTotals(
+    form: SaleForm,
+    total: Long,
+    expanded: Boolean,
+    onTaken: (String) -> Unit,
+    trailing: @Composable () -> Unit = {}
+) {
     val texts = LocalStrings.current
     val taken = amount(form.taken).tiyn
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
-        SumLine(textsOf(LocalLanguage.current).kassa.checkout.toPay, total, MaterialTheme.colorScheme.onSurface)
+        val toPay = textsOf(LocalLanguage.current).kassa.checkout.toPay
+        SumLine(toPay, total, MaterialTheme.colorScheme.onSurface, trailing)
         // Принятые деньги и сдача — часть денежного итога, а не оплаты:
         // кассир вводит их, глядя на сумму к оплате, и обе цифры должны
         // стоять рядом.
@@ -86,14 +98,18 @@ internal fun ReceiptTotals(form: SaleForm, total: Long, expanded: Boolean, onTak
     }
 }
 
-/** Подпись и крупная сумма под ней, прижатая вправо. */
+/** Подпись и крупная сумма под ней, прижатая вправо; [trailing] — в конце строки подписи. */
 @Composable
-private fun SumLine(title: String, sum: Long, color: Color) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
+private fun SumLine(title: String, sum: Long, color: Color, trailing: @Composable () -> Unit = {}) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
+        )
+        trailing()
+    }
     MoneyText(Money.formatTiyn(sum), Modifier.fillMaxWidth(), MoneyStyle.hero, color)
 }
 

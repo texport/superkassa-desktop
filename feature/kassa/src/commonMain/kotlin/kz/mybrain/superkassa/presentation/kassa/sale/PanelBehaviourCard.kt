@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.presentation.kassa.sale
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import kz.mybrain.superkassa.designsystem.list.ListRows
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
 import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
@@ -35,8 +36,10 @@ fun PanelBehaviourGroup(expanded: (SalePanel) -> Boolean, onToggle: (SalePanel) 
         title = texts.settingsScreen.panelBehaviour,
         info = texts.settingsScreen.panelBehaviourHint
     ) {
-        SalePanel.entries.forEach { panel ->
-            SwitchRow(panel.title(texts.settingsScreen), expanded(panel), { onToggle(panel) })
+        ListRows {
+            SalePanel.entries.forEach { panel ->
+                SwitchRow(panel.title(texts.settingsScreen), expanded(panel), { onToggle(panel) })
+            }
         }
     }
 }

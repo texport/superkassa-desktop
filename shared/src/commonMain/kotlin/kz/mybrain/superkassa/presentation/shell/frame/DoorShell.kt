@@ -6,9 +6,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.NavDisplay
 import kz.mybrain.superkassa.designsystem.state.BusyLine
 import kz.mybrain.superkassa.navigation.NavKeys
 import kz.mybrain.superkassa.navigation.section.KkmsKey
@@ -58,12 +56,9 @@ internal fun DoorShell(app: AppContainer, window: WindowParts, messages: Snackba
             snackbarHost = { MessageHost(messages) }
         ) { padding ->
             ShellMessages(app, messages)
-            NavDisplay(
-                backStack = history,
-                modifier = Modifier.padding(padding).backOnEscape(history.size > 1, back),
-                onBack = back,
-                entryProvider = entryProvider { doorEntries(app, window, login, toKkms) }
-            )
+            WindowDisplay(history, back, Modifier.padding(padding)) { step ->
+                doorEntries(app, window, login, toKkms, step)
+            }
         }
     }
 }

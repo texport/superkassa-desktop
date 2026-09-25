@@ -27,19 +27,25 @@ import kz.mybrain.superkassa.presentation.users.signin.LoginViewModel
  *
  * @param toKkms вернуться к кассам и перечитать их — за соседним разделом
  *   кассу могли завести; этим же «перейти к кассе» уводит из кабинета.
+ * @param step переход шага вглубь и обратно — метаданные записей шагов.
  */
 internal fun EntryProviderScope<NavKey>.doorEntries(
     app: AppContainer,
     window: WindowParts,
     login: LoginViewModel,
-    toKkms: () -> Unit
+    toKkms: () -> Unit,
+    step: Map<String, Any>
 ) {
     entry<KkmsKey> { SectionPlace(app) { Kkms(app, login) } }
     entry<RegisterKey> { SectionPlace(app) { Connect(app, window, toKkms) } }
     entry<CabinetKey> { SectionPlace(app) { window.cabinet?.let { CabinetDoor(it, toKkms) } } }
-    entry<PlaceCardKey> { SectionPlace(app) { window.cabinet?.let { CabinetDoor(it, toKkms, stepped = true) } } }
+    entry<PlaceCardKey>(metadata = step) {
+        SectionPlace(app) { window.cabinet?.let { CabinetDoor(it, toKkms, stepped = true) } }
+    }
     entry<SettingsKey> { SectionPlace(app) { WorkplaceSettingsScreen(settingsOf(app, window)) } }
-    entry<SettingsSectionKey> { SectionPlace(app) { WorkplaceSettingsScreen(settingsOf(app, window), it) } }
+    entry<SettingsSectionKey>(metadata = step) {
+        SectionPlace(app) { WorkplaceSettingsScreen(settingsOf(app, window), it) }
+    }
 }
 
 /**

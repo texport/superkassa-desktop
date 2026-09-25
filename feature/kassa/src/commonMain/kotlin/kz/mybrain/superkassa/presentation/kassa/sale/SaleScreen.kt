@@ -14,7 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
+import kz.mybrain.superkassa.designsystem.adaptive.SupportingPanes
 import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
@@ -47,8 +47,13 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * главный и забирает всё место, кроме кассы, — и касса, где кассир вводит
  * позицию, выбирает оплату и видит итог. Касса не шире своего предела
  * ([Panes.receiptAndTill]): в окне по умолчанию она прежде стояла постоянной
- * ширины и оставляла названию товара в чеке одну букву. Там, где рядом
- * им тесно, касса встаёт под чеком.
+ * ширины и оставляла названию товара в чеке одну букву.
+ *
+ * Касса сворачивается до итога с «Пробить чек» ([SupportingPanes]): на
+ * широком окне она уходит вбок, и чек забирает всю ширину, а итог встаёт
+ * под ним; где рядом тесно — телефон, планшет стоймя, — касса лежит снизу
+ * нижним листом, свёрнутым до итога. Сумма к оплате и главная кнопка
+ * видны всегда; развёрнута ли касса, помнит рабочее место.
  *
  * Одна операция на два направления намеренно: состав чека у продажи
  * и покупки одинаковый, различается только направление денег.
@@ -73,11 +78,14 @@ fun SaleContent(state: SaleUiState, actions: SaleActions = SaleActions(), output
         LocalVatRates provides state.positionVat(language, texts.enums),
         LocalUnits provides measureUnits(language)
     ) {
-        TwoPane(
+        SupportingPanes(
             split = Panes.receiptAndTill,
-            modifier = Modifier.fillMaxSize(),
-            first = { ReceiptColumn(state, actions, output) },
-            second = { TillColumn(state, actions) }
+            expanded = state.expanded(SalePanel.Till),
+            onToggle = { actions.toggle(SalePanel.Till) },
+            main = { ReceiptColumn(state, actions, output) },
+            supporting = { TillBody(state, actions) },
+            summary = { toggle -> Checkout(state, actions, toggle) },
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -124,41 +132,42 @@ private fun StampDialog(basket: Basket, at: Int, actions: BasketActions, onClose
 }
 
 /**
- * Правая колонка — рабочее место кассира.
- *
- * Ввод, реквизиты и оплата прокручиваются, итог с единственной кнопкой
- * прибиты к низу: сумма к оплате и «Пробить чек» обязаны быть на экране
- * всегда, сколько бы позиций и оплат ни набралось. Прибито только то,
- * без чего чек не пробить: пять строк оплаты внизу прежде отнимали
- * у ввода всю высоту, и в окне 960×640 поля штрихкода не было вовсе.
+ * Касса — рабочее место кассира: ввод, реквизиты и оплата прокручиваются.
  *
  * Разделы сворачиваются: высота колонки одна, и кассир отдаёт её тому,
  * чем занят сейчас.
  */
 @Composable
-private fun TillColumn(state: SaleUiState, actions: SaleActions) {
+private fun TillBody(state: SaleUiState, actions: SaleActions) {
     val toggle = actions.toggle
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
-    ) {
-        ScrollableColumn(modifier = Modifier.weight(1f), gutter = KassaLayout.tillGutter) {
-            // Штрихкод стоит первым: сканер вводит код в поле, которое
-            // кассир видит, а реквизиты отрасли прежде уводили его под
-            // сгиб. Незаполненный реквизит назовёт строка под кнопкой.
-            PositionEntryCard(state, actions.entry, state.expanded(SalePanel.PositionEntry)) {
-                toggle(SalePanel.PositionEntry)
-            }
-            DomainCard(state.domainKind, state.form.domain, actions.form::domain)
-            PaymentCard(state, actions.payments, state.expanded(SalePanel.Money)) { toggle(SalePanel.Money) }
-            TillExtras(state, actions)
+    ScrollableColumn(modifier = Modifier.fillMaxSize(), gutter = KassaLayout.tillGutter) {
+        // Штрихкод стоит первым: сканер вводит код в поле, которое
+        // кассир видит, а реквизиты отрасли прежде уводили его под
+        // сгиб. Незаполненный реквизит назовёт строка под кнопкой.
+        PositionEntryCard(state, actions.entry, state.expanded(SalePanel.PositionEntry)) {
+            toggle(SalePanel.PositionEntry)
         }
-        // Прибитое стоит в тех же полях, что и прокручиваемое над ним.
-        Box(modifier = Modifier.padding(end = KassaLayout.tillGutter)) {
-            CheckoutPanel {
-                ReceiptTotals(state.form, state.total, state.expanded(SalePanel.Money), actions.form::taken)
-                IssueRow(state, actions.issue)
-            }
+        DomainCard(state.domainKind, state.form.domain, actions.form::domain)
+        PaymentCard(state, actions.payments, state.expanded(SalePanel.Money)) { toggle(SalePanel.Money) }
+        TillExtras(state, actions)
+    }
+}
+
+/**
+ * Итог с единственной кнопкой — то, без чего чек не пробить: сумма
+ * к оплате и «Пробить чек» на экране всегда, сколько бы позиций и оплат
+ * ни набралось и свёрнута ли касса. Пять строк оплаты здесь прежде
+ * отнимали у ввода всю высоту, и в окне 960×640 поля штрихкода не было.
+ *
+ * @param toggle кнопка «свернуть / развернуть кассу» — в строке итога.
+ */
+@Composable
+private fun Checkout(state: SaleUiState, actions: SaleActions, toggle: @Composable () -> Unit) {
+    // Итог стоит в тех же полях, что и прокручиваемое над ним.
+    Box(modifier = Modifier.padding(end = KassaLayout.tillGutter)) {
+        CheckoutPanel {
+            ReceiptTotals(state.form, state.total, state.expanded(SalePanel.Money), actions.form::taken, toggle)
+            IssueRow(state, actions.issue)
         }
     }
 }

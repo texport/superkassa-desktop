@@ -121,6 +121,7 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     panelReceiptChanges = "Discounts and markups",
     panelCustomerData = "Customer details",
     panelMoney = "Payment and total",
+    panelTill = "Till column",
     printLayoutHint = "58 and 80 mm tape are for receipt printers; the page is for plain paper " +
         "and for sending to the customer.",
     layoutTape58 = "58 mm tape",

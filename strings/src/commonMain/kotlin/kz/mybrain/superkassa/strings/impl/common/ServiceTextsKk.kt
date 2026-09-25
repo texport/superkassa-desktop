@@ -122,6 +122,7 @@ internal val settingsScreenTextsKk = SettingsScreenTexts(
     panelReceiptChanges = "Жеңілдіктер мен үстемелер",
     panelCustomerData = "Сатып алушының деректері",
     panelMoney = "Төлем және қорытынды",
+    panelTill = "Касса бағаны",
     printLayoutHint = "58 және 80 мм таспа — чек принтерлеріне, бет — кәдімгі параққа басып шығаруға " +
         "және сатып алушыға жіберуге.",
     layoutTape58 = "58 мм таспа",

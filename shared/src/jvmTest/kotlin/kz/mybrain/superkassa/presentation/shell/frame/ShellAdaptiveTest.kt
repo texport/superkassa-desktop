@@ -40,8 +40,9 @@ import kotlin.test.assertTrue
  * Шапка отдаёт названию кассы не меньше [ContentWidths.topBarTitle]:
  * действия, которым не хватает места, уходят в меню «Ещё». Меряется
  * ширина действий, а место названию — всё, что осталось от окна за
- * вычетом полей шапки. Рельс разделов стоит при любой ширине и в низком
- * окне прокручивается.
+ * вычетом полей шапки. Рельс разделов стоит с расширенного окна и в низком
+ * окне прокручивается; на планшете стоймя его нет — разделы у полосы снизу
+ * или, у администратора с десятью разделами, за кнопкой меню в шапке.
  *
  * Кадры остаются в `/tmp/shell-<ширина>x<высота>-<язык>.png` — смотреть
  * глазами, как оболочка стоит на каждом размере.
@@ -94,7 +95,8 @@ class ShellAdaptiveTest {
             "окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}"
         )
         assertTrue(title >= ContentWidths.topBarTitle.value, "в окне $width×$height названию кассы осталось $title")
-        assertTrue(measured.rail >= Sizes.rail.value, "в окне $width×$height рельса нет")
+        val railed = if (width >= EXPANDED) measured.rail >= Sizes.rail.value else measured.rail == 0
+        assertTrue(railed, "в окне $width×$height рельс ${measured.rail}: он стоит только с расширенного окна")
     }
 
     @Test
@@ -111,6 +113,9 @@ class ShellAdaptiveTest {
     private companion object {
         val SIZES = listOf(960 to 640, 1180 to 820, 1920 to 1080, 2560 to 1080, 800 to 1280, 1280 to 800)
         const val LOW = 640
+
+        /** С какой ширины окно расширенное по Material 3 — и у него рельс. */
+        const val EXPANDED = 840
         const val SETTLE = 20
         const val WHEEL = 6f
 

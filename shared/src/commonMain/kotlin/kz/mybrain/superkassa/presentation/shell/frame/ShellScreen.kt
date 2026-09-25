@@ -10,9 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.NavDisplay
 import kz.mybrain.superkassa.designsystem.keyboard.escapePressedBy
 import kz.mybrain.superkassa.navigation.LocalNavigator
 import kz.mybrain.superkassa.navigation.NavKeys
@@ -161,12 +159,7 @@ private fun SectionDisplay(
     back: () -> Unit
 ) {
     CompositionLocalProvider(LocalToKassa provides { history.openSection(Section.Dashboard) }) {
-        NavDisplay(
-            backStack = history,
-            modifier = modifier.backOnEscape(history.size > 1, back),
-            onBack = back,
-            entryProvider = entryProvider { sectionEntries(app, window) }
-        )
+        WindowDisplay(history, back, modifier) { step -> sectionEntries(app, window, step) }
     }
 }
 

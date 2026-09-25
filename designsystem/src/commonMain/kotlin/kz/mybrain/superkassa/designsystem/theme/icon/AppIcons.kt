@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.designsystem.theme.icon
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
@@ -108,8 +109,11 @@ object AppIcons {
     /** Меню действий, которым не хватило места в шапке. */
     val moreActions: ImageVector = Icons.Filled.MoreVert
 
-    /** Свернуть и развернуть рельс разделов. */
+    /** Открыть разделы окна: на телефоне — из шапки, шире — из шапки рельса. */
     val menu: ImageVector = Icons.Filled.Menu
+
+    /** Закрыть разделы, открытые поверх окна. */
+    val menuOpen: ImageVector = Icons.AutoMirrored.Filled.MenuOpen
 
     /** Просмотр печатной формы на экране. */
     val preview: ImageVector = Icons.Outlined.Visibility
@@ -148,6 +152,18 @@ object AppIcons {
 
     /** Личный кабинет ОФД: дела владельца, а не кассира. */
     val cabinet: ImageVector = Icons.Filled.Business
+
+    /** Убрать вспомогательную панель сбоку: она уходит вправо до сводки. */
+    val sidePanelHide: ImageVector = Icons.Filled.ChevronRight
+
+    /** Вернуть вспомогательную панель сбоку. */
+    val sidePanelShow: ImageVector = Icons.Filled.ChevronLeft
+
+    /** Свернуть нижний лист до сводки. */
+    val bottomSheetHide: ImageVector = Icons.Filled.ExpandMore
+
+    /** Развернуть нижний лист из сводки. */
+    val bottomSheetShow: ImageVector = Icons.Filled.ExpandLess
 
     /** Перелистывание дня в журнале. */
     val earlierDay: ImageVector = Icons.Filled.ChevronLeft

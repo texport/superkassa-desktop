@@ -131,6 +131,8 @@ data class SettingsScreenTexts(
     val panelReceiptChanges: String,
     val panelCustomerData: String,
     val panelMoney: String,
+    /** Вся кассовая колонка продажи: сбоку или нижним листом, до итога. */
+    val panelTill: String,
     val printLayoutHint: String,
     val layoutTape58: String,
     val layoutTape80: String,

@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.designsystem.list
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -11,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
 import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 
 /**
  * Список с видимой полосой прокрутки.
@@ -21,9 +19,14 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * читается как весь список целиком. Для журнала документов это значит,
  * что часть смены кассир просто не увидит.
  *
- * Заведено один раз на всё приложение вместе с [ScrollableColumn]: полоса,
- * её ширина и отступ под неё одинаковы везде. Клавиатура двигает список
- * так же, как колесо, — см. [scrolledByKeys].
+ * Заведено один раз на всё приложение вместе с [ScrollableColumn]: полоса
+ * и её ширина одинаковы везде. Клавиатура двигает список так же, как
+ * колесо, — см. [scrolledByKeys].
+ *
+ * Строки идут во всю ширину, а полоса ложится поверх их края: у строки
+ * списка своё поле до содержимого шире полосы. Поле под полосу справа
+ * обрезало фон выбранной строки, и справа от неё стояла пустая полоска —
+ * а на Android и iOS своей полосы нет вовсе, и поле пустовало всегда.
  */
 @Composable
 fun ScrollableList(
@@ -41,8 +44,7 @@ fun ScrollableList(
                 state = state,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .scrolledByKeys(state) { state.layoutInfo.viewportSize.height }
-                    .padding(end = Spacing.scrollbarGutter),
+                    .scrolledByKeys(state) { state.layoutInfo.viewportSize.height },
                 content = content
             )
             ListScrollbar(state, Modifier)

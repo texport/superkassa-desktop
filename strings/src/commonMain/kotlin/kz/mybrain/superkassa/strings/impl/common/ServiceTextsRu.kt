@@ -122,6 +122,7 @@ internal val settingsScreenTextsRu = SettingsScreenTexts(
     panelReceiptChanges = "Скидки и наценки",
     panelCustomerData = "Данные покупателя",
     panelMoney = "Оплата и итог",
+    panelTill = "Кассовая колонка",
     printLayoutHint = "Лента 58 и 80 мм — для чековых принтеров, страница — для печати на обычном листе " +
         "и для отправки покупателю.",
     layoutTape58 = "Лента 58 мм",

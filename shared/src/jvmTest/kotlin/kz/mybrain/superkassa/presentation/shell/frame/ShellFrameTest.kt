@@ -41,12 +41,12 @@ class ShellFrameTest {
         val desktop = WindowClass(WidthClass.Expanded, HeightClass.Expanded)
         val monitor = WindowClass(WidthClass.ExtraLarge, HeightClass.Expanded)
 
-        assertEquals(ShellNavigation.Bar, ShellNavigation.of(phone, cashier.size, expanded = true))
-        assertEquals(ShellNavigation.Modal, ShellNavigation.of(phone, Section.entries.size, expanded = true))
-        assertEquals(ShellNavigation.LowBar, ShellNavigation.of(landscape, cashier.size, expanded = true))
-        assertEquals(ShellNavigation.Rail, ShellNavigation.of(desktop, Section.entries.size, expanded = true))
-        assertEquals(ShellNavigation.WideRail, ShellNavigation.of(monitor, Section.entries.size, expanded = true))
-        assertEquals(ShellNavigation.Rail, ShellNavigation.of(monitor, Section.entries.size, expanded = false))
+        assertEquals(ShellNavigation.Bar, ShellNavigation.of(phone, cashier.size))
+        assertEquals(ShellNavigation.Modal, ShellNavigation.of(phone, Section.entries.size))
+        assertEquals(ShellNavigation.LowBar, ShellNavigation.of(landscape, cashier.size))
+        assertEquals(ShellNavigation.Rail, ShellNavigation.of(desktop, Section.entries.size))
+        // Большое окно — тот же рельс: развёрнутые разделы открываются поверх окна.
+        assertEquals(ShellNavigation.Rail, ShellNavigation.of(monitor, Section.entries.size))
     }
 
     @Test
@@ -65,11 +65,31 @@ class ShellFrameTest {
         RenderProbe(PHONE_W, PHONE_H) { Frame(Section.entries) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             assertTrue(probe.nodes().any { it.label == texts.sections.menu }, "нет кнопки меню в шапке")
+            val menu = probe.centerOf(texts.sections.menu)
             probe.tap(texts.sections.menu)
             repeat(SETTLE) { probe.frame() }
             File("/tmp/frame-phone-admin.png").writeBytes(probe.frame())
+            val collapse = textsOf(Language.Ru).common.general.collapse
+            assertEquals(menu, probe.centerOf(collapse), "кнопка закрытия не на месте кнопки меню в шапке")
             val settings = texts.sections.settings
             assertTrue(probe.nodes().any { it.text == settings }, "в модальном рельсе нет настроек")
+        }
+    }
+
+    @Test
+    fun `на большом окне кнопка меню рельса открывает разделы поверх окна`() {
+        val general = textsOf(Language.Ru).common.general
+        RenderProbe(width = WIDE_W, height = WIDE_H) { Frame(Section.entries) }.use { probe ->
+            repeat(SETTLE) { probe.frame() }
+            val title = probe.nodes().first { it.text == "Касса у входа" }.at.x
+            val menu = probe.centerOf(general.expand)
+            probe.tap(general.expand)
+            repeat(SETTLE) { probe.frame() }
+            File("/tmp/frame-wide-menu.png").writeBytes(probe.frame())
+            assertTrue(probe.nodes().any { it.label == general.collapse }, "разделы поверх окна не открылись")
+            assertEquals(menu, probe.centerOf(general.collapse), "кнопка закрытия не на месте кнопки меню")
+            val moved = probe.nodes().first { it.text == "Касса у входа" }.at.x
+            assertEquals(title, moved, "развёрнутые разделы отодвинули окно")
         }
     }
 
@@ -84,15 +104,20 @@ class ShellFrameTest {
         }
     }
 
-    private fun RenderProbe.tap(label: String) {
+    private fun RenderProbe.tap(label: String) = click(centerOf(label))
+
+    /** Середина кнопки с подписью [label] для чтения с экрана. */
+    private fun RenderProbe.centerOf(label: String): Offset {
         val node = nodes().first { it.label == label }
-        click(Offset(node.at.x + node.width / 2f, node.at.y + node.height / 2f))
+        return Offset(node.at.x + node.width / 2f, node.at.y + node.height / 2f)
     }
 
     private companion object {
         const val PHONE_W = 411
         const val PHONE_H = 891
         const val DESK_W = 1000
+        const val WIDE_W = 1920
+        const val WIDE_H = 1080
         const val LOW_H = 640
         const val RAIL_X = 48f
         const val WHEEL = 6f
