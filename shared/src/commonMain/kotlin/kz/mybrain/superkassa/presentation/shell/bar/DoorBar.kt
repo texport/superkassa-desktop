@@ -2,59 +2,43 @@ package kz.mybrain.superkassa.presentation.shell.bar
 
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
-import kz.mybrain.superkassa.designsystem.section.BarLead
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
 import kz.mybrain.superkassa.presentation.common.navigation.LocalScreenBar
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
-import kz.mybrain.superkassa.presentation.users.signin.Door
+import kz.mybrain.superkassa.presentation.shell.section.DoorSection
 import kz.mybrain.superkassa.strings.api.common.CommonTexts
 
 /**
- * Шапка окна до входа — одна на вход и на всё, что открыто его дверями.
+ * Шапка окна до входа — та же, что у рабочего окна.
  *
- * Прежде у каждой двери была своя шапка: у настроек — серая полоса внутри
- * полей окна, у кабинета — шапка кабинета, у заведения кассы — никакой,
- * со стрелкой внутри мастера, а у самого входа — крупный заголовок
- * в колонке. Шапка прыгала от двери к двери. Теперь она стоит в слоте
- * `Scaffold` каркаса, как у рабочего окна (Material 3: один `TopAppBar`
- * на окно): на входе — «Вход в кассу» с темой и языком, за дверью —
- * название двери и стрелка назад на вход; у кабинета — его шапка, та же,
- * что у раздела кабинета после входа.
+ * Стоит в слоте `Scaffold` рамки окна (Material 3: один `TopAppBar`
+ * на окно) и называет открытый раздел: у касс — «Вход в кассу», у прочих —
+ * их название; у кабинета — шапка кабинета, та же, что после входа.
+ * Разделы — верхний уровень навигации, и стрелки назад у них нет; она
+ * появляется у шага внутри раздела, который сам себя называет. Тема
+ * и язык — в каждом разделе: до входа их больше негде переключить.
  *
- * За дверью шаг называет себя сам — например, раздел настроек поверх их
- * списка, — и стрелка снимает сперва его.
- *
- * @param close шаг назад: снять шаг за дверью или вернуться на вход.
+ * @param onMenu открыть разделы окна — на телефоне, где их не видно.
+ * @param onBack снять шаг внутри раздела; `null` — открыт сам раздел.
  */
 @Composable
-internal fun DoorBar(window: WindowParts, door: Door, close: () -> Unit) {
+internal fun DoorBar(window: WindowParts, door: DoorSection, onMenu: (() -> Unit)?, onBack: (() -> Unit)?) {
     val texts = LocalStrings.current
     val cabinet = window.cabinet
-    if (door == Door.Cabinet && cabinet != null) {
-        CabinetBar(cabinet.cabinet, cabinet.look, onExit = close)
+    if (door == DoorSection.Cabinet && cabinet != null) {
+        CabinetBar(cabinet.cabinet, cabinet.look, onMenu = onMenu.takeIf { onBack == null }, onStep = onBack)
         return
     }
-    val atDoor = door == Door.Kkms
     val step = LocalScreenBar.current
-    AppTopBar(
-        title = step.title ?: door.title(texts),
-        subtitle = step.subtitle,
-        lead = BarLead.Back(close, texts.settingsScreen.back).takeUnless { atDoor }
-    ) {
-        if (atDoor) {
-            ThemeSwitch(window.look)
-            LanguagePicker(window.look)
-        }
+    AppTopBar(title = step.title ?: door.barTitle(texts), subtitle = step.subtitle, lead = barLead(onMenu, onBack)) {
+        ThemeSwitch(window.look)
+        LanguagePicker(window.look)
     }
 }
 
-/** Как называется дверь в шапке: так же, как раздел рабочего окна за ней. */
-private fun Door.title(texts: CommonTexts): String = when (this) {
-    Door.Register -> texts.sections.register
-    Door.Cabinet -> texts.sections.cabinet
-    Door.Settings -> texts.sections.settings
-    Door.Kkms -> texts.login.title
-}
+/** Как раздел назван в шапке: кассы — входом, прочие — как в навигации. */
+private fun DoorSection.barTitle(texts: CommonTexts): String =
+    if (this == DoorSection.Kkms) texts.login.title else title(texts.sections)

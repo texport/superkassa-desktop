@@ -9,7 +9,6 @@ import kz.mybrain.superkassa.designsystem.section.AppTopBar
 import kz.mybrain.superkassa.designsystem.section.BarLead
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.cabinet.component.cabinetHead
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerLine
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
@@ -59,13 +58,13 @@ fun CabinetBar(
 
 /**
  * Начало шапки кабинета: стрелка назад, если есть куда, кнопка меню
- * на телефоне, иначе значок кабинета.
+ * на телефоне, иначе ничего — как у всех разделов окна.
  */
 @Composable
-private fun barLead(back: (() -> Unit)?, backLabel: String, onMenu: (() -> Unit)?): BarLead = when {
+private fun barLead(back: (() -> Unit)?, backLabel: String, onMenu: (() -> Unit)?): BarLead? = when {
     back != null -> BarLead.Back(back, backLabel)
     onMenu != null -> BarLead.Menu(onMenu, LocalStrings.current.sections.menu)
-    else -> BarLead.Badge(AppIcons.cabinet)
+    else -> null
 }
 
 /**

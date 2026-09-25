@@ -1,14 +1,10 @@
 package kz.mybrain.superkassa.designsystem.section
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,13 +14,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
-import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 
 /**
@@ -40,7 +33,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  *
  * @param subtitleKept хвост подзаголовка, который не сокращается: имя
  *   кассира. Сокращается то, что перед ним, — кассы или организации.
- * @param lead начало шапки: стрелка назад, кнопка меню или значок;
+ * @param lead начало шапки: стрелка назад или кнопка меню;
  *   `null` — заголовок начинается с поля окна.
  * @param actions кнопки справа: у каждого раздела свои.
  */
@@ -80,7 +73,7 @@ fun AppTopBar(
     )
 }
 
-/** Начало шапки: стрелка, меню или значок — по [lead]. */
+/** Начало шапки: стрелка или меню — по [lead]. */
 @Composable
 private fun BarLeadIcon(lead: BarLead) {
     when (lead) {
@@ -90,32 +83,6 @@ private fun BarLeadIcon(lead: BarLead) {
         is BarLead.Menu -> IconButton(onClick = lead.onClick, modifier = Modifier.padding(start = Spacing.fieldGap)) {
             Icon(AppIcons.menu, contentDescription = lead.label)
         }
-        is BarLead.Badge -> TopBarBadge(lead.icon)
-    }
-}
-
-/**
- * Опознавательный значок в кружке.
- *
- * Своя разметка вместо готового составного: у Material 3 нет отдельного
- * элемента для такого значка — гайдлайн описывает его содержимым
- * `navigationIcon` и оставляет вид на усмотрение приложения.
- */
-@Composable
-private fun TopBarBadge(icon: ImageVector) {
-    Box(
-        modifier = Modifier
-            .padding(start = windowMargin)
-            .size(Sizes.headerIcon)
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.secondaryContainer),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondaryContainer
-        )
     }
 }
 

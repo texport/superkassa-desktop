@@ -29,7 +29,7 @@ class LoginEmptyTest {
 
     @Composable
     private fun Empty(listRead: Boolean) {
-        EmptyKkms(listRead = listRead, actions = object : LoginActions {}, doors = Door.entries.toSet())
+        EmptyKkms(listRead = listRead, actions = object : LoginActions {}, onRegister = {})
     }
 
     private fun shot(name: String, listRead: Boolean): ByteArray {

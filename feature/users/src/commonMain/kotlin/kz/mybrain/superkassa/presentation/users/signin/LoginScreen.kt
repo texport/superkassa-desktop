@@ -1,17 +1,13 @@
 package kz.mybrain.superkassa.presentation.users.signin
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
 import kz.mybrain.superkassa.designsystem.field.SearchField
 import kz.mybrain.superkassa.designsystem.state.LoadingState
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
@@ -26,49 +22,44 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * не спрашивается ни на одном экране. Касса запоминается: на рабочем месте
  * она не меняется, и утром достаточно ввести пин.
  *
- * Блоки идут сверху вниз без разрывов: поиск, перечень, двери и полоса
- * пина — с шагом общей шкалы. Заголовок «Вход в кассу», тема и язык стоят
- * в шапке окна: её ставит каркас, одну на вход и на всё, что открыто
- * дверями отсюда. Перечень берёт высоту своих строк
- * и прокручивается, только когда касс больше, чем помещается; полоса пина
- * встаёт сразу под дверями. Прежде она была прибита к низу окна, а
- * перечень растягивался до неё пустой рамкой, и между дверями и пином
- * стояла пустота в пол-экрана.
+ * Это первый раздел окна до входа — «Кассы». Заведение кассы, кабинет
+ * БФД и настройки — соседние разделы той же навигации окна, а не кнопки
+ * под списком: прежде они стояли здесь дверями, за которыми открывалась
+ * другая страница со своей стрелкой назад.
+ *
+ * Блоки идут сверху вниз без разрывов: поиск, перечень и полоса пина —
+ * с шагом общей шкалы. Заголовок «Вход в кассу», тема и язык стоят
+ * в шапке окна. Перечень берёт высоту своих строк и прокручивается,
+ * только когда касс больше, чем помещается; полоса пина встаёт сразу
+ * под ним. Прежде она была прибита к низу окна, а перечень растягивался
+ * до неё пустой рамкой, и между списком и пином стояла пустота
+ * в пол-экрана.
  *
  * Снизу колонка держит запас под снекбар ([Sizes.snackbarRoom]): отказ
  * входа встаёт у нижнего края по центру и не закрывает поле пина, даже
  * когда перечень занял всю высоту.
  *
- * @param doors двери, за которыми на этой платформе что-то есть.
+ * @param onRegister открыть раздел «Новая касса» — главное действие, когда
+ *   касс нет; `null` — мастера на этой платформе нет.
  */
 @Composable
-fun LoginScreen(
-    state: LoginUiState,
-    actions: LoginActions,
-    doors: Set<Door>,
-    door: @Composable (Door, close: () -> Unit) -> Unit
-) {
+fun LoginScreen(state: LoginUiState, actions: LoginActions, onRegister: (() -> Unit)? = null) {
+    // Список перечитывается при каждом возврате в раздел: в соседнем
+    // «Новая касса» кассу могли только что завести.
     LaunchedEffect(Unit) { actions.reload() }
-    // Заведение кассы, кабинет и настройки открываются прямо отсюда: пока
-    // не заведена первая касса, войти некуда, а адрес кабинета нужен раньше,
-    // чем есть куда войти. Что за дверью — знает каркас окна, не вход.
-    if (state.door != Door.Kkms) return door(state.door) { actions.open(Door.Kkms) }
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        // Поля и шаг между блоками задаёт колонка, а не каждый блок сам:
-        // когда шапка, список и двери несли по своему отступу, все
-        // зазоры выходили разными.
-        Column(
-            modifier = Modifier
-                .widthIn(max = Sizes.loginColumn)
-                .fillMaxWidth()
-                .padding(bottom = Sizes.snackbarRoom),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
-        ) {
-            when {
-                state.kkms.isEmpty() && !state.answered -> LoadingState(Modifier.weight(1f, fill = false))
-                state.kkms.isEmpty() -> EmptyKkms(state.listRead, actions, doors)
-                else -> KkmChoice(state, actions, doors, Modifier.weight(1f, fill = false))
-            }
+    // Поля и шаг между блоками задаёт колонка, а не каждый блок сам:
+    // когда шапка, список и двери несли по своему отступу, все зазоры
+    // выходили разными. Колонка — во всю ширину раздела, по тем же краям,
+    // что соседние «Новая касса» и «Настройки»: узкая колонка посередине
+    // прыгала краями при переходе между разделами.
+    Column(
+        modifier = Modifier.fillMaxSize().padding(bottom = Sizes.snackbarRoom),
+        verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
+    ) {
+        when {
+            state.kkms.isEmpty() && !state.answered -> LoadingState(Modifier.weight(1f, fill = false))
+            state.kkms.isEmpty() -> EmptyKkms(state.listRead, actions, onRegister)
+            else -> KkmChoice(state, actions, Modifier.weight(1f, fill = false))
         }
     }
 }
@@ -81,7 +72,7 @@ fun LoginScreen(
  * кассе не менял ничего, и кассир входил не туда, куда набрал.
  */
 @Composable
-private fun KkmChoice(state: LoginUiState, actions: LoginActions, doors: Set<Door>, modifier: Modifier) {
+private fun KkmChoice(state: LoginUiState, actions: LoginActions, modifier: Modifier) {
     val texts = LocalStrings.current
     SearchField(
         value = state.search,
@@ -91,10 +82,6 @@ private fun KkmChoice(state: LoginUiState, actions: LoginActions, doors: Set<Doo
         modifier = Modifier.fillMaxWidth()
     )
     KkmList(state, modifier, onPick = actions::pick)
-    // Две двери рядом: кассир входит пином ниже, владелец — своей ЭЦП
-    // в кабинет. Обе со значками и в рамке: кабинет для нового владельца —
-    // единственный вход, пока нет ни кассы, ни компании.
-    WrapRow { DoorButtons(doors, listOf(Door.Register, Door.Cabinet, Door.Settings), actions) }
     // Удачный вход меняет держатель входа, и окно само уходит к работе:
     // экрану входа об этом знать незачем.
     SignInBar(state, actions)

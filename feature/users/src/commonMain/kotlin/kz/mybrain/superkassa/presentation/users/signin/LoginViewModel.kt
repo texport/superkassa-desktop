@@ -45,10 +45,6 @@ class LoginViewModel(private val cases: LoginCases, private val talk: Talk) : Vi
         screen.update { it.copy(pin = Pin.digitsOf(text)) }
     }
 
-    override fun open(door: Door) {
-        screen.update { it.copy(door = door) }
-    }
-
     /** Проверяет пин у кассы и начинает работу; неверный пин — отказ словами кассы. */
     override fun enter() {
         val now = screen.value

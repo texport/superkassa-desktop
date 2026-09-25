@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.navigation.section.CabinetKey
 import kz.mybrain.superkassa.navigation.section.CashKey
 import kz.mybrain.superkassa.navigation.section.DashboardKey
 import kz.mybrain.superkassa.navigation.section.HistoryKey
+import kz.mybrain.superkassa.navigation.section.KkmsKey
 import kz.mybrain.superkassa.navigation.section.QueueKey
 import kz.mybrain.superkassa.navigation.section.RegisterKey
 import kz.mybrain.superkassa.navigation.section.ReturnsKey
@@ -31,6 +32,7 @@ val NavKeys: SavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
         polymorphic(NavKey::class) {
             sections()
+            subclass(KkmsKey::class, KkmsKey.serializer())
             steps()
         }
     }

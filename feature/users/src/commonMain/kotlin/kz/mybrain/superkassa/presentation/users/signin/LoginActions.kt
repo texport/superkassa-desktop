@@ -19,6 +19,4 @@ interface LoginActions {
     fun typePin(text: String) = Unit
 
     fun enter() = Unit
-
-    fun open(door: Door) = Unit
 }

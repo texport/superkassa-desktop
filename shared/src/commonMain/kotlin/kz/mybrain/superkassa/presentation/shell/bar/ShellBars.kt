@@ -59,7 +59,7 @@ internal fun ShellBar(
  * стрелкой, разделы открывают только с их верхнего уровня.
  */
 @Composable
-private fun barLead(onMenu: (() -> Unit)?, onBack: (() -> Unit)?): BarLead? {
+internal fun barLead(onMenu: (() -> Unit)?, onBack: (() -> Unit)?): BarLead? {
     val texts = LocalStrings.current
     return when {
         onBack != null -> BarLead.Back(onBack, texts.settingsScreen.back)

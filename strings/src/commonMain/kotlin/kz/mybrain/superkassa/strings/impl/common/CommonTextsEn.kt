@@ -65,6 +65,7 @@ internal val commonTextsEn = CommonTexts(
         settings = "Settings",
         register = "New register",
         cabinet = "BFD cabinet",
+        kkms = "Registers",
         menu = "Sections"
     ),
     dashboard = dashboardTextsEn,

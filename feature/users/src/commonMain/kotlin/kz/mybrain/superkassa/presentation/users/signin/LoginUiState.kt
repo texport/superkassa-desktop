@@ -4,9 +4,6 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.domain.kkm.model.displayName
 import kz.mybrain.superkassa.domain.kkm.model.matches
 
-/** Что открыто на входе: список касс или одна из дверей рядом с ним. */
-enum class Door { Kkms, Register, Cabinet, Settings }
-
 /**
  * Экран входа, каким его видит кассир.
  *
@@ -31,7 +28,6 @@ data class LoginUiState(
     val rememberedId: String? = null,
     val selectedId: String? = null,
     val pin: String = "",
-    val door: Door = Door.Kkms,
     val entering: Boolean = false
 ) {
     /** Кассы, подходящие под набранное кассиром. */
@@ -51,14 +47,6 @@ data class LoginUiState(
             ?: shown.singleOrNull()
             ?: kkms.firstOrNull { it.kkmId == rememberedId }
             ?: kkms.firstOrNull { it.kkmId == selectedId }
-
-    /**
-     * Спрашивать ли сейчас пин.
-     *
-     * За открытой дверью — заведением кассы, кабинетом, настройками —
-     * полосы пина нет: там кассир ничего не вводит.
-     */
-    val atPin: Boolean get() = door == Door.Kkms && kkms.isNotEmpty()
 
     /** Как зовут кассу на этом рабочем месте. */
     fun nameOf(kkm: KkmResponse): String = kkm.displayName(localNames[kkm.kkmId])

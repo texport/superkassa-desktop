@@ -52,3 +52,15 @@ data object CabinetKey : SectionKey
 /** Настройки. */
 @Serializable
 data object SettingsKey : SectionKey
+
+/**
+ * Кассы рабочего места и вход по пину — начало окна до входа.
+ *
+ * Окно до входа устроено так же, как рабочее: разделы «Кассы», «Новая
+ * касса», «Кабинет БФД» и «Настройки» в той же навигации, «назад» из
+ * любого ведёт сюда. Разделы, общие с рабочим окном, — те же ключи
+ * [RegisterKey], [CabinetKey], [SettingsKey]; раздела касс в рабочем окне
+ * нет, поэтому этот ключ — не [SectionKey].
+ */
+@Serializable
+data object KkmsKey : NavKey

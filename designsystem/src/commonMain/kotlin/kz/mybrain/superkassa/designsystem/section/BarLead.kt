@@ -1,13 +1,12 @@
 package kz.mybrain.superkassa.designsystem.section
 
-import androidx.compose.ui.graphics.vector.ImageVector
-
 /**
  * Что стоит в начале шапки окна — слот `navigationIcon` Material 3.
  *
- * Одно из трёх, и никогда два сразу: стрелка назад по истории окна,
- * кнопка меню, которая на телефоне открывает все разделы, или
- * опознавательный значок там, где ни возврата, ни меню нет.
+ * Одно из двух, и никогда оба сразу: стрелка назад по истории окна или
+ * кнопка меню, которая на телефоне открывает все разделы. Когда нет ни
+ * того, ни другого, слот пуст — у всех разделов одинаково: значок
+ * в кружке был только у кабинета, и шапка там выглядела чужой.
  */
 sealed interface BarLead {
 
@@ -16,7 +15,4 @@ sealed interface BarLead {
 
     /** Открыть навигацию окна; [label] — для чтения с экрана. */
     data class Menu(val onClick: () -> Unit, val label: String?) : BarLead
-
-    /** Опознавательный значок в кружке: чей это экран. */
-    data class Badge(val icon: ImageVector) : BarLead
 }

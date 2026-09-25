@@ -25,11 +25,11 @@ import kz.mybrain.superkassa.strings.api.common.SectionTexts
  */
 internal enum class Section(
     val key: SectionKey,
-    val icon: ImageVector,
-    val title: (SectionTexts) -> String,
+    override val icon: ImageVector,
+    override val title: (SectionTexts) -> String,
     /** Раздел, на который узел отвечает только администратору. */
     val adminOnly: Boolean = false
-) {
+) : Destination {
     Dashboard(DashboardKey, AppIcons.dashboard, { it.dashboard }),
     Sale(SaleKey, AppIcons.sale, { it.sale }),
     Returns(ReturnsKey, AppIcons.returns, { it.returns }),

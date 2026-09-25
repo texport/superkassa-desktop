@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
-import kz.mybrain.superkassa.presentation.shell.section.Section
+import kz.mybrain.superkassa.presentation.shell.section.Destination
 
 /**
  * Рамка окна — одна на всё приложение: навигация по разделам, шапка
@@ -38,7 +38,8 @@ import kz.mybrain.superkassa.presentation.shell.section.Section
  * `NavigationSuiteScaffold` Material 3 сам ставит навигацию по классу окна
  * ([ShellNavigation]), а внутри него — один `Scaffold` с одной шапкой
  * и одним местом для снекбара. Разделы своей навигации, шапок и отступов
- * под них не строят.
+ * под них не строят. Рамка одна и у рабочего окна, и у окна до входа —
+ * меняется только набор разделов ([Destination]).
  *
  * @param marked разделы с отметкой — например, настройки, когда вышла
  *   новая версия кассы.
@@ -46,11 +47,11 @@ import kz.mybrain.superkassa.presentation.shell.section.Section
  *   спрятаны в модальный рельс, — иначе `null`.
  */
 @Composable
-internal fun ShellFrame(
-    sections: List<Section>,
-    current: Section,
-    onPick: (Section) -> Unit,
-    marked: Set<Section> = emptySet(),
+internal fun <D : Destination> ShellFrame(
+    sections: List<D>,
+    current: D,
+    onPick: (D) -> Unit,
+    marked: Set<D> = emptySet(),
     topBar: @Composable (onMenu: (() -> Unit)?) -> Unit,
     snackbarHost: @Composable () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit
@@ -81,7 +82,7 @@ internal fun ShellFrame(
 
 /** Все разделы в модальном широком рельсе: на телефоне, где их больше пяти. */
 @Composable
-private fun ModalSections(state: WideNavigationRailState, items: SectionItems) {
+private fun ModalSections(state: WideNavigationRailState, items: SectionItems<*>) {
     ModalWideNavigationRail(state = state, hideOnCollapse = true) {
         Scrolled { items(NavigationSuiteType.WideNavigationRailExpanded) }
     }
@@ -89,7 +90,7 @@ private fun ModalSections(state: WideNavigationRailState, items: SectionItems) {
 
 /** Пункты навигации окна: в рельсе — прокручиваемым столбцом, в полосе — рядом. */
 @Composable
-private fun NavigationItems(navigation: ShellNavigation, items: SectionItems) {
+private fun NavigationItems(navigation: ShellNavigation, items: SectionItems<*>) {
     if (navigation.railed) {
         Scrolled { items(navigation.type) }
     } else {
@@ -98,11 +99,11 @@ private fun NavigationItems(navigation: ShellNavigation, items: SectionItems) {
 }
 
 /** Разделы пунктами навигации нужного вида. */
-private class SectionItems(
-    val sections: List<Section>,
-    val current: Section,
-    val marked: Set<Section>,
-    val onPick: (Section) -> Unit
+private class SectionItems<D : Destination>(
+    val sections: List<D>,
+    val current: D,
+    val marked: Set<D>,
+    val onPick: (D) -> Unit
 ) {
     @Composable
     operator fun invoke(type: NavigationSuiteType) {

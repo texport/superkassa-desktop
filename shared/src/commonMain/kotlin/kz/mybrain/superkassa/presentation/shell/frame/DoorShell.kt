@@ -1,71 +1,86 @@
 package kz.mybrain.superkassa.presentation.shell.frame
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
 import kz.mybrain.superkassa.designsystem.state.BusyLine
 import kz.mybrain.superkassa.navigation.NavKeys
+import kz.mybrain.superkassa.navigation.section.KkmsKey
+import kz.mybrain.superkassa.navigation.step.StepKey
 import kz.mybrain.superkassa.presentation.common.message.MessageHost
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.bar.DoorBar
-import kz.mybrain.superkassa.presentation.shell.section.SectionDoor
-import kz.mybrain.superkassa.presentation.shell.section.closeDoor
-import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
-import kz.mybrain.superkassa.presentation.users.signin.Door
-import kz.mybrain.superkassa.presentation.users.signin.LoginUiState
+import kz.mybrain.superkassa.presentation.shell.section.DoorSection
+import kz.mybrain.superkassa.presentation.shell.section.currentDoor
+import kz.mybrain.superkassa.presentation.shell.section.doorEntries
+import kz.mybrain.superkassa.presentation.shell.section.doorSectionsFor
+import kz.mybrain.superkassa.presentation.shell.section.openDoor
+import kz.mybrain.superkassa.presentation.shell.section.stepBack
+import kz.mybrain.superkassa.presentation.users.signin.LoginViewModel
 import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
 
 /**
- * Окно до входа: кассир видит только вход.
+ * Окно до входа: кассы, новая касса, кабинет БФД и настройки.
  *
- * Пустые разделы без выбранной кассы отвечают отказами и ничему не учат,
- * поэтому ни рельса, ни шапки кассы здесь нет. Шапка окна при этом одна —
- * в том же слоте `Scaffold` и тех же цветов, что у рабочего окна: она
- * называет вход, а за дверью — заведение кассы, кабинет или настройки,
- * и держит возврат на вход. Двери своих шапок не строят.
+ * С него начинается всё, и устроено оно как рабочее окно: та же рамка
+ * [ShellFrame] на `NavigationSuiteScaffold` — нижняя полоса на телефоне,
+ * рельс шире, — одна шапка и одна история Navigation 3. Первый раздел —
+ * кассы и вход по пину; «назад» из любого раздела ведёт к ним, а шаг
+ * внутри раздела — раздел настроек или карточка точки поверх списка —
+ * снимается стрелкой в шапке, жестом и Escape. Прежде это был экран входа
+ * с кнопками-дверями под списком касс, и за каждой открывалась своя
+ * страница со своей стрелкой.
+ *
+ * Разделов кассы здесь нет: без выбранной кассы они отвечали бы отказами.
  */
 @Composable
 internal fun DoorShell(app: AppContainer, window: WindowParts, messages: SnackbarHostState) {
     // Набранное кассиром живёт в модели входа окна: список касс и полоса
-    // пина читают одно и то же. Поле окна — то же, что у разделов, и сверху:
-    // шапки над входом нет.
+    // пина читают одно и то же.
     val login = loginViewModel(app.services)
-    val door by login.state.collectAsScreenState()
-    // Шаги за дверью — раздел настроек поверх их списка — идут той же
-    // историей, что в рабочем окне: «назад» сперва снимает шаг, потом
-    // закрывает дверь.
-    val steps = rememberNavBackStack(NavKeys)
-    val close: () -> Unit = { if (steps.isEmpty()) closeDoor(login) else steps.removeAt(steps.lastIndex) }
-    LaunchedEffect(door.door) { if (door.door != Door.Settings) steps.clear() }
-    StepsOf(steps, close) {
-        Scaffold(
-            topBar = { DoorTop(window, door, close) },
+    val history = rememberNavBackStack(NavKeys, KkmsKey)
+    val door = history.currentDoor()
+    val back: () -> Unit = { history.stepBack() }
+    val toKkms = { login.reload().also { history.openDoor(DoorSection.Kkms) } }
+    StepsOf(history, back) {
+        ShellFrame(
+            sections = doorSectionsFor(app.areas),
+            current = door,
+            onPick = history::openDoor,
+            topBar = { onMenu -> DoorTop(window, login, door, onMenu, back.takeIf { history.last() is StepKey }) },
             snackbarHost = { MessageHost(messages) }
         ) { padding ->
             ShellMessages(app, messages)
-            val frame = Modifier.fillMaxSize().padding(padding).sectionFrame()
-            Row(modifier = frame.backOnEscape(steps.isNotEmpty(), close)) {
-                SectionDoor(app, window, door, login, close, steps.lastOrNull())
-            }
+            NavDisplay(
+                backStack = history,
+                modifier = Modifier.padding(padding).backOnEscape(history.size > 1, back),
+                onBack = back,
+                entryProvider = entryProvider { doorEntries(app, window, login, toKkms) }
+            )
         }
     }
 }
 
-/** Шапка входа и полоска ожидания под ней: ждут и входа кассира, и ответа кабинета. */
+/** Шапка окна и полоска ожидания под ней: ждут и входа кассира, и ответа кабинета. */
 @Composable
-private fun DoorTop(window: WindowParts, door: LoginUiState, close: () -> Unit) {
+private fun DoorTop(
+    window: WindowParts,
+    login: LoginViewModel,
+    door: DoorSection,
+    onMenu: (() -> Unit)?,
+    onBack: (() -> Unit)?
+) {
+    val entering = login.state.collectAsScreenState().value.entering
     val office = window.cabinet?.cabinet?.state?.collectAsScreenState()?.value
     Column {
-        DoorBar(window, door.door, close)
-        BusyLine(door.entering || (door.door == Door.Cabinet && office?.busy == true))
+        DoorBar(window, door, onMenu, onBack)
+        BusyLine(entering || (door == DoorSection.Cabinet && office?.busy == true))
     }
 }

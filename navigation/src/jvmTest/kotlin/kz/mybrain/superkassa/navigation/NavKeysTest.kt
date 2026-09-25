@@ -5,6 +5,7 @@ import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.elementDescriptors
 import kotlinx.serialization.json.Json
+import kz.mybrain.superkassa.navigation.section.KkmsKey
 import kz.mybrain.superkassa.navigation.section.SectionKey
 import kz.mybrain.superkassa.navigation.section.SettingsKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
@@ -47,6 +48,11 @@ class NavKeysTest {
     fun `ключ переживает сохранение`() {
         val saved = json.encodeToString(PolymorphicSerializer(NavKey::class), SettingsKey)
         assertEquals(SettingsKey, restore(saved))
+    }
+
+    @Test
+    fun `кассы окна до входа переживают сохранение`() {
+        assertEquals(KkmsKey, restore(json.encodeToString(PolymorphicSerializer(NavKey::class), KkmsKey)))
     }
 
     @Test

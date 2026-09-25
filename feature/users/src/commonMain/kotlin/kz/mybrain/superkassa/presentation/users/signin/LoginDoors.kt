@@ -3,17 +3,13 @@ package kz.mybrain.superkassa.presentation.users.signin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import kz.mybrain.superkassa.designsystem.state.EmptyState
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
@@ -28,27 +24,31 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * действием посылает кассира заводить кассу там, где не читается даже
  * список.
  *
+ * Кабинет и настройки здесь кнопками не повторяются: они — соседние
+ * разделы навигации окна и видны всегда.
+ *
  * @param listRead прочитан ли список касс; `false` — касса промолчала
  *   или ответила отказом, и о кассах неизвестно ничего.
+ * @param onRegister открыть раздел «Новая касса»; `null` — мастера нет.
  */
 @Composable
-internal fun EmptyKkms(listRead: Boolean, actions: LoginActions, doors: Set<Door>) {
+internal fun EmptyKkms(listRead: Boolean, actions: LoginActions, onRegister: (() -> Unit)?) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         if (listRead) {
-            NoKkms(actions, doors)
+            NoKkms(onRegister)
         } else {
-            KkmsUnread(actions, doors)
+            KkmsUnread(actions)
         }
     }
 }
 
 /** Узел ответил, и касс на нём правда нет: первую заводит владелец. */
 @Composable
-private fun NoKkms(actions: LoginActions, doors: Set<Door>) {
+private fun NoKkms(onRegister: (() -> Unit)?) {
     val texts = LocalStrings.current
     EmptyState(
         icon = AppIcons.kkm,
@@ -60,11 +60,7 @@ private fun NoKkms(actions: LoginActions, doors: Set<Door>) {
     )
     // Завести кассу — главное действие пустого экрана: список прочитан,
     // и касса появится в нём, как только её заведут.
-    if (Door.Register in doors) Button(onClick = { actions.open(Door.Register) }) { Text(texts.sections.register) }
-    // Вторая дверь стоит и здесь: у владельца, который только начал,
-    // нет ни кассы, ни компании, ни точки — и всё это заводится
-    // в кабинете, а не в кассе.
-    DoorButtons(doors, listOf(Door.Cabinet, Door.Settings), actions)
+    if (onRegister != null) Button(onClick = onRegister) { Text(texts.sections.register) }
 }
 
 /**
@@ -75,7 +71,7 @@ private fun NoKkms(actions: LoginActions, doors: Set<Door>) {
  * сообщения внизу окна.
  */
 @Composable
-private fun KkmsUnread(actions: LoginActions, doors: Set<Door>) {
+private fun KkmsUnread(actions: LoginActions) {
     val texts = LocalStrings.current
     EmptyState(
         icon = AppIcons.warning,
@@ -83,40 +79,4 @@ private fun KkmsUnread(actions: LoginActions, doors: Set<Door>) {
         hint = texts.login.kkmsUnread
     )
     Button(onClick = actions::reload) { Text(texts.login.reload) }
-    // Кабинет живёт своей службой и отвечает, когда касса молчит: владельцу
-    // остаётся хотя бы он.
-    DoorButtons(doors, listOf(Door.Settings, Door.Cabinet), actions)
-}
-
-/**
- * Двери [order] из тех, что есть на платформе, — в порядке [order].
- *
- * @param doors двери, за которыми на этой платформе что-то есть.
- */
-@Composable
-internal fun DoorButtons(doors: Set<Door>, order: List<Door>, actions: LoginActions) {
-    val sections = LocalStrings.current.sections
-    order.filter { it in doors }.forEach { door ->
-        when (door) {
-            Door.Register -> DoorButton(AppIcons.newKkm, sections.register) { actions.open(door) }
-            Door.Cabinet -> DoorButton(AppIcons.cabinet, sections.cabinet) { actions.open(door) }
-            Door.Settings -> DoorButton(AppIcons.settings, sections.settings) { actions.open(door) }
-            Door.Kkms -> Unit
-        }
-    }
-}
-
-/**
- * Дверь с экрана входа: заведение кассы и кабинет ОФД.
- *
- * Рамка и значок, а не текст вподбор: это входы для владельца, и они
- * должны читаться как входы, не соперничая при этом с главным действием
- * экрана — входом кассира по пину.
- */
-@Composable
-internal fun DoorButton(icon: ImageVector, title: String, onClick: () -> Unit) {
-    OutlinedButton(onClick = onClick) {
-        Icon(icon, contentDescription = null)
-        Text(text = title, modifier = Modifier.padding(start = Spacing.itemGap))
-    }
 }

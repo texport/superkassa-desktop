@@ -117,6 +117,8 @@ data class SectionTexts(
     val settings: String,
     val register: String,
     val cabinet: String,
+    /** Кассы рабочего места и вход по пину — первый раздел окна до входа. */
+    val kkms: String,
     /** Кнопка шапки, которая на телефоне открывает все разделы разом. */
     val menu: String
 )
