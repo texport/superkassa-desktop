@@ -4,9 +4,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import kotlin.time.Clock
 
 /**
  * Журнал приложения: одно место, куда пишется всё.
@@ -28,7 +32,7 @@ class LogJournal(
     private val capacity: Int = CAPACITY,
     private val file: LogFile? = null,
     level: LogLevel = LogLevel.Info,
-    private val clock: () -> LocalDateTime = LocalDateTime::now
+    private val clock: () -> LocalDateTime = ::now
 ) {
 
     private val threshold = MutableStateFlow(level)
@@ -88,7 +92,23 @@ class LogJournal(
          */
         const val CAPACITY = 2000
 
-        /** Время записи так, как его читают в окне и в файле. */
-        val TIME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        /** Время записи так, как его читают в окне и в файле: `2026-09-19 12:30:15.042`. */
+        val TIME = LocalDateTime.Format {
+            date(LocalDate.Formats.ISO)
+            char(' ')
+            hour()
+            char(':')
+            minute()
+            char(':')
+            second()
+            char('.')
+            secondFraction(MILLIS)
+        }
+
+        /** Знаков доли секунды: тысячные. */
+        const val MILLIS = 3
     }
 }
+
+/** Время машины сейчас — в её часовом поясе, как его видит кассир. */
+private fun now(): LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())

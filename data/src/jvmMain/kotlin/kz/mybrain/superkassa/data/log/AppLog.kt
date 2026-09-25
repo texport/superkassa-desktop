@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.debug.model.LogEntry
-import java.io.File
 
 /**
  * Журнал приложения, доступный отовсюду.
@@ -47,9 +46,9 @@ object AppLog {
     val debugMode: Boolean get() = debug.value
 
     /** Поднимает журнал рабочего места: уровень, файл и режим отладки с диска. */
-    fun start(loaded: LogSettings = LogSettings()) {
+    fun start(loaded: LogSettings) {
         settings = loaded
-        journal = LogJournal(file = LogFile(Path(loaded.directory.path)), level = loaded.level)
+        journal = LogJournal(file = LogFile(loaded.directory), level = loaded.level)
         debug.value = loaded.debugMode
     }
 
@@ -60,7 +59,7 @@ object AppLog {
     val entries: List<LogEntry> get() = journal.entries
 
     /** Текущий файл журнала; до [start] его нет. */
-    val file: File? get() = settings?.let { File(it.directory, LogFile.NAME) }
+    val file: Path? get() = settings?.let { Path(it.directory, LogFile.NAME) }
 
     fun chooseLevel(chosen: LogLevel) {
         journal.level = chosen

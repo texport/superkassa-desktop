@@ -1,9 +1,8 @@
 package kz.mybrain.superkassa.data.log
 
-import kz.mybrain.superkassa.data.local.Preferences
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.readSetting
 import kz.mybrain.superkassa.data.local.writeSetting
-import java.io.File
 
 /**
  * Что рабочее место помнит о журнале: уровень записи и режим отладки.
@@ -14,8 +13,10 @@ import java.io.File
  *
  * По умолчанию уровень обычный: тела запросов и ответов не пишутся,
  * пока владелец не включит отладочный.
+ *
+ * @param home каталог данных рабочего места.
  */
-class LogSettings(private val home: File = Preferences.defaultFile().parentFile) {
+class LogSettings(private val home: Path) {
 
     /** Порог записи. */
     var level: LogLevel
@@ -28,11 +29,11 @@ class LogSettings(private val home: File = Preferences.defaultFile().parentFile)
         set(value) = writeSetting(debugFile, if (value) ON else null)
 
     /** Папка файлов журнала — рядом с настройками рабочего места. */
-    val directory: File get() = File(home, "log")
+    val directory: Path get() = Path(home, "log")
 
-    private val levelFile get() = File(home, "log-level")
+    private val levelFile get() = Path(home, "log-level")
 
-    private val debugFile get() = File(home, "debug")
+    private val debugFile get() = Path(home, "debug")
 
     private companion object {
 

@@ -5,6 +5,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.UpdatePreferences
 import kz.mybrain.superkassa.domain.update.model.Fetched
 import kz.mybrain.superkassa.domain.update.model.Installer
@@ -61,7 +62,7 @@ class UpdatesViewModelTest {
         directory.deleteRecursively()
     }
 
-    private fun model(installed: String, memory: UpdateMemory = UpdatePreferences(directory)) = updatesModel(
+    private fun model(installed: String, memory: UpdateMemory = UpdatePreferences(Path(directory.path))) = updatesModel(
         services = CoreScene.services(FakeCore(), notices = notices),
         ports = UpdatePorts(releases, memory),
         installed = AppVersion.parse(installed)!!,
@@ -78,7 +79,7 @@ class UpdatesViewModelTest {
         assertEquals("Superkassa-1.0.3.msi", found.installer?.name)
         assertEquals(found, state.available)
         assertEquals(moment, state.lastChecked)
-        assertEquals(moment, UpdatePreferences(directory).lastChecked)
+        assertEquals(moment, UpdatePreferences(Path(directory.path)).lastChecked)
     }
 
     @Test
@@ -105,7 +106,7 @@ class UpdatesViewModelTest {
         assertEquals(UpdateOutcome.Unreachable, state.outcome)
         assertNull(state.available)
         assertNull(state.lastChecked)
-        assertNull(UpdatePreferences(directory).lastChecked)
+        assertNull(UpdatePreferences(Path(directory.path)).lastChecked)
         assertFalse(state.checking)
     }
 
@@ -114,10 +115,10 @@ class UpdatesViewModelTest {
         val model = model("1.0.2")
         assertTrue(model.state.value.automatic, "по умолчанию проверка выключена")
         model.switchAutomatic(false)
-        assertFalse(UpdatePreferences(directory).automatic)
+        assertFalse(UpdatePreferences(Path(directory.path)).automatic)
         assertFalse(model.state.value.automatic)
         model.switchAutomatic(true)
-        assertTrue(UpdatePreferences(directory).automatic)
+        assertTrue(UpdatePreferences(Path(directory.path)).automatic)
     }
 
     /** «Скачать» скачивает установщик, сверяет его и открывает — ставит кассир. */

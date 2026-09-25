@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.data.local
 
-import java.io.File
+import kotlinx.io.files.Path
 
 /**
  * С какой кассой работает эта машина: выбранная касса, её отрасль
@@ -9,7 +9,7 @@ import java.io.File
  * Отдельный предмет, потому что без выбора кассы кассира утром встречает
  * пустой список. Всё остальное можно потерять и не заметить.
  */
-class KkmPreferences(private val kkmFile: File) {
+class KkmPreferences(private val directory: Path) {
 
     /** Касса, выбранная в прошлый раз. */
     var defaultKkmId: String?
@@ -53,13 +53,13 @@ class KkmPreferences(private val kkmFile: File) {
 
     fun rename(kkmId: String, name: String?) = writeSetting(nameFile(kkmId), name)
 
-    private val directory: File? = kkmFile.parentFile
+    private val kkmFile = Path(directory, "kkm")
 
-    private val nodeFile = File(directory, "node")
+    private val nodeFile = Path(directory, "node")
 
-    private fun domainFile(kkmId: String) = File(directory, "domains/$kkmId")
+    private fun domainFile(kkmId: String) = Path(directory, "domains", kkmId)
 
-    private fun nameFile(kkmId: String) = File(directory, "names/$kkmId")
+    private fun nameFile(kkmId: String) = Path(directory, "names", kkmId)
 
     private companion object {
         /** Адрес, по которому узел отвечал, пока его не меняли. */

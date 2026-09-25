@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.data.local
 
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.update.port.UpdateMemory
-import java.io.File
 import kotlin.time.Instant
 
 /**
@@ -13,7 +13,7 @@ import kotlin.time.Instant
  * Отказаться можно: на рабочем месте без выхода в интернет проверка
  * только пишет отказы в журнал.
  */
-class UpdatePreferences(private val directory: File?) : UpdateMemory {
+class UpdatePreferences(private val directory: Path) : UpdateMemory {
 
     /** Проверять ли выпуски самой; файла нет — проверять. */
     override var automatic: Boolean
@@ -30,9 +30,9 @@ class UpdatePreferences(private val directory: File?) : UpdateMemory {
         get() = readSetting(checkedFile)?.let { runCatching { Instant.parse(it) }.getOrNull() }
         set(value) = writeSetting(checkedFile, value?.toString())
 
-    private val automaticFile = File(directory, "updates")
+    private val automaticFile = Path(directory, "updates")
 
-    private val checkedFile = File(directory, "updates-checked")
+    private val checkedFile = Path(directory, "updates-checked")
 
     companion object {
         /** Отметка выключенной проверки: файла с другим содержимым не бывает. */

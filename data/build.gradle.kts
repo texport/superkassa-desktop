@@ -31,7 +31,9 @@ kotlin {
             // и точка сборки отдаёт экземпляр модуля соседним адаптерам.
             api(project(":integrations:bfd-cabinet"))
             api(project(":integrations:maps"))
-            implementation(libs.kotlinx.io.core)
+            // Настройки и журнал рабочего места — файлами на любой платформе.
+            api(libs.kotlinx.io.core)
+            implementation(libs.kotlinx.atomicfu)
         }
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)

@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.data.map
 
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.Preferences
 import kz.mybrain.superkassa.integrations.maps.MapServices
-import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +26,7 @@ class MapServicesTest {
      */
     private fun preferences(): Preferences {
         val directory = Files.createTempDirectory("map").toFile().also { it.deleteOnExit() }
-        return Preferences(File(directory, "kkm"))
+        return Preferences(Path(directory.path))
     }
 
     @Test

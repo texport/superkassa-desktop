@@ -37,7 +37,7 @@ object NoSigner : Signer {
 class KeptFiles : SavedFiles {
     val saved = mutableMapOf<String, ByteArray>()
 
-    override suspend fun save(bytes: ByteArray, name: String): String {
+    override suspend fun save(bytes: ByteArray, name: String, title: String): String {
         saved[name] = bytes
         return name
     }

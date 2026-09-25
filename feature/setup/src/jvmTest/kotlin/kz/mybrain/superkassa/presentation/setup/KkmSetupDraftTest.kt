@@ -6,6 +6,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.Preferences
 import kz.mybrain.superkassa.domain.setup.model.SetupStep
 import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
@@ -13,7 +14,6 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.services
-import java.io.File
 import java.nio.file.Files
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -45,7 +45,7 @@ class KkmSetupDraftTest {
 
     private fun preferences(): Preferences {
         val home = Files.createTempDirectory("superkassa-draft").toFile()
-        return Preferences(File(home, "settings"))
+        return Preferences(Path(home.path))
     }
 
     private fun wizard(preferences: Preferences) =

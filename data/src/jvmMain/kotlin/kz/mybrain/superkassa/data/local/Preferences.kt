@@ -1,10 +1,10 @@
 package kz.mybrain.superkassa.data.local
 
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.setup.port.SetupMemory
 import kz.mybrain.superkassa.domain.workplace.model.LookChoice
 import kz.mybrain.superkassa.domain.workplace.port.LookMemory
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
-import java.io.File
 
 /**
  * То, что касса помнит между запусками.
@@ -19,32 +19,34 @@ import java.io.File
  *
  * Пин не хранится ни здесь, ни где-либо ещё на диске: он даёт право
  * на фискальные команды и живёт только в памяти запущенного приложения.
+ *
+ * @param directory каталог данных рабочего места: файлы настроек лежат в нём.
  */
-class Preferences(private val file: File = defaultFile()) : WorkplaceMemory, SetupMemory, LookMemory {
+class Preferences(directory: Path) : WorkplaceMemory, SetupMemory, LookMemory {
 
     /** Выбранная касса, её отрасль и название на этом рабочем месте. */
-    val kkm = KkmPreferences(file)
+    val kkm = KkmPreferences(directory)
 
     /** Адрес кабинета и личность для входа без ЭЦП. */
-    val cabinet = CabinetPreferences(file.parentFile)
+    val cabinet = CabinetPreferences(directory)
 
     /** Язык, оформление, размер окна и свёрнутые части. */
-    val view = ViewPreferences(file.parentFile)
+    val view = ViewPreferences(directory)
 
     /** Пройденное в мастере подключения кассы. */
-    val setup = SetupPreferences(file.parentFile)
+    val setup = SetupPreferences(directory)
 
     /** Согласие владельца на определение места по адресу подключения. */
-    val location = LocationPreferences(file.parentFile)
+    val location = LocationPreferences(directory)
 
     /** Свои службы карты; пустые — общедоступные службы сообщества. */
-    val maps = MapPreferences(file.parentFile)
+    val maps = MapPreferences(directory)
 
     /** Настройки печати: принтер, вид формы и число копий. */
-    val printing = PrintPreferences(file.parentFile)
+    val printing = PrintPreferences(directory)
 
     /** Проверять ли выпуски самой и когда проверяли в последний раз. */
-    val updates = UpdatePreferences(file.parentFile)
+    val updates = UpdatePreferences(directory)
 
     override var rememberedKkmId: String?
         get() = kkm.defaultKkmId
@@ -123,8 +125,4 @@ class Preferences(private val file: File = defaultFile()) : WorkplaceMemory, Set
     override fun setupValue(name: String): String? = setup.value(name)
 
     override fun setupValue(name: String, value: String?) = setup.remember(name, value)
-
-    companion object {
-        fun defaultFile(): File = File(DataHome.directory(), "kkm")
-    }
 }

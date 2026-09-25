@@ -1,10 +1,11 @@
 package kz.mybrain.superkassa.data.log
 
+import kotlinx.atomicfu.locks.reentrantLock
+import kotlinx.atomicfu.locks.withLock
 import kotlinx.io.buffered
 import kotlinx.io.files.Path
 import kotlinx.io.files.SystemFileSystem
 import kotlinx.io.writeString
-import kotlin.jvm.Synchronized
 
 /**
  * Журнал на диске: текущий файл и несколько прошлых.
@@ -30,19 +31,23 @@ class LogFile(
     /** Текущий файл: его открывают первым при разборе. */
     val current: Path = Path(directory, NAME)
 
+    /** Строки пишутся из разных потоков: перекладка и дозапись идут по одной. */
+    private val lock = reentrantLock()
+
     /**
      * Дописывает строку, переложив файл, если он переполнен.
      *
      * Отказ диска гасится намеренно: непишущийся журнал — не повод
      * прекращать продажу.
      */
-    @Synchronized
     fun append(line: String) {
-        runCatching {
-            SystemFileSystem.createDirectories(directory)
-            val text = line + "\n"
-            rotate(text.encodeToByteArray().size)
-            SystemFileSystem.sink(current, append = true).buffered().use { it.writeString(text) }
+        lock.withLock {
+            runCatching {
+                SystemFileSystem.createDirectories(directory)
+                val text = line + "\n"
+                rotate(text.encodeToByteArray().size)
+                SystemFileSystem.sink(current, append = true).buffered().use { it.writeString(text) }
+            }
         }
     }
 

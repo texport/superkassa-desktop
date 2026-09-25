@@ -5,6 +5,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.Preferences
 import kz.mybrain.superkassa.domain.kassa.model.decimal
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
@@ -18,7 +19,6 @@ import kz.mybrain.superkassa.kassa.SaleScene
 import kz.mybrain.superkassa.kassa.SaleScene.receipts
 import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
-import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -38,7 +38,7 @@ class DomainSettingTest {
 
     @Test
     fun `по умолчанию касса работает в торговле`() {
-        assertEquals(DomainKind.Trading, domainOf(Preferences(freshFile()), TAXI_KKM))
+        assertEquals(DomainKind.Trading, domainOf(Preferences(freshHome()), TAXI_KKM))
     }
 
     /**
@@ -48,16 +48,16 @@ class DomainSettingTest {
      */
     @Test
     fun `отрасль помнится за каждой кассой отдельно`() {
-        val file = freshFile()
+        val home = freshHome()
 
-        Preferences(file).chooseDomain(TAXI_KKM, DomainKind.Taxi.code)
+        Preferences(home).chooseDomain(TAXI_KKM, DomainKind.Taxi.code)
 
-        val saved = Preferences(file)
+        val saved = Preferences(home)
         assertEquals(DomainKind.Taxi, domainOf(saved, TAXI_KKM), "отрасль забылась")
         assertEquals(DomainKind.Trading, domainOf(saved, SHOP_KKM), "отрасль такси перешла на другую кассу")
 
-        Preferences(file).chooseDomain(TAXI_KKM, DomainKind.Trading.code)
-        assertEquals(DomainKind.Trading, domainOf(Preferences(file), TAXI_KKM))
+        Preferences(home).chooseDomain(TAXI_KKM, DomainKind.Trading.code)
+        assertEquals(DomainKind.Trading, domainOf(Preferences(home), TAXI_KKM))
     }
 
     /**
@@ -67,7 +67,7 @@ class DomainSettingTest {
      */
     @Test
     fun `отрасль кассы уходит в чек вместе с её реквизитами`() {
-        val preferences = Preferences(freshFile())
+        val preferences = Preferences(freshHome())
         preferences.chooseDomain(CoreScene.kkm().kkmId, DomainKind.Taxi.code)
         val core = SaleScene.core()
         val receipts = core.receipts()
@@ -98,8 +98,7 @@ class DomainSettingTest {
     }
 
     /** Свой каталог настроек у каждой проверки: общий затёр бы рабочую кассу. */
-    private fun freshFile(): File =
-        File(Files.createTempDirectory("superkassa-domain").toFile(), "kkm")
+    private fun freshHome(): Path = Path(Files.createTempDirectory("superkassa-domain").toString())
 
     /** Отрасль кассы так, как её прочтёт продажа: код из памяти рабочего места. */
     private fun domainOf(memory: Preferences, kkmId: String): DomainKind = DomainKind.byCode(memory.domain(kkmId))

@@ -93,7 +93,7 @@ private fun areaPorts(kassa: Superkassa, preferences: Preferences, language: () 
         ),
         print = PrintPorts(SystemPrintOut(), preferences.printing),
         update = UpdatePorts(GithubUpdates(), preferences.updates),
-        debug = DebugPorts(AppLogBook()),
+        debug = DebugPorts(AppLogBook(DialogFiles())),
         analytics = analyticsPorts(cabinet.bfd, preferences, language),
         cabinet = cabinet,
         setup = SetupPorts(memory = preferences, cabinet = CabinetSetup(cabinet))

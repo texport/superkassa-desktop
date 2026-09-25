@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.analytics.map
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.Look
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.local.Preferences
@@ -15,7 +16,6 @@ import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsPinCard
 import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.shot
-import java.io.File
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,7 +32,7 @@ import kotlin.test.assertTrue
 class AnalyticsMapFullTest {
 
     private fun preferences(): Preferences =
-        Preferences(File(Files.createTempDirectory("an").toFile(), "kkm"))
+        Preferences(Path(Files.createTempDirectory("an").toString()))
 
     /** Карточка под картой так, как её заводит раздел, — на памяти рабочего места. */
     private fun cardOf(preferences: Preferences) = MapPorts(QuietMaps(), WorkplaceMapMemory(preferences)).cases().card()

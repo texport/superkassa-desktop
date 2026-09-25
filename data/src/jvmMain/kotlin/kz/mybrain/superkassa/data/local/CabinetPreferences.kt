@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.data.local
 
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.integrations.bfdcabinet.CabinetSettings
-import java.io.File
 
 /**
  * Чем рабочее место отвечает на вопрос «где кабинет и кем в него входить».
@@ -10,7 +10,7 @@ import java.io.File
  * работает в процессе приложения. Адрес кабинета меняется вместе с его
  * площадкой и ни на что в кассе не влияет.
  */
-class CabinetPreferences(private val directory: File?) {
+class CabinetPreferences(private val directory: Path) {
 
     /**
      * Адрес личного кабинета ОФД.
@@ -32,9 +32,9 @@ class CabinetPreferences(private val directory: File?) {
         get() = readSetting(developerBinFile) ?: ""
         set(value) = writeSetting(developerBinFile, value.trim().takeIf { it.isNotBlank() })
 
-    private val cabinetFile = File(directory, "cabinet")
+    private val cabinetFile = Path(directory, "cabinet")
 
-    private val developerIinFile = File(directory, "cabinet-developer-iin")
+    private val developerIinFile = Path(directory, "cabinet-developer-iin")
 
-    private val developerBinFile = File(directory, "cabinet-developer-bin")
+    private val developerBinFile = Path(directory, "cabinet-developer-bin")
 }

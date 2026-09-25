@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.data.local
 
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.print.model.PrintKind
 import kz.mybrain.superkassa.domain.print.port.PrintChoices
 import kz.mybrain.superkassa.domain.print.port.PrintChoices.Companion.MAX_COPIES
-import java.io.File
 
 /**
  * Что помнит рабочее место о печати: принтер, вид формы и число копий.
@@ -11,7 +11,7 @@ import java.io.File
  * У кассы свой принтер — чековый, а не тот, на котором в конторе печатают
  * договоры. Выбор хранится по кассе: за одним компьютером их бывает две.
  */
-class PrintPreferences(private val directory: File?) : PrintChoices {
+class PrintPreferences(private val directory: Path) : PrintChoices {
 
     override fun printer(kkmId: String): String? = readSetting(printerFile(kkmId))
 
@@ -34,9 +34,9 @@ class PrintPreferences(private val directory: File?) : PrintChoices {
         get() = readSetting(copiesFile)?.toIntOrNull()?.coerceIn(1, MAX_COPIES) ?: 1
         set(value) = writeSetting(copiesFile, value.coerceIn(1, MAX_COPIES).toString())
 
-    private fun printerFile(kkmId: String) = File(directory, "printers/$kkmId")
+    private fun printerFile(kkmId: String) = Path(directory, "printers", kkmId)
 
-    private val copiesFile = File(directory, "print-copies")
+    private val copiesFile = Path(directory, "print-copies")
 
-    private val kindFile = File(directory, "print-kind")
+    private val kindFile = Path(directory, "print-kind")
 }

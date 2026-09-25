@@ -11,7 +11,8 @@ interface SavedFiles {
     /**
      * Предлагает сохранить [bytes] под именем [name].
      *
+     * @param title заголовок окна выбора; пусто — его ставит система.
      * @return имя сохранённого файла; `null` — владелец передумал.
      */
-    suspend fun save(bytes: ByteArray, name: String): String?
+    suspend fun save(bytes: ByteArray, name: String, title: String = ""): String?
 }

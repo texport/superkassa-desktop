@@ -1,11 +1,11 @@
 package kz.mybrain.superkassa.data.log
 
+import kotlinx.datetime.LocalDateTime
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.model.LogSource
 import kz.mybrain.superkassa.domain.debug.model.matching
 import java.io.File
-import java.time.LocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
  */
 class AppLogTest {
 
-    private val moment = LocalDateTime.of(2026, 9, 19, 12, 30, 15)
+    private val moment = LocalDateTime(2026, 9, 19, 12, 30, 15)
 
     private fun journal(level: LogLevel = LogLevel.Debug, file: LogFile? = null) =
         LogJournal(file = file, level = level, clock = { moment })

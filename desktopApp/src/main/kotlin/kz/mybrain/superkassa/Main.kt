@@ -21,8 +21,11 @@ import androidx.compose.ui.window.rememberWindowState
 import io.github.texport.superkassa.embedded.api.Superkassa
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.io.files.Path
+import kz.mybrain.superkassa.data.local.DataHome
 import kz.mybrain.superkassa.data.local.Preferences
 import kz.mybrain.superkassa.data.log.AppLog
+import kz.mybrain.superkassa.data.log.LogSettings
 import kz.mybrain.superkassa.designsystem.adaptive.WindowClassRoot
 import kz.mybrain.superkassa.designsystem.keyboard.EscapeListener
 import kz.mybrain.superkassa.designsystem.strings.ProvideStrings
@@ -55,8 +58,9 @@ fun main() {
     System.setProperty("apple.awt.application.name", APP_NAME)
     // Журнал поднимается до первого обращения к кассе: иначе запуск,
     // ради разбора которого отладку и включали, в него не попадёт.
-    AppLog.start()
-    val preferences = Preferences()
+    val home = Path(DataHome.directory().path)
+    AppLog.start(LogSettings(home))
+    val preferences = Preferences(home)
     val look = WorkplaceLook(preferences)
     when (val start = startKassa(preferences)) {
         is KassaStart.Refused -> refused(start.problem, look)

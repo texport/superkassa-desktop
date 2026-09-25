@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.data.local
 
-import java.io.File
+import kotlinx.io.files.Path
 
 /**
  * Чьими службами рисуется карта на этом рабочем месте.
@@ -9,7 +9,7 @@ import java.io.File
  * запрещают массовую выкачку, и выпускать на неё всех владельцев нельзя.
  * Замена — настройка, а не перевыпуск приложения.
  */
-class MapPreferences(private val directory: File?) {
+class MapPreferences(private val directory: Path) {
 
     /** Откуда берутся плитки карты. */
     var tiles: String?
@@ -31,11 +31,11 @@ class MapPreferences(private val directory: File?) {
         get() = readSetting(locationFile)
         set(value) = writeSetting(locationFile, value)
 
-    private val tilesFile = File(directory, "map-tiles")
+    private val tilesFile = Path(directory, "map-tiles")
 
-    private val searchFile = File(directory, "map-search")
+    private val searchFile = Path(directory, "map-search")
 
-    private val reverseFile = File(directory, "map-reverse")
+    private val reverseFile = Path(directory, "map-reverse")
 
-    private val locationFile = File(directory, "map-location")
+    private val locationFile = Path(directory, "map-location")
 }

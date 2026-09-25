@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.data.local
 
-import java.io.File
+import kotlinx.io.files.Path
 
 /**
  * Разрешил ли владелец определять место по адресу подключения.
@@ -13,7 +13,7 @@ import java.io.File
  * Пусто — не спрашивали ещё; отказ хранится наравне с согласием,
  * чтобы не спрашивать снова при каждом открытии карты.
  */
-class LocationPreferences(private val directory: File?) {
+class LocationPreferences(private val directory: Path) {
 
     var allowed: Boolean?
         get() = when (readSetting(locationFile)) {
@@ -23,7 +23,7 @@ class LocationPreferences(private val directory: File?) {
         }
         set(value) = writeSetting(locationFile, value?.let { if (it) ALLOWED else DENIED })
 
-    private val locationFile = File(directory, "location")
+    private val locationFile = Path(directory, "location")
 
     companion object {
         /** Ответ владельца на вопрос об определении места. */

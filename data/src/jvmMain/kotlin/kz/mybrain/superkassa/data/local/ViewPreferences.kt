@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.data.local
 
-import java.io.File
+import kotlinx.io.files.Path
 
 /**
  * Каким кассир оставил окно: язык, оформление, размер и свёрнутые части.
@@ -10,7 +10,7 @@ import java.io.File
  * его делают один раз под свой монитор и свою привычку, и повторять
  * каждое утро одни и те же нажатия кассир не должен.
  */
-class ViewPreferences(private val directory: File?) {
+class ViewPreferences(private val directory: Path) {
 
     /** Язык интерфейса, выбранный кассиром. */
     var language: String?
@@ -110,27 +110,27 @@ class ViewPreferences(private val directory: File?) {
         get() = readSetting(mapLegendFile) == COLLAPSED
         set(value) = writeSetting(mapLegendFile, if (value) COLLAPSED else null)
 
-    private val languageFile = File(directory, "language")
+    private val languageFile = Path(directory, "language")
 
-    private val appearanceFile = File(directory, "appearance")
+    private val appearanceFile = Path(directory, "appearance")
 
-    private val accentFile = File(directory, "accent")
+    private val accentFile = Path(directory, "accent")
 
-    private val typefaceFile = File(directory, "typeface")
+    private val typefaceFile = Path(directory, "typeface")
 
-    private val textScaleFile = File(directory, "textscale")
+    private val textScaleFile = Path(directory, "textscale")
 
-    private val windowFile = File(directory, "window")
+    private val windowFile = Path(directory, "window")
 
-    private val panelsFile = File(directory, "panels")
+    private val panelsFile = Path(directory, "panels")
 
-    private val railFile = File(directory, "rail")
+    private val railFile = Path(directory, "rail")
 
-    private val placesFile = File(directory, "places")
+    private val placesFile = Path(directory, "places")
 
-    private val mapCardFile = File(directory, "map-card")
+    private val mapCardFile = Path(directory, "map-card")
 
-    private val mapLegendFile = File(directory, "map-legend")
+    private val mapLegendFile = Path(directory, "map-legend")
 
     companion object {
         /** Ширина и высота разделены крестиком: строка читаема глазами. */

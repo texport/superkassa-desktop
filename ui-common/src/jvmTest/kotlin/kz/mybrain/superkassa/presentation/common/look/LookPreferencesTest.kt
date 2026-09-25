@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.presentation.common.look
 
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.Preferences
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
@@ -23,11 +24,10 @@ class LookPreferencesTest {
     @Test
     fun `выбор оформления запоминается и читается тем же`() {
         val home = freshHome()
-        val file = File(home, "kkm")
 
-        assertEquals(Look(), shown(file).look, "без выбора — касса как была")
+        assertEquals(Look(), shown(home).look, "без выбора — касса как была")
 
-        WorkplaceLook(Preferences(file)).let { look ->
+        WorkplaceLook(Preferences(Path(home.path))).let { look ->
             look.choose(
                 look.state.value.copy(
                     language = Language.En.code,
@@ -39,7 +39,7 @@ class LookPreferencesTest {
             )
         }
 
-        val saved = shown(file)
+        val saved = shown(home)
         assertEquals(Look(accent = Accent.Teal, typeface = Typeface.Serif, textScale = TextScale.Large), saved.look)
         assertEquals(Language.En, saved.language)
         assertTrue(saved.railCollapsed, "свёрнутый рельс развернулся после перезапуска")
@@ -52,12 +52,12 @@ class LookPreferencesTest {
         File(home, "accent").writeText("chartreuse")
         File(home, "textscale").writeText("")
 
-        assertEquals(Look(), shown(File(home, "kkm")).look)
+        assertEquals(Look(), shown(home).look)
         home.deleteRecursively()
     }
 
     /** Вид окна, каким его прочтёт следующий запуск. */
-    private fun shown(file: File) = LookUiState.of(WorkplaceLook(Preferences(file)).state.value)
+    private fun shown(home: File) = LookUiState.of(WorkplaceLook(Preferences(Path(home.path))).state.value)
 
     private fun freshHome(): File = File.createTempFile("look", "").also {
         it.delete()
