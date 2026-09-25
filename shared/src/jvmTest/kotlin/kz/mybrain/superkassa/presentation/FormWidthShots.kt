@@ -23,7 +23,6 @@ import kz.mybrain.superkassa.SettingsMeasure
 import kz.mybrain.superkassa.StubReply
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.desk
-import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
@@ -44,6 +43,7 @@ import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
+import kz.mybrain.superkassa.windowCabinet
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -87,7 +87,7 @@ class FormWidthShots {
     private fun Window(screen: Screen) {
         val desk = remember { KassaScene.desk(SettingsMeasure.extremeKkm(), admin = true) }
         val app = remember { SettingsScene.app(desk) }
-        val parts = remember { WindowParts(desk.parts.shell, desk.look, idleCabinet(app, desk.look)) }
+        val parts = remember { WindowParts(desk.parts.shell, desk.look, windowCabinet(app, desk.look)) }
         Surface(Modifier.fillMaxSize()) {
             WithRail(screen.section) {
                 if (screen == Screen.Register) {

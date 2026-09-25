@@ -39,6 +39,7 @@ import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.KkmTopBar
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
+import kz.mybrain.superkassa.presentation.shell.frame.cabinetNeighbours
 import kz.mybrain.superkassa.presentation.shell.frame.shellModel
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
@@ -71,7 +72,8 @@ internal class AnalyticsWindow(
 
     private val windowLook = lookModel(app.services.look)
 
-    private val parts = WindowParts(shellModel(app), windowLook, CabinetRig(exchange, app).enter(OWNER, COMPANY).window)
+    private val cabinet = CabinetRig(exchange, app.services, neighbours = cabinetNeighbours(app)).enter(OWNER, COMPANY)
+    private val parts = WindowParts(shellModel(app), windowLook, cabinet.window)
 
     private val models = WindowModels()
 

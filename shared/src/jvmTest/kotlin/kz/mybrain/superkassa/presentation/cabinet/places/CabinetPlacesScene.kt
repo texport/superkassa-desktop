@@ -10,9 +10,12 @@ import io.ktor.http.HttpStatusCode
 import kz.mybrain.superkassa.CabinetStage
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.StubReply
+import kz.mybrain.superkassa.app
+import kz.mybrain.superkassa.data.cabinet.CabinetPages
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
+import kz.mybrain.superkassa.domain.cabinet.PlaceLook
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
@@ -42,7 +45,7 @@ internal class CabinetPlacesScene(
 ) {
     val texts = textsOf(language).cabinet
     private val stage = CabinetStage(::reply)
-    private val parts = WindowParts(shellModel(stage.app), stage.look, stage.cabinet)
+    private val parts = WindowParts(shellModel(stage.app()), stage.look, stage.cabinet)
 
     /** Раздел открыт на вкладке точек, список прочитан; кадр — в файл. */
     fun open(name: String, check: (RenderProbe) -> Unit) {
@@ -62,14 +65,14 @@ internal class CabinetPlacesScene(
             AppTopBar(title = "Касса 3", subtitle = "ТОО «Азик и Ко»", subtitleKept = "Курманов Азамат") {}
             Row(modifier = Modifier.fillMaxSize()) {
                 SectionRail(Section.entries, Section.Cabinet, false, {}, { Text("1.0.6") }) {}
-                stage.Window { SectionContent(stage.app, parts, Section.Cabinet) }
+                stage.Window { SectionContent(stage.app(), parts, Section.Cabinet) }
             }
         }
     }
 
     private fun reply(path: String): StubReply = when (path) {
-        "/api/retail-places" -> StubReply(CabinetWire.places(PLACES))
-        "/api/cash-registers" -> StubReply(CabinetWire.registers(REGISTERS))
+        "/api/retail-places" -> StubReply(CabinetPages.places(PLACES))
+        "/api/cash-registers" -> StubReply(CabinetPages.registers(REGISTERS))
         else -> refusal("NOT_FOUND", "нет в проверке", HttpStatusCode.NotFound)
     }
 

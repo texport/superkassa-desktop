@@ -35,6 +35,7 @@ kotlin {
             // службы окна, слова домена, контракты между областями. Открыт
             // наружу: его типы стоят в открытых объявлениях каркаса.
             api(project(":ui-common"))
+            api(project(":feature:cabinet"))
             api(project(":feature:analytics"))
             api(project(":feature:kassa"))
             api(project(":feature:journal"))

@@ -20,7 +20,6 @@ import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
 import kz.mybrain.superkassa.desk
-import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.KkmTopBar
@@ -30,6 +29,7 @@ import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
+import kz.mybrain.superkassa.windowCabinet
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -71,7 +71,7 @@ class AdaptiveSettingsShots {
                     // Адреса кабинета и карты — на сотню знаков: поле обязано
                     // показать их, не выталкивая кнопку за край карточки.
                     val app = remember { SettingsScene.app(desk) }
-                    val parts = remember { WindowParts(desk.parts.shell, desk.look, idleCabinet(app, desk.look)) }
+                    val parts = remember { WindowParts(desk.parts.shell, desk.look, windowCabinet(app, desk.look)) }
                     ProvideWindowModels(remember { WindowModels() }) {
                         SectionContent(app, parts, Section.Settings)
                     }

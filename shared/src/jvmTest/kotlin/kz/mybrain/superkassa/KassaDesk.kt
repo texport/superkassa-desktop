@@ -35,5 +35,5 @@ internal fun KassaScene.desk(
  */
 internal class KassaDesk(val app: AppContainer) {
     val look = lookModel(app.services.look)
-    val parts = WindowParts(shellModel(app), look, idleCabinet(app, look))
+    val parts = WindowParts(shellModel(app), look, windowCabinet(app, look))
 }

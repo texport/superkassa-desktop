@@ -20,7 +20,6 @@ import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.desk
-import kz.mybrain.superkassa.idleCabinet
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
@@ -46,6 +45,7 @@ import kz.mybrain.superkassa.presentation.users.UsersContent
 import kz.mybrain.superkassa.presentation.users.UsersUiState
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
+import kz.mybrain.superkassa.windowCabinet
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertNotNull
@@ -126,7 +126,7 @@ class AreaQaShots {
                         actions = object : SetupActions {},
                         registration = RegistrationUiState(),
                         registrationActions = object : RegistrationActions {},
-                        cabinet = idleCabinet(desk.app, desk.look).steps(),
+                        cabinet = windowCabinet(desk.app, desk.look).steps(),
                         session = CabinetSession(),
                         onBack = null
                     )

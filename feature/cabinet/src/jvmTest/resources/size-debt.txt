@@ -1,0 +1,9 @@
+# Поэлементные размеры, с которыми код пришёл к проверке одной сетки.
+#
+# Долг, снимается при переводе экрана на раскладку: ширина из колонки
+# (fillMaxWidth) или доля ряда (weight). ModuleSourcesTest падает и на новое
+# место, и на исправленное, но не вычеркнутое.
+#
+# Формат: <файл от kz/mybrain/superkassa> -> <токен>
+presentation/cabinet/places/component/PlacePoint.kt -> Sizes.fieldForm
+presentation/cabinet/places/component/PlaceTree.kt -> Sizes.registerColumn

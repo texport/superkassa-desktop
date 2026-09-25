@@ -5,7 +5,5 @@
 # место, и на исправленное, но не вычеркнутое.
 #
 # Формат: <файл от kz/mybrain/superkassa> -> <токен>
-presentation/cabinet/places/component/PlacePoint.kt -> Sizes.fieldForm
-presentation/cabinet/places/component/PlaceTree.kt -> Sizes.registerColumn
 presentation/settings/core/DeliveryCard.kt -> Sizes.fieldForm
 presentation/setup/component/OfdStep.kt -> Sizes.fieldChoice

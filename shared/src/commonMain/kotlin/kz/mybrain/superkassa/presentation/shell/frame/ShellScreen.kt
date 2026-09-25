@@ -20,6 +20,7 @@ import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
 import kz.mybrain.superkassa.designsystem.state.BusyLine
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
+import kz.mybrain.superkassa.presentation.cabinet.cabinetLook
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
