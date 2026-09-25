@@ -27,7 +27,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
 internal fun CabinetAddressCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSettingsActions) {
     val texts = textsOf(LocalLanguage.current).cabinet
     val settings = LocalStrings.current.settingsScreen
-    SectionCard(title = texts.address, info = texts.hints.address) {
+    SectionCard(title = texts.signin.address, info = texts.hints.address) {
         // Адрес занимает остаток строки карточки, кнопка стоит за ним:
         // адрес службы длиннее любой заданной ширины поля. Негодный адрес
         // назван до сохранения: по адресу без схемы входа в кабинет не будет
@@ -36,7 +36,7 @@ internal fun CabinetAddressCard(workplace: WorkplaceSettingsUiState, actions: Wo
             OutlinedTextField(
                 value = workplace.cabinetField,
                 onValueChange = actions::typeCabinet,
-                label = { Text(texts.address) },
+                label = { Text(texts.signin.address) },
                 isError = workplace.cabinetMalformed,
                 supportingText = if (workplace.cabinetMalformed) ({ Text(settings.addressMalformed) }) else null,
                 singleLine = true,

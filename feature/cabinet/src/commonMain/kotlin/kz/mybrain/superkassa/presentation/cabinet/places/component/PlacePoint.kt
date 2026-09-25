@@ -58,13 +58,14 @@ internal fun PlacePoint(
     // прежнего поля формы, и тогда кнопка уходит под неё.
     WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
         Text(
-            text = point?.let { "${texts.latitude}: ${it.latitude}${Glyphs.SEPARATOR}${texts.longitude}: ${it.longitude}" }
-                ?: texts.pointNotChosen,
+            text = point?.let {
+                "${texts.places.latitude}: ${it.latitude}${Glyphs.SEPARATOR}${texts.places.longitude}: ${it.longitude}"
+            } ?: texts.places.pointNotChosen,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f).widthIn(min = Sizes.fieldForm)
         )
-        FieldButton(text = texts.pickOnMap) { onMap = true }
+        FieldButton(text = texts.places.pickOnMap) { onMap = true }
     }
     if (onMap) {
         cabinet.neighbours.points.Show(

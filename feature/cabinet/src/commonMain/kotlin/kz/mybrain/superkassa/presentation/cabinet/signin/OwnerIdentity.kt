@@ -16,6 +16,6 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  */
 internal fun ownerIdentifier(owner: CabinetOwner, texts: CabinetTexts): String {
     val identifier = owner.company.bin
-    val label = if (identifier.isNotBlank() && identifier == owner.user.iin) texts.iin else texts.bin
+    val label = if (identifier.isNotBlank() && identifier == owner.user.iin) texts.signin.iin else texts.signin.bin
     return "$label $identifier"
 }

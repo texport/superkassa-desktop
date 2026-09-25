@@ -21,13 +21,13 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /** Ответ по существу — крупной строкой над плашками. */
 internal fun CabinetTexts.headlineWords(headline: Headline): String = when (headline) {
-    Headline.Working -> stateWorking
-    Headline.Blocked -> stateBlocked
-    Headline.OffRecord -> stateOffRecord
-    Headline.WorkUnknown -> stateWorkUnknown
+    Headline.Working -> register.state.working
+    Headline.Blocked -> register.state.blocked
+    Headline.OffRecord -> register.state.offRecord
+    Headline.WorkUnknown -> register.state.workUnknown
     Headline.ShiftOpen -> statuses.shiftOpen
     Headline.ShiftClosed -> statuses.shiftClosed
-    Headline.ShiftUnknown -> stateShiftUnknown
+    Headline.ShiftUnknown -> register.state.shiftUnknown
 }
 
 /**
@@ -64,7 +64,7 @@ internal fun CabinetTexts.claimWords(
  * а если он кассу ещё не видел — ждут первого обращения самой кассы.
  */
 internal fun CabinetTexts.bfdSilenceTitle(technical: TechnicalState?): String =
-    if (technical == null) sourceBfd else technicalUnknown
+    if (technical == null) register.state.sourceBfd else register.technicalUnknown
 
 internal fun CabinetTexts.bfdSilenceHint(technical: TechnicalState?): String =
     if (technical == null) hints.bfdNoAnswer else hints.technicalUnknown
@@ -78,9 +78,9 @@ internal fun CabinetTexts.bfdSilenceHint(technical: TechnicalState?): String =
  */
 private fun CabinetTexts.usableWords(claim: StateClaim, technical: TechnicalState?): String = when {
     claim.source == StateSource.Cabinet -> recordWords(claim.record)
-    claim.usable == Verdict.Yes -> claimWorking
-    claim.usable == Verdict.No -> claimBlocked
-    claim.source == StateSource.Node -> claimNodeNoKkm
+    claim.usable == Verdict.Yes -> register.state.claimWorking
+    claim.usable == Verdict.No -> register.state.claimBlocked
+    claim.source == StateSource.Node -> register.state.claimNodeNoKkm
     else -> bfdSilenceWords(technical)
 }
 
@@ -93,12 +93,12 @@ private fun CabinetTexts.usableWords(claim: StateClaim, technical: TechnicalStat
  * сам — прочесть о нём там, где его не было, значит бежать разбираться.
  */
 private fun CabinetTexts.recordWords(record: KkmRecord?): String = when (record) {
-    KkmRecord.OnRecord -> claimOnRecord
-    KkmRecord.Deregistered -> claimOffRecord
-    KkmRecord.Entered -> claimNotFiled
-    KkmRecord.Applied -> claimIsnaPending
-    KkmRecord.Refused -> claimIsnaRefused
-    null -> claimRecordUnread
+    KkmRecord.OnRecord -> register.state.claimOnRecord
+    KkmRecord.Deregistered -> register.state.claimOffRecord
+    KkmRecord.Entered -> register.state.claimNotFiled
+    KkmRecord.Applied -> register.state.claimIsnaPending
+    KkmRecord.Refused -> register.state.claimIsnaRefused
+    null -> register.state.claimRecordUnread
 }
 
 /**
@@ -109,12 +109,12 @@ private fun CabinetTexts.recordWords(record: KkmRecord?): String = when (record)
  * ответа, которого не будет никогда.
  */
 private fun CabinetTexts.shiftWords(claim: StateClaim, technical: TechnicalState?): String = when {
-    claim.source == StateSource.Cabinet -> claimShiftNotKept
-    claim.shift == Verdict.Yes -> claimShiftOpen
-    claim.shift == Verdict.No -> claimShiftClosed
-    claim.source == StateSource.Node -> claimNodeNoKkm
+    claim.source == StateSource.Cabinet -> register.state.claimShiftNotKept
+    claim.shift == Verdict.Yes -> register.state.claimShiftOpen
+    claim.shift == Verdict.No -> register.state.claimShiftClosed
+    claim.source == StateSource.Node -> register.state.claimNodeNoKkm
     else -> bfdSilenceWords(technical)
 }
 
 private fun CabinetTexts.bfdSilenceWords(technical: TechnicalState?): String =
-    if (technical == null) claimBfdNoAnswer else claimBfdNoKkm
+    if (technical == null) register.state.claimBfdNoAnswer else register.state.claimBfdNoKkm

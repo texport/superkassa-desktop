@@ -4,9 +4,9 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /** Действие названо словами, а не именем перечисления. */
 internal fun actionTitle(code: String, texts: CabinetTexts): String = when (code) {
-    "REGISTRATION" -> texts.registration
-    "REREGISTRATION" -> texts.reregistration
-    "DEREGISTRATION" -> texts.deregistration
+    "REGISTRATION" -> texts.applications.registration
+    "REREGISTRATION" -> texts.applications.reregistration
+    "DEREGISTRATION" -> texts.applications.deregistration
     else -> code
 }
 
@@ -23,11 +23,11 @@ internal fun cardFieldTitle(code: String, texts: CabinetTexts): String = when (c
     // подпись «Адрес кабинета» — та, которой на экране входа назван
     // сетевой адрес самой службы, — и список изменений карты сообщал,
     // что перерегистрация переписала адрес кабинета.
-    "ADDRESS", "RKA", "CATO" -> texts.placeAddress
-    "RETAIL_PLACE", "RETAILPLACE", "RETAIL_PLACE_ID" -> texts.placeName
-    "MODEL", "KKM_MODEL", "MODEL_NAME" -> texts.model
-    "FACTORY_NUMBER", "FACTORYNUMBER" -> texts.factoryNumber
-    "REGISTRATION_NUMBER", "RNM" -> texts.registrationNumber
-    "INTERNAL_NAME", "NAME" -> texts.internalName
+    "ADDRESS", "RKA", "CATO" -> texts.places.address
+    "RETAIL_PLACE", "RETAILPLACE", "RETAIL_PLACE_ID" -> texts.places.name
+    "MODEL", "KKM_MODEL", "MODEL_NAME" -> texts.register.model
+    "FACTORY_NUMBER", "FACTORYNUMBER" -> texts.register.factoryNumber
+    "REGISTRATION_NUMBER", "RNM" -> texts.register.registrationNumber
+    "INTERNAL_NAME", "NAME" -> texts.register.internalName
     else -> code
 }

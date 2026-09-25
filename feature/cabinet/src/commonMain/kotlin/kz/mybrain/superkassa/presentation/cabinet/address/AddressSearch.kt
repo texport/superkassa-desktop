@@ -54,7 +54,7 @@ internal fun AddressSearch(
     query: String,
     onQuery: (String) -> Unit,
     owner: Any? = null,
-    title: String = texts.placeAddress,
+    title: String = texts.places.address,
     onChoose: (RegisterAddress) -> Unit
 ) {
     val model = addressSearchViewModel(cabinet.cabinet, owner?.toString() ?: NEW_PLACE)
@@ -71,7 +71,7 @@ internal fun AddressSearch(
             // Адрес подобран: шаги спрятаны, иначе список регионов раскрывался бы
             // заново поверх готового адреса. Сменить его — отдельным действием.
             Text(text = query, style = MaterialTheme.typography.bodyMedium)
-            TextButton(onClick = { onQuery("") }) { Text(texts.addressPickAgain) }
+            TextButton(onClick = { onQuery("") }) { Text(texts.address.pickAgain) }
             return@Column
         }
         SubsectionTitle(title, texts.hints.addressStep)

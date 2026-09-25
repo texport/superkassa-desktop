@@ -96,15 +96,16 @@ private fun RegisterLiveBlocks(
         block = RegisterBlock.Technical,
         open = state.open,
         onToggle = model::toggle,
-        title = texts.technicalState,
+        title = texts.register.technicalState,
         trailing = { TechnicalHeader(texts, work, disagreeing(claims).isNotEmpty()) }
     ) {
         RegisterTechnical(state.state, texts, answers)
     }
-    RegisterBlockCard(RegisterBlock.Applications, state.open, model::toggle, texts.applications) {
+    RegisterBlockCard(RegisterBlock.Applications, state.open, model::toggle, texts.applications.title) {
         RegistrationActionsBlock(cabinet, language, texts, view, model::reload)
     }
-    RegisterBlockCard(RegisterBlock.Card, state.open, model::toggle, texts.card, info = texts.hints.card) {
+    val title = texts.register.card.title
+    RegisterBlockCard(RegisterBlock.Card, state.open, model::toggle, title, info = texts.hints.card) {
         RegistrationCardBlock(cabinet, texts, view.card)
     }
 }
@@ -121,7 +122,7 @@ private fun RegisterAdminBlocks(
         block = RegisterBlock.Journal,
         open = open,
         onToggle = onToggle,
-        title = texts.actionsJournal,
+        title = texts.register.actionsJournal,
         info = texts.hints.actionsJournal,
         trailing = { ActionsCount(actions.size) }
     ) {

@@ -53,21 +53,21 @@ internal fun RegisterTokenBlock(
     // Вписать токен можно только в ту кассу, в которую вошли: пин
     // принадлежит кассе, и чужой к этой не подойдёт.
     val mine = here?.takeIf { seat.signedIn && it.kkmId == seat.kkm?.kkmId }
-    SubsectionTitle(texts.token, texts.hints.token)
+    SubsectionTitle(texts.register.token, texts.hints.token)
     // Почему кнопка погасла — строкой: это состояние кассы, а не объяснение
     // раздела, и владелец должен видеть его не открывая подсказку.
-    if (!allowed) Explanation(texts.tokenOnlyRegistered)
-    if (here != null && mine == null) Explanation(texts.tokenNeedsNode)
+    if (!allowed) Explanation(texts.register.tokenOnlyRegistered)
+    if (here != null && mine == null) Explanation(texts.register.tokenNeedsNode)
     issued?.takeIf { it.registerId == register.id }?.let { value ->
         SelectionContainer {
-            DetailLine(texts.tokenIssued, value.token.toString())
+            DetailLine(texts.register.tokenIssued, value.token.toString())
         }
     }
     // Кнопка тональная, а не залитая: залитая на экране одна, и это подача
     // заявления — то, ради чего карточку кассы и открывают. Токен выдают
     // один раз, и две залитые кнопки подряд не говорили, какую нажимать.
     BusyButton(
-        text = texts.issueToken,
+        text = texts.register.issueToken,
         busy = busy,
         enabled = allowed,
         kind = FieldButtonKind.Tonal,

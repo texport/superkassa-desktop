@@ -38,7 +38,8 @@ class CabinetWordingTest {
     @Test
     fun `токен назван токеном без лишних определений`() {
         val texts = textsOf(Language.Ru).cabinet
-        assertFalse(texts.token.contains("Технический"), "определение ничего не добавляет: ${texts.token}")
+        val token = texts.register.token
+        assertFalse(token.contains("Технический"), "определение ничего не добавляет: $token")
     }
 
     /** Разговорные формы, которых в государственном кабинете быть не должно. */

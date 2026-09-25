@@ -44,7 +44,7 @@ internal fun RegistrationCardVersions(
 ) {
     val rows = state.versions.orEmpty().sortedByDescending { it.version }
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
-        SectionTitle(texts.cardVersions)
+        SectionTitle(texts.register.card.versions)
         ScreenSlot(versionsState(state.versions != null, rows, texts), dense = true) {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
                 rows.forEach { version ->
@@ -72,7 +72,8 @@ internal fun RegistrationCardVersions(
 private fun versionsState(asked: Boolean, rows: List<RegistrationCardVersion>, texts: CabinetTexts): ScreenState =
     when {
         !asked -> ScreenState.Working
-        rows.isEmpty() -> ScreenState.Empty(AppIcons.print, texts.cardVersionsEmpty, texts.hints.cardVersionsEmpty)
+        rows.isEmpty() ->
+            ScreenState.Empty(AppIcons.print, texts.register.card.versionsEmpty, texts.hints.cardVersionsEmpty)
         else -> ScreenState.Ready
     }
 
@@ -93,7 +94,7 @@ private fun VersionRow(texts: CabinetTexts, line: VersionLine, onOpen: () -> Uni
     // подпись, либо служебную часть, и подпись со сроком молча пропадала —
     // владелец не видел того, за чем в этот раздел и приходит.
     RecordRow(
-        title = "${texts.cardVersion} ${version.version}",
+        title = "${texts.register.card.version} ${version.version}",
         selected = line.chosen,
         onClick = onOpen,
         support = { VersionFacts(version, texts) },
@@ -102,8 +103,8 @@ private fun VersionRow(texts: CabinetTexts, line: VersionLine, onOpen: () -> Uni
                 horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (version.open) Chip(texts.cardCurrentVersion, StatusColors.delivered)
-                TextButton(enabled = !line.busy, onClick = onSave) { Text(texts.savePdf) }
+                if (version.open) Chip(texts.register.card.currentVersion, StatusColors.delivered)
+                TextButton(enabled = !line.busy, onClick = onSave) { Text(texts.register.card.savePdf) }
             }
         }
     )
@@ -121,7 +122,7 @@ private fun VersionCard(texts: CabinetTexts, version: Int, cards: Map<Int, Regis
     val shown = cards[version]
     val state = when {
         version !in cards -> ScreenState.Working
-        shown == null -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.hints.cardMissing)
+        shown == null -> ScreenState.Empty(AppIcons.print, texts.register.card.missing, texts.hints.cardMissing)
         else -> ScreenState.Ready
     }
     ScreenSlot(state, dense = true) {
@@ -130,11 +131,11 @@ private fun VersionCard(texts: CabinetTexts, version: Int, cards: Map<Int, Regis
             modifier = Modifier.padding(start = Spacing.blockPadding),
             verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
-            DetailLine(texts.registrationNumber, shown.registrationNumber)
-            DetailLine(texts.placeName, shown.retailPlaceName)
+            DetailLine(texts.register.registrationNumber, shown.registrationNumber)
+            DetailLine(texts.places.name, shown.retailPlaceName)
             // Адрес точки, а не сетевой адрес кабинета.
-            DetailLine(texts.placeAddress, shown.address)
-            DetailLine(texts.model, shown.modelName)
+            DetailLine(texts.places.address, shown.address)
+            DetailLine(texts.register.model, shown.modelName)
         }
     }
 }
@@ -149,9 +150,9 @@ private fun VersionFacts(version: RegistrationCardVersion, texts: CabinetTexts) 
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        DetailLine(texts.openedAt, version.openedBy?.let { actionTitle(it, texts) })
-        DetailLine(texts.closedAt, version.closedBy?.let { actionTitle(it, texts) })
-        DetailLine(texts.cardChanged, changedWords(version, texts))
+        DetailLine(texts.documents.openedAt, version.openedBy?.let { actionTitle(it, texts) })
+        DetailLine(texts.documents.closedAt, version.closedBy?.let { actionTitle(it, texts) })
+        DetailLine(texts.register.card.changed, changedWords(version, texts))
     }
 }
 

@@ -83,7 +83,7 @@ internal fun SalesPurchaseTiles(
     ) {
         MinorTile(texts.receipts, Modifier.weight(1f)) { MinorCount(summary.purchaseCount) }
         MinorTile(texts.paidOut, Modifier.weight(1f)) { MinorSum(Money.formatTiyn(summary.purchases)) }
-        MinorTile(cabinet.operationPurchaseReturn, Modifier.weight(1f)) {
+        MinorTile(cabinet.documents.operationPurchaseReturn, Modifier.weight(1f)) {
             MinorSum(Money.formatTiyn(summary.purchaseRefunds))
         }
     }

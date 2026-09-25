@@ -32,10 +32,10 @@ internal fun cabinetPeriodOf(period: JournalPeriod, zone: TimeZone = TimeZone.cu
 
 /** Название вида документов на сегменте выбора. */
 internal fun DocumentKind.title(texts: CabinetTexts): String = when (this) {
-    DocumentKind.Receipts -> texts.receipts
-    DocumentKind.Shifts -> texts.shifts
-    DocumentKind.Reports -> texts.reports
-    DocumentKind.CashMovements -> texts.cashMovements
+    DocumentKind.Receipts -> texts.documents.receipts
+    DocumentKind.Shifts -> texts.documents.shifts
+    DocumentKind.Reports -> texts.documents.reports
+    DocumentKind.CashMovements -> texts.documents.cashMovements
 }
 
 /**
@@ -55,8 +55,8 @@ internal fun documentsEmpty(
     val kept = overview?.let(kind.countIn) ?: 0
     val narrowed = kind.dated && period.range != null && kept > 0
     return if (narrowed) {
-        JournalEmpty(texts.documentsNoneInPeriod, texts.hints.documentsNoneInPeriod)
+        JournalEmpty(texts.documents.noneInPeriod, texts.hints.documentsNoneInPeriod)
     } else {
-        JournalEmpty(texts.documentsEmpty, texts.hints.documentsEmpty)
+        JournalEmpty(texts.documents.empty, texts.hints.documentsEmpty)
     }
 }

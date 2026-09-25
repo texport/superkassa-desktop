@@ -72,7 +72,7 @@ internal fun PlacesLook(
             if (chosen == null) {
                 EmptyState(
                     icon = AppIcons.newKkm,
-                    title = Look.cabinet.pickRegisterFirst,
+                    title = Look.cabinet.places.pickRegisterFirst,
                     hint = Look.cabinet.hints.pickRegisterFirst,
                     modifier = pane
                 )

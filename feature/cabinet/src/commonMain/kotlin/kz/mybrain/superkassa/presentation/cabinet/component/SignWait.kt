@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
-import kz.mybrain.superkassa.strings.api.cabinet.EdsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.eds.EdsTexts
 import kz.mybrain.superkassa.strings.api.fill
 import kotlin.time.Duration
 
@@ -54,7 +54,7 @@ internal fun SignWait(
             horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
         ) {
             CircularProgressIndicator(modifier = Modifier.size(Sizes.busyCircle))
-            Text(texts.signing, style = MaterialTheme.typography.titleMedium)
+            Text(texts.signin.signing, style = MaterialTheme.typography.titleMedium)
             InfoTip(texts.hints.signWait)
         }
         if (left > Duration.ZERO) {

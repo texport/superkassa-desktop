@@ -2,11 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>LargeClass:CabinetTexts.kt$CabinetTexts</ID>
-    <ID>LongFile:CabinetTexts.kt$kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts.kt</ID>
-    <ID>LongFile:CabinetTextsEn.kt$kz.mybrain.superkassa.strings.impl.cabinet.CabinetTextsEn.kt</ID>
-    <ID>LongFile:CabinetTextsKk.kt$kz.mybrain.superkassa.strings.impl.cabinet.CabinetTextsKk.kt</ID>
-    <ID>LongFile:CabinetTextsRu.kt$kz.mybrain.superkassa.strings.impl.cabinet.CabinetTextsRu.kt</ID>
     <ID>MagicNumber:OfdRefusalCodes.kt$OfdResult.Blocked$15</ID>
     <ID>MagicNumber:OfdRefusalCodes.kt$OfdResult.Deregistered$18</ID>
     <ID>MagicNumber:OfdRefusalCodes.kt$OfdResult.Disconnected$19</ID>
@@ -25,21 +20,6 @@
     <ID>MaxLineLength:AnalyticsTextsEn.kt$purchasesHint = "What the register buys from individuals is paid out of the drawer: this money is not revenue and is not part of the numbers above"</ID>
     <ID>MaxLineLength:AnalyticsTextsKk.kt$purchasesHint = "Халықтан сатып алынғанын касса жәшіктен төлейді: бұл ақша түсім емес және жоғарыдағы сандарға кірмейді"</ID>
     <ID>MaxLineLength:AnalyticsTextsRu.kt$purchasesHint = "Скупленное у населения касса оплачивает из ящика: эти деньги не выручка, и в числа выше они не входят"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$documentsNoneInPeriod = "The register has documents from another time — widen the period or take the whole time"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$localInfoNeedsSync = "The new place reaches receipts after the details are synced in the register settings: it cannot be done right now"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$okedNotFound = "Nothing found. The classifier knows only its own wording: a pharmacy there is trade in pharmaceutical goods"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$shiftOpenAsk = "A register can be taken off record only with the shift closed. Close the shift on this register and file the application?"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$token = "The key the register signs its requests with. Copy it into the register settings: it is not shown here twice"</ID>
-    <ID>MaxLineLength:CabinetTextsEn.kt$tokenNeedsNode = "The register works on this machine: write the new token into its settings, otherwise it stops at the first receipt"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$documentsNoneInPeriod = "Кассада басқа уақыттағы құжаттар бар — кезеңді кеңейтіңіз немесе «Барлық уақыт» алыңыз"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$localInfoNeedsSync = "Жаңа нүкте чектерде касса баптауларындағы салыстырудан кейін шығады: қазір оны жасау мүмкін емес"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$okedNotFound = "Ештеңе табылмады. Жіктеуіш тек өз тұжырымдарын біледі: дәріхана онда фармацевтикалық тауарлар саудасы деп аталады"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$shiftOpenAsk = "Кассаны есептен шығару ауысым жабылған кезде ғана мүмкін. Осы кассада ауысымды жабып, өтініш беру керек пе?"</ID>
-    <ID>MaxLineLength:CabinetTextsKk.kt$tokenNeedsNode = "Касса осы машинада жұмыс істейді: жаңа токенді оның баптауларына жазыңыз, әйтпесе ол алғашқы чекте тоқтайды"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$okedNotFound = "Ничего не нашлось. Классификатор знает только свои формулировки: аптека в нём называется торговлей фармацевтическими товарами"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$shiftOpenAsk = "Снять кассу с учёта можно только при закрытой смене. Закрыть смену на этой кассе и подать заявление?"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$token = "Ключ, которым касса подписывает обращения. Перенесите его в настройки кассы: второй раз он здесь не покажется"</ID>
-    <ID>MaxLineLength:CabinetTextsRu.kt$tokenNeedsNode = "Касса работает на этой машине: впишите новый токен в её настройках, иначе она встанет на первом же чеке"</ID>
     <ID>MaxLineLength:MoneyTextsEn.kt$deleteBlocked = "The only administrator cannot be deleted: no one would be left to add cashiers and change settings. Add a second administrator first, then delete."</ID>
     <ID>MaxLineLength:MoneyTextsEn.kt$listHint</ID>
     <ID>MaxLineLength:MoneyTextsKk.kt$deleteBlocked = "Жалғыз әкімшіні жоюға болмайды: кассирлерді енгізетін және баптауларды өзгертетін ешкім қалмайды. Алдымен екінші әкімшіні енгізіңіз, содан кейін жойыңыз."</ID>
@@ -52,9 +32,6 @@
     <ID>MaximumLineLength:AnalyticsTextsEn.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsTextsKk.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsTextsRu.kt$ </ID>
-    <ID>MaximumLineLength:CabinetTextsEn.kt$ </ID>
-    <ID>MaximumLineLength:CabinetTextsKk.kt$ </ID>
-    <ID>MaximumLineLength:CabinetTextsRu.kt$ </ID>
     <ID>MaximumLineLength:MoneyTextsEn.kt$ </ID>
     <ID>MaximumLineLength:MoneyTextsKk.kt$ </ID>
     <ID>MaximumLineLength:MoneyTextsRu.kt$ </ID>

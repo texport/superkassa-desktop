@@ -102,10 +102,10 @@ internal fun PlaceTree(
         TreeRows(texts, language, rows, state, place, register, onPlace, onRegister, listState, Modifier.weight(1f)) {
             SearchField(
                 value = sieve.needle,
-                label = texts.placeSearch,
+                label = texts.places.search,
                 onChange = { onSieve(sieve.copy(needle = it)) },
                 modifier = Modifier.fillMaxWidth(),
-                clearLabel = texts.sieve.clear
+                clearLabel = texts.places.sieve.clear
             )
             PlaceSieveBar(texts, sieve, locksKnown, onSieve)
         }

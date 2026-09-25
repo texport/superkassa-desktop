@@ -61,7 +61,7 @@ internal fun AnalyticsSalesBody(
             SalesTiles(view.summary, texts)
         }
         if (view.summary.purchased) {
-            SectionCard(cabinet.operationPurchase, info = sales.purchasesHint) {
+            SectionCard(cabinet.documents.operationPurchase, info = sales.purchasesHint) {
                 SalesPurchaseTiles(view.summary, sales, cabinet)
             }
         }

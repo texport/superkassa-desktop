@@ -71,7 +71,7 @@ internal class AddRegisterViewModel(private val cabinet: CabinetViewModel) : Vie
     fun stamp(draft: RegisterDraft) {
         viewModelScope.launch {
             val info = cabinet.useCases.issueFactoryNumber()
-                .shown(cabinet.texts.factoryNumber, "generate factory number", cabinet.talk) ?: return@launch
+                .shown(cabinet.texts.register.factoryNumber, "generate factory number", cabinet.talk) ?: return@launch
             if (draft.factory.isNotBlank()) return@launch
             draft.factory = info.factoryNumber
             draft.year = info.manufactureYear.toString()

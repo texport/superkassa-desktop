@@ -101,7 +101,7 @@ class PolishShots {
         val nodes = shoot("cabinet-technical-kk-larger", CARD_W, CARD_H, Language.Kk, TextScale.Larger) {
             Column(Modifier.width(CARD_PANE.dp).padding(Spacing.fieldGap)) {
                 CollapsibleCard(
-                    title = texts.technicalState,
+                    title = texts.register.technicalState,
                     expanded = false,
                     onToggle = {},
                     info = texts.hints.technicalState,
@@ -109,7 +109,7 @@ class PolishShots {
                 ) {}
             }
         }
-        val title = nodes.single { it.text == texts.technicalState }
+        val title = nodes.single { it.text == texts.register.technicalState }
         val chip = nodes.single { it.text == WORKING_KK }
         assertTrue(title.at.x + title.width <= chip.at.x, "заголовок наехал на плашку: $title, $chip")
         // Две строки заголовка выше плашки в полтора раза и больше; одна — вровень с ней.

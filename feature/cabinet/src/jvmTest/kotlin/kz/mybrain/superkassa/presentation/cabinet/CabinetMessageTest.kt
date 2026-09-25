@@ -32,7 +32,7 @@ class CabinetMessageTest {
             texts
         )
         val refusal = assertIs<Message.Refusal>(message)
-        assertEquals(texts.tokenOnlyRegistered, refusal.text)
+        assertEquals(texts.register.tokenOnlyRegistered, refusal.text)
         assertEquals("CASH_REGISTER_STATUS", refusal.code)
     }
 
@@ -51,8 +51,8 @@ class CabinetMessageTest {
 
         val words = assertIs<Message.Refusal>(silent).text
         assertTrue(words.contains(texts.hints.signNoAnswer), words)
-        assertFalse(words.contains(texts.noNcaLayer), "молчание выдано за отсутствие: $words")
-        assertEquals(texts.noNcaLayer, assertIs<Message.Refusal>(absent).text)
+        assertFalse(words.contains(texts.refusal.noNcaLayer), "молчание выдано за отсутствие: $words")
+        assertEquals(texts.refusal.noNcaLayer, assertIs<Message.Refusal>(absent).text)
     }
 
     /** Закрытое окно подписи названо своими словами, а не кодом. */
@@ -61,7 +61,7 @@ class CabinetMessageTest {
         val message = cabinetMessage(CabinetProblem.SignDeclined(Signer.WINDOW_CLOSED), texts)
         val words = assertIs<Message.Refusal>(message).text
 
-        assertTrue(words.contains(texts.signWindowClosed), words)
+        assertTrue(words.contains(texts.refusal.signWindowClosed), words)
         assertFalse(words.contains("WINDOW_CLOSED"), "код вместо слов: $words")
     }
 
@@ -84,7 +84,7 @@ class CabinetMessageTest {
     fun `недоступный кабинет говорит о кабинете, а не об узле кассы`() {
         val message = cabinetMessage(CabinetProblem.Unreachable("Connection refused"), texts)
         val refusal = assertIs<Message.Refusal>(message)
-        assertEquals(texts.unreachable, refusal.text)
+        assertEquals(texts.refusal.unreachable, refusal.text)
         assertEquals("CABINET_UNREACHABLE", refusal.code)
     }
 
@@ -98,16 +98,17 @@ class CabinetMessageTest {
     @Test
     fun `открытая смена названа словами владельца`() {
         val message = cabinetMessage(CabinetProblem.Refused("SHIFT_IS_OPEN", "Shift is open"), texts)
-        assertEquals(texts.shiftOpenTitle, assertIs<Message.Refusal>(message).text)
+        assertEquals(texts.applications.shiftOpenTitle, assertIs<Message.Refusal>(message).text)
     }
 
     @Test
     fun `истёкший доступ и отказ подписи говорят по-русски`() {
         assertEquals(
-            texts.sessionExpired,
+            texts.refusal.sessionExpired,
             assertIs<Message.Refusal>(cabinetMessage(CabinetProblem.SessionExpired, texts)).text
         )
-        assertEquals(texts.noNcaLayer, assertIs<Message.Refusal>(cabinetMessage(CabinetProblem.NoNcaLayer, texts)).text)
+        val refusal = assertIs<Message.Refusal>(cabinetMessage(CabinetProblem.NoNcaLayer, texts))
+        assertEquals(texts.refusal.noNcaLayer, refusal.text)
     }
 
     @Test

@@ -31,7 +31,7 @@ internal fun PointSupport(texts: CabinetTexts, language: Language, place: Retail
         if (address.isNotBlank()) {
             SupportLine(address, MaterialTheme.typography.bodySmall, ADDRESS_LINES)
         }
-        SupportLine("${texts.registerCount}: ${place.cashRegisterCount}", MaterialTheme.typography.labelSmall)
+        SupportLine("${texts.places.registerCount}: ${place.cashRegisterCount}", MaterialTheme.typography.labelSmall)
     }
 }
 

@@ -113,7 +113,7 @@ class RegisterViewModelTest {
         model.show(WAITING.copy(status = "REGISTERED"))
 
         val refusal = assertIs<Message.Refusal>(scene.services.talk.notices.last)
-        assertEquals(textsOf(Language.Ru).cabinet.unreachable, refusal.text)
+        assertEquals(textsOf(Language.Ru).cabinet.refusal.unreachable, refusal.text)
         assertFalse(scene.cabinet.state.value.busy)
     }
 

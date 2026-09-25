@@ -141,7 +141,7 @@ private fun CabinetPage(window: CabinetWindow, texts: CabinetTexts, page: Cabine
  * у аналитики набор надписей свой.
  */
 internal enum class CabinetTab(val title: (Language) -> String) {
-    Company({ textsOf(it).cabinet.company }),
-    Places({ textsOf(it).cabinet.places }),
+    Company({ textsOf(it).cabinet.company.title }),
+    Places({ textsOf(it).cabinet.places.title }),
     Analytics({ textsOf(it).analytics.title })
 }

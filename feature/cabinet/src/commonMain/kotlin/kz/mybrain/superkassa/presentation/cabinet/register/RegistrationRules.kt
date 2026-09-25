@@ -40,9 +40,9 @@ internal fun availableActions(register: CabinetRegister): Set<ActionKind> {
  */
 internal fun noActionsReason(register: CabinetRegister, texts: CabinetTexts): String =
     if (register.status.endsWith(IN_ISNA_PROCESS)) {
-        texts.applicationInFlight
+        texts.applications.inFlight
     } else {
-        texts.noApplications
+        texts.applications.none
     }
 
 /**

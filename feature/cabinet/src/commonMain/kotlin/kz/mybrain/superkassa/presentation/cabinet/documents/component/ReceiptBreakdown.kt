@@ -23,7 +23,7 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  */
 @Composable
 internal fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetTexts) {
-    BreakdownTitle(texts.receiptItems)
+    BreakdownTitle(texts.documents.receiptItems)
     receipt.items.forEach { item ->
         NamedSumRow(
             name = item.name.orEmpty(),
@@ -32,13 +32,13 @@ internal fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetText
         )
     }
     if (receipt.payments.isNotEmpty()) {
-        BreakdownTitle(texts.receiptPayments)
+        BreakdownTitle(texts.documents.receiptPayments)
         receipt.payments.forEach { payment ->
             NamedSumRow(name = paymentTitle(payment.type, texts), amount = Money.format(payment.sum))
         }
     }
     if (receipt.taxes.isNotEmpty()) {
-        BreakdownTitle(texts.receiptTaxes)
+        BreakdownTitle(texts.documents.receiptTaxes)
         receipt.taxes.forEach { tax ->
             NamedSumRow(
                 name = listOfNotNull(taxTitle(tax.type, texts), tax.percent?.let { "$it %" })
@@ -61,12 +61,12 @@ internal fun ReceiptBreakdown(receipt: CabinetReceiptDetails, texts: CabinetText
 private fun ReceiptTotals(receipt: CabinetReceiptDetails, texts: CabinetTexts) {
     val amounts = receipt.amounts
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-    amounts?.discount?.let { MinorSumLine(texts.receiptDiscount, Money.format(it)) }
-    amounts?.markup?.let { MinorSumLine(texts.receiptMarkup, Money.format(it)) }
-    amounts?.taken?.let { MinorSumLine(texts.receiptTaken, Money.format(it)) }
-    amounts?.change?.let { MinorSumLine(texts.receiptChange, Money.format(it)) }
+    amounts?.discount?.let { MinorSumLine(texts.documents.receiptDiscount, Money.format(it)) }
+    amounts?.markup?.let { MinorSumLine(texts.documents.receiptMarkup, Money.format(it)) }
+    amounts?.taken?.let { MinorSumLine(texts.documents.receiptTaken, Money.format(it)) }
+    amounts?.change?.let { MinorSumLine(texts.documents.receiptChange, Money.format(it)) }
     HeroSumLine(
-        title = texts.receiptTotal,
+        title = texts.documents.receiptTotal,
         amount = Money.format(amounts?.total ?: receipt.total),
         color = MaterialTheme.colorScheme.onSurface
     )

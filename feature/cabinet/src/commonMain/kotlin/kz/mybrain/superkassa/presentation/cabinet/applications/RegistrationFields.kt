@@ -44,7 +44,7 @@ internal fun ApplicationFields(
         // О том, что точка не выбрана, говорит строка под кнопкой подачи:
         // в поле набора её место занимает сам набор.
         ActionKind.Reregistration -> PlacePicker(
-            label = texts.newPlace,
+            label = texts.applications.newPlace,
             texts = texts,
             language = language,
             options = PlaceOptions(places),
@@ -75,7 +75,7 @@ private fun DeregistrationFields(
         OutlinedTextField(
             value = comment,
             onValueChange = onComment,
-            label = { Text(texts.comment) },
+            label = { Text(texts.applications.comment) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )

@@ -43,10 +43,10 @@ internal fun DocumentCounters(overview: DocumentsOverview?, texts: CabinetTexts,
             horizontalArrangement = Arrangement.spacedBy(Spacing.sectionGap),
             verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
-            CounterTile(counts.receiptsCount.toString(), texts.receipts)
-            CounterTile(counts.shiftsCount.toString(), texts.shifts)
-            CounterTile(counts.reportsCount.toString(), texts.reports)
-            CounterTile(counts.cashMovementsCount.toString(), texts.cashMovements)
+            CounterTile(counts.receiptsCount.toString(), texts.documents.receipts)
+            CounterTile(counts.shiftsCount.toString(), texts.documents.shifts)
+            CounterTile(counts.reportsCount.toString(), texts.documents.reports)
+            CounterTile(counts.cashMovementsCount.toString(), texts.documents.cashMovements)
         }
     }
 }

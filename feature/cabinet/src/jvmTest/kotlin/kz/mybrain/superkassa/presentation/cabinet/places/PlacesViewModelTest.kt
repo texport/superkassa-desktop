@@ -47,7 +47,7 @@ class PlacesViewModelTest {
         val said = rig.said()
 
         assertFalse(closed, "окно закрылось, как будто точка заведена")
-        assertTrue(said.contains(texts.placeExists), "владельцу не сказано, что новой точки нет: $said")
+        assertTrue(said.contains(texts.places.exists), "владельцу не сказано, что новой точки нет: $said")
         assertTrue(said.contains("Магазин на Абая"), "не названа точка, которая уже стоит по адресу: $said")
     }
 
@@ -67,7 +67,7 @@ class PlacesViewModelTest {
         model.move(place, ADDRESS, POINT) {}
         val said = rig.said()
 
-        assertTrue(said.contains(texts.addressNeedsReregistration), "не сказано, почему адрес прежний: $said")
+        assertTrue(said.contains(texts.places.addressNeedsReregistration), "не сказано, почему адрес прежний: $said")
         assertTrue(said.contains("Касса у входа"), "не названа касса, мешающая переезду: $said")
     }
 

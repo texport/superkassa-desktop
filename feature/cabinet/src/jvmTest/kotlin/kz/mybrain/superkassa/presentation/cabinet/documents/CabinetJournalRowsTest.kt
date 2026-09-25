@@ -45,7 +45,7 @@ class CabinetJournalRowsTest {
 
         val entry = receiptRow(receipt, cabinet).entry
 
-        assertEquals(cabinet.operationSale, entry.type)
+        assertEquals(cabinet.documents.operationSale, entry.type)
         assertEquals("12", entry.number)
         assertEquals(12L, entry.numberOrder)
         assertEquals(0, Decimal.parse("4500.84").compareTo(requireNotNull(entry.amountOrder)))
@@ -57,13 +57,13 @@ class CabinetJournalRowsTest {
 
     @Test
     fun `кабинет различает четыре вида чека, и покупка не названа продажей`() {
-        assertEquals(cabinet.operationSale, documentTitle("SALE", cabinet))
-        assertEquals(cabinet.operationReturn, documentTitle("RETURN", cabinet))
-        assertEquals(cabinet.operationPurchase, documentTitle("BUY", cabinet))
-        assertEquals(cabinet.operationPurchaseReturn, documentTitle("BUY_RETURN", cabinet))
+        assertEquals(cabinet.documents.operationSale, documentTitle("SALE", cabinet))
+        assertEquals(cabinet.documents.operationReturn, documentTitle("RETURN", cabinet))
+        assertEquals(cabinet.documents.operationPurchase, documentTitle("BUY", cabinet))
+        assertEquals(cabinet.documents.operationPurchaseReturn, documentTitle("BUY_RETURN", cabinet))
         listOf("BUY", "BUY_RETURN").forEach { code ->
             assertTrue(
-                !documentTitle(code, cabinet).contains(cabinet.operationSale),
+                !documentTitle(code, cabinet).contains(cabinet.documents.operationSale),
                 "покупка выдана за продажу: $code"
             )
         }
@@ -78,8 +78,8 @@ class CabinetJournalRowsTest {
         val types = journalTypesIn(rows)
 
         assertEquals(3, types.size, "три вида чека — три плашки отбора")
-        assertEquals(cabinet.operationPurchase, types.single { it.code == "BUY" }.title)
-        assertEquals(cabinet.operationPurchaseReturn, types.single { it.code == "BUY_RETURN" }.title)
+        assertEquals(cabinet.documents.operationPurchase, types.single { it.code == "BUY" }.title)
+        assertEquals(cabinet.documents.operationPurchaseReturn, types.single { it.code == "BUY_RETURN" }.title)
     }
 
     @Test

@@ -88,7 +88,8 @@ internal class DocumentsViewModel(private val cabinet: CabinetViewModel) : ViewM
             if (reply is CabinetReply.Failed) return@launch
             val packet = reply.value?.packet
             if (packet == null) {
-                cabinet.talk.say("open cabinet document", Message.Refusal(cabinet.texts.documentDataMissing, NO_PACKET))
+                val refusal = Message.Refusal(cabinet.texts.documents.dataMissing, NO_PACKET)
+                cabinet.talk.say("open cabinet document", refusal)
                 return@launch
             }
             onForm(packet, entry.key, PrintFileName.of(entry.typeCode, entry.number, entry.shiftNo))
@@ -126,7 +127,7 @@ internal class DocumentsViewModel(private val cabinet: CabinetViewModel) : ViewM
         }
         val slice = reply.value
         if (slice == null) {
-            val words = reply.problem?.let { cabinetMessage(it, texts).words() } ?: texts.unreachable
+            val words = reply.problem?.let { cabinetMessage(it, texts).words() } ?: texts.refusal.unreachable
             screen.update { it.copy(trouble = words) }
             return
         }

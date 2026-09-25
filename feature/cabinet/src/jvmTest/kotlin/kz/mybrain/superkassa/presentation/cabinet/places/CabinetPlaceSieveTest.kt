@@ -128,9 +128,9 @@ class CabinetPlaceSieveTest {
         val searched = treeEmpty(texts, PlaceSieve(needle = "аптека"))
         val nothing = treeEmpty(texts, PlaceSieve())
 
-        assertEquals(texts.sieve.empty, sieved.title, "пустой отбор назван не отбором")
-        assertEquals(texts.placeNotFound, searched.title, "ненайденное поиском названо не поиском")
-        assertEquals(texts.placesEmpty, nothing.title, "пустое хозяйство названо не пустым хозяйством")
+        assertEquals(texts.places.sieve.empty, sieved.title, "пустой отбор назван не отбором")
+        assertEquals(texts.places.notFound, searched.title, "ненайденное поиском названо не поиском")
+        assertEquals(texts.places.empty, nothing.title, "пустое хозяйство названо не пустым хозяйством")
         val titles = listOf(sieved, searched, nothing).map { it.title }
         assertEquals(titles.size, titles.toSet().size, "два разных случая пустоты названы одинаково")
     }

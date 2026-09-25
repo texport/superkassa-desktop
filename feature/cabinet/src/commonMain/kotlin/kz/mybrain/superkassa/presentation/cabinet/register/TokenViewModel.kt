@@ -43,12 +43,12 @@ internal class TokenViewModel(private val cabinet: CabinetViewModel) : ViewModel
             // касса с ним получила бы «неверный токен» и блокировку.
             val token = issued.token ?: return@launch cabinet.talk.say(
                 "issue token",
-                Message.Refusal(texts.tokenUnconfirmed, TOKEN_UNCONFIRMED)
+                Message.Refusal(texts.register.tokenUnconfirmed, TOKEN_UNCONFIRMED)
             )
             shown.value = IssuedToken(registerId, token)
             val written = cases.writeToken(here, token.toString()) ?: return@launch
-            written.shown(texts.issueToken, "write issued token", cabinet.talk) ?: return@launch
-            cabinet.talk.done(texts.tokenGoesToNode)
+            written.shown(texts.register.issueToken, "write issued token", cabinet.talk) ?: return@launch
+            cabinet.talk.done(texts.register.tokenGoesToNode)
         }
     }
 }

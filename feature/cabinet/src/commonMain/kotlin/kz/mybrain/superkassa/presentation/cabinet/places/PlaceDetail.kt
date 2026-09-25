@@ -48,7 +48,7 @@ internal fun PlaceDetail(
             chosenPlace != null -> PlaceCard(cabinet, texts, chosenPlace, pane)
             else -> EmptyState(
                 icon = AppIcons.newKkm,
-                title = texts.pickRegisterFirst,
+                title = texts.places.pickRegisterFirst,
                 hint = texts.hints.pickRegisterFirst,
                 modifier = Modifier.weight(1f)
             )
@@ -67,6 +67,6 @@ internal fun PlaceDetail(
 private fun BackToPlaces(texts: CabinetTexts, onBack: () -> Unit) {
     TextButton(onClick = onBack) {
         Icon(AppIcons.back, contentDescription = null, modifier = Modifier.padding(end = ButtonDefaults.IconSpacing))
-        Text(texts.places)
+        Text(texts.places.title)
     }
 }

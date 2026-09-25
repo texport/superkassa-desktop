@@ -84,7 +84,7 @@ class CabinetRegistrationRulesTest {
     @Test
     fun `причина названа по существу, а не одной строкой на оба случая`() {
         val texts = textsOf(Language.Ru).cabinet
-        assertEquals(texts.applicationInFlight, noActionsReason(register("REGISTRATION_IN_ISNA_PROCESS"), texts))
-        assertEquals(texts.noApplications, noActionsReason(register("DEREGISTERED"), texts))
+        assertEquals(texts.applications.inFlight, noActionsReason(register("REGISTRATION_IN_ISNA_PROCESS"), texts))
+        assertEquals(texts.applications.none, noActionsReason(register("DEREGISTERED"), texts))
     }
 }

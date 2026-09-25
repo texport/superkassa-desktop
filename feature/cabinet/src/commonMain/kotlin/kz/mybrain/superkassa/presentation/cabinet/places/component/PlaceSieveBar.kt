@@ -62,7 +62,7 @@ internal fun PlaceSieveBar(
             // Порядок сбросом не трогается: владелец выстроил список под
             // себя, и сброшенный отбор не повод перетряхивать его снова.
             TextButton(onClick = { onSieve(PlaceSieve(order = sieve.order, descending = sieve.descending)) }) {
-                Text(texts.sieve.clear)
+                Text(texts.places.sieve.clear)
             }
         }
     }
@@ -72,9 +72,9 @@ internal fun PlaceSieveBar(
 @Composable
 private fun RecordChip(texts: CabinetTexts, sieve: PlaceSieve, onSieve: (PlaceSieve) -> Unit, modifier: Modifier) {
     MenuChip(
-        value = recordTitle(sieve.record, texts.sieve),
+        value = recordTitle(sieve.record, texts.places.sieve),
         options = listOf(null) + KkmRecord.entries,
-        title = { recordTitle(it, texts.sieve) },
+        title = { recordTitle(it, texts.places.sieve) },
         chosen = sieve.record != null,
         modifier = modifier,
         onSelect = { onSieve(sieve.copy(record = it)) }
@@ -95,7 +95,7 @@ private fun BlockedChip(
         selected = sieve.blocked,
         enabled = locksKnown,
         onClick = { onSieve(sieve.copy(blocked = !sieve.blocked)) },
-        label = { Text(texts.sieve.blocked, maxLines = 1) },
+        label = { Text(texts.places.sieve.blocked, maxLines = 1) },
         leadingIcon = { if (sieve.blocked) Icon(AppIcons.chosen, contentDescription = null) }
     )
 }
@@ -128,7 +128,7 @@ private fun DirectionButton(texts: CabinetTexts, sieve: PlaceSieve, onSieve: (Pl
     ) {
         Icon(
             imageVector = if (sieve.descending) AppIcons.descending else AppIcons.ascending,
-            contentDescription = if (sieve.descending) texts.descending else texts.ascending,
+            contentDescription = if (sieve.descending) texts.places.descending else texts.places.ascending,
             modifier = Modifier.size(Sizes.chipIcon)
         )
     }

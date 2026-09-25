@@ -39,8 +39,8 @@ internal fun DegreesEntry(state: MapState, texts: CabinetTexts) {
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        DegreeField(texts.latitude, latitude, MAX_LATITUDE, Modifier.weight(1f)) { latitude = it }
-        DegreeField(texts.longitude, longitude, MAX_LONGITUDE, Modifier.weight(1f)) { longitude = it }
+        DegreeField(texts.places.latitude, latitude, MAX_LATITUDE, Modifier.weight(1f)) { latitude = it }
+        DegreeField(texts.places.longitude, longitude, MAX_LONGITUDE, Modifier.weight(1f)) { longitude = it }
         // Пара собирается целиком или не собирается вовсе: половина точки
         // на карту не ставится, и проверять её потом второй раз незачем.
         val point = degreesOf(latitude, MAX_LATITUDE)?.let { north ->

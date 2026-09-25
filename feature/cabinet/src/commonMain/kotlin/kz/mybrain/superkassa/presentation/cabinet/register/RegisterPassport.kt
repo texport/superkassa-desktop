@@ -47,7 +47,7 @@ internal fun RegisterPassport(
     val register = view.card
     val window by cabinet.cabinet.state.collectAsScreenState()
     SectionCard(
-        title = texts.passport,
+        title = texts.register.passport,
         info = texts.hints.passport,
         trailing = { CabinetStatusChip(register.status, texts) }
     ) {
@@ -76,11 +76,11 @@ private fun PassportFacts(texts: CabinetTexts, register: CabinetRegister) {
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
-        DetailLine(texts.registrationNumber, register.registrationNumber)
-        DetailLine(texts.factoryNumber, register.factoryNumber)
-        DetailLine(texts.model, register.model?.name ?: register.model?.modelCode)
-        DetailLine(texts.manufactureYear, register.manufactureYear.takeIf { it > 0 }?.toString())
-        DetailLine(texts.place, register.retailPlace?.name)
+        DetailLine(texts.register.registrationNumber, register.registrationNumber)
+        DetailLine(texts.register.factoryNumber, register.factoryNumber)
+        DetailLine(texts.register.model, register.model?.name ?: register.model?.modelCode)
+        DetailLine(texts.register.manufactureYear, register.manufactureYear.takeIf { it > 0 }?.toString())
+        DetailLine(texts.places.place, register.retailPlace?.name)
     }
 }
 

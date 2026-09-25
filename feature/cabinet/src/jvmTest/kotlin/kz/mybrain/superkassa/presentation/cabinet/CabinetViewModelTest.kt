@@ -60,7 +60,7 @@ class CabinetViewModelTest {
         scene.cabinet.signIn()
 
         val shown = assertIs<Message.Refusal>(scene.services.talk.notices.last)
-        assertEquals(textsOf(Language.Ru).cabinet.noNcaLayer, shown.text)
+        assertEquals(textsOf(Language.Ru).cabinet.refusal.noNcaLayer, shown.text)
         assertFalse(scene.cabinet.state.value.busy)
     }
 

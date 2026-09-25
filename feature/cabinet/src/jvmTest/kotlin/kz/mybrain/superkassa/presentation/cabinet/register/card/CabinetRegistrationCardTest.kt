@@ -119,9 +119,9 @@ class CabinetRegistrationCardTest {
     @Test
     fun `изменённое названо словами, а незнакомый код показан как пришёл`() {
         val texts = textsOf(Language.Ru).cabinet
-        assertEquals(texts.placeAddress, cardFieldTitle("ADDRESS", texts))
-        assertEquals(texts.placeName, cardFieldTitle("RETAIL_PLACE", texts))
-        assertEquals(texts.model, cardFieldTitle("KKM_MODEL", texts))
+        assertEquals(texts.places.address, cardFieldTitle("ADDRESS", texts))
+        assertEquals(texts.places.name, cardFieldTitle("RETAIL_PLACE", texts))
+        assertEquals(texts.register.model, cardFieldTitle("KKM_MODEL", texts))
         assertEquals("СОВСЕМ_НОВОЕ_ПОЛЕ", cardFieldTitle("СОВСЕМ_НОВОЕ_ПОЛЕ", texts))
     }
 }

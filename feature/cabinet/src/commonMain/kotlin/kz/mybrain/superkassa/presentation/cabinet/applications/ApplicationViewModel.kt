@@ -116,7 +116,11 @@ internal class ApplicationViewModel(private val cabinet: CabinetViewModel) : Vie
         screen.update { it.copy(closingShift = true) }
         running = viewModelScope.launch {
             val closed = cabinet.useCases.closeShift(here.kkmId, pin)
-                .shown(cabinet.texts.closeShiftAndDeregister, "close shift before deregistration", cabinet.talk)
+                .shown(
+                    cabinet.texts.applications.closeShiftAndDeregister,
+                    "close shift before deregistration",
+                    cabinet.talk
+                )
             screen.update { it.copy(closingShift = false, closing = false) }
             if (closed != null) send(register, here)
             onDone()
@@ -171,7 +175,7 @@ internal class ApplicationViewModel(private val cabinet: CabinetViewModel) : Vie
         val synced = cabinet.useCases.syncServiceInfo(here) ?: return
         if (synced !is Answer.Done) talk.journal.warn("service info not synced after reregistration")
         val texts = cabinet.texts
-        talk.done(if (synced is Answer.Done) texts.localInfoSynced else texts.localInfoNeedsSync)
+        talk.done(if (synced is Answer.Done) texts.register.localInfoSynced else texts.register.localInfoNeedsSync)
     }
 }
 

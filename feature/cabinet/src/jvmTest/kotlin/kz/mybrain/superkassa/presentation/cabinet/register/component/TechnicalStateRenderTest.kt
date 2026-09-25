@@ -58,7 +58,7 @@ class TechnicalStateRenderTest {
         val answers = stateAnswers(claims)
         val work = answers.first { it.question == StateQuestion.Usable }
         CollapsibleCard(
-            title = texts.technicalState,
+            title = texts.register.technicalState,
             expanded = true,
             onToggle = {},
             trailing = { TechnicalHeader(texts, work, disagreeing(claims).isNotEmpty()) }

@@ -92,7 +92,7 @@ private fun AddRegisterStep(
     onAdded: (CabinetRegister) -> Unit
 ) {
     var adding by remember { mutableStateOf(false) }
-    FilledTonalButton(onClick = { adding = true }) { Text(texts.addRegister) }
+    FilledTonalButton(onClick = { adding = true }) { Text(texts.enroll.add) }
     if (adding) {
         cabinet.AddRegister(factoryNumber, year, onDismiss = { adding = false }, onAdded = onAdded)
     }

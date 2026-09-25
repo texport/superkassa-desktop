@@ -86,7 +86,7 @@ internal class RegistrationCardViewModel(private val cabinet: CabinetViewModel) 
         viewModelScope.launch {
             val saved = cabinet.work.run("save card pdf") { cases.saveCardPdf(register, version) }.value
                 ?: return@launch
-            cabinet.talk.done("${cabinet.texts.savePdf}: $saved")
+            cabinet.talk.done("${cabinet.texts.register.card.savePdf}: $saved")
         }
     }
 

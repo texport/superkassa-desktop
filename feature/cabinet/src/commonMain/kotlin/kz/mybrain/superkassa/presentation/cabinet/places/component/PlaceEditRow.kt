@@ -81,14 +81,14 @@ private fun PlaceRename(texts: CabinetTexts, place: RetailPlace, busy: Boolean, 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text(texts.placeName) },
+            label = { Text(texts.places.name) },
             singleLine = true,
             // Поле тянется до кнопки: ряд занимает всю ширину карточки,
             // и края поля совпадают с краями полей над ним.
-            modifier = Modifier.weight(1f).fieldMinWidth(texts.placeName, Sizes.fieldForm)
+            modifier = Modifier.weight(1f).fieldMinWidth(texts.places.name, Sizes.fieldForm)
         )
         FieldButton(
-            text = texts.rename,
+            text = texts.places.rename,
             enabled = !busy && name.isNotBlank() && name != place.name
         ) { onRename(name) }
     }
@@ -114,16 +114,16 @@ private fun PlaceMove(
         query = draft.query,
         onQuery = draft::type,
         owner = place.id,
-        title = texts.changeAddress,
+        title = texts.places.changeAddress,
         onChoose = onAddress
     )
     if (draft.chosen != null) {
-        Chip(texts.addressChosen, StatusColors.delivered)
+        Chip(texts.address.chosen, StatusColors.delivered)
     }
     // Пока новый адрес не выбран, карта открывается на нынешнем адресе точки:
     // переезжают обычно в соседний дом, а не в другой город.
     PlacePoint(cabinet, texts, draft.point, draft.here, onAddress) { draft.point = it }
-    BusyButton(text = texts.changeAddress, busy = busy, enabled = draft.ready) {
+    BusyButton(text = texts.places.changeAddress, busy = busy, enabled = draft.ready) {
         val address = draft.chosen ?: return@BusyButton
         val where = draft.point ?: return@BusyButton
         model.move(place, address, where, draft::clear)

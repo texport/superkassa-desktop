@@ -39,16 +39,16 @@ internal fun ReceiptCard(receipt: CabinetReceiptDetails, texts: CabinetTexts, on
         info = texts.hints.receiptCard,
         trailing = { ReceiptTail(receipt, texts, onClose) }
     ) {
-        DetailLine(texts.receiptMoment, Dates.momentOf(receipt.createdAt))
-        DetailLine(texts.operator, receipt.operator?.name)
-        DetailLine(texts.shift, receipt.shiftNumber?.toString())
+        DetailLine(texts.documents.receiptMoment, Dates.momentOf(receipt.createdAt))
+        DetailLine(texts.documents.operator, receipt.operator?.name)
+        DetailLine(texts.register.shift, receipt.shiftNumber?.toString())
         // Фискальный признак стоит в заголовке карточки; здесь — номер документа по счётчику кассы
-        DetailLine(texts.kkmDocumentNumber, receipt.kkmDocumentNumber)
+        DetailLine(texts.documents.kkmDocumentNumber, receipt.kkmDocumentNumber)
         // Отметка КГД — то, ради чего чек и смотрят в кабинете: её
         // отсутствие названо словами, а не пропущенной строкой. Слова
         // продолжают подпись, а не повторяют её: в строке стояло
         // «Отметка КГД · Отметки КГД нет».
-        DetailLine(texts.kgdMarked, receipt.kgdMark ?: texts.noKgdMark)
+        DetailLine(texts.documents.kgdMarked, receipt.kgdMark ?: texts.documents.noKgdMark)
         ReceiptBreakdown(receipt, texts)
     }
 }

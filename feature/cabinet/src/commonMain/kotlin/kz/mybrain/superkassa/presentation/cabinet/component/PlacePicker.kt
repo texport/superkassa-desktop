@@ -40,11 +40,11 @@ internal fun PlacePicker(
         label = label,
         options = options.places,
         selected = selected,
-        words = PickerWords({ placeTitle(language, it) }, ::placeSearchKeys, texts.placeNotFound),
+        words = PickerWords({ placeTitle(language, it) }, ::placeSearchKeys, texts.places.notFound),
         onQuery = options.onQuery,
         onSelect = onSelect
     )
-    options.onCreate?.let { create -> TextButton(onClick = create) { Text(texts.addPlace) } }
+    options.onCreate?.let { create -> TextButton(onClick = create) { Text(texts.places.add) } }
 }
 
 /**

@@ -1,6 +1,6 @@
-package kz.mybrain.superkassa.strings.impl.cabinet
+package kz.mybrain.superkassa.strings.impl.cabinet.eds
 
-import kz.mybrain.superkassa.strings.api.cabinet.EdsTexts
+import kz.mybrain.superkassa.strings.api.cabinet.eds.EdsTexts
 
 /** Надписи [EdsTexts] по-английски. */
 internal val edsTextsEn = EdsTexts(

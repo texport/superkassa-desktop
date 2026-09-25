@@ -24,7 +24,7 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 @Composable
 internal fun RegisterJournal(actions: List<RegistrationAction>, texts: CabinetTexts) {
     if (actions.isEmpty()) {
-        EmptyState(AppIcons.history, texts.actionsEmpty, texts.hints.actionsEmpty)
+        EmptyState(AppIcons.history, texts.register.actionsEmpty, texts.hints.actionsEmpty)
         return
     }
     actions.forEachIndexed { at, action ->

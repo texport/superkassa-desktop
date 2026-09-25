@@ -41,22 +41,22 @@ internal fun ReportCard(report: CabinetReportDetails, texts: CabinetTexts, onClo
     SectionCard(
         title = listOfNotNull(
             documentTitle(report.type, texts),
-            report.shiftNumber?.let { "${texts.shift} $it" }
+            report.shiftNumber?.let { "${texts.register.shift} $it" }
         ).joinToString(Glyphs.SEPARATOR),
         info = texts.hints.reportCard,
         trailing = { CardTail(cabinetState(report.deliveryStatus, report.sendStatus), texts, onClose) }
     ) {
-        DetailLine(texts.documentMoment, Dates.momentOf(report.createdAt))
-        DetailLine(texts.receipts, report.receiptsCount?.toString())
-        DetailLine(texts.kkmDocumentNumber, report.kkmDocumentNumber)
-        MinorSumLine(texts.sales, Money.format(report.total))
-        MinorSumLine(texts.returns, Money.format(report.returnTotal))
+        DetailLine(texts.documents.moment, Dates.momentOf(report.createdAt))
+        DetailLine(texts.documents.receipts, report.receiptsCount?.toString())
+        DetailLine(texts.documents.kkmDocumentNumber, report.kkmDocumentNumber)
+        MinorSumLine(texts.documents.sales, Money.format(report.total))
+        MinorSumLine(texts.documents.returns, Money.format(report.returnTotal))
         // Покупка у населения — там же, где она стоит на ленте кассы:
         // отчёт в кабинете обязан сходиться с отчётом, который кассир
         // держит в руках.
-        report.buyTotal?.let { MinorSumLine(texts.operationPurchase, Money.format(it)) }
-        report.buyReturnTotal?.let { MinorSumLine(texts.operationPurchaseReturn, Money.format(it)) }
-        MinorSumLine(texts.cashInDrawer, Money.format(report.cashBalance))
+        report.buyTotal?.let { MinorSumLine(texts.documents.operationPurchase, Money.format(it)) }
+        report.buyReturnTotal?.let { MinorSumLine(texts.documents.operationPurchaseReturn, Money.format(it)) }
+        MinorSumLine(texts.documents.cashInDrawer, Money.format(report.cashBalance))
     }
 }
 
@@ -71,7 +71,7 @@ internal fun ReportCard(report: CabinetReportDetails, texts: CabinetTexts, onClo
 @Composable
 internal fun ShiftCard(shift: CabinetShift, texts: CabinetTexts, onClose: () -> Unit) {
     SectionCard(
-        title = "${texts.shift} ${shift.shiftNumber}",
+        title = "${texts.register.shift} ${shift.shiftNumber}",
         info = texts.hints.shiftCard,
         trailing = {
             Row(
@@ -83,9 +83,9 @@ internal fun ShiftCard(shift: CabinetShift, texts: CabinetTexts, onClose: () -> 
             }
         }
     ) {
-        DetailLine(texts.openedAt, Dates.momentOf(shift.openedAt))
-        DetailLine(texts.closedAt, Dates.momentOf(shift.closedAt))
-        MinorSumLine(texts.revenue, Money.format(shift.total))
+        DetailLine(texts.documents.openedAt, Dates.momentOf(shift.openedAt))
+        DetailLine(texts.documents.closedAt, Dates.momentOf(shift.closedAt))
+        MinorSumLine(texts.documents.revenue, Money.format(shift.total))
         ShiftTotalsLines(shift.totals, texts)
     }
 }
@@ -94,15 +94,15 @@ internal fun ShiftCard(shift: CabinetShift, texts: CabinetTexts, onClose: () -> 
 @Composable
 private fun ShiftTotalsLines(totals: ShiftTotals?, texts: CabinetTexts) {
     val sums = totals ?: return
-    MinorSumLine(texts.cashInDrawer, Money.format(sums.cashSum))
-    DetailLine(texts.receipts, sums.receiptsCount.toString())
-    MinorSumLine(texts.sales, Money.format(sums.salesSum))
-    MinorSumLine(texts.returns, Money.format(sums.returnsSum))
+    MinorSumLine(texts.documents.cashInDrawer, Money.format(sums.cashSum))
+    DetailLine(texts.documents.receipts, sums.receiptsCount.toString())
+    MinorSumLine(texts.documents.sales, Money.format(sums.salesSum))
+    MinorSumLine(texts.documents.returns, Money.format(sums.returnsSum))
     // Покупка у населения показывается, только когда она в смене была:
     // у торговой точки без приёма от населения строка стояла бы нулём
     // в каждой смене и занимала место зря.
-    sums.purchasesSum?.let { MinorSumLine(texts.operationPurchase, Money.format(it)) }
-    sums.purchaseReturnsSum?.let { MinorSumLine(texts.operationPurchaseReturn, Money.format(it)) }
+    sums.purchasesSum?.let { MinorSumLine(texts.documents.operationPurchase, Money.format(it)) }
+    sums.purchaseReturnsSum?.let { MinorSumLine(texts.documents.operationPurchaseReturn, Money.format(it)) }
 }
 
 /** Внесение или изъятие: сумма, смена и кто оформил. */
@@ -113,9 +113,9 @@ internal fun CashMovementCard(movement: CabinetCashMovementDetails, texts: Cabin
         info = texts.hints.cashMovement,
         trailing = { CardTail(cabinetState(null, movement.sendStatus), texts, onClose) }
     ) {
-        DetailLine(texts.documentMoment, Dates.momentOf(movement.createdAt))
-        DetailLine(texts.shift, movement.shiftNumber?.toString())
-        DetailLine(texts.documentNumber, movement.protocolDocumentId)
+        DetailLine(texts.documents.moment, Dates.momentOf(movement.createdAt))
+        DetailLine(texts.register.shift, movement.shiftNumber?.toString())
+        DetailLine(texts.documents.number, movement.protocolDocumentId)
         MinorSumLine(documentTitle(movement.type, texts), Money.format(movement.amount))
     }
 }

@@ -57,7 +57,7 @@ internal fun RegisterTechnical(state: RegisterState?, texts: CabinetTexts, answe
 internal fun TechnicalHeader(texts: CabinetTexts, work: StateAnswer, disagree: Boolean) {
     InfoTip(texts.hints.technicalState)
     if (disagree) {
-        Chip(texts.stateDisagree, toneColor(StatusTone.Bad))
+        Chip(texts.register.state.disagree, toneColor(StatusTone.Bad))
     } else {
         Chip(texts.headlineWords(work.headline), toneColor(headlineTone(work.headline)))
     }
@@ -116,7 +116,7 @@ private fun DisagreeNote(answer: StateAnswer, texts: CabinetTexts) {
     if (answer.disagreeing.isEmpty()) return
     val names = answer.disagreeing.joinToString(Glyphs.SEPARATOR) { it.title(texts) }
     Text(
-        text = texts.stateDisagreeNote.fill(names),
+        text = texts.register.state.disagreeNote.fill(names),
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.error
     )
@@ -144,8 +144,8 @@ private fun silent(claim: StateClaim, question: StateQuestion): Boolean =
 @Composable
 private fun TroubleRow(technical: TechnicalState?, texts: CabinetTexts) {
     val troubles = listOfNotNull(
-        (texts.trafficSuspended to StatusTone.Bad).takeIf { technical?.trafficSuspended == true },
-        (texts.bfdDisconnected to StatusTone.Waiting).takeIf { technical?.ofdDisconnected == true }
+        (texts.register.trafficSuspended to StatusTone.Bad).takeIf { technical?.trafficSuspended == true },
+        (texts.register.bfdDisconnected to StatusTone.Waiting).takeIf { technical?.ofdDisconnected == true }
     )
     if (troubles.isEmpty()) return
     FlowRow(
@@ -171,9 +171,9 @@ private fun TechnicalFacts(technical: TechnicalState?, texts: CabinetTexts) {
         DetailLine(texts.bfdSilenceTitle(technical), texts.bfdSilenceHint(technical))
         return
     }
-    DetailLine(texts.shiftNumberTitle, technical.shiftNumber?.toString() ?: texts.shiftNumberNone)
-    DetailLine(texts.lastContact, lastContactWords(technical, texts))
+    DetailLine(texts.register.shiftNumberTitle, technical.shiftNumber?.toString() ?: texts.register.shiftNumberNone)
+    DetailLine(texts.register.lastContact, lastContactWords(technical, texts))
 }
 
 private fun lastContactWords(technical: TechnicalState, texts: CabinetTexts): String =
-    technical.lastContactAt?.takeIf { it.isNotBlank() }?.let(Dates::momentOf) ?: texts.lastContactNever
+    technical.lastContactAt?.takeIf { it.isNotBlank() }?.let(Dates::momentOf) ?: texts.register.lastContactNever

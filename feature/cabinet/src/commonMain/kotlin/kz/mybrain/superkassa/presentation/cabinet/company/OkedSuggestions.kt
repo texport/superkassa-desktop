@@ -55,7 +55,7 @@ internal fun OkedSuggestionsField(
         OutlinedTextField(
             value = query,
             onValueChange = onQuery,
-            label = { Text(texts.okedSearch) },
+            label = { Text(texts.company.okedSearch) },
             singleLine = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = open) },
             modifier = Modifier
@@ -64,7 +64,8 @@ internal fun OkedSuggestionsField(
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable)
         )
         ExposedDropdownMenu(expanded = open, onDismissRequest = { onOpen(false) }) {
-            val more = rest?.let { if (it > 0) "${texts.showMore}${Glyphs.SEPARATOR}$it" else texts.showMore }
+            val showMore = texts.company.showMore
+            val more = rest?.let { if (it > 0) "$showMore${Glyphs.SEPARATOR}$it" else showMore }
             OkedItems(found, more, title, onMore, onPick)
         }
     }

@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
 import kz.mybrain.superkassa.presentation.common.status.kkmStateColor
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
-import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
+import kz.mybrain.superkassa.strings.api.cabinet.machine.MachineTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

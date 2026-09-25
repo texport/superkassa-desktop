@@ -43,20 +43,31 @@ internal fun RegistrationCardBlock(cabinet: CabinetViewModel, texts: CabinetText
     val issued = state.card?.takeIf { state.registerId == register.id }
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         ScreenSlot(cardState(issued, register, state, texts), dense = true) {
-            if (issued == null) return@ScreenSlot
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                DetailLine(statusTitle(issued.status ?: register.status, texts), Dates.momentOf(issued.updatedAt))
-                FilledTonalButton(enabled = !window.busy, onClick = { model.save(register) }) { Text(texts.savePdf) }
-            }
+            if (issued != null) IssuedCard(issued, register, texts, window.busy) { model.save(register) }
         }
         if (!register.registrationNumber.isNullOrBlank()) {
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             RegistrationCardVersions(state, texts, register, window.busy, model)
         }
+    }
+}
+
+/** Выданная карта: её состояние, дата и сохранение в PDF. */
+@Composable
+private fun IssuedCard(
+    issued: RegistrationCard,
+    register: CabinetRegister,
+    texts: CabinetTexts,
+    busy: Boolean,
+    onSave: () -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        DetailLine(statusTitle(issued.status ?: register.status, texts), Dates.momentOf(issued.updatedAt))
+        FilledTonalButton(enabled = !busy, onClick = onSave) { Text(texts.register.card.savePdf) }
     }
 }
 
@@ -69,5 +80,5 @@ private fun cardState(
 ): ScreenState = when {
     issued != null -> ScreenState.Ready
     register.registrationCardAvailable && !state.cardAsked -> ScreenState.Working
-    else -> ScreenState.Empty(AppIcons.print, texts.cardMissing, texts.hints.cardMissing)
+    else -> ScreenState.Empty(AppIcons.print, texts.register.card.missing, texts.hints.cardMissing)
 }

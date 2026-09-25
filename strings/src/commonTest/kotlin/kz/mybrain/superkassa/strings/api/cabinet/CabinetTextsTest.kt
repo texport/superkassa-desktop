@@ -28,7 +28,7 @@ class CabinetTextsTest {
     @Test
     fun `счётчик показанного подставляет оба числа`() {
         Language.entries.forEach { language ->
-            val line = textsOf(language).cabinet.shownOf.fill(50, 1240)
+            val line = textsOf(language).cabinet.places.shownOf.fill(50, 1240)
             assertTrue(line.contains("50"), "$language: не подставлено показанное — $line")
             assertTrue(line.contains("1240"), "$language: не подставлено общее — $line")
             // Незакрытая подстановка доходит до владельца как «%1$s»:

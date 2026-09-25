@@ -26,11 +26,11 @@ internal fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Messa
     // про работающий узел: касса при этом пробивает чеки, а не отвечает
     // только кабинет. Поэтому здесь стоят слова самого кабинета, а код
     // остаётся своим — поддержка по нему отличает молчание от отказа.
-    is CabinetProblem.Unreachable -> Message.Refusal(texts.unreachable, UNREACHABLE)
-    CabinetProblem.Unreadable -> Message.Refusal(texts.unreadable, UNREADABLE)
-    CabinetProblem.NoNcaLayer -> Message.Refusal(texts.noNcaLayer, NCALAYER)
+    is CabinetProblem.Unreachable -> Message.Refusal(texts.refusal.unreachable, UNREACHABLE)
+    CabinetProblem.Unreadable -> Message.Refusal(texts.refusal.unreadable, UNREADABLE)
+    CabinetProblem.NoNcaLayer -> Message.Refusal(texts.refusal.noNcaLayer, NCALAYER)
     is CabinetProblem.SignDeclined -> Message.Refusal(signWords(problem.detail, texts), SIGN)
-    CabinetProblem.SessionExpired -> Message.Refusal(texts.sessionExpired, EXPIRED)
+    CabinetProblem.SessionExpired -> Message.Refusal(texts.refusal.sessionExpired, EXPIRED)
 }
 
 /**
@@ -46,27 +46,27 @@ internal fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Messa
  */
 private fun signWords(detail: String, texts: CabinetTexts): String {
     val reason = when {
-        detail == Signer.WINDOW_CLOSED -> texts.signWindowClosed
+        detail == Signer.WINDOW_CLOSED -> texts.refusal.signWindowClosed
         detail == Signer.NO_ANSWER -> texts.hints.signNoAnswer
         // Отказ владельца NCALayer называет по-своему — «500 - action.canceled».
         // Это ответ службы, а не объяснение: подписывать отказался сам
         // владелец, и сказать об этом нужно его словами.
-        cancelledBySigner(detail) -> texts.signCancelled
+        cancelledBySigner(detail) -> texts.refusal.signCancelled
         else -> detail
     }
-    return listOf(texts.signDeclined, reason).filter { it.isNotBlank() }.joinToString(Glyphs.SEPARATOR)
+    return listOf(texts.refusal.signDeclined, reason).filter { it.isNotBlank() }.joinToString(Glyphs.SEPARATOR)
 }
 
 /** Отказ кабинета словами владельца; `null` — такого кода приложение не знает. */
 private fun refusalWords(code: String, texts: CabinetTexts): String? = when (code) {
-    "CASH_REGISTER_STATUS" -> texts.tokenOnlyRegistered
+    "CASH_REGISTER_STATUS" -> texts.register.tokenOnlyRegistered
     // Самый частый отказ по снятию с учёта, и приложение умеет его
     // исправить само — кнопкой закрытия смены. Под кнопкой при этом
     // стояло английское «Shift is open» от кабинета.
-    "SHIFT_IS_OPEN" -> texts.shiftOpenTitle
+    "SHIFT_IS_OPEN" -> texts.applications.shiftOpenTitle
     "STATE_UNKNOWN" -> texts.hints.technicalUnknown
-    "KKM_NOT_ACTIVE" -> texts.kkmNotActive
-    "DEFAULT_PIN_NOT_ALLOWED" -> texts.defaultPinNotAllowed
+    "KKM_NOT_ACTIVE" -> texts.refusal.kkmNotActive
+    "DEFAULT_PIN_NOT_ALLOWED" -> texts.refusal.defaultPinNotAllowed
     else -> null
 }
 

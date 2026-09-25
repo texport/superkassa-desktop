@@ -141,7 +141,7 @@ private fun SubmitRow(
     onSubmit: () -> Unit
 ) {
     BusyButton(
-        text = state.stage?.title(texts) ?: texts.submitApplication,
+        text = state.stage?.title(texts) ?: texts.applications.submit,
         busy = state.stage != null || busy,
         enabled = enabled,
         kind = if (state.blockedByShift) FieldButtonKind.Tonal else FieldButtonKind.Filled,
@@ -168,10 +168,10 @@ private fun ShiftBlock(
 ) {
     if (!state.blockedByShift) return
     if (here == null) {
-        Note(texts.shiftOpenElsewhere)
+        Note(texts.applications.shiftOpenElsewhere)
         return
     }
-    BusyButton(text = texts.closeShiftAndDeregister, busy = state.closingShift) { model.closing(true) }
+    BusyButton(text = texts.applications.closeShiftAndDeregister, busy = state.closingShift) { model.closing(true) }
     if (state.closing) {
         CloseShiftBeforeDeregister(texts, state.closingShift, onDismiss = { model.closing(false) }) { pin ->
             onConfirm(pin, here)

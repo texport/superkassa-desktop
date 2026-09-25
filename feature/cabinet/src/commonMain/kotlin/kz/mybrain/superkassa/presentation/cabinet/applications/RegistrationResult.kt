@@ -47,10 +47,11 @@ internal fun ApplicationResult(outcome: ApplicationOutcome?, texts: CabinetTexts
     when (outcome) {
         null -> Unit
         is ApplicationOutcome.Sent -> {
-            DetailLine(texts.applicationSent, statusTitle(outcome.sent.actionStatus, texts))
-            DetailLine(texts.registerStatus, outcome.sent.cashRegisterStatus?.let { statusTitle(it, texts) })
+            DetailLine(texts.applications.sent, statusTitle(outcome.sent.actionStatus, texts))
+            val status = outcome.sent.cashRegisterStatus?.let { statusTitle(it, texts) }
+            DetailLine(texts.applications.registerStatus, status)
             Text(
-                text = texts.applicationWait,
+                text = texts.applications.wait,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -58,7 +59,7 @@ internal fun ApplicationResult(outcome: ApplicationOutcome?, texts: CabinetTexts
         // Неудача остаётся под кнопкой до следующей подачи: всплывающая строка
         // каркаса гаснет за секунды, и владелец не успевал прочитать причину.
         is ApplicationOutcome.Failed -> Text(
-            text = "${texts.applicationFailed}: ${cabinetMessage(outcome.problem, texts).words()}",
+            text = "${texts.applications.failed}: ${cabinetMessage(outcome.problem, texts).words()}",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.error
         )

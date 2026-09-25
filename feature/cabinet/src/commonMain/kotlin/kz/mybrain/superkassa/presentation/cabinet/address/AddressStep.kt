@@ -71,7 +71,7 @@ internal fun AddressStep(
 @Composable
 private fun NotFound(texts: CabinetTexts) {
     Text(
-        text = texts.addressNotFound,
+        text = texts.address.notFound,
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

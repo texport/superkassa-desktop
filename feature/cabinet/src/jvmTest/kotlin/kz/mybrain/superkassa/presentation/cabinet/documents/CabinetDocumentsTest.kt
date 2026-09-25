@@ -69,23 +69,23 @@ class CabinetDocumentsTest {
         val week = JournalPeriod.of(JournalSpan.Week)
 
         assertEquals(
-            texts.documentsNoneInPeriod,
+            texts.documents.noneInPeriod,
             documentsEmpty(DocumentKind.Receipts, week, hundred, texts).title,
             "пустая неделя объявила кассу без чеков"
         )
         assertEquals(
-            texts.documentsEmpty,
+            texts.documents.empty,
             documentsEmpty(DocumentKind.Receipts, week, DocumentsOverview(cashRegisterId = "c-1"), texts).title,
             "у кассы без чеков вовсе предложено сменить срок"
         )
         assertEquals(
-            texts.documentsEmpty,
+            texts.documents.empty,
             documentsEmpty(DocumentKind.Receipts, JournalPeriod.of(JournalSpan.All), hundred, texts).title,
             "за всё время предложено сменить срок"
         )
         // У смен срока нет вовсе: кабинет их по дате не отдаёт.
         assertEquals(
-            texts.documentsEmpty,
+            texts.documents.empty,
             documentsEmpty(DocumentKind.Shifts, week, hundred.copy(shiftsCount = 5), texts).title,
             "смены, которых кабинет по сроку не отдаёт, предложено искать сроком"
         )

@@ -55,10 +55,10 @@ internal data class PlaceSieve(
  * в списке выбора без второй правки.
  */
 internal enum class PlaceOrder(val title: (CabinetTexts) -> String) {
-    Name({ it.orderByName }),
-    Address({ it.orderByAddress }),
-    Registers({ it.orderByRegisters }),
-    Record({ it.orderByRecord })
+    Name({ it.places.orderByName }),
+    Address({ it.places.orderByAddress }),
+    Registers({ it.places.orderByRegisters }),
+    Record({ it.places.orderByRecord })
 }
 
 /** Точка и её кассы, оставшиеся после отбора. */

@@ -46,7 +46,7 @@ class CabinetPlacesAdaptiveTest {
                     whole.size >= least,
                     "${scene.width}×${scene.height} ${scene.language} ${scene.scale}: целиком видно ${whole.size} точек"
                 )
-                listOf(scene.texts.addRegister, scene.texts.addPlace).forEach { button ->
+                listOf(scene.texts.enroll.add, scene.texts.places.add).forEach { button ->
                     assertTrue(probe.nodes().any { it.text == button && it.whole }, "кнопка «$button» не видна целиком")
                 }
                 val chosen = whole.first()
@@ -67,7 +67,7 @@ class CabinetPlacesAdaptiveTest {
             val card = probe.nodes().filter { it.text == chosen.text && it.whole && !it.editable }
             assertEquals(1, card.size, "на узком окне список должен уступить место карточке")
             assertTrue(card.single().width > TABLET_CARD, "карточка точки сжата до ${card.single().width}")
-            val back = probe.nodes().filter { it.text == scene.texts.places }.maxBy { it.at.y }
+            val back = probe.nodes().filter { it.text == scene.texts.places.title }.maxBy { it.at.y }
             probe.click(back.middle())
             assertTrue(probe.rows(probe.tree()).count { it.whole } > 1, "кнопка возврата не вернула список точек")
         }

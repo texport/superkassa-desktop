@@ -32,7 +32,7 @@ import kz.mybrain.superkassa.strings.api.fill
 internal fun PlaceCount(texts: CabinetTexts, rows: List<PlaceRow>, total: Int, modifier: Modifier = Modifier) {
     val shown = rows.count { it is PlaceRow.Point }
     Text(
-        text = if (shown == total) "${texts.places}: $total" else texts.shownOf.fill(shown, total),
+        text = if (shown == total) "${texts.places.title}: $total" else texts.places.shownOf.fill(shown, total),
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = modifier.padding(start = Spacing.itemGap, end = Spacing.fieldGap)
@@ -53,7 +53,7 @@ internal fun PlaceCount(texts: CabinetTexts, rows: List<PlaceRow>, total: Int, m
  * ненайденного говорит о его хозяйстве неправду.
  */
 internal fun treeEmpty(texts: CabinetTexts, sieve: PlaceSieve): ScreenState.Empty = when {
-    sieve.marked -> ScreenState.Empty(AppIcons.find, texts.sieve.empty, texts.sieve.emptyHint)
-    sieve.needle.isNotBlank() -> ScreenState.Empty(AppIcons.find, texts.placeNotFound, texts.hints.placeNotFound)
-    else -> ScreenState.Empty(AppIcons.newKkm, texts.placesEmpty, texts.hints.placesEmpty)
+    sieve.marked -> ScreenState.Empty(AppIcons.find, texts.places.sieve.empty, texts.places.sieve.emptyHint)
+    sieve.needle.isNotBlank() -> ScreenState.Empty(AppIcons.find, texts.places.notFound, texts.hints.placeNotFound)
+    else -> ScreenState.Empty(AppIcons.newKkm, texts.places.empty, texts.hints.placesEmpty)
 }

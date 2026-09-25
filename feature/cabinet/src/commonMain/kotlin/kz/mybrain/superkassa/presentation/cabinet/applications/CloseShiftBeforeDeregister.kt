@@ -41,20 +41,20 @@ internal fun CloseShiftBeforeDeregister(
 ) {
     var pin by remember { mutableStateOf("") }
     FormDialog(
-        title = texts.shiftOpenTitle,
+        title = texts.applications.shiftOpenTitle,
         icon = AppIcons.warning,
-        action = texts.closeShiftAndDeregister,
+        action = texts.applications.closeShiftAndDeregister,
         close = texts.close,
         busy = busy,
-        missing = listOfNotNull(texts.adminPin.takeIf { UserRules.checkPin(pin) != null }),
+        missing = listOfNotNull(texts.applications.adminPin.takeIf { UserRules.checkPin(pin) != null }),
         onDismiss = onDismiss,
         onAction = { onConfirm(pin) }
     ) {
-        Text(texts.shiftOpenAsk)
+        Text(texts.applications.shiftOpenAsk)
         OutlinedTextField(
             value = pin,
             onValueChange = { pin = UserRules.digitsOf(it) },
-            label = { Text(texts.adminPin) },
+            label = { Text(texts.applications.adminPin) },
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),

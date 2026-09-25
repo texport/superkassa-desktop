@@ -120,8 +120,8 @@ class LiveWalkCabinetShots {
                 modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap),
                 verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
             ) {
-                CollapsibleCard(texts.card, expanded = false, onToggle = {}, info = texts.hints.card) {}
-                val journal = texts.actionsJournal
+                CollapsibleCard(texts.register.card.title, expanded = false, onToggle = {}, info = texts.hints.card) {}
+                val journal = texts.register.actionsJournal
                 CollapsibleCard(journal, expanded = false, onToggle = {}, info = texts.hints.actionsJournal) {}
             }
         }

@@ -56,11 +56,11 @@ class CabinetFormFieldsTest {
             Windowed { AddPlaceCard(mockCabinet(EMPTY), texts, onDismiss = {}, onAdded = {}) }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }
-            val hint = probe.nodes().any { it.text == texts.pointNotChosen }
+            val hint = probe.nodes().any { it.text == texts.places.pointNotChosen }
             assertTrue(hint, "не сказано, что место на карте не выбрано")
             val action = probe.semantics().single { node ->
                 val button = node.config.getOrNull(SemanticsProperties.Role) == Role.Button
-                button && node.children.any { it.says(texts.addPlace) }
+                button && node.children.any { it.says(texts.places.add) }
             }
             assertTrue(SemanticsProperties.Disabled in action.config, "кнопка создания доступна без места на карте")
         }

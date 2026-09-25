@@ -17,9 +17,9 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /** Как назван шаг подачи: каждый ждёт своего — кабинета, владельца с ключом, снова кабинета. */
 internal fun ApplicationStage.title(texts: CabinetTexts): String = when (this) {
-    ApplicationStage.Preparing -> texts.stagePreparing
-    ApplicationStage.Signing -> texts.stageSigning
-    ApplicationStage.Sending -> texts.stageSending
+    ApplicationStage.Preparing -> texts.applications.stagePreparing
+    ApplicationStage.Signing -> texts.applications.stageSigning
+    ApplicationStage.Sending -> texts.applications.stageSending
 }
 
 /** Чем закончилась подача: отправлено либо не отправлено — и почему. */
@@ -30,17 +30,17 @@ internal sealed interface ApplicationOutcome {
 
 /** Что владелец подаёт в ИСНА. */
 internal enum class ActionKind(val title: (CabinetTexts) -> String) {
-    Registration({ it.registration }),
-    Reregistration({ it.reregistration }),
-    Deregistration({ it.deregistration })
+    Registration({ it.applications.registration }),
+    Reregistration({ it.applications.reregistration }),
+    Deregistration({ it.applications.deregistration })
 }
 
 /** Почему кассу снимают с учёта — набор задан ИСНА. */
 internal enum class DeregistrationReason(val code: String, val title: (CabinetTexts) -> String) {
-    CessationOfUse("CESSATION_OF_USE", { it.reasonCessation }),
-    Broken("KKM_BROKEN", { it.reasonBroken }),
-    Lost("KKM_LOST", { it.reasonLost }),
-    Other("OTHER", { it.reasonOther })
+    CessationOfUse("CESSATION_OF_USE", { it.applications.reasonCessation }),
+    Broken("KKM_BROKEN", { it.applications.reasonBroken }),
+    Lost("KKM_LOST", { it.applications.reasonLost }),
+    Other("OTHER", { it.applications.reasonOther })
 }
 
 /**

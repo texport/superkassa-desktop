@@ -59,8 +59,8 @@ internal data class OkedSearch(
      */
     fun hint(texts: CabinetTexts): String = when {
         !searched || needle.isEmpty() -> texts.hints.okedSearch
-        found.isEmpty() -> texts.okedNotFound
-        !ended -> texts.okedNarrowSearch
+        found.isEmpty() -> texts.company.okedNotFound
+        !ended -> texts.company.okedNarrowSearch
         else -> texts.hints.okedSearch
     }
 

@@ -47,7 +47,7 @@ fun receiptRow(receipt: CabinetReceipt, texts: CabinetTexts): CabinetDocumentRow
             sign = receipt.kgdMark ?: Glyphs.DASH,
             delivery = cabinetState(receipt.deliveryStatus, receipt.sendStatus),
             shiftNo = receipt.shiftNumber?.toLong(),
-            about = receipt.kgdMark?.let { texts.kgdMarked }.orEmpty(),
+            about = receipt.kgdMark?.let { texts.documents.kgdMarked }.orEmpty(),
             printable = drawable(cabinetState(receipt.deliveryStatus, receipt.sendStatus))
         ),
         target = RowTarget.Remote(receipt.transactionId)
@@ -72,7 +72,7 @@ internal fun shiftRow(shift: CabinetShift, texts: CabinetTexts): CabinetDocument
             at = cabinetMillis(shift.openedAt),
             moment = Dates.momentOf(shift.openedAt),
             typeCode = null,
-            type = texts.shift,
+            type = texts.register.shift,
             number = Glyphs.DASH,
             numberOrder = null,
             amount = Money.format(shift.total),

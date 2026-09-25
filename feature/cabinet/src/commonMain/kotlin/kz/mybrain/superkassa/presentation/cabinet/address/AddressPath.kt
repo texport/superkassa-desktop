@@ -44,9 +44,9 @@ internal data class AddressPath(
     fun currentLabel(texts: CabinetTexts): String = level.label(texts)
 
     fun labelAt(at: Int, texts: CabinetTexts): String = when {
-        at == 0 -> texts.addressRegion
-        chosen[at].level == LEVEL_STREET -> texts.addressStreet
-        else -> texts.addressLocality
+        at == 0 -> texts.address.region
+        chosen[at].level == LEVEL_STREET -> texts.address.street
+        else -> texts.address.locality
     }
 
     /** Дом завершает путь; за пунктом следующий шаг известен только после ответа регистра о вложенных. */
@@ -61,10 +61,10 @@ internal data class AddressPath(
 
 /** Как шаг регистра назван в поле. */
 private fun AddressLevel.label(texts: CabinetTexts): String = when (this) {
-    AddressLevel.Region -> texts.addressRegion
-    AddressLevel.Locality -> texts.addressLocality
-    AddressLevel.Street -> texts.addressStreet
-    AddressLevel.Building -> texts.addressBuilding
+    AddressLevel.Region -> texts.address.region
+    AddressLevel.Locality -> texts.address.locality
+    AddressLevel.Street -> texts.address.street
+    AddressLevel.Building -> texts.address.building
 }
 
 internal const val LEVEL_LOCALITY = "LOCALITY"

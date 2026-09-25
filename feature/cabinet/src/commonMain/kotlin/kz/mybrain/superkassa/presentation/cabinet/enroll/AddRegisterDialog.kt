@@ -48,9 +48,9 @@ internal fun AddRegisterDialog(
     var addingPlace by remember { mutableStateOf(false) }
     OpenForm(model, draft)
     FormDialog(
-        title = texts.addRegister,
+        title = texts.enroll.add,
         icon = AppIcons.kkm,
-        action = texts.addRegister,
+        action = texts.enroll.add,
         close = texts.close,
         busy = window.busy,
         missing = missingFields(texts, draft),
@@ -116,8 +116,8 @@ private const val OUR_MODEL = "Суперкасса"
 
 /** Какие обязательные поля пусты. */
 private fun missingFields(texts: CabinetTexts, draft: RegisterDraft): List<String> = listOfNotNull(
-    texts.place.takeIf { draft.place == null },
-    texts.model.takeIf { draft.model == null },
-    texts.factoryNumber.takeIf { draft.factory.isBlank() },
-    texts.manufactureYear.takeIf { draft.year.length != YEAR_DIGITS }
+    texts.places.place.takeIf { draft.place == null },
+    texts.register.model.takeIf { draft.model == null },
+    texts.register.factoryNumber.takeIf { draft.factory.isBlank() },
+    texts.register.manufactureYear.takeIf { draft.year.length != YEAR_DIGITS }
 )

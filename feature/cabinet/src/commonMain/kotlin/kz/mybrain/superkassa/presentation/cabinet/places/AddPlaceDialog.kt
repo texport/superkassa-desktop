@@ -46,9 +46,9 @@ internal fun AddPlaceCard(
     val window by cabinet.cabinet.state.collectAsScreenState()
     val draft = remember { NewPlaceDraft() }
     FormDialog(
-        title = texts.addPlace,
+        title = texts.places.add,
         icon = AppIcons.newKkm,
-        action = texts.addPlace,
+        action = texts.places.add,
         close = texts.close,
         busy = window.busy,
         missing = missingFields(texts, draft.name, draft.chosen, draft.point),
@@ -71,7 +71,7 @@ private fun NewPlaceFields(cabinet: CabinetWindow, texts: CabinetTexts, draft: N
     OutlinedTextField(
         value = draft.name,
         onValueChange = { draft.name = it },
-        label = { Text(texts.placeName) },
+        label = { Text(texts.places.name) },
         singleLine = true,
         modifier = Modifier.fillMaxWidth()
     )
@@ -120,7 +120,7 @@ private fun missingFields(
     address: RegisterAddress?,
     point: MapPoint?
 ): List<String> = listOfNotNull(
-    texts.placeName.takeIf { name.isBlank() },
-    texts.placeAddress.takeIf { address == null },
-    texts.pickOnMap.takeIf { point == null }
+    texts.places.name.takeIf { name.isBlank() },
+    texts.places.address.takeIf { address == null },
+    texts.places.pickOnMap.takeIf { point == null }
 )

@@ -23,14 +23,14 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  * у них одно на оба: второй перевод разошёлся бы с первым.
  */
 internal fun documentTitle(code: String?, texts: CabinetTexts): String = when (code) {
-    "SALE" -> texts.operationSale
-    "RETURN" -> texts.operationReturn
-    "BUY", "PURCHASE" -> texts.operationPurchase
-    "BUY_RETURN", "PURCHASE_RETURN" -> texts.operationPurchaseReturn
-    "Z" -> texts.reportZ
-    "X" -> texts.reportX
-    "DEPOSIT" -> texts.deposit
-    "WITHDRAWAL" -> texts.withdrawal
+    "SALE" -> texts.documents.operationSale
+    "RETURN" -> texts.documents.operationReturn
+    "BUY", "PURCHASE" -> texts.documents.operationPurchase
+    "BUY_RETURN", "PURCHASE_RETURN" -> texts.documents.operationPurchaseReturn
+    "Z" -> texts.documents.reportZ
+    "X" -> texts.documents.reportX
+    "DEPOSIT" -> texts.documents.deposit
+    "WITHDRAWAL" -> texts.documents.withdrawal
     null -> ""
     else -> code
 }
@@ -42,19 +42,19 @@ internal fun documentTitle(code: String?, texts: CabinetTexts): String = when (c
  * чек глазами покупателя, и «Тарой» ему понятно, а `TARE` — нет.
  */
 internal fun paymentTitle(code: String?, texts: CabinetTexts): String = when (code) {
-    "CASH" -> texts.paymentCash
-    "CARD" -> texts.paymentCard
-    "ELECTRONIC" -> texts.paymentElectronic
-    "MOBILE" -> texts.paymentMobile
-    "CREDIT" -> texts.paymentCredit
-    "TARE" -> texts.paymentTare
+    "CASH" -> texts.documents.paymentCash
+    "CARD" -> texts.documents.paymentCard
+    "ELECTRONIC" -> texts.documents.paymentElectronic
+    "MOBILE" -> texts.documents.paymentMobile
+    "CREDIT" -> texts.documents.paymentCredit
+    "TARE" -> texts.documents.paymentTare
     null -> ""
     else -> code
 }
 
 /** Налог словами: в чеке стоял код ставки, а не её название. */
 internal fun taxTitle(code: String?, texts: CabinetTexts): String = when (code) {
-    "VAT", "NDS" -> texts.taxVat
+    "VAT", "NDS" -> texts.documents.taxVat
     null -> ""
     else -> code
 }

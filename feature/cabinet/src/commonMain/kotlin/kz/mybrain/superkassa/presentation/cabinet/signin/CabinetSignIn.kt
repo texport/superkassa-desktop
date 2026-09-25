@@ -72,7 +72,7 @@ internal fun CabinetSignIn(
                 DoorTitle(texts)
                 SignInAction(state, language, texts, actions)
                 Text(
-                    text = "${texts.address}: ${state.address}",
+                    text = "${texts.signin.address}: ${state.address}",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -116,7 +116,7 @@ internal fun SignInAction(
     val since = state.signingSince
     if (since == null) {
         BusyButton(
-            text = if (state.busy) texts.signing else texts.signIn,
+            text = if (state.busy) texts.signin.signing else texts.signin.signIn,
             busy = state.busy,
             modifier = modifier,
             onClick = actions::signIn

@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
  * Кнопки входа ищутся по надписи, а их место — по заголовку первого шага.
  */
 class SetupSignInTest {
-    private val signIn = textsOf(Language.Ru).cabinet.signIn
+    private val signIn = textsOf(Language.Ru).cabinet.signin.signIn
 
     @Test
     fun `над шагами не стоит второй такой же вход`() {

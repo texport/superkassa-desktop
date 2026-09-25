@@ -51,9 +51,9 @@ class StateWordsTest {
 
         assertEquals(
             listOf(
-                "${texts.sourceNode}${Glyphs.SEPARATOR}${texts.claimWorking}",
-                "${texts.sourceCabinet}${Glyphs.SEPARATOR}${texts.claimOffRecord}",
-                "${texts.sourceBfd}${Glyphs.SEPARATOR}${texts.claimWorking}"
+                "${texts.register.state.sourceNode}${Glyphs.SEPARATOR}${texts.register.state.claimWorking}",
+                "${texts.register.state.sourceCabinet}${Glyphs.SEPARATOR}${texts.register.state.claimOffRecord}",
+                "${texts.register.state.sourceBfd}${Glyphs.SEPARATOR}${texts.register.state.claimWorking}"
             ),
             words
         )
@@ -78,12 +78,12 @@ class StateWordsTest {
         }
 
         said.forEach { (status, words) ->
-            assertFalse(words == texts.claimOffRecord, "о состоянии $status сказано «$words»")
+            assertFalse(words == texts.register.state.claimOffRecord, "о состоянии $status сказано «$words»")
         }
         assertEquals(said.map { it.second }.distinct().size, said.size, "три разных состояния названы одинаково")
         val deregistered = stateClaims(null, cabinetRegister("DEREGISTERED"), null)
         assertEquals(
-            texts.claimOffRecord,
+            texts.register.state.claimOffRecord,
             texts.claimWords(
                 deregistered.first { it.source == StateSource.Cabinet },
                 StateQuestion.Usable,
@@ -105,7 +105,7 @@ class StateWordsTest {
         val cabinet = StateClaim(StateSource.Cabinet, Verdict.Yes, Verdict.Unknown)
 
         assertEquals(
-            listOf(texts.claimBfdNoAnswer, texts.claimBfdNoKkm, texts.claimShiftNotKept),
+            with(texts.register.state) { listOf(claimBfdNoAnswer, claimBfdNoKkm, claimShiftNotKept) },
             listOf(
                 texts.claimWords(bfd, StateQuestion.Usable, null),
                 texts.claimWords(bfd, StateQuestion.Usable, TechnicalState()),

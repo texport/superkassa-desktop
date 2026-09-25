@@ -51,7 +51,7 @@ class ApplicationSignWaitTest {
             val cabinet = signingRig(fake, PREPARED, asked).enter()
             RenderProbe(CARD, TALL) { Actions(cabinet) }.use { probe ->
                 val before = probe.frame()
-                probe.tap { it.text == texts.submitApplication }
+                probe.tap { it.text == texts.applications.submit }
                 val waiting = probe.frame()
                 File("/tmp/fix-15-cabinet-wait.png").writeBytes(waiting)
 

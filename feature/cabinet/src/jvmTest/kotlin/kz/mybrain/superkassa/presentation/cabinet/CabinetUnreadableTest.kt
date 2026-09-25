@@ -39,7 +39,7 @@ class CabinetUnreadableTest {
 
         val said = rig.state.placesTrouble
         assertEquals(cabinetMessage(CabinetProblem.Unreadable, texts).words(), said, "помеха названа так: $said")
-        assertTrue(said != texts.unreachable, "о разобравшемся не ответе сказано, что кабинет не отвечает")
+        assertTrue(said != texts.refusal.unreachable, "о разобравшемся не ответе сказано, что кабинет не отвечает")
     }
 
     /** Молчание остаётся молчанием: подмена одного другим — та же неправда. */
@@ -50,6 +50,6 @@ class CabinetUnreadableTest {
 
         runBlocking { rig.lists.readPlaces() }
 
-        assertEquals(texts.unreachable, rig.state.placesTrouble)
+        assertEquals(texts.refusal.unreachable, rig.state.placesTrouble)
     }
 }

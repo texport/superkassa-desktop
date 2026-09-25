@@ -46,7 +46,7 @@ internal fun MapHeader(texts: CabinetTexts, onDismiss: () -> Unit) {
     ) {
         Icon(AppIcons.place, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         Text(
-            text = texts.pickOnMap,
+            text = texts.places.pickOnMap,
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(1f)
         )
@@ -103,10 +103,10 @@ private fun MarkerWords(state: MapState, texts: CabinetTexts, modifier: Modifier
     Column(modifier = modifier) {
         Text(
             text = if (latitude == null || longitude == null) {
-                texts.pointNotChosen
+                texts.places.pointNotChosen
             } else {
-                "${texts.latitude}: ${cabinetDegrees(latitude)}${Glyphs.SEPARATOR}" +
-                    "${texts.longitude}: ${cabinetDegrees(longitude)}"
+                "${texts.places.latitude}: ${cabinetDegrees(latitude)}${Glyphs.SEPARATOR}" +
+                    "${texts.places.longitude}: ${cabinetDegrees(longitude)}"
             },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant

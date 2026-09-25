@@ -104,7 +104,7 @@ internal fun okedTitle(oked: Oked, state: CompanyUiState, language: Language): S
  */
 @Composable
 private fun CompanyCard(owner: CabinetOwner?, profile: CompanyProfile?, texts: CabinetTexts) {
-    SectionCard(title = texts.company, info = texts.companyFromEds) {
+    SectionCard(title = texts.company.title, info = texts.company.fromEds) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(Spacing.inline)

@@ -73,7 +73,7 @@ internal class PlacesViewModel(private val cabinet: CabinetViewModel) : ViewMode
             val added = cabinet.work.run("add place") { cases.addPlace(name, address, latitude, longitude, known) }
                 .value ?: return@launch
             if (added.existed) {
-                val words = listOf(cabinet.texts.placeExists, added.place.name).joinToString(Glyphs.SEPARATOR)
+                val words = listOf(cabinet.texts.places.exists, added.place.name).joinToString(Glyphs.SEPARATOR)
                 cabinet.talk.say("add place", Message.Refusal(words, PLACE_EXISTS))
                 return@launch
             }
@@ -110,7 +110,7 @@ internal class PlacesViewModel(private val cabinet: CabinetViewModel) : ViewMode
                 cabinet.talk.say("move place", Message.Refusal(blockedWords(result), REREGISTRATION))
                 return@launch
             }
-            cabinet.talk.done(cabinet.texts.addressChanged)
+            cabinet.talk.done(cabinet.texts.places.addressChanged)
             onMoved()
             cabinet.reload()
         }
@@ -129,7 +129,7 @@ internal class PlacesViewModel(private val cabinet: CabinetViewModel) : ViewMode
     /** Почему адрес не сменился: причина и кассы, которые мешают. */
     private fun blockedWords(result: ChangeAddressResult): String {
         val blocked = result.blockingCashRegisters.map { it.title() }.filter { it.isNotBlank() }
-        return listOf(cabinet.texts.addressNeedsReregistration, blocked.joinToString(", "))
+        return listOf(cabinet.texts.places.addressNeedsReregistration, blocked.joinToString(", "))
             .filter { it.isNotBlank() }
             .joinToString(Glyphs.SEPARATOR)
     }

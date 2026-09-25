@@ -41,8 +41,8 @@ internal fun RegisterEditCard(texts: CabinetTexts, register: CabinetRegister, bu
     NameRow(texts, register, busy, model::rename)
     EditRow(
         field = EditField(
-            label = texts.factoryNumber,
-            hint = if (draft) texts.hints.factoryNumber else texts.factoryLocked,
+            label = texts.register.factoryNumber,
+            hint = if (draft) texts.hints.factoryNumber else texts.register.factoryLocked,
             initial = register.factoryNumber.orEmpty()
         ),
         save = texts.save,
@@ -58,7 +58,7 @@ internal fun RegisterEditCard(texts: CabinetTexts, register: CabinetRegister, bu
 @Composable
 private fun NameRow(texts: CabinetTexts, register: CabinetRegister, busy: Boolean, onSave: (String) -> Unit) {
     EditRow(
-        field = EditField(texts.internalName, texts.hints.internalName, register.internalName.orEmpty()),
+        field = EditField(texts.register.internalName, texts.hints.internalName, register.internalName.orEmpty()),
         save = texts.save,
         key = register.id,
         enabled = true,
@@ -75,10 +75,10 @@ private fun NameRow(texts: CabinetTexts, register: CabinetRegister, busy: Boolea
  */
 @Composable
 private fun RegisterRemoval(texts: CabinetTexts, draft: Boolean, busy: Boolean, onRemove: () -> Unit) {
-    OutlinedButton(enabled = !busy && draft, onClick = onRemove) { Text(texts.deleteRegister) }
+    OutlinedButton(enabled = !busy && draft, onClick = onRemove) { Text(texts.register.delete) }
     if (!draft) {
         Text(
-            text = texts.deleteOnlyDraft,
+            text = texts.register.deleteOnlyDraft,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

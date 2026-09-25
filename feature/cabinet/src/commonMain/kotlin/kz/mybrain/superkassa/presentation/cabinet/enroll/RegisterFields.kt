@@ -31,20 +31,30 @@ internal fun RegisterFields(
     // Точка заводится отсюда же: у владельца без торговых точек форма
     // просила выбрать точку и не давала её создать — мастер подключения
     // кассы упирался в тупик на первом же шаге.
-    PlacePicker(label = texts.place, texts = texts, language = language, options = places, selected = draft.place) {
+    PlacePicker(
+        label = texts.places.place,
+        texts = texts,
+        language = language,
+        options = places,
+        selected = draft.place
+    ) {
         draft.place = it
     }
     // Модель — поиском, а не перебором: в справочнике ИСНА их сотни,
     // и владелец набирает то, что помнит, — часть названия или код.
     SearchablePicker(
-        label = texts.model,
+        label = texts.register.model,
         options = models,
         selected = draft.model,
-        words = PickerWords({ it.name ?: it.modelCode }, { listOfNotNull(it.name, it.modelCode) }, texts.modelNotFound),
+        words = PickerWords(
+            { it.name ?: it.modelCode },
+            { listOfNotNull(it.name, it.modelCode) },
+            texts.enroll.modelNotFound
+        ),
         onSelect = { draft.model = it }
     )
     if (!stamped) FactoryFields(texts, draft, issued)
-    FormField(texts.internalName, draft.name) { draft.name = it }
+    FormField(texts.register.internalName, draft.name) { draft.name = it }
 }
 
 /**
@@ -56,15 +66,15 @@ internal fun RegisterFields(
 @Composable
 private fun FactoryFields(texts: CabinetTexts, draft: RegisterDraft, issued: Boolean) {
     FormField(
-        label = texts.factoryNumber,
+        label = texts.register.factoryNumber,
         value = draft.factory,
-        hint = texts.factoryIssued.takeIf { issued },
+        hint = texts.enroll.factoryIssued.takeIf { issued },
         enabled = !issued
     ) { draft.factory = it }
     FormField(
-        label = texts.manufactureYear,
+        label = texts.register.manufactureYear,
         value = draft.year,
-        hint = texts.factoryIssued.takeIf { issued },
+        hint = texts.enroll.factoryIssued.takeIf { issued },
         enabled = !issued
     ) { draft.year = it.filter(Char::isDigit).take(YEAR_DIGITS) }
 }

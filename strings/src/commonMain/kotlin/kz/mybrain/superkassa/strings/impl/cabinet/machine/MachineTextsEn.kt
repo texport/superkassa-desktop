@@ -1,6 +1,6 @@
-package kz.mybrain.superkassa.strings.impl.cabinet
+package kz.mybrain.superkassa.strings.impl.cabinet.machine
 
-import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
+import kz.mybrain.superkassa.strings.api.cabinet.machine.MachineTexts
 
 /** Надписи [MachineTexts] по-английски. */
 internal val machineTextsEn = MachineTexts(

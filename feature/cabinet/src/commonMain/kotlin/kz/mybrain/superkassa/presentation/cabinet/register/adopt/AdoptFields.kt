@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.presentation.cabinet.register.heardElsewhere
 import kz.mybrain.superkassa.presentation.words.users.pinProblem
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
-import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
+import kz.mybrain.superkassa.strings.api.cabinet.machine.MachineTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -126,7 +126,7 @@ private fun HandoverConsent(
     technical: TechnicalState?
 ) {
     DetailLine(machine.heardByOfd, Dates.momentOf(technical?.lastContactAt))
-    DetailLine(texts.shift, technical?.shiftNumber?.toString())
+    DetailLine(texts.register.shift, technical?.shiftNumber?.toString())
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically

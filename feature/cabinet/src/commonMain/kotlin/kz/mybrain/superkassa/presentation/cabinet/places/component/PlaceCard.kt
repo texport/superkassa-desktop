@@ -49,7 +49,7 @@ internal fun PlaceCard(
         // Удаление стоит в конце карточки, а не в её заголовке: в узком
         // окне на заголовок приходились два значка подсказки и кнопка,
         // и «Убрать» выходило как «Убр / ать».
-        SectionCard(title = texts.place, info = texts.hints.places) {
+        SectionCard(title = texts.places.place, info = texts.hints.places) {
             PlaceFacts(texts, language, place)
             PlaceEditRow(cabinet, texts, place, window.busy)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -78,8 +78,8 @@ private fun PlaceFacts(texts: CabinetTexts, language: Language, place: RetailPla
         // Прочерк, а не пропуск строки: у точки без адреса строка
         // исчезала целиком, и владелец не видел, что адреса нет.
         // Прочерк — общая отметка отсутствующего значения.
-        DetailLine(texts.placeAddress, addressIn(language, place.address, place.addressKz).ifBlank { Glyphs.DASH })
-        DetailLine(texts.registerCount, place.cashRegisterCount.toString())
+        DetailLine(texts.places.address, addressIn(language, place.address, place.addressKz).ifBlank { Glyphs.DASH })
+        DetailLine(texts.places.registerCount, place.cashRegisterCount.toString())
     }
 }
 
@@ -98,7 +98,7 @@ private fun PlaceRemoval(texts: CabinetTexts, place: RetailPlace, busy: Boolean,
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (held) InfoTip(texts.placeRemoveBlocked)
+        if (held) InfoTip(texts.places.removeBlocked)
         OutlinedButton(enabled = !held && !busy, onClick = onRemove) { Text(texts.remove) }
     }
 }

@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.presentation.cabinet.register.adoptMissing
 import kz.mybrain.superkassa.presentation.cabinet.register.heardElsewhere
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
-import kz.mybrain.superkassa.strings.api.cabinet.MachineTexts
+import kz.mybrain.superkassa.strings.api.cabinet.machine.MachineTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**

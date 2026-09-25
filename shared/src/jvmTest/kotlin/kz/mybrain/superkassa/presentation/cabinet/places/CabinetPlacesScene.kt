@@ -51,7 +51,7 @@ internal class CabinetPlacesScene(
     fun open(name: String, check: (RenderProbe) -> Unit) {
         RenderProbe(width, height, look = Look(textScale = scale), language = language) { Window() }.use { probe ->
             repeat(SETTLE) { probe.frame() }
-            probe.tap { it.text == texts.places }
+            probe.tap { it.text == texts.places.title }
             repeat(LOADING) { if (probe.nodes().none { it.text.contains(PLACES.size.toString()) }) probe.frame() }
             check(probe)
             File("/tmp/adaptive-cabinet-$name-${width}x$height-${language.name.lowercase()}-${scale.code}.png")

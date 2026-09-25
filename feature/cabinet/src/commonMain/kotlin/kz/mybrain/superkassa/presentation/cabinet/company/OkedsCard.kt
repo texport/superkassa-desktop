@@ -46,9 +46,9 @@ internal fun OkedsCard(
     actions: CompanyActions
 ) {
     val okeds = state.okeds
-    SectionCard(title = texts.okeds, info = texts.hints.okeds) {
+    SectionCard(title = texts.company.okeds, info = texts.hints.okeds) {
         if (okeds.isEmpty()) {
-            EmptyState(AppIcons.settings, texts.okedsEmpty, texts.hints.okedsEmpty)
+            EmptyState(AppIcons.settings, texts.company.okedsEmpty, texts.hints.okedsEmpty)
         }
         okeds.forEachIndexed { at, oked ->
             OkedRow(oked, texts, title(oked), stripedAt(at), { actions.markPrimary(oked.code) }) {
@@ -62,7 +62,7 @@ internal fun OkedsCard(
         //
         // Гаснет она и на нетронутом списке: сохранять то же, что пришло
         // от кабинета, незачем.
-        BusyButton(text = texts.saveOkeds, busy = busy, enabled = state.changed, onClick = actions::save)
+        BusyButton(text = texts.company.saveOkeds, busy = busy, enabled = state.changed, onClick = actions::save)
     }
 }
 
@@ -84,7 +84,7 @@ internal fun OkedsCard(
 internal fun AddOkedCard(search: OkedSearch, language: Language, texts: CabinetTexts, actions: CompanyActions) {
     var expanded by remember { mutableStateOf(false) }
     CollapsibleCard(
-        title = texts.addOked,
+        title = texts.company.addOked,
         expanded = expanded,
         onToggle = {
             expanded = !expanded
@@ -133,9 +133,9 @@ private fun OkedRow(
                 // с каждой строкой стояла кнопка «Основной», и список читался
                 // так, будто основными объявлены все сразу.
                 if (oked.primary) {
-                    Chip(texts.primaryOked, MaterialTheme.colorScheme.primary)
+                    Chip(texts.company.primaryOked, MaterialTheme.colorScheme.primary)
                 } else {
-                    TextButton(onClick = onPrimary) { Text(texts.makePrimary) }
+                    TextButton(onClick = onPrimary) { Text(texts.company.makePrimary) }
                 }
                 IconButton(onClick = onRemove) {
                     Icon(AppIcons.close, contentDescription = texts.remove)

@@ -25,13 +25,13 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 internal enum class StateSource(val title: (CabinetTexts) -> String) {
 
     /** Касса на этой машине: её база и есть то, чем работает кассир. */
-    Node({ it.sourceNode }),
+    Node({ it.register.state.sourceNode }),
 
     /** Кабинет: учёт КГД — стоит ли касса на учёте. */
-    Cabinet({ it.sourceCabinet }),
+    Cabinet({ it.register.state.sourceCabinet }),
 
     /** БФД: база фискальных данных — работает ли касса и открыта ли смена. */
-    Bfd({ it.sourceBfd })
+    Bfd({ it.register.state.sourceBfd })
 }
 
 /** Общий ответ на вопрос, который каждый источник понимает по-своему. */

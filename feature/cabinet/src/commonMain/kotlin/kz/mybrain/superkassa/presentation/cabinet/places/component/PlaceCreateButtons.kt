@@ -50,8 +50,8 @@ internal fun PlaceCreateButtons(
     var addingPlace by remember { mutableStateOf(false) }
     var addingRegister by remember { mutableStateOf(false) }
     WrapRow(modifier = Modifier.fillMaxWidth().padding(end = Spacing.fieldGap)) {
-        Button(enabled = place != null, onClick = { addingRegister = true }) { Text(texts.addRegister) }
-        FilledTonalButton(onClick = { addingPlace = true }) { Text(texts.addPlace) }
+        Button(enabled = place != null, onClick = { addingRegister = true }) { Text(texts.enroll.add) }
+        FilledTonalButton(onClick = { addingPlace = true }) { Text(texts.places.add) }
     }
     if (addingPlace) {
         AddPlaceCard(cabinet, texts, onDismiss = { addingPlace = false }, onAdded = {})

@@ -140,7 +140,7 @@ private fun CardActions(
 private fun CardFacts(kkm: AnalyticsKkm, source: PositionSource, texts: AnalyticsTexts, cabinet: CabinetTexts) {
     DetailLine(texts.registrationNumber, kkm.registrationNumber ?: texts.noRegistrationNumber)
     DetailLine(texts.retailPlace, kkm.retailPlaceName)
-    DetailLine(cabinet.placeAddress, kkm.address)
+    DetailLine(cabinet.places.address, kkm.address)
     DetailLine(texts.lastContact, kkm.lastContactAt?.let(Dates::momentOf) ?: texts.neverSeen)
     DetailLine(texts.positionFrom, positionWords(source, texts))
     DetailLine(texts.geoSource, kkm.position?.geoSource)
