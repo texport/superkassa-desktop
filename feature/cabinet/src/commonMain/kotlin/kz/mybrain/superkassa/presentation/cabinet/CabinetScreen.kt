@@ -13,7 +13,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,9 +42,12 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * Пока владелец не вошёл, раздел показывает одну кнопку входа: показывать
  * пустые списки компании, которой ещё нет, значит обещать данные, которых
  * взять неоткуда.
+ *
+ * @param stepped открыта карточка точки или кассы поверх их списка — шагом
+ *   истории окна на узком окне. Вкладки — уровень списка, и в шаге их нет.
  */
 @Composable
-fun CabinetScreen(window: CabinetWindow) {
+fun CabinetScreen(window: CabinetWindow, stepped: Boolean = false) {
     val model = window.cabinet
     val state by model.state.collectAsScreenState()
     val language = LocalLanguage.current
@@ -61,7 +64,7 @@ fun CabinetScreen(window: CabinetWindow) {
         // возврату владелец видит ту же карточку, из которой уходил. Возврат
         // рисует шапка окна: навигация в приложении одна и живёт там.
         CompositionLocalProvider(LocalRegisterDocuments provides model::openDocuments) {
-            CabinetTabsBody(window, texts)
+            if (stepped) PlacesScreen(window, texts, stepped = true) else CabinetTabsBody(window, texts)
         }
         val register = state.documentsOf
         if (register != null) {
@@ -78,10 +81,13 @@ fun CabinetScreen(window: CabinetWindow) {
  * Вкладки стоят вплотную под шапкой окна, как по Material 3: поле над ними
  * отнимало у списка точек в малом окне ещё четверть строки и ничего
  * не отделяло — вкладки и так черта.
+ *
+ * Открытая вкладка переживает шаг истории окна: вернувшись из карточки
+ * точки, владелец видит точки, а не вкладку компании.
  */
 @Composable
 private fun CabinetTabsBody(window: CabinetWindow, texts: CabinetTexts) {
-    var page by remember { mutableStateOf(CabinetTab.Company) }
+    var page by rememberSaveable { mutableStateOf(CabinetTab.Company) }
     Column(
         modifier = Modifier
             .fillMaxSize(),

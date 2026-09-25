@@ -2,11 +2,13 @@ package kz.mybrain.superkassa.navigation
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.elementDescriptors
 import kotlinx.serialization.json.Json
 import kz.mybrain.superkassa.navigation.section.SectionKey
 import kz.mybrain.superkassa.navigation.section.SettingsKey
-import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.StepKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -23,13 +25,21 @@ class NavKeysTest {
     private val json = Json { serializersModule = NavKeys.serializersModule }
 
     @Test
-    fun `каждый раздел есть в реестре`() {
-        // У запечатанного ключа второй элемент описания — все его подтипы.
-        val subtypes = SectionKey.serializer().descriptor.getElementDescriptor(1)
-        val sections = subtypes.elementDescriptors.map { it.serialName }
-        sections.forEach { name ->
-            val restored = runCatching { restore("{\"type\":\"$name\"}") }
-            assertNotNull(restored.getOrNull(), "$name нет в реестре")
+    fun `каждый раздел есть в реестре`() = everyKnown(SectionKey.serializer().descriptor)
+
+    @Test
+    fun `каждый шаг есть в реестре`() = everyKnown(StepKey.serializer().descriptor)
+
+    /**
+     * Все подтипы запечатанного ключа находятся реестром. У запечатанного
+     * ключа второй элемент описания — все его подтипы; шаг с данными
+     * узнаётся по отказу в недостающем поле, а не в неизвестном типе.
+     */
+    private fun everyKnown(sealed: SerialDescriptor) {
+        sealed.getElementDescriptor(1).elementDescriptors.forEach { subtype ->
+            val fields = (0 until subtype.elementsCount).joinToString("") { ",\"${subtype.getElementName(it)}\":\"x\"" }
+            val restored = runCatching { restore("{\"type\":\"${subtype.serialName}\"$fields}") }
+            assertNotNull(restored.getOrNull(), "${subtype.serialName} нет в реестре: ${restored.exceptionOrNull()}")
         }
     }
 

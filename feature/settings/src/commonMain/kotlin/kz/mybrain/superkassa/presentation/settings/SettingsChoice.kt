@@ -1,13 +1,12 @@
 package kz.mybrain.superkassa.presentation.settings
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import kz.mybrain.superkassa.navigation.LocalNavigator
-import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
+import kz.mybrain.superkassa.presentation.common.navigation.detailStep
 
 /**
  * Какой раздел настроек открыт и как открыть другой.
@@ -27,8 +26,8 @@ internal class SettingsChoice(
  * шагом истории окна.
  *
  * Нажатый раздел запоминается и на узком окне: раздвинули окно, пока
- * раздел открыт поверх списка, — шаг снимается, а раздел остаётся открытым
- * рядом со списком. Раздел, которого вошедшему не видно, — кассир сменил
+ * раздел открыт поверх списка, — шаг снимается ([detailStep]), а раздел
+ * остаётся открытым рядом со списком. Раздел, которого вошедшему не видно, — кассир сменил
  * администратора, — уступает место первому видимому, а не остаётся пустой
  * панелью.
  */
@@ -38,16 +37,15 @@ internal fun settingsChoice(
     opened: SettingsSectionKey?,
     beside: Boolean
 ): SettingsChoice {
-    val navigator = LocalNavigator.current
     var picked by rememberSaveable { mutableStateOf<String?>(null) }
     val stepped = opened?.let { sectionOf(it.section) }?.takeIf { it in sections }
-    LaunchedEffect(beside, opened) { if (beside && opened != null) navigator.back() }
+    val step = detailStep(stepped = opened != null, chosen = stepped != null, beside = beside)
     return SettingsChoice(
         open = stepped ?: picked?.let(::sectionOf)?.takeIf { it in sections } ?: sections.first(),
-        over = stepped != null && !beside
+        over = step.over
     ) { chosen ->
         picked = chosen.name
-        if (!beside) navigator.open(SettingsSectionKey(chosen.name))
+        step.opened(SettingsSectionKey(chosen.name))
     }
 }
 

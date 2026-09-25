@@ -15,7 +15,9 @@ import kz.mybrain.superkassa.navigation.section.ReturnsKey
 import kz.mybrain.superkassa.navigation.section.SaleKey
 import kz.mybrain.superkassa.navigation.section.SettingsKey
 import kz.mybrain.superkassa.navigation.section.UsersKey
-import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.PlaceCardKey
+import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
+import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
 
 /**
  * Реестр ключей экранов — для сохранения истории «назад».
@@ -29,7 +31,7 @@ val NavKeys: SavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
         polymorphic(NavKey::class) {
             sections()
-            subclass(SettingsSectionKey::class, SettingsSectionKey.serializer())
+            steps()
         }
     }
 }
@@ -46,4 +48,11 @@ private fun PolymorphicModuleBuilder<NavKey>.sections() {
     subclass(RegisterKey::class, RegisterKey.serializer())
     subclass(CabinetKey::class, CabinetKey.serializer())
     subclass(SettingsKey::class, SettingsKey.serializer())
+}
+
+/** Шаги внутри разделов. */
+private fun PolymorphicModuleBuilder<NavKey>.steps() {
+    subclass(SettingsSectionKey::class, SettingsSectionKey.serializer())
+    subclass(ReturnBasisKey::class, ReturnBasisKey.serializer())
+    subclass(PlaceCardKey::class, PlaceCardKey.serializer())
 }

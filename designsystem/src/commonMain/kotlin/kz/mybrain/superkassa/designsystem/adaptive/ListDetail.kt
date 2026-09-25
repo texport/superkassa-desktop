@@ -1,7 +1,12 @@
 package kz.mybrain.superkassa.designsystem.adaptive
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldDefaults
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
+import androidx.compose.material3.adaptive.layout.calculateThreePaneScaffoldValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kz.mybrain.superkassa.designsystem.theme.size.Panes
@@ -30,6 +35,24 @@ fun listDetailDirective(): PaneScaffoldDirective {
         )
     }
 }
+
+/**
+ * Что показывает «список и подробности»: при одной панели — подробности,
+ * если [over], иначе список; при двух — обе.
+ *
+ * Выбор держит история окна, а не навигатор панелей: подробности поверх
+ * списка — шаг общей истории, и «назад» у окна одно.
+ */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+fun listDetailValue(directive: PaneScaffoldDirective, over: Boolean): ThreePaneScaffoldValue =
+    calculateThreePaneScaffoldValue(
+        directive.maxHorizontalPartitions,
+        ListDetailPaneScaffoldDefaults.adaptStrategies(),
+        ThreePaneScaffoldDestinationItem<Any>(
+            if (over) ListDetailPaneScaffoldRole.Detail else ListDetailPaneScaffoldRole.List
+        )
+    )
 
 /** Одна панель: подробности сменяют список. */
 private const val ALONE = 1

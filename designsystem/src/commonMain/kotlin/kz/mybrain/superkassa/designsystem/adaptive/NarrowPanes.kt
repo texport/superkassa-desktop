@@ -19,23 +19,6 @@ import androidx.compose.ui.unit.Dp
 import kz.mybrain.superkassa.designsystem.theme.size.PaneSplit
 import kz.mybrain.superkassa.designsystem.theme.size.Panes
 
-/** Что делают две панели, когда рядом им тесно. */
-sealed interface NarrowPanes {
-
-    /**
-     * Одна над другой: вторая — своей высоты, но не больше
-     * [Panes.STACKED_SECOND_SHARE] высоты; остальное — первой.
-     * Для пары, где обе части нужны сразу: чек и касса.
-     */
-    data object Stacked : NarrowPanes
-
-    /**
-     * По одной: показана вторая, если [showSecond], иначе первая.
-     * Для пары «список и подробности»: возврат к списку — забота экрана.
-     */
-    data class Switched(val showSecond: Boolean) : NarrowPanes
-}
-
 /** Ширины панелей рядом или `null`, если рядом они не помещаются. */
 internal fun sideBySide(split: PaneSplit, room: Dp, gap: Dp): Pair<Dp, Dp>? {
     val usable = room - gap
@@ -57,13 +40,16 @@ internal fun sideBySide(split: PaneSplit, room: Dp, gap: Dp): Pair<Dp, Dp>? {
  * Переход между раскладками не теряет состояния панелей: набранное
  * в поле и прокрутка списка переживают растягивание окна через порог.
  *
- * @param narrow что делать, когда рядом тесно.
+ * На тесном месте панели встают одна над другой: вторая — своей высоты,
+ * но не больше [Panes.STACKED_SECOND_SHARE] высоты, остальное — первой.
+ * Это пары, где обе части нужны сразу, — чек и касса. «Список
+ * и подробности», где части сменяют друг друга, — `ListDetailPaneScaffold`
+ * Material 3, а не эта раскладка.
  */
 @Composable
 fun TwoPane(
     split: PaneSplit,
     modifier: Modifier = Modifier,
-    narrow: NarrowPanes = NarrowPanes.Stacked,
     first: @Composable () -> Unit,
     second: @Composable () -> Unit
 ) {
@@ -78,9 +64,6 @@ fun TwoPane(
                 Box(modifier = Modifier.width(widths.first).fillMaxHeight()) { firstKept() }
                 Spacer(modifier = Modifier.width(Panes.gap))
                 Box(modifier = Modifier.width(widths.second).fillMaxHeight()) { secondKept() }
-            }
-            narrow is NarrowPanes.Switched -> Box(modifier = Modifier.fillMaxSize()) {
-                if (narrow.showSecond) secondKept() else firstKept()
             }
             else -> Stacked(firstKept, secondKept)
         }

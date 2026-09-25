@@ -94,7 +94,8 @@ class KassaCoreLookTest {
                 SaleContent(sale)
             },
             Screen("returns", Section.Returns, { listOf(returns.kind.action(textsOf(it).common.returns)) }) {
-                ReturnsContent(returns)
+                // Чек выбран: на узком окне он открыт поверх списка шагом истории.
+                ReturnsContent(returns, stepped = true)
             },
             Screen("cash", Section.Cash, { listOf(textsOf(it).common.cash.deposit) }) { CashContent(cash) }
         )

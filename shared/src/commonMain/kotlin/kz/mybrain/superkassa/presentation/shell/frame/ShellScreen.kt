@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.navigation.LocalNavigator
 import kz.mybrain.superkassa.navigation.NavKeys
 import kz.mybrain.superkassa.navigation.Navigator
 import kz.mybrain.superkassa.navigation.section.DashboardKey
-import kz.mybrain.superkassa.navigation.section.SectionKey
+import kz.mybrain.superkassa.navigation.step.StepKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetLook
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
@@ -113,7 +113,7 @@ private fun WorkShell(app: AppContainer, window: WindowParts, shell: ShellUiStat
     // кассир оставлял за собой отказ настроек, и тот висел поверх аналитики
     // до нажатия. Переход, сделанный самим приложением, сообщение не гасит.
     val back = { if (history.stepBack()) window.shell.sectionPicked() }
-    val stepped = history.last() !is SectionKey
+    val stepped = history.last() is StepKey
     StepsOf(history, back) {
         ShellFrame(
             sections = sections,

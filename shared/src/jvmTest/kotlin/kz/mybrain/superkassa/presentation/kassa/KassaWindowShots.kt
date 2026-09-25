@@ -73,8 +73,11 @@ class KassaWindowShots {
             shoot("sale", width, height, Section.Sale) { SaleContent(sale) }
             shoot("sale-empty", width, height, Section.Sale) { SaleContent(sale.copy(basket = Basket())) }
             shoot("sale-issued", width, height, Section.Sale) { SaleContent(issued, output = OUTPUT) }
-            shoot("returns", width, height, Section.Returns) { ReturnsContent(returns) }
-            shoot("returns-confirm", width, height, Section.Returns) { ReturnsContent(returns.copy(confirming = true)) }
+            // Чек выбран: на узком окне он открыт поверх списка шагом истории.
+            shoot("returns", width, height, Section.Returns) { ReturnsContent(returns, stepped = true) }
+            shoot("returns-confirm", width, height, Section.Returns) {
+                ReturnsContent(returns.copy(confirming = true), stepped = true)
+            }
         }
     }
 

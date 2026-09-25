@@ -14,12 +14,13 @@ import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.SettingsMeasure
+import kz.mybrain.superkassa.WindowSteps
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
 import kz.mybrain.superkassa.desk
-import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
 import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.ShellBar
@@ -65,14 +66,14 @@ class AdaptiveSettingsShots {
     private fun Window(desk: KassaDesk) {
         val shell by desk.parts.shell.state.collectAsState()
         Surface(Modifier.fillMaxSize()) {
-            SettingsSteps { opened, back ->
+            WindowSteps { step, back ->
                 ShellFrame(
                     Section.entries,
                     Section.Settings,
                     {},
                     topBar = { onMenu -> ShellBar(desk.parts, shell, Section.Settings, {}, onMenu, back) }
                 ) {
-                    Box(Modifier.fillMaxSize().padding(it)) { Settings(desk, opened) }
+                    Box(Modifier.fillMaxSize().padding(it)) { Settings(desk, step as? SettingsSectionKey) }
                 }
             }
         }

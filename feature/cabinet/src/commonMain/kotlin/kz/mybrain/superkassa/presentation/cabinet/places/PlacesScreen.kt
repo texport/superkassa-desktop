@@ -1,22 +1,21 @@
 package kz.mybrain.superkassa.presentation.cabinet.places
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.PaneScaffoldScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.NarrowPanes
-import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
+import kz.mybrain.superkassa.designsystem.adaptive.listDetailDirective
+import kz.mybrain.superkassa.designsystem.adaptive.listDetailValue
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.CabinetPanes
+import kz.mybrain.superkassa.navigation.step.PlaceCardKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCreateButtons
@@ -24,6 +23,7 @@ import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceRow
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
 import kz.mybrain.superkassa.presentation.cabinet.places.component.placeRows
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.navigation.detailStep
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
@@ -39,41 +39,49 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  * её карточке нужна вся ширина окна, а свёрнутая колонка остаётся рельсом
  * значков. Выбор помнится рабочим местом.
  *
- * Колонка и карточка делят место долями [CabinetPanes.placesAndCard],
- * а не постоянной шириной колонки: на планшете стоймя колонка в четыреста
- * точек оставляла карточке столбик в букву шириной. Где обеим тесно,
- * карточка сменяет колонку целиком.
+ * Колонка и карточка — «список и подробности» Material 3: рядом, начиная
+ * с расширенного окна, и поровну, а свёрнутая колонка — шириной рельса.
+ * На узком окне выбранное открывается поверх колонки шагом истории окна
+ * ([detailStep]): назад к колонке ведёт стрелка в шапке окна, жест
+ * и Escape, а не своя кнопка над карточкой.
+ *
+ * @param stepped карточка открыта поверх колонки шагом истории окна.
  *
  * Поиск сужает обе части списка сразу: у сети бывают сотни точек, и найти
  * среди них кассу глазами нельзя. Отбор и порядок — там же: пять тысяч
  * касс, из которых на учёте единицы, поиском по названию не перебрать.
  */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-internal fun PlacesScreen(cabinet: CabinetWindow, texts: CabinetTexts) {
+internal fun PlacesScreen(cabinet: CabinetWindow, texts: CabinetTexts, stepped: Boolean = false) {
     val collapsed = cabinet.look.placesCollapsed()
     val model = placesViewModel(cabinet.cabinet)
     val chosen by model.state.collectAsScreenState()
-    var detailShown by remember { mutableStateOf(false) }
-    var listShown by remember { mutableStateOf(true) }
     val listState = rememberLazyListState()
-    TwoPane(
-        split = if (collapsed) CabinetPanes.railAndCard else CabinetPanes.placesAndCard,
-        modifier = Modifier.fillMaxSize(),
-        narrow = NarrowPanes.Switched(showSecond = detailShown && (chosen.place != null || chosen.register != null)),
-        first = {
-            // Колонка на экране или нет, знает только сама раскладка:
-            // отсюда карточка и узнаёт, нужна ли ей кнопка возврата.
-            OnScreen { listShown = it }
-            Row(modifier = Modifier.fillMaxSize()) {
-                PlacesColumn(cabinet, texts, model, chosen, listState, Modifier.weight(1f)) { detailShown = true }
-                VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+    val directive = listDetailDirective()
+    val picked = chosen.place != null || chosen.register != null
+    val step = detailStep(stepped, picked, beside = directive.maxHorizontalPartitions > 1)
+    ListDetailPaneScaffold(
+        directive = directive,
+        value = listDetailValue(directive, step.over),
+        listPane = {
+            AnimatedPane(modifier = placesWidth(collapsed)) {
+                PlacesColumn(cabinet, texts, model, chosen, listState, Modifier.fillMaxSize()) {
+                    step.opened(PlaceCardKey)
+                }
             }
         },
-        second = {
-            val back = if (listShown) null else ({ detailShown = false })
-            PlaceDetail(cabinet, texts, chosen, back)
-        }
+        detailPane = { AnimatedPane { PlaceDetail(cabinet, texts, chosen) } },
+        modifier = Modifier.fillMaxSize()
     )
+}
+
+/** Ширина колонки: развёрнутая — долей окна, свёрнутая — рельсом. */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+private fun PaneScaffoldScope.placesWidth(collapsed: Boolean): Modifier = if (collapsed) {
+    Modifier.preferredWidth(CabinetPanes.placesRail)
+} else {
+    Modifier.preferredWidth(CabinetPanes.PLACES_SHARE)
 }
 
 /**
@@ -122,15 +130,6 @@ private fun PlacesColumn(
         listState = listState,
         modifier = modifier
     )
-}
-
-/** Сообщает, стоит ли содержимое на экране: раскладка убирает его и возвращает сама. */
-@Composable
-private fun OnScreen(shown: (Boolean) -> Unit) {
-    DisposableEffect(Unit) {
-        shown(true)
-        onDispose { shown(false) }
-    }
 }
 
 /** Строки колонки: пересобираются, только когда меняется то, из чего они собраны. */

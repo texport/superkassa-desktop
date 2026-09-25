@@ -3,23 +3,18 @@ package kz.mybrain.superkassa.presentation.kassa.refund.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
 import kz.mybrain.superkassa.designsystem.button.FieldButton
 import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
-import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.text.MoneyText
-import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.theme.type.MoneyStyle
@@ -42,22 +37,17 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * что итог чека на экране продажи: кассир сверяет её с бумагой в руке.
  */
 @Composable
-internal fun RefundSummary(basis: FiscalDocumentResponse, journal: ReturnJournalTexts, onBack: () -> Unit) {
+internal fun RefundSummary(basis: FiscalDocumentResponse, journal: ReturnJournalTexts) {
     val texts = LocalStrings.current
-    // Жест «назад» на Android ведёт туда же, куда стрелка, — к списку чеков.
-    SystemBack(enabled = true, onBack = onBack)
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        // Назад к списку: на узком окне панель стоит вместо списка чеков,
-        // и выбрать другое основание иначе нечем.
-        IconButton(onClick = onBack) { Icon(AppIcons.back, contentDescription = journal.backToList) }
-        // Номер — тот, что стоит на бумажном чеке покупателя: его касса
-        // присваивает сама. Здесь стоял номер от ОФД, то есть фискальный
-        // признак, и заголовок расходился со списком рядом и с бумагой.
-        Text(
-            text = "${journal.basis}: ${texts.returns.receiptNo} ${basis.number ?: Glyphs.DASH}",
-            style = MaterialTheme.typography.titleMedium
-        )
-    }
+    // Стрелки к списку чеков здесь нет: на узком окне чек открыт шагом
+    // истории окна, и назад ведёт стрелка в шапке окна, жест и Escape.
+    // Номер — тот, что стоит на бумажном чеке покупателя: его касса
+    // присваивает сама. Здесь стоял номер от ОФД, то есть фискальный
+    // признак, и заголовок расходился со списком рядом и с бумагой.
+    Text(
+        text = "${journal.basis}: ${texts.returns.receiptNo} ${basis.number ?: Glyphs.DASH}",
+        style = MaterialTheme.typography.titleMedium
+    )
     Text(
         text = journal.receiptTotal,
         style = MaterialTheme.typography.labelMedium,

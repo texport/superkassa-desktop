@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.KassaExtremes.Case
 import kz.mybrain.superkassa.KassaProbe
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.KassaWindow
+import kz.mybrain.superkassa.WindowSteps
 import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
@@ -19,6 +20,7 @@ import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.ReturnsScene
 import kz.mybrain.superkassa.kassa.SaleScene
 import kz.mybrain.superkassa.kassa.services
+import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
@@ -58,7 +60,9 @@ class ReturnsAdaptiveTest {
         val journal = textsOf(case.language).journal.returns
         val failures = mutableListOf<String>()
         probe.show(case.look, case.language) {
-            KassaWindow(desk, Section.Returns) { ReturnsScreen(model) }
+            KassaWindow(desk, Section.Returns) {
+                WindowSteps { step, _ -> ReturnsScreen(model, step is ReturnBasisKey) }
+            }
         }
         probe.frame(KassaProbe.SETTLE)
         val sign = probe.part("${journal.fiscalSign}: ")

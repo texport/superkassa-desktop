@@ -68,7 +68,7 @@ private fun RefundForm(
         verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.fieldGap) {
-            RefundSummary(draft.basis, journal, actions.basis::back)
+            RefundSummary(draft.basis, journal)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             RefundTill {
                 RefundNote(journal.itemsIgnored.takeIf { draft.chosen.isNotEmpty() && !draft.byLines })

@@ -1,11 +1,10 @@
 package kz.mybrain.superkassa.designsystem.theme.size
 
+import androidx.compose.ui.unit.Dp
+
 /**
- * Раскладки раздела торговых точек кабинета.
- *
- * Наименьшие ширины — те же, что у общей пары [Panes.placesAndCard]:
- * колонка и карточка встают рядом и сменяют друг друга на тех же порогах.
- * Отличается раздел доли.
+ * Панели раздела торговых точек кабинета: колонка точек и касс
+ * и карточка выбранного — «список и подробности» Material 3.
  *
  * Колонке каждая точка ширины — это строка списка по высоте: в узкой
  * колонке поиск, отбор и кнопки переносятся на вторую и третью строку,
@@ -16,24 +15,12 @@ package kz.mybrain.superkassa.designsystem.theme.size
  */
 object CabinetPanes {
 
-    /** Колонка точек и касс и карточка выбранного. */
-    val placesAndCard = PaneSplit(
-        firstShare = HALF,
-        firstMin = Panes.placesAndCard.firstMin,
-        secondMin = Panes.placesAndCard.secondMin
-    )
+    /** Доля окна под развёрнутую колонку: поровну с карточкой. */
+    const val PLACES_SHARE = 0.5f
 
     /**
-     * Свёрнутая колонка рельсом и карточка рядом.
-     *
-     * Свёрнутой колонке не нужно ничего сверх ширины рельса, и всё
-     * остальное — карточке, как и было до раскладки долями.
+     * Свёрнутая колонка — шириной рельса: ей не нужно ничего сверх
+     * значков, и всё остальное — карточке.
      */
-    val railAndCard = PaneSplit(
-        firstShare = 0f,
-        firstMin = Sizes.rail,
-        secondMin = Panes.placesAndCard.secondMin
-    )
-
-    private const val HALF = 0.5f
+    val placesRail: Dp = Sizes.rail
 }

@@ -81,9 +81,6 @@ object Panes {
      */
     val list = 90.steps
 
-    /** Список слева, подробности выбранного справа: журнал, возврат, очередь. */
-    val listDetail = PaneSplit(firstShare = 0.4f, firstMin = 80.steps, secondMin = 100.steps)
-
     /**
      * Чек слева, касса справа: итог, оплата и «Пробить чек».
      *
@@ -96,9 +93,6 @@ object Panes {
         secondMin = 80.steps,
         secondMax = 110.steps
     )
-
-    /** Дерево точек и касс слева, карточка выбранного справа: кабинет. */
-    val placesAndCard = PaneSplit(firstShare = 0.34f, firstMin = 75.steps, secondMin = 105.steps)
 
     /** Карта и сведения о выбранном месте: аналитика. */
     val mapAndDetails = PaneSplit(

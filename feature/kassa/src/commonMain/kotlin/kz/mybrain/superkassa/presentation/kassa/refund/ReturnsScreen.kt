@@ -6,23 +6,29 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.NarrowPanes
-import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.adaptive.listDetailDirective
+import kz.mybrain.superkassa.designsystem.adaptive.listDetailValue
 import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
 import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.size.Panes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.kassa.model.refund.ReturnKind
+import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.navigation.DetailStep
+import kz.mybrain.superkassa.presentation.common.navigation.detailStep
 import kz.mybrain.superkassa.presentation.kassa.refund.component.BasisList
 import kz.mybrain.superkassa.presentation.kassa.refund.component.BasisSearch
 import kz.mybrain.superkassa.presentation.kassa.refund.component.RefundPanel
@@ -45,42 +51,76 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * не участвует. Сама же операция возврата требует открытой смены,
  * и это остаётся условием экрана.
  */
+/**
+ * @param stepped чек открыт поверх списка шагом истории окна — на узком окне.
+ */
 @Composable
-fun ReturnsScreen(model: ReturnsViewModel) {
+fun ReturnsScreen(model: ReturnsViewModel, stepped: Boolean = false) {
     val state by model.state.collectAsScreenState()
     val actions = remember(model) { model.actions() }
     // День перечитывается и при каждом входе: возврат по только что
     // выданному чеку — обычное дело, а прочитанный раньше день о нём не знает.
     LaunchedEffect(model) { model.visit() }
-    ReturnsContent(state, actions)
+    ReturnsContent(state, actions, stepped)
 }
 
-/** Возврат по готовому состоянию: снимки вида рисуют его без модели. */
+/**
+ * Возврат по готовому состоянию: снимки вида рисуют его без модели.
+ *
+ * Список чеков и панель возврата — «список и подробности» Material 3:
+ * рядом, начиная с расширенного окна; на узком выбранный чек открывается
+ * поверх списка шагом истории окна ([detailStep]), и поиск над списком
+ * уступает место панели — назад к нему ведёт стрелка в шапке окна.
+ *
+ * @param stepped чек открыт поверх списка шагом истории окна.
+ */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun ReturnsContent(state: ReturnsUiState, actions: ReturnsActions = ReturnsActions()) {
+fun ReturnsContent(state: ReturnsUiState, actions: ReturnsActions = ReturnsActions(), stepped: Boolean = false) {
     val texts = textsOf(LocalLanguage.current).journal
     val journal = texts.returns
-    val chosen = state.basis
+    val directive = listDetailDirective()
+    val step = detailStep(stepped, state.basis != null, beside = directive.maxHorizontalPartitions > 1)
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
-        ReturnHeader(journal, state.kind, actions.basis::kind)
-        BasisSearch(texts.history, state.day, state.number, state.loading, actions.basis::number, actions.basis::day)
+        if (!step.over) {
+            ReturnHeader(journal, state.kind, actions.basis::kind)
+            val basis = actions.basis
+            BasisSearch(texts.history, state.day, state.number, state.loading, basis::number, basis::day)
+        }
         ScreenSlot(basisState(state, journal, actions.basis::rereadDay), Modifier.weight(1f)) {
-            // Список и панель возврата — рядом, пока обеим хватает места;
-            // на узком окне выбранный чек открывает панель вместо списка.
-            TwoPane(
-                split = Panes.listDetail,
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                narrow = NarrowPanes.Switched(showSecond = chosen != null),
-                first = {
-                    BasisList(state.candidates, chosen, journal, Modifier.fillMaxSize(), actions.basis::choose)
-                },
-                second = { RefundPanel(state, actions, Modifier.fillMaxSize()) }
-            )
+            ReturnPanes(state, actions, directive, step, Modifier.fillMaxWidth().weight(1f))
         }
     }
+}
+
+/** Список чеков и панель возврата — панелями «списка и подробностей». */
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun ReturnPanes(
+    state: ReturnsUiState,
+    actions: ReturnsActions,
+    directive: PaneScaffoldDirective,
+    step: DetailStep,
+    modifier: Modifier
+) {
+    val journal = textsOf(LocalLanguage.current).journal.returns
+    ListDetailPaneScaffold(
+        directive = directive,
+        value = listDetailValue(directive, step.over),
+        listPane = {
+            AnimatedPane {
+                BasisList(state.candidates, state.basis, journal, Modifier.fillMaxSize()) {
+                    actions.basis.choose(it)
+                    step.opened(ReturnBasisKey)
+                }
+            }
+        },
+        detailPane = { AnimatedPane { RefundPanel(state, actions, Modifier.fillMaxSize()) } },
+        modifier = modifier
+    )
 }
 
 /**

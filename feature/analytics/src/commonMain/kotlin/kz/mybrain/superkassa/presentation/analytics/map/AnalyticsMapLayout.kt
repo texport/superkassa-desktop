@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
-import kz.mybrain.superkassa.designsystem.adaptive.NarrowPanes
 import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
 import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
 import kz.mybrain.superkassa.designsystem.list.ColumnScrollbar
@@ -82,7 +81,6 @@ internal fun MapAndDetails(
     TwoPane(
         split = Panes.mapAndDetails,
         modifier = modifier,
-        narrow = NarrowPanes.Stacked,
         first = map,
         second = { ListOverCard(list = list, card = card) }
     )

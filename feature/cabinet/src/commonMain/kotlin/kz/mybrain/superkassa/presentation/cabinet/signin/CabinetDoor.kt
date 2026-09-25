@@ -23,12 +23,13 @@ import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
  * печатной формы стоит над обоими входами и живёт в каркасе окна.
  *
  * @param onBack возврат на вход: им же «перейти к кассе» уводит из двери.
+ * @param stepped открыта карточка точки или кассы шагом истории окна.
  */
 @Composable
-fun CabinetDoor(window: CabinetWindow, onBack: () -> Unit) {
+fun CabinetDoor(window: CabinetWindow, onBack: () -> Unit, stepped: Boolean = false) {
     // За дверью разделов кассы нет, и просьба показать раздел значит одно:
     // выйти из кабинета на вход, где уже выбрана нужная касса.
     CompositionLocalProvider(LocalToKassa provides onBack) {
-        Column(modifier = Modifier.fillMaxSize()) { CabinetScreen(window) }
+        Column(modifier = Modifier.fillMaxSize()) { CabinetScreen(window, stepped) }
     }
 }

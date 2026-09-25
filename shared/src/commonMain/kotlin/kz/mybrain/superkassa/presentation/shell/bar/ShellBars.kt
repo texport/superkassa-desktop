@@ -41,7 +41,7 @@ internal fun ShellBar(
     val texts = LocalStrings.current
     Column {
         if (door != null && section == Section.Cabinet && office?.open == true) {
-            CabinetBar(door.cabinet, door.look, onMenu = onMenu)
+            CabinetBar(door.cabinet, door.look, onMenu = onMenu.takeIf { onBack == null }, onStep = onBack)
         } else {
             val step = LocalScreenBar.current
             val heading = BarHeading(step.title ?: section.title(texts.sections), step.subtitle)

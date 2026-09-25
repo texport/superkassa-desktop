@@ -3,14 +3,11 @@ package kz.mybrain.superkassa.presentation.settings
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldDefaults
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldDestinationItem
-import androidx.compose.material3.adaptive.layout.calculateThreePaneScaffoldValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.listDetailDirective
-import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
+import kz.mybrain.superkassa.designsystem.adaptive.listDetailValue
+import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
 
 /**
  * Настройки «списком и подробностями» Material 3.
@@ -37,14 +34,9 @@ internal fun SettingsPanes(board: SettingsBoard, opened: SettingsSectionKey?, mo
     val directive = listDetailDirective()
     val beside = directive.maxHorizontalPartitions > 1
     val choice = settingsChoice(board.sections, opened, beside)
-    val role = if (choice.over) ListDetailPaneScaffoldRole.Detail else ListDetailPaneScaffoldRole.List
     ListDetailPaneScaffold(
         directive = directive,
-        value = calculateThreePaneScaffoldValue(
-            directive.maxHorizontalPartitions,
-            ListDetailPaneScaffoldDefaults.adaptStrategies(),
-            ThreePaneScaffoldDestinationItem<Any>(role)
-        ),
+        value = listDetailValue(directive, choice.over),
         listPane = {
             AnimatedPane { SettingsList(board, board.sections, choice.open.takeIf { beside }, choice.pick) }
         },

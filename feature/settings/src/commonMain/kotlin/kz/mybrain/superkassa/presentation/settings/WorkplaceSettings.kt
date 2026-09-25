@@ -3,7 +3,7 @@ package kz.mybrain.superkassa.presentation.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
 
 /**
  * Настройки с экрана входа.
