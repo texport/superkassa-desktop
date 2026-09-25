@@ -23,6 +23,9 @@ object SourceTree {
     /** Корневой пакет приложения. */
     const val ROOT = "kz.mybrain.superkassa"
 
+    /** Наибольшее число файлов в пакете основного кода. */
+    const val PACKAGE_LIMIT = 15
+
     private const val PREFIX = "kotlin/kz/mybrain/superkassa"
     private val MAIN_SETS = listOf("commonMain", "jvmMain", "androidMain", "iosMain")
 
@@ -32,6 +35,19 @@ object SourceTree {
         .filter { it.isDirectory }
         .flatMap { root -> root.walkTopDown().filter { it.extension == "kt" }.map { root to it } }
         .map { (root, file) -> of(file.relativeTo(root).invariantSeparatorsPath, file.readLines()) }
+
+    /**
+     * Пакеты основного кода, в которых больше [PACKAGE_LIMIT] файлов: `путь: число`.
+     *
+     * Пакет считается по всем основным наборам вместе: общий и платформенные
+     * наборы кладут файлы в один пакет. Тесный пакет — знак, что внутри есть
+     * сценарии, которые пора разложить по своим пакетам.
+     */
+    fun crowded(): List<String> = main()
+        .groupingBy { it.path.substringBeforeLast('/', missingDelimiterValue = ".") }
+        .eachCount()
+        .filterValues { it > PACKAGE_LIMIT }
+        .map { (dir, count) -> "$dir: $count" }
 
     /** Наборы основного кода, которые у модуля есть: `commonMain`, `jvmMain`, `androidMain`, `iosMain`. */
     fun mainSets(): List<String> = MAIN_SETS.filter { File("src/$it").isDirectory }

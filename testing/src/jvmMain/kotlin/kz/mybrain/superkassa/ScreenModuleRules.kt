@@ -11,8 +11,9 @@ import kotlin.test.assertTrue
  * и домен — это держит граф модулей. Граф не заметит другого: файла чужой
  * области, положенного сюда, чтения домена чужой области без объявления
  * в [AreaRules], открытого объявления без описания, модели экрана, которая
- * тянется к портам мимо сценариев, и размера, записанного числом или своим
- * токеном вместо раскладки ([DesignRules]). Проверки читают исходники,
+ * тянется к портам мимо сценариев, размера, записанного числом или своим
+ * токеном вместо раскладки ([DesignRules]), и пакета, в котором сценарии
+ * свалены в одну кучу ([SourceTree.crowded]). Проверки читают исходники,
  * поэтому живут на JVM; модуль наследует их своим набором проверок.
  *
  * Поэлементные размеры, с которыми код пришёл к проверке, перечислены
@@ -48,6 +49,11 @@ abstract class ScreenModuleRules(private val own: List<String>, private val allo
     @Test
     fun publicDeclarationsAreDocumented() {
         assertEquals(emptyList(), SourceTree.undocumented(), "public declarations without KDoc")
+    }
+
+    @Test
+    fun packagesHoldAtMostFifteenFiles() {
+        assertEquals(emptyList(), SourceTree.crowded(), "packages to split by scenario")
     }
 
     @Test
