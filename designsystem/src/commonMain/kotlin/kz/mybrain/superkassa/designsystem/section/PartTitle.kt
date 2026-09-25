@@ -13,16 +13,18 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
 
 /**
- * Название части карточки настроек — «Язык чека», «Копии», «Уровень» —
- * и объяснение к ней, если есть.
+ * Подпись строки выбора внутри группы настроек — «Язык чека», «Копии»,
+ * «Уровень» — и объяснение к ней, если есть.
+ *
+ * Набрана как подпись строки списка Material 3 (`bodyLarge`, `onSurface`),
+ * а не как заголовок: заголовок в группе один — её подзаголовок цветом
+ * `primary`. Прежде подпись была набрана `titleSmall` и читалась вторым
+ * видом заголовка рядом с подзаголовком другого цвета: «Оформление»
+ * одним цветом, «Тон» и «Шрифт» под ним — другим.
  *
  * Строка всегда высотой с цель нажатия, со значком подсказки или без
- * него. Значок ⓘ — кнопка, и Material отводит ей 48 точек; подпись без
- * значка была высотой в строку текста. Части одной карточки стояли
- * поэтому с разными промежутками: «Язык чека» прижимался к сегментам,
- * а «Макет печати» со значком отходил от них на треть кнопки. Подписи
- * к тому же были набраны разными ролями шкалы — где `titleSmall`, где
- * `bodyMedium`.
+ * него: значок ⓘ — кнопка, и Material отводит ей 48 точек, а части одной
+ * группы должны стоять с одинаковыми промежутками.
  */
 @Composable
 fun PartTitle(title: String, info: String? = null) {
@@ -33,7 +35,7 @@ fun PartTitle(title: String, info: String? = null) {
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleSmall,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.weight(1f, fill = false)
         )

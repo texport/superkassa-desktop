@@ -129,7 +129,7 @@ class AdaptiveSettingsShots {
         val room = minOf(case.width - rail, ContentWidths.workspace.value.toInt())
         // Раздел рядом со списком: его заголовок стоит правее заголовка списка.
         val sections = textsOf(case.language).settings.sections
-        val section = SettingsMeasure.lastByText(nodes, if (workplace) sections.look else sections.kkm)
+        val section = SettingsMeasure.lastByText(nodes, if (workplace) sections.look else sections.general)
         val beside = section != null && section.left > title.left + PANE_GAP
         println(
             "настройки $name: столбец $column из $room, раздел рядом со списком: $beside; " +

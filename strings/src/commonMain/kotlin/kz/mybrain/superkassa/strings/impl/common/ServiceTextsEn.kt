@@ -61,7 +61,7 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     environment = "Environment",
     language = "Language",
     appearance = "Appearance",
-    appearanceHint = "The theme and language of this workplace. Kept on this machine: receipts, other cash registers " +
+    appearanceHint = "The look of this workplace. Kept on this machine: receipts, other cash registers " +
         "and the cabinet stay as they are",
     look = lookTextsEn,
     ofdToken = "BFD token",

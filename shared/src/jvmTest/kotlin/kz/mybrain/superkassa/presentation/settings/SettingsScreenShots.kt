@@ -19,8 +19,8 @@ import kotlin.test.assertTrue
 /**
  * Снимки экрана настроек: из кассы и с экрана входа, раздел за разделом.
  *
- * Смотрит человек: слева список разделов по полкам — касса, рабочее место,
- * программа, — справа открытый раздел одной колонкой; до входа остаются
+ * Смотрит человек: слева список разделов по полкам — касса, приложение,
+ * кабинет БФД, — справа открытый раздел одной колонкой; до входа остаются
  * только разделы того, что задают раньше, чем куда-либо входят.
  *
  * Каждый раздел открывается нажатием в списке, как его открывает
@@ -53,12 +53,14 @@ class SettingsScreenShots {
 
     @Test
     fun `настройки администратора в кассе`() = sections("settings-admin", KassaScene.desk()) {
-        with(it) { listOf(kkm, printing, taxes, bfd, look, salePanels, machine, delivery, addresses, updates, debug) }
+        with(it) {
+            listOf(general, printing, taxes, bfd, delivery, look, language, salePanels, debug, about, connection)
+        }
     }
 
     @Test
     fun `настройки до входа`() = sections("settings-door", KassaScene.desk(kkm = null)) {
-        with(it) { listOf(look, salePanels, machine, addresses, updates, debug) }
+        with(it) { listOf(look, language, salePanels, debug, about, connection) }
     }
 
     private companion object {

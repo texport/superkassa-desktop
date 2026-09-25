@@ -61,7 +61,7 @@ internal val settingsScreenTextsRu = SettingsScreenTexts(
     environment = "Контур",
     language = "Язык",
     appearance = "Оформление",
-    appearanceHint = "Тема и язык этого рабочего места. Хранится на этой машине: на чеках, на других кассах и в " +
+    appearanceHint = "Вид этого рабочего места. Хранится на этой машине: на чеках, на других кассах и в " +
         "кабинете ничего не меняется",
     look = lookTextsRu,
     ofdToken = "Токен БФД",

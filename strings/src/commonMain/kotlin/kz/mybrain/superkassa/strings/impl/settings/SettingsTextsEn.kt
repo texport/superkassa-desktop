@@ -57,7 +57,7 @@ internal val settingsTextsEn = SettingsTexts(
         )
     ),
     facts = KassaFactsTexts(
-        title = "Register facts",
+        title = "Application and kassa core",
         hint = "What support asks first: which versions are installed, how the register runs and where its data " +
             "lives. Visible before sign-in too — when the register did not open or does not let anyone in.",
         appVersion = "App version",
@@ -73,6 +73,7 @@ internal val settingsTextsEn = SettingsTexts(
 
 /** Надписи [LookTexts] по-английски. */
 internal val lookTextsEn = LookTexts(
+    theme = "Theme",
     accent = "Accent",
     accentHint = "Main colour of buttons, selection and icons. Refusal stays red with any accent.",
     accentRed = "Red",

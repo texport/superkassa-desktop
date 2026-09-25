@@ -61,7 +61,7 @@ internal val settingsScreenTextsKk = SettingsScreenTexts(
     environment = "Контур",
     language = "Тіл",
     appearance = "Безендіру",
-    appearanceHint = "Осы жұмыс орнының тақырыбы мен тілі. Осы машинада сақталады: чектерде, басқа кассаларда және " +
+    appearanceHint = "Осы жұмыс орнының көрінісі. Осы машинада сақталады: чектерде, басқа кассаларда және " +
         "кабинетте ештеңе өзгермейді",
     look = lookTextsKk,
     ofdToken = "БФД токені",

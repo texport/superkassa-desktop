@@ -4,40 +4,39 @@ package kz.mybrain.superkassa.strings.api.settings
  * Надписи списка разделов настроек: полки, названия разделов и сводки
  * под ними.
  *
- * Список стоит слева от настроек раздела, а на телефоне открывается
- * первым: по названию и строке под ним владелец решает, куда зайти,
- * не открывая раздела. Сводка поэтому называет, что внутри, словами
- * кассира, а не перечисляет поля.
+ * Полки отвечают на вопрос, чьё это: выбранной кассы, самого приложения
+ * на этой машине или кабинета БФД. По названию и строке под ним владелец
+ * решает, куда зайти, не открывая раздела.
  */
 data class SettingsSectionTexts(
-    /** Полка разделов самой кассы: их принимает касса. */
+    /** Полка выбранной кассы: её настройки принимает сама касса. */
     val shelfKkm: String,
-    /** Полка разделов этой машины: они одни на все кассы рабочего места. */
-    val shelfWorkplace: String,
-    /** Полка самой программы: выпуски и журнал. */
-    val shelfProgram: String,
-    val kkm: String,
-    val kkmAbout: String,
+    /** Полка приложения на этой машине: вид, язык, журнал, версии. */
+    val shelfApp: String,
+    /** Полка кабинета БФД: как рабочее место к нему подключается. */
+    val shelfCabinet: String,
+    val general: String,
+    val generalAbout: String,
     val printing: String,
     val printingAbout: String,
     val taxes: String,
     val taxesAbout: String,
     val bfd: String,
     val bfdAbout: String,
-    val look: String,
-    val lookAbout: String,
-    val salePanels: String,
-    val salePanelsAbout: String,
-    val machine: String,
-    val machineAbout: String,
     val delivery: String,
     val deliveryAbout: String,
-    val addresses: String,
-    val addressesAbout: String,
-    val updates: String,
-    val updatesAbout: String,
+    val look: String,
+    val lookAbout: String,
+    val language: String,
+    val languageAbout: String,
+    val salePanels: String,
+    val salePanelsAbout: String,
     val debug: String,
     val debugAbout: String,
-    /** Язык надписей приложения: группа в разделе оформления. */
+    val about: String,
+    val aboutAbout: String,
+    val connection: String,
+    val connectionAbout: String,
+    /** Язык надписей приложения: группа в разделе языка. */
     val appLanguage: String
 )

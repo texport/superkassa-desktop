@@ -57,7 +57,7 @@ internal val settingsTextsRu = SettingsTexts(
         )
     ),
     facts = KassaFactsTexts(
-        title = "Сведения о кассе",
+        title = "Программа и кассовое ядро",
         hint = "Первое, что спрашивает поддержка: какие версии стоят, как работает касса и где лежат её данные. " +
             "Видно и до входа — когда касса не открылась или не пускает.",
         appVersion = "Версия приложения",
@@ -73,6 +73,7 @@ internal val settingsTextsRu = SettingsTexts(
 
 /** Надписи [LookTexts] по-русски. */
 internal val lookTextsRu = LookTexts(
+    theme = "Тема",
     accent = "Тон",
     accentHint = "Основной цвет кнопок, выделения и значков. Отказ остаётся красным при любом тоне.",
     accentRed = "Красный",

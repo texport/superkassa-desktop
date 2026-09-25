@@ -26,9 +26,9 @@ import kz.mybrain.superkassa.presentation.settings.workplace.TradeDomainCard
  * по разделам, а внутри раздела — от повседневного к необратимому.
  */
 internal enum class Setting(val section: SettingsSection) {
-    CurrentKkm(SettingsSection.Kkm),
-    Programming(SettingsSection.Kkm),
-    Decommission(SettingsSection.Kkm),
+    CurrentKkm(SettingsSection.General),
+    Programming(SettingsSection.General),
+    Decommission(SettingsSection.General),
     PrintForm(SettingsSection.Printing),
     PrintTarget(SettingsSection.Printing),
     Domain(SettingsSection.Taxes),
@@ -36,16 +36,16 @@ internal enum class Setting(val section: SettingsSection) {
     Diagnostics(SettingsSection.Bfd),
     OfdSync(SettingsSection.Bfd),
     OfdToken(SettingsSection.Bfd),
-    Appearance(SettingsSection.Look),
-    Language(SettingsSection.Look),
-    PanelBehaviour(SettingsSection.SalePanels),
-    Facts(SettingsSection.Machine),
-    Core(SettingsSection.Machine),
+    Core(SettingsSection.Bfd),
     Delivery(SettingsSection.Delivery),
-    CabinetAddress(SettingsSection.Addresses),
-    MapServices(SettingsSection.Addresses),
-    Updates(SettingsSection.Updates),
-    Debug(SettingsSection.Debug)
+    Appearance(SettingsSection.Look),
+    Language(SettingsSection.Language),
+    PanelBehaviour(SettingsSection.SalePanels),
+    Debug(SettingsSection.Debug),
+    Facts(SettingsSection.About),
+    Updates(SettingsSection.About),
+    CabinetAddress(SettingsSection.Connection),
+    MapServices(SettingsSection.Connection)
 }
 
 /**
@@ -86,9 +86,15 @@ internal fun visibleSettings(
  * доступно. Добавленная настройка ложится сюда со своим разделом
  * и условиями.
  */
-internal val settingsCards: List<SettingsCard> = kkmCards() + machineCards()
+internal val settingsCards: List<SettingsCard> = kkmCards() + appCards() + cabinetCards()
 
-/** Настройки самой кассы: их принимает касса, и нужна выбранная касса. */
+/**
+ * Настройки выбранной кассы.
+ *
+ * Сроки обмена с БФД и доставка чека одни на все кассы этой машины, но
+ * владелец ищет их там же, где связь кассы с БФД и её чеки, — и меняет их
+ * только администратор, то есть уже с выбранной кассой.
+ */
 private fun kkmCards() = listOf(
     SettingsCard(Setting.CurrentKkm, needsRegister = true) { CurrentKkmCard(it.kkm, it.kkmActions) },
     // Режим программирования стоит сразу под кассой, которой он принадлежит:
@@ -96,7 +102,7 @@ private fun kkmCards() = listOf(
     SettingsCard(Setting.Programming, needsRegister = true, adminOnly = true) {
         ProgrammingCard(it.kkm, it.kkmActions)
     },
-    // Снятие с учёта — последним в разделе кассы: его не нажимают по дороге.
+    // Снятие с учёта — последним в разделе: его не нажимают по дороге.
     SettingsCard(Setting.Decommission, needsRegister = true, adminOnly = true) {
         DecommissionCard(it.kkm, it.kkmActions)
     },
@@ -112,27 +118,30 @@ private fun kkmCards() = listOf(
     SettingsCard(Setting.Tax, needsRegister = true, adminOnly = true) { TaxSettingsCard(it.tax, it.taxActions) },
     SettingsCard(Setting.Diagnostics, needsRegister = true) { DiagnosticsCard(it.ofd, it.ofdActions) },
     SettingsCard(Setting.OfdSync, needsRegister = true, adminOnly = true) { OfdSyncCard(it.ofd, it.ofdActions) },
-    SettingsCard(Setting.OfdToken, needsRegister = true, adminOnly = true) { OfdTokenCard(it.ofd, it.ofdActions) }
+    SettingsCard(Setting.OfdToken, needsRegister = true, adminOnly = true) { OfdTokenCard(it.ofd, it.ofdActions) },
+    SettingsCard(Setting.Core, adminOnly = true) { CoreSettingsCard(it.core, it.coreActions) },
+    SettingsCard(Setting.Delivery, adminOnly = true) { DeliveryCard(it.delivery, it.deliveryActions) }
 )
 
 /**
- * Настройки машины и программы: их задают и до входа.
+ * Настройки приложения на этой машине: их задают и до входа.
  *
- * Сведения о кассе видны всем и без входа — поддержке они нужны, когда
- * касса не открылась. Сроки обмена и доставка одни на все кассы машины
- * и меняются только администратором. Адреса кабинета и карты нужны только
- * там, где собран кабинет, выпуски — там, где касса обновляет себя сама.
- * Отладка условий не имеет: она нужна ровно тогда, когда войти нельзя.
+ * Сведения о программе и кассовом ядре видны всем и без входа — поддержке
+ * они нужны, когда касса не открылась. Выпуски — там, где касса обновляет
+ * себя сама. Отладка условий не имеет: она нужна ровно тогда, когда войти
+ * нельзя.
  */
-private fun machineCards() = listOf(
+private fun appCards() = listOf(
     SettingsCard(Setting.Appearance) { AppearanceCard(it.look, it.lookActions) },
     SettingsCard(Setting.Language) { LanguageCard(it.look, it.lookActions) },
     SettingsCard(Setting.PanelBehaviour) { it.parts.panels() },
+    SettingsCard(Setting.Debug) { it.parts.debug() },
     SettingsCard(Setting.Facts) { KassaFactsCard(it.core) },
-    SettingsCard(Setting.Core, adminOnly = true) { CoreSettingsCard(it.core, it.coreActions) },
-    SettingsCard(Setting.Delivery, adminOnly = true) { DeliveryCard(it.delivery, it.deliveryActions) },
+    SettingsCard(Setting.Updates, needsReleases = true) { it.parts.updates() }
+)
+
+/** Подключение к кабинету БФД и его карте — только там, где кабинет собран. */
+private fun cabinetCards() = listOf(
     SettingsCard(Setting.CabinetAddress, needsCabinet = true) { CabinetAddressCard(it.workplace, it.workplaceActions) },
-    SettingsCard(Setting.MapServices, needsCabinet = true) { MapServicesCard(it.workplace, it.workplaceActions) },
-    SettingsCard(Setting.Updates, needsReleases = true) { it.parts.updates() },
-    SettingsCard(Setting.Debug) { it.parts.debug() }
+    SettingsCard(Setting.MapServices, needsCabinet = true) { MapServicesCard(it.workplace, it.workplaceActions) }
 )

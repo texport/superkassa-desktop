@@ -3,22 +3,23 @@ package kz.mybrain.superkassa.presentation.settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
-import kz.mybrain.superkassa.presentation.settings.workplace.title
+import kz.mybrain.superkassa.presentation.settings.workplace.summary
 import kz.mybrain.superkassa.strings.api.Texts
 import kz.mybrain.superkassa.strings.api.settings.SettingsSectionTexts
 
 /**
  * Полки списка разделов: чьё это.
  *
- * Касса принимает свои настройки сама и только для себя; рабочее место —
- * это машина со всеми её кассами; программа — выпуски и журнал. Полка
- * отвечает на вопрос, где изменится выбранное, ещё до того, как раздел
- * открыт.
+ * Настройки бывают трёх хозяев, и полка называет хозяина раньше, чем
+ * открыт раздел: выбранная касса принимает свои настройки сама и только
+ * для себя; приложение — вид, язык, журнал и версии на этой машине;
+ * кабинет БФД — куда рабочее место к нему подключается. Касса выбрана
+ * только после входа: до входа её полки нет.
  */
 internal enum class SettingsShelf(val title: (SettingsSectionTexts) -> String) {
     Kkm({ it.shelfKkm }),
-    Workplace({ it.shelfWorkplace }),
-    Program({ it.shelfProgram })
+    App({ it.shelfApp }),
+    Cabinet({ it.shelfCabinet })
 }
 
 /**
@@ -31,8 +32,8 @@ internal enum class SettingsShelf(val title: (SettingsSectionTexts) -> String) {
  * настроек на большом экране, слева список разделов, справа — один
  * открытый раздел одной колонкой.
  *
- * Порядок — порядок в списке: сперва сама касса, от повседневного
- * к редкому, потом машина, потом программа.
+ * Порядок — порядок в списке: сперва выбранная касса, от повседневного
+ * к редкому, потом приложение, потом кабинет.
  */
 internal enum class SettingsSection(
     val shelf: SettingsShelf,
@@ -40,17 +41,17 @@ internal enum class SettingsSection(
     val title: (SettingsSectionTexts) -> String,
     val about: (SettingsSectionTexts) -> String
 ) {
-    Kkm(SettingsShelf.Kkm, AppIcons.sectionKkm, { it.kkm }, { it.kkmAbout }),
+    General(SettingsShelf.Kkm, AppIcons.sectionKkm, { it.general }, { it.generalAbout }),
     Printing(SettingsShelf.Kkm, AppIcons.sectionPrinting, { it.printing }, { it.printingAbout }),
     Taxes(SettingsShelf.Kkm, AppIcons.sectionTaxes, { it.taxes }, { it.taxesAbout }),
     Bfd(SettingsShelf.Kkm, AppIcons.sectionBfd, { it.bfd }, { it.bfdAbout }),
-    Look(SettingsShelf.Workplace, AppIcons.sectionLook, { it.look }, { it.lookAbout }),
-    SalePanels(SettingsShelf.Workplace, AppIcons.sectionSalePanels, { it.salePanels }, { it.salePanelsAbout }),
-    Machine(SettingsShelf.Workplace, AppIcons.sectionMachine, { it.machine }, { it.machineAbout }),
-    Delivery(SettingsShelf.Workplace, AppIcons.receiptDelivery, { it.delivery }, { it.deliveryAbout }),
-    Addresses(SettingsShelf.Workplace, AppIcons.sectionAddresses, { it.addresses }, { it.addressesAbout }),
-    Updates(SettingsShelf.Program, AppIcons.update, { it.updates }, { it.updatesAbout }),
-    Debug(SettingsShelf.Program, AppIcons.debug, { it.debug }, { it.debugAbout })
+    Delivery(SettingsShelf.Kkm, AppIcons.receiptDelivery, { it.delivery }, { it.deliveryAbout }),
+    Look(SettingsShelf.App, AppIcons.sectionLook, { it.look }, { it.lookAbout }),
+    Language(SettingsShelf.App, AppIcons.sectionLanguage, { it.language }, { it.languageAbout }),
+    SalePanels(SettingsShelf.App, AppIcons.sectionSalePanels, { it.salePanels }, { it.salePanelsAbout }),
+    Debug(SettingsShelf.App, AppIcons.debug, { it.debug }, { it.debugAbout }),
+    About(SettingsShelf.App, AppIcons.info, { it.about }, { it.aboutAbout }),
+    Connection(SettingsShelf.Cabinet, AppIcons.sectionAddresses, { it.connection }, { it.connectionAbout })
 }
 
 /** Разделы, в которых при таком месте, правах, кабинете и выпусках есть что показать. */
@@ -73,21 +74,23 @@ internal fun SettingsBoard.cardsOf(section: SettingsSection): List<SettingsCard>
 /**
  * Строка под названием раздела.
  *
- * У кассы — её название и режим программирования: по списку видно,
- * настройки какой кассы открыты и принимает ли она их сейчас. У вида —
- * выбранная тема и язык. Остальные разделы называют, что в них лежит.
+ * У основного раздела кассы — её название и режим программирования:
+ * по списку видно, настройки какой кассы открыты и принимает ли она их
+ * сейчас. У оформления — выбранные тема и тон, у языка — сам язык,
+ * у сведений о программе — её версия. Остальные разделы называют, что
+ * в них лежит.
  */
 internal fun SettingsSection.summary(board: SettingsBoard, texts: Texts): String {
     val sections = texts.settings.sections
     return when (this) {
-        SettingsSection.Kkm -> listOfNotNull(
+        SettingsSection.General -> listOfNotNull(
             board.kkm.displayName.ifBlank { null },
             texts.kassa.money.kkm.programmingOn.takeIf { board.kkm.programming }
         ).joinToString(Glyphs.SEPARATOR).ifBlank { about(sections) }
-        SettingsSection.Look -> listOf(
-            board.look.appearance.title(texts.common.settingsScreen),
-            board.look.language.title
-        ).joinToString(Glyphs.SEPARATOR)
+        SettingsSection.Look -> board.look.summary(texts.common.settingsScreen)
+        SettingsSection.Language -> board.look.language.title
+        SettingsSection.About ->
+            board.core.about?.let { "${texts.settings.facts.appVersion} ${it.appVersion}" } ?: about(sections)
         else -> about(sections)
     }
 }

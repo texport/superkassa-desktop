@@ -55,6 +55,7 @@ import androidx.compose.material.icons.outlined.Dialpad
 import androidx.compose.material.icons.outlined.EventAvailable
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Keyboard
+import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.NewReleases
@@ -239,15 +240,16 @@ object AppIcons {
 
     /**
      * Разделы настроек в списке слева — контурные, как значки строк
-     * списка Material 3: сама касса, печать, налоги, связь с БФД, вид,
-     * экран продажи, машина и адреса служб. Доставка, обновления
-     * и отладка берут значки своих областей.
+     * списка Material 3: основное кассы, печать, налоги, связь с БФД,
+     * оформление, язык, экран продажи, машина и подключение к кабинету.
+     * Доставка, сведения о программе и отладка берут значки своих областей.
      */
     val sectionKkm: ImageVector = Icons.Outlined.PointOfSale
     val sectionPrinting: ImageVector = Icons.Outlined.Print
     val sectionTaxes: ImageVector = Icons.Outlined.Percent
     val sectionBfd: ImageVector = Icons.Outlined.CloudSync
     val sectionLook: ImageVector = Icons.Outlined.Palette
+    val sectionLanguage: ImageVector = Icons.Outlined.Language
     val sectionSalePanels: ImageVector = Icons.AutoMirrored.Outlined.ViewSidebar
     val sectionMachine: ImageVector = Icons.Outlined.Computer
     val sectionAddresses: ImageVector = Icons.Outlined.Link

@@ -7,6 +7,8 @@ package kz.mybrain.superkassa.strings.api.settings
  * десятка, и в общем перечне настроек они заслонили бы всё остальное.
  */
 data class LookTexts(
+    /** Светлая, тёмная или как в системе. */
+    val theme: String,
     val accent: String,
     val accentHint: String,
     val accentRed: String,

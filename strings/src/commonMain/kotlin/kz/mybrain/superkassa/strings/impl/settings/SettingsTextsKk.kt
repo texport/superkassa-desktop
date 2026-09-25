@@ -58,7 +58,7 @@ internal val settingsTextsKk = SettingsTexts(
         )
     ),
     facts = KassaFactsTexts(
-        title = "Касса туралы мәліметтер",
+        title = "Бағдарлама және касса ядросы",
         hint = "Қолдау қызметі алдымен сұрайтыны: қандай нұсқалар тұр, касса қалай жұмыс істейді және деректері " +
             "қайда жатыр. Кіргенге дейін де көрінеді — касса ашылмағанда немесе кіргізбегенде.",
         appVersion = "Қолданба нұсқасы",
@@ -74,6 +74,7 @@ internal val settingsTextsKk = SettingsTexts(
 
 /** Надписи [LookTexts] по-казахски. */
 internal val lookTextsKk = LookTexts(
+    theme = "Тақырып",
     accent = "Реңк",
     accentHint = "Түймелердің, ерекшелеудің және белгішелердің негізгі түсі. " +
         "Бас тарту кез келген реңкте қызыл болып қалады.",

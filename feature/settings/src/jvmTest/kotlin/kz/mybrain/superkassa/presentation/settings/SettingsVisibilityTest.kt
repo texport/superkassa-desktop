@@ -22,27 +22,27 @@ class SettingsVisibilityTest {
                 Setting.Appearance,
                 Setting.Language,
                 Setting.PanelBehaviour,
+                Setting.Debug,
                 Setting.Facts,
-                Setting.CabinetAddress,
-                Setting.MapServices,
                 Setting.Updates,
-                Setting.Debug
+                Setting.CabinetAddress,
+                Setting.MapServices
             ),
             visibleSettings(hasRegister = false, admin = false)
         )
     }
 
-    /** До входа — только разделы машины и программы: полки кассы нет вовсе. */
+    /** До входа — только разделы приложения и кабинета: полки кассы нет вовсе. */
     @Test
     fun `до входа разделы кассы не показываются`() {
         assertEquals(
             listOf(
                 SettingsSection.Look,
+                SettingsSection.Language,
                 SettingsSection.SalePanels,
-                SettingsSection.Machine,
-                SettingsSection.Addresses,
-                SettingsSection.Updates,
-                SettingsSection.Debug
+                SettingsSection.Debug,
+                SettingsSection.About,
+                SettingsSection.Connection
             ),
             visibleSections(hasRegister = false, admin = false)
         )
@@ -71,11 +71,11 @@ class SettingsVisibilityTest {
         assertTrue(Setting.Core !in visibleSettings(hasRegister = true, admin = false), "сроки БФД показаны кассиру")
     }
 
-    /** На Android приложение обновляет магазин: раздела выпусков там нет. */
+    /** На Android приложение обновляет магазин: выпусков там нет, а сведения о программе есть. */
     @Test
-    fun `без своих выпусков раздела обновлений нет`() {
-        assertTrue(SettingsSection.Updates !in visibleSections(hasRegister = true, admin = true, hasReleases = false))
-        assertTrue(Setting.Facts in visibleSettings(hasRegister = true, admin = true, hasReleases = false))
+    fun `без своих выпусков нет обновлений, но есть сведения о программе`() {
+        assertTrue(Setting.Updates !in visibleSettings(hasRegister = true, admin = true, hasReleases = false))
+        assertTrue(SettingsSection.About in visibleSections(hasRegister = true, admin = true, hasReleases = false))
     }
 
     /** Без кабинета — на Android — адреса кабинета и служб карты настраивать незачем. */
@@ -83,8 +83,8 @@ class SettingsVisibilityTest {
     fun `без кабинета раздела адресов служб нет`() {
         val shown = visibleSections(hasRegister = true, admin = true, hasCabinet = false)
 
-        assertTrue(SettingsSection.Addresses !in shown, "адреса служб показаны без кабинета")
-        assertTrue(SettingsSection.Machine in shown, "без кабинета пропали настройки кассы на машине")
+        assertTrue(SettingsSection.Connection !in shown, "подключение к кабинету показано без кабинета")
+        assertTrue(SettingsSection.Bfd in shown, "без кабинета пропала связь кассы с БФД")
     }
 
     @Test
@@ -111,11 +111,11 @@ class SettingsVisibilityTest {
                 Setting.Appearance,
                 Setting.Language,
                 Setting.PanelBehaviour,
+                Setting.Debug,
                 Setting.Facts,
-                Setting.CabinetAddress,
-                Setting.MapServices,
                 Setting.Updates,
-                Setting.Debug
+                Setting.CabinetAddress,
+                Setting.MapServices
             ),
             visibleSettings(hasRegister = true, admin = false)
         )
@@ -140,18 +140,29 @@ class SettingsVisibilityTest {
     }
 
     /**
-     * Снятие с учёта — последним в разделе кассы, режим программирования —
+     * Сроки обмена с БФД — в связи кассы с БФД, язык — своим разделом
+     * приложения: владелец ищет их по смыслу, а не по тому, где они хранятся.
+     */
+    @Test
+    fun `сроки обмена — в связи с БФД, язык — своим разделом`() {
+        assertEquals(SettingsSection.Bfd, Setting.Core.section)
+        assertEquals(SettingsShelf.App, Setting.Language.section.shelf)
+        assertEquals(listOf(Setting.Language), Setting.entries.filter { it.section == SettingsSection.Language })
+    }
+
+    /**
+     * Снятие с учёта — последним в основном разделе кассы, режим программирования —
      * сразу под самой кассой: вход и выход в одном месте, а необратимое
      * не нажимают по дороге к остальному.
      */
     @Test
     fun `в разделе кассы режим рядом с кассой, снятие последним`() {
-        val kkm = visibleSettings(hasRegister = true, admin = true).filter { it.section == SettingsSection.Kkm }
+        val kkm = visibleSettings(hasRegister = true, admin = true).filter { it.section == SettingsSection.General }
 
         assertEquals(listOf(Setting.CurrentKkm, Setting.Programming, Setting.Decommission), kkm)
     }
 
-    /** Полки идут от кассы к программе, и раздел не оторван от своей полки. */
+    /** Полки идут от кассы к приложению и кабинету, и раздел не оторван от своей полки. */
     @Test
     fun `разделы стоят по полкам`() {
         val shelves = SettingsSection.entries.map { it.shelf.ordinal }
