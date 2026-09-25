@@ -10,5 +10,5 @@ import kz.mybrain.superkassa.ScreenModuleRules
  */
 class ModuleSourcesTest : ScreenModuleRules(
     own = listOf("presentation.common", "presentation.words"),
-    allowed = listOf("domain", "designsystem", "strings.api")
+    allowed = listOf("navigation", "domain", "designsystem", "strings.api")
 )

@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.CardColumns
 import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
-import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.designsystem.state.ScreenState
@@ -51,7 +50,6 @@ fun UsersContent(state: UsersUiState, actions: UsersActions) {
         modifier = Modifier.fillMaxSize(),
         spacing = Spacing.cardGap
     ) {
-        ScreenTitle(texts.users.title)
         CardColumns(Modifier.fillMaxWidth()) {
             AddCashier(state, actions, money)
             SectionCard(title = money.cashiers.listTitle, info = money.cashiers.listHint) {

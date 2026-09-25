@@ -4,7 +4,6 @@ import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /** Надписи [SetupTexts] по-казахски. */
 internal val setupTextsKk = SetupTexts(
-    title = "Кассаны қосу",
     explain = "Қадамдар кезекпен жүреді; шеберді жауып, кейін жалғастыруға болады",
     startOver = "Қайтадан бастау",
     startOverAsk = "Өткен қосылымды ұмытсын ба?",

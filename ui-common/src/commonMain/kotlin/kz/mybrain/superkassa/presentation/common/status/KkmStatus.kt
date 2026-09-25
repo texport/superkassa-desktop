@@ -19,8 +19,13 @@ import kz.mybrain.superkassa.domain.kkm.model.isProgramming
 import kz.mybrain.superkassa.strings.api.common.EnumTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
-/** Плашка шапки: слово и роль цвета. */
-internal data class KkmStatusChip(val text: String, val tone: StatusTone)
+/**
+ * Плашка шапки: слово и роль цвета.
+ *
+ * @property urgent мешает пробить чек: касса заблокирована, программируется
+ *   или работает без связи с БФД. Такие плашки стоят и в узкой шапке.
+ */
+internal data class KkmStatusChip(val text: String, val tone: StatusTone, val urgent: Boolean = false)
 
 /** Слова шапки, уже переведённые на язык кассира. */
 internal data class KkmStatusWords(
@@ -40,10 +45,13 @@ internal data class KkmStatusWords(
  * Собирается без композиции, чтобы повтор ловился проверкой, а не глазами.
  */
 internal fun kkmStatusChips(kkm: KkmResponse?, words: KkmStatusWords): List<KkmStatusChip> = listOfNotNull(
-    kkm?.let { KkmStatusChip(words.state, stateTone(it.isBlocked, it.isProgramming)) },
-    kkm?.takeIf { it.isAutonomous }?.let { KkmStatusChip(words.autonomous, StatusTone.Waiting) },
+    kkm?.let { stateChip(words.state, stateTone(it.isBlocked, it.isProgramming)) },
+    kkm?.takeIf { it.isAutonomous }?.let { KkmStatusChip(words.autonomous, StatusTone.Waiting, urgent = true) },
     kkm?.let { shiftChip(it.isShiftOpen, words) }
 )
+
+/** Состояние кассы; всякое, кроме рабочего, мешает пробить чек. */
+private fun stateChip(word: String, tone: StatusTone) = KkmStatusChip(word, tone, urgent = tone != StatusTone.Good)
 
 /**
  * Смена со слов кассы: касса отдаёт её состояние вместе с собой.
@@ -79,10 +87,14 @@ internal fun EnumTexts.kkmState(code: String): String = when (KkmState.entries.f
  *
  * Порядок от тревожного к обычному: состояние кассы и автономную работу
  * кассир обязан увидеть первыми.
+ *
+ * @param all показывать все плашки. На телефоне шапка узкая: плашки
+ *   смены и «В работе» отнимали место у названия экрана, и там остаются
+ *   только те, что мешают пробить чек, — смену кассир видит на главном.
  */
 @Composable
-fun KkmStatusChips(kkm: KkmResponse?) {
-    val chips = kkmStatusChips(kkm, statusWords(kkm))
+fun KkmStatusChips(kkm: KkmResponse?, all: Boolean = true) {
+    val chips = kkmStatusChips(kkm, statusWords(kkm)).filter { all || it.urgent }
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalArrangement = Arrangement.spacedBy(Spacing.inline),

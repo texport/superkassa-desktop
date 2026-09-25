@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.designsystem.state.ScreenState
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
@@ -47,7 +46,6 @@ fun QueueContent(state: QueueUiState, actions: QueueActions) {
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
-        ScreenTitle(texts.queue.title)
         QueueSummary(state, actions, journal)
         ScreenSlot(queueState(texts, journal, state, actions), Modifier.weight(1f)) {
             QueueList(state, journal, Modifier.weight(1f))

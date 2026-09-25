@@ -4,7 +4,6 @@ import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /** Надписи [SetupTexts] по-русски. */
 internal val setupTextsRu = SetupTexts(
-    title = "Подключение кассы",
     explain = "Шаги идут подряд; мастер можно закрыть и продолжить позже",
     startOver = "Начать заново",
     startOverAsk = "Забыть пройденное подключение?",

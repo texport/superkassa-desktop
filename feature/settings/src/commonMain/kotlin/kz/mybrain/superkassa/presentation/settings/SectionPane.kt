@@ -7,38 +7,38 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.input.key.onKeyEvent
-import kz.mybrain.superkassa.designsystem.keyboard.escapePressedBy
 import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
 import kz.mybrain.superkassa.designsystem.section.PaneTitle
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.common.navigation.ScreenBar
+import kz.mybrain.superkassa.strings.api.settings.SettingsSectionTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
- * Открытый раздел: заголовок и группы настроек одной колонкой.
+ * Открытый раздел: группы настроек одной колонкой.
  *
  * Группы стоят одна под другой во всю ширину панели, в порядке каталога:
  * порядок не зависит от их высоты и не меняется от нажатия.
  *
- * Открытый раздел забирает ввод с клавиатуры: PageDown и стрелки листают
- * его сразу, а Escape — как стрелка в заголовке — ведёт назад к списку,
- * когда раздел открыт поверх него. Нажатие берётся на всплытии: Escape
- * раскрытого списка выбора или диалога достаётся им, а не разделу.
+ * Рядом со списком у панели свой заголовок — раздел; шапка окна называет
+ * настройки целиком. Поверх списка — на узком окне — заголовка у панели
+ * нет: раздел называет шапка окна, под ним — чьи это настройки, и она же
+ * держит стрелку назад по истории окна.
  *
- * @param onBack назад к списку; `null` — список стоит рядом.
+ * Открытый раздел забирает ввод с клавиатуры: PageDown и стрелки листают
+ * его сразу.
+ *
+ * @param beside раздел стоит рядом со списком.
  */
 @Composable
-internal fun SectionPane(board: SettingsBoard, section: SettingsSection, onBack: (() -> Unit)?) {
+internal fun SectionPane(board: SettingsBoard, section: SettingsSection, beside: Boolean) {
     val texts = textsOf(LocalLanguage.current)
+    val title = section.title(texts.settings.sections)
     val focus = remember { FocusRequester() }
-    Column(
-        modifier = Modifier.fillMaxSize().onKeyEvent { event ->
-            val back = onBack ?: return@onKeyEvent false
-            escapePressedBy(event).also { if (it) back() }
-        }
-    ) {
-        PaneTitle(section.title(texts.settings.sections), onBack, texts.common.settingsScreen.back)
+    if (!beside) ScreenBar(title, section.owner(board, texts.settings.sections))
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (beside) PaneTitle(title)
         ScrollableColumn(
             modifier = Modifier.weight(1f),
             spacing = Spacing.sectionGap,
@@ -50,3 +50,11 @@ internal fun SectionPane(board: SettingsBoard, section: SettingsSection, onBack:
     }
     LaunchedEffect(section) { focus.requestFocus() }
 }
+
+/**
+ * Чьи это настройки — коротко, как группа в списке: касса по имени,
+ * «Приложение» или «Кабинет БФД». Длинное «Настройки кассы «…»» на
+ * телефоне обрезалось раньше имени кассы — ради которого и стоит.
+ */
+private fun SettingsSection.owner(board: SettingsBoard, texts: SettingsSectionTexts): String =
+    board.kkm.displayName.takeIf { shelf == SettingsShelf.Kkm && it.isNotBlank() } ?: shelf.title(texts)

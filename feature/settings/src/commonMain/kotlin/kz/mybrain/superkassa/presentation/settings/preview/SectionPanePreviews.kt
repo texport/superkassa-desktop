@@ -51,5 +51,5 @@ private fun ConnectionSectionPreview() = Section(SettingsSection.Connection)
 
 @Composable
 private fun Section(section: SettingsSection) = PreviewTheme {
-    SectionPane(SettingsSamples.admin(), section, onBack = {})
+    SectionPane(SettingsSamples.admin(), section, beside = false)
 }

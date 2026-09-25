@@ -37,5 +37,5 @@ private fun DoorListPreview() = PreviewTheme { ListOf(SettingsSamples.door()) }
 
 @Composable
 private fun ListOf(board: SettingsBoard) {
-    SettingsList(board, board.sections, open = board.sections.first(), titled = true) {}
+    SettingsList(board, board.sections, open = board.sections.first()) {}
 }

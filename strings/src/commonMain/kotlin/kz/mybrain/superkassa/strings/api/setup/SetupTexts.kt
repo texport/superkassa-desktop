@@ -8,7 +8,6 @@ package kz.mybrain.superkassa.strings.api.setup
  * остановился, не считая шаги заново.
  */
 data class SetupTexts(
-    val title: String,
     val explain: String,
     val startOver: String,
 

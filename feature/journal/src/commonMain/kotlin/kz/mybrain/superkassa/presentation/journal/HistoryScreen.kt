@@ -7,11 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
 import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
-import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
-import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.print.PrintActions
@@ -67,21 +64,18 @@ class HistoryParts(
  */
 @Composable
 fun HistoryContent(parts: HistoryParts) {
-    val texts = LocalStrings.current
     val journal = textsOf(LocalLanguage.current).journal.history
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
-        WrapRow(spacing = Spacing.cardGap) {
-            ScreenTitle(texts.sections.history)
-            ChoiceSegments(
-                options = HistoryView.entries,
-                selected = parts.day.view,
-                label = { it.title(journal) },
-                onSelect = parts.dayActions::show
-            )
-        }
+        // Заголовок «История» — в шапке окна; здесь только выбор вида.
+        ChoiceSegments(
+            options = HistoryView.entries,
+            selected = parts.day.view,
+            label = { it.title(journal) },
+            onSelect = parts.dayActions::show
+        )
         when (parts.day.view) {
             HistoryView.Day -> JournalScreen(parts.day, parts.dayActions, parts.print)
             HistoryView.Shifts -> ShiftsScreen(parts.shifts, parts.shiftActions, parts.print)

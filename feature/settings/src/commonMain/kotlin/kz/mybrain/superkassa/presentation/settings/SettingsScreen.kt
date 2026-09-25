@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
 
 /**
  * Настройки — один экран на всё приложение.
@@ -18,8 +19,11 @@ import androidx.compose.ui.Modifier
  * того, что задают раньше, чем куда-либо войти.
  *
  * Разложены настройки «списком и подробностями» — см. [SettingsPanes].
+ *
+ * @param opened раздел, открытый поверх списка историей окна; `null` —
+ *   открыт список (на широком окне — с разделом рядом).
  */
 @Composable
-fun SettingsScreen(board: SettingsBoard) {
-    SettingsPanes(board, Modifier.fillMaxSize())
+fun SettingsScreen(board: SettingsBoard, opened: SettingsSectionKey? = null) {
+    SettingsPanes(board, opened, Modifier.fillMaxSize())
 }

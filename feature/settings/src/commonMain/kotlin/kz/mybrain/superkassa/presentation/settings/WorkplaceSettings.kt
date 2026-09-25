@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
 
 /**
  * Настройки с экрана входа.
@@ -12,10 +13,11 @@ import androidx.compose.ui.Modifier
  * администратора нет, поэтому остаются разделы приложения и кабинета.
  *
  * Шапки у экрана нет: её вместе с возвратом на вход ставит каркас окна
- * в свой единственный слот, и она же называет экран — второго заголовка
- * «Настройки» над списком не нужно.
+ * в свой единственный слот, и она же называет экран.
+ *
+ * @param opened раздел, открытый поверх списка историей окна.
  */
 @Composable
-fun WorkplaceSettingsScreen(board: SettingsBoard) {
-    SettingsPanes(board, Modifier.fillMaxSize(), titled = false)
+fun WorkplaceSettingsScreen(board: SettingsBoard, opened: SettingsSectionKey? = null) {
+    SettingsPanes(board, opened, Modifier.fillMaxSize())
 }

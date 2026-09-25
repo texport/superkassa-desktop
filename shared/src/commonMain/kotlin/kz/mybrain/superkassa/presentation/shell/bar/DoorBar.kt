@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.designsystem.section.AppTopBar
 import kz.mybrain.superkassa.designsystem.section.BarLead
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
+import kz.mybrain.superkassa.presentation.common.navigation.LocalScreenBar
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
 import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
@@ -23,7 +24,10 @@ import kz.mybrain.superkassa.strings.api.common.CommonTexts
  * название двери и стрелка назад на вход; у кабинета — его шапка, та же,
  * что у раздела кабинета после входа.
  *
- * @param close закрыть дверь и вернуться на вход.
+ * За дверью шаг называет себя сам — например, раздел настроек поверх их
+ * списка, — и стрелка снимает сперва его.
+ *
+ * @param close шаг назад: снять шаг за дверью или вернуться на вход.
  */
 @Composable
 internal fun DoorBar(window: WindowParts, door: Door, close: () -> Unit) {
@@ -34,8 +38,10 @@ internal fun DoorBar(window: WindowParts, door: Door, close: () -> Unit) {
         return
     }
     val atDoor = door == Door.Kkms
+    val step = LocalScreenBar.current
     AppTopBar(
-        title = door.title(texts),
+        title = step.title ?: door.title(texts),
+        subtitle = step.subtitle,
         lead = BarLead.Back(close, texts.settingsScreen.back).takeUnless { atDoor }
     ) {
         if (atDoor) {

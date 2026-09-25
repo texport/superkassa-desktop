@@ -14,15 +14,15 @@ import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.SettingsMeasure
-import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.size.ContentWidths
 import kz.mybrain.superkassa.desk
+import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
 import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels
-import kz.mybrain.superkassa.presentation.shell.bar.KkmTopBar
+import kz.mybrain.superkassa.presentation.shell.bar.ShellBar
 import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.section.Section
@@ -64,10 +64,16 @@ class AdaptiveSettingsShots {
     @Composable
     private fun Window(desk: KassaDesk) {
         val shell by desk.parts.shell.state.collectAsState()
-        val title = textsOf(LocalLanguage.current).common.sections.settings
         Surface(Modifier.fillMaxSize()) {
-            ShellFrame(Section.entries, Section.Settings, {}, topBar = { KkmTopBar(shell, desk.look, {}, {}, title) }) {
-                Box(Modifier.fillMaxSize().padding(it)) { Settings(desk) }
+            SettingsSteps { opened, back ->
+                ShellFrame(
+                    Section.entries,
+                    Section.Settings,
+                    {},
+                    topBar = { onMenu -> ShellBar(desk.parts, shell, Section.Settings, {}, onMenu, back) }
+                ) {
+                    Box(Modifier.fillMaxSize().padding(it)) { Settings(desk, opened) }
+                }
             }
         }
     }
@@ -77,10 +83,10 @@ class AdaptiveSettingsShots {
      * поле обязано показать их, не выталкивая кнопку за край.
      */
     @Composable
-    private fun Settings(desk: KassaDesk) {
+    private fun Settings(desk: KassaDesk, opened: SettingsSectionKey?) {
         val app = remember { SettingsScene.app(desk) }
         val parts = remember { WindowParts(desk.parts.shell, desk.look, windowCabinet(app, desk.look)) }
-        ProvideWindowModels(remember { WindowModels() }) { SectionContent(app, parts, Section.Settings) }
+        ProvideWindowModels(remember { WindowModels() }) { SectionContent(app, parts, Section.Settings, opened) }
     }
 
     /** Окно с кассой в режиме программирования, за которой вошёл администратор. */

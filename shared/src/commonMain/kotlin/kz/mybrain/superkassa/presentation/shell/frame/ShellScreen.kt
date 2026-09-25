@@ -14,8 +14,11 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import kz.mybrain.superkassa.designsystem.keyboard.escapePressedBy
+import kz.mybrain.superkassa.navigation.LocalNavigator
 import kz.mybrain.superkassa.navigation.NavKeys
+import kz.mybrain.superkassa.navigation.Navigator
 import kz.mybrain.superkassa.navigation.section.DashboardKey
+import kz.mybrain.superkassa.navigation.section.SectionKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetLook
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
@@ -26,7 +29,9 @@ import kz.mybrain.superkassa.presentation.common.look.lookViewModel
 import kz.mybrain.superkassa.presentation.common.message.MessageEffect
 import kz.mybrain.superkassa.presentation.common.message.MessageHost
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.navigation.LocalScreenBar
 import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
+import kz.mybrain.superkassa.presentation.common.navigation.ScreenBarState
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.bar.WorkBar
 import kz.mybrain.superkassa.presentation.shell.section.Section
@@ -108,17 +113,42 @@ private fun WorkShell(app: AppContainer, window: WindowParts, shell: ShellUiStat
     // кассир оставлял за собой отказ настроек, и тот висел поверх аналитики
     // до нажатия. Переход, сделанный самим приложением, сообщение не гасит.
     val back = { if (history.stepBack()) window.shell.sectionPicked() }
-    ShellFrame(
-        sections = sections,
-        current = section,
-        onPick = { picked -> window.shell.sectionPicked().also { history.openSection(picked) } },
-        marked = if (release.available != null) setOf(Section.Settings) else emptySet(),
-        topBar = { onMenu -> WorkBar(app, window, shell, section, onMenu) },
-        snackbarHost = { MessageHost(messages) }
-    ) { padding ->
-        ShellMessages(app, messages)
-        SectionDisplay(app, window, history, Modifier.padding(padding), back)
+    val stepped = history.last() !is SectionKey
+    StepsOf(history, back) {
+        ShellFrame(
+            sections = sections,
+            current = section,
+            onPick = { picked -> window.shell.sectionPicked().also { history.openSection(picked) } },
+            marked = if (release.available != null) setOf(Section.Settings) else emptySet(),
+            topBar = { onMenu -> WorkBar(app, window, shell, section, onMenu, back.takeIf { stepped }) },
+            snackbarHost = { MessageHost(messages) }
+        ) { padding ->
+            ShellMessages(app, messages)
+            SectionDisplay(app, window, history, Modifier.padding(padding), back)
+        }
     }
+}
+
+/**
+ * Шаги внутри разделов — по истории окна: экран открывает ключ шага
+ * через [LocalNavigator], а называет себя в шапке через [LocalScreenBar].
+ */
+@Composable
+internal fun StepsOf(history: MutableList<NavKey>, back: () -> Unit, content: @Composable () -> Unit) {
+    val navigator = remember(history) {
+        object : Navigator {
+            override fun open(key: NavKey) {
+                history.add(key)
+            }
+
+            override fun back() = back()
+        }
+    }
+    CompositionLocalProvider(
+        LocalNavigator provides navigator,
+        LocalScreenBar provides remember { ScreenBarState() },
+        content = content
+    )
 }
 
 /** Раздел под шапкой: вершина истории окна, нарисованная `NavDisplay`. */
@@ -146,7 +176,7 @@ private fun SectionDisplay(
  * Нажатие берётся на всплытии: Escape раскрытого списка, диалога или
  * открытого поверх списка раздела настроек достаётся им, а не окну.
  */
-private fun Modifier.backOnEscape(enabled: Boolean, back: () -> Unit): Modifier = onKeyEvent { event ->
+internal fun Modifier.backOnEscape(enabled: Boolean, back: () -> Unit): Modifier = onKeyEvent { event ->
     (enabled && escapePressedBy(event)).also { if (it) back() }
 }
 

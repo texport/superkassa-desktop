@@ -11,7 +11,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
 import kz.mybrain.superkassa.designsystem.list.SectionListItem
-import kz.mybrain.superkassa.designsystem.section.PaneTitle
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -26,18 +25,18 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * @param open раздел, открытый в панели рядом; `null` — рядом ничего нет,
  *   и подсвечивать нечего.
  * @param onOpen раздел выбран: он открывается рядом или поверх списка.
+ *
+ * Своего заголовка у списка нет: «Настройки» называет шапка окна.
  */
 @Composable
 internal fun SettingsList(
     board: SettingsBoard,
     sections: List<SettingsSection>,
     open: SettingsSection?,
-    titled: Boolean,
     onOpen: (SettingsSection) -> Unit
 ) {
     val texts = textsOf(LocalLanguage.current)
     Column(modifier = Modifier.fillMaxSize()) {
-        if (titled) PaneTitle(texts.common.settingsScreen.title)
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.inline) {
             SettingsShelf.entries.forEach { shelf ->
                 val shelved = sections.filter { it.shelf == shelf }

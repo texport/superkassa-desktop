@@ -16,9 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.CardColumns
 import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
-import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
-import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.text.MoneyText
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.theme.type.MoneyStyle
@@ -52,9 +50,6 @@ fun CashContent(state: CashUiState, actions: CashActions = object : CashActions 
     // Экран во всю ширину раздела: на широком окне остаток с формой стоят
     // слева, проведённое — справа, и половина экрана не пустует.
     ScrollableColumn(modifier = Modifier.fillMaxSize(), spacing = Spacing.cardGap) {
-        // Заголовок — имя раздела, как у продажи и возврата: «В денежном
-        // ящике» стояло и заголовком, и подписью остатка под ним.
-        ScreenTitle(LocalStrings.current.sections.cash)
         CardColumns(Modifier.fillMaxWidth()) {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)) {
                 DrawerCard(state.cashInDrawer, money.drawer)

@@ -4,7 +4,6 @@ import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /** Надписи [SetupTexts] по-английски. */
 internal val setupTextsEn = SetupTexts(
-    title = "Connecting a cash register",
     explain = "The steps run in order; the wizard can be closed and resumed later",
     startOver = "Start over",
     startOverAsk = "Forget what the wizard has done?",

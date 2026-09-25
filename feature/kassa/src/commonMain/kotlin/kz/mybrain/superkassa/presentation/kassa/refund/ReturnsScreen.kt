@@ -15,7 +15,6 @@ import kz.mybrain.superkassa.designsystem.adaptive.NarrowPanes
 import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
 import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
-import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
@@ -102,9 +101,8 @@ private fun ColumnScope.ReturnHeader(
     // Ряд переносится, а не сжимается: сегменты в узком окне обрезали
     // подпись до «Сатып а» без многоточия.
     WrapRow(spacing = Spacing.cardGap) {
-        ScreenTitle(texts.returns.title)
         // В сегменте стоит только направление: «Возврат» уже написано
-        // заголовком слева.
+        // в шапке окна.
         ChoiceSegments(
             options = ReturnKind.entries,
             selected = kind,

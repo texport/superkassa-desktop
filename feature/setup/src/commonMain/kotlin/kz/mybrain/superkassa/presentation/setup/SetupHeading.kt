@@ -2,28 +2,25 @@ package kz.mybrain.superkassa.presentation.setup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /**
- * Название мастера и «Начать заново».
+ * Как идёт мастер и «Начать заново».
  *
- * Возврата здесь нет: стрелку назад рисует шапка окна — и в разделе
- * кассы, и за дверью экрана входа, — а мастер своей не строит.
+ * Ни названия, ни возврата здесь нет: «Новая касса» и стрелку назад
+ * рисует шапка окна — и в разделе кассы, и за дверью экрана входа, —
+ * а мастер второго заголовка под ней не строит.
  *
  * Пока мастер ничего не прошёл, забывать нечего, и кнопки нет: нажатая
  * по ошибке, она стирает заводской номер, уже унесённый в кабинет.
- * Что мастер можно бросить и продолжить, сказано подсказкой у названия,
- * а не второй строкой шапки.
  */
 @Composable
 internal fun SetupHeading(setup: SetupTexts, started: Boolean, actions: SetupActions) {
@@ -32,9 +29,12 @@ internal fun SetupHeading(setup: SetupTexts, started: Boolean, actions: SetupAct
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ScreenTitle(setup.title, modifier = Modifier.weight(1f, fill = false))
-        InfoTip(setup.explain)
-        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = setup.explain,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
+        )
         if (started) {
             TextButton(onClick = { actions.askStartOver(true) }) { Text(setup.startOver) }
         }

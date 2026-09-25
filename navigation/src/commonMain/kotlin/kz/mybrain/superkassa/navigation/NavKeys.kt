@@ -15,6 +15,7 @@ import kz.mybrain.superkassa.navigation.section.ReturnsKey
 import kz.mybrain.superkassa.navigation.section.SaleKey
 import kz.mybrain.superkassa.navigation.section.SettingsKey
 import kz.mybrain.superkassa.navigation.section.UsersKey
+import kz.mybrain.superkassa.navigation.settings.SettingsSectionKey
 
 /**
  * Реестр ключей экранов — для сохранения истории «назад».
@@ -26,7 +27,10 @@ import kz.mybrain.superkassa.navigation.section.UsersKey
  */
 val NavKeys: SavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
-        polymorphic(NavKey::class) { sections() }
+        polymorphic(NavKey::class) {
+            sections()
+            subclass(SettingsSectionKey::class, SettingsSectionKey.serializer())
+        }
     }
 }
 

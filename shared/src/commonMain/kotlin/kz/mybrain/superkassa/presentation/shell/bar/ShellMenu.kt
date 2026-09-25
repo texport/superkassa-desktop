@@ -44,7 +44,7 @@ import kz.mybrain.superkassa.presentation.shell.frame.ShellUiState
 internal fun KkmBarActions(shell: ShellUiState, look: LookViewModel, onSignOut: () -> Unit, onRefresh: () -> Unit) {
     val texts = LocalStrings.current
     val width = LocalWindowClass.current.width
-    KkmStatusChips(shell.kkm)
+    KkmStatusChips(shell.kkm, all = width > WidthClass.Compact)
     if (width >= WidthClass.Large) {
         IconButton(onClick = onRefresh) {
             Icon(AppIcons.refresh, contentDescription = texts.general.refresh)

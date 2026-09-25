@@ -21,6 +21,9 @@ kotlin {
             // объявлениях общего: сценарии, токены, хранилище моделей окна.
             api(project(":domain"))
             api(project(":designsystem"))
+            // Ключи экранов и переход по ним: область открывает соседку
+            // по ключу, не видя её.
+            api(project(":navigation"))
             api(libs.lifecycle.viewmodel.compose)
             implementation(libs.lifecycle.runtime.compose)
         }
