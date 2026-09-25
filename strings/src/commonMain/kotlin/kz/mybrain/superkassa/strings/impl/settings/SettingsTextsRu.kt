@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.strings.api.settings.SettingsTexts
 /** Надписи [SettingsTexts] по-русски. */
 internal val settingsTextsRu = SettingsTexts(
     core = CoreSettingTexts(
-        title = "Касса на этой машине",
+        title = "Сроки обмена с БФД",
         hint = "Одни на все кассы рабочего места: сколько ждать ответа БФД и когда пробовать связь снова. " +
             "Новые значения действуют после перезапуска кассы.",
         unread = "Касса не отдала свои настройки",
@@ -67,7 +67,8 @@ internal val settingsTextsRu = SettingsTexts(
         unread = "Касса не ответила",
         ofdAuth = "Данные авторизации БФД",
         nextRequest = "Номер следующего запроса"
-    )
+    ),
+    sections = settingsSectionsRu
 )
 
 /** Надписи [LookTexts] по-русски. */

@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.designsystem.keyboard
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
@@ -26,6 +27,12 @@ import androidx.compose.ui.input.key.type
 fun Modifier.onEscape(handle: () -> Boolean): Modifier = onPreviewKeyEvent { event ->
     escapePressed(event.type, event.key) && handle()
 }
+
+/**
+ * Нажат ли Escape — для тех, кто слушает клавиши сам: панель, которую
+ * Escape закрывает на всплытии, после раскрытых списков и диалогов.
+ */
+fun escapePressedBy(event: KeyEvent): Boolean = escapePressed(event.type, event.key)
 
 /**
  * Нажатие, которым закрывают раскрытое.

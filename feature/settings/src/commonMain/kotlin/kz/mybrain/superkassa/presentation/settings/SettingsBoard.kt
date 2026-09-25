@@ -2,6 +2,8 @@ package kz.mybrain.superkassa.presentation.settings
 
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.domain.settings.port.SettingsPorts
+import kz.mybrain.superkassa.presentation.common.look.LookActions
+import kz.mybrain.superkassa.presentation.common.look.LookUiState
 import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
@@ -33,12 +35,16 @@ import kz.mybrain.superkassa.presentation.settings.workplace.workplaceSettingsVi
  * Карточка берёт отсюда своё и ничего не спрашивает сама: запросы
  * и правила живут в моделях, а здесь — их итог на эту минуту.
  *
+ * Доска — только состояние и действия: превью и снимки вида собирают
+ * её руками, без моделей, кассы и сети.
+ *
  * @property look вид окна: тема, тон, шрифт, язык — один на все разделы.
  * @property parts карточки других областей — принтер кассы, обновления,
  *   журнал: каждая со своей моделью, настройки их только расставляют.
  */
 data class SettingsBoard(
-    val look: LookViewModel,
+    val look: LookUiState = LookUiState(),
+    val lookActions: LookActions = object : LookActions {},
     val kkm: KkmSettingsUiState = KkmSettingsUiState(),
     val kkmActions: KkmSettingsActions = object : KkmSettingsActions {},
     val tax: TaxSettingsUiState = TaxSettingsUiState(),
@@ -97,7 +103,8 @@ fun settingsBoard(
     val form = receiptFormViewModel(services)
     val ofd = ofdSettingsViewModel(services)
     return SettingsBoard(
-        look = look,
+        look = look.state.collectAsScreenState().value,
+        lookActions = look,
         kkm = kkm.state.collectAsScreenState().value,
         kkmActions = kkm,
         tax = tax.state.collectAsScreenState().value,

@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
 import kz.mybrain.superkassa.designsystem.format.Dates
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
 import kz.mybrain.superkassa.designsystem.section.FactLines
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.update.model.UpdateOutcome
@@ -34,7 +34,7 @@ import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 @Composable
 fun UpdatesCard(updates: UpdatesUiState, actions: UpdatesActions) {
     val texts = textsOf(LocalLanguage.current).update
-    SectionCard(title = texts.title, info = texts.hint) {
+    SettingGroup(title = texts.title, info = texts.hint) {
         SwitchRow(texts.automatic, updates.automatic, actions::switchAutomatic)
         FactLines(texts.appName, factLines(updates, texts), texts.neverChecked)
         // Итог проверки переносится под кнопку целиком, когда ему не хватает

@@ -1,26 +1,19 @@
 package kz.mybrain.superkassa.presentation.settings.kkm
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.kkm.model.orgAddress
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
@@ -30,8 +23,9 @@ import kz.mybrain.superkassa.strings.api.textsOf
 /**
  * Какая касса сейчас в работе.
  *
- * Карточка приподнята над остальными разделами: с неё кассир начинает
- * читать экран и по ней понимает, настройки какой машины перед ним.
+ * С неё начинается раздел кассы: по названию кассир понимает, настройки
+ * какой машины перед ним. Подзаголовок группы — «Текущая касса», рядом —
+ * дверь к выбору другой, под ним — название крупно и чья это касса.
  *
  * Название кассы уходит в кассу: так её зовут на входе, до того как
  * кассир набрал пин.
@@ -46,41 +40,18 @@ import kz.mybrain.superkassa.strings.api.textsOf
 internal fun CurrentKkmCard(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
     val texts = LocalStrings.current
     val current = kkm.kkm ?: return
-    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
-        ) {
-            KkmHeading(kkm.displayName, actions)
-            Text(
-                text = whatItIs(current, kkm.displayName, texts),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            NameField(kkm, actions)
-            RenameActions(kkm, actions)
-        }
-    }
-}
-
-/** Какая касса перед кассиром и дверь к выбору другой. */
-@Composable
-private fun KkmHeading(name: String, actions: KkmSettingsActions) {
-    val texts = LocalStrings.current
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
-        verticalAlignment = Alignment.CenterVertically
+    SettingGroup(
+        title = texts.settingsScreen.currentKkm,
+        trailing = { TextButton(onClick = actions::switchKkm) { Text(texts.settingsScreen.changeKkm) } }
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = texts.settingsScreen.currentKkm,
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(name, style = MaterialTheme.typography.titleLarge)
-        }
-        TextButton(onClick = actions::switchKkm) { Text(texts.settingsScreen.changeKkm) }
+        Text(kkm.displayName, style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = whatItIs(current, kkm.displayName, texts),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        NameField(kkm, actions)
+        RenameActions(kkm, actions)
     }
 }
 
@@ -117,9 +88,11 @@ private fun NameField(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
 private fun RenameActions(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
     val texts = LocalStrings.current
     val money = textsOf(LocalLanguage.current).kassa.money.kkm
+    // Сохранение названия — главное действие раздела кассы: оно одно
+    // залито цветом, возврат к названию от ОФД — текстовой кнопкой рядом.
     WrapRow {
-        FilledTonalButton(enabled = !kkm.busy, onClick = actions::saveName) { Text(texts.settingsScreen.save) }
-        OutlinedButton(enabled = kkm.nameField.isNotBlank() && !kkm.busy, onClick = actions::resetName) {
+        Button(enabled = !kkm.busy, onClick = actions::saveName) { Text(texts.settingsScreen.save) }
+        TextButton(enabled = kkm.nameField.isNotBlank() && !kkm.busy, onClick = actions::resetName) {
             Text(money.renameReset)
         }
     }

@@ -12,6 +12,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.Dp
 import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
@@ -31,13 +33,17 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * @param gutter поле под полосу прокрутки. Задаётся снаружи там, где
  *   от него зависит вёрстка соседей: у колонки касс это поле и есть
  *   зазор до разделителя, и с общим значением он получался вдвое шире
- *   отступа от края экрана.
+ *   отступа от края экрана. [Spacing.flush] — полоса ложится на поле,
+ *   которое содержимое держит само: у групп настроек оно уже есть.
+ * @param focus чем столбцу забрать ввод с клавиатуры: открытый раздел
+ *   листается PageDown сразу, без Tab.
  */
 @Composable
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
     spacing: Dp = Spacing.cardGap,
     gutter: Dp = Spacing.scrollbarGutter,
+    focus: FocusRequester? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
     val scroll = rememberScrollState()
@@ -46,6 +52,7 @@ fun ScrollableColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scroll)
+                .then(focus?.let { Modifier.focusRequester(it) } ?: Modifier)
                 .scrolledByKeys(scroll) { scroll.viewportSize }
                 .padding(end = gutter),
             verticalArrangement = Arrangement.spacedBy(spacing),

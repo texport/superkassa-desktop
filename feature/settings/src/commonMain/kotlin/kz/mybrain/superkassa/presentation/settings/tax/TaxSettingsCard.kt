@@ -1,13 +1,13 @@
 package kz.mybrain.superkassa.presentation.settings.tax
 
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
 import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.state.ScreenSlot
 import kz.mybrain.superkassa.designsystem.state.ScreenState
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
 fun TaxSettingsCard(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
     val texts = LocalStrings.current
     tax.kkm ?: return
-    SectionCard(title = texts.settingsScreen.taxSettings, info = texts.settingsScreen.taxSettingsHint) {
+    SettingGroup(title = texts.settingsScreen.taxSettings, info = texts.settingsScreen.taxSettingsHint) {
         TaxFields(tax, actions)
         val core = textsOf(LocalLanguage.current).settings.core
         // Переключатель и есть действие: уходит в кассу сразу. Касса меняет
@@ -63,7 +63,7 @@ private fun ColumnScope.TaxFields(tax: TaxSettingsUiState, actions: TaxSettingsA
             Picker(texts.defaultVatGroup, tax.vatRates.map { it.code to it.name }, tax.vatGroup, actions::chooseVat)
         }
         SettingRequirements(tax.needs, textsOf(LocalLanguage.current).kassa.money.kkm)
-        FilledTonalButton(enabled = tax.savable, onClick = actions::saveTax) { Text(texts.save) }
+        Button(enabled = tax.savable, onClick = actions::saveTax) { Text(texts.save) }
     }
 }
 

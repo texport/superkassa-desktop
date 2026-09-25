@@ -13,5 +13,7 @@ data class SettingsTexts(
     /** Каналы доставки чека покупателю. */
     val delivery: DeliverySettingTexts,
     /** Сведения о кассе. */
-    val facts: KassaFactsTexts
+    val facts: KassaFactsTexts,
+    /** Список разделов настроек: полки, названия и сводки. */
+    val sections: SettingsSectionTexts
 )

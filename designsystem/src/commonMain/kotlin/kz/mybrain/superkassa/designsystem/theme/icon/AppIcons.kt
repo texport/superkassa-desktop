@@ -7,6 +7,7 @@ import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.automirrored.outlined.Send
 import androidx.compose.material.icons.automirrored.outlined.Undo
+import androidx.compose.material.icons.automirrored.outlined.ViewSidebar
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddBusiness
@@ -46,6 +47,8 @@ import androidx.compose.material.icons.outlined.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.CloudSync
+import androidx.compose.material.icons.outlined.Computer
 import androidx.compose.material.icons.outlined.DarkMode
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Dialpad
@@ -53,8 +56,13 @@ import androidx.compose.material.icons.outlined.EventAvailable
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.LightMode
+import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.NewReleases
+import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Password
+import androidx.compose.material.icons.outlined.Percent
+import androidx.compose.material.icons.outlined.PointOfSale
+import androidx.compose.material.icons.outlined.Print
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sell
@@ -228,4 +236,19 @@ object AppIcons {
 
     /** Вышла новая версия кассы. */
     val update: ImageVector = Icons.Outlined.NewReleases
+
+    /**
+     * Разделы настроек в списке слева — контурные, как значки строк
+     * списка Material 3: сама касса, печать, налоги, связь с БФД, вид,
+     * экран продажи, машина и адреса служб. Доставка, обновления
+     * и отладка берут значки своих областей.
+     */
+    val sectionKkm: ImageVector = Icons.Outlined.PointOfSale
+    val sectionPrinting: ImageVector = Icons.Outlined.Print
+    val sectionTaxes: ImageVector = Icons.Outlined.Percent
+    val sectionBfd: ImageVector = Icons.Outlined.CloudSync
+    val sectionLook: ImageVector = Icons.Outlined.Palette
+    val sectionSalePanels: ImageVector = Icons.AutoMirrored.Outlined.ViewSidebar
+    val sectionMachine: ImageVector = Icons.Outlined.Computer
+    val sectionAddresses: ImageVector = Icons.Outlined.Link
 }

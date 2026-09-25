@@ -41,10 +41,11 @@ import kotlin.test.assertTrue
  * Окна от наименьшего 960×640 до широкого 2560×1080 и планшеты, русский
  * и казахский, обычная и крупная ступень. Название кассы и организации
  * на сотню знаков, девять своих строк чека по сто знаков, длинные адреса
- * служб. Кадры — `/tmp/adaptive-settings-<вкладка>-<окно>-<язык>-<ступень>.png`,
- * замеры — строкой в выводе проверки: ширины карточек и полей, правый край
- * самой правой кнопки против ширины окна. Карточки занимают всю ширину
- * раздела и на широком окне встают рядом.
+ * служб. Кадры — `/tmp/adaptive-settings-<раздел>-<окно>-<язык>-<ступень>.png`,
+ * замеры — строкой в выводе проверки: ширины полей, правый край самой
+ * правой кнопки против ширины окна. Настройки — «список и подробности»:
+ * на расширенном окне и шире раздел стоит справа от списка и доходит
+ * до правого края окна; уже — список занимает раздел целиком.
  */
 class AdaptiveSettingsShots {
 
@@ -84,11 +85,12 @@ class AdaptiveSettingsShots {
     private fun desk(): KassaDesk = KassaScene.desk(SettingsMeasure.extremeKkm(), admin = true)
 
     /**
-     * Кадр вкладки и замер; с [screens] больше одного — ещё и прокрутка
-     * до конца столбца, кадр за кадром.
+     * Кадр раздела и замер; с [screens] больше одного — ещё и прокрутка
+     * до конца столбца, кадр за кадром. Раздел оформления открывается
+     * нажатием в списке, раздел кассы открыт сам — он первый.
      */
     private fun shoot(case: Case, workplace: Boolean, screens: Int = 1) {
-        val tab = if (workplace) "workplace" else "kkm"
+        val tab = if (workplace) "look" else "kkm"
         val appearance = if (case.dark) Appearance.Dark else Appearance.Light
         val probe = RenderProbe(case.width, case.height, appearance, Look(textScale = case.scale), case.language) {
             Window(desk())
@@ -96,8 +98,11 @@ class AdaptiveSettingsShots {
         probe.use {
             repeat(SETTLE) { probe.frame() }
             if (workplace) {
-                val title = textsOf(case.language).common.settingsScreen.householdWorkplace
+                val title = textsOf(case.language).settings.sections.look
                 SettingsMeasure.byText(probe.semantics(), title)?.let { probe.click(it.center) }
+                // Раздел въезжает поверх списка движением панели Material 3:
+                // меряется то, где он встал, а не где он на полпути.
+                repeat(PANE_MOTION) { probe.frame() }
             }
             report("$tab-${case.name}", case, probe, workplace)
             repeat(screens) { at ->
@@ -110,8 +115,10 @@ class AdaptiveSettingsShots {
 
     private fun report(name: String, case: Case, probe: RenderProbe, workplace: Boolean) {
         val nodes = probe.semantics()
-        // Раздел начинается там, где стоит его заголовок: левее — рельс.
-        val title = SettingsMeasure.lastByText(nodes, textsOf(case.language).common.settingsScreen.title) ?: return
+        // Раздел начинается там, где стоит самый левый заголовок панели:
+        // списка — рядом с разделом, раздела — когда он открыт поверх списка.
+        // Левее — рельс; его подписи заголовками не отмечены.
+        val title = SettingsMeasure.leftHeading(nodes) ?: return
         val rail = title.left
         val column = SettingsMeasure.extent(nodes, title)
         val fields = SettingsMeasure.fields(nodes)
@@ -120,18 +127,17 @@ class AdaptiveSettingsShots {
         val outside = (controls + fields).count { it.right > case.width }
         // Раздел — всё, что оставил рельс, но не шире рабочего экрана.
         val room = minOf(case.width - rail, ContentWidths.workspace.value.toInt())
-        // Две карточки одного раздела: на широком окне вторая стоит правее первой.
-        val texts = textsOf(case.language).common.settingsScreen
-        val pair = if (workplace) texts.appearance to texts.panelBehaviour else texts.printForm to texts.printer
-        val lefts = listOf(pair.first, pair.second).map { SettingsMeasure.byText(nodes, it)?.left ?: 0 }
-        val columns = if (lefts[1] > lefts[0]) 2 else 1
+        // Раздел рядом со списком: его заголовок стоит правее заголовка списка.
+        val sections = textsOf(case.language).settings.sections
+        val section = SettingsMeasure.lastByText(nodes, if (workplace) sections.look else sections.kkm)
+        val beside = section != null && section.left > title.left + PANE_GAP
         println(
-            "настройки $name: столбец $column из $room, столбцов карточек $columns; " +
+            "настройки $name: столбец $column из $room, раздел рядом со списком: $beside; " +
                 "поля ${SettingsMeasure.widths(fields)}; правый край $rightmost из ${case.width}, за краем $outside"
         )
-        assertTrue(column >= room * FILLED, "$name: карточки заняли $column из $room — справа пустая полоса")
+        assertTrue(column >= room * FILLED, "$name: настройки заняли $column из $room — справа пустая полоса")
         assertEquals(0, outside, "$name: кнопка или поле за краем окна")
-        if (case.width >= SIDE_BY_SIDE) assertTrue(columns > 1, "$name: на широком окне карточки стоят одним столбцом")
+        if (case.width >= SIDE_BY_SIDE) assertTrue(beside, "$name: на широком окне раздел не встал рядом со списком")
     }
 
     @Test
@@ -161,6 +167,9 @@ class AdaptiveSettingsShots {
         val SCALES = listOf(TextScale.Normal, TextScale.Larger)
         const val VERSION = "1.0.6"
         const val SETTLE = 20
+
+        /** Кадров на движение панели: полсекунды с запасом. */
+        const val PANE_MOTION = 60
         const val ROLL = 10
         const val ROLL_WIDE = 4
         const val TICKS = 30f
@@ -168,8 +177,11 @@ class AdaptiveSettingsShots {
         /** Меньше этой доли раздела — значит, справа пустует полоса. */
         const val FILLED = 0.85f
 
-        /** С этой ширины окна карточки стоят рядом: окно расширенное и шире за вычетом рельса. */
-        const val SIDE_BY_SIDE = 1180
+        /** С этой ширины окна раздел стоит рядом со списком: окно расширенное и шире. */
+        const val SIDE_BY_SIDE = 840
+
+        /** Раздел правее списка хотя бы на ширину зазора между панелями. */
+        const val PANE_GAP = 24
 
         /** Где крутить колесо: над столбцом настроек, правее рельса. */
         const val WHEEL_AT = 0.4f

@@ -69,7 +69,7 @@ class AppearanceShots {
     private fun card(appearance: Appearance, look: LookViewModel): ByteArray =
         RenderProbe(width = WIDTH, height = HEIGHT, appearance = appearance, look = look.state.value.look) {
             Surface(Modifier.fillMaxSize()) {
-                Column(Modifier.padding(Spacing.fieldGap)) { AppearanceCard(look) }
+                Column(Modifier.padding(Spacing.fieldGap)) { AppearanceCard(look.state.value, look) }
             }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }

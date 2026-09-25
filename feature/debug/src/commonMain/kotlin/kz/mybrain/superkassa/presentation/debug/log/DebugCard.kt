@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
 import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
 import kz.mybrain.superkassa.designsystem.section.PartTitle
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
@@ -31,7 +31,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
 @Composable
 fun DebugCard(journal: LogUiState, actions: LogActions) {
     val texts = textsOf(LocalLanguage.current).debug
-    SectionCard(title = texts.debugMode, info = texts.debugModeHint) {
+    SettingGroup(title = texts.debugMode, info = texts.debugModeHint) {
         SwitchRow(texts.title, journal.book.debugMode, actions::switchDebugMode)
         PartTitle(texts.level)
         WideChoiceSegments(

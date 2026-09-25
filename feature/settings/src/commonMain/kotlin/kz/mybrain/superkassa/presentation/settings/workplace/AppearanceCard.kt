@@ -3,11 +3,11 @@ package kz.mybrain.superkassa.presentation.settings.workplace
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import kz.mybrain.superkassa.designsystem.picker.ColorChoice
 import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
 import kz.mybrain.superkassa.designsystem.section.PartTitle
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.Typeface
@@ -15,12 +15,13 @@ import kz.mybrain.superkassa.designsystem.theme.color.Accent
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.designsystem.theme.color.swatch
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.common.look.LookActions
 import kz.mybrain.superkassa.presentation.common.look.LookUiState
-import kz.mybrain.superkassa.presentation.common.look.LookViewModel
-import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.settings.title
+import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
 import kz.mybrain.superkassa.strings.api.settings.LookTexts
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Как выглядит касса: тема, тон, шрифт и размер.
@@ -33,10 +34,9 @@ import kz.mybrain.superkassa.strings.api.settings.LookTexts
  * Всё применяется сразу: карточка и есть предпросмотр, второго не нужно.
  */
 @Composable
-internal fun AppearanceCard(actions: LookViewModel) {
-    val look by actions.state.collectAsScreenState()
+internal fun AppearanceCard(look: LookUiState, actions: LookActions) {
     val texts = LocalStrings.current.settingsScreen
-    SectionCard(title = texts.appearance, info = texts.appearanceHint) {
+    SettingGroup(title = texts.appearance, info = texts.appearanceHint) {
         WideChoiceSegments(
             options = Appearance.entries,
             selected = look.appearance,
@@ -59,7 +59,7 @@ private fun Choice(title: String, info: String? = null, content: @Composable () 
 }
 
 @Composable
-private fun AccentChoice(look: LookUiState, actions: LookViewModel, texts: LookTexts) {
+private fun AccentChoice(look: LookUiState, actions: LookActions, texts: LookTexts) {
     Choice(texts.accent, info = texts.accentHint) {
         ColorChoice(
             options = Accent.entries,
@@ -72,7 +72,7 @@ private fun AccentChoice(look: LookUiState, actions: LookViewModel, texts: LookT
 }
 
 @Composable
-private fun TypefaceChoice(look: LookUiState, actions: LookViewModel, texts: LookTexts) {
+private fun TypefaceChoice(look: LookUiState, actions: LookActions, texts: LookTexts) {
     Choice(texts.typeface) {
         WideChoiceSegments(
             options = Typeface.entries,
@@ -84,7 +84,7 @@ private fun TypefaceChoice(look: LookUiState, actions: LookViewModel, texts: Loo
 }
 
 @Composable
-private fun TextScaleChoice(look: LookUiState, actions: LookViewModel, texts: LookTexts) {
+private fun TextScaleChoice(look: LookUiState, actions: LookActions, texts: LookTexts) {
     Choice(texts.textScale, info = texts.textScaleHint) {
         WideChoiceSegments(
             options = TextScale.entries,
@@ -95,8 +95,29 @@ private fun TextScaleChoice(look: LookUiState, actions: LookViewModel, texts: Lo
     }
 }
 
+/**
+ * Язык надписей приложения.
+ *
+ * Своей группой в разделе оформления, а не только значком в шапке: язык
+ * меняют раз в жизни рабочего места, и искать его там же, где тему и шрифт,
+ * естественнее, чем в меню шапки. Названия языков — на них самих: так их
+ * узнают, не читая остального.
+ */
+@Composable
+internal fun LanguageCard(look: LookUiState, actions: LookActions) {
+    val texts = textsOf(LocalLanguage.current).settings.sections
+    SettingGroup(title = texts.appLanguage) {
+        WideChoiceSegments(
+            options = Language.entries,
+            selected = look.language,
+            label = { it.title },
+            onSelect = actions::switchLanguage
+        )
+    }
+}
+
 /** Название темы для кассира. */
-private fun Appearance.title(texts: SettingsScreenTexts): String = when (this) {
+internal fun Appearance.title(texts: SettingsScreenTexts): String = when (this) {
     Appearance.System -> texts.appearanceSystem
     Appearance.Light -> texts.appearanceLight
     Appearance.Dark -> texts.appearanceDark

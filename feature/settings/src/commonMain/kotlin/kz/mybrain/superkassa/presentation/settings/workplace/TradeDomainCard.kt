@@ -4,7 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
@@ -35,7 +35,7 @@ fun TradeDomainCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSetti
     val texts = LocalStrings.current
     workplace.kkmId ?: return
     val kind = DomainKind.byCode(workplace.domainCode)
-    SectionCard(title = texts.settingsScreen.tradeDomain, info = texts.settingsScreen.tradeDomainHint) {
+    SettingGroup(title = texts.settingsScreen.tradeDomain, info = texts.settingsScreen.tradeDomainHint) {
         LabelledPicker(
             label = texts.settingsScreen.domainKind,
             options = DomainKind.entries,

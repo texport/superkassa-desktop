@@ -72,6 +72,15 @@ object SettingsMeasure {
     fun lastByText(nodes: List<SemanticsNode>, text: String): Box? =
         nodes.filter { it.words() == text }.map { it.box() }.maxByOrNull { it.left }
 
+    /**
+     * Самый левый заголовок: у «списка и подробностей» — заголовок списка
+     * или, когда раздел открыт поверх списка, подзаголовок его группы.
+     */
+    fun leftHeading(nodes: List<SemanticsNode>): Box? =
+        nodes.filter { SemanticsProperties.Heading in it.config && it.words().isNotEmpty() }
+            .map { it.box() }
+            .minByOrNull { it.left }
+
     /** Узел, надпись которого начинается так: для длинных строк. */
     fun byPrefix(nodes: List<SemanticsNode>, prefix: String): Box? =
         nodes.firstOrNull { it.words().startsWith(prefix) }?.box()

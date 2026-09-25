@@ -3,25 +3,19 @@ package kz.mybrain.superkassa.presentation.settings.core
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRowScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.picker.SwitchRow
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.status.Chip
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
@@ -39,7 +33,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * Получателя у канала нет: чек уходит на контакт покупателя, который
  * кассир указал в самом чеке. Без контакта чек покупателю не уходит.
  *
- * Каждый канал — своим разделом с плашкой «настроен» и переключателем:
+ * Каждый канал — строкой-переключателем с пометкой «настроен» и полями под ней:
  * владелец видит, уйдёт ли чек, до первого чека, а не по жалобе. Закрытая
  * правка видна плашкой до нажатия, поля гаснут, под ними — почему.
  */
@@ -47,18 +41,18 @@ import kz.mybrain.superkassa.strings.api.textsOf
 fun DeliveryCard(delivery: DeliveryUiState, actions: DeliveryActions) {
     val texts = textsOf(LocalLanguage.current).settings.delivery
     val core = textsOf(LocalLanguage.current).settings.core
-    SectionCard(
+    SettingGroup(
         title = texts.title,
         info = texts.hint,
         trailing = { if (delivery.frozen) Chip(core.frozen, StatusColors.pending) }
     ) {
-        if (!delivery.read) return@SectionCard
+        if (!delivery.read) return@SettingGroup
         Note(texts.recipient)
         if (delivery.frozen) Note(if (delivery.server) core.serverHint else core.frozenHint)
         if (!delivery.frozen && DeliveryField.entries.any(delivery::hidden)) Note(texts.secretHint)
         DeliveryChannel.entries.forEach { ChannelFields(it, delivery, actions, texts) }
         WrapRow {
-            FilledTonalButton(enabled = delivery.savable, onClick = actions::save) {
+            Button(enabled = delivery.savable, onClick = actions::save) {
                 Text(LocalStrings.current.settingsScreen.save)
             }
         }
@@ -81,7 +75,11 @@ private fun ChannelFields(
     }
 }
 
-/** Строка канала: название, плашка «настроен» и переключатель в конце. */
+/**
+ * Строка канала — переключатель Material 3: название, под ним — настроен
+ * ли канал, в конце — шлёт ли он каждый чек. Владелец видит, уйдёт ли
+ * чек, до первого чека, а не по жалобе.
+ */
 @Composable
 private fun ChannelHead(
     channel: DeliveryChannel,
@@ -89,25 +87,13 @@ private fun ChannelHead(
     actions: DeliveryActions,
     texts: DeliverySettingTexts
 ) {
-    val name = texts.channels.of(channel)
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = name, style = MaterialTheme.typography.titleSmall)
-        if (channel in delivery.configured) {
-            Chip(texts.configured, StatusColors.delivered)
-        } else {
-            Chip(texts.notConfigured, MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-        Spacer(Modifier.weight(1f))
-        Switch(
-            checked = delivery.enabled(channel),
-            onCheckedChange = { actions.switch(channel, it) },
-            enabled = !delivery.frozen && !delivery.busy,
-            modifier = Modifier.semantics { contentDescription = name }
-        )
-    }
+    SwitchRow(
+        title = texts.channels.of(channel),
+        checked = delivery.enabled(channel),
+        onSwitch = { actions.switch(channel, it) },
+        enabled = !delivery.frozen && !delivery.busy,
+        hint = if (channel in delivery.configured) texts.configured else texts.notConfigured
+    )
 }
 
 /**

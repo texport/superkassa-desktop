@@ -59,10 +59,10 @@ import kotlin.test.assertTrue
  */
 class FormWidthShots {
 
-    /** Экран раздела; у настроек две вкладки, и вторая открывается нажатием. */
+    /** Экран раздела; у настроек открыт раздел кассы, а оформление открывается нажатием в списке. */
     private enum class Screen(val section: Section, val tab: ((Language) -> String)? = null) {
         SettingsKkm(Section.Settings),
-        SettingsWorkplace(Section.Settings, { textsOf(it).common.settingsScreen.householdWorkplace }),
+        SettingsWorkplace(Section.Settings, { textsOf(it).settings.sections.look }),
         Cash(Section.Cash),
         Users(Section.Users),
         Queue(Section.Queue),

@@ -17,19 +17,34 @@ class SettingsVisibilityTest {
 
     @Test
     fun `до входа видно то, что задают раньше входа`() {
-        val shown = visibleSettings(hasRegister = false, admin = false)
-
         assertEquals(
             listOf(
                 Setting.Appearance,
+                Setting.Language,
                 Setting.PanelBehaviour,
+                Setting.Facts,
                 Setting.CabinetAddress,
                 Setting.MapServices,
-                Setting.Facts,
                 Setting.Updates,
                 Setting.Debug
             ),
-            shown
+            visibleSettings(hasRegister = false, admin = false)
+        )
+    }
+
+    /** До входа — только разделы машины и программы: полки кассы нет вовсе. */
+    @Test
+    fun `до входа разделы кассы не показываются`() {
+        assertEquals(
+            listOf(
+                SettingsSection.Look,
+                SettingsSection.SalePanels,
+                SettingsSection.Machine,
+                SettingsSection.Addresses,
+                SettingsSection.Updates,
+                SettingsSection.Debug
+            ),
+            visibleSections(hasRegister = false, admin = false)
         )
     }
 
@@ -56,32 +71,27 @@ class SettingsVisibilityTest {
         assertTrue(Setting.Core !in visibleSettings(hasRegister = true, admin = false), "сроки БФД показаны кассиру")
     }
 
-    /** На Android приложение обновляет магазин: карточки выпусков там нет. */
+    /** На Android приложение обновляет магазин: раздела выпусков там нет. */
     @Test
-    fun `без своих выпусков карточки обновлений нет`() {
-        assertTrue(Setting.Updates !in visibleSettings(hasRegister = true, admin = true, hasReleases = false))
+    fun `без своих выпусков раздела обновлений нет`() {
+        assertTrue(SettingsSection.Updates !in visibleSections(hasRegister = true, admin = true, hasReleases = false))
         assertTrue(Setting.Facts in visibleSettings(hasRegister = true, admin = true, hasReleases = false))
     }
 
     /** Без кабинета — на Android — адреса кабинета и служб карты настраивать незачем. */
     @Test
-    fun `без кабинета адресов кабинета и карты не видно`() {
-        val shown = visibleSettings(hasRegister = true, admin = true, hasCabinet = false)
+    fun `без кабинета раздела адресов служб нет`() {
+        val shown = visibleSections(hasRegister = true, admin = true, hasCabinet = false)
 
-        assertTrue(Setting.CabinetAddress !in shown, "адрес кабинета показан без кабинета")
-        assertTrue(Setting.MapServices !in shown, "службы карты показаны без кабинета")
-        assertTrue(Setting.Core in shown, "без кабинета пропали настройки кассы")
+        assertTrue(SettingsSection.Addresses !in shown, "адреса служб показаны без кабинета")
+        assertTrue(SettingsSection.Machine in shown, "без кабинета пропали настройки кассы на машине")
     }
 
     @Test
     fun `настройки кассы без выбранной кассы не показываются`() {
         val shown = visibleSettings(hasRegister = false, admin = true)
 
-        listOf(
-            Setting.CurrentKkm, Setting.Programming, Setting.PrintForm, Setting.PrintTarget,
-            Setting.Tax, Setting.OfdSync, Setting.OfdToken,
-            Setting.Diagnostics, Setting.Decommission
-        ).forEach { assertTrue(it !in shown, "$it показана без кассы") }
+        kkmSettings.forEach { assertTrue(it !in shown, "$it показана без кассы") }
     }
 
     /**
@@ -89,23 +99,23 @@ class SettingsVisibilityTest {
      *
      * Список перечислен целиком, а не выборкой: выборка молчала о том,
      * чего в ней нет, и режим программирования с печатной формой стояли
-     * у кассира живой кнопкой и мёртвой карточкой — узел отвечает по ним
-     * только администратору, а войти в режим кассир не может вовсе.
+     * у кассира живой кнопкой и мёртвой карточкой.
      */
     @Test
     fun `служебное кассиру не показывается`() {
         assertEquals(
             listOf(
-                Setting.Appearance,
-                Setting.PanelBehaviour,
-                Setting.CabinetAddress,
-                Setting.MapServices,
-                Setting.Facts,
-                Setting.Updates,
-                Setting.Debug,
                 Setting.CurrentKkm,
                 Setting.PrintTarget,
-                Setting.Diagnostics
+                Setting.Diagnostics,
+                Setting.Appearance,
+                Setting.Language,
+                Setting.PanelBehaviour,
+                Setting.Facts,
+                Setting.CabinetAddress,
+                Setting.MapServices,
+                Setting.Updates,
+                Setting.Debug
             ),
             visibleSettings(hasRegister = true, admin = false)
         )
@@ -114,71 +124,45 @@ class SettingsVisibilityTest {
     @Test
     fun `администратору в кассе видно всё`() {
         assertEquals(Setting.entries, visibleSettings(hasRegister = true, admin = true))
+        assertEquals(SettingsSection.entries, visibleSections(hasRegister = true, admin = true))
     }
 
     /**
-     * Порядок внутри хозяйства идёт от повседневного к необратимому.
-     *
-     * Прежде «Сведения об узле» и «Обновления» стояли после режима отладки,
-     * а отладка — посреди настроек кассы: владелец, пришедший узнать версию,
-     * первым делом натыкался на уровень записи журнала.
+     * Каталог идёт в порядке разделов: иначе настройки одного раздела
+     * встали бы вразбивку, а раздел в списке — не на своём месте.
      */
     @Test
-    fun `порядок идёт от повседневного к необратимому`() {
-        val shown = visibleSettings(hasRegister = true, admin = true)
+    fun `настройки идут по разделам списка`() {
+        val order = settingsCards.map { it.setting.section.ordinal }
 
-        assertEquals(
-            Setting.Decommission,
-            shown.last { it in kkmSettings },
-            "необратимое обязано стоять последним среди настроек кассы"
-        )
-        assertTrue(
-            shown.indexOf(Setting.Debug) > shown.indexOf(Setting.Updates),
-            "отладка стоит раньше обновлений"
-        )
-        assertTrue(
-            shown.indexOf(Setting.CabinetAddress) < shown.indexOf(Setting.Diagnostics),
-            "адреса служб перемешаны с настройками кассы"
-        )
+        assertEquals(order.sorted(), order, "настройки перемешаны между разделами")
+        assertEquals(Setting.entries, settingsCards.map { it.setting }, "каталог разошёлся с порядком настроек")
     }
 
     /**
-     * Вход в режим программирования и выход из него — одна настройка.
-     *
-     * Прежде войти предлагала карточка печатной формы, а выйти — кнопка
-     * в диагностике: кассир входил и искал выход по всему экрану.
+     * Снятие с учёта — последним в разделе кассы, режим программирования —
+     * сразу под самой кассой: вход и выход в одном месте, а необратимое
+     * не нажимают по дороге к остальному.
      */
     @Test
-    fun `режим программирования стоит рядом с самой кассой`() {
-        val shown = visibleSettings(hasRegister = true, admin = true)
+    fun `в разделе кассы режим рядом с кассой, снятие последним`() {
+        val kkm = visibleSettings(hasRegister = true, admin = true).filter { it.section == SettingsSection.Kkm }
 
-        assertEquals(
-            Setting.CurrentKkm,
-            shown[shown.indexOf(Setting.Programming) - 1],
-            "режим программирования оторван от кассы, которой принадлежит"
-        )
+        assertEquals(listOf(Setting.CurrentKkm, Setting.Programming, Setting.Decommission), kkm)
     }
 
-    /**
-     * Вкладка открывается разделом, а не карточкой в пустом окне.
-     *
-     * Хозяйство кабинета БФД держало один адрес: вкладка занимала треть
-     * шапки, а под ней стояла карточка и поле высотой в экран. Адрес
-     * кабинета хранится на этой же машине, как адрес узла и адреса карты,
-     * и стоит теперь рядом с ними.
-     */
+    /** Полки идут от кассы к программе, и раздел не оторван от своей полки. */
     @Test
-    fun `во вкладке не бывает одной карточки на пустом экране`() {
-        SettingsHousehold.entries.forEach { household ->
-            val cards = settingsCards.filter { it.group.household == household }
-            assertTrue(cards.size > 1, "$household открывается одной карточкой в пустом окне")
-        }
+    fun `разделы стоят по полкам`() {
+        val shelves = SettingsSection.entries.map { it.shelf.ordinal }
+
+        assertEquals(shelves.sorted(), shelves, "раздел стоит не на своей полке")
     }
 
     /** Настройки, которые принимает узел этой кассы. */
     private val kkmSettings = listOf(
         Setting.CurrentKkm, Setting.Programming, Setting.PrintForm, Setting.PrintTarget,
-        Setting.Tax, Setting.OfdSync, Setting.OfdToken,
+        Setting.Tax, Setting.Domain, Setting.OfdSync, Setting.OfdToken,
         Setting.Diagnostics, Setting.Decommission
     )
 }

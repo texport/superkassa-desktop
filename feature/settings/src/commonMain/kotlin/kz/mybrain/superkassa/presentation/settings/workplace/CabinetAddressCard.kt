@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.button.FieldButton
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
@@ -27,7 +27,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
 internal fun CabinetAddressCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSettingsActions) {
     val texts = textsOf(LocalLanguage.current).cabinet
     val settings = LocalStrings.current.settingsScreen
-    SectionCard(title = texts.signin.address, info = texts.hints.address) {
+    SettingGroup(title = texts.signin.address, info = texts.hints.address) {
         // Адрес занимает остаток строки карточки, кнопка стоит за ним:
         // адрес службы длиннее любой заданной ширины поля. Негодный адрес
         // назван до сохранения: по адресу без схемы входа в кабинет не будет

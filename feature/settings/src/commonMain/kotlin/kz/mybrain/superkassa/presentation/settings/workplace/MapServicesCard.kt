@@ -9,7 +9,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
 
@@ -31,7 +31,7 @@ internal fun MapServicesCard(workplace: WorkplaceSettingsUiState, actions: Workp
     val texts = LocalStrings.current.settingsScreen
     val maps = workplace.mapFields
     val standard = workplace.publicMaps
-    SectionCard(title = texts.mapServices, info = texts.mapServicesHint) {
+    SettingGroup(title = texts.mapServices, info = texts.mapServicesHint) {
         ServiceField(texts.mapTiles, maps.tiles, standard.tiles) { actions.typeMaps(maps.copy(tiles = it)) }
         ServiceField(texts.mapSearch, maps.search, standard.search) { actions.typeMaps(maps.copy(search = it)) }
         ServiceField(texts.mapReverse, maps.reverse, standard.reverse) { actions.typeMaps(maps.copy(reverse = it)) }

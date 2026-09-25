@@ -30,6 +30,11 @@ kotlin {
             api(libs.compose.ui)
             api(libs.compose.material3)
             api(libs.compose.material.icons.extended)
+            // Многопанельные экраны — раскладкой Material 3: «список
+            // и подробности» с навигатором панелей.
+            api(libs.compose.adaptive)
+            api(libs.compose.adaptive.layout)
+            api(libs.compose.adaptive.navigation)
             // Общие аннотации превью стоят на функциях превью всех модулей
             // экранов: Android Studio видит `@Preview` сквозь них.
             api(libs.compose.ui.tooling.preview)

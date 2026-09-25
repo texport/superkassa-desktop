@@ -1,28 +1,29 @@
 package kz.mybrain.superkassa.designsystem.picker
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import kz.mybrain.superkassa.designsystem.list.bleed
+import kz.mybrain.superkassa.designsystem.theme.color.ContentAlpha
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.designsystem.tip.InfoTip
 
 /**
- * Настройка «да или нет» строкой во всю ширину карточки.
+ * Настройка «да или нет» — строка списка Material 3 с переключателем.
  *
- * По Material 3 подпись стоит в начале строки, переключатель — в её конце,
- * и нажатие по любому месту строки переключает: попадать в сам переключатель
- * кассиру незачем. Прежде у каждой карточки была своя строка с переключателем
- * впереди подписи, и в широкой карточке они стояли столбиком у левого края.
+ * По Material 3 подпись стоит в начале строки, объяснение — строкой под
+ * ней, переключатель — в конце, и нажатие по любому месту строки
+ * переключает: попадать в сам переключатель кассиру незачем. Строка идёт
+ * от края до края панели, а подпись начинается с той же вертикали, что
+ * подзаголовок и поля группы.
  *
- * @param hint объяснение под значком у подписи; `null` — объяснять нечего.
+ * @param hint объяснение под подписью; `null` — объяснять нечего.
  */
 @Composable
 fun SwitchRow(
@@ -32,22 +33,16 @@ fun SwitchRow(
     enabled: Boolean = true,
     hint: String? = null
 ) {
-    Row(
+    // Строка списка сама не гаснет: выключенную подпись приглушают так же,
+    // как Material 3 приглушает выключенный переключатель рядом с ней.
+    val shown = Modifier.alpha(if (enabled) ContentAlpha.FULL else ContentAlpha.DISABLED)
+    ListItem(
+        headlineContent = { Text(title, modifier = shown) },
+        supportingContent = hint?.let { { Text(it, modifier = shown) } },
+        trailingContent = { Switch(checked = checked, onCheckedChange = null, enabled = enabled) },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         modifier = Modifier
-            .fillMaxWidth()
-            .toggleable(value = checked, enabled = enabled, role = Role.Switch, onValueChange = onSwitch),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Значок объяснения держится за подписью, а не уезжает к переключателю.
-        Row(
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(title, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f, fill = false))
-            hint?.let { InfoTip(it) }
-        }
-        Switch(checked = checked, enabled = enabled, onCheckedChange = null)
-    }
+            .bleed(Spacing.cardPadding)
+            .toggleable(value = checked, enabled = enabled, role = Role.Switch, onValueChange = onSwitch)
+    )
 }

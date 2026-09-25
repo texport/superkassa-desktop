@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import kz.mybrain.superkassa.designsystem.section.FactLines
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.status.Chip
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
@@ -34,7 +34,7 @@ internal fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsAction
     val texts = LocalStrings.current
     val money = textsOf(LocalLanguage.current).kassa.money.kkm
     ofd.kkm ?: return
-    SectionCard(
+    SettingGroup(
         title = texts.settingsScreen.diagnostics,
         info = money.diagnosticsHint,
         // Ответ ОФД — не состояние кассы, а итог только что нажатой

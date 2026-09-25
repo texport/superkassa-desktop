@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
 import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
 import kz.mybrain.superkassa.designsystem.section.PartTitle
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.settings.title
@@ -23,7 +23,7 @@ internal fun PrintFormCard(form: ReceiptFormUiState, actions: ReceiptFormActions
     val texts = LocalStrings.current.settingsScreen
     form.kkm ?: return
     val branding = form.branding
-    SectionCard(title = texts.printForm, info = texts.printFormHint) {
+    SettingGroup(title = texts.printForm, info = texts.printFormHint) {
         PartTitle(texts.receiptLanguage)
         WideChoiceSegments(
             options = ReceiptLanguageChoice.entries,

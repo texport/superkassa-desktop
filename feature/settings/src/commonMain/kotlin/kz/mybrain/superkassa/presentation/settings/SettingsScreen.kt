@@ -1,24 +1,8 @@
 package kz.mybrain.superkassa.presentation.settings
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.CardColumns
-import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
-import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 
 /**
  * Настройки — один экран на всё приложение.
@@ -28,124 +12,14 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * карточек, и они разошлись: отладка стояла только за входом — то есть
  * ровно там, где она уже не нужна, потому что войти получилось.
  *
- * Список карточек один, а показывается каждая по своим условиям:
+ * Список настроек один, а показывается каждая по своим условиям:
  * настройке кассы нужна выбранная касса, служебной — права
- * администратора. До входа ни того, ни другого нет, и остаётся то, что
- * задают раньше, чем куда-либо войти.
+ * администратора. До входа ни того, ни другого нет, и остаются разделы
+ * того, что задают раньше, чем куда-либо войти.
+ *
+ * Разложены настройки «списком и подробностями» — см. [SettingsPanes].
  */
 @Composable
 fun SettingsScreen(board: SettingsBoard) {
-    val texts = LocalStrings.current.settingsScreen
-    Column(modifier = Modifier.fillMaxSize()) {
-        Text(
-            text = texts.title,
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = Spacing.fieldGap)
-        )
-        SettingsCards(board, Modifier.weight(1f))
-    }
-}
-
-/**
- * Карточки настроек, разложенные по хозяйствам.
- *
- * Вкладка первого уровня называет владельца настройки — рабочее место,
- * касса, кабинет БФД, — а заголовок внутри неё называет предмет. Вкладки,
- * а не второй список слева: слева уже стоит колонка разделов кассы,
- * и вторая вертикаль рядом с ней читалась бы как её продолжение.
- *
- * Вкладка стоит над прокруткой и не уезжает вместе с содержимым: переход
- * между хозяйствами не должен требовать возврата наверх.
- *
- * Вынесено отдельно от экрана: тот же набор стоит в окне настроек
- * рабочего места, где у него своя шапка с возвратом.
- */
-@Composable
-internal fun SettingsCards(board: SettingsBoard, modifier: Modifier = Modifier) {
-    val texts = LocalStrings.current.settingsScreen
-    val hasRegister = board.kkm.kkm != null
-    val parts = board.parts
-    val shown = settingsCards.filter { it.visible(hasRegister, board.kkm.admin, parts.hasCabinet, parts.hasReleases) }
-    val households = SettingsHousehold.entries.filter { household ->
-        shown.any { it.group.household == household }
-    }
-    // Владелец с выбранной кассой приходит в настройки к ней: открывать
-    // ему вид приложения значит заставлять нажимать вкладку каждый раз.
-    // Выбранная вкладка переживает поворот экрана: он пересоздаёт окно.
-    var wanted by rememberSaveable(hasRegister) {
-        mutableStateOf(if (hasRegister) SettingsHousehold.Kkm else SettingsHousehold.Workplace)
-    }
-    val chosen = wanted.takeIf { it in households } ?: households.first()
-    Column(modifier = modifier) {
-        if (households.size > 1) {
-            HouseholdTabs(households, chosen) { wanted = it }
-        }
-        HouseholdCards(board, shown.filter { it.group.household == chosen })
-    }
-}
-
-/**
- * Карточки одного хозяйства, разложенные по разделам.
- *
- * Прокручивается вся ширина раздела — колесо работает над любым местом, —
- * и карточки занимают её всю: колонка шириной чтения оставляла на широком
- * окне пустую половину экрана. Чтобы карточка с тремя сегментами не
- * тянулась на полторы тысячи точек, карточки раздела встают рядом.
- */
-@Composable
-private fun HouseholdCards(board: SettingsBoard, shown: List<SettingsCard>) {
-    val texts = LocalStrings.current.settingsScreen
-    ScrollableColumn(modifier = Modifier.fillMaxSize().padding(top = Spacing.fieldGap), spacing = Spacing.sectionGap) {
-        SettingsGroup.entries.forEach { group ->
-            val cards = shown.filter { it.group == group }
-            if (cards.isEmpty()) return@forEach
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
-                group.title(texts)?.let { GroupTitle(it) }
-                CardColumns(Modifier.fillMaxWidth()) { cards.forEach { it.card(board) } }
-            }
-        }
-    }
-}
-
-/** Вкладки хозяйств: только те, в которых сейчас что-то есть. */
-@Composable
-private fun HouseholdTabs(
-    households: List<SettingsHousehold>,
-    chosen: SettingsHousehold,
-    onChoose: (SettingsHousehold) -> Unit
-) {
-    val texts = LocalStrings.current.settingsScreen
-    // Вкладки той же ширины, что карточки под ними: по Material 3
-    // постоянные вкладки делят ширину содержимого поровну.
-    PrimaryTabRow(
-        selectedTabIndex = households.indexOf(chosen),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        households.forEach { household ->
-            // По гайдлайну выбранная вкладка несёт цвет `primary`, невыбранная —
-            // `onSurfaceVariant`. Одинаковым цветом обе читались выбранными.
-            Tab(
-                selected = household == chosen,
-                onClick = { onChoose(household) },
-                text = { Text(household.title(texts)) },
-                selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-    }
-}
-
-/**
- * Заголовок раздела внутри хозяйства.
- *
- * Карточек в настройках десяток, и без разделов они читаются одним
- * списком: кассир ищет нужную глазами по всему экрану.
- */
-@Composable
-private fun GroupTitle(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.titleSmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
+    SettingsPanes(board, Modifier.fillMaxSize())
 }

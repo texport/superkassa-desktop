@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
 import kz.mybrain.superkassa.designsystem.picker.WideChoiceSegments
 import kz.mybrain.superkassa.designsystem.section.PartTitle
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.print.model.PrintKind
@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
 @Composable
 fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetActions) {
     val texts = LocalStrings.current
-    SectionCard(title = texts.settingsScreen.printer, info = texts.settingsScreen.printerHint) {
+    SettingGroup(title = texts.settingsScreen.printer, info = texts.settingsScreen.printerHint) {
         if (target.systemDialog) {
             SystemDialogNote()
         } else {

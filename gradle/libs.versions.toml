@@ -9,6 +9,8 @@ compose = "1.12.0"
 # плагина: значки закреплены на 1.7.3 и новых выпусков не получают.
 composeMaterial3 = "1.9.0"
 composeMaterialIcons = "1.7.3"
+# Адаптивная раскладка Material 3 («список и подробности»): своя линия выпусков.
+composeAdaptive = "1.2.0"
 ktor = "3.5.2"
 serialization = "1.11.0"
 coroutines = "1.11.0"
@@ -50,6 +52,9 @@ compose-material-icons-extended = { group = "org.jetbrains.compose.material", na
 # и отрисовщик превью — только в Android-сборке модуля, не в приложении.
 compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
 compose-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "compose" }
+compose-adaptive = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive", version.ref = "composeAdaptive" }
+compose-adaptive-layout = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive-layout", version.ref = "composeAdaptive" }
+compose-adaptive-navigation = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "composeAdaptive" }
 compose-desktop = { group = "org.jetbrains.compose.desktop", name = "desktop", version.ref = "compose" }
 lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }

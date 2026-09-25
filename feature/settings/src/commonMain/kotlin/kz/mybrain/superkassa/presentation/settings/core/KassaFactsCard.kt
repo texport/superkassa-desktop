@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.presentation.settings.core
 
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.designsystem.section.FactLines
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.strings.api.textsOf
 
@@ -19,7 +19,7 @@ internal fun KassaFactsCard(core: CoreSettingsUiState) {
     val language = LocalLanguage.current
     val all = textsOf(language)
     val texts = all.settings.facts
-    SectionCard(title = texts.title, info = texts.hint) {
+    SettingGroup(title = texts.title, info = texts.hint) {
         FactLines(null, core.facts(texts, all.settings.core, all.kassa.money.kkm), texts.unread)
     }
 }

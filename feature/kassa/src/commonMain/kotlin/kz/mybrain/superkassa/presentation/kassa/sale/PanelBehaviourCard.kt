@@ -3,7 +3,7 @@ package kz.mybrain.superkassa.presentation.kassa.sale
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 
@@ -17,14 +17,26 @@ import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
  */
 @Composable
 fun PanelBehaviourCard(memory: WorkplaceMemory) {
-    val texts = LocalStrings.current
     val panels = remember(memory) { SalePanels(memory) }
-    SectionCard(
+    PanelBehaviourGroup(expanded = panels::expanded, onToggle = panels::toggle)
+}
+
+/**
+ * Разделы кассовой колонки переключателями — по состоянию, без памяти
+ * рабочего места: так группу рисуют и превью.
+ *
+ * @param expanded развёрнут ли раздел, когда продажу открывают.
+ * @param onToggle раздел переключили.
+ */
+@Composable
+fun PanelBehaviourGroup(expanded: (SalePanel) -> Boolean, onToggle: (SalePanel) -> Unit) {
+    val texts = LocalStrings.current
+    SettingGroup(
         title = texts.settingsScreen.panelBehaviour,
         info = texts.settingsScreen.panelBehaviourHint
     ) {
         SalePanel.entries.forEach { panel ->
-            SwitchRow(panel.title(texts.settingsScreen), panels.expanded(panel), { panels.toggle(panel) })
+            SwitchRow(panel.title(texts.settingsScreen), expanded(panel), { onToggle(panel) })
         }
     }
 }

@@ -19,7 +19,7 @@ import kz.mybrain.superkassa.strings.api.Language
  * сделанный в одном месте, сразу виден во всех. Первое состояние — уже
  * сохранённый выбор: окно не мигает умолчанием до первого чтения.
  */
-class LookViewModel(private val cases: LookCases) : ViewModel() {
+class LookViewModel(private val cases: LookCases) : ViewModel(), LookActions {
     private val screen = MutableStateFlow(LookUiState.of(cases.observe().value))
 
     val state: StateFlow<LookUiState> = screen.asStateFlow()
@@ -28,15 +28,15 @@ class LookViewModel(private val cases: LookCases) : ViewModel() {
         follow(cases.observe()) { chosen -> screen.value = LookUiState.of(chosen) }
     }
 
-    fun switchLanguage(chosen: Language) = change { it.copy(language = chosen.code) }
+    override fun switchLanguage(chosen: Language) = change { it.copy(language = chosen.code) }
 
-    fun switchAppearance(chosen: Appearance) = change { it.copy(appearance = chosen.code) }
+    override fun switchAppearance(chosen: Appearance) = change { it.copy(appearance = chosen.code) }
 
-    fun chooseAccent(chosen: Accent) = change { it.copy(accent = chosen.code) }
+    override fun chooseAccent(chosen: Accent) = change { it.copy(accent = chosen.code) }
 
-    fun chooseTypeface(chosen: Typeface) = change { it.copy(typeface = chosen.code) }
+    override fun chooseTypeface(chosen: Typeface) = change { it.copy(typeface = chosen.code) }
 
-    fun chooseTextScale(chosen: TextScale) = change { it.copy(textScale = chosen.code) }
+    override fun chooseTextScale(chosen: TextScale) = change { it.copy(textScale = chosen.code) }
 
     fun toggleRail() = change { it.copy(railCollapsed = !it.railCollapsed) }
 

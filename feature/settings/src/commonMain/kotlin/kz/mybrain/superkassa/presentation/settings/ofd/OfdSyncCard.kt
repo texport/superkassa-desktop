@@ -6,7 +6,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
@@ -35,7 +35,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
 @Composable
 internal fun OfdSyncCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
     val money = textsOf(LocalLanguage.current).kassa.money.kkm
-    SectionCard(title = money.syncTitle, info = money.bfdMeaning) {
+    SettingGroup(title = money.syncTitle, info = money.bfdMeaning) {
         SyncAction(money.syncService, money.syncServiceHint, ofd.serviceSyncable, actions::syncService)
         SyncAction(money.syncCounters, money.syncCountersHint, ofd.syncable, actions::syncCounters)
     }

@@ -127,21 +127,6 @@ data class SettingsScreenTexts(
     val mapReverse: String,
     val mapLocation: String,
     val mapDefault: String,
-    /** Хозяйства настроек: где именно изменится выбранное. */
-    val householdWorkplace: String,
-    val householdKkm: String,
-    val householdCabinet: String,
-    /** Обмен кассы с БФД на этой машине: сроки ожидания и доставка чека. */
-    val groupExchange: String,
-    /** Как печатает эта касса: форма на узле, принтер на этой машине. */
-    val groupPrinting: String,
-    /** Настройки самой кассы: их принимает узел и только в режиме программирования. */
-    val groupService: String,
-    /** Адреса служб, с которыми говорит рабочее место: узел, кабинет, карта. */
-    val groupServices: String,
-    /** Сама программа на этой машине: журнал, версия, сведения об узле. */
-    val groupProgram: String,
-    val groupIrreversible: String,
     val panelBehaviourHint: String,
     val panelPositionEntry: String,
     val panelReceiptChanges: String,

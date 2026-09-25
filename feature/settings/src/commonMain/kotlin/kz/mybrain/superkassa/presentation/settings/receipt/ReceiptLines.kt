@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.settings.receipt
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,7 +38,7 @@ internal fun ReceiptLinesSection(form: ReceiptFormUiState, actions: ReceiptFormA
             modifier = Modifier.fillMaxWidth().keysOfSingleLine()
         )
     }
-    FilledTonalButton(
+    Button(
         enabled = form.editable && !form.busy && edited != form.branding,
         onClick = actions::saveLines
     ) { Text(texts.settingsScreen.saveReceiptLines) }

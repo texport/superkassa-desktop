@@ -1,21 +1,13 @@
 package kz.mybrain.superkassa.presentation.settings.kkm
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.SolidColor
 import kz.mybrain.superkassa.designsystem.dialog.ConfirmDangerDialog
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
 import kz.mybrain.superkassa.presentation.settings.SettingRequirements
 import kz.mybrain.superkassa.strings.api.fill
@@ -24,9 +16,9 @@ import kz.mybrain.superkassa.strings.api.textsOf
 /**
  * Снятие кассы с учёта.
  *
- * Раздел выделен обводкой цвета отказа и стоит последним: он необратим,
- * и всё в нём — от рамки до кнопки — должно останавливать руку, а не
- * подгонять её.
+ * Группа стоит последней в разделе кассы, подзаголовок и кнопка — цвета
+ * отказа: действие необратимо, и всё в группе должно останавливать руку,
+ * а не подгонять её. Перед снятием — диалог подтверждения Material 3.
  *
  * Требования кассы показаны отдельными плашками: касса откажет ровно
  * по ним, и кассир должен видеть, чего не хватает, до нажатия, а не после
@@ -37,40 +29,20 @@ internal fun DecommissionCard(kkm: KkmSettingsUiState, actions: KkmSettingsActio
     val money = textsOf(LocalLanguage.current).kassa.money.kkm
     val current = kkm.kkm ?: return
     val needs = KkmSettingRules.decommission(current)
-    OutlinedCard(
-        modifier = Modifier.fillMaxWidth(),
-        border = CardDefaults.outlinedCardBorder().copy(brush = errorEdge())
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
-        ) {
-            DecommissionHeading()
-            SettingRequirements(needs, money)
-            OutlinedButton(
-                enabled = KkmSettingRules.met(needs) && !kkm.busy,
-                onClick = actions::askDecommission,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
-            ) { Text(money.decommission) }
-        }
+    SettingGroup(title = money.decommission, danger = true) {
+        Text(
+            text = money.decommissionHint,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        SettingRequirements(needs, money)
+        OutlinedButton(
+            enabled = KkmSettingRules.met(needs) && !kkm.busy,
+            onClick = actions::askDecommission,
+            colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+        ) { Text(money.decommission) }
     }
     if (kkm.decommissionAsked) DecommissionQuestion(kkm.displayName, actions)
-}
-
-/** Что сделает снятие: названо цветом отказа и объяснено до нажатия. */
-@Composable
-private fun DecommissionHeading() {
-    val money = textsOf(LocalLanguage.current).kassa.money.kkm
-    Text(
-        text = money.decommission,
-        style = MaterialTheme.typography.titleMedium,
-        color = MaterialTheme.colorScheme.error
-    )
-    Text(
-        text = money.decommissionHint,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
 }
 
 /** Вопрос перед необратимым: что будет удалено и с какой кассой. */
@@ -86,7 +58,3 @@ private fun DecommissionQuestion(name: String, actions: KkmSettingsActions) {
         onConfirm = actions::decommission
     )
 }
-
-/** Обводка раздела цветом отказа. */
-@Composable
-private fun errorEdge() = SolidColor(MaterialTheme.colorScheme.error)

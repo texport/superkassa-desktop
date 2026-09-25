@@ -45,7 +45,8 @@ internal object SettingsScene {
         val seat = desk.app.services.signIn.state.value
         val kkm = seat.kkm?.let { kkm -> queued?.let { kkm.copy(offlineQueueCount = it) } ?: kkm }
         return SettingsBoard(
-            look = desk.look,
+            look = desk.look.state.value,
+            lookActions = desk.look,
             kkm = KkmSettingsUiState(kkm = kkm, admin = seat.isAdmin),
             tax = TaxSettingsUiState(kkm = kkm, regimes = REGIMES, vatRates = RATES, dictionariesRead = true),
             form = ReceiptFormUiState(kkm = kkm),

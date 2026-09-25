@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.button.FieldButton
 import kz.mybrain.superkassa.designsystem.field.fieldMinWidth
-import kz.mybrain.superkassa.designsystem.section.SectionCard
+import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.presentation.settings.title
 internal fun OfdTokenCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
     val texts = LocalStrings.current.settingsScreen
     ofd.kkm ?: return
-    SectionCard(title = texts.ofdToken, info = texts.tokenHint) {
+    SettingGroup(title = texts.ofdToken, info = texts.tokenHint) {
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),

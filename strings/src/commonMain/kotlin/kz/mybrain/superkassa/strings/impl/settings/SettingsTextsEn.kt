@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.strings.api.settings.SettingsTexts
 /** Надписи [SettingsTexts] по-английски. */
 internal val settingsTextsEn = SettingsTexts(
     core = CoreSettingTexts(
-        title = "The register on this machine",
+        title = "BFD exchange timeouts",
         hint = "Shared by every register of the workplace: how long to wait for the BFD and when to try the link " +
             "again. New values take effect after the register restarts.",
         unread = "The register did not return its settings",
@@ -67,7 +67,8 @@ internal val settingsTextsEn = SettingsTexts(
         unread = "The register did not answer",
         ofdAuth = "BFD authorisation data",
         nextRequest = "Next request number"
-    )
+    ),
+    sections = settingsSectionsEn
 )
 
 /** Надписи [LookTexts] по-английски. */
