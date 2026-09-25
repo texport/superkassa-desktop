@@ -1,8 +1,8 @@
 # Поэлементные размеры, с которыми код пришёл к проверке одной сетки.
 #
 # Долг, снимается при переводе экрана на раскладку: ширина из колонки
-# (fillMaxWidth) или доля ряда (weight). ElementSizesTest падает и на новое
+# (fillMaxWidth) или доля ряда (weight). ModuleSourcesTest падает и на новое
 # место, и на исправленное, но не вычеркнутое.
 #
 # Формат: <файл от kz/mybrain/superkassa> -> <токен>
-presentation/setup/component/OfdStep.kt -> Sizes.fieldChoice
+presentation/settings/core/DeliveryCard.kt -> Sizes.fieldForm

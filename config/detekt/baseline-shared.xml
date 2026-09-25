@@ -6,7 +6,6 @@
     <ID>ArgumentListWrapping:AdaptiveDialogShots.kt$AdaptiveDialogShots$(TAPE_MARGIN, line + TAPE_MARGIN, (line * 7 % 400 + 80).toFloat(), 10f)</ID>
     <ID>ArgumentListWrapping:AnalyticsWalk.kt$AnalyticsWalk$( window.find(texts.mapFullscreen), window.find(map.zoomIn), window.find(map.zoomOut), window.find(map.myLocation) )</ID>
     <ID>ArgumentListWrapping:ShellAdaptiveTest.kt$ShellAdaptiveTest$("окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}")</ID>
-    <ID>CyclomaticComplexMethod:AppearanceCard.kt$private fun Accent.title(texts: LookStrings): String</ID>
     <ID>LongMethod:DashboardAdaptiveTest.kt$DashboardAdaptiveTest$private fun check(probe: KassaProbe, case: Case): List&lt;String&gt;</ID>
     <ID>LongMethod:KassaShiftLookTest.kt$KassaShiftLookTest$@Test fun `главный экран собирается во всех состояниях смены и они различимы`()</ID>
     <ID>LongMethod:ReturnsAdaptiveTest.kt$ReturnsAdaptiveTest$private fun check(probe: KassaProbe, case: Case): List&lt;String&gt;</ID>

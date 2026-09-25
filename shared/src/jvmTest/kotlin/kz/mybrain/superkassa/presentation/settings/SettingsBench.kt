@@ -12,7 +12,9 @@ import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.log.port.Journal
+import kz.mybrain.superkassa.domain.settings.port.MemoryChoices
 import kz.mybrain.superkassa.domain.settings.port.SettingsPorts
+import kz.mybrain.superkassa.domain.settings.port.settingsPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.kassa.MemoryLook

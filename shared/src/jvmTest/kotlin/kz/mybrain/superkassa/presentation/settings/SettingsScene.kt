@@ -5,6 +5,8 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.TaxReg
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
 import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.SettingsMeasure
+import kz.mybrain.superkassa.domain.settings.port.MemoryChoices
+import kz.mybrain.superkassa.domain.settings.port.settingsPorts
 import kz.mybrain.superkassa.domain.workplace.model.MapServices
 import kz.mybrain.superkassa.integrations.bfdcabinet.CabinetSettings
 import kz.mybrain.superkassa.kassa.CoreScene
