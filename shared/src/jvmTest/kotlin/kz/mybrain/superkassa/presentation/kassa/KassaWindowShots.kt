@@ -16,12 +16,12 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.domain.kassa.model.sale.IssuedReceipt
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.ReturnsScene
+import kz.mybrain.superkassa.kassa.SaleScene
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsContent
-import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScene
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.ReceiptOutput
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
-import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section

@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
  * Модуль экранов кассы: общее экранов или область приложения.
  *
  * Цели — как у `superkassa.library`, разметка — Compose. Проверки у всех
- * одни: общий код — `kotlin.test`, JVM — ещё оснастка `:testing` со сценой
- * отрисовки, корутины проверок и настоящие адаптеры: экраны в проверках
+ * одни: общий код — `kotlin.test` и суммы оснастки `:testing`, JVM — ещё
+ * сцена отрисовки оснастки, корутины проверок и настоящие адаптеры: экраны в проверках
  * стоят на кассе поверх ядра, кабинете поверх подставного обмена
  * и настройках на диске, как в приложении. Куча проверок вида — 2 ГБ:
  * сцены держат память до сборки мусора, и полному набору 512 МБ по
@@ -31,7 +31,12 @@ class ScreensPlugin : Plugin<Project> {
         val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
         fun lib(name: String) = libs.findLibrary(name).get()
         extensions.configure<KotlinMultiplatformExtension> {
-            sourceSets.named("commonTest") { dependencies { implementation(lib("kotlin-test")) } }
+            sourceSets.named("commonTest") {
+                dependencies {
+                    implementation(lib("kotlin-test"))
+                    implementation(project(TESTING))
+                }
+            }
             sourceSets.named("jvmTest") {
                 dependencies {
                     TEST_LIBRARIES.forEach { implementation(lib(it)) }

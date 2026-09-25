@@ -8,8 +8,9 @@ import kz.mybrain.superkassa.KassaProbe
 import kz.mybrain.superkassa.KassaWindow
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.eachWindow
+import kz.mybrain.superkassa.kassa.SaleScene
 import kz.mybrain.superkassa.presentation.common.message.Message
-import kz.mybrain.superkassa.presentation.shell.frame.MessageEffect
+import kz.mybrain.superkassa.presentation.common.message.MessageEffect
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test

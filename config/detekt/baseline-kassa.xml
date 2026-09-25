@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:BasketView.kt$@Composable internal fun BasketCard( basket: Basket, modifier: Modifier = Modifier, onStorno: (Int) -&gt; Unit, onExcise: (Int) -&gt; Unit, onRemove: (Int) -&gt; Unit )</ID>
+    <ID>LongMethod:ExciseDialog.kt$@Composable internal fun ExciseDialog(stamps: List&lt;String&gt;, onChanged: (List&lt;String&gt;) -&gt; Unit, onDismiss: () -&gt; Unit)</ID>
+    <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `набранный чек рисуется вместе с итогом и помехами`()</ID>
+    <ID>LongMethod:KassaSaleLookTest.kt$KassaSaleLookTest$@Test fun `экран продажи собирается во всех отказных состояниях и они различимы`()</ID>
+    <ID>LongParameterList:MoneyField.kt$( value: String, label: String, modifier: Modifier, isError: Boolean = false, placeholder: String? = null, supportingText: String? = null, trailing: (@Composable () -&gt; Unit)? = null, readOnly: Boolean = false, onValueChange: (String) -&gt; Unit )</ID>
+    <ID>ReturnCount:VatRate.kt$internal fun vatTitle(rates: List&lt;VatRate&gt;, code: String): String</ID>
+  </CurrentIssues>
+</SmellBaseline>

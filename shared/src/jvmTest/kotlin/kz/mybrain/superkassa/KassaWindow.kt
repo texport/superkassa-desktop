@@ -13,8 +13,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.presentation.common.message.MessageHost
 import kz.mybrain.superkassa.presentation.shell.bar.ShellBar
-import kz.mybrain.superkassa.presentation.shell.frame.MessageHost
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.sectionFrame

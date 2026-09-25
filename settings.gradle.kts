@@ -47,6 +47,7 @@ include(":ui-common")
 // собирает каркас окна — модуль `shared`.
 include(":feature:debug")
 include(":feature:journal")
+include(":feature:kassa")
 include(":feature:map")
 include(":feature:print")
 include(":feature:shift")

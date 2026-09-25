@@ -12,7 +12,13 @@ import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.KassaWindow
 import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
+import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
+import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.eachWindow
+import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.ReturnsScene
+import kz.mybrain.superkassa.kassa.SaleScene
+import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.wholeOnScreen
@@ -46,7 +52,8 @@ class ReturnsAdaptiveTest {
         val sold = KassaExtremes.sold(ITEMS).map {
             ReturnsScene.item(it.name, it.price, it.quantityThousandths, it.sum)
         }
-        val model = ReturnsScene.model(bases, sold)
+        val services = CoreScene.services(ReturnsScene.core(bases, sold), SaleScene.signedIn())
+        val model = returnsModel(services, KassaPorts(FixedDeliverySetup()))
         val texts = textsOf(case.language).common
         val journal = textsOf(case.language).journal.returns
         val failures = mutableListOf<String>()

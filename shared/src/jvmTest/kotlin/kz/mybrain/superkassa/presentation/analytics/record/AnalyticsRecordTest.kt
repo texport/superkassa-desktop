@@ -7,7 +7,6 @@ import kz.mybrain.superkassa.domain.analytics.model.refusedKkms
 import kz.mybrain.superkassa.domain.analytics.model.regionOf
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsTab
-import kz.mybrain.superkassa.presentation.kassa.sale.component.open
 import kz.mybrain.superkassa.presentation.words.cabinet.recordTitle
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf

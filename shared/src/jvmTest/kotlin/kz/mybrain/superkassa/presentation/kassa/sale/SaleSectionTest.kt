@@ -8,6 +8,9 @@ import androidx.compose.runtime.snapshots.Snapshot
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.domain.kassa.model.entry.PositionDraft
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.ReturnsScene
+import kz.mybrain.superkassa.kassa.SaleScene
+import kz.mybrain.superkassa.kassa.SaleScene.receipts
 import kz.mybrain.superkassa.kassa.app
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.message.Message
@@ -16,8 +19,6 @@ import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.kassa.cash.CashScreen
 import kz.mybrain.superkassa.presentation.kassa.cash.cashViewModel
-import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScene
-import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene.receipts
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import java.io.IOException

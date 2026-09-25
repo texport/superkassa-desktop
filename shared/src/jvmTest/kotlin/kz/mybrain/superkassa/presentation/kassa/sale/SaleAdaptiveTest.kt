@@ -14,6 +14,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.eachWindow
+import kz.mybrain.superkassa.kassa.SaleScene
 import kz.mybrain.superkassa.label
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.Language

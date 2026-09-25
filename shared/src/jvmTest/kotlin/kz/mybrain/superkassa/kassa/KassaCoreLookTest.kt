@@ -15,8 +15,8 @@ import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsContent
 import kz.mybrain.superkassa.presentation.kassa.refund.returnsModel
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.kassa.sale.add
-import kz.mybrain.superkassa.presentation.kassa.sale.sale
+import kz.mybrain.superkassa.presentation.kassa.sale.SaleViewModel
+import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardContent
 import kz.mybrain.superkassa.presentation.shift.dashboard.dashboardModel
@@ -62,11 +62,19 @@ class KassaCoreLookTest {
             cashIn("5000.00")
             rejectedSale()
         }
-        return desk.sale().apply {
+        return saleModel(desk.services, desk.kassaPorts).apply {
+            visit()
             add(KassaExtremes.LONG_NAME, "1234567.89", quantity = "12")
             add(KassaExtremes.KAZAKH_WORD, "450")
             form.taken("99999999")
         }.state.value
+    }
+
+    /** Позиция руками, как её набирает кассир: штуками по ОКЕИ. */
+    private fun SaleViewModel.add(name: String, price: String, quantity: String = "1") {
+        val draft = state.value.draft.copy(name = name, price = price, quantity = quantity, measureUnitCode = PIECE)
+        entry.editDraft(draft)
+        assertTrue(entry.addDraft(), "позиция «$name» не встала в чек")
     }
 
     private fun screens(): List<Screen> {
@@ -129,5 +137,8 @@ class KassaCoreLookTest {
             View(Appearance.Light, Look(textScale = TextScale.Normal), Language.Ru, "light"),
             View(Appearance.Dark, Look(textScale = TextScale.Larger), Language.Kk, "dark-larger-kk")
         )
+
+        /** Штука по ОКЕИ. */
+        const val PIECE = "796"
     }
 }

@@ -14,9 +14,9 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleForm
 import kz.mybrain.superkassa.domain.kassa.model.tenge
 import kz.mybrain.superkassa.kassa.CoreScene
+import kz.mybrain.superkassa.kassa.SaleScene
+import kz.mybrain.superkassa.kassa.SaleScene.receipts
 import kz.mybrain.superkassa.kassa.app
-import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene
-import kz.mybrain.superkassa.presentation.kassa.sale.SaleScene.receipts
 import kz.mybrain.superkassa.presentation.kassa.sale.saleModel
 import java.io.File
 import java.nio.file.Files
