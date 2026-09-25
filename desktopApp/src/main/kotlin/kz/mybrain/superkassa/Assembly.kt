@@ -106,11 +106,12 @@ private fun areaPorts(kassa: Superkassa, preferences: Preferences, language: () 
  * Вход разработчика заголовками — только явной настройкой машины, см. [DeveloperEntry].
  */
 private fun cabinet(preferences: Preferences, language: () -> String): RemoteCabinet = RemoteCabinet.open(
-    preferences.cabinetUrl,
-    NcaSigner(locale = language),
-    DialogFiles(),
-    AppJournal(LogSource.Cabinet),
-    DeveloperEntry.fromEnvironment()
+    address = preferences.cabinetUrl,
+    server = preferences.cabinetServer,
+    signer = NcaSigner(locale = language),
+    files = DialogFiles(),
+    journal = AppJournal(LogSource.Cabinet),
+    developer = DeveloperEntry.fromEnvironment()
 )
 
 /**

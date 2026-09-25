@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.integrations.bfdcabinet
 
+import io.ktor.http.Url
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -9,6 +10,9 @@ import kotlin.time.Duration.Companion.seconds
  *
  * @property baseUrl адрес кабинета: он может стоять и на стенде, и у себя,
  *   поэтому задаётся настройкой рабочего места.
+ * @property serverIp IP сервера кабинета — когда имя из [baseUrl] в сети
+ *   не находится: VPN без своего DNS. Запрос уходит на этот IP под именем
+ *   кабинета, как со строкой в `/etc/hosts`; `null` — имя находит сеть.
  * @property development личность разработчика: кабинет в режиме разработки
  *   берёт пользователя и компанию из заголовков `X-Debug-Iin`/`X-Debug-Bin`,
  *   а не из входа по ЭЦП. `null` — обычный вход; задаётся только явно.
@@ -22,6 +26,7 @@ import kotlin.time.Duration.Companion.seconds
  */
 data class CabinetSettings(
     val baseUrl: String = DEFAULT_URL,
+    val serverIp: String? = null,
     val development: DevelopmentIdentity? = null,
     val connectWait: Duration = 10.seconds,
     val answerWait: Duration = 30.seconds,
@@ -29,6 +34,15 @@ data class CabinetSettings(
     val tokenAttempts: Int = 10,
     val tokenPause: Duration = 1.seconds
 ) {
+    /**
+     * Имя сервера кабинета и [serverIp] — когда имя в сети не находится;
+     * `null` — IP не задан или адрес кабинета уже IP.
+     */
+    val pin: HostPin?
+        get() = serverIp?.takeIf { it.isNotBlank() }?.let { ip ->
+            Url(baseUrl).host.takeIf { it.isNotBlank() && it != ip }?.let { HostPin(it, ip) }
+        }
+
     /** Адрес кабинета по умолчанию. */
     companion object {
         /** Кабинет ECC. */

@@ -23,6 +23,14 @@ class CabinetPreferences(private val directory: Path) {
         get() = readSetting(cabinetFile) ?: CabinetSettings.DEFAULT_URL
         set(value) = writeSetting(cabinetFile, value.trim().takeIf { it.isNotBlank() })
 
+    /**
+     * IP сервера кабинета — когда его имя в сети не находится; пусто —
+     * имя находит сеть. Кабинет открывается по IP под своим именем.
+     */
+    var server: String
+        get() = readSetting(serverFile) ?: ""
+        set(value) = writeSetting(serverFile, value.trim().takeIf { it.isNotBlank() })
+
     /** ИИН и БИН для входа в кабинет без ЭЦП; помнятся, чтобы не набирать перед каждым показом. */
     var developerIin: String
         get() = readSetting(developerIinFile) ?: ""
@@ -33,6 +41,8 @@ class CabinetPreferences(private val directory: Path) {
         set(value) = writeSetting(developerBinFile, value.trim().takeIf { it.isNotBlank() })
 
     private val cabinetFile = Path(directory, "cabinet")
+
+    private val serverFile = Path(directory, "cabinet-server")
 
     private val developerIinFile = Path(directory, "cabinet-developer-iin")
 

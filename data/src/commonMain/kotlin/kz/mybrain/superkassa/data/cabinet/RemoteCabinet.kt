@@ -54,6 +54,8 @@ class RemoteCabinet(
         /**
          * Кабинет по адресу [address]; подписью владельца [signer] в него входят.
          *
+         * @param server IP сервера кабинета — когда его имя в сети не находится;
+         *   пусто — имя находит сеть.
          * @param journal куда писать ход обмена: метод, путь, код ответа — без тел.
          * @param developer личность разработчика: задана — кабинет берёт её из
          *   заголовков, а не из подписи. Только явной настройкой машины.
@@ -61,6 +63,7 @@ class RemoteCabinet(
          */
         fun open(
             address: String,
+            server: String = "",
             signer: Signer,
             files: SavedFiles,
             journal: Journal,
@@ -68,7 +71,11 @@ class RemoteCabinet(
             signing: Signing = Signing.NcaLayerOnly
         ): RemoteCabinet {
             if (developer != null) journal.warn("cabinet: developer entry by headers is on, no EDS sign-in")
-            val settings = CabinetSettings(baseUrl = address, development = developer)
+            val settings = CabinetSettings(
+                baseUrl = address,
+                serverIp = server.ifBlank { null },
+                development = developer
+            )
             return RemoteCabinet(BfdCabinet(settings, signing(signer), exchange(journal)), signer, files, signing)
         }
     }

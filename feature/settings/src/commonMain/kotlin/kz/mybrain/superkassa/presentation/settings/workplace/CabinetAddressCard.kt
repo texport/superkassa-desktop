@@ -44,5 +44,27 @@ internal fun CabinetAddressCard(workplace: WorkplaceSettingsUiState, actions: Wo
             )
             FieldButton(text = texts.save, enabled = workplace.cabinetChanged, onClick = actions::saveCabinet)
         }
+        ServerRow(workplace, actions, texts.save)
+    }
+}
+
+/**
+ * IP сервера кабинета — когда имя кабинета в сети не находится: VPN без
+ * своего DNS, планшет без `/etc/hosts`. Кабинет открывается по этому IP
+ * под своим именем; голый IP в адресе открывал на общем сервере не кабинет.
+ */
+@Composable
+private fun ServerRow(workplace: WorkplaceSettingsUiState, actions: WorkplaceSettingsActions, save: String) {
+    val settings = LocalStrings.current.settingsScreen
+    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap), verticalAlignment = Alignment.Top) {
+        OutlinedTextField(
+            value = workplace.serverField,
+            onValueChange = actions::typeServer,
+            label = { Text(settings.cabinetServer) },
+            supportingText = { Text(settings.cabinetServerHint) },
+            singleLine = true,
+            modifier = Modifier.weight(1f)
+        )
+        FieldButton(text = save, enabled = workplace.serverChanged, onClick = actions::saveServer)
     }
 }

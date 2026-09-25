@@ -88,6 +88,10 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     printerNone = "This machine has no printer at all: there is nowhere to print a receipt. " +
         "Connect a printer and open the settings again",
     printKind = "File kind when saving",
+    cabinetServer = "Cabinet server IP",
+    cabinetServerHint = "If the cabinet name is not found on the network (a VPN without its own DNS), enter the " +
+        "server IP: the cabinet opens through it under its own name. Empty means the network " +
+        "finds the name",
     printKindHint = "On screen the receipt is always shown as a picture — the file kind does not affect the " +
         "preview. It sets the file the receipt is saved as: PDF for sending and printing, PNG as " +
         "a picture, HTML as a browser page. On Android printing goes through the system dialog as" +

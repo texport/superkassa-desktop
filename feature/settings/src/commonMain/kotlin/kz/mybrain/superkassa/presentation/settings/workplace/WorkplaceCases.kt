@@ -7,6 +7,7 @@ import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 import kz.mybrain.superkassa.domain.workplace.usecase.ChooseTradeDomain
 import kz.mybrain.superkassa.domain.workplace.usecase.ReadWorkplace
 import kz.mybrain.superkassa.domain.workplace.usecase.SaveCabinetAddress
+import kz.mybrain.superkassa.domain.workplace.usecase.SaveCabinetServer
 import kz.mybrain.superkassa.domain.workplace.usecase.SaveMapServices
 
 /** Сценарии настроек машины. */
@@ -14,6 +15,7 @@ internal class WorkplaceCases(signIn: SignIn, choices: WorkplaceChoices, memory:
     val observe = ObserveSignIn(signIn)
     val read = ReadWorkplace(choices, memory)
     val saveCabinet = SaveCabinetAddress(choices)
+    val saveServer = SaveCabinetServer(choices)
     val saveMaps = SaveMapServices(choices)
     val chooseDomain = ChooseTradeDomain(choices)
 }

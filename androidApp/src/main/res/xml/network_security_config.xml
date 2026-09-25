@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Какие адреса приложение открывает без шифрования.
+
+    Кабинет БФД внутри контура ECC отвечает по http: адрес по умолчанию —
+    http://bfd-cabinet.ecc.kz, доступен через VPN. Android с 9-й версии
+    молча запрещает http, и кабинет не открывался ни по имени, ни по IP.
+    Разрешено только своё: домен ecc.kz с поддоменами и адрес сервера
+    контура. Всё остальное — как велит Android, только по https.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">ecc.kz</domain>
+        <domain includeSubdomains="false">192.168.10.123</domain>
+    </domain-config>
+</network-security-config>

@@ -19,6 +19,12 @@ class PreferenceChoices(private val preferences: Preferences) : WorkplaceChoices
             preferences.cabinetUrl = value
         }
 
+    override var cabinetServer: String
+        get() = preferences.cabinetServer
+        set(value) {
+            preferences.cabinetServer = value
+        }
+
     override var maps: MapServices
         get() = preferences.maps.run { MapServices(tiles, search, reverse, location) }
         set(value) {

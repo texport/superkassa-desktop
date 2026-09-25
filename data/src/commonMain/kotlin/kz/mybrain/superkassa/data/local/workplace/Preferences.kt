@@ -72,6 +72,12 @@ class Preferences(directory: Path) : WorkplaceMemory, SetupMemory, LookMemory {
             cabinet.url = value
         }
 
+    var cabinetServer: String
+        get() = cabinet.server
+        set(value) {
+            cabinet.server = value
+        }
+
     override var look: LookChoice
         get() = LookChoice(
             language = view.language,

@@ -29,11 +29,12 @@ class EmbeddedKassa(
          *
          * Умолчаний у ядра нет намеренно: касса в приложении не должна
          * молча работать по другой версии, чем узел той же установки.
+         * Провайдер — БФД: адреса его контуров знает ядро.
          */
         fun config(): SuperkassaConfig =
             SuperkassaConfig(ofdProviderId = OFD_PROVIDER, ofdProtocolVersion = PROTOCOL_VERSION)
 
-        private const val OFD_PROVIDER = "KAZAKHTELECOM"
+        private const val OFD_PROVIDER = "BFD"
         private const val PROTOCOL_VERSION = "204"
     }
 }

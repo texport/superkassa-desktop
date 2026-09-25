@@ -13,6 +13,8 @@ import kz.mybrain.superkassa.domain.workplace.model.tidy
  * молча. На диск попадает только сохранённое кнопкой.
  *
  * @property cabinetDraft набранный адрес кабинета; `null` — поле не трогали.
+ * @property cabinetServer IP сервера кабинета; пусто — имя находит сеть.
+ * @property serverDraft набранный IP сервера; `null` — поле не трогали.
  * @property mapDrafts набранные адреса служб карты; `null` — не трогали.
  * @property publicMaps общедоступные службы: видны подсказкой в пустых полях.
  * @property domainCode вид отрасли выбранной кассы; `null` — торговля.
@@ -21,6 +23,8 @@ data class WorkplaceSettingsUiState(
     val kkmId: String? = null,
     val cabinetUrl: String = "",
     val cabinetDraft: String? = null,
+    val cabinetServer: String = "",
+    val serverDraft: String? = null,
     val maps: MapServices = MapServices(),
     val mapDrafts: MapServices? = null,
     val publicMaps: MapServices = MapServices(),
@@ -31,6 +35,12 @@ data class WorkplaceSettingsUiState(
 
     /** Годен ли набранный адрес и отличается ли он от сохранённого. */
     val cabinetChanged: Boolean get() = ServiceAddress.changed(cabinetField, cabinetUrl)
+
+    /** IP сервера в поле: набранный, иначе сохранённый. */
+    val serverField: String get() = serverDraft ?: cabinetServer
+
+    /** Набранный IP сервера отличается от сохранённого. */
+    val serverChanged: Boolean get() = serverField.trim() != cabinetServer
 
     /** Адрес без схемы назван до сохранения, а не отказом входа в кабинет. */
     val cabinetMalformed: Boolean get() = cabinetField.isNotBlank() && !ServiceAddress.valid(cabinetField)

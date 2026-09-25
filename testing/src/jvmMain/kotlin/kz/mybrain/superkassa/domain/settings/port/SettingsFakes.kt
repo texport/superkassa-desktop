@@ -94,6 +94,7 @@ open class MemoryCoreSettings(
  */
 class MemoryChoices(
     override var cabinetUrl: String = "https://bfd-cabinet.ecc.kz",
+    override var cabinetServer: String = "",
     override var maps: MapServices = MapServices(),
     override val publicMaps: MapServices = MapServices(tiles = "https://tile.openstreetmap.org"),
     val memory: MemoryWorkplace = MemoryWorkplace()

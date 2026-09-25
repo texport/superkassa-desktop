@@ -96,6 +96,10 @@ data class SettingsScreenTexts(
     /** На машине нет ни одного принтера: печатать чек некуда. */
     val printerNone: String,
     val printKind: String,
+    /** IP сервера кабинета — когда его имя в сети не находится. */
+    val cabinetServer: String,
+    /** Под полем IP сервера: когда его задавать. */
+    val cabinetServerHint: String,
     /** Что меняет вид файла: сохранённый файл, а не просмотр на экране и не печать. */
     val printKindHint: String,
     val printCopies: String,

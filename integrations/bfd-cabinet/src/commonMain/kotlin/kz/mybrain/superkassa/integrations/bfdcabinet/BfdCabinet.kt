@@ -34,7 +34,7 @@ class BfdCabinet(
     settings: CabinetSettings = CabinetSettings(),
     signer: CabinetSigner,
     journal: CabinetJournal = CabinetJournal.Silent,
-    engine: HttpClientEngine = platformEngine()
+    engine: HttpClientEngine = platformEngine(settings.pin)
 ) : AutoCloseable {
     private val http = CabinetHttp(settings, journal, engine)
     private val link = CabinetLink(http, CabinetAccess())

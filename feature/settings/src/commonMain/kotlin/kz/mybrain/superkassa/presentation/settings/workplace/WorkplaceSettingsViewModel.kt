@@ -16,6 +16,10 @@ interface WorkplaceSettingsActions {
 
     fun saveCabinet() = Unit
 
+    fun typeServer(text: String) = Unit
+
+    fun saveServer() = Unit
+
     fun typeMaps(maps: MapServices) = Unit
 
     fun saveMaps() = Unit
@@ -29,7 +33,12 @@ interface WorkplaceSettingsActions {
 internal class WorkplaceSettingsViewModel(private val cases: WorkplaceCases) : ViewModel(), WorkplaceSettingsActions {
     private val screen = MutableStateFlow(
         cases.read(null).let { saved ->
-            WorkplaceSettingsUiState(null, saved.cabinetUrl, maps = saved.maps, publicMaps = saved.publicMaps)
+            WorkplaceSettingsUiState(
+                cabinetUrl = saved.cabinetUrl,
+                cabinetServer = saved.cabinetServer,
+                maps = saved.maps,
+                publicMaps = saved.publicMaps
+            )
         }
     )
 
@@ -47,6 +56,14 @@ internal class WorkplaceSettingsViewModel(private val cases: WorkplaceCases) : V
     override fun saveCabinet() {
         val saved = cases.saveCabinet(screen.value.cabinetField) ?: return
         screen.update { it.copy(cabinetUrl = saved, cabinetDraft = null) }
+    }
+
+    override fun typeServer(text: String) = screen.update { it.copy(serverDraft = text) }
+
+    /** Новый IP берётся при следующем входе в кабинет, как и адрес. */
+    override fun saveServer() {
+        val saved = cases.saveServer(screen.value.serverField) ?: return
+        screen.update { it.copy(cabinetServer = saved, serverDraft = null) }
     }
 
     override fun typeMaps(maps: MapServices) = screen.update { it.copy(mapDrafts = maps) }

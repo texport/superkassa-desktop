@@ -44,6 +44,7 @@ internal fun androidCabinet(
     )
     return RemoteCabinet.open(
         address = preferences.cabinetUrl,
+        server = preferences.cabinetServer,
         signer = signer,
         files = DocumentFiles(screen),
         journal = AppJournal(LogSource.Cabinet),

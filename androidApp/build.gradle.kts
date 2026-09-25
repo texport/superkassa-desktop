@@ -58,7 +58,4 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.lifecycle.process)
-    // Касса отладочной сборки — на тестовом БФД в процессе (`src/debug`):
-    // оснастка ядра в выпуск не попадает.
-    debugImplementation(libs.superkassa.core.testing)
 }
