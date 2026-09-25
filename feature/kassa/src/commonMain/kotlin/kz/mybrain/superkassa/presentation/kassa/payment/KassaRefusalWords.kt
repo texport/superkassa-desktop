@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.kassa.payment
 
 import kz.mybrain.superkassa.domain.kassa.model.Answer
+import kz.mybrain.superkassa.domain.kassa.model.sale.UNKNOWN_VAT
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -15,16 +16,18 @@ import kz.mybrain.superkassa.strings.api.textsOf
  *    словами разошёлся бы с ним: «В кассе недостаточно наличных»,
  *    «Смена не открыта», «По этому чеку уже возвращено всё» — остаются.
  * 2. Своя формулировка по коду отказа — только там, где слова ядра не
- *    годятся кассиру (перечень — у текстов отказа, `KassaRefusalTexts.own`);
- *    отказ, который приложение ставит само до кассы (неизвестная ставка НДС),
- *    тоже там: своих слов у него нет.
+ *    годятся кассиру (перечень — у текстов отказа, `KassaRefusalTexts.own`).
+ *    Отказ, который приложение ставит само до кассы, — неизвестная ставка
+ *    НДС, [UNKNOWN_VAT], — своих слов не имеет вовсе и называется здесь:
+ *    код знает домен, слова — тексты, а сводит их экран.
  * 3. Слов ядра на языке интерфейса нет — пусто или тот же текст, что
  *    по-английски, — и своей формулировки нет: общая фраза с кодом отказа.
  *    Код кассир назовёт поддержке.
  */
 internal fun kassaRefusalWords(refused: Answer.Refused, language: Language): String {
     val texts = textsOf(language).kassa.refusal
-    texts.own(refused.code)?.let { return it }
+    val own = if (refused.code == UNKNOWN_VAT) texts.vatUnknown else texts.own(refused.code)
+    own?.let { return it }
     val core = when (language) {
         Language.Ru -> refused.ru
         Language.Kk -> refused.kk

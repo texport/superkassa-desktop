@@ -37,11 +37,17 @@ class KassaRefusalWordsTest {
         }
     }
 
+    /**
+     * Код неизвестной ставки ставит домен, а слова к нему — только здесь:
+     * у текстов отказа этого кода нет, и разойтись с доменом ему не с чем.
+     */
     @Test
-    fun `отказ до кассы без слов — свои по коду`() {
+    fun `отказ до кассы без слов — свои по коду домена`() {
         val unknown = Answer.Refused(UNKNOWN_VAT, "", "", "")
 
-        assertEquals(textsOf(Language.Kk).kassa.refusal.vatUnknown, kassaRefusalWords(unknown, Language.Kk))
+        Language.entries.forEach { language ->
+            assertEquals(textsOf(language).kassa.refusal.vatUnknown, kassaRefusalWords(unknown, language))
+        }
     }
 
     @Test
