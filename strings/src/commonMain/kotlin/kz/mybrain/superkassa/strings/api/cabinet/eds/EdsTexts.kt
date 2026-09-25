@@ -46,6 +46,9 @@ data class EdsTexts(
     /** Открыть eGov mobile на этом устройстве — главное действие окна. */
     val egovOpen: String,
 
+    /** eGov mobile не открылся на этом устройстве: что сделать вместо. */
+    val egovNotOpened: String,
+
     /** Подпись картинки QR для чтения с экрана. */
     val egovQr: String,
 

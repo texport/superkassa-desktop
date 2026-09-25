@@ -48,6 +48,9 @@ designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/Clos
 designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/SystemBack.jvm.kt — у настольного окна системного «назад» нет
 designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/SystemBack.android.kt — системный «назад» Android
 designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/SystemBack.ios.kt — системного «назад» у iOS нет
+designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/link/AppLink.jvm.kt — ссылку открывает система настольной машины
+designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/link/AppLink.android.kt — ссылка сперва в приложении по имени пакета (Intent Android)
+designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/link/AppLink.ios.kt — ссылку открывает система iOS
 designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/list/Scrollbars.jvm.kt — полоса прокрутки настольного окна
 designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/list/Scrollbars.android.kt — на Android полосу показывает сама прокрутка пальцем
 designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/list/Scrollbars.ios.kt — на iOS полосу показывает сама прокрутка пальцем

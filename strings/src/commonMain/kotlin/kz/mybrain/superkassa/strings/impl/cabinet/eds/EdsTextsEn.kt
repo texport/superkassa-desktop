@@ -18,6 +18,8 @@ internal val edsTextsEn = EdsTexts(
     egovTitle = "Sign in eGov mobile",
     egovScan = "Scan the QR code in eGov mobile on your phone or open the app on this device",
     egovOpen = "Open eGov mobile",
+    egovNotOpened = "Could not open eGov mobile on this device. Scan " +
+        "the QR code with a phone that has eGov mobile",
     egovQr = "QR code for signing in eGov mobile",
     egovDocument = "Signature for the BFD cabinet — Superkassa",
     keyTitle = "Sign with a key file",

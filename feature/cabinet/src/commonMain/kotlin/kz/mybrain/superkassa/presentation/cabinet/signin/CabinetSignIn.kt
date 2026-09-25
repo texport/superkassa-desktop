@@ -28,6 +28,7 @@ import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
+import kz.mybrain.superkassa.domain.cabinet.model.signature.SignMethod
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
@@ -110,9 +111,16 @@ private fun DoorTitle(texts: CabinetTexts) {
 /**
  * Главное действие двери: вход — или ожидание подписи на его месте.
  *
- * Ожидание встаёт туда же, где стояла кнопка: владелец прерывает его тем
- * же местом, где начал. Над кнопкой — выбор способа подписи, если выбирать
- * есть из чего. Тем же действием вход просит и мастер подключения.
+ * Пока идёт вход, кнопка стоит на месте погашенной, а ход показывает
+ * полоска ожидания в шапке окна: проверка связи с кабинетом не дёргает
+ * карточку, и отказ, пришедший сразу, не мелькает ожиданием на каждом
+ * нажатии. Ожидание подписи с отсчётом встаёт на место кнопки только
+ * у NCALayer — после паузы [Durations.beforeWaiting], когда подпись уже
+ * ждёт владельца в окне NCALayer; владелец прерывает его тем же местом,
+ * где начал. eGov mobile и файл ключа ждут владельца своим окном подписи
+ * поверх кассы, и отсчёт у eGov mobile стоит там.
+ * Над кнопкой — выбор способа подписи, если выбирать есть из чего. Тем же
+ * действием вход просит и мастер подключения.
  *
  * @param signing подпись окна; `null` — выбора способа нет (снимки вида).
  */
@@ -126,15 +134,12 @@ internal fun SignInAction(
     signing: CabinetSigning? = null
 ) {
     val since = state.signingSince
+    val entering = since != null || state.busy
+    val inline = LocalSignMethod.current == SignMethod.NcaLayer
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
-        signing?.let { SignMethodChoice(it, texts.eds, enabled = since == null && !state.busy) }
-        if (since == null) {
-            BusyButton(
-                text = if (state.busy) texts.signin.signing else texts.signin.signIn,
-                busy = state.busy,
-                modifier = Modifier.fillMaxWidth(),
-                onClick = actions::signIn
-            )
+        signing?.let { SignMethodChoice(it, texts.eds, enabled = !entering) }
+        if (since == null || !inline || !waitShown(since)) {
+            EnterButton(texts, enabled = !entering, onClick = actions::signIn)
         } else {
             SignWait(
                 left = leftOf(since),
@@ -145,6 +150,22 @@ internal fun SignInAction(
             )
         }
     }
+}
+
+/** Кнопка входа во всю ширину; пока вход идёт, погашена — ход показывает шапка окна. */
+@Composable
+private fun EnterButton(texts: CabinetTexts, enabled: Boolean, onClick: () -> Unit) =
+    BusyButton(texts.signin.signIn, busy = false, enabled = enabled, Modifier.fillMaxWidth(), onClick = onClick)
+
+/** Пора ли показать ожидание подписи: вход идёт дольше паузы [Durations.beforeWaiting]. */
+@Composable
+private fun waitShown(since: TimeMark): Boolean {
+    var shown by remember(since) { mutableStateOf(since.elapsedNow() >= Durations.beforeWaiting) }
+    LaunchedEffect(since) {
+        delay(Durations.beforeWaiting - since.elapsedNow())
+        shown = true
+    }
+    return shown
 }
 
 /**

@@ -11,8 +11,11 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kz.mybrain.superkassa.designsystem.theme.motion.Durations
+import kz.mybrain.superkassa.domain.cabinet.model.signature.SignMethod
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
+import kz.mybrain.superkassa.presentation.cabinet.component.SignCancel
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
+import kz.mybrain.superkassa.presentation.cabinet.signing.LocalSignMethod
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -38,6 +41,9 @@ import kotlin.time.TimeSource
  */
 @Composable
 internal fun ApplicationSignWait(language: Language, texts: CabinetTexts, onCancel: () -> Unit) {
+    // eGov mobile и файл ключа ждут владельца своим окном подписи поверх
+    // кассы: здесь остаётся только отмена, без второго отсчёта под окном.
+    if (LocalSignMethod.current != SignMethod.NcaLayer) return SignCancel(textsOf(language).cabinet.eds, onCancel)
     SignWait(
         left = signWaitLeft(LocalSignTick.current),
         window = Signer.SIGN_WINDOW,

@@ -18,6 +18,8 @@ internal val edsTextsKk = EdsTexts(
     egovTitle = "eGov mobile-да қол қою",
     egovScan = "Телефондағы eGov mobile-да QR-ды сканерлеңіз немесе қосымшаны осы құрылғыда ашыңыз",
     egovOpen = "eGov mobile ашу",
+    egovNotOpened = "Бұл құрылғыда eGov mobile ашылмады. " +
+        "eGov mobile орнатылған телефонмен QR-ды сканерлеңіз",
     egovQr = "eGov mobile-да қол қоюға арналған QR",
     egovDocument = "БФД кабинетіне арналған қолтаңба — Суперкасса",
     keyTitle = "Кілт файлымен қол қою",

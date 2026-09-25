@@ -12,9 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import io.ktor.http.HttpHeaders
 import io.ktor.http.headersOf
+import kotlinx.coroutines.awaitCancellation
+import kz.mybrain.superkassa.CabinetRig
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.data.eds.NcaFake
 import kz.mybrain.superkassa.data.eds.NcaReply
+import kz.mybrain.superkassa.designsystem.theme.motion.Durations
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
@@ -26,7 +29,9 @@ import kz.mybrain.superkassa.presentation.cabinet.signingRig
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -84,6 +89,9 @@ class EdsWaitLookTest {
             RenderProbe { Door(cabinet) }.use { probe ->
                 probe.click(SIGN_IN)
                 probe.frame()
+                // Ожидание с отменой встаёт после паузы: быстрый отказ не должен его мелькать.
+                Thread.sleep((Durations.beforeWaiting + TICK_MARGIN).inWholeMilliseconds)
+                probe.frame()
                 probe.click(CANCEL)
                 val after = probe.frame()
                 File("/tmp/eds-wait-cancelled.png").writeBytes(after)
@@ -94,6 +102,37 @@ class EdsWaitLookTest {
                 assertFalse(cabinet.state.value.busy, "после отмены приложение осталось занятым")
                 assertNull(cabinet.talk.notices.last, "по отмене владельцу ничего не показывается")
             }
+        }
+    }
+
+    /**
+     * Частые нажатия «Войти» запускают один вход.
+     *
+     * Владелец на планшете жал «Войти» раз за разом, и раздел кабинета
+     * дёргался: пока вход идёт, кнопка занята и нового входа не начинает,
+     * а кабинет получает одну просьбу о задаче входа.
+     */
+    @Test
+    fun `десять нажатий подряд — один вход`(): Unit = inlineMain {
+        val asked = AtomicInteger()
+        val waiting = object : Signer {
+            override suspend fun sign(payload: String): String {
+                asked.incrementAndGet()
+                awaitCancellation()
+            }
+        }
+        val cabinet = CabinetRig(signer = waiting).model
+        RenderProbe { Door(cabinet) }.use { probe ->
+            probe.frame()
+            repeat(TAPS) {
+                probe.click(SIGN_IN)
+                probe.frame()
+            }
+            val until = System.nanoTime() + WAIT.inWholeNanoseconds
+            while (asked.get() == 0 && System.nanoTime() < until) Thread.sleep(STEP.inWholeMilliseconds)
+            Thread.sleep(TICK_MARGIN.inWholeMilliseconds)
+            assertEquals(1, asked.get(), "вход запущен не один раз")
+            cabinet.cancelSignIn()
         }
     }
 
@@ -127,6 +166,8 @@ class EdsWaitLookTest {
     private companion object {
         val jsonHeader = headersOf(HttpHeaders.ContentType, "application/json")
         const val CHALLENGE = """{"challengeId":"c-1","payload":"cGF5bG9hZA=="}"""
+        const val TAPS = 10
+        val TICK_MARGIN = 300.milliseconds
 
         /** Где на карточке входа стоит кнопка входа и где — отмена ожидания. */
         val SIGN_IN = Offset(590f, 452f)

@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.presentation.analytics.map
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -94,12 +95,20 @@ internal fun MapAndDetails(
  * за нижний край, и открыть её было нечем. Остальное — списку. Карточка
  * под списком, а не над ним: выбранная строка не уезжает из-под указателя,
  * когда карточка раскрывается.
+ *
+ * Полоса прокрутки карточки — только там, где она есть: на Android
+ * и iOS её показывает сама прокрутка пальцем, и третьей части у раскладки
+ * нет. Прежде раскладка всегда брала третью часть и на планшете падала
+ * при открытии аналитики.
+ *
+ * @param scrollbar полоса прокрутки карточки; на Android и iOS — пустая.
  */
 @Composable
 internal fun ListOverCard(
     modifier: Modifier = Modifier,
     list: @Composable () -> Unit,
-    card: @Composable () -> Unit
+    card: @Composable () -> Unit,
+    scrollbar: @Composable (ScrollState) -> Unit = { ColumnScrollbar(it, Modifier) }
 ) {
     val scroll = rememberScrollState()
     Layout(
@@ -107,7 +116,7 @@ internal fun ListOverCard(
         content = {
             Box { list() }
             Box(modifier = Modifier.verticalScroll(scroll).padding(end = Spacing.scrollbarGutter)) { card() }
-            ColumnScrollbar(scroll, Modifier)
+            scrollbar(scroll)
         }
     ) { measurables, constraints ->
         val width = constraints.maxWidth
@@ -116,11 +125,12 @@ internal fun ListOverCard(
         val lower = measurables[1].measure(Constraints(minWidth = width, maxWidth = width, maxHeight = cap))
         val gap = if (lower.height > 0) Spacing.fieldGap.roundToPx() else 0
         val upper = measurables[0].measure(Constraints.fixed(width, (height - lower.height - gap).coerceAtLeast(0)))
-        val bar = measurables[2].measure(Constraints.fixedHeight(lower.height))
+        // Полосы прокрутки на Android и iOS нет вовсе — узла под неё тоже нет.
+        val bar = measurables.getOrNull(2)?.measure(Constraints.fixedHeight(lower.height))
         layout(width, height) {
             upper.place(0, 0)
             lower.place(0, height - lower.height)
-            bar.place(width - bar.width, height - lower.height)
+            bar?.place(width - bar.width, height - lower.height)
         }
     }
 }

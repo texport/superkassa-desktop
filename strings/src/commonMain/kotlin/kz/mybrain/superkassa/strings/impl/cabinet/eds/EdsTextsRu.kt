@@ -18,6 +18,8 @@ internal val edsTextsRu = EdsTexts(
     egovTitle = "Подпись в eGov mobile",
     egovScan = "Отсканируйте QR в eGov mobile на телефоне или откройте приложение на этом устройстве",
     egovOpen = "Открыть eGov mobile",
+    egovNotOpened = "Не удалось открыть eGov mobile на этом " +
+        "устройстве. Отсканируйте QR телефоном, где установлен eGov mobile",
     egovQr = "QR для подписи в eGov mobile",
     egovDocument = "Подпись для кабинета БФД — Суперкасса",
     keyTitle = "Подпись файлом ключа",

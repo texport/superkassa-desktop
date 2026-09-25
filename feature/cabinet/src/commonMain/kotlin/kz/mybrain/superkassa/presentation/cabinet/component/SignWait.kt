@@ -71,8 +71,14 @@ internal fun SignWait(
                 modifier = Modifier.fillMaxWidth()
             )
         }
-        FilledTonalButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
-            Text(eds.cancelWait)
-        }
+        SignCancel(eds, onCancel)
+    }
+}
+
+/** Прервать ожидание подписи — во всю ширину, на месте главного действия. */
+@Composable
+internal fun SignCancel(eds: EdsTexts, onCancel: () -> Unit) {
+    FilledTonalButton(onClick = onCancel, modifier = Modifier.fillMaxWidth()) {
+        Text(eds.cancelWait)
     }
 }
