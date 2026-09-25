@@ -46,6 +46,10 @@ compose-foundation = { group = "org.jetbrains.compose.foundation", name = "found
 compose-ui = { group = "org.jetbrains.compose.ui", name = "ui", version.ref = "compose" }
 compose-material3 = { group = "org.jetbrains.compose.material3", name = "material3", version.ref = "composeMaterial3" }
 compose-material-icons-extended = { group = "org.jetbrains.compose.material", name = "material-icons-extended", version.ref = "composeMaterialIcons" }
+# Превью в общем коде: аннотация `@Preview` для Android Studio на всех целях
+# и отрисовщик превью — только в Android-сборке модуля, не в приложении.
+compose-ui-tooling-preview = { group = "org.jetbrains.compose.ui", name = "ui-tooling-preview", version.ref = "compose" }
+compose-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", version.ref = "compose" }
 compose-desktop = { group = "org.jetbrains.compose.desktop", name = "desktop", version.ref = "compose" }
 lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }

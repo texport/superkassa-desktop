@@ -44,6 +44,11 @@ style:
     # Числа проверок — их данные, а не правила кода. Оснастка проверок
     # (`testing`) — тот же код проверок, хоть и собирается основным набором.
     excludes: ['**/test/**', '**/*Test/**', '**/testing/src/**']
+  # Функция превью закрыта: её зовёт только Android Studio и проверка
+  # превью — по общей аннотации дизайн-системы, а не по имени.
+  UnusedPrivateMember:
+    active: true
+    ignoreAnnotated: ['ScreenPreviews', 'PanePreviews', 'ElementPreviews']
   WildcardImport:
     active: true
     excludeImports: ['kotlin.test.*']

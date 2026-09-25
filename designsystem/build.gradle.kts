@@ -30,6 +30,9 @@ kotlin {
             api(libs.compose.ui)
             api(libs.compose.material3)
             api(libs.compose.material.icons.extended)
+            // Общие аннотации превью стоят на функциях превью всех модулей
+            // экранов: Android Studio видит `@Preview` сквозь них.
+            api(libs.compose.ui.tooling.preview)
             // Язык и формы текстов — в `ProvideStrings` и `LocalStrings`.
             api(project(":strings"))
             implementation(libs.kotlinx.datetime)
@@ -48,6 +51,14 @@ kotlin {
             implementation(project(":testing"))
         }
     }
+}
+
+/**
+ * Отрисовщик превью Android Studio — только в Android-сборке модуля:
+ * путь исполнения библиотеки наружу не отдаётся, и в приложение он не попадает.
+ */
+dependencies {
+    "androidRuntimeClasspath"(libs.compose.ui.tooling)
 }
 
 tasks.named<Test>("jvmTest") {

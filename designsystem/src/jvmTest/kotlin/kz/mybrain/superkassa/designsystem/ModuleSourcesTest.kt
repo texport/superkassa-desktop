@@ -1,8 +1,10 @@
 package kz.mybrain.superkassa.designsystem
 
+import kz.mybrain.superkassa.PreviewSweep
 import kz.mybrain.superkassa.SourceTree
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /**
  * Устройство модуля по его исходникам: только вид, открытое описано.
@@ -38,6 +40,20 @@ class ModuleSourcesTest {
     @Test
     fun `открытые объявления описаны`() {
         assertEquals(emptyList(), SourceTree.undocumented(), "открытые объявления без описания")
+    }
+
+    /** Превью общих элементов рисуются так же, как в Android Studio, — все до одного. */
+    @Test
+    fun `каждое превью рисуется`() {
+        val found = PreviewSweep.found()
+        assertTrue(found.isNotEmpty(), "проверка не нашла ни одного превью: аннотации не видны во время исполнения")
+        assertEquals(emptyList(), PreviewSweep.failures(found), "превью, которые не рисуются")
+    }
+
+    /** `@Preview` живёт только в общих аннотациях: мимо них превью не нашла бы проверка. */
+    @Test
+    fun `превью идут через общие аннотации`() {
+        assertEquals(emptyList(), PreviewSweep.strayPreviews(), "@Preview мимо общих аннотаций")
     }
 
     private companion object {

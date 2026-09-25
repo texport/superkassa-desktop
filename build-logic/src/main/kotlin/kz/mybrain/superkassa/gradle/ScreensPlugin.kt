@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
  * сцены держат память до сборки мусора, и полному набору 512 МБ по
  * умолчанию не хватает.
  *
+ * Превью экранов Android Studio рисует Android-сборкой модуля: отрисовщик
+ * превью стоит на её пути исполнения, наружу не отдаётся и в приложение
+ * не попадает.
+ *
  * Зависимости основного кода модуль называет сам: у общего экранов —
  * домен и дизайн-система, у области — общее экранов, у каркаса — все
  * области. Так граф модулей читается по их файлам сборки.
@@ -45,6 +49,7 @@ class ScreensPlugin : Plugin<Project> {
                 }
             }
         }
+        dependencies.add(PREVIEW_RUNTIME, lib("compose-ui-tooling"))
         tasks.named<Test>("jvmTest") {
             useJUnitPlatform()
             maxHeapSize = HEAP
@@ -54,6 +59,9 @@ class ScreensPlugin : Plugin<Project> {
     private companion object {
         const val TESTING = ":testing"
         const val DATA = ":data"
+
+        /** Путь исполнения Android-сборки модуля: на нём Android Studio рисует превью. */
+        const val PREVIEW_RUNTIME = "androidRuntimeClasspath"
 
         /**
          * Библиотеки проверок JVM: утверждения, корутины, стенд ядра и подставной

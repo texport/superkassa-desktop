@@ -16,6 +16,9 @@ import kotlin.test.assertTrue
  * свалены в одну кучу ([SourceTree.crowded]). Проверки читают исходники,
  * поэтому живут на JVM; модуль наследует их своим набором проверок.
  *
+ * Превью модуля проверяются здесь же: каждое обязано рисоваться
+ * ([PreviewSweep]) и стоять под общей аннотацией дизайн-системы.
+ *
  * Поэлементные размеры, с которыми код пришёл к проверке, перечислены
  * в `size-debt.txt` модуля: долг только сокращается.
  *
@@ -76,6 +79,16 @@ abstract class ScreenModuleRules(private val own: List<String>, private val allo
     @Test
     fun sizeDebtListsOnlyWhatIsLeft() {
         assertEquals(emptySet(), SourceTree.debtOrEmpty(SIZE_DEBT) - elementSizes(), "sizes removed, strike them out")
+    }
+
+    @Test
+    fun everyPreviewDraws() {
+        assertEquals(emptyList(), PreviewSweep.failures(), "previews that do not draw")
+    }
+
+    @Test
+    fun previewsUseSharedAnnotations() {
+        assertEquals(emptyList(), PreviewSweep.strayPreviews(), "@Preview outside the shared preview annotations")
     }
 
     private fun elementSizes(): Set<String> =
