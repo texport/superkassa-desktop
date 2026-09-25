@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.strings
 
 import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -40,6 +41,20 @@ class ModuleSourcesTest {
         }
     }
 
+    /**
+     * Пакет не больше пятнадцати файлов — то же правило, что у остальных
+     * модулей. Общей оснастки проверок устройства модуль не берёт: она
+     * зависит от экранов, а тексты — самый нижний модуль.
+     */
+    @Test
+    fun `в пакете не больше пятнадцати файлов`() {
+        val crowded = listOf("api", "impl").flatMap { sources(it) }
+            .groupBy { it.parentFile }
+            .filterValues { it.size > PACKAGE_LIMIT }
+            .map { (dir, files) -> "${dir.name}: ${files.size}" }
+        assertEquals(emptyList(), crowded, "пакеты, которые пора разложить по сценариям")
+    }
+
     private fun sources(part: String): List<File> {
         val root = File("src/commonMain/kotlin/kz/mybrain/superkassa/strings/$part")
         assertTrue(root.isDirectory, "нет исходников ${root.absolutePath}")
@@ -47,6 +62,9 @@ class ModuleSourcesTest {
     }
 
     private companion object {
+        /** Сколько файлов может лежать в одном пакете. */
+        const val PACKAGE_LIMIT = 15
+
         /** Объявление верхнего уровня без `internal` и `private`. */
         val OPEN = Regex("""^(?!internal |private )([a-z]+ )*(class|object|interface|fun|val|var|typealias)\b.*""")
 

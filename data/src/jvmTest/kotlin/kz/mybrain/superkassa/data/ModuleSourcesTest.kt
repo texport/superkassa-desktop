@@ -21,6 +21,11 @@ class ModuleSourcesTest {
     }
 
     @Test
+    fun `в пакете не больше пятнадцати файлов`() {
+        assertEquals(emptyList(), SourceTree.crowded(), "пакеты, которые пора разложить по сценариям")
+    }
+
+    @Test
     fun `открытые объявления описаны`() {
         assertEquals(emptyList(), SourceTree.undocumented(), "открытые объявления без описания")
     }
