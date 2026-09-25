@@ -141,9 +141,14 @@ class KkmSettingsOnCoreTest {
         model.saveName()
         model.decommission()
 
+        // Ищется слово целиком: номер кассы — случайный UUID, и пин «7391»
+        // однажды встаёт в нём подстрокой «c73918f5», не будучи пином.
         val journal = desk.journal.lines.joinToString("\n")
         listOf(SettingsBench.ADMIN_PIN, SettingsBench.CASHIER_NAME, SettingsBench.KKM_NAME, "Касса у окна").forEach {
-            assertFalse(journal.contains(it), "в журнале «$it»:\n$journal")
+            assertFalse(wholeWord(it).containsMatchIn(journal), "в журнале «$it»:\n$journal")
         }
     }
+
+    /** Слово целиком: не часть соседнего слова или числа. */
+    private fun wholeWord(word: String) = Regex("(?<![\\p{L}\\p{N}])${Regex.escape(word)}(?![\\p{L}\\p{N}])")
 }
