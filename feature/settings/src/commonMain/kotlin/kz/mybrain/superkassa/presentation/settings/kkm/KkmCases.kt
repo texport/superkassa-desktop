@@ -2,9 +2,9 @@ package kz.mybrain.superkassa.presentation.settings.kkm
 
 import kz.mybrain.superkassa.domain.kassa.port.Kassa
 import kz.mybrain.superkassa.domain.log.port.Journal
-import kz.mybrain.superkassa.domain.settings.usecase.DecommissionKkm
-import kz.mybrain.superkassa.domain.settings.usecase.RenameKkm
-import kz.mybrain.superkassa.domain.settings.usecase.SwitchProgramming
+import kz.mybrain.superkassa.domain.settings.usecase.kkm.DecommissionKkm
+import kz.mybrain.superkassa.domain.settings.usecase.kkm.RenameKkm
+import kz.mybrain.superkassa.domain.settings.usecase.kkm.SwitchProgramming
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.signin.usecase.ObserveSignIn
 import kz.mybrain.superkassa.domain.signin.usecase.SwitchKkm

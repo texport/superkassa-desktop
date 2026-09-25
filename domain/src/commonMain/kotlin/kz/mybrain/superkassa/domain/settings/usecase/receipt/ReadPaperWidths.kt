@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.domain.settings.usecase
+package kz.mybrain.superkassa.domain.settings.usecase.receipt
 
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaperWidthResponse
 import kz.mybrain.superkassa.domain.kassa.model.Answer

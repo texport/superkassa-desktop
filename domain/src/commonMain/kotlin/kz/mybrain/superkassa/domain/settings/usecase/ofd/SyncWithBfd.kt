@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.domain.settings.usecase
+package kz.mybrain.superkassa.domain.settings.usecase.ofd
 
 import io.github.texport.superkassa.core.presentation.api.model.ofd.OfdCommandResponse
 import kz.mybrain.superkassa.domain.kassa.model.Answer

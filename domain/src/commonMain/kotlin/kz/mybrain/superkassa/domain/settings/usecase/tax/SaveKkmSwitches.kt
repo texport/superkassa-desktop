@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.domain.settings.usecase
+package kz.mybrain.superkassa.domain.settings.usecase.tax
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.domain.kassa.model.Answer

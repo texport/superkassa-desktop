@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kz.mybrain.superkassa.domain.settings.usecase.SyncWithBfd
+import kz.mybrain.superkassa.domain.settings.usecase.ofd.SyncWithBfd
 import kz.mybrain.superkassa.presentation.common.model.Busy
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.follow

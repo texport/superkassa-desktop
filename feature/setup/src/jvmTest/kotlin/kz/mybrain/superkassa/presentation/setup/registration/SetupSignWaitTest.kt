@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.presentation.setup
+package kz.mybrain.superkassa.presentation.setup.registration
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,8 +15,8 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
+import kz.mybrain.superkassa.presentation.setup.SetupScene
 import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
-import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.tap
 import java.io.File
 import kotlin.test.Test

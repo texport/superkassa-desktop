@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.domain.settings.usecase
+package kz.mybrain.superkassa.domain.settings.usecase.tax
 
 import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.domain.kassa.model.ask
