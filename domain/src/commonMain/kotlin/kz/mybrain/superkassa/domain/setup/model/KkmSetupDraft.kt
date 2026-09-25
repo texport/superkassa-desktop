@@ -20,21 +20,29 @@ import kz.mybrain.superkassa.domain.setup.port.SetupMemory
  * @property systemId идентификатор кассы у БФД: по нему её заводят здесь.
  * @property name название, данное кассе в кабинете: назвали сегодня, завели
  *   через неделю — без этого касса рождалась бы безымянной.
+ * @property way путь, выбранный владельцем; `null` — ещё не выбран.
  */
 data class KkmSetupDraft(
     val factoryNumber: String? = null,
     val manufactureYear: String? = null,
     val cabinetRegisterId: String? = null,
     val systemId: String? = null,
-    val name: String? = null
+    val name: String? = null,
+    val way: SetupWay? = null
 ) {
-    /** На каком шаге мастер откроется. */
-    val step: SetupStep
-        get() = when {
-            factoryNumber == null -> SetupStep.Factory
-            cabinetRegisterId == null -> SetupStep.Cabinet
-            else -> SetupStep.Application
-        }
+    /**
+     * Шаг [step] пройден по записанному.
+     *
+     * Учёт в КГД знает только кабинет, идентификатор и токен ручного пути
+     * не запоминаются вовсе — токен на диск не пишется, — поэтому эти шаги
+     * пройденными не считаются никогда, и мастер продолжают с них.
+     */
+    fun passed(step: SetupStep): Boolean = when (step) {
+        SetupStep.Way -> way != null
+        SetupStep.Factory -> factoryNumber != null
+        SetupStep.Cabinet -> cabinetRegisterId != null
+        else -> false
+    }
 
     /** Записывает пройденное целиком; пустое поле стирает запись. */
     fun saveTo(memory: SetupMemory) {
@@ -43,6 +51,7 @@ data class KkmSetupDraft(
         memory.setupValue(REGISTER, cabinetRegisterId)
         memory.setupValue(SYSTEM_ID, systemId)
         memory.setupValue(NAME, name)
+        memory.setupValue(WAY, way?.name)
     }
 
     companion object {
@@ -52,7 +61,8 @@ data class KkmSetupDraft(
             manufactureYear = memory.setupValue(YEAR),
             cabinetRegisterId = memory.setupValue(REGISTER),
             systemId = memory.setupValue(SYSTEM_ID),
-            name = memory.setupValue(NAME)
+            name = memory.setupValue(NAME),
+            way = memory.setupValue(WAY)?.let { saved -> SetupWay.entries.firstOrNull { it.name == saved } }
         )
 
         private const val FACTORY = "factory"
@@ -60,14 +70,6 @@ data class KkmSetupDraft(
         private const val REGISTER = "register"
         private const val SYSTEM_ID = "system"
         private const val NAME = "name"
+        private const val WAY = "way"
     }
 }
-
-/**
- * Шаги подключения кассы.
- *
- * Порядок задан не удобством, а зависимостями: без номера кассу
- * не завести в кабинете, без кассы в кабинете не подать заявление,
- * без учёта в ИСНА не выдать токен, без токена не завести кассу здесь.
- */
-enum class SetupStep { Factory, Cabinet, Application, Token, Admin }

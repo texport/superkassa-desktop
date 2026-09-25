@@ -8,7 +8,9 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.workplace.Preferences
+import kz.mybrain.superkassa.domain.setup.model.SetupRoute
 import kz.mybrain.superkassa.domain.setup.model.SetupStep
+import kz.mybrain.superkassa.domain.setup.model.SetupWay
 import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
@@ -76,14 +78,32 @@ class KkmSetupDraftTest {
     fun `мастер открывается там, где его оставили`() {
         val preferences = preferences()
         val model = wizard(preferences)
-        assertEquals(SetupStep.Factory, model.state.value.draft.step)
+        assertEquals(SetupStep.Way, resumed(model))
+
+        model.chooseWay(SetupWay.ViaCabinet)
+        assertEquals(SetupStep.Factory, resumed(wizard(preferences)))
 
         model.getFactory()
-        assertEquals(SetupStep.Cabinet, wizard(preferences).state.value.draft.step)
+        assertEquals(SetupStep.Cabinet, resumed(wizard(preferences)))
 
         model.rememberRegister("22222222-2222-2222-2222-222222222222", 5000004, null)
-        assertEquals(SetupStep.Application, wizard(preferences).state.value.draft.step)
+        assertEquals(SetupStep.Application, resumed(wizard(preferences)))
     }
+
+    @Test
+    fun `выбранный путь запоминается`() {
+        val preferences = preferences()
+        wizard(preferences).chooseWay(SetupWay.ByHand)
+        wizard(preferences).getFactory()
+
+        val reopened = wizard(preferences).state.value
+        assertEquals(SetupWay.ByHand, reopened.way)
+        val resumed = reopened.route.resume(reopened.draft)
+        assertEquals(SetupStep.Credentials, resumed, "ручной путь продолжен не с данных БФД")
+    }
+
+    /** Шаг, с которого продолжится мастер модели [model]. */
+    private fun resumed(model: SetupViewModel): SetupStep = model.state.value.let { it.route.resume(it.draft) }
 
     @Test
     fun `идентификатор БФД запоминается вместе с кассой кабинета`() {
@@ -107,7 +127,7 @@ class KkmSetupDraftTest {
         assertNull(reopened.factoryNumber)
         assertNull(reopened.cabinetRegisterId)
         assertNull(reopened.systemId)
-        assertEquals(SetupStep.Factory, reopened.step)
+        assertEquals(SetupStep.Way, SetupRoute(SetupWay.ViaCabinet, choosing = true).resume(reopened))
     }
 
     @Test

@@ -23,6 +23,6 @@ internal class SetupCases(kassa: Kassa, ports: SetupPorts, log: Journal) {
     val enroll = EnrollKkm(kassa, log)
     val issueToken = ports.cabinet?.let(::IssueKkmToken)
 
-    /** Путь, которым мастер начинает: через кабинет, если он есть. */
-    val firstWay: SetupWay = if (issueToken == null) SetupWay.ByHand else SetupWay.ViaCabinet
+    /** Путь выбирают только там, где есть кабинет: без него путь один — вручную. */
+    val choosing: Boolean = issueToken != null
 }

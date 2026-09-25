@@ -24,10 +24,10 @@ class SetupContourTest {
 
     @Test
     fun `без выбранного контура касса не заводится`(): Unit = inlineMain {
-        val scene = SetupScene(contours = null).started(halfway = true)
+        val scene = SetupScene(contours = null).started(halfway = true).registered()
         scene.cabinet.token = ISSUED_TOKEN
         val model = scene.model()
-        RenderProbe(width = WIDE, height = TALL) { AdminStepAlone(model, scene) }.use { probe ->
+        RenderProbe(width = WIDE, height = TALL) { AdminStepAlone(scene, model) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             probe.tap { it.text == texts.settingsScreen.adminPin }
             probe.type(GOOD_PIN)
@@ -43,8 +43,8 @@ class SetupContourTest {
     }
 
     private companion object {
-        const val WIDE = 900
-        const val TALL = 460
+        const val WIDE = 1280
+        const val TALL = 900
         const val SETTLE = 30
         const val GOOD_PIN = "4821"
 

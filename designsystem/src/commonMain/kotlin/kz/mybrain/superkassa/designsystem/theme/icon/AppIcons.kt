@@ -45,9 +45,13 @@ import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material.icons.filled.ZoomOut
 import androidx.compose.material.icons.outlined.AccountBalanceWallet
+import androidx.compose.material.icons.outlined.AddBusiness
+import androidx.compose.material.icons.outlined.AdminPanelSettings
 import androidx.compose.material.icons.outlined.ArrowDownward
 import androidx.compose.material.icons.outlined.ArrowUpward
+import androidx.compose.material.icons.outlined.AssignmentTurnedIn
 import androidx.compose.material.icons.outlined.BugReport
+import androidx.compose.material.icons.outlined.Business
 import androidx.compose.material.icons.outlined.CloudSync
 import androidx.compose.material.icons.outlined.Computer
 import androidx.compose.material.icons.outlined.DarkMode
@@ -60,6 +64,7 @@ import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LightMode
 import androidx.compose.material.icons.outlined.Link
 import androidx.compose.material.icons.outlined.NewReleases
+import androidx.compose.material.icons.outlined.Numbers
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.Percent
@@ -69,7 +74,9 @@ import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -269,4 +276,20 @@ object AppIcons {
     val sectionSalePanels: ImageVector = Icons.AutoMirrored.Outlined.ViewSidebar
     val sectionMachine: ImageVector = Icons.Outlined.Computer
     val sectionAddresses: ImageVector = Icons.Outlined.Link
+
+    /**
+     * Иллюстрации шагов мастера подключения кассы — по смыслу шага: выбор
+     * пути, заводской номер, касса в кабинете, заявление в КГД, идентификатор
+     * с токеном и пин администратора. Контурные: крупный залитый значок
+     * читается пятном, а не картинкой.
+     */
+    val setupWay: ImageVector = Icons.Outlined.AddBusiness
+    val setupFactory: ImageVector = Icons.Outlined.Numbers
+    val setupCabinet: ImageVector = Icons.Outlined.Business
+    val setupApplication: ImageVector = Icons.Outlined.AssignmentTurnedIn
+    val setupCredentials: ImageVector = Icons.Outlined.VpnKey
+    val setupAdmin: ImageVector = Icons.Outlined.AdminPanelSettings
+
+    /** Шаг сделан: касса получила номер, заведена в кабинете, встала на учёт. */
+    val stepDone: ImageVector = Icons.Outlined.TaskAlt
 }

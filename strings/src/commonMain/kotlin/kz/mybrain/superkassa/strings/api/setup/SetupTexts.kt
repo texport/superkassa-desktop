@@ -3,12 +3,17 @@ package kz.mybrain.superkassa.strings.api.setup
 /**
  * Надписи области «Подключение кассы».
  *
- * Шаги названы тем, что происходит, а не порядковым номером: владелец,
- * вернувшийся к брошенному мастеру через неделю, должен понять, где он
- * остановился, не считая шаги заново.
+ * Мастер показывает по одному шагу на экран, и у каждого шага три надписи:
+ * название того, что происходит, объяснение — что делает шаг и зачем он, —
+ * и действие. Владелец, вернувшийся к брошенному мастеру через неделю,
+ * должен понять, где он остановился и что делать дальше, не вспоминая,
+ * с чего начинал.
  */
 data class SetupTexts(
-    val explain: String,
+    /** «Шаг 2 из 5»: `%1$s` — номер шага, `%2$s` — сколько их всего. */
+    val stepOf: String,
+    val next: String,
+    val back: String,
     val startOver: String,
 
     /**
@@ -22,27 +27,40 @@ data class SetupTexts(
      */
     val startOverAsk: String,
     val startOverExplain: String,
+    val stepWay: String,
+    val wayExplain: String,
+    val viaCabinet: String,
+    val viaCabinetHint: String,
+    val manually: String,
+    val manuallyHint: String,
     val stepFactory: String,
-    val stepFactoryHint: String,
+    val factoryExplain: String,
+
+    /** Заводской номер на ручном пути: он нужен тому, кто ещё будет заводить кассу в БФД. */
+    val factoryExplainManual: String,
     val getFactory: String,
+
+    /** Год выпуска под заводским номером: `%s` — год. */
+    val factoryYear: String,
     val stepCabinet: String,
-    val stepCabinetHint: String,
+    val cabinetExplain: String,
     val signInFirst: String,
     val addedToCabinet: String,
     val stepApplication: String,
-    val stepApplicationHint: String,
+    val applicationExplain: String,
     val submit: String,
     val registered: String,
+    val status: String,
+    val stepCredentials: String,
+    val credentialsExplain: String,
     val stepAdmin: String,
-    val stepAdminHint: String,
+    val adminExplain: String,
+
+    /** Пин на ручном пути: токен владелец набрал сам, и о выпуске токена ни слова. */
+    val adminExplainManual: String,
     val connect: String,
     val connected: String,
     val done: String,
-    val waiting: String,
-    val viaCabinet: String,
-    val manually: String,
-    val manuallyHint: String,
-    val status: String,
 
     /**
      * Касса ответила, что завела кассу, а сохранить её не смогла.
@@ -55,7 +73,7 @@ data class SetupTexts(
     val notStored: String,
 
     /**
-     * Кабинет токена не выдал: касса в ИСНА ещё не поставлена на учёт.
+     * Кабинет токена не выдал: касса в КГД ещё не поставлена на учёт.
      *
      * Прежде нажатие «Подключить» в этом случае проходило молча.
      */

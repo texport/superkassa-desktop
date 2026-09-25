@@ -17,6 +17,15 @@ interface Navigator {
 
     /** Шаг назад по истории окна. */
     fun back()
+
+    /**
+     * Снять шаг [key] и всё, что открыто над ним; нет его в истории — ничего.
+     *
+     * В отличие от [back], повтор безвреден: экран, чей шаг потерял смысл,
+     * снимает именно себя, даже если его уже сняли, пока он уходил
+     * с экрана, — лишний «назад» увёл бы из раздела.
+     */
+    fun close(key: NavKey)
 }
 
 /**
@@ -32,4 +41,6 @@ private object Nowhere : Navigator {
     override fun open(key: NavKey) = Unit
 
     override fun back() = Unit
+
+    override fun close(key: NavKey) = Unit
 }

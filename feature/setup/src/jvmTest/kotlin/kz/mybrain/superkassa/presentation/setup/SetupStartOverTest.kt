@@ -55,7 +55,7 @@ class SetupStartOverTest {
         RenderProbe(width = WIDE, height = TALL, content = screen).use { probe ->
             repeat(SETTLE) { probe.frame() }
             val nodes = probe.nodes()
-            assertTrue(nodes.any { it.text == scene.texts.explain }, "мастер не нарисован: $nodes")
+            assertTrue(nodes.any { it.text == scene.texts.stepWay }, "мастер не нарисован: $nodes")
             assertTrue(nodes.none { it.text == scene.texts.startOver }, "у нетронутого мастера есть «Начать заново»")
             assertNull(model.state.value.draft.factoryNumber)
         }

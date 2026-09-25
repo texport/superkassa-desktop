@@ -5,7 +5,6 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnv
 import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
 import kz.mybrain.superkassa.presentation.words.common.of
 
@@ -14,7 +13,8 @@ import kz.mybrain.superkassa.presentation.words.common.of
  *
  * Названия контуров — со слов кассы, на трёх языках: свой список означал
  * бы, что нового контура владелец не увидит, пока не обновит программу.
- * Неподнятый контур гаснет по правилу [OfdContours.raised].
+ * Неподнятый контур гаснет по правилу [OfdContours.raised]. Поле — во всю
+ * ширину колонки шага, как и поля пина под ним.
  */
 @Composable
 internal fun ContourPicker(contours: List<OfdEnvironmentResponse>, selected: String, onSelect: (String) -> Unit) {
@@ -25,7 +25,6 @@ internal fun ContourPicker(contours: List<OfdEnvironmentResponse>, selected: Str
         selected = contours.firstOrNull { it.code == selected },
         title = { contour -> contour?.name?.of(language) ?: selected },
         onSelect = { onSelect(it.code) },
-        available = { OfdContours.raised(it.code) },
-        width = Sizes.fieldChoice
+        available = { OfdContours.raised(it.code) }
     )
 }

@@ -16,8 +16,9 @@ import kz.mybrain.superkassa.domain.setup.model.CabinetRecord
 import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSession
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
+import kz.mybrain.superkassa.presentation.setup.SetupOffice
 import kz.mybrain.superkassa.presentation.setup.SetupScene
-import kz.mybrain.superkassa.presentation.setup.component.ApplicationStepCard
+import kz.mybrain.superkassa.presentation.setup.step.ApplicationStep
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kz.mybrain.superkassa.tap
@@ -42,7 +43,7 @@ class SetupLiveCheckTest {
         scene.cabinet.signer = { awaitCancellation() }
         val model = scene.registration()
         val steps = CabinetStepsRig.idle()
-        RenderProbe(CARD, TALL) { Step(model, scene, steps) }.use { probe ->
+        RenderProbe(CARD, TALL) { Step(model, steps) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             probe.tap { it.text == scene.texts.submit }
             repeat(SETTLE) { probe.frame() }
@@ -73,7 +74,7 @@ class SetupLiveCheckTest {
         scene.cabinet.record = record
         val model = scene.registration()
         val steps = CabinetStepsRig.idle()
-        RenderProbe(CARD, TALL) { Step(model, scene, steps) }.use { probe ->
+        RenderProbe(CARD, TALL) { Step(model, steps) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             File("/tmp/live-check-application-$name.png").writeBytes(probe.frame())
             probe.nodes().map { it.text }
@@ -82,12 +83,12 @@ class SetupLiveCheckTest {
 
     /** Шаг постановки на учёт так, как его собирает мастер: касса в кабинете прочитана. */
     @Composable
-    private fun Step(model: RegistrationViewModel, scene: SetupScene, steps: CabinetSteps) {
+    private fun Step(model: RegistrationViewModel, steps: CabinetSteps) {
         val state by model.state.collectAsState()
         LaunchedEffect(Unit) { model.readRecord(REGISTER) }
         CabinetStepsRig.Ticking(TICK) {
             Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
-                ApplicationStepCard(REGISTER, state, model, scene.texts, steps, CabinetSession(open = true))
+                ApplicationStep(SetupOffice(steps, CabinetSession(open = true), state, model), REGISTER)
             }
         }
     }

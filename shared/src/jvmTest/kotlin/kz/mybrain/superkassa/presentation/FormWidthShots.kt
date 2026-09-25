@@ -29,6 +29,7 @@ import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupContent
+import kz.mybrain.superkassa.presentation.setup.SetupOffice
 import kz.mybrain.superkassa.presentation.setup.SetupParts
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
@@ -108,10 +109,12 @@ class FormWidthShots {
                 SetupParts(
                     state = SetupUiState(contours = contours),
                     actions = object : SetupActions {},
-                    registration = RegistrationUiState(),
-                    registrationActions = object : RegistrationActions {},
-                    cabinet = cabinet,
-                    session = CabinetSession(),
+                    office = SetupOffice(
+                        cabinet = cabinet,
+                        session = CabinetSession(),
+                        registration = RegistrationUiState(),
+                        actions = object : RegistrationActions {}
+                    ),
                     onBack = null
                 )
             )

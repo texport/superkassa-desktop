@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.navigation.section.UsersKey
 import kz.mybrain.superkassa.navigation.step.PlaceCardKey
 import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SetupStepKey
 
 /**
  * Реестр ключей экранов — для сохранения истории «назад».
@@ -57,4 +58,5 @@ private fun PolymorphicModuleBuilder<NavKey>.steps() {
     subclass(SettingsSectionKey::class, SettingsSectionKey.serializer())
     subclass(ReturnBasisKey::class, ReturnBasisKey.serializer())
     subclass(PlaceCardKey::class, PlaceCardKey.serializer())
+    subclass(SetupStepKey::class, SetupStepKey.serializer())
 }

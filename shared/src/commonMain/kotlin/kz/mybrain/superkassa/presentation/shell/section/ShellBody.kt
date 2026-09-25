@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
 import kz.mybrain.superkassa.navigation.step.PlaceCardKey
 import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SetupStepKey
 import kz.mybrain.superkassa.navigation.step.StepKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetScreen
 import kz.mybrain.superkassa.presentation.common.print.LocalPrint
@@ -88,17 +89,21 @@ private fun SectionScreen(app: AppContainer, window: WindowParts, section: Secti
         )
         Section.Queue -> QueueScreen(queueViewModel(app.services))
         Section.Users -> UsersScreen(usersViewModel(app.services))
-        Section.Register -> Connect(app, window)
+        Section.Register -> Connect(app, window, step = step as? SetupStepKey)
         Section.Cabinet -> window.cabinet?.let { CabinetScreen(it, step is PlaceCardKey) }
         Section.Settings -> SettingsScreen(settingsOf(app, window), step as? SettingsSectionKey)
     }
 }
 
-/** Мастер подключения окна; на платформе без мастера не рисуется ничего: двери к нему там нет. */
+/**
+ * Мастер подключения окна; на платформе без мастера не рисуется ничего: двери к нему там нет.
+ *
+ * @param step шаг мастера поверх первого; `null` — первый шаг.
+ */
 @Composable
-internal fun Connect(app: AppContainer, window: WindowParts, onBack: (() -> Unit)? = null) {
+internal fun Connect(app: AppContainer, window: WindowParts, onBack: (() -> Unit)? = null, step: SetupStepKey? = null) {
     val ports = app.areas.setup ?: return
-    ConnectKkm(app.services, ports, window.steps, onBack)
+    ConnectKkm(app.services, ports, window.steps, step = step?.step, onBack = onBack)
 }
 
 /**

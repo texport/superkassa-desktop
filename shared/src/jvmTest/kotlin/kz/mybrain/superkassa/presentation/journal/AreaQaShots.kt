@@ -33,6 +33,7 @@ import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsScreen
 import kz.mybrain.superkassa.presentation.journal.shifts.ShiftsUiState
 import kz.mybrain.superkassa.presentation.setup.SetupActions
 import kz.mybrain.superkassa.presentation.setup.SetupContent
+import kz.mybrain.superkassa.presentation.setup.SetupOffice
 import kz.mybrain.superkassa.presentation.setup.SetupParts
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
@@ -117,17 +118,19 @@ class AreaQaShots {
     fun `мастер подключения — первый шаг`() {
         val contours = listOf("DEV", "TEST", "PROD")
             .map { OfdEnvironmentResponse(it, TrilingualMessageResponse(it, it, it)) }
-        everywhere("setup-factory", { textsOf(it).setup.getFactory }) {
+        everywhere("setup-way", { textsOf(it).setup.stepWay }) {
             val desk = KassaScene.desk()
             Place {
                 SetupContent(
                     SetupParts(
                         state = SetupUiState(contours = contours),
                         actions = object : SetupActions {},
-                        registration = RegistrationUiState(),
-                        registrationActions = object : RegistrationActions {},
-                        cabinet = windowCabinet(desk.app, desk.look).steps(),
-                        session = CabinetSession(),
+                        office = SetupOffice(
+                            cabinet = windowCabinet(desk.app, desk.look).steps(),
+                            session = CabinetSession(),
+                            registration = RegistrationUiState(),
+                            actions = object : RegistrationActions {}
+                        ),
                         onBack = null
                     )
                 )

@@ -34,9 +34,9 @@ class SetupAdminPinTest {
 
     /** Надписи карточки шага с набранным пином; поле пина ищется по подписи. */
     private fun card(name: String, pin: String): List<String> = inlineMain {
-        val scene = SetupScene().started(halfway = true)
+        val scene = SetupScene().started(halfway = true).registered()
         val model = scene.model()
-        RenderProbe(width = WIDE, height = TALL) { AdminStepAlone(model, scene) }.use { probe ->
+        RenderProbe(width = WIDE, height = TALL) { AdminStepAlone(scene, model) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
             probe.tap { it.text == texts.settingsScreen.adminPin }
             probe.type(pin)
@@ -47,8 +47,8 @@ class SetupAdminPinTest {
     }
 
     private companion object {
-        const val WIDE = 900
-        const val TALL = 460
+        const val WIDE = 1280
+        const val TALL = 900
         const val SETTLE = 30
     }
 }

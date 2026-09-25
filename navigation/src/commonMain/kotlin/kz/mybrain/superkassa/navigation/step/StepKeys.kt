@@ -4,7 +4,7 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 /**
- * Шаг внутри раздела: подробности, открытые поверх списка на узком окне.
+ * Шаг внутри раздела: подробности поверх списка или следующий шаг мастера.
  *
  * Так Material 3 велит вести «список и подробности» (List-detail →
  * back navigation): на широком окне подробности стоят рядом со списком,
@@ -12,6 +12,8 @@ import kotlinx.serialization.Serializable
  * на узком они открываются поверх списка, и «назад» — жест, Escape,
  * стрелка в шапке окна — возвращает к списку по общей истории окна.
  * Раздвинули окно, пока шаг открыт, — шаг снимается сам.
+ *
+ * Шаги мастера ложатся той же историей: «назад» ведёт на предыдущий шаг.
  */
 @Serializable
 sealed interface StepKey : NavKey
@@ -37,3 +39,14 @@ data object ReturnBasisKey : StepKey
  */
 @Serializable
 data object PlaceCardKey : StepKey
+
+/**
+ * Шаг мастера подключения кассы поверх его первого шага.
+ *
+ * Каждый шаг — запись истории окна: жест «назад», Escape и стрелка
+ * в шапке ведут по шагам мастера так же, как кнопка «Назад» под шагом.
+ *
+ * @property step имя шага: сами шаги знает мастер.
+ */
+@Serializable
+data class SetupStepKey(val step: String) : StepKey

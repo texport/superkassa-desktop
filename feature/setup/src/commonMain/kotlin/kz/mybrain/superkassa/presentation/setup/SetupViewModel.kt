@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.domain.setup.model.EnrollOutcome
 import kz.mybrain.superkassa.domain.setup.model.KkmSetupDraft
+import kz.mybrain.superkassa.domain.setup.model.SetupRoute
+import kz.mybrain.superkassa.domain.setup.model.SetupWay
 import kz.mybrain.superkassa.domain.signin.model.Pin
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetCalls
 import kz.mybrain.superkassa.presentation.common.message.Message
@@ -35,7 +37,7 @@ internal class SetupViewModel(
     private val talk: Talk,
     private val calls: CabinetCalls
 ) : ViewModel(), SetupActions {
-    private val screen = MutableStateFlow(SetupUiState(way = cases.firstWay, draft = cases.remember.read()))
+    private val screen = MutableStateFlow(cases.opened())
 
     val state: StateFlow<SetupUiState> = screen.asStateFlow()
 
@@ -47,7 +49,11 @@ internal class SetupViewModel(
         }
     }
 
-    override fun chooseWay(way: SetupWay) = screen.update { it.copy(way = way) }
+    override fun chooseWay(way: SetupWay) {
+        if (!cases.choosing) return
+        screen.update { it.copy(way = way) }
+        show(cases.remember(screen.value.draft.copy(way = way)))
+    }
 
     override fun askStartOver(ask: Boolean) =
         screen.update { it.copy(startingOver = ask && it.draft.factoryNumber != null) }
@@ -98,13 +104,11 @@ internal class SetupViewModel(
             screen.update { it.withForm(it.form.copy(busy = false)) }
             if (notIssued) talk.say(INIT_KKM, Message.Refusal(textsOf(talk.language()).setup.noToken, NO_TOKEN))
             if (!outcome.announced(talk)) return@launch
-            // Через кабинет пройденное забывается: касса подключена. Вручную —
-            // стирается набранный токен: на экране ему не место.
-            if (now.way == SetupWay.ByHand) {
-                screen.update { it.copy(byHand = KkmForm()) }
-            } else {
-                show(cases.remember(KkmSetupDraft()))
-            }
+            // Касса подключена: пройденное забывается — следующей кассе нужен
+            // свой заводской номер, — а набранный токен стирается: на экране
+            // ему не место.
+            screen.update { it.copy(byHand = KkmForm(), viaCabinet = KkmForm()) }
+            show(cases.remember(KkmSetupDraft()))
             reload()
             onDone()
         }
@@ -127,6 +131,12 @@ internal class SetupViewModel(
     }
 
     private fun show(draft: KkmSetupDraft) = screen.update { it.copy(draft = draft, startingOver = false) }
+}
+
+/** Мастер, каким его открыли: с пройденного и тем же путём, что выбрали прежде. */
+private fun SetupCases.opened(): SetupUiState {
+    val draft = remember.read()
+    return SetupUiState(way = SetupRoute.wayOf(draft, choosing), choosing = choosing, draft = draft)
 }
 
 /** Итог заведения — в строку сообщений; `true` — касса заведена и читается. */

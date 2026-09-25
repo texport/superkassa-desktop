@@ -27,6 +27,15 @@ internal fun MutableList<NavKey>.openSection(section: Section) {
 internal fun MutableList<NavKey>.stepBack(): Boolean = (size > 1).also { if (it) removeAt(lastIndex) }
 
 /**
+ * Снять шаг [key] и всё над ним; нет его в истории — ничего. Основание
+ * истории не снимается: оно не шаг.
+ */
+internal fun MutableList<NavKey>.closeStep(key: NavKey) {
+    val at = lastIndexOf(key)
+    if (at > 0) subList(at, size).clear()
+}
+
+/**
  * Разделы, которых вошедшему не видно, — например, после смены кассира
  * на кассира без прав администратора: история возвращается на главный экран.
  */

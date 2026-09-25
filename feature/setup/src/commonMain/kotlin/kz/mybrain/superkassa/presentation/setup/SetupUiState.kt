@@ -5,12 +5,16 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnv
 import kz.mybrain.superkassa.domain.setup.model.EnrollmentPlan
 import kz.mybrain.superkassa.domain.setup.model.KkmSetupDraft
 import kz.mybrain.superkassa.domain.setup.model.OfdContours
+import kz.mybrain.superkassa.domain.setup.model.SetupRoute
+import kz.mybrain.superkassa.domain.setup.model.SetupStep
+import kz.mybrain.superkassa.domain.setup.model.SetupWay
 import kz.mybrain.superkassa.domain.users.model.UserRules
-import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /**
  * Мастер подключения кассы, каким его видит владелец.
  *
+ * @property way путь, которым идёт владелец.
+ * @property choosing путь выбирают: без кабинета он один — вручную.
  * @property draft пройденное, как его запомнил мастер.
  * @property startingOver спрошено, забыть ли пройденное.
  * @property contours контуры БФД со слов кассы; пусто — касса их не назвала,
@@ -22,6 +26,7 @@ import kz.mybrain.superkassa.strings.api.setup.SetupTexts
  */
 data class SetupUiState(
     val way: SetupWay = SetupWay.ViaCabinet,
+    val choosing: Boolean = true,
     val draft: KkmSetupDraft = KkmSetupDraft(),
     val startingOver: Boolean = false,
     val contours: List<OfdEnvironmentResponse> = emptyList(),
@@ -30,6 +35,9 @@ data class SetupUiState(
     val viaCabinet: KkmForm = KkmForm(),
     val byHand: KkmForm = KkmForm()
 ) {
+    /** Шаги мастера на пути, которым идёт владелец. */
+    val route: SetupRoute get() = SetupRoute(way, choosing)
+
     /** Форма того пути, которым идёт владелец. */
     val form: KkmForm get() = if (way == SetupWay.ByHand) byHand else viaCabinet
 
@@ -76,10 +84,39 @@ data class SetupUiState(
      * в пустой контур — с уже выданным на неё токеном кабинета.
      */
     val ready: Boolean
-        get() {
-            val filled = form.systemId.isNotBlank() && form.token.isNotBlank()
-            return !form.busy && contour.isNotBlank() && form.pinConfirmed && (way == SetupWay.ViaCabinet || filled)
-        }
+        get() = !form.busy && contour.isNotBlank() && form.pinConfirmed && (way == SetupWay.ViaCabinet || filled)
+
+    /**
+     * Можно нажать «Завести кассу».
+     *
+     * Через кабинет токен выпускает кабинет в миг заведения, и выпускает
+     * только кассе на учёте: без входа и без учёта нажатие ушло бы в отказ.
+     *
+     * @param onRecord касса в кабинете встала на учёт.
+     * @param signedIn владелец вошёл в кабинет.
+     */
+    fun canConnect(onRecord: Boolean, signedIn: Boolean): Boolean =
+        ready && (way == SetupWay.ByHand || (onRecord && signedIn))
+
+    /** Идентификатор и токен ручного пути набраны. */
+    private val filled: Boolean get() = byHand.systemId.isNotBlank() && byHand.token.isNotBlank()
+
+    /**
+     * Шаг [step] сделан, и можно идти дальше.
+     *
+     * Заводской номер на ручном пути не обязателен: кассу в БФД могли
+     * завести и без него, и тогда идентификатор с токеном уже на руках.
+     *
+     * @param onRecord касса в кабинете встала на учёт — это знает шаг учёта.
+     */
+    fun done(step: SetupStep, onRecord: Boolean): Boolean = when (step) {
+        SetupStep.Way -> true
+        SetupStep.Factory -> way == SetupWay.ByHand || draft.passed(step)
+        SetupStep.Cabinet -> draft.passed(step)
+        SetupStep.Application -> onRecord
+        SetupStep.Credentials -> filled
+        SetupStep.Admin -> connected
+    }
 }
 
 /**
@@ -105,17 +142,4 @@ data class KkmForm(
     val pinsDiffer: Boolean get() = adminPinRepeat.isNotEmpty() && adminPinRepeat != adminPin
 
     override fun toString(): String = "KkmForm(contour=$contour, systemId=$systemId, busy=$busy)"
-}
-
-/**
- * Каким путём подключают кассу.
- *
- * Через кабинет — когда владелец с ключом ЭЦП сидит за этим же
- * компьютером. Вручную — когда кассу в БФД завёл сервисник или бухгалтер,
- * и на руках только идентификатор и токен: заставлять в этом случае
- * проходить кабинет значит требовать чужой ключ.
- */
-enum class SetupWay(val title: (SetupTexts) -> String) {
-    ViaCabinet({ it.viaCabinet }),
-    ByHand({ it.manually })
 }

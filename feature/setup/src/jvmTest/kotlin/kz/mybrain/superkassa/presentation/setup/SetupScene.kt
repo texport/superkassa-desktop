@@ -1,24 +1,21 @@
 package kz.mybrain.superkassa.presentation.setup
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.remember
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.OfdEnvironmentResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.CabinetStepsRig
+import kz.mybrain.superkassa.Windowed
+import kz.mybrain.superkassa.domain.setup.model.CabinetRecord
+import kz.mybrain.superkassa.domain.setup.model.SetupStep
 import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
 import kz.mybrain.superkassa.kassa.services
-import kz.mybrain.superkassa.presentation.setup.component.AdminStepCard
+import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationViewModel
 import kz.mybrain.superkassa.presentation.setup.registration.registrationModel
 import kz.mybrain.superkassa.strings.api.Language
@@ -60,6 +57,9 @@ internal class SetupScene(
         }
     }
 
+    /** Касса в кабинете уже на учёте: номер КГД выдан, и кабинет выпустит ей токен. */
+    fun registered(): SetupScene = apply { cabinet.record = CabinetRecord("REGISTERED", KGD_NUMBER) }
+
     /** Модель мастера, как её создаст окно; создаётся при подменённом главном потоке. */
     fun model(): SetupViewModel = setupModel(CoreScene.services(core), SetupPorts(memory, cabinet), calls)
 
@@ -71,16 +71,25 @@ internal class SetupScene(
     companion object {
         const val FACTORY = "KZT26E2C509A200"
         const val YEAR = "2026"
+        const val KGD_NUMBER = "010100253145"
         const val NO_PLACES = """{"page":0,"size":50,"totalElements":0,"items":[]}"""
     }
 }
 
-/** Последний шаг мастера отдельно, как его рисует мастер: касса в кабинете уже на учёте. */
+/**
+ * Последний шаг пути через кабинет, как его открывает «Далее»: владелец
+ * вошёл в кабинет, касса в кабинете прочитана.
+ */
 @Composable
-internal fun AdminStepAlone(model: SetupViewModel, scene: SetupScene) {
-    val state by model.state.collectAsState()
-    LaunchedEffect(Unit) { model.reload() }
-    Column(modifier = Modifier.fillMaxWidth().padding(Spacing.fieldGap)) {
-        AdminStepCard(state, model, scene.texts, onRecord = true, cabinetBusy = false) {}
-    }
+internal fun AdminStepAlone(scene: SetupScene, model: SetupViewModel) {
+    val models = remember { SetupModels(model, scene.registration()) }
+    val cabinet = remember { CabinetStepsRig.signedIn(SetupScene.NO_PLACES) }
+    Windowed { ConnectKkmScreen(models, cabinet, step = SetupStep.Admin.name) }
+}
+
+/** Мастер в истории [history] поверх сцены [scene]; вход в кабинет — [cabinet]. */
+@Composable
+internal fun WizardOf(scene: SetupScene, history: WizardHistory, cabinet: CabinetSteps, onBack: (() -> Unit)? = null) {
+    val models = remember { SetupModels(scene.model(), scene.registration()) }
+    Windowed { WizardShown(history) { step -> ConnectKkmScreen(models, cabinet, step, onBack) } }
 }

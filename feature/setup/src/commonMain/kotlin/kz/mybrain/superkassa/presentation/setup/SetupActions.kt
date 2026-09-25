@@ -1,5 +1,7 @@
 package kz.mybrain.superkassa.presentation.setup
 
+import kz.mybrain.superkassa.domain.setup.model.SetupWay
+
 /**
  * Что владелец может сделать в мастере подключения.
  *
@@ -8,6 +10,7 @@ package kz.mybrain.superkassa.presentation.setup
 interface SetupActions {
     fun reload() = Unit
 
+    /** Путь выбран и запоминается: мастер, продолженный назавтра, идёт тем же путём. */
     fun chooseWay(way: SetupWay) = Unit
 
     /** Спрашивает, забыть ли пройденное; `false` — снимает вопрос. */

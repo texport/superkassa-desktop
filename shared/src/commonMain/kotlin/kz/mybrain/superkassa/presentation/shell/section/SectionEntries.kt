@@ -5,6 +5,7 @@ import androidx.navigation3.runtime.NavKey
 import kz.mybrain.superkassa.navigation.step.PlaceCardKey
 import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SetupStepKey
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 
@@ -26,4 +27,6 @@ internal fun EntryProviderScope<NavKey>.sectionEntries(app: AppContainer, window
     entry<SettingsSectionKey>(metadata = step) { SectionContent(app, window, Section.Settings, it) }
     entry<ReturnBasisKey>(metadata = step) { SectionContent(app, window, Section.Returns, it) }
     entry<PlaceCardKey>(metadata = step) { SectionContent(app, window, Section.Cabinet, it) }
+    // Шаги мастера подключения — поверх его первого шага.
+    entry<SetupStepKey>(metadata = step) { SectionContent(app, window, Section.Register, it) }
 }

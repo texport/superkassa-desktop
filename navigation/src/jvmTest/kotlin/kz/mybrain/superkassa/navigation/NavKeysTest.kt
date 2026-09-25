@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.navigation.section.KkmsKey
 import kz.mybrain.superkassa.navigation.section.SectionKey
 import kz.mybrain.superkassa.navigation.section.SettingsKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
+import kz.mybrain.superkassa.navigation.step.SetupStepKey
 import kz.mybrain.superkassa.navigation.step.StepKey
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -58,6 +59,12 @@ class NavKeysTest {
     @Test
     fun `раздел настроек переживает сохранение вместе с именем`() {
         val key = SettingsSectionKey("Printing")
+        assertEquals(key, restore(json.encodeToString(PolymorphicSerializer(NavKey::class), key)))
+    }
+
+    @Test
+    fun `шаг мастера подключения переживает сохранение вместе с именем`() {
+        val key = SetupStepKey("Application")
         assertEquals(key, restore(json.encodeToString(PolymorphicSerializer(NavKey::class), key)))
     }
 

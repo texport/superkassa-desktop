@@ -33,6 +33,7 @@ import kz.mybrain.superkassa.presentation.common.navigation.ScreenBarState
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.bar.WorkBar
 import kz.mybrain.superkassa.presentation.shell.section.Section
+import kz.mybrain.superkassa.presentation.shell.section.closeStep
 import kz.mybrain.superkassa.presentation.shell.section.currentSection
 import kz.mybrain.superkassa.presentation.shell.section.openSection
 import kz.mybrain.superkassa.presentation.shell.section.outside
@@ -140,6 +141,8 @@ internal fun StepsOf(history: MutableList<NavKey>, back: () -> Unit, content: @C
             }
 
             override fun back() = back()
+
+            override fun close(key: NavKey) = history.closeStep(key)
         }
     }
     CompositionLocalProvider(
