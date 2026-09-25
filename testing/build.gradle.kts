@@ -69,3 +69,20 @@ kotlin {
 composeCompiler {
     targetKotlinPlatforms.set(setOf(KotlinPlatformType.jvm))
 }
+
+/**
+ * Проверки самой оснастки — правила всей сборки, которые не принадлежат
+ * ни одному модулю.
+ *
+ * Платформенный код всех модулей — вход проверки: она читает его с диска,
+ * и без этого Gradle не заметил бы нового файла и счёл бы её выполненной.
+ */
+tasks.named<Test>("jvmTest") {
+    useJUnitPlatform()
+    inputs.files(
+        fileTree(rootDir) {
+            include("**/src/*Main/**/*.kt")
+            exclude("**/src/commonMain/**", "**/build/**", ".*/**")
+        }
+    ).withPropertyName("platformSources").withPathSensitivity(PathSensitivity.RELATIVE)
+}

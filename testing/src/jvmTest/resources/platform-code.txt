@@ -1,0 +1,78 @@
+# Платформенный код основного кода модулей — и почему он не в общем коде.
+#
+# Общий код пишется в commonMain; в jvmMain, androidMain и iosMain остаётся
+# только то, что платформа делает иначе. Каждый файл таких наборов записан
+# здесь строкой «путь — причина»; путь, оканчивающийся на «/», покрывает
+# каталог целиком. Новый файл без записи и запись без файла не проходят
+# проверку PlatformCodeTest модуля testing.
+
+# Оснастка проверок: сцены отрисовки рисует настольный Compose, стенд ядра
+# и подставной кабинет живут на JVM. В приложение модуль не входит.
+testing/src/jvmMain/ — оснастка проверок на JVM: сцены отрисовки, стенд ядра, подставной кабинет
+
+# Слой данных: настольные системы.
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/cabinet/DeveloperEntry.kt — вход разработчика по переменным окружения настольной машины
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/eds/NcaSigner.kt — подпись ЭЦП через NCALayer: он есть только на настольных системах
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/eds/SignatureJournal.kt — журнал обмена с NCALayer: модуль NCALayer есть только на JVM
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/kassa/NodeDataMove.kt — перенос данных прежнего узла: узел жил только на настольных машинах
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/local/Browser.kt — страница и файл открываются программами системы (AWT Desktop)
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/local/DataHome.kt — каталог данных: переменная окружения, свойство JVM, домашний каталог
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/local/DialogFiles.kt — сохранение файла окном системы
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/local/SaveFile.kt — окно «Сохранить» системы (AWT FileDialog)
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/map/MacLocation.kt — место машины службами macOS через JNA
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/Printing.kt — печать на системный принтер (javax.print, AWT)
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/SystemPrintOut.kt — принтеры и диск настольной машины
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/TapePrintable.kt — лента чека как страница печати AWT
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/GithubUpdates.kt — установщик под систему машины и открытие его системой
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/InstallerDownload.kt — скачивание установщика на диск со сверкой SHA-256
+
+# Слой данных: Android.
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/analytics/NotOnAndroid.kt — порты аналитики и карт там, где раздела на Android нет
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/DocumentFiles.kt — окно «Сохранить» Android и запись по выданному адресу
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/ForegroundActivity.kt — активность на экране: окна системы открываются поверх неё
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/workplace/SystemLanguageLook.kt — язык приложения на Android 13+ хранит система
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/log/LogcatJournal.kt — журнал системы Android (Logcat)
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/print/PdfPrintAdapter.kt — документ PDF для системного диалога печати Android
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/print/SystemDialogPrintOut.kt — печать системным диалогом Android
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/releases/StoreReleases.kt — выпуски на Android приносит магазин приложений
+
+# Дизайн-система: ожидаемые объявления общего кода, по файлу на платформу.
+designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/image/EncodedImage.jvm.kt — картинка средствами Skia и масштаб колесом мыши настольной машины
+designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/image/EncodedImage.android.kt — картинка средствами Android; колеса мыши нет
+designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/image/EncodedImage.ios.kt — картинка средствами Skia на iOS; колеса мыши нет
+designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/EscapeCloses.jvm.kt — Esc закрывает окно: клавиатура настольной машины
+designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/CloseOnEscape.android.kt — на Android закрытие — системным «назад»
+designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/CloseOnEscape.ios.kt — клавиши Esc у iOS нет
+designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/SystemBack.jvm.kt — у настольного окна системного «назад» нет
+designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/SystemBack.android.kt — системный «назад» Android
+designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/keyboard/SystemBack.ios.kt — системного «назад» у iOS нет
+designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/list/Scrollbars.jvm.kt — полоса прокрутки настольного окна
+designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/list/Scrollbars.android.kt — на Android полосу показывает сама прокрутка пальцем
+designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/list/Scrollbars.ios.kt — на iOS полосу показывает сама прокрутка пальцем
+designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/theme/PlatformTheme.jvm.kt — полоса прокрутки настольного окна в общей теме
+designsystem/src/androidMain/kotlin/kz/mybrain/superkassa/designsystem/theme/PlatformTheme.android.kt — полосы системы Android в общей теме
+designsystem/src/iosMain/kotlin/kz/mybrain/superkassa/designsystem/theme/PlatformTheme.ios.kt — своего у темы iOS пока нет
+
+# Общее экранов.
+ui-common/src/jvmMain/kotlin/kz/mybrain/superkassa/presentation/common/model/CollectState.jvm.kt — состояние потоком на настольной машине
+ui-common/src/androidMain/kotlin/kz/mybrain/superkassa/presentation/common/model/CollectState.android.kt — состояние потоком по жизненному циклу Android
+ui-common/src/jvmMain/kotlin/kz/mybrain/superkassa/presentation/common/strings/SystemLanguage.jvm.kt — язык системы настольной машины
+ui-common/src/androidMain/kotlin/kz/mybrain/superkassa/presentation/common/strings/SystemLanguage.android.kt — язык системы Android
+
+# Области экранов.
+feature/debug/src/jvmMain/kotlin/kz/mybrain/superkassa/presentation/debug/log/LogWindow.kt — журнал в отдельном окне рядом с кассой
+feature/debug/src/androidMain/kotlin/kz/mybrain/superkassa/presentation/debug/log/LogDialog.kt — журнал диалогом поверх кассы: второго окна на Android нет
+
+# Интеграции: движок Ktor своей платформы и NCALayer.
+integrations/bfd-cabinet/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/bfdcabinet/PlatformEngine.jvm.kt — движок Ktor настольной машины
+integrations/bfd-cabinet/src/androidMain/kotlin/kz/mybrain/superkassa/integrations/bfdcabinet/PlatformEngine.android.kt — движок Ktor Android
+integrations/bfd-cabinet/src/iosMain/kotlin/kz/mybrain/superkassa/integrations/bfdcabinet/PlatformEngine.ios.kt — движок Ktor iOS (Darwin)
+integrations/maps/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/maps/PlatformEngine.jvm.kt — движок Ktor настольной машины
+integrations/maps/src/androidMain/kotlin/kz/mybrain/superkassa/integrations/maps/PlatformEngine.android.kt — движок Ktor Android
+integrations/maps/src/iosMain/kotlin/kz/mybrain/superkassa/integrations/maps/PlatformEngine.ios.kt — движок Ktor iOS (Darwin)
+integrations/releases/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/releases/PlatformEngine.jvm.kt — движок Ktor настольной машины
+integrations/releases/src/androidMain/kotlin/kz/mybrain/superkassa/integrations/releases/PlatformEngine.android.kt — движок Ktor Android
+integrations/releases/src/iosMain/kotlin/kz/mybrain/superkassa/integrations/releases/PlatformEngine.ios.kt — движок Ktor iOS (Darwin)
+integrations/ncalayer/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/ncalayer/DesktopNcaLayer.kt — NCALayer есть только на настольных системах
+integrations/ncalayer/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/ncalayer/socket/NcaExchange.kt — обмен с NCALayer по WebSocket машины
+integrations/ncalayer/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/ncalayer/socket/NcaSocket.kt — WebSocket к NCALayer на этой машине
