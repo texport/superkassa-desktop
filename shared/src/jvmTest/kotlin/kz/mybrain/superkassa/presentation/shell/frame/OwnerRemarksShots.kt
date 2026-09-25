@@ -12,31 +12,24 @@ import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.OwnerShots
 import kz.mybrain.superkassa.StubReply
-import kz.mybrain.superkassa.Windowed
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.LoginScene
 import kz.mybrain.superkassa.kassa.app
-import kz.mybrain.superkassa.kassa.inlineMain
-import kz.mybrain.superkassa.mockCabinet
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.cabinet.places.CabinetPlacesScene
-import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.settings.SettingsScreen
-import kz.mybrain.superkassa.presentation.setup.ConnectKkmScreen
-import kz.mybrain.superkassa.presentation.setup.SetupModels
-import kz.mybrain.superkassa.presentation.setup.SetupScene
 import kz.mybrain.superkassa.strings.api.Language
 import kotlin.test.Test
 
 /**
- * Кадры по замечаниям владельца в окне каркаса: вход со снекбаром, мастер
- * новой кассы, компания в кабинете, точки кабинета и настройки — в окне
- * ноутбука и на мониторе. Кадры — `/tmp/owner-<экран>-<окно>.png`; карту
- * касс снимает аналитика у себя тем же порядком.
+ * Кадры по замечаниям владельца в окне каркаса: вход со снекбаром,
+ * компания в кабинете, точки кабинета и настройки — в окне ноутбука и на
+ * мониторе. Кадры — `/tmp/owner-<экран>-<окно>.png`; карту касс и мастер
+ * новой кассы снимают аналитика и мастер у себя тем же порядком.
  */
 class OwnerRemarksShots {
 
@@ -45,14 +38,6 @@ class OwnerRemarksShots {
         val app = CoreScene.app(LoginScene.core(listOf(KassaScene.kkm())))
         app.services.talk.notices.show(Message.Done(CONNECTED))
         OwnerShots.save("door", width, height) { LoginScene.Door(app) }
-    }
-
-    @Test
-    fun `мастер новой кассы`() = OwnerShots.each { width, height ->
-        val scene = inlineMain { SetupScene().started() }
-        val models = inlineMain { SetupModels(scene.model(), scene.registration()) }
-        val cabinet = mockCabinet(SetupScene.NO_PLACES).steps()
-        OwnerShots.save("setup", width, height) { Windowed { ConnectKkmScreen(models, cabinet) {} } }
     }
 
     @Test
