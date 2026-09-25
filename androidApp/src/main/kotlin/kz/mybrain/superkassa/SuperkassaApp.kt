@@ -10,8 +10,10 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.background.BackgroundWork
-import kz.mybrain.superkassa.data.analytics.AnalyticsNotOnAndroid
+import kz.mybrain.superkassa.data.analytics.CabinetAnalytics
 import kz.mybrain.superkassa.data.analytics.MapsNotOnAndroid
+import kz.mybrain.superkassa.data.cabinet.RemoteCabinet
+import kz.mybrain.superkassa.data.cabinet.setup.CabinetSetup
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
@@ -21,9 +23,11 @@ import kz.mybrain.superkassa.data.local.ForegroundActivity
 import kz.mybrain.superkassa.data.local.workplace.PreferenceChoices
 import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.data.local.workplace.SystemLanguageLook
+import kz.mybrain.superkassa.data.log.AppJournal
 import kz.mybrain.superkassa.data.log.AppLog
 import kz.mybrain.superkassa.data.log.AppLogBook
 import kz.mybrain.superkassa.data.log.LogSettings
+import kz.mybrain.superkassa.data.log.LogSource
 import kz.mybrain.superkassa.data.log.LogcatJournal
 import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
 import kz.mybrain.superkassa.data.print.SystemDialogPrintOut
@@ -45,6 +49,7 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
+import kz.mybrain.superkassa.strings.api.Language
 
 /**
  * Точка сборки кассы на Android — единственное место, знающее все три слоя.
@@ -107,19 +112,21 @@ class SuperkassaApp : Application() {
                 // Слова кассиру — на языке окна, как на компьютере.
                 talk = Talk(Notices(), LogcatJournal()) { workplaceLanguage(look.state.value.language) }
             ),
-            areas = areaPorts(kassa, preferences)
+            areas = areaPorts(kassa, preferences) { workplaceLanguage(look.state.value.language) }
         )
     }
 
     /**
      * Порты областей на Android.
      *
-     * Кабинета на Android нет: подписи ЭЦП здесь пока нет. Мастер подключения
-     * без кабинета ведёт ручной путь — идентификатор и токен.
+     * Кабинет — тот же, что на компьютере, с подписью eGov mobile или файлом
+     * ключа ([androidCabinet]); мастер подключения ведёт и путь через кабинет,
+     * и ручной — идентификатор и токен.
      */
-    private fun areaPorts(kassa: Superkassa, preferences: Preferences): AreaPorts {
+    private fun areaPorts(kassa: Superkassa, preferences: Preferences, language: () -> Language): AreaPorts {
         // Выпуски на Android приносит магазин приложений.
         val updates = StoreReleases()
+        val cabinet = androidCabinet(preferences, screen, language)
         return AreaPorts(
             kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
             journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
@@ -130,14 +137,18 @@ class SuperkassaApp : Application() {
             print = PrintPorts(SystemDialogPrintOut(screen), preferences.printing),
             update = UpdatePorts(releases = updates, updateMemory = updates),
             debug = DebugPorts(AppLogBook(DocumentFiles(screen))),
-            analytics = analyticsPorts(preferences),
-            setup = SetupPorts(memory = preferences)
+            analytics = analyticsPorts(cabinet, preferences),
+            cabinet = cabinet,
+            setup = SetupPorts(memory = preferences, cabinet = CabinetSetup(cabinet))
         )
     }
 
-    /** Аналитики кабинета и карты на Android пока нет: порты отвечают, что раздела нет. */
-    private fun analyticsPorts(preferences: Preferences) = AnalyticsPorts(
-        cabinet = AnalyticsNotOnAndroid(),
+    /**
+     * Аналитика — из того же кабинета, что и его разделы: доступ вошедшего
+     * модуль кабинета наружу не отдаёт. Карты на Android пока нет.
+     */
+    private fun analyticsPorts(cabinet: RemoteCabinet, preferences: Preferences) = AnalyticsPorts(
+        cabinet = CabinetAnalytics(cabinet.bfd, AppJournal(LogSource.Cabinet)),
         map = MapPorts(MapsNotOnAndroid(), WorkplaceMapMemory(preferences))
     )
 }

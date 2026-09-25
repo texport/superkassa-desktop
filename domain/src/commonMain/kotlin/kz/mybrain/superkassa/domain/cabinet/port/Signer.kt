@@ -8,7 +8,8 @@ import kotlin.time.Duration.Companion.minutes
  *
  * Порт, а не NCALayer: ключ и пароль к нему остаются у владельца, а экран
  * знает только, что подпись просят и что её могут не дать. Подписью входят
- * в кабинет и подают заявления в ИСНА.
+ * в кабинет и подают заявления в ИСНА. Чем подписывать — NCALayer, eGov
+ * mobile или файлом ключа — выбирает владелец через [Signing].
  */
 interface Signer {
 
@@ -35,6 +36,19 @@ interface Signer {
 
         /** Запрос подписывающий принял, а подписи не вернул: окна владелец не видел. */
         const val NO_ANSWER: String = "NO_ANSWER"
+
+        /**
+         * Владелец отменил подпись у кассы: закрыл выбор файла, окно пароля
+         * или ожидание eGov mobile. Код читается как отказ владельца
+         * ([kz.mybrain.superkassa.domain.cabinet.model.cancelledBySigner]).
+         */
+        const val CANCELLED: String = "CANCELLED"
+
+        /** Служба, через которую eGov mobile получает и отдаёт подпись, не отвечает. */
+        const val EGOV_UNREACHABLE: String = "EGOV_UNREACHABLE"
+
+        /** Срок подписи в eGov mobile вышел, а подписи нет. */
+        const val EGOV_EXPIRED: String = "EGOV_EXPIRED"
 
         /**
          * Сколько ждать подписи.

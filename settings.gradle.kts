@@ -74,6 +74,8 @@ include(":testing")
 // своей службы и не зависит ни от приложения, ни от соседних интеграций.
 include(
     ":integrations:bfd-cabinet",
+    ":integrations:egov-mobile",
+    ":integrations:kalkan",
     ":integrations:maps",
     ":integrations:ncalayer",
     ":integrations:releases"

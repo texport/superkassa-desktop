@@ -21,5 +21,5 @@ internal fun SignInAction(
     modifier: Modifier = Modifier.fillMaxWidth()
 ) {
     val state by cabinet.state.collectAsScreenState()
-    SignInAction(state, language, texts, cabinet.actionsForOne(), modifier)
+    SignInAction(state, language, texts, cabinet.actionsForOne(), modifier, cabinet.signature)
 }

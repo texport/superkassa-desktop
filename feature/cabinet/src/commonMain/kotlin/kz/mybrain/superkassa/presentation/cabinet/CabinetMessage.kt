@@ -37,7 +37,7 @@ internal fun cabinetMessage(problem: CabinetProblem, texts: CabinetTexts): Messa
  * Почему подпись не получена.
  *
  * Своё объяснение приложение даёт кодом — его и переводим. Всё прочее
- * пришло от NCALayer, и доходит как есть: это сообщение для поддержки,
+ * пришло от NCALayer или посредника eGov mobile, и доходит как есть: это сообщение для поддержки,
  * и подменять его выдумкой хуже, чем показать чужими словами.
  *
  * Молчание NCALayer называется молчанием. Прежде оно приходило сюда
@@ -48,6 +48,9 @@ private fun signWords(detail: String, texts: CabinetTexts): String {
     val reason = when {
         detail == Signer.WINDOW_CLOSED -> texts.refusal.signWindowClosed
         detail == Signer.NO_ANSWER -> texts.hints.signNoAnswer
+        detail == Signer.CANCELLED -> texts.eds.cancelled
+        detail == Signer.EGOV_UNREACHABLE -> texts.eds.egovUnreachable
+        detail == Signer.EGOV_EXPIRED -> texts.eds.egovExpired
         // Отказ владельца NCALayer называет по-своему — «500 - action.canceled».
         // Это ответ службы, а не объяснение: подписывать отказался сам
         // владелец, и сказать об этом нужно его словами.

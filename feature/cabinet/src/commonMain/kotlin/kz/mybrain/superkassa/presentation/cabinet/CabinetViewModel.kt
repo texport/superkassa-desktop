@@ -11,12 +11,13 @@ import kotlinx.coroutines.launch
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetOwner
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
+import kz.mybrain.superkassa.presentation.cabinet.signing.CabinetSigning
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.time.TimeSource
 
 /**
- * Кабинет окна: вход владельца по ЭЦП и хозяйство его компании.
+ * Кабинет окна: вход владельца по ЭЦП, подпись и хозяйство его компании.
  *
  * Модель живёт, пока открыто окно: владелец уходит на вход кассы и обратно,
  * а вошедший, списки и выбранное остаются. Вышел владелец или истёк доступ —
@@ -37,6 +38,9 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
     private var listsOnEnter = true
 
     val state: StateFlow<CabinetUiState> = screen.asStateFlow()
+
+    /** Чем владелец подписывает и что подписывающий просит у него сейчас. */
+    val signature = CabinetSigning(useCases.signing)
 
     init {
         viewModelScope.launch { useCases.owner().collect(::follow) }

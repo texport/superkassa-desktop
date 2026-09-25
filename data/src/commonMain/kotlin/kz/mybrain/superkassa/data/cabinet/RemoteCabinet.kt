@@ -19,6 +19,7 @@ import kz.mybrain.superkassa.domain.cabinet.port.CabinetPorts
 import kz.mybrain.superkassa.domain.cabinet.port.CabinetRegisters
 import kz.mybrain.superkassa.domain.cabinet.port.SavedFiles
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
+import kz.mybrain.superkassa.domain.cabinet.port.Signing
 import kz.mybrain.superkassa.domain.log.port.Journal
 import kz.mybrain.superkassa.integrations.bfdcabinet.BfdCabinet
 import kz.mybrain.superkassa.integrations.bfdcabinet.CabinetSettings
@@ -36,7 +37,8 @@ import kz.mybrain.superkassa.integrations.bfdcabinet.DevelopmentIdentity
 class RemoteCabinet(
     val bfd: BfdCabinet,
     override val signer: Signer,
-    override val files: SavedFiles
+    override val files: SavedFiles,
+    override val signing: Signing = Signing.NcaLayerOnly
 ) : CabinetPorts {
     override val account: CabinetAccount = RemoteAccount(bfd.account)
     override val company: CabinetCompanies = RemoteCompanies(bfd.company)
@@ -55,17 +57,19 @@ class RemoteCabinet(
          * @param journal куда писать ход обмена: метод, путь, код ответа — без тел.
          * @param developer личность разработчика: задана — кабинет берёт её из
          *   заголовков, а не из подписи. Только явной настройкой машины.
+         * @param signing способы подписи и стол подписи; по умолчанию — только NCALayer.
          */
         fun open(
             address: String,
             signer: Signer,
             files: SavedFiles,
             journal: Journal,
-            developer: DevelopmentIdentity? = null
+            developer: DevelopmentIdentity? = null,
+            signing: Signing = Signing.NcaLayerOnly
         ): RemoteCabinet {
             if (developer != null) journal.warn("cabinet: developer entry by headers is on, no EDS sign-in")
             val settings = CabinetSettings(baseUrl = address, development = developer)
-            return RemoteCabinet(BfdCabinet(settings, signing(signer), exchange(journal)), signer, files)
+            return RemoteCabinet(BfdCabinet(settings, signing(signer), exchange(journal)), signer, files, signing)
         }
     }
 }

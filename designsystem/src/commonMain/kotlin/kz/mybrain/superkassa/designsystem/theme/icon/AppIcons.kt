@@ -59,6 +59,7 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Dialpad
 import androidx.compose.material.icons.outlined.EventAvailable
 import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.Key
 import androidx.compose.material.icons.outlined.Keyboard
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material.icons.outlined.LightMode
@@ -68,6 +69,7 @@ import androidx.compose.material.icons.outlined.Numbers
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.Percent
+import androidx.compose.material.icons.outlined.PhonelinkLock
 import androidx.compose.material.icons.outlined.PointOfSale
 import androidx.compose.material.icons.outlined.Print
 import androidx.compose.material.icons.outlined.QrCodeScanner
@@ -230,6 +232,12 @@ object AppIcons {
 
     /** Пин кассира. */
     val pin: ImageVector = Icons.Outlined.Password
+
+    /** Подпись в eGov mobile — на телефоне. */
+    val signOnPhone: ImageVector = Icons.Outlined.PhonelinkLock
+
+    /** Подпись файлом ключа. */
+    val signKeyFile: ImageVector = Icons.Outlined.Key
 
     /** Акцизная марка на позиции чека. */
     val excise: ImageVector = Icons.Outlined.QrCodeScanner

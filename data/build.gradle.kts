@@ -13,7 +13,8 @@ plugins {
  * Общий код — адаптеры ядра, кабинета и карт, настройки и журнал рабочего
  * места; платформе остаётся только то, что она делает иначе: окна системы,
  * печать, NCALayer и место машины на настольных системах; окно «Сохранить»,
- * печать, журнал системы и язык приложения на Android.
+ * выбор файла ключа и подпись им, печать, журнал системы и язык приложения
+ * на Android.
  *
  * Цели iOS — как у домена и интеграций: ядро, кабинет и карты их дают,
  * а общий код слоя стоит только на kotlinx-io, kotlinx-datetime и atomicfu.
@@ -31,6 +32,9 @@ kotlin {
             // и точка сборки отдаёт экземпляр модуля соседним адаптерам.
             api(project(":integrations:bfd-cabinet"))
             api(project(":integrations:maps"))
+            // Подпись в eGov mobile — общим кодом: протокол посредника
+            // не зависит от платформы.
+            api(project(":integrations:egov-mobile"))
             // Настройки и журнал рабочего места — файлами на любой платформе.
             api(libs.kotlinx.io.core)
             implementation(libs.kotlinx.atomicfu)
@@ -49,6 +53,15 @@ kotlin {
         androidMain.dependencies {
             // Выбор файла и печать Android идут через окно приложения.
             implementation(libs.androidx.activity)
+            // Подпись файлом ключа НУЦ РК — провайдером Kalkan, только Android:
+            // на компьютере подписывает NCALayer.
+            implementation(project(":integrations:kalkan"))
+        }
+        // Подпись файлом ключа проверяется на JVM машины разработчика:
+        // Kalkan там тот же, что на Android.
+        getByName("androidHostTest").dependencies {
+            implementation(libs.kotlin.test)
+            implementation(libs.kotlinx.coroutines.test)
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)

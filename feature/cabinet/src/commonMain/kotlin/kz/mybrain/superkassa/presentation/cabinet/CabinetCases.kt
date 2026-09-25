@@ -52,6 +52,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.signin.usecase.ObserveSignIn
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 import kz.mybrain.superkassa.domain.workplace.usecase.ReadLocalName
+import kz.mybrain.superkassa.presentation.cabinet.signing.SigningCases
 
 /**
  * Сценарии кабинета, собранные над его портами и кассой процесса.
@@ -103,6 +104,7 @@ class CabinetCases(kassa: Kassa, signIn: SignIn, memory: WorkplaceMemory, ports:
     val saveCardPdf = SaveCardPdf(ports.cards, ports.files)
 
     val submitApplication = SubmitApplication(ports.applications, ports.signer)
+    val signing = SigningCases(ports.signing)
     val closeShift = CloseShiftHere(kassa)
     val syncServiceInfo = SyncServiceInfoHere(kassa, signIn)
 

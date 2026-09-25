@@ -119,4 +119,20 @@ class CabinetMessageTest {
         assertFalse(tokenAllowed(register("REGISTRATION_IN_ISNA_PROCESS")))
         assertFalse(tokenAllowed(register("DEREGISTERED")))
     }
+
+    /**
+     * Отказы подписи на Android — словами владельца, без NCALayer.
+     *
+     * Отмена у кассы прежде читалась бы «Подпись отменена в NCALayer» —
+     * на планшете, где NCALayer нет и не бывает.
+     */
+    @Test
+    fun `отказы eGov mobile и отмена у кассы названы без NCALayer`() {
+        val words = listOf(Signer.CANCELLED, Signer.EGOV_UNREACHABLE, Signer.EGOV_EXPIRED)
+            .map { assertIs<Message.Refusal>(cabinetMessage(CabinetProblem.SignDeclined(it), texts)).text }
+        assertTrue(words[0].contains(texts.eds.cancelled), words[0])
+        assertTrue(words[1].contains(texts.eds.egovUnreachable), words[1])
+        assertTrue(words[2].contains(texts.eds.egovExpired), words[2])
+        assertTrue(words.none { it.contains("NCALayer") }, words.toString())
+    }
 }

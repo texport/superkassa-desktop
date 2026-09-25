@@ -19,6 +19,12 @@ interface CabinetPorts {
     val documents: CabinetDocuments
     val signer: Signer
 
+    /**
+     * Чем подписывать и что подписывающий спрашивает у владельца. По умолчанию —
+     * один NCALayer: окно подписи он показывает сам, спрашивать кассе нечего.
+     */
+    val signing: Signing get() = Signing.NcaLayerOnly
+
     /** Куда владелец сохраняет PDF регистрационной карты. */
     val files: SavedFiles
 }

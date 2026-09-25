@@ -17,13 +17,16 @@ import kz.mybrain.superkassa.designsystem.format.Times
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
+import kz.mybrain.superkassa.presentation.cabinet.signing.LocalSignMethod
+import kz.mybrain.superkassa.presentation.cabinet.signing.waitOf
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.cabinet.eds.EdsTexts
 import kz.mybrain.superkassa.strings.api.fill
 import kotlin.time.Duration
 
 /**
- * Ожидание подписи в NCALayer — с видимым сроком и отменой.
+ * Ожидание подписи — с видимым сроком и отменой: в NCALayer, в eGov mobile
+ * или паролем к файлу ключа (подсказка — о выбранном способе).
  *
  * Прежде на этом месте стояла занятая кнопка и больше ничего: владелец
  * подписывал в окне NCALayer, приложение три минуты не двигалось, а затем
@@ -55,7 +58,7 @@ internal fun SignWait(
         ) {
             CircularProgressIndicator(modifier = Modifier.size(Sizes.busyCircle))
             Text(texts.signin.signing, style = MaterialTheme.typography.titleMedium)
-            InfoTip(texts.hints.signWait)
+            InfoTip(waitOf(LocalSignMethod.current, texts))
         }
         if (left > Duration.ZERO) {
             Text(

@@ -20,6 +20,7 @@ import kz.mybrain.superkassa.navigation.step.StepKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetLook
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
+import kz.mybrain.superkassa.presentation.cabinet.signing.SigningScope
 import kz.mybrain.superkassa.presentation.cabinet.steps
 import kz.mybrain.superkassa.presentation.common.cabinet.CabinetSteps
 import kz.mybrain.superkassa.presentation.common.look.LookViewModel
@@ -68,10 +69,14 @@ fun ShellScreen(app: AppContainer) {
     // Проверка выпусков живёт, пока открыто окно, и начинается с него —
     // ещё до входа: модель окна сама ждёт своего часа и молчит без сети.
     updatesViewModel(app.services, app.areas.update)
-    if (shell.seat.signedIn) {
-        WorkShell(app, window, shell, messages)
-    } else {
-        DoorShell(app, window, messages)
+    // Подпись ЭЦП — одним окном над всеми разделами: просят её и кабинет,
+    // и дверь кабинета до входа кассира, и мастер подключения.
+    SigningScope(cabinet) {
+        if (shell.seat.signedIn) {
+            WorkShell(app, window, shell, messages)
+        } else {
+            DoorShell(app, window, messages)
+        }
     }
 }
 

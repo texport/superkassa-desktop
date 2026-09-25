@@ -31,6 +31,10 @@ import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.component.SignWait
+import kz.mybrain.superkassa.presentation.cabinet.signing.CabinetSigning
+import kz.mybrain.superkassa.presentation.cabinet.signing.LocalSignMethod
+import kz.mybrain.superkassa.presentation.cabinet.signing.SignMethodChoice
+import kz.mybrain.superkassa.presentation.cabinet.signing.aboutOf
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -40,9 +44,12 @@ import kotlin.time.TimeMark
 /**
  * Вход владельца в кабинет по ЭЦП.
  *
- * Одна кнопка и одна строка объяснения: сертификат владелец выбирает
- * в окне NCALayer, пароль вводит там же. Приложение ключа не видит
- * и никуда его не сохраняет — сюда возвращается только готовая подпись.
+ * Одна кнопка и одна строка объяснения. На компьютере сертификат владелец
+ * выбирает в окне NCALayer, пароль вводит там же. На Android над кнопкой —
+ * выбор способа: eGov mobile или файл ключа; QR и пароль просит окно
+ * подписи поверх кассы ([kz.mybrain.superkassa.presentation.cabinet.signing.SigningScope]).
+ * Приложение ключа не хранит и пароля не помнит — сюда возвращается
+ * только готовая подпись.
  *
  * Пока NCALayer ждёт пароль, на месте кнопки стоит ожидание с видимым
  * сроком и отменой — см. [SignWait]. Прежде там была занятая кнопка,
@@ -57,7 +64,8 @@ internal fun CabinetSignIn(
     state: CabinetUiState,
     language: Language,
     texts: CabinetTexts,
-    actions: CabinetActions
+    actions: CabinetActions,
+    signing: CabinetSigning? = null
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -70,7 +78,7 @@ internal fun CabinetSignIn(
                 verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
             ) {
                 DoorTitle(texts)
-                SignInAction(state, language, texts, actions)
+                SignInAction(state, language, texts, actions, signing = signing)
                 Text(
                     text = "${texts.signin.address}: ${state.address}",
                     style = MaterialTheme.typography.labelMedium,
@@ -95,7 +103,7 @@ private fun DoorTitle(texts: CabinetTexts) {
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)
     ) {
         Text(texts.title, style = MaterialTheme.typography.headlineSmall)
-        InfoTip(texts.hints.signIn)
+        InfoTip(aboutOf(LocalSignMethod.current, texts))
     }
 }
 
@@ -103,7 +111,10 @@ private fun DoorTitle(texts: CabinetTexts) {
  * Главное действие двери: вход — или ожидание подписи на его месте.
  *
  * Ожидание встаёт туда же, где стояла кнопка: владелец прерывает его тем
- * же местом, где начал. Тем же действием вход просит и мастер подключения.
+ * же местом, где начал. Над кнопкой — выбор способа подписи, если выбирать
+ * есть из чего. Тем же действием вход просит и мастер подключения.
+ *
+ * @param signing подпись окна; `null` — выбора способа нет (снимки вида).
  */
 @Composable
 internal fun SignInAction(
@@ -111,24 +122,28 @@ internal fun SignInAction(
     language: Language,
     texts: CabinetTexts,
     actions: CabinetActions,
-    modifier: Modifier = Modifier.fillMaxWidth()
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    signing: CabinetSigning? = null
 ) {
     val since = state.signingSince
-    if (since == null) {
-        BusyButton(
-            text = if (state.busy) texts.signin.signing else texts.signin.signIn,
-            busy = state.busy,
-            modifier = modifier,
-            onClick = actions::signIn
-        )
-    } else {
-        SignWait(
-            left = leftOf(since),
-            window = Signer.SIGN_WINDOW,
-            texts = texts,
-            eds = textsOf(language).cabinet.eds,
-            onCancel = actions::cancelSignIn
-        )
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
+        signing?.let { SignMethodChoice(it, texts.eds, enabled = since == null && !state.busy) }
+        if (since == null) {
+            BusyButton(
+                text = if (state.busy) texts.signin.signing else texts.signin.signIn,
+                busy = state.busy,
+                modifier = Modifier.fillMaxWidth(),
+                onClick = actions::signIn
+            )
+        } else {
+            SignWait(
+                left = leftOf(since),
+                window = Signer.SIGN_WINDOW,
+                texts = texts,
+                eds = textsOf(language).cabinet.eds,
+                onCancel = actions::cancelSignIn
+            )
+        }
     }
 }
 

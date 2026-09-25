@@ -53,7 +53,7 @@ fun CabinetScreen(window: CabinetWindow, stepped: Boolean = false) {
     val language = LocalLanguage.current
     val texts = textsOf(language).cabinet
     if (!state.open) {
-        CabinetSignIn(state, language, texts, model.actions())
+        CabinetSignIn(state, language, texts, model.actions(), model.signature)
         return
     }
     // Вошли из мастера — хозяйство не читалось: раздел читает его сам.

@@ -72,9 +72,12 @@ object DesignRules {
     private val TOKEN =
         Regex("""\b(Sizes|KassaLayout|HistoryLayout|AnalyticsLayout|ContentWidths|CardGrid|Tape)\.\w+""")
 
-    /** Свой размер по смыслу: значки, рельс, диалог, колонка входа, высота поля и полоски ожидания. */
+    /**
+     * Свой размер по смыслу: значки, рельс, диалог, колонка входа, высота поля
+     * и полоски ожидания, QR подписи — его читает телефон, и размер задан этим.
+     */
     private val ALLOWED = listOf(
         Regex("""Sizes\.\w*(Icon|icon|Circle|Swatch|Dot)\w*"""),
-        Regex("""Sizes\.(rail|formDialog|loginColumn|fieldHeight|busyLine|chipHeight)""")
+        Regex("""Sizes\.(rail|formDialog|loginColumn|fieldHeight|busyLine|chipHeight|signQr)""")
     )
 }

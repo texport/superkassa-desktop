@@ -27,7 +27,9 @@ data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/GithubUpdates.kt —
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/InstallerDownload.kt — скачивание установщика на диск со сверкой SHA-256
 
 # Слой данных: Android.
-data/src/androidMain/kotlin/kz/mybrain/superkassa/data/analytics/NotOnAndroid.kt — порты аналитики и карт там, где раздела на Android нет
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/analytics/MapsNotOnAndroid.kt — порт карт там, где карты на Android нет
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/eds/KeyFilePicker.kt — файл ключа системным окном выбора файлов Android
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/eds/KeyFileSigning.kt — подпись файлом ключа провайдером Kalkan: он есть только на JVM/Android
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/DocumentFiles.kt — окно «Сохранить» Android и запись по выданному адресу
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/ForegroundActivity.kt — активность на экране: окна системы открываются поверх неё
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/workplace/SystemLanguageLook.kt — язык приложения на Android 13+ хранит система
@@ -73,6 +75,10 @@ integrations/maps/src/iosMain/kotlin/kz/mybrain/superkassa/integrations/maps/Pla
 integrations/releases/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/releases/PlatformEngine.jvm.kt — движок Ktor настольной машины
 integrations/releases/src/androidMain/kotlin/kz/mybrain/superkassa/integrations/releases/PlatformEngine.android.kt — движок Ktor Android
 integrations/releases/src/iosMain/kotlin/kz/mybrain/superkassa/integrations/releases/PlatformEngine.ios.kt — движок Ktor iOS (Darwin)
+integrations/egov-mobile/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/egovmobile/PlatformEngine.jvm.kt — движок Ktor настольной машины
+integrations/egov-mobile/src/androidMain/kotlin/kz/mybrain/superkassa/integrations/egovmobile/PlatformEngine.android.kt — движок Ktor Android
+integrations/egov-mobile/src/iosMain/kotlin/kz/mybrain/superkassa/integrations/egovmobile/PlatformEngine.ios.kt — движок Ktor iOS (Darwin)
+integrations/kalkan/src/androidMain/ — провайдер Kalkan НУЦ РК, библиотека Java; на компьютере подписывает NCALayer
 integrations/ncalayer/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/ncalayer/DesktopNcaLayer.kt — NCALayer есть только на настольных системах
 integrations/ncalayer/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/ncalayer/socket/NcaExchange.kt — обмен с NCALayer по WebSocket машины
 integrations/ncalayer/src/jvmMain/kotlin/kz/mybrain/superkassa/integrations/ncalayer/socket/NcaSocket.kt — WebSocket к NCALayer на этой машине

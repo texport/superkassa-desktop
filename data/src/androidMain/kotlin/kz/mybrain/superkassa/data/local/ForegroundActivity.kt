@@ -5,6 +5,8 @@ import android.app.Application
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -36,19 +38,31 @@ class ForegroundActivity(application: Application) {
      *
      * @return адрес выбранного файла; `null` — окно закрыли или экрана нет.
      */
-    suspend fun createDocument(name: String, mime: String): Uri? = withContext(Dispatchers.Main) {
-        val screen = current ?: return@withContext null
-        suspendCancellableCoroutine { answer ->
-            val registry = screen.activityResultRegistry
-            var launcher: androidx.activity.result.ActivityResultLauncher<String>? = null
-            launcher = registry.register("$KEY${asked++}", ActivityResultContracts.CreateDocument(mime)) { uri ->
-                launcher?.unregister()
-                if (answer.isActive) answer.resume(uri)
+    suspend fun createDocument(name: String, mime: String): Uri? =
+        ask(ActivityResultContracts.CreateDocument(mime), name)
+
+    /**
+     * Спрашивает системным окном выбора файлов, какой файл открыть.
+     *
+     * @param kinds виды файлов, которые окно предлагает.
+     * @return адрес выбранного файла; `null` — окно закрыли или экрана нет.
+     */
+    suspend fun openDocument(kinds: Array<String>): Uri? = ask(ActivityResultContracts.OpenDocument(), kinds)
+
+    /** Окно системы поверх активности на экране — и его ответ. */
+    private suspend fun <I> ask(contract: ActivityResultContract<I, Uri?>, input: I): Uri? =
+        withContext(Dispatchers.Main) {
+            val screen = current ?: return@withContext null
+            suspendCancellableCoroutine { answer ->
+                var launcher: ActivityResultLauncher<I>? = null
+                launcher = screen.activityResultRegistry.register("$KEY${asked++}", contract) { uri ->
+                    launcher?.unregister()
+                    if (answer.isActive) answer.resume(uri)
+                }
+                answer.invokeOnCancellation { launcher.unregister() }
+                launcher.launch(input)
             }
-            answer.invokeOnCancellation { launcher.unregister() }
-            launcher.launch(name)
         }
-    }
 
     /** Следит, какая активность кассы на экране. */
     private inner class Tracker : Application.ActivityLifecycleCallbacks {
@@ -73,6 +87,6 @@ class ForegroundActivity(application: Application) {
 
     private companion object {
         /** Ключ окна выбора файла: у каждого обращения свой. */
-        const val KEY = "superkassa.save."
+        const val KEY = "superkassa.file."
     }
 }

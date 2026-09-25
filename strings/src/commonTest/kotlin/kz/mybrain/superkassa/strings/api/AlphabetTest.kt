@@ -65,8 +65,9 @@ class AlphabetTest {
         /**
          * Допустимая латиница в казахских надписях.
          *
-         * Названия служб и программ — NCALayer, SMS, Telegram, WhatsApp;
-         * PDF, QR и ID — так их называют и по-казахски; Enter — надпись
+         * Названия служб и программ — NCALayer, eGov mobile, SMS, Telegram,
+         * WhatsApp; PDF, QR и ID — так их называют и по-казахски; AUTH
+         * и `.p12` — так НУЦ называет ключ входа и файл ключа; Enter — надпись
          * на клавише; X и Z — названия отчётов кассы; схемы адреса
          * `http://` и `https://`; образцы набора: адрес почты и номер
          * телефона `+7 7XX XXX XX XX`; места подстановки `%s`, `%1$s`,
@@ -78,7 +79,9 @@ class AlphabetTest {
             Regex("""https?://"""),
             Regex("""name@example\.kz"""),
             Regex("""\d*X{2,3}"""),
-            Regex("""\b(NCALayer|SMS|Telegram|WhatsApp|PDF|QR|ID|Enter|X|Z)\b""")
+            Regex("""\beGov mobile\b"""),
+            Regex("""\.p12\b"""),
+            Regex("""\b(NCALayer|AUTH|SMS|Telegram|WhatsApp|PDF|QR|ID|Enter|X|Z)\b""")
         )
     }
 }
