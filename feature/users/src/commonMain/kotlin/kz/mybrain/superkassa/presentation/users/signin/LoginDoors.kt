@@ -2,13 +2,10 @@ package kz.mybrain.superkassa.presentation.users.signin
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,27 +18,6 @@ import kz.mybrain.superkassa.designsystem.state.EmptyState
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-
-/**
- * Заголовок экрана: название и то, что рядом с ним ставит каркас окна —
- * вид, язык, состояние связи.
- */
-@Composable
-internal fun LoginHeader(extras: @Composable RowScope.() -> Unit) {
-    val texts = LocalStrings.current
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            texts.login.title,
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.weight(1f)
-        )
-        extras()
-    }
-}
 
 /**
  * Списка касс нет.

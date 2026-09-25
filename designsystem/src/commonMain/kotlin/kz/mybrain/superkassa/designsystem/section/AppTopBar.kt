@@ -15,7 +15,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,10 +56,10 @@ fun AppTopBar(
     backLabel: String? = null,
     actions: @Composable RowScope.() -> Unit
 ) {
+    // Цвета — Material 3 по умолчанию: шапка стоит на той же `surface`,
+    // что рельс и разделы. Своя подложка `surfaceContainer` делала её
+    // отдельной серой полосой над окном, чужой рельсу и содержимому.
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
         navigationIcon = {
             when {
                 onBack != null -> IconButton(

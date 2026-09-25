@@ -119,7 +119,6 @@ data class SettingsScreenTexts(
     val autoCashoutHint: String,
     val settingsSaved: String,
     val addressMalformed: String,
-    val workplace: String,
     val mapServices: String,
     val mapServicesHint: String,
     val mapTiles: String,

@@ -23,7 +23,7 @@ private fun CashierSettingsPreview() = PreviewTheme { SettingsScreen(SettingsSam
 /** Настройки с экрана входа: кассы нет, остаётся то, что задают до входа. */
 @ScreenPreviews
 @Composable
-private fun DoorSettingsPreview() = PreviewTheme { WorkplaceSettingsScreen(SettingsSamples.door()) {} }
+private fun DoorSettingsPreview() = PreviewTheme { WorkplaceSettingsScreen(SettingsSamples.door()) }
 
 /** Список разделов администратора — панель слева или весь экран телефона. */
 @PanePreviews

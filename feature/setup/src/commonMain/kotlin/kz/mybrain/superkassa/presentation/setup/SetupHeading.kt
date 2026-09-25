@@ -4,22 +4,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.section.ScreenTitle
-import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
 
 /**
- * Название мастера, возврат и «Начать заново».
+ * Название мастера и «Начать заново».
+ *
+ * Возврата здесь нет: стрелку назад рисует шапка окна — и в разделе
+ * кассы, и за дверью экрана входа, — а мастер своей не строит.
  *
  * Пока мастер ничего не прошёл, забывать нечего, и кнопки нет: нажатая
  * по ошибке, она стирает заводской номер, уже унесённый в кабинет.
@@ -27,17 +26,12 @@ import kz.mybrain.superkassa.strings.api.setup.SetupTexts
  * а не второй строкой шапки.
  */
 @Composable
-internal fun SetupHeading(setup: SetupTexts, started: Boolean, actions: SetupActions, onBack: (() -> Unit)?) {
+internal fun SetupHeading(setup: SetupTexts, started: Boolean, actions: SetupActions) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        onBack?.let { back ->
-            IconButton(onClick = back) {
-                Icon(AppIcons.back, contentDescription = LocalStrings.current.settingsScreen.back)
-            }
-        }
         ScreenTitle(setup.title, modifier = Modifier.weight(1f, fill = false))
         InfoTip(setup.explain)
         Spacer(modifier = Modifier.weight(1f))

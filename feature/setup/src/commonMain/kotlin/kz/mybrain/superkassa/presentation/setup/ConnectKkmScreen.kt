@@ -46,7 +46,7 @@ fun ConnectKkm(
     onBack: (() -> Unit)? = null
 ) {
     if (cabinet == null || ports.cabinet == null) {
-        return ConnectByHand(setupViewModel(services, ports, WithoutCabinet), onBack)
+        return ConnectByHand(setupViewModel(services, ports, WithoutCabinet))
     }
     val calls = cabinet.calls
     val models = SetupModels(setupViewModel(services, ports, calls), registrationViewModel(ports, calls))
@@ -106,7 +106,7 @@ class SetupParts(
 fun SetupContent(parts: SetupParts) {
     val setup = textsOf(LocalLanguage.current).setup
     val state = parts.state
-    SetupFrame(state, parts.actions, parts.onBack) {
+    SetupFrame(state, parts.actions) {
         WideChoiceSegments(
             options = SetupWay.entries,
             selected = state.way,
@@ -125,7 +125,6 @@ fun SetupContent(parts: SetupParts) {
 internal fun SetupFrame(
     state: SetupUiState,
     actions: SetupActions,
-    onBack: (() -> Unit)?,
     steps: @Composable ColumnScope.() -> Unit
 ) {
     val setup = textsOf(LocalLanguage.current).setup
@@ -134,7 +133,7 @@ internal fun SetupFrame(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
-        SetupHeading(setup, state.draft.factoryNumber != null, actions, onBack)
+        SetupHeading(setup, state.draft.factoryNumber != null, actions)
         ScrollableColumn(modifier = Modifier.weight(1f), spacing = Spacing.fieldGap, content = steps)
     }
 }

@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.presentation.shell.section
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,8 +10,6 @@ import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
 import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
 import kz.mybrain.superkassa.presentation.cabinet.CabinetScreen
 import kz.mybrain.superkassa.presentation.cabinet.signin.CabinetDoor
-import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
-import kz.mybrain.superkassa.presentation.common.picker.ThemeSwitch
 import kz.mybrain.superkassa.presentation.common.print.LocalPrint
 import kz.mybrain.superkassa.presentation.debug.log.DebugSetting
 import kz.mybrain.superkassa.presentation.journal.HistoryScreen
@@ -94,25 +91,35 @@ private fun SectionScreen(app: AppContainer, window: WindowParts, section: Secti
     }
 }
 
-/** Вход кассира занимает окно целиком: пустые разделы без кассы ничему не учат. */
+/**
+ * Вход кассира занимает окно целиком: пустые разделы без кассы ничему не учат.
+ *
+ * @param close закрыть дверь и вернуться на вход — то же, что стрелка
+ *   в шапке окна: перечитывает кассы, за дверью кассу могли завести.
+ */
 @Composable
-internal fun SectionDoor(app: AppContainer, window: WindowParts, state: LoginUiState, actions: LoginActions) {
+internal fun SectionDoor(
+    app: AppContainer,
+    window: WindowParts,
+    state: LoginUiState,
+    actions: LoginActions,
+    close: () -> Unit
+) {
     // Форму владелец может открыть и отсюда — через дверь в кабинет.
     PrintDesk(app.services, app.areas.print) {
         LoginScreen(
             state = state,
             actions = actions,
-            header = { LoginExtras(window) },
             doors = doorsOf(app.areas),
-            // Закрытая дверь перечитывает кассы: за ней кассу могли завести.
-            door = { door, close ->
-                LoginDoor(app, window, door) {
-                    actions.reload()
-                    close()
-                }
-            }
+            door = { door, _ -> LoginDoor(app, window, door, close) }
         )
     }
+}
+
+/** Закрыть дверь: вернуться к списку касс и перечитать его — за дверью кассу могли завести. */
+internal fun closeDoor(login: LoginActions) {
+    login.reload()
+    login.open(Door.Kkms)
 }
 
 /**
@@ -128,7 +135,7 @@ private fun LoginDoor(app: AppContainer, window: WindowParts, door: Door, close:
     when (door) {
         Door.Register -> Connect(app, window, close)
         Door.Cabinet -> window.cabinet?.let { CabinetDoor(it, close) }
-        Door.Settings -> WorkplaceSettingsScreen(settingsOf(app, window), close)
+        Door.Settings -> WorkplaceSettingsScreen(settingsOf(app, window))
         Door.Kkms -> Unit
     }
 }
@@ -143,13 +150,6 @@ private fun doorsOf(areas: AreaPorts): Set<Door> = buildSet {
     if (areas.setup != null) add(Door.Register)
     if (areas.cabinet != null) add(Door.Cabinet)
     add(Door.Settings)
-}
-
-/** Рядом с названием входа: вид и язык — их меняют и до входа. */
-@Composable
-private fun RowScope.LoginExtras(window: WindowParts) {
-    ThemeSwitch(window.look)
-    LanguagePicker(window.look)
 }
 
 /** Мастер подключения окна; на платформе без мастера не рисуется ничего: двери к нему там нет. */

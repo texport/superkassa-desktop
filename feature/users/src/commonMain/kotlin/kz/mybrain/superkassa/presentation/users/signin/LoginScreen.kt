@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.users.signin
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,8 +26,10 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * не спрашивается ни на одном экране. Касса запоминается: на рабочем месте
  * она не меняется, и утром достаточно ввести пин.
  *
- * Блоки идут сверху вниз без разрывов: шапка, поиск, перечень, двери
- * и полоса пина — с шагом общей шкалы. Перечень берёт высоту своих строк
+ * Блоки идут сверху вниз без разрывов: поиск, перечень, двери и полоса
+ * пина — с шагом общей шкалы. Заголовок «Вход в кассу», тема и язык стоят
+ * в шапке окна: её ставит каркас, одну на вход и на всё, что открыто
+ * дверями отсюда. Перечень берёт высоту своих строк
  * и прокручивается, только когда касс больше, чем помещается; полоса пина
  * встаёт сразу под дверями. Прежде она была прибита к низу окна, а
  * перечень растягивался до неё пустой рамкой, и между дверями и пином
@@ -44,7 +45,6 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 fun LoginScreen(
     state: LoginUiState,
     actions: LoginActions,
-    header: @Composable RowScope.() -> Unit,
     doors: Set<Door>,
     door: @Composable (Door, close: () -> Unit) -> Unit
 ) {
@@ -64,7 +64,6 @@ fun LoginScreen(
                 .padding(bottom = Sizes.snackbarRoom),
             verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
-            LoginHeader(header)
             when {
                 state.kkms.isEmpty() && !state.answered -> LoadingState(Modifier.weight(1f, fill = false))
                 state.kkms.isEmpty() -> EmptyKkms(state.listRead, actions, doors)

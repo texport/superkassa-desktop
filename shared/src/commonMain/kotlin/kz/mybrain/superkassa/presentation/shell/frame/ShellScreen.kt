@@ -15,9 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
 import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
-import kz.mybrain.superkassa.designsystem.state.BusyLine
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetLook
@@ -35,7 +33,6 @@ import kz.mybrain.superkassa.presentation.shell.bar.WorkBar
 import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
-import kz.mybrain.superkassa.presentation.shell.section.SectionDoor
 import kz.mybrain.superkassa.presentation.shell.section.SectionTrail
 import kz.mybrain.superkassa.presentation.shell.section.SectionTrailSaver
 import kz.mybrain.superkassa.presentation.shell.section.sectionsFor
@@ -44,7 +41,6 @@ import kz.mybrain.superkassa.presentation.update.check.UpdateDialog
 import kz.mybrain.superkassa.presentation.update.check.UpdatesUiState
 import kz.mybrain.superkassa.presentation.update.check.UpdatesViewModel
 import kz.mybrain.superkassa.presentation.update.check.updatesViewModel
-import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -92,30 +88,6 @@ internal class WindowParts(val shell: ShellViewModel, val look: LookViewModel, v
 
     /** Шаги кабинета для мастера подключения: те же вход и формы, что в разделах кабинета. */
     val steps: CabinetSteps? = cabinet?.steps()
-}
-
-/**
- * Окно до входа: кассир видит только вход.
- *
- * Пустые разделы без выбранной кассы отвечают отказами и ничему не учат,
- * поэтому ни рельса, ни шапки кассы здесь нет.
- */
-@Composable
-internal fun DoorShell(app: AppContainer, window: WindowParts, messages: SnackbarHostState) {
-    // Набранное кассиром живёт в модели входа окна: список касс и полоса
-    // пина читают одно и то же. Поле окна — то же, что у разделов, и сверху:
-    // шапки над входом нет.
-    val login = loginViewModel(app.services)
-    val door by login.state.collectAsScreenState()
-    Scaffold(
-        topBar = { BusyLine(door.entering) },
-        snackbarHost = { MessageHost(messages) }
-    ) { padding ->
-        ShellMessages(app, messages)
-        Row(modifier = Modifier.fillMaxSize().padding(padding).padding(windowMargin)) {
-            SectionDoor(app, window, door, login)
-        }
-    }
 }
 
 /**
@@ -189,7 +161,7 @@ private fun UpdateOffer(release: UpdatesUiState, updates: UpdatesViewModel, show
  * пишут их в ту же строку сообщений, и место ему одно — внизу окна.
  */
 @Composable
-private fun ShellMessages(app: AppContainer, messages: SnackbarHostState) {
+internal fun ShellMessages(app: AppContainer, messages: SnackbarHostState) {
     val message by app.services.talk.notices.current.collectAsScreenState()
     MessageEffect(message, messages) { app.services.talk.notices.clear() }
 }

@@ -44,14 +44,13 @@ internal fun ByHand(state: SetupUiState, actions: SetupActions) {
  *
  * Там, где кабинета нет — на Android нет подписи ЭЦП, — выбирать путь
  * не из чего, и переключатель путей не ставится: кассу, заведённую в БФД
- * сервисником, владелец подключает идентификатором и токеном.
- *
- * @param onBack возврат туда, откуда пришли; `null` — возвращаться некуда.
+ * сервисником, владелец подключает идентификатором и токеном. Возврат
+ * рисует шапка окна, а не мастер.
  */
 @Composable
-internal fun ConnectByHand(model: SetupViewModel, onBack: (() -> Unit)?) {
+internal fun ConnectByHand(model: SetupViewModel) {
     val state by model.state.collectAsScreenState()
     // Контуры и кассы читаются, как мастер открыт: справочник мог не ответить прежде.
     LaunchedEffect(Unit) { model.reload() }
-    SetupFrame(state, model, onBack) { ByHand(state, model) }
+    SetupFrame(state, model) { ByHand(state, model) }
 }
