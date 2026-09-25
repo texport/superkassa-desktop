@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.data.local
+package kz.mybrain.superkassa.data.local.workplace
 
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.domain.print.model.PrintKind

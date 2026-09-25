@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.data.map
 
-import kz.mybrain.superkassa.data.local.Preferences
+import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.domain.map.port.MapMemory
 
 /** Память карт — в настройках рабочего места, рядом с прочими выборами владельца. */

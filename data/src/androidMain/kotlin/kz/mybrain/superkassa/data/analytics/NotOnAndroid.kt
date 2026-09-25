@@ -12,7 +12,6 @@ import kz.mybrain.superkassa.domain.analytics.model.SalesSummary
 import kz.mybrain.superkassa.domain.analytics.port.Analytics
 import kz.mybrain.superkassa.domain.map.model.MapPlace
 import kz.mybrain.superkassa.domain.map.model.MapPointPlace
-import kz.mybrain.superkassa.domain.map.port.MapMemory
 import kz.mybrain.superkassa.domain.map.port.Maps
 
 /**
@@ -40,11 +39,4 @@ class MapsNotOnAndroid : Maps {
     override suspend fun placeAt(latitude: Double, longitude: Double): MapPointPlace? = null
     override suspend fun locateMachine(): MapPlace? = null
     override suspend fun locateByConnection(): MapPlace? = null
-}
-
-/** Память карт на время процесса: раздела с картой на Android ещё нет. */
-class ProcessMapMemory : MapMemory {
-    override var cardCollapsed: Boolean = false
-    override var legendCollapsed: Boolean = false
-    override var locationAllowed: Boolean? = null
 }

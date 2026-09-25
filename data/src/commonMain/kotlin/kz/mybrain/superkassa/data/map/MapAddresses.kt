@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.data.map
 
-import kz.mybrain.superkassa.data.local.MapPreferences
+import kz.mybrain.superkassa.data.local.workplace.MapPreferences
 import kz.mybrain.superkassa.integrations.maps.MapServices
 
 /**

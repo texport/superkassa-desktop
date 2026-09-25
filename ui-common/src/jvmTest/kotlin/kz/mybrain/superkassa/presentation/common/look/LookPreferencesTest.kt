@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.common.look
 
 import kotlinx.io.files.Path
-import kz.mybrain.superkassa.data.local.Preferences
+import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.Typeface

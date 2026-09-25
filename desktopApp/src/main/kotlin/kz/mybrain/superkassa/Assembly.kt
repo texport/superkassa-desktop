@@ -16,8 +16,8 @@ import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
 import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
 import kz.mybrain.superkassa.data.local.DataHome
 import kz.mybrain.superkassa.data.local.DialogFiles
-import kz.mybrain.superkassa.data.local.PreferenceChoices
-import kz.mybrain.superkassa.data.local.Preferences
+import kz.mybrain.superkassa.data.local.workplace.PreferenceChoices
+import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.data.log.AppJournal
 import kz.mybrain.superkassa.data.log.AppLog
 import kz.mybrain.superkassa.data.log.AppLogBook

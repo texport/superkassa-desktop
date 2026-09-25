@@ -7,7 +7,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kotlinx.io.files.Path
-import kz.mybrain.superkassa.data.local.Preferences
+import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.domain.setup.model.SetupStep
 import kz.mybrain.superkassa.domain.setup.port.FakeSetupCabinet
 import kz.mybrain.superkassa.domain.setup.port.SetupPorts

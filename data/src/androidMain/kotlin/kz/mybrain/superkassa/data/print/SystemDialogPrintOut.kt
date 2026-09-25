@@ -5,6 +5,7 @@ import android.print.PrintManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kz.mybrain.superkassa.data.local.DocumentFiles
 import kz.mybrain.superkassa.data.local.ForegroundActivity
 import kz.mybrain.superkassa.domain.print.model.Kept
 import kz.mybrain.superkassa.domain.print.model.PrintRoute
@@ -26,6 +27,8 @@ import kotlin.coroutines.resume
  */
 class SystemDialogPrintOut(private val screen: ForegroundActivity) : PrintOut {
 
+    private val files = DocumentFiles(screen)
+
     override val route: PrintRoute = PrintRoute.SystemDialog
 
     override suspend fun printers(): List<String> = emptyList()
@@ -45,29 +48,17 @@ class SystemDialogPrintOut(private val screen: ForegroundActivity) : PrintOut {
             }
         }
 
-    override suspend fun keep(bytes: ByteArray, name: String, title: String): Kept {
-        val target = screen.createDocument(name, mimeOf(name)) ?: return Kept.Cancelled
-        val written = withContext(Dispatchers.IO) {
-            runCatching { screen.activity?.contentResolver?.openOutputStream(target)?.use { it.write(bytes) } }
-                .getOrNull()
-        }
-        return if (written != null) Kept.Saved(name) else Kept.Unavailable
-    }
+    override suspend fun keep(bytes: ByteArray, name: String, title: String): Kept =
+        runCatching { files.save(bytes, name, title) }.fold(
+            onSuccess = { saved -> saved?.let(Kept::Saved) ?: Kept.Cancelled },
+            onFailure = { Kept.Unavailable }
+        )
 
     /** Чем кончилось задание, когда диалог закрыт. */
     private fun outcome(job: PrintJob?): Printed = when {
         job == null || job.isFailed -> Printed.Refused
         job.isCancelled -> Printed.Cancelled
         else -> Printed.Sent
-    }
-
-    /** Вид файла по его окончанию: система подписывает по нему окно и выбирает, чем открыть. */
-    private fun mimeOf(name: String): String = when (name.substringAfterLast('.').lowercase()) {
-        "pdf" -> "application/pdf"
-        "html" -> "text/html"
-        "png" -> "image/png"
-        "txt" -> "text/plain"
-        else -> "application/octet-stream"
     }
 
     private companion object {

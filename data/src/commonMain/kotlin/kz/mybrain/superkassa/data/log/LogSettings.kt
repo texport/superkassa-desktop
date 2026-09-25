@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.data.log
 
 import kotlinx.io.files.Path
-import kz.mybrain.superkassa.data.local.readSetting
-import kz.mybrain.superkassa.data.local.writeSetting
+import kz.mybrain.superkassa.data.local.workplace.readSetting
+import kz.mybrain.superkassa.data.local.workplace.writeSetting
 
 /**
  * Что рабочее место помнит о журнале: уровень записи и режим отладки.

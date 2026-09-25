@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kotlinx.io.files.Path
-import kz.mybrain.superkassa.data.local.UpdatePreferences
+import kz.mybrain.superkassa.data.local.workplace.UpdatePreferences
 import kz.mybrain.superkassa.domain.update.model.Fetched
 import kz.mybrain.superkassa.domain.update.model.Installer
 import kz.mybrain.superkassa.domain.update.model.Release

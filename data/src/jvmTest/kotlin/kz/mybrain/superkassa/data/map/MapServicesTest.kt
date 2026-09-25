@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.data.map
 
 import kotlinx.io.files.Path
-import kz.mybrain.superkassa.data.local.Preferences
+import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.integrations.maps.MapServices
 import java.nio.file.Files
 import kotlin.test.Test

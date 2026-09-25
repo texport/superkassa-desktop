@@ -1,30 +1,31 @@
 package kz.mybrain.superkassa.data.log
 
 import android.util.Log
-import kz.mybrain.superkassa.domain.debug.model.LogLevel
 import kz.mybrain.superkassa.domain.log.port.Journal
 
 /**
- * Журнал на Android — журнал системы под меткой кассы.
+ * Журнал на Android — журнал системы под меткой кассы и журнал рабочего
+ * места, как на компьютере.
  *
- * Та же строка ложится в [book]: её видно в журнале поверх кассы, когда
- * включён режим отладки, — без кабеля и без средств разработчика.
+ * Та же строка ложится в [AppLog]: её видно в журнале поверх кассы, когда
+ * включён режим отладки, — без кабеля и без средств разработчика, — и она
+ * остаётся в файле, который пересылают в поддержку.
  */
-class LogcatJournal(private val book: LogcatBook) : Journal {
+class LogcatJournal(private val journal: Journal = AppJournal(LogSource.App)) : Journal {
 
     override fun info(text: String) {
         Log.i(TAG, text)
-        book.record(LogLevel.Info, text)
+        journal.info(text)
     }
 
     override fun warn(text: String) {
         Log.w(TAG, text)
-        book.record(LogLevel.Warning, text)
+        journal.warn(text)
     }
 
     override fun failure(text: String) {
         Log.e(TAG, text)
-        book.record(LogLevel.Failure, text)
+        journal.failure(text)
     }
 
     private companion object {

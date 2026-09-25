@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.data.local
+package kz.mybrain.superkassa.data.local.workplace
 
 import kz.mybrain.superkassa.data.map.publicMaps
 import kz.mybrain.superkassa.domain.workplace.model.MapServices

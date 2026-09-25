@@ -23,7 +23,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.DataHome
-import kz.mybrain.superkassa.data.local.Preferences
+import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.data.log.AppLog
 import kz.mybrain.superkassa.data.log.LogSettings
 import kz.mybrain.superkassa.designsystem.adaptive.WindowClassRoot

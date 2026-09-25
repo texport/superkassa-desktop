@@ -8,20 +8,24 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.async
+import kotlinx.io.files.Path
 import kz.mybrain.superkassa.background.BackgroundWork
 import kz.mybrain.superkassa.data.analytics.AnalyticsNotOnAndroid
 import kz.mybrain.superkassa.data.analytics.MapsNotOnAndroid
-import kz.mybrain.superkassa.data.analytics.ProcessMapMemory
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
 import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
-import kz.mybrain.superkassa.data.local.AndroidChoices
-import kz.mybrain.superkassa.data.local.AndroidWorkplace
+import kz.mybrain.superkassa.data.local.DocumentFiles
 import kz.mybrain.superkassa.data.local.ForegroundActivity
-import kz.mybrain.superkassa.data.log.LogcatBook
+import kz.mybrain.superkassa.data.local.workplace.PreferenceChoices
+import kz.mybrain.superkassa.data.local.workplace.Preferences
+import kz.mybrain.superkassa.data.local.workplace.SystemLanguageLook
+import kz.mybrain.superkassa.data.log.AppLog
+import kz.mybrain.superkassa.data.log.AppLogBook
+import kz.mybrain.superkassa.data.log.LogSettings
 import kz.mybrain.superkassa.data.log.LogcatJournal
-import kz.mybrain.superkassa.data.print.AndroidPrintChoices
+import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
 import kz.mybrain.superkassa.data.print.SystemDialogPrintOut
 import kz.mybrain.superkassa.data.releases.StoreReleases
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
@@ -41,7 +45,6 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
-import java.io.File
 
 /**
  * Точка сборки кассы на Android — единственное место, знающее все три слоя.
@@ -69,10 +72,20 @@ class SuperkassaApp : Application() {
     /** Активность на экране: над ней открываются диалог печати и окно «Сохранить». */
     private lateinit var screen: ForegroundActivity
 
+    /**
+     * Каталог данных рабочего места — внутренняя память приложения: настройки,
+     * журнал и касса лежат в нём так же, как в каталоге данных на компьютере.
+     */
+    private val home: Path get() = Path(filesDir.path)
+
     override fun onCreate() {
         super.onCreate()
         screen = ForegroundActivity(this)
-        kassa = scope.async(Dispatchers.IO) { open() }
+        kassa = scope.async(Dispatchers.IO) {
+            // Журнал поднимается до первого обращения к кассе, как на компьютере.
+            AppLog.start(LogSettings(home))
+            open()
+        }
         container = scope.async(Dispatchers.IO) { assemble(kassa.await()) }
         BackgroundWork.schedule(this)
     }
@@ -83,19 +96,18 @@ class SuperkassaApp : Application() {
         .getOrThrow()
 
     private fun assemble(kassa: Superkassa): AppContainer {
-        val workplace = AndroidWorkplace(this)
-        val look = WorkplaceLook(workplace)
-        val log = LogcatBook(File(filesDir, LOG_DIRECTORY).path, screen)
+        val preferences = Preferences(home)
+        val look = WorkplaceLook(SystemLanguageLook(this, preferences))
         return AppContainer(
             services = WindowServices(
                 kassa = EmbeddedKassa(kassa.api),
                 signIn = SignIn(),
-                memory = workplace,
+                memory = preferences,
                 look = look,
                 // Слова кассиру — на языке окна, как на компьютере.
-                talk = Talk(Notices(), LogcatJournal(log)) { workplaceLanguage(look.state.value.language) }
+                talk = Talk(Notices(), LogcatJournal()) { workplaceLanguage(look.state.value.language) }
             ),
-            areas = areaPorts(kassa, workplace, log)
+            areas = areaPorts(kassa, preferences)
         )
     }
 
@@ -105,7 +117,7 @@ class SuperkassaApp : Application() {
      * Кабинета на Android нет: подписи ЭЦП здесь пока нет. Мастер подключения
      * без кабинета ведёт ручной путь — идентификатор и токен.
      */
-    private fun areaPorts(kassa: Superkassa, workplace: AndroidWorkplace, log: LogcatBook): AreaPorts {
+    private fun areaPorts(kassa: Superkassa, preferences: Preferences): AreaPorts {
         // Выпуски на Android приносит магазин приложений.
         val updates = StoreReleases()
         return AreaPorts(
@@ -113,24 +125,21 @@ class SuperkassaApp : Application() {
             journal = JournalPorts(EmbeddedDeliveries(kassa.delivery)),
             settings = SettingsPorts(
                 coreSettings = EmbeddedSettings(kassa.settings, KassaSource.directory(this).path),
-                workplace = AndroidChoices(workplace)
+                workplace = PreferenceChoices(preferences)
             ),
-            print = PrintPorts(SystemDialogPrintOut(screen), AndroidPrintChoices(this)),
+            print = PrintPorts(SystemDialogPrintOut(screen), preferences.printing),
             update = UpdatePorts(releases = updates, updateMemory = updates),
-            debug = DebugPorts(log),
-            analytics = analyticsPorts(),
-            setup = SetupPorts(memory = workplace)
+            debug = DebugPorts(AppLogBook(DocumentFiles(screen))),
+            analytics = analyticsPorts(preferences),
+            setup = SetupPorts(memory = preferences)
         )
     }
 
     /** Аналитики кабинета и карты на Android пока нет: порты отвечают, что раздела нет. */
-    private fun analyticsPorts() = AnalyticsPorts(
+    private fun analyticsPorts(preferences: Preferences) = AnalyticsPorts(
         cabinet = AnalyticsNotOnAndroid(),
-        map = MapPorts(MapsNotOnAndroid(), ProcessMapMemory())
+        map = MapPorts(MapsNotOnAndroid(), WorkplaceMapMemory(preferences))
     )
 }
 
 private const val TAG = "Superkassa"
-
-/** Каталог файлов журнала в памяти приложения — как `log` рядом с настройками на компьютере. */
-private const val LOG_DIRECTORY = "log"
