@@ -96,6 +96,8 @@ data class SettingsScreenTexts(
     /** На машине нет ни одного принтера: печатать чек некуда. */
     val printerNone: String,
     val printKind: String,
+    /** Что меняет вид файла: сохранённый файл, а не просмотр на экране и не печать. */
+    val printKindHint: String,
     val printCopies: String,
     val panelBehaviour: String,
     val taxSettings: String,

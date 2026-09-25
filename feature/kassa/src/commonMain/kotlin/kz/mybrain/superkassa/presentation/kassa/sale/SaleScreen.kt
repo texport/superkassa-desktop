@@ -30,7 +30,6 @@ import kz.mybrain.superkassa.presentation.kassa.sale.component.DomainCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ExciseDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.component.IssueRow
 import kz.mybrain.superkassa.presentation.kassa.sale.component.IssuedCard
-import kz.mybrain.superkassa.presentation.kassa.sale.component.PaymentCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ReceiptChangesCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ReceiptTotals
 import kz.mybrain.superkassa.presentation.kassa.sale.component.SaleHeader
@@ -49,11 +48,11 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * ([Panes.receiptAndTill]): в окне по умолчанию она прежде стояла постоянной
  * ширины и оставляла названию товара в чеке одну букву.
  *
- * Касса сворачивается до итога с «Пробить чек» ([SupportingPanes]): на
- * широком окне она уходит вбок, и чек забирает всю ширину, а итог встаёт
- * под ним; где рядом тесно — телефон, планшет стоймя, — касса лежит снизу
- * нижним листом, свёрнутым до итога. Сумма к оплате и главная кнопка
- * видны всегда; развёрнута ли касса, помнит рабочее место.
+ * Касса — вспомогательная панель ([SupportingPanes]): на широком окне
+ * она справа от чека, где рядом тесно — телефон, планшет стоймя, — лежит
+ * снизу нижним листом, который тянут за ручку до итога с «Пробить чек».
+ * Разделы кассы, и «К оплате» с оплатой в нём, сворачиваются вниз
+ * стрелками в своих заголовках; что развёрнуто, помнит рабочее место.
  *
  * Одна операция на два направления намеренно: состав чека у продажи
  * и покупки одинаковый, различается только направление денег.
@@ -84,7 +83,7 @@ fun SaleContent(state: SaleUiState, actions: SaleActions = SaleActions(), output
             onToggle = { actions.toggle(SalePanel.Till) },
             main = { ReceiptColumn(state, actions, output) },
             supporting = { TillBody(state, actions) },
-            summary = { toggle -> Checkout(state, actions, toggle) },
+            summary = { Checkout(state, actions) },
             modifier = Modifier.fillMaxSize()
         )
     }
@@ -108,7 +107,6 @@ private fun ReceiptColumn(state: SaleUiState, actions: SaleActions, output: Rece
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
-        SaleHeader(state.form.operation, state.basket.positions.isNotEmpty(), actions)
         state.shownIssued?.let { IssuedCard(it, output, actions.next) }
         BasketCard(
             basket = state.basket,
@@ -116,7 +114,7 @@ private fun ReceiptColumn(state: SaleUiState, actions: SaleActions, output: Rece
             onStorno = actions.basket::storno,
             onExcise = { stamping = it },
             onRemove = actions.basket::remove
-        )
+        ) { SaleHeader(state.form.operation, state.basket.positions.size, actions) }
     }
 }
 
@@ -148,25 +146,28 @@ private fun TillBody(state: SaleUiState, actions: SaleActions) {
             toggle(SalePanel.PositionEntry)
         }
         DomainCard(state.domainKind, state.form.domain, actions.form::domain)
-        PaymentCard(state, actions.payments, state.expanded(SalePanel.Money)) { toggle(SalePanel.Money) }
         TillExtras(state, actions)
     }
 }
 
 /**
- * Итог с единственной кнопкой — то, без чего чек не пробить: сумма
- * к оплате и «Пробить чек» на экране всегда, сколько бы позиций и оплат
- * ни набралось и свёрнута ли касса. Пять строк оплаты здесь прежде
- * отнимали у ввода всю высоту, и в окне 960×640 поля штрихкода не было.
- *
- * @param toggle кнопка «свернуть / развернуть кассу» — в строке итога.
+ * «К оплате» с единственной кнопкой — то, без чего чек не пробить: сумма
+ * к оплате и «Пробить чек» на экране всегда, сколько бы позиций ни
+ * набралось. Оплата — в том же блоке и сворачивается вниз вместе с ним.
  */
 @Composable
-private fun Checkout(state: SaleUiState, actions: SaleActions, toggle: @Composable () -> Unit) {
+private fun Checkout(state: SaleUiState, actions: SaleActions) {
     // Итог стоит в тех же полях, что и прокручиваемое над ним.
     Box(modifier = Modifier.padding(end = KassaLayout.tillGutter)) {
         CheckoutPanel {
-            ReceiptTotals(state.form, state.total, state.expanded(SalePanel.Money), actions.form::taken, toggle)
+            ReceiptTotals(
+                state = state,
+                payments = actions.payments,
+                expanded = state.expanded(SalePanel.Money),
+                onToggle = { actions.toggle(SalePanel.Money) },
+                onTaken = actions.form::taken,
+                modifier = Modifier.weight(1f, fill = false)
+            )
             IssueRow(state, actions.issue)
         }
     }

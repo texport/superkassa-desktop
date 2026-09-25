@@ -102,8 +102,7 @@ class SaleEntryLookTest {
             ) {
                 PositionEntryCard(state, NO_ENTRY, expanded = true, onToggle = {})
                 ReceiptChangesCard(state, NO_FORM, expanded = true, onToggle = {})
-                PaymentCard(state, NO_PAYMENTS, expanded = true, onToggle = {})
-                ReceiptTotals(state.form, state.total, expanded = true, onTaken = {})
+                ReceiptTotals(state, NO_PAYMENTS, expanded = true, onToggle = {}, onTaken = {})
             }
         }
     }

@@ -30,7 +30,8 @@ import kz.mybrain.superkassa.presentation.kassa.sale.position.details
 /**
  * Корзина чека на экране.
  *
- * Лист чека: шапка с числом позиций, под ней сам список. Список
+ * Лист чека: шапка ([head]) — по умолчанию число позиций, на экране
+ * продажи — ещё направление и очистка, — под ней сам список. Список
  * ленивый и прокручивается сам — колонка чека больше не прокручивается
  * целиком, и длинный чек не уводит вниз ни итог, ни кнопку.
  *
@@ -44,33 +45,14 @@ internal fun BasketCard(
     modifier: Modifier = Modifier,
     onStorno: (Int) -> Unit,
     onExcise: (Int) -> Unit,
-    onRemove: (Int) -> Unit
+    onRemove: (Int) -> Unit,
+    head: @Composable () -> Unit = { BasketSummary(basket) }
 ) {
     // Открытая строка переживает поворот экрана, как и сама корзина.
     var detailed by rememberSaveable { mutableStateOf<Int?>(null) }
-    detailed?.let { at ->
-        // Строка читается из корзины на каждом кадре: сторно из окна меняет
-        // её, и окно обязано показать уже новое состояние, а не снимок.
-        val position = basket.positions.getOrNull(at)
-        if (position == null) {
-            detailed = null
-        } else {
-            PositionDetailsDialog(
-                details = position.details(),
-                rates = LocalVatRates.current,
-                onDismiss = { detailed = null },
-                onStorno = { onStorno(at) },
-                // Удалённой строки в корзине нет, а её место занимает
-                // следующая: без закрытия окно показало бы соседку.
-                onRemove = {
-                    onRemove(at)
-                    detailed = null
-                }
-            )
-        }
-    }
+    detailed?.let { at -> Details(basket, at, { detailed = null }, onStorno, onRemove) }
     Card(modifier = modifier.fillMaxWidth()) {
-        BasketSummary(basket)
+        head()
         HorizontalDivider()
         if (basket.positions.isEmpty()) {
             EmptyBasket(Modifier.weight(1f))
@@ -78,6 +60,29 @@ internal fun BasketCard(
             PositionList(basket, Modifier.weight(1f), { detailed = it }, onStorno, onExcise, onRemove)
         }
     }
+}
+
+/**
+ * Подробности строки [at] поверх листа.
+ *
+ * Строка читается из корзины на каждом кадре: сторно из окна меняет её,
+ * и окно обязано показать уже новое состояние, а не снимок.
+ */
+@Composable
+private fun Details(basket: Basket, at: Int, onClose: () -> Unit, onStorno: (Int) -> Unit, onRemove: (Int) -> Unit) {
+    val position = basket.positions.getOrNull(at) ?: return onClose()
+    PositionDetailsDialog(
+        details = position.details(),
+        rates = LocalVatRates.current,
+        onDismiss = onClose,
+        onStorno = { onStorno(at) },
+        // Удалённой строки в корзине нет, а её место занимает следующая:
+        // без закрытия окно показало бы соседку.
+        onRemove = {
+            onRemove(at)
+            onClose()
+        }
+    )
 }
 
 /** Шапка листа: сколько позиций набрано. Сумма стоит в денежном блоке. */

@@ -19,7 +19,7 @@ internal val queueTextsKk = QueueTexts(
 internal val userTextsKk = UserTexts(
     title = "Кассирлер мен пиндер",
     name = "Аты",
-    create = "Тіркеу",
+    create = "Қосу",
     created = "тіркелді",
     newPin = "Жаңа пин",
     change = "Ауыстыру",
@@ -88,6 +88,10 @@ internal val settingsScreenTextsKk = SettingsScreenTexts(
     printerNone = "Бұл машинада бірде-бір принтер жоқ: чекті басып шығаратын орын жоқ. " +
         "Принтерді қосып, баптауларды қайта ашыңыз",
     printKind = "Сақтау кезіндегі файл түрі",
+    printKindHint = "Экранда чек әрқашан сурет болып көрсетіледі — файл түрі қарауға әсер етпейді. Ол чектің " +
+        "қандай файл болып сақталатынын анықтайды: PDF — жіберу мен басып шығаруға, PNG — сурет, " +
+        "HTML — браузерге арналған бет. Android-та басып шығару жүйелік диалог арқылы PDF-пен " +
+        "жүреді",
     printCopies = "Басып шығару даналары",
     panelBehaviour = "Касса бағанының бөлімдері",
     taxSettings = "Касса салықтары",

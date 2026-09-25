@@ -81,7 +81,7 @@ class AlphabetTest {
             Regex("""\d*X{2,3}"""),
             Regex("""\beGov mobile\b"""),
             Regex("""\.p12\b"""),
-            Regex("""\b(NCALayer|AUTH|SMS|Telegram|WhatsApp|PDF|QR|ID|Enter|X|Z)\b""")
+            Regex("""\b(NCALayer|AUTH|SMS|Telegram|WhatsApp|PDF|PNG|HTML|Android|QR|ID|Enter|X|Z)\b""")
         )
     }
 }

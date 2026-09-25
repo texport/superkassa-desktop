@@ -1,15 +1,14 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kz.mybrain.superkassa.designsystem.section.Collapsible
@@ -30,86 +29,77 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
- * Оплата чека: чем платят и сколько каждым видом.
- *
- * Стоит в прокручиваемой части кассы, а не у кнопки: строк оплаты бывает
- * пять, и прибитые к низу, они отнимали у ввода позиции всю высоту.
- * Сворачивается вместе с принятыми деньгами — это один раздел кассы.
- */
-@Composable
-internal fun PaymentCard(state: SaleUiState, actions: PaymentActions, expanded: Boolean, onToggle: () -> Unit) {
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
-        ) {
-            SectionHeader(LocalSaleTexts.current.payment, expanded, onToggle)
-            Collapsible(expanded) { PaymentPanel(state, actions) }
-        }
-    }
-}
-
-/**
- * Итог чека и сдача.
+ * Блок «К оплате» — итог чека и всё, чем за него платят.
  *
  * Внизу кассы, в блоке оплаты ([CheckoutPanel]): «К оплате» — самым
- * крупным начертанием денег на экране.
+ * крупным начертанием денег на экране; сумму к оплате кассир видит
+ * всегда. Под ней, в одном блоке с ней, — виды оплаты, принятые деньги
+ * и сдача: прежде виды оплаты стояли отдельной карточкой выше, и кассир
+ * рассчитывался в двух местах колонки. Блок сворачивается вниз стрелкой
+ * в своём заголовке, как остальные разделы кассы, — остаются итог
+ * и «Пробить чек».
+ *
  * Сдача показана так же крупно и вторичной ролью схемы: кассир считает её
  * в уме под взглядом очереди, и ошибка здесь стоит живых денег. Суммы
  * набраны целиком одной строкой: от миллиарда они переносились посреди
- * числа. Карточка вокруг итога была третьим видом карточки в одной
- * колонке и обрезала сумму, не поместившуюся даже малой ступенью, —
- * без рамки такая сумма видна целиком.
- *
- * Пока оплата не наличными, строки «принято» и «сдача» не показываются
- * вовсе — к безналичному расчёту они отношения не имеют. Свёрнутая оплата
- * прячет их вместе с собой, а итог остаётся: сумму к оплате кассир
- * должен видеть всегда.
- *
- * @param trailing в конце строки подписи — например, кнопка «свернуть /
- *   развернуть кассу»: сумма и поле под подписью остаются во всю ширину.
+ * числа. Пока оплата не наличными, строк «принято» и «сдача» нет вовсе —
+ * к безналичному расчёту они отношения не имеют.
  */
 @Composable
 internal fun ReceiptTotals(
-    form: SaleForm,
-    total: Long,
+    state: SaleUiState,
+    payments: PaymentActions,
     expanded: Boolean,
+    onToggle: () -> Unit,
     onTaken: (String) -> Unit,
-    trailing: @Composable () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
-    val texts = LocalStrings.current
-    val taken = amount(form.taken).tiyn
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
-        val toPay = textsOf(LocalLanguage.current).kassa.checkout.toPay
-        SumLine(toPay, total, MaterialTheme.colorScheme.onSurface, trailing)
-        // Принятые деньги и сдача — часть денежного итога, а не оплаты:
-        // кассир вводит их, глядя на сумму к оплате, и обе цифры должны
-        // стоять рядом.
-        Collapsible(expanded && form.split.hasCash) {
-            Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
-                val cash = form.split.cashSum(total)
-                TakenField(form.taken, short = taken != null && taken < cash, onTaken)
-                if (taken != null) ChangeLine(taken, cash)
+        SectionHeader(textsOf(LocalLanguage.current).kassa.checkout.toPay, expanded, onToggle)
+        val color = MaterialTheme.colorScheme.onSurface
+        MoneyText(Money.formatTiyn(state.total), Modifier.fillMaxWidth(), MoneyStyle.hero, color)
+        // Оплата прокручивается внутри блока, если ему не хватает высоты:
+        // итог над ней и «Пробить чек» под ней остаются на месте.
+        Box(modifier = Modifier.weight(1f, fill = false)) {
+            Collapsible(expanded) {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
+                ) {
+                    PaymentPanel(state, payments)
+                    CashTaken(state.form, state.total, onTaken)
+                }
             }
         }
     }
 }
 
-/** Подпись и крупная сумма под ней, прижатая вправо; [trailing] — в конце строки подписи. */
+/**
+ * Принятые наличные и сдача — рядом с суммой к оплате: кассир вводит их,
+ * глядя на неё. Без наличных в оплате их нет.
+ */
 @Composable
-private fun SumLine(title: String, sum: Long, color: Color, trailing: @Composable () -> Unit = {}) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.weight(1f)
-        )
-        trailing()
+private fun CashTaken(form: SaleForm, total: Long, onTaken: (String) -> Unit) {
+    if (!form.split.hasCash) return
+    val taken = amount(form.taken).tiyn
+    val cash = form.split.cashSum(total)
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
+        TakenField(form.taken, short = taken != null && taken < cash, onTaken)
+        if (taken != null) ChangeLine(taken, cash)
     }
+}
+
+/** Подпись и крупная сумма под ней, прижатая вправо. */
+@Composable
+private fun SumLine(title: String, sum: Long, color: Color) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
     MoneyText(Money.formatTiyn(sum), Modifier.fillMaxWidth(), MoneyStyle.hero, color)
 }
 

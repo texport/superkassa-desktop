@@ -88,6 +88,10 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     printerNone = "This machine has no printer at all: there is nowhere to print a receipt. " +
         "Connect a printer and open the settings again",
     printKind = "File kind when saving",
+    printKindHint = "On screen the receipt is always shown as a picture — the file kind does not affect the " +
+        "preview. It sets the file the receipt is saved as: PDF for sending and printing, PNG as " +
+        "a picture, HTML as a browser page. On Android printing goes through the system dialog as" +
+        " PDF",
     printCopies = "Copies when printing",
     panelBehaviour = "Till column sections",
     taxSettings = "Register taxes",

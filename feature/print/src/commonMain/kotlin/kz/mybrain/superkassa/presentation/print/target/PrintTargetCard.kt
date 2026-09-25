@@ -36,7 +36,9 @@ fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetActions) {
         } else {
             PrinterChoice(target, actions)
         }
-        PartTitle(texts.settingsScreen.printKind)
+        // Вид файла на экран не влияет: просмотр — всегда картинка. Без
+        // объяснения переключатель выглядел сломанным.
+        PartTitle(texts.settingsScreen.printKind, info = texts.settingsScreen.printKindHint)
         WideChoiceSegments(
             options = PrintKind.entries,
             selected = target.kind,

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -17,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
 import kz.mybrain.superkassa.designsystem.section.CollapsibleSection
-import kz.mybrain.superkassa.designsystem.section.ScreenTitle
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
@@ -32,31 +32,40 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleActions
 import kz.mybrain.superkassa.presentation.words.kassa.title
 
 /**
- * Заголовок чека: направление операции и очистка набранного.
+ * Шапка листа чека: направление операции, сколько позиций набрано
+ * и очистка набранного.
+ *
+ * Стоит в самой карточке чека, а не рядом над ней: отдельный ряд
+ * с надписью «Чек» над карточкой опускал лист ниже кассы справа, и две
+ * колонки экрана начинались на разной высоте. Название раздела и так
+ * в шапке окна.
  *
  * Направление — сегментами: их ровно два, оба видны сразу, и выбранное
  * читается без открывания списка. Очистка — второстепенное действие
  * и потому текстовой кнопкой; появляется только когда есть что очищать.
+ * Сумма позиций стоит в денежном блоке справа и здесь не повторяется:
+ * два одинаковых числа на одном экране кассир сверяет.
  *
- * Ряд переносится, а не сжимается. Ширина сегментов задана их подписями,
- * и в окне шириной в тысячу точек листу чека остаётся четверть ширины:
- * прежде заголовок отдавал её сегментам и рассыпался столбиком по одной
- * букве. Теперь при нехватке места направление и очистка уходят на
- * вторую строку, а название остаётся названием — общим заголовком экрана,
- * который сам сокращается многоточием, если места нет и под него.
+ * Ряд переносится, а не сжимается: в узкой колонке счёт и очистка уходят
+ * на вторую строку, а не рассыпаются столбиком по одной букве.
  */
 @Composable
-fun SaleHeader(operation: SaleOperation, filled: Boolean, actions: SaleActions) {
+fun SaleHeader(operation: SaleOperation, count: Int, actions: SaleActions) {
     val texts = LocalStrings.current
     FlowRow(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = Spacing.cardPadding, vertical = Spacing.fieldGap),
         horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
-        ScreenTitle(texts.receipt.receipt, Modifier.weight(1f, fill = false))
         OperationChoice(operation, actions.form::operation)
-        if (filled) {
+        Text(
+            text = "${LocalSaleTexts.current.positionsCount}: $count",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
+        )
+        if (count > 0) {
             TextButton(onClick = actions.basket::clear) { Text(texts.receipt.clearBasket) }
         }
     }

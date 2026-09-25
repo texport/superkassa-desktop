@@ -1,11 +1,14 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
-import kz.mybrain.superkassa.designsystem.picker.ChoiceSegments
+import kz.mybrain.superkassa.designsystem.picker.FieldChoice
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.Percent
 import kz.mybrain.superkassa.domain.kassa.model.Tenge
 import kz.mybrain.superkassa.domain.kassa.model.sale.Adjustment
@@ -17,16 +20,16 @@ import kz.mybrain.superkassa.presentation.words.kassa.sign
 import kz.mybrain.superkassa.strings.api.fill
 
 /**
- * Поле скидки или наценки со способом ввода внутри него.
+ * Поле скидки или наценки и способ ввода рядом с ним.
  *
  * Одно на весь экран продажи: скидка на чек, наценка на чек и скидка
  * на позицию — одно и то же понятие, и два разных способа его набрать
  * кассир читать не должен.
  *
- * Знак стоит в самом поле, а не переключателем сбоку: полей на экране
- * несколько, и общий переключатель менял бы смысл соседнего молча.
- * Под полем написано то же число другим способом — набравший процент
- * видит тенге, набравший тенге видит долю.
+ * Способ ввода — у каждого поля свой, в его строке ([FieldChoice]):
+ * полей на экране несколько, и общий переключатель менял бы смысл
+ * соседнего молча. Под полем написано то же число другим способом —
+ * набравший процент видит тенге, набравший тенге видит долю.
  */
 @Composable
 internal fun AdjustmentField(
@@ -38,27 +41,21 @@ internal fun AdjustmentField(
     onEnter: (String) -> Unit,
     onSwitch: (AdjustmentUnit) -> Unit
 ) {
-    MoneyField(
-        value = change.text,
-        label = label,
+    Row(
         modifier = modifier,
-        isError = isError,
-        supportingText = supportingText,
-        trailing = { UnitChoice(change.unit, onSwitch) },
-        onValueChange = onEnter
-    )
-}
-
-/** Тенге или процент: оба знака видны сразу, и выбранный читается без списка. */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun UnitChoice(selected: AdjustmentUnit, onSwitch: (AdjustmentUnit) -> Unit) {
-    ChoiceSegments(
-        options = AdjustmentUnit.entries,
-        selected = selected,
-        label = { it.sign },
-        onSelect = onSwitch
-    )
+        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
+        verticalAlignment = Alignment.Top
+    ) {
+        MoneyField(
+            value = change.text,
+            label = label,
+            modifier = Modifier.weight(1f),
+            isError = isError,
+            supportingText = supportingText,
+            onValueChange = onEnter
+        )
+        FieldChoice(AdjustmentUnit.entries, change.unit, { it.sign }, onSwitch)
+    }
 }
 
 /**

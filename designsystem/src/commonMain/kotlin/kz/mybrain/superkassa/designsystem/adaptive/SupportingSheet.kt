@@ -21,10 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.theme.size.Panes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 
 /**
@@ -34,8 +36,9 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * Свёрнутый лист показывает ручку и сводку — высота свёрнутого листа
  * берётся из самой сводки, а не из подобранного числа; развёрнутый —
  * ещё и всё остальное. Главная панель отступает снизу на свёрнутый лист,
- * и её низ под ним не прячется. Лист тянут за ручку и жестом, сводка
- * сворачивает и разворачивает его кнопкой.
+ * и её низ под ним не прячется. Лист тянут за ручку — ручка Material 3
+ * сама разворачивает и сворачивает его и нажатием; второй кнопки рядом
+ * нет, чтобы не спорить со стрелками разделов внутри.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,13 +47,12 @@ internal fun SupportingSheet(
     onToggle: () -> Unit,
     main: @Composable () -> Unit,
     supporting: @Composable () -> Unit,
-    summary: @Composable (toggle: @Composable () -> Unit) -> Unit
+    summary: @Composable () -> Unit
 ) {
     val sheet = rememberStandardBottomSheetState(
         initialValue = if (expanded) SheetValue.Expanded else SheetValue.PartiallyExpanded,
         skipHiddenState = true
     )
-    val open = sheet.targetValue == SheetValue.Expanded
     SheetFollows(sheet, expanded, onToggle)
     var peek by remember { mutableStateOf(Spacing.flush) }
     val density = LocalDensity.current
@@ -60,10 +62,7 @@ internal fun SupportingSheet(
         sheetDragHandle = null,
         containerColor = Color.Transparent,
         sheetContent = {
-            SheetPeek(Modifier.onSizeChanged { peek = with(density) { it.height.toDp() } }) {
-                summary { SheetToggle(open, onToggle) }
-            }
-            Box(modifier = Modifier.padding(Spacing.cardPadding)) { supporting() }
+            SheetBody(Modifier.onSizeChanged { peek = with(density) { it.height.toDp() } }, summary, supporting)
         }
     ) {
         Box(modifier = Modifier.fillMaxSize().padding(bottom = peek.bottomGap())) { main() }
@@ -81,6 +80,35 @@ private fun SheetFollows(sheet: SheetState, expanded: Boolean, onToggle: () -> U
     LaunchedEffect(sheet.currentValue) { if ((sheet.currentValue == SheetValue.Expanded) != expanded) onToggle() }
 }
 
+/**
+ * Развёрнутый лист во всю высоту: сверху ручка и сводка — не выше доли
+ * [Panes.STACKED_SECOND_SHARE] листа, лишнее сводка прокручивает сама, —
+ * под ними всё остальное. Иначе развёрнутая сводка с пятью видами оплаты
+ * выталкивала остальное за край.
+ *
+ * @param peek размер ручки со сводкой — по нему лист и сворачивается.
+ */
+@Composable
+private fun SheetBody(peek: Modifier, summary: @Composable () -> Unit, supporting: @Composable () -> Unit) {
+    Layout(
+        modifier = Modifier.fillMaxSize(),
+        content = {
+            SheetPeek(peek, summary)
+            Box(modifier = Modifier.padding(Spacing.cardPadding)) { supporting() }
+        }
+    ) { measurables, constraints ->
+        val width = constraints.maxWidth
+        val cap = (constraints.maxHeight * Panes.STACKED_SECOND_SHARE).toInt()
+        val head = measurables[0].measure(Constraints(minWidth = width, maxWidth = width, maxHeight = cap))
+        val rest = (constraints.maxHeight - head.height).coerceAtLeast(0)
+        val body = measurables[1].measure(Constraints.fixed(width, rest))
+        layout(width, constraints.maxHeight) {
+            head.place(0, 0)
+            body.place(0, head.height)
+        }
+    }
+}
+
 /** Свёрнутый лист: ручка и сводка — по их росту лист и сворачивается. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,12 +117,6 @@ private fun SheetPeek(modifier: Modifier, summary: @Composable () -> Unit) {
         BottomSheetDefaults.DragHandle(modifier = Modifier.align(Alignment.CenterHorizontally))
         Box(modifier = Modifier.padding(horizontal = Spacing.cardPadding)) { summary() }
     }
-}
-
-/** Кнопка листа: развернуть свёрнутый, свернуть развёрнутый. */
-@Composable
-private fun SheetToggle(open: Boolean, onToggle: () -> Unit) {
-    PanelToggle(if (open) AppIcons.bottomSheetHide else AppIcons.bottomSheetShow, open, onToggle)
 }
 
 /** Главная панель отступает от свёрнутого листа ещё на шаг между карточками. */

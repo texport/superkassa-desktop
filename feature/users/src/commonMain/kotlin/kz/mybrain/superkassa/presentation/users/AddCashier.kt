@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.presentation.users
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -12,8 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import io.github.texport.superkassa.core.presentation.api.model.user.UserRole
-import kz.mybrain.superkassa.designsystem.button.FieldButton
-import kz.mybrain.superkassa.designsystem.button.FieldButtonKind
 import kz.mybrain.superkassa.designsystem.field.fieldMinWidth
 import kz.mybrain.superkassa.designsystem.picker.LabelledPicker
 import kz.mybrain.superkassa.designsystem.section.SectionCard
@@ -32,10 +30,10 @@ import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
  * которое её вызвало: касса откажет ровно по ней, а администратор заводит
  * кассира раз в полгода и не помнит наизусть, чем ей не угодит пин 1111.
  *
- * Поля разложены переносом, а не в одну строку: в узком окне строка из
- * трёх полей и кнопки обрезается, и первым уезжает пин. Поля тянутся до
- * конца строки: в широкой карточке поля заданной ширины оставляли справа
- * от себя пустую половину.
+ * Поля — одно под другим во всю ширину карточки, как форма Material 3,
+ * а «Добавить» — главная кнопка под ними у правого края. Прежде поля
+ * переносились рядом с кнопкой как придётся: имя и роль по строке,
+ * а пин делил строку с кнопкой.
  */
 @Composable
 internal fun AddCashier(state: UsersUiState, actions: UsersActions, money: MoneyTexts) {
@@ -55,20 +53,18 @@ internal fun AddCashier(state: UsersUiState, actions: UsersActions, money: Money
     }
 }
 
-/** Имя, роль и пин в переносимом ряду и кнопка заведения в его конце. */
+/** Имя, роль и пин одно под другим и кнопка «Добавить» под ними. */
 @Composable
 private fun CashierFields(state: UsersUiState, actions: UsersActions, money: MoneyTexts) {
-    FlowRow(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
-        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
-        itemVerticalAlignment = Alignment.Top
-    ) {
-        NameField(state.form, actions, money, Modifier.weight(1f))
-        RoleField(state, actions, Modifier.weight(1f).widthIn(min = Sizes.fieldAmount))
-        PinField(state.form, actions, money, Modifier.weight(1f))
-        val create = LocalStrings.current.users.create
-        FieldButton(create, FieldButtonKind.Filled, state.canCreate, onClick = actions::create)
+    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
+        NameField(state.form, actions, money, Modifier.fillMaxWidth())
+        RoleField(state, actions, Modifier.fillMaxWidth())
+        PinField(state.form, actions, money, Modifier.fillMaxWidth())
+        Button(
+            onClick = actions::create,
+            enabled = state.canCreate,
+            modifier = Modifier.align(Alignment.End)
+        ) { Text(LocalStrings.current.users.create) }
     }
 }
 

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +22,6 @@ import kz.mybrain.superkassa.designsystem.table.TableColumn
 import kz.mybrain.superkassa.designsystem.table.TableLine
 import kz.mybrain.superkassa.designsystem.table.TableWidths
 import kz.mybrain.superkassa.designsystem.table.grownColumns
-import kz.mybrain.superkassa.designsystem.table.leastWidths
 import kz.mybrain.superkassa.designsystem.text.NumberText
 import kz.mybrain.superkassa.designsystem.theme.StatusColors
 import kz.mybrain.superkassa.designsystem.theme.size.HistoryLayout
@@ -41,10 +39,13 @@ import kz.mybrain.superkassa.strings.api.journal.ShiftJournalTexts
  *
  * Строкой списка смена растягивалась на всю ширину монитора: номер
  * у левого края, плашка и кнопка — в полутора тысячах точек от него,
- * а «Не закрыта» стояло и в подписи, и на плашке. В таблице столбцы
- * своей ширины, время открытия и закрытия стоят друг под другом у всех
- * смен, а у открытой смены на месте времени закрытия — плашка
- * «Не закрыта», одна на строку.
+ * а «Не закрыта» стояло и в подписи, и на плашке. В таблице время
+ * открытия и закрытия стоят друг под другом у всех смен, а у открытой
+ * смены на месте времени закрытия — плашка «Не закрыта», одна на строку.
+ *
+ * Таблица во всю ширину раздела, как журнал документов рядом: номер
+ * и кнопка своей ширины, остальное делят время открытия и закрытия.
+ * Узкая таблица у левого края оставляла пустой бо́льшую часть раздела.
  *
  * Кнопка Z-отчёта показана только у закрытой смены: у открытой отчёта
  * ещё нет, и нажатие дало бы отказ кассы вместо бумаги.
@@ -60,9 +61,7 @@ internal fun ShiftTable(
     val columns = grownColumns(SHIFT_COLUMNS, setOf(Z_REPORT))
     ScrollingTable(
         columns = columns,
-        // Таблица своей ширины и полосы прокрутки стоят у её края,
-        // а не в тысяче точек от неё у края раздела.
-        modifier = modifier.widthIn(max = leastWidths(columns).total + Spacing.scrollbarGutter),
+        modifier = modifier,
         header = { widths -> ShiftHeader(journal, widths) },
         rows = { widths ->
             itemsIndexed(shifts) { at, shift ->
@@ -131,12 +130,13 @@ private const val CLOSED = 2
 private const val Z_REPORT = 3
 
 /**
- * Все столбцы своей ширины: таблица смен не тянется на весь монитор.
- * Столбец Z-отчёта уже рассчитан на крупную ступень и с ней не растёт.
+ * Номер и кнопка Z-отчёта — своей ширины, время открытия и закрытия
+ * делят остальное поровну. Столбец Z-отчёта уже рассчитан на крупную
+ * ступень и с ней не растёт.
  */
 private val SHIFT_COLUMNS = listOf(
     TableColumn(TableColumns.number, weight = 0f, numeric = true),
-    TableColumn(TableColumns.moment, weight = 0f),
-    TableColumn(TableColumns.moment, weight = 0f),
+    TableColumn(TableColumns.moment, weight = 1f),
+    TableColumn(TableColumns.moment, weight = 1f),
     TableColumn(HistoryLayout.wordAction, weight = 0f)
 )

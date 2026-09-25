@@ -1,7 +1,6 @@
 package kz.mybrain.superkassa.presentation.users
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,12 +13,11 @@ import androidx.compose.ui.Alignment
 import io.github.texport.superkassa.core.presentation.api.model.user.UserResponse
 import kz.mybrain.superkassa.designsystem.dialog.ConfirmDangerDialog
 import kz.mybrain.superkassa.designsystem.list.RecordRow
-import kz.mybrain.superkassa.designsystem.status.Chip
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.designsystem.tip.InfoTip
+import kz.mybrain.superkassa.designsystem.tip.WarningTip
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.kassa.CashierTexts
 import kz.mybrain.superkassa.strings.api.kassa.MoneyTexts
@@ -52,22 +50,27 @@ internal fun UserRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
-        support = { WhoIs(money.cashiers, roleTitle, deletable) },
-        trailing = { RowActions(user, deletable, actions) }
+        support = { Text(roleTitle) },
+        trailing = { RowActions(money.cashiers, user, deletable, actions) }
     )
 }
 
-/** Новый пин и корзина; корзина единственного администратора погашена. */
+/**
+ * Новый пин и корзина. У единственного администратора на месте корзины —
+ * предупреждение: удалить его нельзя, и прямо там, где удаляют, значок
+ * объясняет почему. Погашенная корзина молчала, а плашка с надписью
+ * у роли делала его строку выше соседних.
+ */
 @Composable
-private fun RowActions(user: UserResponse, deletable: Boolean, actions: UsersActions) {
+private fun RowActions(money: CashierTexts, user: UserResponse, deletable: Boolean, actions: UsersActions) {
     val texts = LocalStrings.current
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextButton(onClick = { actions.askPin(user) }) { Text(texts.users.newPin) }
+        if (!deletable) return@Row WarningTip(money.onlyInRole, money.deleteBlocked)
         IconButton(
-            enabled = deletable,
             onClick = { actions.askRemove(user) },
             colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.error)
         ) {
@@ -87,23 +90,4 @@ internal fun RemoveDialog(money: MoneyTexts, user: UserResponse, actions: UsersA
         onCancel = { actions.askRemove(null) },
         onConfirm = actions::confirmRemove
     )
-}
-
-/** Роль кассира и, если удалить его нельзя, — почему. */
-@Composable
-private fun WhoIs(money: CashierTexts, roleTitle: String, deletable: Boolean) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(roleTitle)
-            if (!deletable) {
-                Chip(money.onlyInRole, MaterialTheme.colorScheme.outline)
-                // Почему удалить нельзя — под значком: строка на каждой
-                // строке списка удваивает высоту перечня кассиров.
-                InfoTip(money.deleteBlocked)
-            }
-        }
-    }
 }

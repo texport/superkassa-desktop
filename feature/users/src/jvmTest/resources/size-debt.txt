@@ -5,5 +5,4 @@
 # место, и на исправленное, но не вычеркнутое.
 #
 # Формат: <файл от kz/mybrain/superkassa> -> <токен>
-presentation/users/AddCashier.kt -> Sizes.fieldAmount
 presentation/users/signin/SignInBar.kt -> Sizes.fieldPin

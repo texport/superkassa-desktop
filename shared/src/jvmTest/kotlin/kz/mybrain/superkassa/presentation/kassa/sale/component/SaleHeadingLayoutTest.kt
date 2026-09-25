@@ -55,7 +55,7 @@ class SaleHeadingLayoutTest {
 
     @Composable
     private fun Header() {
-        SaleHeader(SaleOperation.Sell, filled = true, actions = SaleActions())
+        SaleHeader(SaleOperation.Sell, count = 3, actions = SaleActions())
     }
 
     /**

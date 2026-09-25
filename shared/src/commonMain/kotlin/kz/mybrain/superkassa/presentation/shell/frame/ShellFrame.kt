@@ -17,10 +17,14 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.launch
+import kz.mybrain.superkassa.designsystem.adaptive.LocalSnackbarRoom
 import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
+import kz.mybrain.superkassa.designsystem.adaptive.SnackbarRoom
 import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
 import kz.mybrain.superkassa.designsystem.keyboard.clearFocusOnTap
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
@@ -65,13 +69,16 @@ internal fun <D : Destination> ShellFrame(
     // названиями в строку ищут чаще, чем на планшете у кассы.
     val railMenu = navigation.railed && window.width >= WidthClass.Large
     val onMenu = open.takeIf { navigation == ShellNavigation.Modal }
+    val room = remember { SnackbarRoom() }
     Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.clearFocusOnTap()) {
-        SectionDrawer(drawer, fromRail = railMenu, enabled = onMenu != null || railMenu, close, items) {
-            NavigationSuiteScaffoldLayout(
-                navigationSuite = { NavigationOf(navigation, items, open.takeIf { railMenu }) },
-                navigationSuiteType = navigation.type
-            ) {
-                Scaffold(topBar = { topBar(onMenu) }, snackbarHost = snackbarHost, content = content)
+        CompositionLocalProvider(LocalSnackbarRoom provides room) {
+            SectionDrawer(drawer, fromRail = railMenu, enabled = onMenu != null || railMenu, close, items) {
+                NavigationSuiteScaffoldLayout(
+                    navigationSuite = { NavigationOf(navigation, items, open.takeIf { railMenu }) },
+                    navigationSuiteType = navigation.type
+                ) {
+                    Scaffold(topBar = { topBar(onMenu) }, snackbarHost = snackbarHost, content = content)
+                }
             }
         }
     }

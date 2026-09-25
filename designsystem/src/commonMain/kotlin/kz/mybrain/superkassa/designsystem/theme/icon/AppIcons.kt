@@ -162,18 +162,6 @@ object AppIcons {
     /** Личный кабинет ОФД: дела владельца, а не кассира. */
     val cabinet: ImageVector = Icons.Filled.Business
 
-    /** Убрать вспомогательную панель сбоку: она уходит вправо до сводки. */
-    val sidePanelHide: ImageVector = Icons.Filled.ChevronRight
-
-    /** Вернуть вспомогательную панель сбоку. */
-    val sidePanelShow: ImageVector = Icons.Filled.ChevronLeft
-
-    /** Свернуть нижний лист до сводки. */
-    val bottomSheetHide: ImageVector = Icons.Filled.ExpandMore
-
-    /** Развернуть нижний лист из сводки. */
-    val bottomSheetShow: ImageVector = Icons.Filled.ExpandLess
-
     /** Перелистывание дня в журнале. */
     val earlierDay: ImageVector = Icons.Filled.ChevronLeft
     val laterDay: ImageVector = Icons.Filled.ChevronRight
