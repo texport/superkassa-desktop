@@ -65,7 +65,8 @@ internal val commonTextsRu = CommonTexts(
         users = "Кассиры",
         settings = "Настройки",
         register = "Новая касса",
-        cabinet = "Кабинет БФД"
+        cabinet = "Кабинет БФД",
+        menu = "Разделы"
     ),
     dashboard = dashboardTextsRu,
     autonomous = autonomousTextsRu,

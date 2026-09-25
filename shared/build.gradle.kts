@@ -19,6 +19,10 @@ kotlin {
             // службы окна и наборы портов областей, а зонтичная библиотека
             // iOS видит разделы через каркас.
             api(project(":ui-common"))
+            // Навигация окна: ключи разделов — модулем навигации, история
+            // «назад» и её отрисовка — Navigation 3 здесь, в каркасе.
+            api(project(":navigation"))
+            implementation(libs.navigation3.ui)
             api(project(":feature:analytics"))
             api(project(":feature:cabinet"))
             api(project(":feature:debug"))

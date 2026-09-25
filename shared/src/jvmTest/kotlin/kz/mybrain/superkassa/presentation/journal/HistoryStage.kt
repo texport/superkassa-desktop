@@ -1,12 +1,8 @@
 package kz.mybrain.superkassa.presentation.journal
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +23,7 @@ import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.presentation.shell.bar.KkmBarActions
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.Language
 import java.io.ByteArrayInputStream
@@ -113,20 +109,23 @@ internal object HistoryStage {
     fun Window(desk: KassaDesk, section: Section, place: Place, content: @Composable () -> Unit) {
         // Подложка окна та же, что у кассы: без неё тёмное оформление
         // рисовалось по белому.
-        Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
-            val shell by desk.parts.shell.state.collectAsState()
-            AppTopBar(title = shell.kkm?.name.orEmpty(), subtitleKept = shell.cashier) {
-                KkmBarActions(shell, desk.look, onSignOut = {}, onRefresh = {})
+        val shell by desk.parts.shell.state.collectAsState()
+        ShellFrame(
+            sections = Section.entries,
+            current = section,
+            onPick = {},
+            topBar = {
+                AppTopBar(title = shell.kkm?.name.orEmpty(), subtitleKept = shell.cashier) {
+                    KkmBarActions(shell, desk.look, onSignOut = {}, onRefresh = {})
+                }
             }
-            Row(modifier = Modifier.fillMaxSize()) {
-                SectionRail(Section.entries, section, false, {}, { Text("1.0.6") }) {}
-                Box(
-                    modifier = Modifier.fillMaxSize().onGloballyPositioned {
-                        place.left = it.positionInRoot().x
-                        place.width = it.size.width
-                    }
-                ) { content() }
-            }
+        ) { padding ->
+            Box(
+                modifier = Modifier.fillMaxSize().padding(padding).onGloballyPositioned {
+                    place.left = it.positionInRoot().x
+                    place.width = it.size.width
+                }
+            ) { content() }
         }
     }
 

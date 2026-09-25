@@ -22,7 +22,11 @@ androidMinSdk = "23"
 androidTargetSdk = "37"
 activity-compose = "1.13.0"
 lifecycle = "2.11.0"
-navigation = "2.9.2"
+# Навигация экранов — Navigation 3: история «назад» — список ключей экранов,
+# рисует её `NavDisplay`. Ключи и история — в библиотеке Google, отрисовка —
+# в сборке JetBrains для всех целей Compose Multiplatform.
+navigation3 = "1.1.2"
+navigation3Runtime = "1.1.7"
 kotlinx-datetime = "0.8.0"
 kotlinx-io = "0.9.1"
 # Блокировки общего кода: та же версия, что приходит с корутинами на iOS.
@@ -55,10 +59,12 @@ compose-ui-tooling = { group = "org.jetbrains.compose.ui", name = "ui-tooling", 
 compose-adaptive = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive", version.ref = "composeAdaptive" }
 compose-adaptive-layout = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive-layout", version.ref = "composeAdaptive" }
 compose-adaptive-navigation = { group = "org.jetbrains.compose.material3.adaptive", name = "adaptive-navigation", version.ref = "composeAdaptive" }
+compose-adaptive-navigation-suite = { group = "org.jetbrains.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "composeMaterial3" }
 compose-desktop = { group = "org.jetbrains.compose.desktop", name = "desktop", version.ref = "compose" }
 lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
-navigation-compose = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+navigation3-ui = { group = "org.jetbrains.androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
+navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3Runtime" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-io-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-io-core", version.ref = "kotlinx-io" }
 kotlinx-atomicfu = { group = "org.jetbrains.kotlinx", name = "atomicfu", version.ref = "kotlinx-atomicfu" }

@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.shift.dashboard
 
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.DashboardScene
 import kz.mybrain.superkassa.kassa.state
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import java.io.File
 import kotlin.test.Test
@@ -47,9 +47,8 @@ class DashboardFitTest {
 
     @Composable
     private fun Work(state: DashboardUiState) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            SectionRail(Section.entries, Section.Dashboard, false, {}, { Text(VERSION) }) {}
-            DashboardContent(state)
+        ShellFrame(Section.entries, Section.Dashboard, {}, topBar = {}) { padding ->
+            Box(Modifier.fillMaxSize().padding(padding)) { DashboardContent(state) }
         }
     }
 

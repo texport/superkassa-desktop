@@ -1,22 +1,21 @@
 package kz.mybrain.superkassa.presentation.shell.frame
 
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.keyboard.SystemBack
-import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import kz.mybrain.superkassa.designsystem.keyboard.escapePressedBy
+import kz.mybrain.superkassa.navigation.NavKeys
+import kz.mybrain.superkassa.navigation.section.DashboardKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.cabinet.cabinetLook
 import kz.mybrain.superkassa.presentation.cabinet.cabinetViewModel
@@ -30,18 +29,14 @@ import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.bar.WorkBar
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
-import kz.mybrain.superkassa.presentation.shell.section.SectionContent
-import kz.mybrain.superkassa.presentation.shell.section.SectionTrail
-import kz.mybrain.superkassa.presentation.shell.section.SectionTrailSaver
+import kz.mybrain.superkassa.presentation.shell.section.currentSection
+import kz.mybrain.superkassa.presentation.shell.section.openSection
+import kz.mybrain.superkassa.presentation.shell.section.outside
+import kz.mybrain.superkassa.presentation.shell.section.sectionEntries
 import kz.mybrain.superkassa.presentation.shell.section.sectionsFor
-import kz.mybrain.superkassa.presentation.update.check.RailVersion
-import kz.mybrain.superkassa.presentation.update.check.UpdateDialog
-import kz.mybrain.superkassa.presentation.update.check.UpdatesUiState
-import kz.mybrain.superkassa.presentation.update.check.UpdatesViewModel
+import kz.mybrain.superkassa.presentation.shell.section.stepBack
 import kz.mybrain.superkassa.presentation.update.check.updatesViewModel
-import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Каркас окна.
@@ -91,67 +86,68 @@ internal class WindowParts(val shell: ShellViewModel, val look: LookViewModel, v
 }
 
 /**
- * Рабочее окно: рельс разделов, шапка и содержимое.
+ * Рабочее окно: навигация по разделам, одна шапка и раздел под ней.
  *
- * Шапка идёт во всю ширину окна, а рельс разделов — под ней: иначе шапка
- * начиналась правее рельса и накрывала его край, а окно выглядело
- * собранным из двух несогласованных половин.
+ * Рамка — [ShellFrame] на `NavigationSuiteScaffold` Material 3, переходы —
+ * Navigation 3: история «назад» — список ключей, который держит окно,
+ * `NavDisplay` рисует её вершину. Жест Android, Escape и стрелка в шапке
+ * ведут по одной этой истории. Шапка называет открытый раздел, а под
+ * ним — кассу и кассира: из шапки видно, где кассир и за какой кассой.
+ *
+ * Модели областей живут в хранилище окна, а не в записи истории: корзина
+ * продажи переживает уход в журнал и возврат обратно.
  */
 @Composable
 private fun WorkShell(app: AppContainer, window: WindowParts, shell: ShellUiState, messages: SnackbarHostState) {
-    val updates = updatesViewModel(app.services, app.areas.update)
-    val release by updates.state.collectAsScreenState()
-    val look by window.look.state.collectAsScreenState()
-    var updateShown by rememberSaveable { mutableStateOf(false) }
+    val release by updatesViewModel(app.services, app.areas.update).state.collectAsScreenState()
     val sections = sectionsFor(shell.seat.isAdmin, app.areas)
+    val history = rememberNavBackStack(NavKeys, DashboardKey)
+    LaunchedEffect(sections) { if (history.outside(sections)) history.openSection(Section.Dashboard) }
+    val section = history.currentSection()
     // Отказ относится к действию, а не к окну: уходя с экрана своей рукой,
     // кассир оставлял за собой отказ настроек, и тот висел поверх аналитики
-    // до нажатия. Переход, сделанный самим приложением, сообщение не гасит:
-    // там оно как раз об итоге действия.
-    var trail by rememberSectionTrail(sections, window.shell::sectionPicked)
-    val section = trail.current
-    val pick = { picked: Section ->
-        window.shell.sectionPicked()
-        trail = trail.open(picked)
-    }
-    Scaffold(topBar = { WorkBar(app, window, shell, section) }, snackbarHost = { MessageHost(messages) }) {
+    // до нажатия. Переход, сделанный самим приложением, сообщение не гасит.
+    val back = { if (history.stepBack()) window.shell.sectionPicked() }
+    ShellFrame(
+        sections = sections,
+        current = section,
+        onPick = { picked -> window.shell.sectionPicked().also { history.openSection(picked) } },
+        marked = if (release.available != null) setOf(Section.Settings) else emptySet(),
+        topBar = { onMenu -> WorkBar(app, window, shell, section, onMenu) },
+        snackbarHost = { MessageHost(messages) }
+    ) { padding ->
         ShellMessages(app, messages)
-        Row(modifier = Modifier.fillMaxSize().padding(it)) {
-            val footer: @Composable ColumnScope.() -> Unit = { RailVersion(release) { updateShown = true } }
-            SectionRail(sections, section, look.railCollapsed, window.look::toggleRail, footer, pick)
-            CompositionLocalProvider(LocalToKassa provides { trail = trail.open(Section.Dashboard) }) {
-                SectionContent(app, window, section)
-            }
-        }
-        UpdateOffer(release, updates, updateShown) { updateShown = false }
+        SectionDisplay(app, window, history, Modifier.padding(padding), back)
+    }
+}
+
+/** Раздел под шапкой: вершина истории окна, нарисованная `NavDisplay`. */
+@Composable
+private fun SectionDisplay(
+    app: AppContainer,
+    window: WindowParts,
+    history: MutableList<NavKey>,
+    modifier: Modifier,
+    back: () -> Unit
+) {
+    CompositionLocalProvider(LocalToKassa provides { history.openSection(Section.Dashboard) }) {
+        NavDisplay(
+            backStack = history,
+            modifier = modifier.backOnEscape(history.size > 1, back),
+            onBack = back,
+            entryProvider = entryProvider { sectionEntries(app, window) }
+        )
     }
 }
 
 /**
- * Путь по разделам окна.
+ * Escape — шаг назад по истории окна, как жест Android и стрелка в шапке.
  *
- * Хранится так, чтобы пережить поворот экрана: на Android поворот
- * пересоздаёт активность, и кассир оказывался на главном экране посреди
- * продажи. Жест «назад» ведёт по нему к предыдущему разделу — своей рукой,
- * поэтому итог прежнего действия снимается ([onLeave]). Разделы, которых
- * вошедшему больше не видно, из пути уходят.
+ * Нажатие берётся на всплытии: Escape раскрытого списка, диалога или
+ * открытого поверх списка раздела настроек достаётся им, а не окну.
  */
-@Composable
-private fun rememberSectionTrail(sections: List<Section>, onLeave: () -> Unit): MutableState<SectionTrail> {
-    val trail = rememberSaveable(stateSaver = SectionTrailSaver) { mutableStateOf(SectionTrail()) }
-    if (trail.value.sections.any { it !in sections }) trail.value = trail.value.within(sections)
-    SystemBack(enabled = trail.value.canGoBack) {
-        onLeave()
-        trail.value = trail.value.back()
-    }
-    return trail
-}
-
-/** Предложение обновиться — когда кассир сам спросил о выпуске. */
-@Composable
-private fun UpdateOffer(release: UpdatesUiState, updates: UpdatesViewModel, shown: Boolean, onClose: () -> Unit) {
-    val update = release.available
-    if (shown && update != null) UpdateDialog(update, textsOf(LocalLanguage.current).update, updates::install, onClose)
+private fun Modifier.backOnEscape(enabled: Boolean, back: () -> Unit): Modifier = onKeyEvent { event ->
+    (enabled && escapePressedBy(event)).also { if (it) back() }
 }
 
 /**

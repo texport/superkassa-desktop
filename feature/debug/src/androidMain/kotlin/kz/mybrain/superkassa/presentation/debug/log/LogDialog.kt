@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.section.BarLead
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
@@ -35,7 +36,7 @@ fun LogDialog(services: WindowServices, ports: DebugPorts) {
     Dialog(onDismissRequest = close, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
             Column {
-                AppTopBar(title = texts.title, onBack = close, backLabel = LocalStrings.current.preview.close) {}
+                AppTopBar(title = texts.title, lead = BarLead.Back(close, LocalStrings.current.preview.close)) {}
                 LogBody(journal, model, texts)
             }
         }

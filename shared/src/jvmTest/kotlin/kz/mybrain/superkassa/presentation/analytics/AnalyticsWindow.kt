@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation.analytics
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -38,10 +38,10 @@ import kz.mybrain.superkassa.presentation.common.look.lookModel
 import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.KkmTopBar
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.frame.cabinetNeighbours
 import kz.mybrain.superkassa.presentation.shell.frame.shellModel
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.strings.api.Language
@@ -87,12 +87,8 @@ internal class AnalyticsWindow(
     @Composable
     private fun Frame() {
         val shell by parts.shell.state.collectAsState()
-        Column(modifier = Modifier.fillMaxSize()) {
-            KkmTopBar(shell, windowLook, onSignOut = {}, onRefresh = {})
-            Row(modifier = Modifier.fillMaxSize()) {
-                SectionRail(Section.entries, Section.Cabinet, false, {}, { Text("1.0.0") }) {}
-                SectionContent(app, parts, Section.Cabinet)
-            }
+        ShellFrame(Section.entries, Section.Cabinet, {}, topBar = { KkmTopBar(shell, windowLook, {}, {}) }) { padding ->
+            Box(modifier = Modifier.fillMaxSize().padding(padding)) { SectionContent(app, parts, Section.Cabinet) }
         }
     }
 

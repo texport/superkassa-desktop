@@ -2,10 +2,9 @@ package kz.mybrain.superkassa.presentation.shell.frame
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -13,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import kz.mybrain.superkassa.KassaDesk
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
@@ -27,7 +27,6 @@ import kz.mybrain.superkassa.kassa.inlineMain
 import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels
 import kz.mybrain.superkassa.presentation.shell.bar.KkmBarActions
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.strings.api.Language
@@ -55,21 +54,18 @@ class ShellAdaptiveTest {
     @Composable
     private fun Window(desk: KassaDesk, measured: Measured) {
         val shell by desk.parts.shell.state.collectAsState()
-        Column(modifier = Modifier.fillMaxSize()) {
-            AppTopBar(
-                title = shell.kkmName.orEmpty(),
-                subtitle = shell.kkm?.orgTitle,
-                subtitleKept = shell.cashier
-            ) {
+        val bar: @Composable ((() -> Unit)?) -> Unit = {
+            AppTopBar(title = shell.kkmName.orEmpty(), subtitle = shell.kkm?.orgTitle, subtitleKept = shell.cashier) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
                     modifier = Modifier.onGloballyPositioned { measured.actions = it.size.width }
                 ) { KkmBarActions(shell, desk.look, onSignOut = {}, onRefresh = {}) }
             }
-            Row(modifier = Modifier.fillMaxSize()) {
-                Box(modifier = Modifier.onGloballyPositioned { measured.rail = it.size.width }) {
-                    SectionRail(Section.entries, Section.Dashboard, false, {}, { Text(VERSION) }) {}
-                }
+        }
+        ShellFrame(Section.entries, Section.Dashboard, {}, topBar = bar) { padding ->
+            // Навигация окна — слева от раздела: её ширина — отступ раздела от края.
+            val place = Modifier.onGloballyPositioned { measured.rail = it.positionInRoot().x.toInt() }
+            Box(modifier = Modifier.fillMaxSize().padding(padding).then(place)) {
                 ProvideWindowModels(remember { WindowModels() }) {
                     SectionContent(desk.app, desk.parts, Section.Dashboard)
                 }
@@ -92,7 +88,8 @@ class ShellAdaptiveTest {
                     }
                 }
         }
-        val title = width - measured.actions - BAR_INSETS
+        // Шапка стоит правее навигации окна, как велит `NavigationSuiteScaffold`.
+        val title = width - measured.rail - measured.actions - BAR_INSETS
         println(
             "окно $width×$height ($language): действия ${measured.actions}, названию $title, рельс ${measured.rail}"
         )
@@ -116,7 +113,6 @@ class ShellAdaptiveTest {
         const val LOW = 640
         const val SETTLE = 20
         const val WHEEL = 6f
-        const val VERSION = "1.0.0"
 
         /**
          * Поля шапки вокруг названия и действий: отступ названия и действий

@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.common.message
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
@@ -12,8 +13,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
+import kz.mybrain.superkassa.designsystem.adaptive.WindowClass
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.strings.api.common.CommonTexts
@@ -36,21 +37,23 @@ import kz.mybrain.superkassa.strings.api.common.CommonTexts
  * то есть посреди экрана слева, и закрывал двери «Новая касса» и «Кабинет
  * БФД». Экран входа оставляет под ним запас у нижнего края.
  *
- * В окне уже большого класса ([WidthClass.Large]) по центру он ложится на
- * кассу продажи — на «Пробить чек» и «Принято», — и кассир не может нажать
+ * Там, где разделу досталось меньше большого класса ([WidthClass.Large]),
+ * по центру он ложится на кассу продажи — на «Пробить чек» и «Принято», — и кассир не может нажать
  * кнопку, пока читает, почему её нажатие не прошло. Там снекбар встаёт
  * у начального края: касса стоит справа, а слева он закрывает рельс
  * и край чека, а не действие.
  */
 @Composable
 fun MessageHost(state: SnackbarHostState) {
-    val centered = LocalWindowClass.current.width >= WidthClass.Large
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = if (centered) Alignment.BottomCenter else Alignment.BottomStart
-    ) {
-        SnackbarHost(hostState = state) { data ->
-            Snackbar(snackbarData = data)
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        // Решает место под снекбаром, а не монитор: навигация окна стоит
+        // сбоку и отнимает у раздела свою ширину.
+        val centered = WindowClass.widthClassOf(maxWidth) >= WidthClass.Large
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = if (centered) Alignment.BottomCenter else Alignment.BottomStart
+        ) {
+            SnackbarHost(hostState = state) { data -> Snackbar(snackbarData = data) }
         }
     }
 }

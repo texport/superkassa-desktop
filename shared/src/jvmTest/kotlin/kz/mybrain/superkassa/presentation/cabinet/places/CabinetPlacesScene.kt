@@ -1,9 +1,8 @@
 package kz.mybrain.superkassa.presentation.cabinet.places
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.ktor.http.HttpStatusCode
@@ -18,9 +17,9 @@ import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.domain.cabinet.PlaceLook
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
 import kz.mybrain.superkassa.presentation.shell.frame.shellModel
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.refusal
@@ -61,10 +60,13 @@ internal class CabinetPlacesScene(
 
     @Composable
     private fun Window() {
-        Column(modifier = Modifier.fillMaxSize()) {
-            AppTopBar(title = "Касса 3", subtitle = "ТОО «Азик и Ко»", subtitleKept = "Курманов Азамат") {}
-            Row(modifier = Modifier.fillMaxSize()) {
-                SectionRail(Section.entries, Section.Cabinet, false, {}, { Text("1.0.6") }) {}
+        ShellFrame(
+            sections = Section.entries,
+            current = Section.Cabinet,
+            onPick = {},
+            topBar = { AppTopBar(title = "Касса 3", subtitle = "ТОО «Азик и Ко»", subtitleKept = "Курманов Азамат") {} }
+        ) { padding ->
+            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
                 stage.Window { SectionContent(stage.app(), parts, Section.Cabinet) }
             }
         }

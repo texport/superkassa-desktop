@@ -38,11 +38,10 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * Заголовок и действия отступают от краёв окна теми же полями, что
  * и содержимое разделов: иначе название начинается от самого края стекла.
  *
- * @param badge опознавательный значок слева. Уступает место возврату:
- *   там, где из раздела есть выход назад, стрелка важнее значка.
  * @param subtitleKept хвост подзаголовка, который не сокращается: имя
- *   кассира. Сокращается то, что перед ним, — название организации.
- * @param onBack возврат из раздела, если он есть.
+ *   кассира. Сокращается то, что перед ним, — кассы или организации.
+ * @param lead начало шапки: стрелка назад, кнопка меню или значок;
+ *   `null` — заголовок начинается с поля окна.
  * @param actions кнопки справа: у каждого раздела свои.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,28 +50,16 @@ fun AppTopBar(
     title: String,
     subtitle: String? = null,
     subtitleKept: String? = null,
-    badge: ImageVector? = null,
-    onBack: (() -> Unit)? = null,
-    backLabel: String? = null,
+    lead: BarLead? = null,
     actions: @Composable RowScope.() -> Unit
 ) {
     // Цвета — Material 3 по умолчанию: шапка стоит на той же `surface`,
     // что рельс и разделы. Своя подложка `surfaceContainer` делала её
     // отдельной серой полосой над окном, чужой рельсу и содержимому.
     TopAppBar(
-        navigationIcon = {
-            when {
-                onBack != null -> IconButton(
-                    onClick = onBack,
-                    modifier = Modifier.padding(start = Spacing.fieldGap)
-                ) { Icon(AppIcons.back, contentDescription = backLabel) }
-
-                badge != null -> TopBarBadge(badge)
-            }
-        },
+        navigationIcon = { lead?.let { BarLeadIcon(it) } },
         title = {
-            val lead = if (badge == null && onBack == null) windowMargin else Spacing.itemGap
-            Column(modifier = Modifier.padding(start = lead)) {
+            Column(modifier = Modifier.padding(start = if (lead == null) windowMargin else Spacing.itemGap)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
@@ -91,6 +78,20 @@ fun AppTopBar(
             )
         }
     )
+}
+
+/** Начало шапки: стрелка, меню или значок — по [lead]. */
+@Composable
+private fun BarLeadIcon(lead: BarLead) {
+    when (lead) {
+        is BarLead.Back -> IconButton(onClick = lead.onClick, modifier = Modifier.padding(start = Spacing.fieldGap)) {
+            Icon(AppIcons.back, contentDescription = lead.label)
+        }
+        is BarLead.Menu -> IconButton(onClick = lead.onClick, modifier = Modifier.padding(start = Spacing.fieldGap)) {
+            Icon(AppIcons.menu, contentDescription = lead.label)
+        }
+        is BarLead.Badge -> TopBarBadge(lead.icon)
+    }
 }
 
 /**

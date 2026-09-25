@@ -1,8 +1,8 @@
 package kz.mybrain.superkassa.presentation
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.KassaDesk
@@ -18,7 +18,7 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.settings.SettingsScene
 import kz.mybrain.superkassa.presentation.settings.SettingsScreen
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import java.io.File
 import kotlin.test.Test
@@ -76,17 +76,12 @@ class LookScaleShots {
     /** Рельс и экран рядом — так, как это стоит в окне кассы. */
     @Composable
     private fun Rail(desk: KassaDesk, section: Section) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            SectionRail(
-                sections = Section.entries,
-                current = section,
-                collapsed = false,
-                onToggle = {},
-                footer = { Box(Modifier) }
-            ) {}
-            when (section) {
-                Section.Sale -> SaleContent(SaleUiState(kkm = CoreScene.kkm(), signedIn = true, shiftOpen = true))
-                else -> SettingsScreen(SettingsScene.board(desk))
+        ShellFrame(Section.entries, section, {}, topBar = {}) { padding ->
+            Box(Modifier.fillMaxSize().padding(padding)) {
+                when (section) {
+                    Section.Sale -> SaleContent(SaleUiState(kkm = CoreScene.kkm(), signedIn = true, shiftOpen = true))
+                    else -> SettingsScreen(SettingsScene.board(desk))
+                }
             }
         }
     }

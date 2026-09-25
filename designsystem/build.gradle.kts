@@ -35,6 +35,8 @@ kotlin {
             api(libs.compose.adaptive)
             api(libs.compose.adaptive.layout)
             api(libs.compose.adaptive.navigation)
+            // Навигация окна по разделам — `NavigationSuiteScaffold` Material 3.
+            api(libs.compose.adaptive.navigation.suite)
             // Общие аннотации превью стоят на функциях превью всех модулей
             // экранов: Android Studio видит `@Preview` сквозь них.
             api(libs.compose.ui.tooling.preview)

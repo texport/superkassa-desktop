@@ -1,9 +1,8 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -19,7 +18,7 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleActions
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.shell.bar.KkmTopBar
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import java.io.File
 import kotlin.test.Test
@@ -115,16 +114,10 @@ class SaleHeadingLayoutTest {
     @Test
     fun `экран продажи в низком узком окне собирается целиком`() {
         val frame = RenderProbe(width = LOW_WINDOW_WIDTH, height = LOW_WINDOW_HEIGHT) {
-            Row(modifier = Modifier.fillMaxSize()) {
-                SectionRail(
-                    sections = Section.entries,
-                    current = Section.Sale,
-                    collapsed = false,
-                    onToggle = {},
-                    footer = { Text(VERSION) },
-                    onPick = {}
-                )
-                SaleContent(SaleUiState(kkm = CoreScene.kkm(), signedIn = true, shiftOpen = true))
+            ShellFrame(Section.entries, Section.Sale, {}, topBar = {}) { padding ->
+                Box(Modifier.fillMaxSize().padding(padding)) {
+                    SaleContent(SaleUiState(kkm = CoreScene.kkm(), signedIn = true, shiftOpen = true))
+                }
             }
         }.use { probe ->
             repeat(SETTLE) { probe.frame() }

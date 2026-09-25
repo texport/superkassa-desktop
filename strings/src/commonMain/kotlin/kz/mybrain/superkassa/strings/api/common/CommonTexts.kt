@@ -116,5 +116,7 @@ data class SectionTexts(
     val users: String,
     val settings: String,
     val register: String,
-    val cabinet: String
+    val cabinet: String,
+    /** Кнопка шапки, которая на телефоне открывает все разделы разом. */
+    val menu: String
 )

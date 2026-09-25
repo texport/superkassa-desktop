@@ -2,12 +2,10 @@ package kz.mybrain.superkassa.presentation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,8 +33,8 @@ import kz.mybrain.superkassa.presentation.setup.SetupParts
 import kz.mybrain.superkassa.presentation.setup.SetupUiState
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationActions
 import kz.mybrain.superkassa.presentation.setup.registration.RegistrationUiState
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.frame.WindowParts
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.SectionContent
 import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
@@ -69,17 +67,16 @@ class FormWidthShots {
         Register(Section.Register)
     }
 
-    /** Правый край рельса разделов в последнем кадре: левее начинается не раздел. */
+    /** Левый край раздела в последнем кадре: левее — навигация окна. */
     private var rail = 0f
 
-    /** Рельс разделов, как в окне кассы, и раздел правее него. */
+    /** Навигация окна, как в окне кассы, и раздел правее неё. */
     @Composable
     private fun WithRail(section: Section, content: @Composable () -> Unit) {
-        Row(modifier = Modifier.fillMaxSize()) {
-            Box(Modifier.onGloballyPositioned { rail = it.positionInRoot().x + it.size.width }) {
-                SectionRail(Section.entries, section, false, {}, { Text(VERSION) }) {}
+        ShellFrame(Section.entries, section, {}, topBar = {}) { padding ->
+            Box(Modifier.fillMaxSize().padding(padding).onGloballyPositioned { rail = it.positionInRoot().x }) {
+                content()
             }
-            content()
         }
     }
 

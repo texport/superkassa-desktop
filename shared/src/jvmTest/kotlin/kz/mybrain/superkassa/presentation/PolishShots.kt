@@ -1,13 +1,11 @@
 package kz.mybrain.superkassa.presentation
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,8 +22,6 @@ import kz.mybrain.superkassa.presentation.analytics.sales.SalesOverviewTiles
 import kz.mybrain.superkassa.presentation.common.document.JournalTable
 import kz.mybrain.superkassa.presentation.journal.HistoryStage
 import kz.mybrain.superkassa.presentation.journal.documents.journalEntriesOf
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
-import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import java.io.File
@@ -52,20 +48,6 @@ class PolishShots {
         repeat(SETTLE) { probe.frame() }
         File("/tmp/polish-$name.png").writeBytes(probe.frame())
         probe.nodes()
-    }
-
-    @Test
-    fun `в рельсе при крупном шрифте подпись последнего раздела не наезжает на версию`() {
-        val nodes = shoot("rail-1280x800-en-larger", RAIL_W, RAIL_H, Language.En, TextScale.Larger) {
-            Row(Modifier.fillMaxSize()) {
-                SectionRail(Section.entries, Section.Settings, false, {}, { Text(VERSION) }) {}
-            }
-        }
-        // Разделы не помещаются и прокручиваются: край их окна не должен стоять вплотную к версии.
-        val sections = nodes.filter { it.scrolls }.minBy { it.at.x }
-        val version = nodes.single { it.text == VERSION }
-        val gap = version.at.y - sections.visible.bottom
-        assertTrue(gap >= Spacing.itemGap.value, "разделы кончаются в $gap от версии")
     }
 
     @Test

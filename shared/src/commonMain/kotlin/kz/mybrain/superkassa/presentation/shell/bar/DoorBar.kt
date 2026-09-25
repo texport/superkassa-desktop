@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.presentation.shell.bar
 
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.section.BarLead
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
@@ -35,8 +36,7 @@ internal fun DoorBar(window: WindowParts, door: Door, close: () -> Unit) {
     val atDoor = door == Door.Kkms
     AppTopBar(
         title = door.title(texts),
-        onBack = close.takeUnless { atDoor },
-        backLabel = texts.settingsScreen.back
+        lead = BarLead.Back(close, texts.settingsScreen.back).takeUnless { atDoor }
     ) {
         if (atDoor) {
             ThemeSwitch(window.look)

@@ -6,6 +6,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.section.BarLead
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
@@ -26,9 +27,10 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * карточке, из кабинета целиком — на экран входа.
  *
  * @param onExit выход из кабинета — только у двери с экрана входа.
+ * @param onMenu открыть разделы окна — на телефоне, где их не видно.
  */
 @Composable
-fun CabinetBar(model: CabinetViewModel, look: CabinetLook, onExit: (() -> Unit)? = null) {
+fun CabinetBar(model: CabinetViewModel, look: CabinetLook, onExit: (() -> Unit)? = null, onMenu: (() -> Unit)? = null) {
     val state by model.state.collectAsScreenState()
     val language = LocalLanguage.current
     val texts = textsOf(language).cabinet
@@ -41,15 +43,21 @@ fun CabinetBar(model: CabinetViewModel, look: CabinetLook, onExit: (() -> Unit)?
         documentsTitle = journal.registerDocuments
     )
     val back = if (head.inDocuments) model::closeDocuments else onExit
-    AppTopBar(
-        title = head.title,
-        subtitle = head.subtitle,
-        badge = AppIcons.cabinet.takeIf { back == null },
-        onBack = back,
-        backLabel = if (head.inDocuments) journal.backToRegister else LocalStrings.current.settingsScreen.back
-    ) {
+    val backLabel = if (head.inDocuments) journal.backToRegister else LocalStrings.current.settingsScreen.back
+    AppTopBar(title = head.title, subtitle = head.subtitle, lead = barLead(back, backLabel, onMenu)) {
         CabinetBarActions(look, state.open, texts.signin.signOut, model::signOut)
     }
+}
+
+/**
+ * Начало шапки кабинета: стрелка назад, если есть куда, кнопка меню
+ * на телефоне, иначе значок кабинета.
+ */
+@Composable
+private fun barLead(back: (() -> Unit)?, backLabel: String, onMenu: (() -> Unit)?): BarLead = when {
+    back != null -> BarLead.Back(back, backLabel)
+    onMenu != null -> BarLead.Menu(onMenu, LocalStrings.current.sections.menu)
+    else -> BarLead.Badge(AppIcons.cabinet)
 }
 
 /**

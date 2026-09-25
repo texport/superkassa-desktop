@@ -1,11 +1,10 @@
 package kz.mybrain.superkassa.presentation.kassa
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.RenderProbe
@@ -23,7 +22,7 @@ import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.ReceiptOutput
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleContent
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
-import kz.mybrain.superkassa.presentation.shell.rail.SectionRail
+import kz.mybrain.superkassa.presentation.shell.frame.ShellFrame
 import kz.mybrain.superkassa.presentation.shell.section.Section
 import kz.mybrain.superkassa.presentation.shell.section.sectionFrame
 import java.io.File
@@ -83,9 +82,8 @@ class KassaWindowShots {
         val file = File("/tmp/kassa-window-$name-${width}x$height.png")
         RenderProbe(width, height) {
             Surface(Modifier.fillMaxSize()) {
-                Row(Modifier.fillMaxSize()) {
-                    SectionRail(Section.entries, section, false, {}, { Text(VERSION) }) {}
-                    Box(Modifier.weight(1f).sectionFrame().fillMaxHeight()) { content() }
+                ShellFrame(Section.entries, section, {}, topBar = {}) { padding ->
+                    Box(Modifier.fillMaxSize().padding(padding).sectionFrame().fillMaxHeight()) { content() }
                 }
             }
         }.use { probe ->
