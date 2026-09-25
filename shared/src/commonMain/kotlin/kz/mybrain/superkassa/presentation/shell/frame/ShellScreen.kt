@@ -88,7 +88,7 @@ fun ShellScreen(app: AppContainer) {
  *
  * @property cabinet кабинет окна; `null` — на этой платформе кабинета нет.
  */
-class WindowParts(val shell: ShellViewModel, val look: LookViewModel, val cabinet: CabinetWindow?) {
+internal class WindowParts(val shell: ShellViewModel, val look: LookViewModel, val cabinet: CabinetWindow?) {
 
     /** Шаги кабинета для мастера подключения: те же вход и формы, что в разделах кабинета. */
     val steps: CabinetSteps? = cabinet?.steps()

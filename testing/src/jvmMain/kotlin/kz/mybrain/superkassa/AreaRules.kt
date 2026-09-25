@@ -25,7 +25,7 @@ package kz.mybrain.superkassa
  * долгом: новое чтение чужого домена требует записи с причиной.
  *
  * Правило одно на всё приложение, а проверяет его каждый модуль у себя:
- * `domain` — свои исходники, `shared` — экраны.
+ * `domain` — свои исходники, модуль экранов — свои ([ScreenModuleRules]).
  */
 object AreaRules {
     private val SHARED_PRESENTATION = setOf("common", "words", "shell")

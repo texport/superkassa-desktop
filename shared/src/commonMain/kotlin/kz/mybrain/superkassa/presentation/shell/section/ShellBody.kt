@@ -190,4 +190,4 @@ private fun settingsParts(app: AppContainer) = SettingsParts(
  * Широкое окно делят панели самих экранов, а не пустые поля.
  */
 @Composable
-fun Modifier.sectionFrame(): Modifier = fillMaxWidth().padding(horizontal = windowMargin)
+internal fun Modifier.sectionFrame(): Modifier = fillMaxWidth().padding(horizontal = windowMargin)

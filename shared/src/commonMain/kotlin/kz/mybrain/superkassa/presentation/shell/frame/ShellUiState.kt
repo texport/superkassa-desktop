@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.domain.signin.model.SignInState
  * @property kkmName как касса зовётся на этом рабочем месте; `null` — кассы нет.
  * @property busy касса перечитывается по кнопке шапки.
  */
-data class ShellUiState(
+internal data class ShellUiState(
     val seat: SignInState = SignInState(),
     val kkmName: String? = null,
     val busy: Boolean = false

@@ -19,7 +19,7 @@ import kz.mybrain.superkassa.presentation.common.model.whileBusy
  * не выбирает и не меняет, а только показывает. Первое состояние — уже
  * сделанный вход: окно не рисует экран входа поверх вошедшего кассира.
  */
-class ShellViewModel(private val cases: ShellCases, private val talk: Talk) : ViewModel() {
+internal class ShellViewModel(private val cases: ShellCases, private val talk: Talk) : ViewModel() {
     private val busy = Busy()
     private val screen = MutableStateFlow(seated(cases.observe().value))
 

@@ -6,8 +6,8 @@ import kz.mybrain.superkassa.presentation.shell.AppContainer
 
 /** Модель каркаса окна: одна на окно, живёт в хранилище моделей окна. */
 @Composable
-fun shellViewModel(app: AppContainer): ShellViewModel = viewModel { shellModel(app) }
+internal fun shellViewModel(app: AppContainer): ShellViewModel = viewModel { shellModel(app) }
 
 /** Модель каркаса со сценариями из портов окна; проверки зовут её без окна. */
-fun shellModel(app: AppContainer): ShellViewModel =
+internal fun shellModel(app: AppContainer): ShellViewModel =
     ShellViewModel(ShellCases(app.services.kassa, app.services.signIn, app.services.memory), app.services.talk)

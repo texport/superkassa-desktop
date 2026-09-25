@@ -10,7 +10,7 @@ import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
- * Модуль экранов кассы: общее экранов или область приложения.
+ * Модуль экранов кассы: общее экранов, область приложения или каркас окна.
  *
  * Цели — как у `superkassa.library`, разметка — Compose. Проверки у всех
  * одни: общий код — `kotlin.test` и суммы оснастки `:testing`, JVM — ещё
@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
  * умолчанию не хватает.
  *
  * Зависимости основного кода модуль называет сам: у общего экранов —
- * домен и дизайн-система, у области — общее экранов. Так граф модулей
- * читается по их файлам сборки.
+ * домен и дизайн-система, у области — общее экранов, у каркаса — все
+ * области. Так граф модулей читается по их файлам сборки.
  */
 class ScreensPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = with(project) {

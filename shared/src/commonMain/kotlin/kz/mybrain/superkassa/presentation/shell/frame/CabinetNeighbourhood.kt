@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.presentation.users.signin.loginViewModel
  * Собираются здесь, в каркасе: каркас видит все области, а кабинет —
  * ни одной, и получает от них только готовое.
  */
-fun cabinetNeighbours(app: AppContainer): CabinetNeighbours = CabinetNeighbours(
+internal fun cabinetNeighbours(app: AppContainer): CabinetNeighbours = CabinetNeighbours(
     analytics = { access, texts -> AnalyticsScreen(app.areas.analytics, access, texts) },
     points = MapPointPicker(app.areas.analytics.map),
     setupMemory = app.areas.setup?.memory,

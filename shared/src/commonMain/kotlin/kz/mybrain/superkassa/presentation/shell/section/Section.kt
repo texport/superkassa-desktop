@@ -14,7 +14,7 @@ import kz.mybrain.superkassa.strings.api.common.SectionStrings
  * ищет продажу там же, где привык. Название берётся из словаря текущего
  * языка, значок — из общего набора.
  */
-enum class Section(
+internal enum class Section(
     val icon: ImageVector,
     val title: (SectionStrings) -> String,
     /** Раздел, на который узел отвечает только администратору. */
@@ -40,7 +40,7 @@ enum class Section(
  * входит подписью ЭЦП, а мастер подключения — через кабинет или вручную;
  * раздел без своих портов открывался бы отказом, который ничему не учит.
  */
-fun sectionsFor(isAdmin: Boolean, areas: AreaPorts): List<Section> =
+internal fun sectionsFor(isAdmin: Boolean, areas: AreaPorts): List<Section> =
     Section.entries.filter { (isAdmin || !it.adminOnly) && it.assembledWith(areas) }
 
 private fun Section.assembledWith(areas: AreaPorts): Boolean = when (this) {
@@ -59,7 +59,7 @@ private fun Section.assembledWith(areas: AreaPorts): Boolean = when (this) {
  *
  * @property sections пройденные разделы; последний — открытый сейчас.
  */
-data class SectionTrail(val sections: List<Section> = listOf(Section.Dashboard)) {
+internal data class SectionTrail(val sections: List<Section> = listOf(Section.Dashboard)) {
 
     /** Открытый сейчас раздел. */
     val current: Section get() = sections.last()
