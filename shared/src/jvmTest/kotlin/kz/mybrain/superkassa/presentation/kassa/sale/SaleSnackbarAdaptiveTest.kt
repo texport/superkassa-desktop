@@ -53,8 +53,8 @@ class SaleSnackbarAdaptiveTest {
     private fun covered(probe: KassaProbe, case: Case): List<String> {
         val texts = textsOf(case.language).common
         val bar = probe.part(REFUSAL_PROBE)?.boundsInRoot
-        val issue = probe.node(texts.sale.issueSale)?.boundsInRoot
-        val taken = probe.node(texts.sale.taken)?.boundsInRoot
+        val issue = probe.node(texts.receipt.issueSale)?.boundsInRoot
+        val taken = probe.node(texts.receipt.taken)?.boundsInRoot
         println("снекбар ${case.tag}: $bar, кнопка $issue, принято $taken")
         return listOfNotNull(
             "${case.tag}: снекбара нет".takeIf { bar == null },

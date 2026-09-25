@@ -40,7 +40,7 @@ class OfdSettingsViewModelTest {
     private val notices = Notices()
     private val services = CoreScene.services(core, signIn, notices)
     private val money = textsOf(Language.Ru).kassa.money.kkm
-    private val texts = textsOf(Language.Ru).common.settings
+    private val texts = textsOf(Language.Ru).common.settingsScreen
 
     @BeforeTest
     fun main() {

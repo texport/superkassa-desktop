@@ -1,10 +1,10 @@
 package kz.mybrain.superkassa.strings.impl.settings
 
 import kz.mybrain.superkassa.strings.api.settings.CoreSettingTexts
-import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldNames
-import kz.mybrain.superkassa.strings.api.settings.DeliveryTexts
+import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldTexts
+import kz.mybrain.superkassa.strings.api.settings.DeliverySettingTexts
 import kz.mybrain.superkassa.strings.api.settings.KassaFactsTexts
-import kz.mybrain.superkassa.strings.api.settings.LookStrings
+import kz.mybrain.superkassa.strings.api.settings.LookTexts
 import kz.mybrain.superkassa.strings.api.settings.SettingsTexts
 
 /** Надписи [SettingsTexts] по-английски. */
@@ -29,7 +29,7 @@ internal val settingsTextsEn = SettingsTexts(
         autoCloseHint = "A shift longer than a day is not allowed: the register stops issuing receipts. " +
             "With this switch the register closes the shift and takes the Z report itself if the cashier did not."
     ),
-    delivery = DeliveryTexts(
+    delivery = DeliverySettingTexts(
         title = "Receipt delivery to the customer",
         hint = "An enabled channel sends the receipt to the customer through a service: an SMS gateway, " +
             "a Telegram bot, WhatsApp or a mail server. Shared by every register of the workplace. " +
@@ -43,7 +43,7 @@ internal val settingsTextsEn = SettingsTexts(
         portRange = "A whole number from 1 to 65535",
         saved = "Receipt delivery saved. Enabled channels take effect after the register restarts",
         channels = deliveryChannels("Email"),
-        fields = DeliveryFieldNames(
+        fields = DeliveryFieldTexts(
             smsUrl = "Gateway address with {phone} and {text}",
             smsKey = "SMS gateway key",
             telegramToken = "Bot token",
@@ -70,8 +70,8 @@ internal val settingsTextsEn = SettingsTexts(
     )
 )
 
-/** Надписи [LookStrings] по-английски. */
-internal val lookStringsEn = LookStrings(
+/** Надписи [LookTexts] по-английски. */
+internal val lookTextsEn = LookTexts(
     accent = "Accent",
     accentHint = "Main colour of buttons, selection and icons. Refusal stays red with any accent.",
     accentRed = "Red",

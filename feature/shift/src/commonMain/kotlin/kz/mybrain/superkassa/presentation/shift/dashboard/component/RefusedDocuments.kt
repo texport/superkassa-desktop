@@ -136,7 +136,7 @@ private fun RefusedRow(state: DashboardUiState, document: FiscalDocumentResponse
 private fun RefusalCode(document: FiscalDocumentResponse) {
     val code = document.refusalCode ?: return
     Text(
-        text = "${LocalStrings.current.common.refusalCode} $code",
+        text = "${LocalStrings.current.general.refusalCode} $code",
         style = MaterialTheme.typography.labelMedium,
         color = StatusColors.refused
     )

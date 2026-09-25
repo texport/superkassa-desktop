@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.presentation.analytics.sales.chart.hourBars
 import kz.mybrain.superkassa.presentation.analytics.sales.chart.salesShares
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
@@ -44,7 +44,7 @@ import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 internal fun AnalyticsSalesBody(
     view: SalesView,
     texts: AnalyticsTexts,
-    enums: EnumStrings,
+    enums: EnumTexts,
     journal: HistoryJournalTexts,
     cabinet: CabinetTexts,
     modifier: Modifier = Modifier,

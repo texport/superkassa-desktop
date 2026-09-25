@@ -121,7 +121,7 @@ class DashboardViewModelTest {
 
         model.xReport()
 
-        assertEquals(Message.Done("${texts.dashboard.xReportDone}: ${texts.common.deliveredToOfd}"), notices.last)
+        assertEquals(Message.Done("${texts.dashboard.xReportDone}: ${texts.general.deliveredToOfd}"), notices.last)
         assertFalse(model.state.value.busy)
         assertEquals(2, core.calls.count { it == "getLocalOpenShift" }, "после отчёта смена не перечитана")
     }

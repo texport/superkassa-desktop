@@ -27,7 +27,7 @@ import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 import kz.mybrain.superkassa.presentation.kassa.payment.SplitEditor
 import kz.mybrain.superkassa.presentation.kassa.payment.fiscal
 import kz.mybrain.superkassa.presentation.words.kassa.title
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.textsOf
 
@@ -43,7 +43,7 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
     private val screen = MutableStateFlow(ReturnsUiState())
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = textsOf(talk.language()).common
+    private val texts: CommonTexts get() = textsOf(talk.language()).common
 
     val state: StateFlow<ReturnsUiState> = screen.asStateFlow()
 

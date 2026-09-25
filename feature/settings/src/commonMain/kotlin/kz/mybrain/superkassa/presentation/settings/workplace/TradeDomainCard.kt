@@ -35,9 +35,9 @@ fun TradeDomainCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSetti
     val texts = LocalStrings.current
     workplace.kkmId ?: return
     val kind = DomainKind.byCode(workplace.domainCode)
-    SectionCard(title = texts.settings.tradeDomain, info = texts.settings.tradeDomainHint) {
+    SectionCard(title = texts.settingsScreen.tradeDomain, info = texts.settingsScreen.tradeDomainHint) {
         LabelledPicker(
-            label = texts.settings.domainKind,
+            label = texts.settingsScreen.domainKind,
             options = DomainKind.entries,
             selected = kind,
             title = { it?.title(texts.enums).orEmpty() },
@@ -54,7 +54,7 @@ private fun RequisiteNames(kind: DomainKind) {
     val sale = textsOf(LocalLanguage.current).kassa.sale
     if (kind.fields.isEmpty()) return
     Text(
-        text = "${texts.settings.domainFields}: ${kind.fields.joinToString { it.label(sale) }}",
+        text = "${texts.settingsScreen.domainFields}: ${kind.fields.joinToString { it.label(sale) }}",
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )

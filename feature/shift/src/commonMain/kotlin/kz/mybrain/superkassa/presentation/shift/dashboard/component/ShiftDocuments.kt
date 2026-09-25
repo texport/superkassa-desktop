@@ -31,7 +31,7 @@ import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.presentation.common.document.DocumentDeliveryChip
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardActions
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardUiState
-import kz.mybrain.superkassa.strings.api.common.DashboardStrings
+import kz.mybrain.superkassa.strings.api.common.DashboardTexts
 
 /**
  * Документы текущей смены.
@@ -70,7 +70,7 @@ internal fun ShiftDocuments(state: DashboardUiState, actions: DashboardActions, 
  * этом месте стояло «Документов пока нет» с обещанием, что первый чек
  * вот-вот появится. Кассир читал это как пустую смену.
  */
-private fun documentsState(state: DashboardUiState, texts: DashboardStrings, onRetry: () -> Unit): ScreenState = when {
+private fun documentsState(state: DashboardUiState, texts: DashboardTexts, onRetry: () -> Unit): ScreenState = when {
     state.documents.isNotEmpty() -> ScreenState.Ready
     // Список приходит вместе с состоянием смены: до ответа кассы пустота
     // читалась как «за смену не пробито ничего».
@@ -95,7 +95,7 @@ private fun documentsState(state: DashboardUiState, texts: DashboardStrings, onR
  * при плитке «Смена: Неизвестна» прямо над списком, — а открытой смене
  * подсказкой доставалось одно слово «Чек».
  */
-private fun emptyHint(state: DashboardUiState, texts: DashboardStrings): String = when (state.shift) {
+private fun emptyHint(state: DashboardUiState, texts: DashboardTexts): String = when (state.shift) {
     ShiftState.Open -> texts.shiftEmptyHint
     ShiftState.Closed -> texts.openShiftHint
     ShiftState.Unknown -> texts.shiftUnknownHint
@@ -157,7 +157,7 @@ private fun DocumentFacts(document: FiscalDocumentResponse) {
         // провести заново. Кассиру полезен не повтор, а причина.
         document.refusalCode?.let { code ->
             Text(
-                text = "${texts.common.refusalCode} $code",
+                text = "${texts.general.refusalCode} $code",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.error
             )

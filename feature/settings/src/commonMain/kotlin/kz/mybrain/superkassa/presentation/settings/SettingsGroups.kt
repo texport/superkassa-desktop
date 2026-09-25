@@ -1,6 +1,6 @@
 package kz.mybrain.superkassa.presentation.settings
 
-import kz.mybrain.superkassa.strings.api.common.SettingStrings
+import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
 
 /**
  * Два хозяйства настроек: чьё это и кто их хранит.
@@ -17,7 +17,7 @@ import kz.mybrain.superkassa.strings.api.common.SettingStrings
  * стояли вперемешку с оформлением и журналом, и владелец читал экран
  * настроек одной кучей.
  */
-internal enum class SettingsHousehold(val title: (SettingStrings) -> String) {
+internal enum class SettingsHousehold(val title: (SettingsScreenTexts) -> String) {
     Workplace({ it.householdWorkplace }),
     Kkm({ it.householdKkm }),
     Cabinet({ it.householdCabinet })
@@ -32,7 +32,7 @@ internal enum class SettingsHousehold(val title: (SettingStrings) -> String) {
  */
 internal enum class SettingsGroup(
     val household: SettingsHousehold,
-    val title: (SettingStrings) -> String?
+    val title: (SettingsScreenTexts) -> String?
 ) {
     /**
      * Вид приложения и состав кассовой колонки.

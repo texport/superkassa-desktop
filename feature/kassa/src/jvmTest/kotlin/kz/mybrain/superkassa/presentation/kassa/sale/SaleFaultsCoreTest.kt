@@ -40,7 +40,7 @@ class SaleFaultsCoreTest {
         model.issue()
 
         assertIs<Message.Done>(desk.said, desk.saidText)
-        assertTrue(texts.common.queuedNoLink in desk.saidText, "не сказано, что чек ждёт связи: ${desk.saidText}")
+        assertTrue(texts.general.queuedNoLink in desk.saidText, "не сказано, что чек ждёт связи: ${desk.saidText}")
         assertTrue(model.state.value.basket.positions.isEmpty())
         assertTrue(kassa.sales().single().isAutonomous, "документ не автономный")
         assertTrue(desk.bfd.countedTickets().isEmpty())

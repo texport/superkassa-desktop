@@ -38,7 +38,7 @@ class SetupAdminPinTest {
         val model = scene.model()
         RenderProbe(width = WIDE, height = TALL) { AdminStepAlone(model, scene) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
-            probe.tap { it.text == texts.settings.adminPin }
+            probe.tap { it.text == texts.settingsScreen.adminPin }
             probe.type(pin)
             repeat(SETTLE) { probe.frame() }
             File("/tmp/audit-users-admin-pin-$name.png").writeBytes(probe.frame())

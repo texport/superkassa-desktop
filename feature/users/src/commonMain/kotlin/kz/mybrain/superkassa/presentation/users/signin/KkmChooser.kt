@@ -29,7 +29,7 @@ import kz.mybrain.superkassa.domain.kkm.model.isAutonomous
 import kz.mybrain.superkassa.domain.kkm.model.isBlocked
 import kz.mybrain.superkassa.domain.kkm.model.orgAddress
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
-import kz.mybrain.superkassa.strings.api.common.LoginStrings
+import kz.mybrain.superkassa.strings.api.common.LoginTexts
 
 /**
  * Список касс на экране входа: поиск, строки и подробности кассы.
@@ -110,8 +110,8 @@ private fun KkmRow(
         trailing = {
             WrapRow {
                 if (remembered) Chip(texts.login.yourKkm, StatusColors.delivered)
-                if (kkm.isBlocked) Chip(texts.shell.blocked, StatusColors.refused)
-                if (kkm.isAutonomous) Chip(texts.shell.autonomous, StatusColors.pending)
+                if (kkm.isBlocked) Chip(texts.topBar.blocked, StatusColors.refused)
+                if (kkm.isAutonomous) Chip(texts.topBar.autonomous, StatusColors.pending)
             }
         }
     )
@@ -124,7 +124,7 @@ private fun KkmRow(
  * и адрес установки. Номер подписан словом: без подписи он читался как
  * часть названия, а кассир не понимал, какая из строк — его касса.
  */
-internal fun kkmDetail(kkm: KkmResponse, texts: LoginStrings): String = listOfNotNull(
+internal fun kkmDetail(kkm: KkmResponse, texts: LoginTexts): String = listOfNotNull(
     kkmNumber(kkm, texts),
     kkm.orgTitle,
     kkm.orgAddress,
@@ -137,7 +137,7 @@ internal fun kkmDetail(kkm: KkmResponse, texts: LoginStrings): String = listOfNo
  * Пусто, пока касса не поставлена на учёт: номера у неё ещё нет,
  * а подпись без числа обещает то, чего нет.
  */
-internal fun kkmNumber(kkm: KkmResponse, texts: LoginStrings): String? =
+internal fun kkmNumber(kkm: KkmResponse, texts: LoginTexts): String? =
     kkm.kkmKgdId?.takeIf { it.isNotBlank() }?.let { "${texts.registrationNumber} $it" }
 
 /** Сколько строк отдаётся названию кассы в списке входа. */

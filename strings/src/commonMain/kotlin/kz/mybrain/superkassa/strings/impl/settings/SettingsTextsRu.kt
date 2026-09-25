@@ -1,10 +1,10 @@
 package kz.mybrain.superkassa.strings.impl.settings
 
 import kz.mybrain.superkassa.strings.api.settings.CoreSettingTexts
-import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldNames
-import kz.mybrain.superkassa.strings.api.settings.DeliveryTexts
+import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldTexts
+import kz.mybrain.superkassa.strings.api.settings.DeliverySettingTexts
 import kz.mybrain.superkassa.strings.api.settings.KassaFactsTexts
-import kz.mybrain.superkassa.strings.api.settings.LookStrings
+import kz.mybrain.superkassa.strings.api.settings.LookTexts
 import kz.mybrain.superkassa.strings.api.settings.SettingsTexts
 
 /** Надписи [SettingsTexts] по-русски. */
@@ -29,7 +29,7 @@ internal val settingsTextsRu = SettingsTexts(
         autoCloseHint = "Смена дольше суток запрещена: касса перестаёт оформлять чеки. С этим переключателем касса " +
             "сама закроет смену и снимет Z-отчёт, если кассир не успел."
     ),
-    delivery = DeliveryTexts(
+    delivery = DeliverySettingTexts(
         title = "Доставка чека покупателю",
         hint = "Включённый канал отправляет чек покупателю через службу: SMS-шлюз, бота Telegram, WhatsApp " +
             "или почтовый сервер. Одни на все кассы рабочего места. Адреса и ключи действуют со следующего чека, " +
@@ -43,7 +43,7 @@ internal val settingsTextsRu = SettingsTexts(
         portRange = "Целое число от 1 до 65535",
         saved = "Доставка чека сохранена. Включение канала подействует после перезапуска кассы",
         channels = deliveryChannels("Почта"),
-        fields = DeliveryFieldNames(
+        fields = DeliveryFieldTexts(
             smsUrl = "Адрес шлюза с {phone} и {text}",
             smsKey = "Ключ SMS-шлюза",
             telegramToken = "Токен бота",
@@ -70,8 +70,8 @@ internal val settingsTextsRu = SettingsTexts(
     )
 )
 
-/** Надписи [LookStrings] по-русски. */
-internal val lookStringsRu = LookStrings(
+/** Надписи [LookTexts] по-русски. */
+internal val lookTextsRu = LookTexts(
     accent = "Тон",
     accentHint = "Основной цвет кнопок, выделения и значков. Отказ остаётся красным при любом тоне.",
     accentRed = "Красный",

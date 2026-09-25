@@ -20,7 +20,7 @@ import kz.mybrain.superkassa.presentation.common.model.followSeat
 import kz.mybrain.superkassa.presentation.common.model.latest
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -34,7 +34,7 @@ class DashboardViewModel(private val cases: DashboardCases, private val talk: Ta
     private val screen = MutableStateFlow(DashboardUiState())
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = textsOf(talk.language()).common
+    private val texts: CommonTexts get() = textsOf(talk.language()).common
 
     val state: StateFlow<DashboardUiState> = screen.asStateFlow()
 
@@ -74,7 +74,7 @@ class DashboardViewModel(private val cases: DashboardCases, private val talk: Ta
     /** Есть ли связь с ОФД: ответ объявляется и когда связи нет — кассир нажал и ждёт итога. */
     fun checkLink() = thenRead {
         cases.checkLink().shown(texts.autonomous.checkLink, "check ofd link", talk)?.let { alive ->
-            talk.done(if (alive) texts.autonomous.linkBack else texts.settings.ofdSilent)
+            talk.done(if (alive) texts.autonomous.linkBack else texts.settingsScreen.ofdSilent)
         }
     }
 

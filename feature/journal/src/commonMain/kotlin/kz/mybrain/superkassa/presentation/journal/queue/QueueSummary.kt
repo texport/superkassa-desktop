@@ -69,7 +69,7 @@ private fun SummaryButtons(state: QueueUiState, actions: QueueActions) {
     ) {
         FilledTonalButton(enabled = state.canRetry, onClick = actions::retryFailed) { Text(texts.queue.retryFailed) }
         IconButton(onClick = actions::refresh) {
-            Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
+            Icon(AppIcons.refresh, contentDescription = texts.general.refresh)
         }
     }
 }

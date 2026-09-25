@@ -59,7 +59,7 @@ internal fun AddPositionForm(draft: PositionDraft, actions: EntryActions) {
                 enabled = draft.position != null,
                 onClick = { actions.addDraft() },
                 modifier = Modifier.weight(1f)
-            ) { Text(texts.sale.add, style = MaterialTheme.typography.titleSmall) }
+            ) { Text(texts.receipt.add, style = MaterialTheme.typography.titleSmall) }
         }
         Hint(draft.hint?.text(extra), extra.addByEnter)
     }
@@ -81,10 +81,10 @@ internal fun DraftFields(
     // Цена и количество делят строку поровну: края полей совпадают с краями
     // наименования и скидки над и под ними — одна сетка на всю форму.
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
-        DraftAmountField(draft, DraftField.Price, texts.sale.price) {
+        DraftAmountField(draft, DraftField.Price, texts.receipt.price) {
             onChange(draft.copy(price = it))
         }
-        DraftAmountField(draft, DraftField.Quantity, texts.sale.quantity) {
+        DraftAmountField(draft, DraftField.Quantity, texts.receipt.quantity) {
             onChange(draft.copy(quantity = it))
         }
     }
@@ -106,7 +106,7 @@ private fun DraftName(draft: PositionDraft, onChange: (PositionDraft) -> Unit) {
     OutlinedTextField(
         value = draft.name,
         onValueChange = { onChange(draft.copy(name = it)) },
-        label = { Text(texts.sale.name) },
+        label = { Text(texts.receipt.name) },
         singleLine = true,
         // Про нехватку наименования сказано у самого поля. Строка под
         // кнопкой на кассовой колонке уезжает за сгиб, и кассир, набравший
@@ -152,7 +152,7 @@ private fun DraftDiscountField(draft: PositionDraft, onChange: (PositionDraft) -
     val extra = LocalSaleTexts.current
     val problem = draft.problem(DraftField.Discount)?.takeIf { draft.discount.text.isNotBlank() }
     AdjustmentField(
-        label = texts.sale.discount,
+        label = texts.receipt.discount,
         change = draft.discount,
         modifier = Modifier.fillMaxWidth(),
         isError = problem != null,

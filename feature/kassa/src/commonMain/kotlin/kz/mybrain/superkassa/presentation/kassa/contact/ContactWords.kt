@@ -2,10 +2,10 @@ package kz.mybrain.superkassa.presentation.kassa.contact
 
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
 import kz.mybrain.superkassa.strings.api.kassa.contact.ContactFieldTexts
-import kz.mybrain.superkassa.strings.api.kassa.contact.ContactKindNames
+import kz.mybrain.superkassa.strings.api.kassa.contact.ContactKindTexts
 
 /** Название вида контакта на сегменте выбора. */
-internal fun ContactKindNames.of(kind: ContactKind): String = when (kind) {
+internal fun ContactKindTexts.of(kind: ContactKind): String = when (kind) {
     ContactKind.None -> none
     ContactKind.Phone -> phone
     ContactKind.Email -> email

@@ -9,7 +9,7 @@ import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 
 /**
  * Выбор вида оплаты — выпадающим списком.
@@ -36,7 +36,7 @@ internal fun PaymentPicker(
     val texts = LocalStrings.current
     val language = LocalLanguage.current
     LabelledPicker(
-        label = texts.sale.payment,
+        label = texts.receipt.payment,
         options = entries,
         selected = entries.firstOrNull { it.code == selectedCode },
         title = { entry -> paymentTitle(entries, language, entry?.code.orEmpty(), texts.enums) },
@@ -51,7 +51,7 @@ private fun paymentTitle(
     entries: List<PaymentTypeResponse>,
     language: Language,
     code: String,
-    texts: EnumStrings
+    texts: EnumTexts
 ): String {
     val fromKassa = entries.firstOrNull { it.code == code }?.name?.of(language)
     return fromKassa?.takeIf { it != code } ?: texts.paymentFallback(code) ?: code

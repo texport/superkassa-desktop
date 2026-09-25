@@ -50,7 +50,7 @@ internal fun PositionDetailsDialog(
 ) {
     val language = LocalLanguage.current
     val texts = textsOf(language).kassa.sale
-    val rows = details.rows(LocalStrings.current.sale, texts, measureUnits(language), rates)
+    val rows = details.rows(LocalStrings.current.receipt, texts, measureUnits(language), rates)
     AlertDialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -93,7 +93,7 @@ private fun DetailRows(rows: List<Pair<String, String>>) {
  */
 @Composable
 private fun LineActions(storno: Boolean, onStorno: (() -> Unit)?, onRemove: (() -> Unit)?) {
-    val labels = LocalStrings.current.sale
+    val labels = LocalStrings.current.receipt
     Row(horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap)) {
         if (onStorno != null) {
             TextButton(onClick = onStorno) {

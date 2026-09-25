@@ -38,7 +38,7 @@ class TaxSettingsViewModelTest {
     private val signIn = SignIn()
     private val notices = Notices()
     private val app = CoreScene.app(core, signIn, notices)
-    private val texts = textsOf(Language.Ru).common.settings
+    private val texts = textsOf(Language.Ru).common.settingsScreen
 
     /** Что касса получила последним обращением к налогам. */
     private var sent: List<Any?> = emptyList()

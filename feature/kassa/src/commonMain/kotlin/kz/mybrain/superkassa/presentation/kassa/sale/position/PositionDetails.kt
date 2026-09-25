@@ -6,7 +6,7 @@ import kz.mybrain.superkassa.domain.kassa.model.Tenge
 import kz.mybrain.superkassa.domain.kassa.model.entry.QUANTITY_SCALE
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.strings.api.common.SaleStrings
+import kz.mybrain.superkassa.strings.api.common.ReceiptTexts
 import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 
 /**
@@ -85,7 +85,7 @@ internal fun ReceiptItemView.details(): PositionDetails = PositionDetails(
  * расхождение в чеке.
  */
 internal fun PositionDetails.rows(
-    labels: SaleStrings,
+    labels: ReceiptTexts,
     texts: SaleTexts,
     units: List<MeasureUnit>,
     rates: List<VatRate>

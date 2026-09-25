@@ -69,7 +69,7 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
     override fun saveToken() {
         val token = screen.value.token.takeIf { it.isNotBlank() } ?: return
         whileBusy(busy) {
-            val texts = textsOf(talk.language()).common.settings
+            val texts = textsOf(talk.language()).common.settingsScreen
             cases.token(token).shown(texts.saveToken, "update ofd token", talk) ?: return@whileBusy
             screen.update { it.copy(token = "") }
             talk.done(texts.tokenSaved)
@@ -80,14 +80,15 @@ class OfdSettingsViewModel(private val cases: OfdCases, private val talk: Talk) 
     override fun checkLink() {
         if (screen.value.kkm == null) return
         whileBusy(busy) {
-            val alive = cases.link().shown(textsOf(talk.language()).common.settings.ofdLink, "check ofd link", talk)
+            val ofdLink = textsOf(talk.language()).common.settingsScreen.ofdLink
+            val alive = cases.link().shown(ofdLink, "check ofd link", talk)
             alive?.let { screen.update { it.copy(linkAlive = alive) } }
         }
     }
 
     override fun askInfo() {
         whileBusy(busy) {
-            val texts = textsOf(talk.language()).common.settings
+            val texts = textsOf(talk.language()).common.settingsScreen
             val summary = cases.info(talk.language().code).shown(texts.ofdInfo, "read ofd info", talk)
             if (summary != null) screen.update { it.copy(summary = summary) }
         }

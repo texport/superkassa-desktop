@@ -65,7 +65,7 @@ fun DashboardContent(state: DashboardUiState, actions: DashboardActions = object
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
         ) {
-            Text(texts.shell.noKkm, style = MaterialTheme.typography.titleMedium)
+            Text(texts.topBar.noKkm, style = MaterialTheme.typography.titleMedium)
             Text(texts.login.pickHint, style = MaterialTheme.typography.bodyMedium)
         }
         return

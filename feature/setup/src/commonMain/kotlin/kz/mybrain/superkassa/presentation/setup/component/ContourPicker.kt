@@ -20,7 +20,7 @@ import kz.mybrain.superkassa.presentation.words.common.of
 internal fun ContourPicker(contours: List<OfdEnvironmentResponse>, selected: String, onSelect: (String) -> Unit) {
     val language = LocalLanguage.current
     LabelledPicker(
-        label = LocalStrings.current.settings.environment,
+        label = LocalStrings.current.settingsScreen.environment,
         options = contours,
         selected = contours.firstOrNull { it.code == selected },
         title = { contour -> contour?.name?.of(language) ?: selected },

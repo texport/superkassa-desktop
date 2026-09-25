@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.presentation.settings.title
  */
 @Composable
 internal fun OfdTokenCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     ofd.kkm ?: return
     SectionCard(title = texts.ofdToken, info = texts.tokenHint) {
         FlowRow(
@@ -50,7 +50,7 @@ internal fun OfdTokenCard(ofd: OfdSettingsUiState, actions: OfdSettingsActions) 
 /** Поле нового токена: не уже своей подписи, дальше — сколько даёт строка. */
 @Composable
 private fun TokenField(ofd: OfdSettingsUiState, actions: OfdSettingsActions, modifier: Modifier) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     OutlinedTextField(
         value = ofd.token,
         onValueChange = actions::typeToken,

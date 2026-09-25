@@ -46,7 +46,7 @@ fun CabinetBar(model: CabinetViewModel, look: CabinetLook, onExit: (() -> Unit)?
         subtitle = head.subtitle,
         badge = AppIcons.cabinet.takeIf { back == null },
         onBack = back,
-        backLabel = if (head.inDocuments) journal.backToRegister else LocalStrings.current.settings.back
+        backLabel = if (head.inDocuments) journal.backToRegister else LocalStrings.current.settingsScreen.back
     ) {
         CabinetBarActions(look, state.open, texts.signOut, model::signOut)
     }

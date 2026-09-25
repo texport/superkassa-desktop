@@ -39,7 +39,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class SaleLookupTest {
     private val notices = Notices()
-    private val sale = textsOf(Language.Ru).common.sale
+    private val sale = textsOf(Language.Ru).common.receipt
 
     @BeforeTest
     fun inlineMain() = Dispatchers.setMain(UnconfinedTestDispatcher())

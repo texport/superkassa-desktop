@@ -133,7 +133,7 @@ private fun ColumnScope.StampList(stamps: List<String>, onRemove: (Int) -> Unit)
                 // Значок называется тем, что делает: прежде он назывался
                 // «Марок нет» — надписью пустого перечня, стоявшей рядом.
                 IconButton(onClick = { onRemove(at) }) {
-                    Icon(AppIcons.remove, contentDescription = LocalStrings.current.sale.remove)
+                    Icon(AppIcons.remove, contentDescription = LocalStrings.current.receipt.remove)
                 }
             }
         }

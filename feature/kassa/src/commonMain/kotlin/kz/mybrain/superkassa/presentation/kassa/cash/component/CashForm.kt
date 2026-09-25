@@ -61,7 +61,7 @@ private fun CashInput(state: CashUiState, actions: CashActions, advice: CashAdvi
     val texts = LocalStrings.current
     MoneyField(
         value = state.amount,
-        label = texts.common.amount,
+        label = texts.general.amount,
         modifier = Modifier.fillMaxWidth(),
         isError = (advice as? CashAdvice.Holdup)?.mistake == true,
         // Правило ввода — подсказкой в самом поле.

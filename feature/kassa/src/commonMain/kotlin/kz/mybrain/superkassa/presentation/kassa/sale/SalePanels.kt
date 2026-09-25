@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
-import kz.mybrain.superkassa.strings.api.common.SettingStrings
+import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
 
 /**
  * Разделы кассовой колонки, которые сворачиваются.
@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.strings.api.common.SettingStrings
  * Названы по смыслу, а не по месту на экране: имя уходит в настройки
  * рабочего места и должно пережить перестановку карточек.
  */
-enum class SalePanel(val title: (SettingStrings) -> String) {
+enum class SalePanel(val title: (SettingsScreenTexts) -> String) {
     PositionEntry({ it.panelPositionEntry }),
     ReceiptChanges({ it.panelReceiptChanges }),
     CustomerData({ it.panelCustomerData }),

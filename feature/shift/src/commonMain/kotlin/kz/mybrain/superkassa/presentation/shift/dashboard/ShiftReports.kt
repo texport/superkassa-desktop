@@ -4,7 +4,7 @@ import kz.mybrain.superkassa.domain.shift.model.ShiftPart
 import kz.mybrain.superkassa.domain.shift.model.ShiftSnapshot
 import kz.mybrain.superkassa.domain.shift.model.ShiftTrouble
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Принимает перечитанное: касса, смена, документы и наличные. */
@@ -21,7 +21,7 @@ internal fun DashboardUiState.adopt(snapshot: ShiftSnapshot): DashboardUiState =
 )
 
 /** Что не прочиталось — словами кассира. */
-internal fun ShiftTrouble.words(texts: AppStrings, language: Language): String = when (part) {
+internal fun ShiftTrouble.words(texts: CommonTexts, language: Language): String = when (part) {
     ShiftPart.Kkm -> texts.login.reload
     ShiftPart.Shift -> texts.dashboard.shift
     ShiftPart.Documents -> texts.dashboard.shiftDocuments

@@ -23,7 +23,7 @@ import kz.mybrain.superkassa.presentation.settings.title
  */
 @Composable
 internal fun ProgrammingCard(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     kkm.kkm ?: return
     val inside = kkm.programming
     SectionCard(

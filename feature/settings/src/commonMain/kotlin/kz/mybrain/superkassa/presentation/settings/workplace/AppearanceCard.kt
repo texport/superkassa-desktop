@@ -19,8 +19,8 @@ import kz.mybrain.superkassa.presentation.common.look.LookUiState
 import kz.mybrain.superkassa.presentation.common.look.LookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.settings.title
-import kz.mybrain.superkassa.strings.api.common.SettingStrings
-import kz.mybrain.superkassa.strings.api.settings.LookStrings
+import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
+import kz.mybrain.superkassa.strings.api.settings.LookTexts
 
 /**
  * Как выглядит касса: тема, тон, шрифт и размер.
@@ -35,7 +35,7 @@ import kz.mybrain.superkassa.strings.api.settings.LookStrings
 @Composable
 internal fun AppearanceCard(actions: LookViewModel) {
     val look by actions.state.collectAsScreenState()
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     SectionCard(title = texts.appearance, info = texts.appearanceHint) {
         WideChoiceSegments(
             options = Appearance.entries,
@@ -59,7 +59,7 @@ private fun Choice(title: String, info: String? = null, content: @Composable () 
 }
 
 @Composable
-private fun AccentChoice(look: LookUiState, actions: LookViewModel, texts: LookStrings) {
+private fun AccentChoice(look: LookUiState, actions: LookViewModel, texts: LookTexts) {
     Choice(texts.accent, info = texts.accentHint) {
         ColorChoice(
             options = Accent.entries,
@@ -72,7 +72,7 @@ private fun AccentChoice(look: LookUiState, actions: LookViewModel, texts: LookS
 }
 
 @Composable
-private fun TypefaceChoice(look: LookUiState, actions: LookViewModel, texts: LookStrings) {
+private fun TypefaceChoice(look: LookUiState, actions: LookViewModel, texts: LookTexts) {
     Choice(texts.typeface) {
         WideChoiceSegments(
             options = Typeface.entries,
@@ -84,7 +84,7 @@ private fun TypefaceChoice(look: LookUiState, actions: LookViewModel, texts: Loo
 }
 
 @Composable
-private fun TextScaleChoice(look: LookUiState, actions: LookViewModel, texts: LookStrings) {
+private fun TextScaleChoice(look: LookUiState, actions: LookViewModel, texts: LookTexts) {
     Choice(texts.textScale, info = texts.textScaleHint) {
         WideChoiceSegments(
             options = TextScale.entries,
@@ -96,13 +96,13 @@ private fun TextScaleChoice(look: LookUiState, actions: LookViewModel, texts: Lo
 }
 
 /** Название темы для кассира. */
-private fun Appearance.title(texts: SettingStrings): String = when (this) {
+private fun Appearance.title(texts: SettingsScreenTexts): String = when (this) {
     Appearance.System -> texts.appearanceSystem
     Appearance.Light -> texts.appearanceLight
     Appearance.Dark -> texts.appearanceDark
 }
 
-private fun Accent.title(texts: LookStrings): String = when (this) {
+private fun Accent.title(texts: LookTexts): String = when (this) {
     Accent.Red -> texts.accentRed
     Accent.Orange -> texts.accentOrange
     Accent.Amber -> texts.accentAmber
@@ -119,14 +119,14 @@ private fun Accent.title(texts: LookStrings): String = when (this) {
     Accent.Pink -> texts.accentPink
 }
 
-private fun Typeface.title(texts: LookStrings): String = when (this) {
+private fun Typeface.title(texts: LookTexts): String = when (this) {
     Typeface.System -> texts.typefaceSystem
     Typeface.Sans -> texts.typefaceSans
     Typeface.Serif -> texts.typefaceSerif
     Typeface.Mono -> texts.typefaceMono
 }
 
-private fun TextScale.title(texts: LookStrings): String = when (this) {
+private fun TextScale.title(texts: LookTexts): String = when (this) {
     TextScale.Dense -> texts.textScaleDense
     TextScale.Compact -> texts.textScaleCompact
     TextScale.Normal -> texts.textScaleNormal

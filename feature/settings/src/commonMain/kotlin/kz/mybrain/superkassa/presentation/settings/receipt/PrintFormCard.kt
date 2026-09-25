@@ -20,7 +20,7 @@ import kz.mybrain.superkassa.presentation.words.common.of
  */
 @Composable
 internal fun PrintFormCard(form: ReceiptFormUiState, actions: ReceiptFormActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     form.kkm ?: return
     val branding = form.branding
     SectionCard(title = texts.printForm, info = texts.printFormHint) {
@@ -53,7 +53,7 @@ internal fun PrintFormCard(form: ReceiptFormUiState, actions: ReceiptFormActions
  */
 @Composable
 private fun LayoutChoice(form: ReceiptFormUiState, actions: ReceiptFormActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     val language = LocalLanguage.current
     WideChoiceSegments(
         options = form.layoutCodes,

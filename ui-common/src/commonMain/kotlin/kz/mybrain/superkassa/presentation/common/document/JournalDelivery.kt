@@ -12,7 +12,7 @@ import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.tip.Tip
 import kz.mybrain.superkassa.domain.document.model.DeliveryCodes
 import kz.mybrain.superkassa.domain.document.model.SHIFT_OPEN_DOCUMENT
-import kz.mybrain.superkassa.strings.api.common.StatusStrings
+import kz.mybrain.superkassa.strings.api.common.StatusTexts
 
 /**
  * Что стало с документом по дороге в ОФД.
@@ -26,7 +26,7 @@ import kz.mybrain.superkassa.strings.api.common.StatusStrings
  * протокольных кодов быть не должно, а угадывать смысл кода — значит
  * однажды покрасить отказ зелёным.
  */
-enum class JournalDelivery(val title: (StatusStrings) -> String) {
+enum class JournalDelivery(val title: (StatusTexts) -> String) {
     /** Принят ОФД. */
     Delivered({ it.delivered }),
 

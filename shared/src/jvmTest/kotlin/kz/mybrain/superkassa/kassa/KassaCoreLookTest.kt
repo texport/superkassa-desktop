@@ -90,7 +90,7 @@ class KassaCoreLookTest {
         }
         return listOf(
             Screen("dashboard", Section.Dashboard, closeAndRefused) { DashboardContent(dashboard) },
-            Screen("sale", Section.Sale, { listOf(sale.form.operation.action(textsOf(it).common.sale)) }) {
+            Screen("sale", Section.Sale, { listOf(sale.form.operation.action(textsOf(it).common.receipt)) }) {
                 SaleContent(sale)
             },
             Screen("returns", Section.Returns, { listOf(returns.kind.action(textsOf(it).common.returns)) }) {

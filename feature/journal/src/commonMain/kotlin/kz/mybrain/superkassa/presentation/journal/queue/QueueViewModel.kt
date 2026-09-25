@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.presentation.common.model.followSeat
 import kz.mybrain.superkassa.presentation.common.model.latest
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -29,7 +29,7 @@ class QueueViewModel(private val cases: QueueCases, private val talk: Talk) : Vi
     private val screen = MutableStateFlow(QueueUiState())
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = textsOf(talk.language()).common
+    private val texts: CommonTexts get() = textsOf(talk.language()).common
 
     val state: StateFlow<QueueUiState> = screen.asStateFlow()
 

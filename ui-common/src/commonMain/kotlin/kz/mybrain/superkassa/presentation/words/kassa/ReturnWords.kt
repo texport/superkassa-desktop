@@ -1,24 +1,24 @@
 package kz.mybrain.superkassa.presentation.words.kassa
 
 import kz.mybrain.superkassa.domain.kassa.model.refund.ReturnKind
-import kz.mybrain.superkassa.strings.api.common.ReturnStrings
-import kz.mybrain.superkassa.strings.api.common.SaleStrings
+import kz.mybrain.superkassa.strings.api.common.ReceiptTexts
+import kz.mybrain.superkassa.strings.api.common.ReturnTexts
 import kz.mybrain.superkassa.strings.api.journal.ReturnJournalTexts
 
 /** Направление возврата словами кассира: возврат продажи выдаёт деньги, возврат покупки — принимает. */
-fun ReturnKind.title(texts: ReturnStrings): String = when (this) {
+fun ReturnKind.title(texts: ReturnTexts): String = when (this) {
     ReturnKind.Sell -> texts.saleReturn
     ReturnKind.Buy -> texts.purchaseReturn
 }
 
 /** Одно слово для сегмента: «Возврат» стоит заголовком рядом. */
-fun ReturnKind.shortTitle(texts: SaleStrings): String = when (this) {
+fun ReturnKind.shortTitle(texts: ReceiptTexts): String = when (this) {
     ReturnKind.Sell -> texts.sale
     ReturnKind.Buy -> texts.purchase
 }
 
 /** Надпись кнопки возврата: отдать деньги или принять их. */
-fun ReturnKind.action(texts: ReturnStrings): String = when (this) {
+fun ReturnKind.action(texts: ReturnTexts): String = when (this) {
     ReturnKind.Sell -> texts.giveBack
     ReturnKind.Buy -> texts.takeBack
 }

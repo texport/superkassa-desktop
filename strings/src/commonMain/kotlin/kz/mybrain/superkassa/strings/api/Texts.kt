@@ -2,7 +2,7 @@ package kz.mybrain.superkassa.strings.api
 
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.debug.DebugTexts
 import kz.mybrain.superkassa.strings.api.journal.JournalTexts
 import kz.mybrain.superkassa.strings.api.kassa.KassaTexts
@@ -10,8 +10,8 @@ import kz.mybrain.superkassa.strings.api.map.MapTexts
 import kz.mybrain.superkassa.strings.api.print.PrintTexts
 import kz.mybrain.superkassa.strings.api.settings.SettingsTexts
 import kz.mybrain.superkassa.strings.api.setup.SetupTexts
-import kz.mybrain.superkassa.strings.api.shell.StartTexts
-import kz.mybrain.superkassa.strings.api.shift.CoreTexts
+import kz.mybrain.superkassa.strings.api.shell.ShellTexts
+import kz.mybrain.superkassa.strings.api.shift.ShiftTexts
 import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 import kz.mybrain.superkassa.strings.impl.textsIn
 
@@ -23,7 +23,7 @@ import kz.mybrain.superkassa.strings.impl.textsIn
  */
 data class Texts(
     /** Общие надписи всех экранов: вход, каркас, главная, продажа, настройки, состояния. */
-    val common: AppStrings,
+    val common: CommonTexts,
     /** Аналитика: сводка продаж, учёт касс, отбор. */
     val analytics: AnalyticsTexts,
     /** Личный кабинет БФД: точки, кассы, заявления, подпись, работа на этой машине. */
@@ -43,9 +43,9 @@ data class Texts(
     /** Мастер первого запуска. */
     val setup: SetupTexts,
     /** Экран, которым касса говорит, что не открылась. */
-    val shell: StartTexts,
+    val shell: ShellTexts,
     /** Главная и смена. */
-    val shift: CoreTexts,
+    val shift: ShiftTexts,
     /** Обновление приложения. */
     val update: UpdateTexts
 )

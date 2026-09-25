@@ -45,7 +45,7 @@ fun InfoTip(text: String) {
         IconButton(onClick = { scope.launch { state.show() } }) {
             Icon(
                 imageVector = AppIcons.info,
-                contentDescription = texts.common.explain,
+                contentDescription = texts.general.explain,
                 modifier = Modifier.size(Sizes.infoIcon)
             )
         }

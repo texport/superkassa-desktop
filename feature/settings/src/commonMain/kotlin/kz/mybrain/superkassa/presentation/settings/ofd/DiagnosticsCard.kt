@@ -35,7 +35,7 @@ internal fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsAction
     val money = textsOf(LocalLanguage.current).kassa.money.kkm
     ofd.kkm ?: return
     SectionCard(
-        title = texts.settings.diagnostics,
+        title = texts.settingsScreen.diagnostics,
         info = money.diagnosticsHint,
         // Ответ ОФД — не состояние кассы, а итог только что нажатой
         // проверки: он и остаётся здесь, в строке заголовка.
@@ -51,7 +51,7 @@ internal fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsAction
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         } else {
-            FactLines(texts.settings.ofdInfo, summary.rows(money), money.ofdEmpty)
+            FactLines(texts.settingsScreen.ofdInfo, summary.rows(money), money.ofdEmpty)
         }
     }
 }
@@ -63,7 +63,7 @@ internal fun DiagnosticsCard(ofd: OfdSettingsUiState, actions: OfdSettingsAction
  */
 @Composable
 private fun Checks(ofd: OfdSettingsUiState, actions: OfdSettingsActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     val busy = ofd.busy
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
@@ -91,7 +91,7 @@ private fun NextRequest(number: Int?) {
 /** Ответил ли ОФД на проверку связи. */
 @Composable
 private fun LinkChip(alive: Boolean) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     if (alive) Chip(texts.ofdAnswers, StatusColors.delivered) else Chip(texts.ofdSilent, StatusColors.refused)
 }
 

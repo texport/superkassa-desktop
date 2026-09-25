@@ -79,14 +79,14 @@ private fun ChangeFields(sale: SaleUiState, actions: FormActions) {
     MarkupField(sale, state, actions)
     Hint(
         problem = changeBlockOf(state)?.reason(LocalSaleTexts.current, textsOf(LocalLanguage.current).kassa.payment),
-        hint = LocalStrings.current.sale.discountOrMarkup
+        hint = LocalStrings.current.receipt.discountOrMarkup
     )
 }
 
 @Composable
 private fun DiscountField(sale: SaleUiState, state: SaleState, actions: FormActions) {
     AdjustmentField(
-        label = LocalStrings.current.sale.receiptDiscount,
+        label = LocalStrings.current.receipt.receiptDiscount,
         change = sale.form.discount,
         modifier = Modifier.fillMaxWidth(),
         isError = state.discountWrong(),
@@ -99,7 +99,7 @@ private fun DiscountField(sale: SaleUiState, state: SaleState, actions: FormActi
 @Composable
 private fun MarkupField(sale: SaleUiState, state: SaleState, actions: FormActions) {
     AdjustmentField(
-        label = LocalStrings.current.sale.receiptMarkup,
+        label = LocalStrings.current.receipt.receiptMarkup,
         change = sale.form.markup,
         modifier = Modifier.fillMaxWidth(),
         isError = state.markupWrong(),
@@ -127,10 +127,10 @@ private fun ChangeSummary(form: SaleForm, basket: Basket) {
     MinorSumLine(extra.changesBefore, Money.formatTiyn(basket.total + given))
     if (given != 0L) MinorSumLine(extra.itemDiscountsGiven, Money.formatTiyn(-given))
     if (discount != null && discount > 0L) {
-        MinorSumLine(changeTitle(texts.sale.receiptDiscount, form.discount), Money.formatTiyn(-discount))
+        MinorSumLine(changeTitle(texts.receipt.receiptDiscount, form.discount), Money.formatTiyn(-discount))
     }
     if (markup != null && markup > 0L) {
-        MinorSumLine(changeTitle(texts.sale.receiptMarkup, form.markup), Money.formatTiyn(markup))
+        MinorSumLine(changeTitle(texts.receipt.receiptMarkup, form.markup), Money.formatTiyn(markup))
     }
     NamedSumRow(name = extra.changesAfter, amount = Money.formatTiyn(basket.totalWith(discount, markup)))
 }

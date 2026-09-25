@@ -96,7 +96,7 @@ fun SectionHeader(
         IconButton(onClick = onToggle) {
             Icon(
                 imageVector = if (expanded) AppIcons.collapse else AppIcons.expand,
-                contentDescription = if (expanded) texts.common.collapse else texts.common.expand
+                contentDescription = if (expanded) texts.general.collapse else texts.general.expand
             )
         }
     }

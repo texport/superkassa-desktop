@@ -80,6 +80,6 @@ private fun adopt(
 /** Подписи полей окна: они объявлены в наборах надписей, а не здесь. */
 @Composable
 private fun adoptLabels(machine: MachineTexts): AdoptLabels {
-    val settings = LocalStrings.current.settings
+    val settings = LocalStrings.current.settingsScreen
     return AdoptLabels(settings.ofd, settings.adminPin, machine.handoverUnderstood)
 }

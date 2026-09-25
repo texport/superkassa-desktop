@@ -34,7 +34,7 @@ class SignInBarNarrowTest {
         probe.click(name)
         probe.save("narrow-login-${language.name.lowercase()}")
         val failures = mutableListOf<String>()
-        val pin = probe.node(texts.common.pin)
+        val pin = probe.node(texts.general.pin)
         if (pin?.wholeOnScreen(WIDTH, HEIGHT) != true) failures += "$language: поле пина за краем: ${pin?.boundsInRoot}"
         val enter = probe.node(texts.login.enter)
         if (enter?.wholeOnScreen(WIDTH, HEIGHT) != true) failures += "$language: «Войти» за краем"

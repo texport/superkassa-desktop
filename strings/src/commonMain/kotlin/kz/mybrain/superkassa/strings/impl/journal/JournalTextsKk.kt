@@ -133,6 +133,6 @@ internal val journalTextsKk = JournalTexts(
         unreadHint = "Оқуды қайталаңыз. Касса үндемей тұрғанда күтіп тұрған құжаттар туралы айтары жоқ.",
         emptyBlockedHint = "Жіберетін ештеңе жоқ: касса бұғатталған және жаңа құжат шығармайды."
     ),
-    delivery = deliveryTextsKk,
+    delivery = deliveryJournalTextsKk,
     ofdRefusal = ofdRefusalTextsKk
 )

@@ -8,7 +8,7 @@ import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.deliveryReport
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.words.common.of
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -36,7 +36,7 @@ internal class FiscalWords(val what: String, val done: String, val action: Strin
  * сказано проверить журнал, а повтор с тем же ключом второго документа
  * не создаст.
  */
-internal fun Talk.fiscal(answer: Answer<Fiscal>, words: FiscalWords, texts: AppStrings): FiscalOutcome {
+internal fun Talk.fiscal(answer: Answer<Fiscal>, words: FiscalWords, texts: CommonTexts): FiscalOutcome {
     when (answer) {
         is Answer.Done -> if (answer.value.rejected) {
             rejected(answer.value, words, texts)
@@ -49,14 +49,14 @@ internal fun Talk.fiscal(answer: Answer<Fiscal>, words: FiscalWords, texts: AppS
         }
         is Answer.Failed -> {
             journal.failure("${words.action}: no answer ${answer.reason}")
-            notices.show(Message.NoAnswer(texts.common.noAnswer))
+            notices.show(Message.NoAnswer(texts.general.noAnswer))
         }
     }
     return answer.outcome
 }
 
 /** БФД отверг документ: причина его кодом, и что делать с набранным. */
-private fun Talk.rejected(fiscal: Fiscal, words: FiscalWords, texts: AppStrings) {
+private fun Talk.rejected(fiscal: Fiscal, words: FiscalWords, texts: CommonTexts) {
     val code = fiscal.refusalCode
     journal.warn("${words.action}: rejected by bfd ${code ?: "without code"}")
     // Слова кассы о причине — на языке кассира; без них — свой справочник кодов.

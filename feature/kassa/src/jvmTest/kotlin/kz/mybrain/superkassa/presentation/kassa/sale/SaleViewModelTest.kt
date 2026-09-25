@@ -89,7 +89,7 @@ class SaleViewModelTest {
         model.issue()
 
         assertEquals(2, receipts.documents.size, "второй чек подряд касса сочла повтором первого")
-        assertEquals(Message.Done("${texts.sale.sale}: ${texts.common.deliveredToOfd}"), notices.last)
+        assertEquals(Message.Done("${texts.receipt.sale}: ${texts.general.deliveredToOfd}"), notices.last)
     }
 
     @Test
@@ -101,7 +101,7 @@ class SaleViewModelTest {
         model.bread()
         model.issue()
 
-        assertEquals(Message.Done("${texts.sale.sale}: ${texts.common.queuedNoLink}"), notices.last)
+        assertEquals(Message.Done("${texts.receipt.sale}: ${texts.general.queuedNoLink}"), notices.last)
     }
 
     @Test

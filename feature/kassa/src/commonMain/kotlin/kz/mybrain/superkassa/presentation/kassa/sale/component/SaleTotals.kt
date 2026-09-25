@@ -103,7 +103,7 @@ private fun TakenField(taken: String, short: Boolean, onTaken: (String) -> Unit)
     val texts = LocalStrings.current
     MoneyField(
         value = taken,
-        label = texts.sale.taken,
+        label = texts.receipt.taken,
         modifier = Modifier.fillMaxWidth(),
         isError = taken.isNotBlank() && (amount(taken).tiyn == null || short),
         onValueChange = onTaken

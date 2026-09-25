@@ -96,7 +96,7 @@ class AdaptiveSettingsShots {
         probe.use {
             repeat(SETTLE) { probe.frame() }
             if (workplace) {
-                val title = textsOf(case.language).common.settings.householdWorkplace
+                val title = textsOf(case.language).common.settingsScreen.householdWorkplace
                 SettingsMeasure.byText(probe.semantics(), title)?.let { probe.click(it.center) }
             }
             report("$tab-${case.name}", case, probe, workplace)
@@ -111,7 +111,7 @@ class AdaptiveSettingsShots {
     private fun report(name: String, case: Case, probe: RenderProbe, workplace: Boolean) {
         val nodes = probe.semantics()
         // Раздел начинается там, где стоит его заголовок: левее — рельс.
-        val title = SettingsMeasure.lastByText(nodes, textsOf(case.language).common.settings.title) ?: return
+        val title = SettingsMeasure.lastByText(nodes, textsOf(case.language).common.settingsScreen.title) ?: return
         val rail = title.left
         val column = SettingsMeasure.extent(nodes, title)
         val fields = SettingsMeasure.fields(nodes)
@@ -121,7 +121,7 @@ class AdaptiveSettingsShots {
         // Раздел — всё, что оставил рельс, но не шире рабочего экрана.
         val room = minOf(case.width - rail, ContentWidths.workspace.value.toInt())
         // Две карточки одного раздела: на широком окне вторая стоит правее первой.
-        val texts = textsOf(case.language).common.settings
+        val texts = textsOf(case.language).common.settingsScreen
         val pair = if (workplace) texts.appearance to texts.panelBehaviour else texts.printForm to texts.printer
         val lefts = listOf(pair.first, pair.second).map { SettingsMeasure.byText(nodes, it)?.left ?: 0 }
         val columns = if (lefts[1] > lefts[0]) 2 else 1

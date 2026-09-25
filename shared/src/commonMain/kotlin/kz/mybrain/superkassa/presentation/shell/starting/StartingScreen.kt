@@ -29,7 +29,7 @@ fun StartingScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             CircularProgressIndicator()
-            Text(LocalStrings.current.common.starting, style = MaterialTheme.typography.headlineSmall)
+            Text(LocalStrings.current.general.starting, style = MaterialTheme.typography.headlineSmall)
         }
     }
 }

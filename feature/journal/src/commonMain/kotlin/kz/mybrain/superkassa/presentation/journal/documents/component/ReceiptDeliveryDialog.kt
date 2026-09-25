@@ -22,7 +22,7 @@ import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.presentation.journal.documents.JournalActions
 import kz.mybrain.superkassa.presentation.journal.documents.ReceiptDeliveryUi
-import kz.mybrain.superkassa.strings.api.journal.DeliveryTexts
+import kz.mybrain.superkassa.strings.api.journal.DeliveryJournalTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -63,7 +63,7 @@ internal fun ReceiptDeliveryDialog(delivery: ReceiptDeliveryUi, actions: Journal
 
 /** Что стоит в окне: ожидание, отказ кассы, объяснение пустоты или каналы. */
 @Composable
-private fun DeliveryBody(delivery: ReceiptDeliveryUi, texts: DeliveryTexts) {
+private fun DeliveryBody(delivery: ReceiptDeliveryUi, texts: DeliveryJournalTexts) {
     delivery.problem?.let { problem ->
         Text(problem, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
     }

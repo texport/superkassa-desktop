@@ -116,12 +116,12 @@ class AdaptiveDialogShots {
             action = texts.preview.draw,
             close = texts.preview.close,
             busy = false,
-            missing = listOf(texts.common.pin),
+            missing = listOf(texts.general.pin),
             onDismiss = {},
             onAction = {}
         ) {
             Text(SettingsMeasure.LONG_KKM, style = MaterialTheme.typography.titleMedium)
-            OutlinedTextField(value = "", onValueChange = {}, label = { Text(texts.common.pin) })
+            OutlinedTextField(value = "", onValueChange = {}, label = { Text(texts.general.pin) })
             Text(texts.preview.drawPinHint, modifier = Modifier.fillMaxWidth())
         }
     }

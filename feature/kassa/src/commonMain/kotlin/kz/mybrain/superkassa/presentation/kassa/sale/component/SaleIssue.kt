@@ -41,7 +41,7 @@ internal fun IssueRow(state: SaleUiState, onIssue: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
         BusyButton(
-            text = if (state.issuing) texts.sale.issuing else state.form.operation.action(texts.sale),
+            text = if (state.issuing) texts.receipt.issuing else state.form.operation.action(texts.receipt),
             busy = state.issuing,
             enabled = block == null,
             // Цель нажатия кассы — выше обычной кнопки: её жмут не глядя, под очередью.

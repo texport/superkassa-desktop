@@ -126,7 +126,7 @@ fun <T> LabelledPicker(
 private fun EmptyPickerLine() {
     DropdownMenuItem(
         enabled = false,
-        text = { Text(LocalStrings.current.common.nothingToPick) },
+        text = { Text(LocalStrings.current.general.nothingToPick) },
         onClick = {}
     )
 }

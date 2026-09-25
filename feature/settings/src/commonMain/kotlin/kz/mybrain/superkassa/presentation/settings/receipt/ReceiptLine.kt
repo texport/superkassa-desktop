@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.settings.receipt
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptBrandingRequest
-import kz.mybrain.superkassa.strings.api.common.SettingStrings
+import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
 
 /**
  * Места печати своих строк кассы на чеке.
@@ -11,7 +11,7 @@ import kz.mybrain.superkassa.strings.api.common.SettingStrings
  * пятнадцати строк разметки. Порядок — тот, в каком строки встанут на чеке.
  */
 enum class ReceiptLine(
-    val title: (SettingStrings) -> String,
+    val title: (SettingsScreenTexts) -> String,
     val read: (ReceiptBrandingRequest) -> String?,
     val write: (ReceiptBrandingRequest, String) -> ReceiptBrandingRequest
 ) {

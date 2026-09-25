@@ -92,7 +92,7 @@ internal fun AdminPinField(pin: String, modifier: Modifier = Modifier.fillMaxWid
     OutlinedTextField(
         value = pin,
         onValueChange = onChange,
-        label = { Text(texts.settings.adminPin) },
+        label = { Text(texts.settingsScreen.adminPin) },
         singleLine = true,
         isError = trouble != null,
         placeholder = { Text(cashiers.pinLength) },

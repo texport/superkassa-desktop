@@ -41,7 +41,7 @@ class KkmSettingsViewModelTest {
     private val services = CoreScene.services(core, signIn, notices, machine.memory)
     private val settings = settingsPorts().copy(workplace = machine).settings
     private val money = textsOf(Language.Ru).kassa.money.kkm
-    private val texts = textsOf(Language.Ru).common.settings
+    private val texts = textsOf(Language.Ru).common.settingsScreen
 
     @BeforeTest
     fun main() {

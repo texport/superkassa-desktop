@@ -44,7 +44,7 @@ fun CoreSettingsCard(core: CoreSettingsUiState, actions: CoreSettingsActions) {
         SecondsField(texts.reconnect, core.reconnect, core.reconnectValid, !core.frozen, actions::typeReconnect)
         WrapRow {
             FilledTonalButton(enabled = core.savable, onClick = actions::save) {
-                Text(LocalStrings.current.settings.save)
+                Text(LocalStrings.current.settingsScreen.save)
             }
         }
     }

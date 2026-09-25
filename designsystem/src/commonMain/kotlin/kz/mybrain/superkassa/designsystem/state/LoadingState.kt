@@ -63,7 +63,7 @@ fun LoadingState(modifier: Modifier = Modifier, dense: Boolean = false) {
             modifier = Modifier.size(if (dense) Sizes.waitCircleDense else Sizes.waitCircle)
         )
         Text(
-            text = texts.common.loading,
+            text = texts.general.loading,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center

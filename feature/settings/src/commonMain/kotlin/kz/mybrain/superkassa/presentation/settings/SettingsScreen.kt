@@ -35,7 +35,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  */
 @Composable
 fun SettingsScreen(board: SettingsBoard) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = texts.title,
@@ -62,7 +62,7 @@ fun SettingsScreen(board: SettingsBoard) {
  */
 @Composable
 internal fun SettingsCards(board: SettingsBoard, modifier: Modifier = Modifier) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     val hasRegister = board.kkm.kkm != null
     val parts = board.parts
     val shown = settingsCards.filter { it.visible(hasRegister, board.kkm.admin, parts.hasCabinet, parts.hasReleases) }
@@ -94,7 +94,7 @@ internal fun SettingsCards(board: SettingsBoard, modifier: Modifier = Modifier) 
  */
 @Composable
 private fun HouseholdCards(board: SettingsBoard, shown: List<SettingsCard>) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     ScrollableColumn(modifier = Modifier.fillMaxSize().padding(top = Spacing.fieldGap), spacing = Spacing.sectionGap) {
         SettingsGroup.entries.forEach { group ->
             val cards = shown.filter { it.group == group }
@@ -114,7 +114,7 @@ private fun HouseholdTabs(
     chosen: SettingsHousehold,
     onChoose: (SettingsHousehold) -> Unit
 ) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     // Вкладки той же ширины, что карточки под ними: по Material 3
     // постоянные вкладки делят ширину содержимого поровну.
     PrimaryTabRow(

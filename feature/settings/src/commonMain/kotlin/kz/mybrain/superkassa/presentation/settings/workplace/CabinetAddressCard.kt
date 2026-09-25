@@ -26,7 +26,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
 @Composable
 internal fun CabinetAddressCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSettingsActions) {
     val texts = textsOf(LocalLanguage.current).cabinet
-    val settings = LocalStrings.current.settings
+    val settings = LocalStrings.current.settingsScreen
     SectionCard(title = texts.address, info = texts.hints.address) {
         // Адрес занимает остаток строки карточки, кнопка стоит за ним:
         // адрес службы длиннее любой заданной ширины поля. Негодный адрес

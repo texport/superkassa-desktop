@@ -24,7 +24,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.kkm.model.orgAddress
 import kz.mybrain.superkassa.domain.kkm.model.orgTitle
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -74,13 +74,13 @@ private fun KkmHeading(name: String, actions: KkmSettingsActions) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = texts.settings.currentKkm,
+                text = texts.settingsScreen.currentKkm,
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(name, style = MaterialTheme.typography.titleLarge)
         }
-        TextButton(onClick = actions::switchKkm) { Text(texts.settings.changeKkm) }
+        TextButton(onClick = actions::switchKkm) { Text(texts.settingsScreen.changeKkm) }
     }
 }
 
@@ -94,7 +94,7 @@ private fun KkmHeading(name: String, actions: KkmSettingsActions) {
  */
 @Composable
 private fun NameField(kkm: KkmSettingsUiState, actions: KkmSettingsActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     OutlinedTextField(
         value = kkm.nameField,
         onValueChange = actions::typeName,
@@ -118,7 +118,7 @@ private fun RenameActions(kkm: KkmSettingsUiState, actions: KkmSettingsActions) 
     val texts = LocalStrings.current
     val money = textsOf(LocalLanguage.current).kassa.money.kkm
     WrapRow {
-        FilledTonalButton(enabled = !kkm.busy, onClick = actions::saveName) { Text(texts.settings.save) }
+        FilledTonalButton(enabled = !kkm.busy, onClick = actions::saveName) { Text(texts.settingsScreen.save) }
         OutlinedButton(enabled = kkm.nameField.isNotBlank() && !kkm.busy, onClick = actions::resetName) {
             Text(money.renameReset)
         }
@@ -132,8 +132,8 @@ private fun RenameActions(kkm: KkmSettingsUiState, actions: KkmSettingsActions) 
  * касса, и пропуск строки читался бы как её отсутствие в карточке, а не
  * как отсутствие сведений у ОФД.
  */
-private fun whatItIs(kkm: KkmResponse, name: String, texts: AppStrings): String = listOfNotNull(
-    kkm.orgTitle ?: texts.settings.orgUnknown,
+private fun whatItIs(kkm: KkmResponse, name: String, texts: CommonTexts): String = listOfNotNull(
+    kkm.orgTitle ?: texts.settingsScreen.orgUnknown,
     kkm.factoryNumber?.let { "${texts.login.factory} $it" },
     kkm.orgAddress
 ).joinToString(Glyphs.SEPARATOR).ifBlank { name }

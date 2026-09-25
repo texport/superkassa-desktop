@@ -35,7 +35,7 @@ internal fun SetupHeading(setup: SetupTexts, started: Boolean, actions: SetupAct
     ) {
         onBack?.let { back ->
             IconButton(onClick = back) {
-                Icon(AppIcons.back, contentDescription = LocalStrings.current.settings.back)
+                Icon(AppIcons.back, contentDescription = LocalStrings.current.settingsScreen.back)
             }
         }
         ScreenTitle(setup.title, modifier = Modifier.weight(1f, fill = false))

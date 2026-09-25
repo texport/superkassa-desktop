@@ -44,7 +44,7 @@ class KkmOrgTitleTest {
 
     @Test
     fun `отсутствие организации названо на всех трёх языках`() {
-        val words = Language.entries.associateWith { textsOf(it).common.settings.orgUnknown }
+        val words = Language.entries.associateWith { textsOf(it).common.settingsScreen.orgUnknown }
 
         words.forEach { (language, text) ->
             assertTrue(text.isNotBlank(), "надписи об отсутствии организации нет на языке $language")

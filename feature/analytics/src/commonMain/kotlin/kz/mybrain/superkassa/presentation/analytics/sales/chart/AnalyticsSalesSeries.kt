@@ -13,7 +13,7 @@ import kz.mybrain.superkassa.domain.analytics.model.orZero
 import kz.mybrain.superkassa.domain.analytics.model.percentOf
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsSalesTexts
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 
 /**
  * Ряд столбиков для графика.
@@ -97,7 +97,7 @@ internal data class SalesShare(val title: String, val amount: Long, val percent:
  * Называются виды расчётов словами справочника кассы, а не своими:
  * на чеке напечатано то же самое.
  */
-internal fun salesShares(payments: SalesPayments, enums: EnumStrings, other: String): List<SalesShare> {
+internal fun salesShares(payments: SalesPayments, enums: EnumTexts, other: String): List<SalesShare> {
     val parts = listOf(
         enums.paymentCash to payments.cash,
         enums.paymentCard to payments.card,

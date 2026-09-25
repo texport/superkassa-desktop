@@ -26,7 +26,7 @@ import kz.mybrain.superkassa.presentation.kassa.payment.SplitEditor
 import kz.mybrain.superkassa.presentation.kassa.payment.fiscal
 import kz.mybrain.superkassa.presentation.kassa.sale.entry.EntryEditor
 import kz.mybrain.superkassa.presentation.words.kassa.title
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -41,7 +41,7 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
     private val screen = MutableStateFlow(SaleUiState(collapsed = panelsOf(cases.panels())))
     private val busy = Busy()
     private val reading = latest()
-    private val texts: AppStrings get() = textsOf(talk.language()).common
+    private val texts: CommonTexts get() = textsOf(talk.language()).common
 
     val state: StateFlow<SaleUiState> = screen.asStateFlow()
 
@@ -101,7 +101,7 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
 
     /** Итог чека назван кассиру. */
     private fun said(state: SaleUiState, answer: Answer<Fiscal>): FiscalOutcome {
-        val title = state.form.operation.title(texts.sale)
+        val title = state.form.operation.title(texts.receipt)
         val words = FiscalWords(what = title, done = title, action = "issue receipt")
         return talk.fiscal(answer, words, texts)
     }

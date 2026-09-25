@@ -29,7 +29,7 @@ class SetupContourTest {
         val model = scene.model()
         RenderProbe(width = WIDE, height = TALL) { AdminStepAlone(model, scene) }.use { probe ->
             repeat(SETTLE) { probe.frame() }
-            probe.tap { it.text == texts.settings.adminPin }
+            probe.tap { it.text == texts.settingsScreen.adminPin }
             probe.type(GOOD_PIN)
             repeat(SETTLE) { probe.frame() }
             probe.tap { it.text == scene.texts.connect }

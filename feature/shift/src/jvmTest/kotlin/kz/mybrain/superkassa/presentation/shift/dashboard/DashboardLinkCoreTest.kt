@@ -41,7 +41,7 @@ class DashboardLinkCoreTest {
 
         model.checkLink()
 
-        assertEquals(texts.settings.ofdSilent, desk.saidText)
+        assertEquals(texts.settingsScreen.ofdSilent, desk.saidText)
     }
 
     @Test

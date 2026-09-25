@@ -78,7 +78,7 @@ class PickerListTest {
             assertTrue(!opened.contentEquals(closed), "пустой список раскрылся ничем")
         }
         assertTrue(
-            Language.entries.all { textsOf(it).common.common.nothingToPick.isNotBlank() },
+            Language.entries.all { textsOf(it).common.general.nothingToPick.isNotBlank() },
             "надпись о пустом списке есть не на всех языках"
         )
     }

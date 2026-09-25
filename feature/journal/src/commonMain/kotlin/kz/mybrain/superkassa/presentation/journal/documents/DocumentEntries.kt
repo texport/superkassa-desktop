@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.presentation.common.document.JournalType
 import kz.mybrain.superkassa.presentation.common.document.deliveryOf
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * @param names названия видов документа со слов кассы.
  */
 fun journalEntriesOf(
-    texts: AppStrings,
+    texts: CommonTexts,
     language: Language,
     names: Map<String, TrilingualMessageResponse>,
     documents: List<FiscalDocumentResponse>
@@ -60,7 +60,7 @@ fun journalEntriesOf(
 
 /** Виды документов, встретившиеся среди [documents], для отбора — в порядке справочника кассы. */
 internal fun journalTypesOf(
-    texts: AppStrings,
+    texts: CommonTexts,
     language: Language,
     names: Map<String, TrilingualMessageResponse>,
     documents: List<FiscalDocumentResponse>
@@ -76,10 +76,10 @@ internal fun journalTypesOf(
  * сказать о нём чужими словами. Код идёт следом — с ним идут
  * в обслуживание.
  */
-private fun refusalOf(document: FiscalDocumentResponse, texts: AppStrings, language: Language): String? {
+private fun refusalOf(document: FiscalDocumentResponse, texts: CommonTexts, language: Language): String? {
     val words = textsOf(language).journal.ofdRefusal.words(document.refusalCode)
         ?: document.ofdErrorText?.takeIf { it.isNotBlank() }
-    val code = document.refusalCode?.let { "${texts.common.refusalCode} $it" }
+    val code = document.refusalCode?.let { "${texts.general.refusalCode} $it" }
     val reason = listOfNotNull(words, code)
     return reason.takeIf { it.isNotEmpty() }?.joinToString(Glyphs.SEPARATOR)
 }

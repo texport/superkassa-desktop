@@ -53,7 +53,7 @@ class KkmSettingsViewModel(private val cases: KkmCases, private val talk: Talk) 
     override fun switchProgramming() {
         val enter = !screen.value.programming
         whileBusy(busy) {
-            val texts = textsOf(talk.language()).common.settings
+            val texts = textsOf(talk.language()).common.settingsScreen
             val action = if (enter) "enter programming" else "exit programming"
             val changed = cases.programming(enter).shown(texts.programmingMode, action, talk)
             if (changed != null) talk.done(if (enter) texts.enteredProgramming else texts.exitedProgramming)
@@ -90,7 +90,7 @@ class KkmSettingsViewModel(private val cases: KkmCases, private val talk: Talk) 
         whileBusy(busy) {
             val texts = textsOf(talk.language()).common
             val money = textsOf(talk.language()).kassa.money.kkm
-            val saved = cases.rename(name).shown(texts.settings.localName, "rename kkm", talk)
+            val saved = cases.rename(name).shown(texts.settingsScreen.localName, "rename kkm", talk)
             val local = cases.localName(kkmId)
             screen.update { it.copy(localName = local, nameDraft = if (saved == null) it.nameDraft else null) }
             if (saved != null) talk.done(if (name == null) money.renameReset else money.renameSaved)

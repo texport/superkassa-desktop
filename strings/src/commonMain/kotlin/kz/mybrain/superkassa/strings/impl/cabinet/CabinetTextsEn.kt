@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.strings.impl.cabinet
 
-import kz.mybrain.superkassa.strings.api.cabinet.CabinetHints
-import kz.mybrain.superkassa.strings.api.cabinet.CabinetStatusNames
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetHintTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetStatusTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.impl.analytics.sieveTextsEn
 import kz.mybrain.superkassa.strings.impl.map.mapTextsEn
@@ -94,7 +94,7 @@ internal val cabinetTextsEn = CabinetTexts(
     changeAddress = "Change the address",
     deleteRegister = "Delete the register",
     deleteOnlyDraft = "Only a register that is not on record yet can be deleted",
-    statuses = CabinetStatusNames(
+    statuses = CabinetStatusTexts(
         draft = "Draft",
         registered = "On record",
         deregistered = "Deregistered",
@@ -250,7 +250,7 @@ internal val cabinetTextsEn = CabinetTexts(
     ascending = "Ascending",
     descending = "Descending",
     map = mapTextsEn,
-    hints = CabinetHints(
+    hints = CabinetHintTexts(
         signIn = "NCALayer asks for the signature: certificate and password are entered in its own window",
         signWait = "NCALayer opens the signing window. It may have appeared behind the main window — " +
             "look for it among the windows. If there is none, stop waiting and sign in again",

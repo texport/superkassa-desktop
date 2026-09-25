@@ -132,6 +132,6 @@ private fun TroubleState(
         verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap, Alignment.CenterVertically)
     ) {
         EmptyState(AppIcons.warning, trouble.title, trouble.hint, dense = dense)
-        FilledTonalButton(onClick = retry) { Text(LocalStrings.current.common.retry) }
+        FilledTonalButton(onClick = retry) { Text(LocalStrings.current.general.retry) }
     }
 }

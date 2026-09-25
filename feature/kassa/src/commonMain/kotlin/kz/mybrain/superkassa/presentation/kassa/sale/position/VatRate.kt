@@ -9,7 +9,7 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.FALLBACK_VAT_CODES
 import kz.mybrain.superkassa.domain.kassa.model.sale.NO_VAT
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 
 /**
  * Ставка НДС: код уходит в чек, название и величина видны кассиру.
@@ -49,7 +49,7 @@ internal fun vatRatesOf(
     read: List<VatRateResponse>,
     kkm: KkmResponse?,
     language: Language,
-    texts: EnumStrings
+    texts: EnumTexts
 ): List<VatRate> {
     val rates = read.map { VatRate(it.code, it.name.of(language) ?: it.code, it.percent) }
         .ifEmpty { fallbackRates(texts) }
@@ -76,5 +76,5 @@ internal fun vatTitle(rates: List<VatRate>, code: String): String {
 }
 
 /** Запасной перечень, пока справочник кассы не прочитан: коды — те же, что знает правило ставок. */
-private fun fallbackRates(texts: EnumStrings): List<VatRate> =
+private fun fallbackRates(texts: EnumTexts): List<VatRate> =
     FALLBACK_VAT_CODES.zip(listOf(texts.vatNone, texts.vat0, texts.vat5, texts.vat10, texts.vat16), ::VatRate)

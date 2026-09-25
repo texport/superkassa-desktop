@@ -27,7 +27,7 @@ import kz.mybrain.superkassa.domain.journal.model.QueueState
 import kz.mybrain.superkassa.domain.journal.model.reason
 import kz.mybrain.superkassa.domain.journal.model.state
 import kz.mybrain.superkassa.presentation.words.common.of
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.journal.QueueJournalTexts
 
 /**
@@ -59,7 +59,7 @@ internal fun QueueList(state: QueueUiState, journal: QueueJournalTexts, modifier
  * @property taskTitle вид задачи словами кассира, а не кодом кассы.
  */
 private class QueueWords(
-    val texts: AppStrings,
+    val texts: CommonTexts,
     val journal: QueueJournalTexts,
     val language: String,
     val taskTitle: (String?) -> String
@@ -103,7 +103,7 @@ private fun QueueRow(task: QueueItemResponse, words: QueueWords, striped: Boolea
 private fun QueueSupport(
     task: QueueItemResponse,
     state: QueueState,
-    texts: AppStrings,
+    texts: CommonTexts,
     journal: QueueJournalTexts,
     language: String
 ) {
@@ -130,7 +130,7 @@ private const val REASON_LINES = 3
 private fun attemptsText(
     task: QueueItemResponse,
     state: QueueState,
-    texts: AppStrings,
+    texts: CommonTexts,
     journal: QueueJournalTexts
 ): String {
     val attempts = "${texts.queue.attempts}: ${task.attempt}"
@@ -147,7 +147,7 @@ private fun attemptsText(
 private fun stateTitle(
     state: QueueState,
     status: String?,
-    texts: AppStrings,
+    texts: CommonTexts,
     journal: QueueJournalTexts
 ): String = when (state) {
     QueueState.Queued -> texts.status.queued

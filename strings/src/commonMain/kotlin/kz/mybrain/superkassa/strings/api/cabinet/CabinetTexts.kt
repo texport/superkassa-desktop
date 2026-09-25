@@ -116,7 +116,7 @@ data class CabinetTexts(
     val changeAddress: String,
     val deleteRegister: String,
     val deleteOnlyDraft: String,
-    val statuses: CabinetStatusNames,
+    val statuses: CabinetStatusTexts,
     val operationSale: String,
     val operationReturn: String,
     val operationPurchase: String,
@@ -324,7 +324,7 @@ data class CabinetTexts(
 
     /** Надписи выбора точки на карте. */
     val map: MapTexts,
-    val hints: CabinetHints,
+    val hints: CabinetHintTexts,
 
     /**
      * Ожидание подписи ЭЦП и работа кассы на этой машине — своими наборами,

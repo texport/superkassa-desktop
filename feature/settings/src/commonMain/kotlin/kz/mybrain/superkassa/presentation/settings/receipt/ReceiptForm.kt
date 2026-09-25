@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.settings.receipt
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptLanguage
-import kz.mybrain.superkassa.strings.api.common.SettingStrings
+import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
 
 /**
  * Язык печатного чека, как его выбирает владелец.
@@ -10,7 +10,7 @@ import kz.mybrain.superkassa.strings.api.common.SettingStrings
  * по-казахски или на двух языках сразу, и сегмент, который касса
  * не примет, — обещание, которого она не держит.
  */
-internal enum class ReceiptLanguageChoice(val language: ReceiptLanguage, val title: (SettingStrings) -> String) {
+internal enum class ReceiptLanguageChoice(val language: ReceiptLanguage, val title: (SettingsScreenTexts) -> String) {
     Mixed(ReceiptLanguage.MIXED, { it.receiptBoth }),
     Kk(ReceiptLanguage.KK, { it.receiptKk }),
     Ru(ReceiptLanguage.RU, { it.receiptRu });
@@ -29,7 +29,7 @@ internal enum class ReceiptLanguageChoice(val language: ReceiptLanguage, val tit
  * макетов). Здесь три сегмента, а не число: кассиру нужен принтер, а не
  * миллиметры.
  */
-internal enum class PrintLayout(val code: String, val millimetres: Int, val title: (SettingStrings) -> String) {
+internal enum class PrintLayout(val code: String, val millimetres: Int, val title: (SettingsScreenTexts) -> String) {
     Narrow("58", TAPE_NARROW, { it.layoutTape58 }),
     Wide("80", TAPE_WIDE, { it.layoutTape80 }),
     Fullscreen(FULLSCREEN, 0, { it.layoutFullscreen });

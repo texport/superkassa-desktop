@@ -25,7 +25,7 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.issued
 import kz.mybrain.superkassa.presentation.kassa.sale.position.VatRate
 import kz.mybrain.superkassa.presentation.kassa.sale.position.vatRatesOf
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 
 /**
  * Продажа: касса, чек и всё набранное поверх него.
@@ -88,7 +88,7 @@ data class SaleUiState(
     fun expanded(panel: SalePanel): Boolean = panel !in collapsed
 
     /** Ставки НДС словами кассира и в пределах режима кассы. */
-    fun vat(language: Language, texts: EnumStrings): List<VatRate> = vatRatesOf(vatRates, kkm, language, texts)
+    fun vat(language: Language, texts: EnumTexts): List<VatRate> = vatRatesOf(vatRates, kkm, language, texts)
 
     /** Плательщик ли касса НДС: только у него есть выбор «на весь чек или по позициям». */
     val vatPayer: Boolean get() = receipt.vatPayer
@@ -103,7 +103,7 @@ data class SaleUiState(
     val receiptVat: String? get() = receipt.receiptVat
 
     /** Ставки у позиции: при НДС на весь чек у позиций ставок нет, и выбирать их незачем. */
-    fun positionVat(language: Language, texts: EnumStrings): List<VatRate> =
+    fun positionVat(language: Language, texts: EnumTexts): List<VatRate> =
         if (vatOnReceipt) emptyList() else vat(language, texts)
 
     /** Итог пробитого чека на экране: только пока корзина следующего пуста. */

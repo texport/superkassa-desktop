@@ -54,9 +54,9 @@ class SaleAdaptiveTest {
         // у набранного — незаполненный реквизит такси.
         val reason = probe.part(sale.blockEmptyBasket) ?: probe.part(sale.carNumber.take(REASON_PROBE))
         return Measured(
-            issue = probe.node(texts.sale.issueSale)
+            issue = probe.node(texts.receipt.issueSale)
                 ?.let { it.wholeOnScreen(case.width, case.height) && it.size.height >= TOUCH } == true,
-            barcode = probe.node(texts.sale.barcode)?.wholeOnScreen(case.width, case.height) == true,
+            barcode = probe.node(texts.receipt.barcode)?.wholeOnScreen(case.width, case.height) == true,
             name = name,
             reason = reason?.wholeOnScreen(case.width, case.height) == true
         )
@@ -105,8 +105,8 @@ class SaleAdaptiveTest {
             }
             val millis = (System.nanoTime() - started) / MILLION
             probe.save("sale-thousand-dark-${case.tag}")
-            val issue = probe.node(texts.sale.issueSale)?.wholeOnScreen(case.width, case.height) == true
-            val barcode = probe.node(texts.sale.barcode)?.wholeOnScreen(case.width, case.height) == true
+            val issue = probe.node(texts.receipt.issueSale)?.wholeOnScreen(case.width, case.height) == true
+            val barcode = probe.node(texts.receipt.barcode)?.wholeOnScreen(case.width, case.height) == true
             println("тысяча строк ${case.tag}: $millis мс, кнопка $issue, штрихкод $barcode")
             listOfNotNull("${case.tag}: касса сдвинута".takeIf { !issue || !barcode })
         }
@@ -130,7 +130,7 @@ class SaleAdaptiveTest {
                 KassaWindow(desk, Section.Sale) { SaleContent(sale(cheap, KassaExtremes.fivePayments())) }
             }
             // Кадр — с оплатой на виду: касса прокручена от штрихкода вниз.
-            probe.node(textsOf(case.language).common.sale.barcode)?.boundsInRoot?.center
+            probe.node(textsOf(case.language).common.receipt.barcode)?.boundsInRoot?.center
                 ?.let { at -> repeat(WHEELS) { probe.wheel(at, SCROLL) } }
             probe.save("sale-payments-${case.tag}")
             val fields = probe.parts().filter { it.config.getOrNull(SemanticsProperties.EditableText) != null }

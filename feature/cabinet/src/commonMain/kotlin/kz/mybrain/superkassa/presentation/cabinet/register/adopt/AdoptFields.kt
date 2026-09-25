@@ -68,7 +68,7 @@ internal fun AdoptFields(
 @Composable
 private fun EnvironmentChoice(draft: AdoptDraft, environments: List<OfdEnvironmentResponse>, language: Language) {
     LabelledPicker(
-        label = LocalStrings.current.settings.environment,
+        label = LocalStrings.current.settingsScreen.environment,
         options = environments,
         selected = environments.firstOrNull { it.code == draft.target.environment },
         title = { entry ->
@@ -102,7 +102,7 @@ private fun AdminPinField(draft: AdoptDraft) {
     OutlinedTextField(
         value = draft.adminPin,
         onValueChange = { draft.adminPin = UserRules.digitsOf(it) },
-        label = { Text(strings.settings.adminPin) },
+        label = { Text(strings.settingsScreen.adminPin) },
         singleLine = true,
         isError = trouble != null,
         placeholder = { Text(cashiers.pinLength) },

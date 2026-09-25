@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.settings.model.DeliveryChannel
 import kz.mybrain.superkassa.domain.settings.model.DeliveryField
-import kz.mybrain.superkassa.strings.api.settings.DeliveryTexts
+import kz.mybrain.superkassa.strings.api.settings.DeliverySettingTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -59,7 +59,7 @@ fun DeliveryCard(delivery: DeliveryUiState, actions: DeliveryActions) {
         DeliveryChannel.entries.forEach { ChannelFields(it, delivery, actions, texts) }
         WrapRow {
             FilledTonalButton(enabled = delivery.savable, onClick = actions::save) {
-                Text(LocalStrings.current.settings.save)
+                Text(LocalStrings.current.settingsScreen.save)
             }
         }
     }
@@ -71,7 +71,7 @@ private fun ChannelFields(
     channel: DeliveryChannel,
     delivery: DeliveryUiState,
     actions: DeliveryActions,
-    texts: DeliveryTexts
+    texts: DeliverySettingTexts
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
         ChannelHead(channel, delivery, actions, texts)
@@ -87,7 +87,7 @@ private fun ChannelHead(
     channel: DeliveryChannel,
     delivery: DeliveryUiState,
     actions: DeliveryActions,
-    texts: DeliveryTexts
+    texts: DeliverySettingTexts
 ) {
     val name = texts.channels.of(channel)
     Row(
@@ -119,7 +119,7 @@ private fun FlowRowScope.DeliveryInput(
     field: DeliveryField,
     delivery: DeliveryUiState,
     actions: DeliveryActions,
-    texts: DeliveryTexts
+    texts: DeliverySettingTexts
 ) {
     val malformed = delivery.malformed(field)
     val dotted = field.secret && !delivery.hidden(field)
@@ -148,5 +148,5 @@ private val DeliveryField.keyboard: KeyboardType
     }
 
 /** Что не так с негодным полем: у порта — диапазон, у адресов — написание. */
-private fun DeliveryTexts.problem(field: DeliveryField): String =
+private fun DeliverySettingTexts.problem(field: DeliveryField): String =
     if (field == DeliveryField.EmailPort) portRange else malformed

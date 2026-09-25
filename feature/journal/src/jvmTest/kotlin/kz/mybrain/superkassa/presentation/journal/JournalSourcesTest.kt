@@ -96,7 +96,7 @@ class JournalSourcesTest {
         val entry = entries(refused).single()
 
         assertEquals(
-            textsOf(Language.Ru).journal.ofdRefusal.words(17) + Glyphs.SEPARATOR + "${texts.common.refusalCode} 17",
+            textsOf(Language.Ru).journal.ofdRefusal.words(17) + Glyphs.SEPARATOR + "${texts.general.refusalCode} 17",
             entry.refusal
         )
         assertTrue(entry.searchable.contains("17"), "по причине отказа строка обязана находиться")
@@ -109,7 +109,7 @@ class JournalSourcesTest {
 
         val rows = entries(strange, quiet).associateBy { it.key }
 
-        assertEquals("Odd refusal${Glyphs.SEPARATOR}${texts.common.refusalCode} 777", rows["s"]?.refusal)
+        assertEquals("Odd refusal${Glyphs.SEPARATOR}${texts.general.refusalCode} 777", rows["s"]?.refusal)
         assertNull(rows["q"]?.refusal, "у принятого документа причины отказа нет")
     }
 

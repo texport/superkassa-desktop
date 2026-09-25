@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.designsystem.theme.StatusColors
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.journal.DeliveryTexts
+import kz.mybrain.superkassa.strings.api.journal.DeliveryJournalTexts
 
 /**
  * Доставка по одному каналу: куда, что с ней и почему не вышло.
@@ -26,7 +26,7 @@ import kz.mybrain.superkassa.strings.api.journal.DeliveryTexts
  * Получателя здесь нет: это данные покупателя.
  */
 @Composable
-internal fun DeliveryChannelRow(delivery: ReceiptDeliveryResponse, texts: DeliveryTexts) {
+internal fun DeliveryChannelRow(delivery: ReceiptDeliveryResponse, texts: DeliveryJournalTexts) {
     val language = LocalLanguage.current
     ListItem(
         colors = ListItemDefaults.colors(containerColor = AlertDialogDefaults.containerColor),
@@ -37,7 +37,7 @@ internal fun DeliveryChannelRow(delivery: ReceiptDeliveryResponse, texts: Delive
 }
 
 /** Канал и вид отправки: у канала их бывает два — ссылка и сам чек. */
-internal fun channelTitle(delivery: ReceiptDeliveryResponse, texts: DeliveryTexts): String {
+internal fun channelTitle(delivery: ReceiptDeliveryResponse, texts: DeliveryJournalTexts): String {
     val channel = when (delivery.channel.uppercase()) {
         "SMS" -> texts.sms
         "TELEGRAM" -> texts.telegram
@@ -62,7 +62,7 @@ internal fun channelTitle(delivery: ReceiptDeliveryResponse, texts: DeliveryText
  */
 internal fun deliveryDetails(
     delivery: ReceiptDeliveryResponse,
-    texts: DeliveryTexts,
+    texts: DeliveryJournalTexts,
     language: Language
 ): String {
     val reason = delivery.failureMessage?.of(language)?.takeIf { it.isNotBlank() }
@@ -77,7 +77,7 @@ internal fun deliveryDetails(
     return parts.joinToString(Glyphs.SEPARATOR)
 }
 
-private fun stateTitle(state: ReceiptDeliveryState, texts: DeliveryTexts): String = when (state) {
+private fun stateTitle(state: ReceiptDeliveryState, texts: DeliveryJournalTexts): String = when (state) {
     ReceiptDeliveryState.PENDING -> texts.pending
     ReceiptDeliveryState.DELIVERED -> texts.delivered
     ReceiptDeliveryState.FAILED -> texts.failed

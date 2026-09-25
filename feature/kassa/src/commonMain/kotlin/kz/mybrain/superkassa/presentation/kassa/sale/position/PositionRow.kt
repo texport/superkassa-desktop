@@ -60,7 +60,7 @@ internal fun PositionRow(
         // цену и ставку показывает окно подробностей.
         headlineContent = {
             Text(
-                text = position.label(texts.sale.storno),
+                text = position.label(texts.receipt.storno),
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = NAME_LINES,
                 overflow = TextOverflow.Ellipsis
@@ -139,11 +139,11 @@ private fun PositionActions(
     IconButton(onClick = onStorno) {
         Icon(
             imageVector = AppIcons.storno,
-            contentDescription = if (position.storno) texts.sale.stornoUndo else texts.sale.storno
+            contentDescription = if (position.storno) texts.receipt.stornoUndo else texts.receipt.storno
         )
     }
     IconButton(onClick = onRemove) {
-        Icon(AppIcons.remove, contentDescription = texts.sale.remove)
+        Icon(AppIcons.remove, contentDescription = texts.receipt.remove)
     }
 }
 

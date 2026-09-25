@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.presentation.common.message.words
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.followSeat
 import kz.mybrain.superkassa.presentation.common.model.shown
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -30,7 +30,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  */
 class UsersViewModel(private val cases: UsersCases, private val talk: Talk) : ViewModel(), UsersActions {
     private val screen = MutableStateFlow(UsersUiState())
-    private val texts: AppStrings get() = textsOf(talk.language()).common
+    private val texts: CommonTexts get() = textsOf(talk.language()).common
 
     val state: StateFlow<UsersUiState> = screen.asStateFlow()
 

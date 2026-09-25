@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.presentation.settings.title
  */
 @Composable
 internal fun MapServicesCard(workplace: WorkplaceSettingsUiState, actions: WorkplaceSettingsActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     val maps = workplace.mapFields
     val standard = workplace.publicMaps
     SectionCard(title = texts.mapServices, info = texts.mapServicesHint) {

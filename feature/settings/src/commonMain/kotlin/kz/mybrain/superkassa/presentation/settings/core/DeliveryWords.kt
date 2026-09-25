@@ -2,11 +2,11 @@ package kz.mybrain.superkassa.presentation.settings.core
 
 import kz.mybrain.superkassa.domain.settings.model.DeliveryChannel
 import kz.mybrain.superkassa.domain.settings.model.DeliveryField
-import kz.mybrain.superkassa.strings.api.settings.DeliveryChannelNames
-import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldNames
+import kz.mybrain.superkassa.strings.api.settings.DeliveryChannelTexts
+import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldTexts
 
 /** Название канала доставки чека. */
-internal fun DeliveryChannelNames.of(channel: DeliveryChannel): String = when (channel) {
+internal fun DeliveryChannelTexts.of(channel: DeliveryChannel): String = when (channel) {
     DeliveryChannel.Sms -> sms
     DeliveryChannel.Telegram -> telegram
     DeliveryChannel.WhatsApp -> whatsApp
@@ -14,7 +14,7 @@ internal fun DeliveryChannelNames.of(channel: DeliveryChannel): String = when (c
 }
 
 /** Подпись поля настройки канала доставки. */
-internal fun DeliveryFieldNames.of(field: DeliveryField): String = when (field) {
+internal fun DeliveryFieldTexts.of(field: DeliveryField): String = when (field) {
     DeliveryField.SmsUrl -> smsUrl
     DeliveryField.SmsKey -> smsKey
     DeliveryField.TelegramToken -> telegramToken

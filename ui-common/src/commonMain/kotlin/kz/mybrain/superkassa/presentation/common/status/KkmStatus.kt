@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kkm.model.isAutonomous
 import kz.mybrain.superkassa.domain.kkm.model.isBlocked
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /** Плашка шапки: слово и роль цвета. */
@@ -60,7 +60,7 @@ private fun shiftChip(open: Boolean, words: KkmStatusWords): KkmStatusChip =
  * показывается своим кодом, а не пропадает: голая плашка без слова
  * значила бы «всё в порядке».
  */
-internal fun EnumStrings.kkmState(code: String): String = when (KkmState.entries.firstOrNull { it.name == code }) {
+internal fun EnumTexts.kkmState(code: String): String = when (KkmState.entries.firstOrNull { it.name == code }) {
     KkmState.ACTIVE -> stateActive
     KkmState.BLOCKED -> stateBlocked
     KkmState.PROGRAMMING -> stateProgramming
@@ -99,7 +99,7 @@ private fun statusWords(kkm: KkmResponse?): KkmStatusWords {
     val core = textsOf(LocalLanguage.current).shift
     return KkmStatusWords(
         state = kkm?.let { texts.enums.kkmState(it.state) }.orEmpty(),
-        autonomous = texts.shell.autonomous,
+        autonomous = texts.topBar.autonomous,
         shiftOpen = core.shiftOpenShort,
         shiftClosed = core.shiftClosedShort
     )

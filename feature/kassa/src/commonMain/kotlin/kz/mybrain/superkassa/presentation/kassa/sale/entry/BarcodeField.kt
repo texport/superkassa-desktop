@@ -87,7 +87,7 @@ private fun BarcodeInput(state: SaleUiState, actions: EntryActions) {
     OutlinedTextField(
         value = state.search.barcode,
         onValueChange = actions::typeBarcode,
-        label = { Text(texts.sale.barcode) },
+        label = { Text(texts.receipt.barcode) },
         singleLine = true,
         keyboardOptions = barcodeKeys(letters),
         keyboardActions = enterKeyboardActions(),
@@ -95,7 +95,7 @@ private fun BarcodeInput(state: SaleUiState, actions: EntryActions) {
             Row {
                 if (touch) LettersToggle(letters) { letters = !letters }
                 IconButton(enabled = state.search.ready && state.kkm != null, onClick = { actions.search() }) {
-                    Icon(AppIcons.find, contentDescription = texts.sale.barcodeFind)
+                    Icon(AppIcons.find, contentDescription = texts.receipt.barcodeFind)
                 }
             }
         },
@@ -146,9 +146,14 @@ private fun BarcodeHint(state: SaleUiState) {
     Hint(
         problem = when {
             state.kkm == null -> LocalSaleTexts.current.blockNoKkm
-            problem != null -> lookupProblemWords(problem, state.kkm.blockReasonCode, LocalLanguage.current, texts.sale)
+            problem != null -> lookupProblemWords(
+                problem,
+                state.kkm.blockReasonCode,
+                LocalLanguage.current,
+                texts.receipt
+            )
             else -> null
         },
-        hint = if (state.search.searching) texts.sale.barcodeSearching else null
+        hint = if (state.search.searching) texts.receipt.barcodeSearching else null
     )
 }

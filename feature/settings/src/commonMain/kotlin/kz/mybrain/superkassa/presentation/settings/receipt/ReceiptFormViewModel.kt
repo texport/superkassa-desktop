@@ -66,7 +66,7 @@ class ReceiptFormViewModel(
 
     private fun save(changed: ReceiptBrandingRequest, onSaved: () -> Unit = {}) {
         whileBusy(busy) {
-            val texts = textsOf(talk.language()).common.settings
+            val texts = textsOf(talk.language()).common.settingsScreen
             cases.save(changed).shown(texts.printForm, "update branding", talk) ?: return@whileBusy
             onSaved()
             talk.done(texts.printFormSaved)

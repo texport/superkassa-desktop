@@ -78,8 +78,8 @@ private data class ThemeFlip(val next: Appearance, val label: String, val icon: 
 private fun themeFlip(): ThemeFlip {
     val texts = LocalStrings.current
     return if (LocalDarkTheme.current) {
-        ThemeFlip(Appearance.Light, texts.settings.appearanceLight, AppIcons.lightTheme)
+        ThemeFlip(Appearance.Light, texts.settingsScreen.appearanceLight, AppIcons.lightTheme)
     } else {
-        ThemeFlip(Appearance.Dark, texts.settings.appearanceDark, AppIcons.darkTheme)
+        ThemeFlip(Appearance.Dark, texts.settingsScreen.appearanceDark, AppIcons.darkTheme)
     }
 }

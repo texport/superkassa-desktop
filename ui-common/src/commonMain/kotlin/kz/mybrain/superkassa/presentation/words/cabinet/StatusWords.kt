@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.presentation.words.cabinet
 
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.cabinet.CabinetStatusNames
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetStatusTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
@@ -33,7 +33,7 @@ fun statusWords(code: String, texts: CabinetTexts): String? {
  * Три отказных состояния учёта не назывались никак и доходили до экрана
  * как «состояние неизвестно» — жёлтым, будто их ещё ждут.
  */
-private val STATUS_WORDS: Map<Set<String>, (CabinetStatusNames) -> String> = mapOf(
+private val STATUS_WORDS: Map<Set<String>, (CabinetStatusTexts) -> String> = mapOf(
     setOf("DRAFT") to { it.draft },
     setOf("REGISTERED", "REGISTERED_REREGISTRATION_SUCCESS") to { it.registered },
     setOf("DEREGISTERED") to { it.deregistered },

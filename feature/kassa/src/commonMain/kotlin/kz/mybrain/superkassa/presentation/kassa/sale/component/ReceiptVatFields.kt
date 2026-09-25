@@ -36,7 +36,7 @@ internal fun ReceiptVatFields(sale: SaleUiState, actions: VatActions) {
     val extra = LocalSaleTexts.current
     val scope = sale.form.vat.scopeAt(sale.vatPayer)
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
-        Text(LocalStrings.current.sale.vat, style = MaterialTheme.typography.labelLarge)
+        Text(LocalStrings.current.receipt.vat, style = MaterialTheme.typography.labelLarge)
         ChoiceSegments(
             options = VatScope.entries,
             selected = scope,

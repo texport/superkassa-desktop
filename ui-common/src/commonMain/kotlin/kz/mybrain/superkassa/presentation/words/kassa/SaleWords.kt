@@ -5,8 +5,8 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.DomainKind
 import kz.mybrain.superkassa.domain.kassa.model.sale.FieldKind
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleBlock
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
-import kz.mybrain.superkassa.strings.api.common.SaleStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
+import kz.mybrain.superkassa.strings.api.common.ReceiptTexts
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.kassa.PaymentTexts
 import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
@@ -20,19 +20,19 @@ import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
  */
 
 /** Направление чека в речи кассира, а не протокола. */
-fun SaleOperation.title(texts: SaleStrings): String = when (this) {
+fun SaleOperation.title(texts: ReceiptTexts): String = when (this) {
     SaleOperation.Sell -> texts.sale
     SaleOperation.Buy -> texts.purchase
 }
 
 /** Надпись главной кнопки: «Пробить продажу». */
-fun SaleOperation.action(texts: SaleStrings): String = when (this) {
+fun SaleOperation.action(texts: ReceiptTexts): String = when (this) {
     SaleOperation.Sell -> texts.issueSale
     SaleOperation.Buy -> texts.issuePurchase
 }
 
 /** Вид отрасли словами владельца: так он назван в настройках рабочего места. */
-fun DomainKind.title(texts: EnumStrings): String = when (this) {
+fun DomainKind.title(texts: EnumTexts): String = when (this) {
     DomainKind.Trading -> texts.domainTrading
     DomainKind.Services -> texts.domainServices
     DomainKind.Hotels -> texts.domainHotels

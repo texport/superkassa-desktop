@@ -8,9 +8,9 @@ import kz.mybrain.superkassa.strings.impl.analytics.analyticsTextsRu
 import kz.mybrain.superkassa.strings.impl.cabinet.cabinetTextsEn
 import kz.mybrain.superkassa.strings.impl.cabinet.cabinetTextsKk
 import kz.mybrain.superkassa.strings.impl.cabinet.cabinetTextsRu
-import kz.mybrain.superkassa.strings.impl.common.appStringsEn
-import kz.mybrain.superkassa.strings.impl.common.appStringsKk
-import kz.mybrain.superkassa.strings.impl.common.appStringsRu
+import kz.mybrain.superkassa.strings.impl.common.commonTextsEn
+import kz.mybrain.superkassa.strings.impl.common.commonTextsKk
+import kz.mybrain.superkassa.strings.impl.common.commonTextsRu
 import kz.mybrain.superkassa.strings.impl.debug.debugTextsEn
 import kz.mybrain.superkassa.strings.impl.debug.debugTextsKk
 import kz.mybrain.superkassa.strings.impl.debug.debugTextsRu
@@ -32,12 +32,12 @@ import kz.mybrain.superkassa.strings.impl.settings.settingsTextsRu
 import kz.mybrain.superkassa.strings.impl.setup.setupTextsEn
 import kz.mybrain.superkassa.strings.impl.setup.setupTextsKk
 import kz.mybrain.superkassa.strings.impl.setup.setupTextsRu
-import kz.mybrain.superkassa.strings.impl.shell.startTextsEn
-import kz.mybrain.superkassa.strings.impl.shell.startTextsKk
-import kz.mybrain.superkassa.strings.impl.shell.startTextsRu
-import kz.mybrain.superkassa.strings.impl.shift.coreTextsEn
-import kz.mybrain.superkassa.strings.impl.shift.coreTextsKk
-import kz.mybrain.superkassa.strings.impl.shift.coreTextsRu
+import kz.mybrain.superkassa.strings.impl.shell.shellTextsEn
+import kz.mybrain.superkassa.strings.impl.shell.shellTextsKk
+import kz.mybrain.superkassa.strings.impl.shell.shellTextsRu
+import kz.mybrain.superkassa.strings.impl.shift.shiftTextsEn
+import kz.mybrain.superkassa.strings.impl.shift.shiftTextsKk
+import kz.mybrain.superkassa.strings.impl.shift.shiftTextsRu
 import kz.mybrain.superkassa.strings.impl.update.updateTextsEn
 import kz.mybrain.superkassa.strings.impl.update.updateTextsKk
 import kz.mybrain.superkassa.strings.impl.update.updateTextsRu
@@ -50,7 +50,7 @@ internal fun textsIn(language: Language): Texts = when (language) {
 }
 
 private val kazakh = Texts(
-    common = appStringsKk,
+    common = commonTextsKk,
     analytics = analyticsTextsKk,
     cabinet = cabinetTextsKk,
     debug = debugTextsKk,
@@ -60,13 +60,13 @@ private val kazakh = Texts(
     print = printTextsKk,
     settings = settingsTextsKk,
     setup = setupTextsKk,
-    shell = startTextsKk,
-    shift = coreTextsKk,
+    shell = shellTextsKk,
+    shift = shiftTextsKk,
     update = updateTextsKk
 )
 
 private val russian = Texts(
-    common = appStringsRu,
+    common = commonTextsRu,
     analytics = analyticsTextsRu,
     cabinet = cabinetTextsRu,
     debug = debugTextsRu,
@@ -76,13 +76,13 @@ private val russian = Texts(
     print = printTextsRu,
     settings = settingsTextsRu,
     setup = setupTextsRu,
-    shell = startTextsRu,
-    shift = coreTextsRu,
+    shell = shellTextsRu,
+    shift = shiftTextsRu,
     update = updateTextsRu
 )
 
 private val english = Texts(
-    common = appStringsEn,
+    common = commonTextsEn,
     analytics = analyticsTextsEn,
     cabinet = cabinetTextsEn,
     debug = debugTextsEn,
@@ -92,7 +92,7 @@ private val english = Texts(
     print = printTextsEn,
     settings = settingsTextsEn,
     setup = setupTextsEn,
-    shell = startTextsEn,
-    shift = coreTextsEn,
+    shell = shellTextsEn,
+    shift = shiftTextsEn,
     update = updateTextsEn
 )

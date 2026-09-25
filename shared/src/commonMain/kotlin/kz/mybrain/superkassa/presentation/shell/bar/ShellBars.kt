@@ -61,7 +61,7 @@ internal fun KkmTopBar(
 ) {
     val texts = LocalStrings.current
     AppTopBar(
-        title = shell.kkmName ?: texts.shell.noKkm,
+        title = shell.kkmName ?: texts.topBar.noKkm,
         subtitle = shell.kkm?.orgTitle,
         subtitleKept = shell.cashier
     ) {

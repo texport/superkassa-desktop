@@ -118,7 +118,7 @@ private fun RailToggle(collapsed: Boolean, onToggle: () -> Unit) {
     IconButton(onClick = onToggle) {
         Icon(
             imageVector = AppIcons.menu,
-            contentDescription = if (collapsed) texts.common.expand else texts.common.collapse
+            contentDescription = if (collapsed) texts.general.expand else texts.general.collapse
         )
     }
 }

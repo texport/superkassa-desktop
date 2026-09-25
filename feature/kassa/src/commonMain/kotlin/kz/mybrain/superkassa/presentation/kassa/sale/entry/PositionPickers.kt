@@ -32,7 +32,7 @@ internal fun UnitPicker(
     if (units.isEmpty()) return
     val texts = LocalStrings.current
     LabelledPicker(
-        label = texts.sale.measureUnit,
+        label = texts.receipt.measureUnit,
         options = units,
         selected = units.firstOrNull { it.code == selected },
         title = { unit -> unitTitle(units, unit?.code ?: selected) },
@@ -58,7 +58,7 @@ internal fun VatPicker(selected: String, modifier: Modifier = Modifier, onSelect
     val rates = LocalVatRates.current
     if (rates.size < 2) return
     LabelledPicker(
-        label = texts.sale.vat,
+        label = texts.receipt.vat,
         options = rates,
         selected = rates.firstOrNull { it.code == selected },
         title = { rate -> vatTitle(rates, rate?.code ?: selected) },

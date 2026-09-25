@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>CyclomaticComplexMethod:AppearanceCard.kt$private fun Accent.title(texts: LookStrings): String</ID>
+    <ID>CyclomaticComplexMethod:AppearanceCard.kt$private fun Accent.title(texts: LookTexts): String</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -117,12 +117,12 @@ private fun PinField(form: CashierForm, actions: UsersActions, money: MoneyTexts
     OutlinedTextField(
         value = form.pin,
         onValueChange = { actions.edit(form.copy(pin = UserRules.digitsOf(it))) },
-        label = { Text(texts.common.pin) },
+        label = { Text(texts.general.pin) },
         singleLine = true,
         isError = trouble != null,
         placeholder = { Text(money.cashiers.pinLength) },
         supportingText = trouble?.let { { Text(it) } },
         visualTransformation = PasswordVisualTransformation(),
-        modifier = modifier.fieldMinWidth(texts.common.pin, Sizes.fieldPin)
+        modifier = modifier.fieldMinWidth(texts.general.pin, Sizes.fieldPin)
     )
 }

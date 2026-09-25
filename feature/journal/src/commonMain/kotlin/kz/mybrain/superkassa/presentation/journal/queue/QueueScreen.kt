@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.journal.QueueJournalTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
@@ -67,7 +67,7 @@ fun QueueContent(state: QueueUiState, actions: QueueActions) {
  * документы не ждут отправки потому, что их больше не пробить.
  */
 internal fun queueState(
-    texts: AppStrings,
+    texts: CommonTexts,
     journal: QueueJournalTexts,
     state: QueueUiState,
     actions: QueueActions

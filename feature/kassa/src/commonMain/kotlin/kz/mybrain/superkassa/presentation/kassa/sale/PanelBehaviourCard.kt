@@ -20,11 +20,11 @@ fun PanelBehaviourCard(memory: WorkplaceMemory) {
     val texts = LocalStrings.current
     val panels = remember(memory) { SalePanels(memory) }
     SectionCard(
-        title = texts.settings.panelBehaviour,
-        info = texts.settings.panelBehaviourHint
+        title = texts.settingsScreen.panelBehaviour,
+        info = texts.settingsScreen.panelBehaviourHint
     ) {
         SalePanel.entries.forEach { panel ->
-            SwitchRow(panel.title(texts.settings), panels.expanded(panel), { panels.toggle(panel) })
+            SwitchRow(panel.title(texts.settingsScreen), panels.expanded(panel), { panels.toggle(panel) })
         }
     }
 }

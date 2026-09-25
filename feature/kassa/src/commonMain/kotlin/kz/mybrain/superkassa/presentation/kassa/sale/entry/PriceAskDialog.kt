@@ -63,7 +63,7 @@ internal fun PriceAskDialog(
     FormDialog(
         title = extra.priceAsk,
         icon = AppIcons.price,
-        action = texts.sale.add,
+        action = texts.receipt.add,
         close = extra.priceAskCancel,
         busy = false,
         missing = ask.problems.map { it.text(extra) },
@@ -95,9 +95,9 @@ private fun FoundItem(found: Position, units: List<MeasureUnit>) {
     val texts = LocalStrings.current
     val extra = LocalSaleTexts.current
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
-        DetailLine(texts.sale.name, found.name)
+        DetailLine(texts.receipt.name, found.name)
         DetailLine(extra.priceAskCode, found.ntin)
-        DetailLine(texts.sale.measureUnit, unitTitle(units, found.measureUnitCode))
+        DetailLine(texts.receipt.measureUnit, unitTitle(units, found.measureUnitCode))
     }
 }
 
@@ -126,10 +126,10 @@ private fun AskedAmounts(
         horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
         EnterSubmits(onAdd) {
-            AskedField(ask, DraftField.Price, typed.price, texts.sale.price, Modifier.focusRequester(focus)) {
+            AskedField(ask, DraftField.Price, typed.price, texts.receipt.price, Modifier.focusRequester(focus)) {
                 typed.price = it
             }
-            AskedField(ask, DraftField.Quantity, typed.counted, texts.sale.quantity, Modifier) {
+            AskedField(ask, DraftField.Quantity, typed.counted, texts.receipt.quantity, Modifier) {
                 typed.counted = it
             }
         }

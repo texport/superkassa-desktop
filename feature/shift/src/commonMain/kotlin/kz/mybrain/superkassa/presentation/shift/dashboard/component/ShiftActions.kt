@@ -27,7 +27,7 @@ import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardActions
 import kz.mybrain.superkassa.presentation.shift.dashboard.DashboardUiState
-import kz.mybrain.superkassa.strings.api.common.DashboardStrings
+import kz.mybrain.superkassa.strings.api.common.DashboardTexts
 import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.textsOf
 
@@ -109,7 +109,7 @@ private fun ShiftNote(state: DashboardUiState) {
     val note = when {
         state.blocked -> textsOf(language).kassa.blockReason.words(state.kkm?.blockReasonCode) +
             Glyphs.SEPARATOR + textsOf(language).kassa.blockReason.readingStays
-        state.programming -> texts.settings.enteredProgramming
+        state.programming -> texts.settingsScreen.enteredProgramming
         // Смену открывает администратор: кассиру вместо кнопки, на которую
         // касса ответит отказом, сказано, кого позвать.
         state.known && state.shift != ShiftState.Open && !state.isAdmin -> texts.dashboard.openShiftAdmin
@@ -169,7 +169,7 @@ private fun CloseShiftAsk(state: DashboardUiState, onCancel: () -> Unit, onConfi
  * решение принимают по ним. Судьба остатка названа отдельно, потому что
  * зависит от настройки кассы, а не от того, что кассир видит на экране.
  */
-private fun closeShiftExplain(state: DashboardUiState, texts: DashboardStrings): String {
+private fun closeShiftExplain(state: DashboardUiState, texts: DashboardTexts): String {
     val cash = if (state.kkm?.autoCashout == true) texts.closeShiftCashout else texts.closeShiftKeepsCash
     return texts.closeShiftExplain.fill(
         state.documents.size.toString(),

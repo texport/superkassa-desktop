@@ -5,7 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -14,7 +14,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * Экран не знает, какой язык выбран: он просто берёт строку по смыслу.
  * Так добавление языка не трогает ни один экран.
  */
-val LocalStrings: ProvidableCompositionLocal<AppStrings> = staticCompositionLocalOf { textsOf(Language.Kk).common }
+val LocalStrings: ProvidableCompositionLocal<CommonTexts> = staticCompositionLocalOf { textsOf(Language.Kk).common }
 
 /**
  * Язык кассира — для слов, которые касса присылает на трёх языках сразу.

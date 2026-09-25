@@ -1,11 +1,11 @@
 package kz.mybrain.superkassa.presentation.shell.starting
 
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
-import kz.mybrain.superkassa.strings.api.shell.StartTexts
-import kz.mybrain.superkassa.strings.api.shell.StartWords
+import kz.mybrain.superkassa.strings.api.shell.ShellTexts
+import kz.mybrain.superkassa.strings.api.shell.StartFailureTexts
 
 /** Что случилось и что делать — по причине. */
-internal fun StartTexts.of(refusal: StartRefusal): StartWords = when (refusal) {
+internal fun ShellTexts.of(refusal: StartRefusal): StartFailureTexts = when (refusal) {
     StartRefusal.NodeRunning -> nodeRunning
     StartRefusal.KassaRunning -> kassaRunning
     StartRefusal.BothDatabases -> bothDatabases

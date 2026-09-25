@@ -62,7 +62,7 @@ class FormWidthShots {
     /** Экран раздела; у настроек две вкладки, и вторая открывается нажатием. */
     private enum class Screen(val section: Section, val tab: ((Language) -> String)? = null) {
         SettingsKkm(Section.Settings),
-        SettingsWorkplace(Section.Settings, { textsOf(it).common.settings.householdWorkplace }),
+        SettingsWorkplace(Section.Settings, { textsOf(it).common.settingsScreen.householdWorkplace }),
         Cash(Section.Cash),
         Users(Section.Users),
         Queue(Section.Queue),

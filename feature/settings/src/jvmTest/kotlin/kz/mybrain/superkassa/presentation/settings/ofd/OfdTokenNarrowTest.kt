@@ -24,7 +24,7 @@ class OfdTokenNarrowTest {
 
     @Test
     fun `поле токена и кнопка видны целиком на телефоне`() {
-        val texts = textsOf(Language.Ru).common.settings
+        val texts = textsOf(Language.Ru).common.settingsScreen
         val state = OfdSettingsUiState(kkm = KassaScene.kkm(state = PROGRAMMING), token = "123456789012")
         RenderProbe(WIDTH, HEIGHT) {
             Surface(Modifier.fillMaxSize()) {

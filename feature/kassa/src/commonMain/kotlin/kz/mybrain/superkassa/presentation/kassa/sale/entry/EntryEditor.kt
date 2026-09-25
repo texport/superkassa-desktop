@@ -48,7 +48,7 @@ internal class EntryEditor(
             // Беда кассы — её словами в строке сообщений; отсутствие товара
             // бедой не считается и названо под полем.
             if (answer !is Answer.Done) {
-                answer.shown(textsOf(talk.language()).common.sale.barcodeSearch, "barcode lookup", talk)
+                answer.shown(textsOf(talk.language()).common.receipt.barcodeSearch, "barcode lookup", talk)
             }
             val item = (answer as? Answer.Done)?.value?.takeIf { it.found }?.item
             screen.update { now ->

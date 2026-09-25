@@ -132,7 +132,7 @@ private fun TreeHead(
     onToggle: () -> Unit,
     count: @Composable RowScope.() -> Unit
 ) {
-    val common = LocalStrings.current.common
+    val common = LocalStrings.current.general
     Row(
         modifier = if (collapsed) Modifier else Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically

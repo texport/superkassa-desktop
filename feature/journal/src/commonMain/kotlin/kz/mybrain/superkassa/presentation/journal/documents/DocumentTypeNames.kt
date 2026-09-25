@@ -4,7 +4,7 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.Trilin
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 
 /**
  * Название вида документа для кассира.
@@ -17,7 +17,7 @@ internal fun documentTypeTitle(
     code: String?,
     names: Map<String, TrilingualMessageResponse>,
     language: Language,
-    enums: EnumStrings
+    enums: EnumTexts
 ): String {
     val known = code ?: return Glyphs.DASH
     return names[known]?.of(language) ?: enums.documentFallback(known) ?: known

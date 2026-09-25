@@ -28,12 +28,12 @@ import kz.mybrain.superkassa.presentation.settings.title
 internal fun ReceiptLinesSection(form: ReceiptFormUiState, actions: ReceiptFormActions) {
     val texts = LocalStrings.current
     val edited = form.edited
-    PartTitle(texts.settings.receiptLines, texts.settings.receiptLinesHint)
+    PartTitle(texts.settingsScreen.receiptLines, texts.settingsScreen.receiptLinesHint)
     ReceiptLine.entries.forEach { line ->
         OutlinedTextField(
             value = line.read(edited).orEmpty(),
             onValueChange = { actions.typeLine(line, it) },
-            label = { Text(line.title(texts.settings)) },
+            label = { Text(line.title(texts.settingsScreen)) },
             enabled = form.editable,
             modifier = Modifier.fillMaxWidth().keysOfSingleLine()
         )
@@ -41,5 +41,5 @@ internal fun ReceiptLinesSection(form: ReceiptFormUiState, actions: ReceiptFormA
     FilledTonalButton(
         enabled = form.editable && !form.busy && edited != form.branding,
         onClick = actions::saveLines
-    ) { Text(texts.settings.saveReceiptLines) }
+    ) { Text(texts.settingsScreen.saveReceiptLines) }
 }

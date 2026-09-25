@@ -28,18 +28,18 @@ import kz.mybrain.superkassa.strings.api.textsOf
 fun TaxSettingsCard(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
     val texts = LocalStrings.current
     tax.kkm ?: return
-    SectionCard(title = texts.settings.taxSettings, info = texts.settings.taxSettingsHint) {
+    SectionCard(title = texts.settingsScreen.taxSettings, info = texts.settingsScreen.taxSettingsHint) {
         TaxFields(tax, actions)
         val core = textsOf(LocalLanguage.current).settings.core
         // Переключатель и есть действие: уходит в кассу сразу. Касса меняет
         // его только в режиме программирования; вне режима он погашен,
         // а не отвечает отказом на каждое нажатие.
         SwitchRow(
-            title = texts.settings.autoCashout,
+            title = texts.settingsScreen.autoCashout,
             checked = tax.kkm.autoCashout,
             onSwitch = actions::switchAutoCashout,
             enabled = tax.switchable,
-            hint = texts.settings.autoCashoutHint
+            hint = texts.settingsScreen.autoCashoutHint
         )
         SwitchRow(core.autoClose, tax.kkm.autoCloseShift, actions::switchAutoClose, tax.switchable, core.autoCloseHint)
     }
@@ -54,7 +54,7 @@ fun TaxSettingsCard(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
  */
 @Composable
 private fun ColumnScope.TaxFields(tax: TaxSettingsUiState, actions: TaxSettingsActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     val trouble =
         ScreenState.Trouble(texts.dictionariesMissing, texts.dictionariesMissingHint, actions::retryDictionaries)
     ScreenSlot(if (tax.dictionariesMissing) trouble else ScreenState.Ready, dense = true) {

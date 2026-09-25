@@ -1,7 +1,7 @@
 package kz.mybrain.superkassa.strings.impl.cabinet
 
-import kz.mybrain.superkassa.strings.api.cabinet.CabinetHints
-import kz.mybrain.superkassa.strings.api.cabinet.CabinetStatusNames
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetHintTexts
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetStatusTexts
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kz.mybrain.superkassa.strings.impl.analytics.sieveTextsKk
 import kz.mybrain.superkassa.strings.impl.map.mapTextsKk
@@ -94,7 +94,7 @@ internal val cabinetTextsKk = CabinetTexts(
     changeAddress = "Мекенжайды ауыстыру",
     deleteRegister = "Кассаны жою",
     deleteOnlyDraft = "Тек есепке қойылмаған кассаны жоюға болады",
-    statuses = CabinetStatusNames(
+    statuses = CabinetStatusTexts(
         draft = "Жоба",
         registered = "Есепте",
         deregistered = "Есептен шығарылған",
@@ -250,7 +250,7 @@ internal val cabinetTextsKk = CabinetTexts(
     ascending = "Өсу бойынша",
     descending = "Кему бойынша",
     map = mapTextsKk,
-    hints = CabinetHints(
+    hints = CabinetHintTexts(
         signIn = "Қолтаңбаны NCALayer сұрайды: сертификат пен құпиясөз оның терезесінде енгізіледі",
         signWait = "Қол қою терезесін NCALayer ашады. Ол негізгі терезенің артында қалуы мүмкін — " +
             "терезелердің арасынан іздеңіз. Терезе болмаса, күтуді тоқтатып, қайта кіріңіз",

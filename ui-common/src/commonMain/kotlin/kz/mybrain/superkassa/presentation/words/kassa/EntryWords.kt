@@ -6,7 +6,7 @@ import kz.mybrain.superkassa.domain.kassa.model.entry.LookupProblem
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
 import kz.mybrain.superkassa.domain.kassa.model.sale.ExciseRefusal
 import kz.mybrain.superkassa.strings.api.Language
-import kz.mybrain.superkassa.strings.api.common.SaleStrings
+import kz.mybrain.superkassa.strings.api.common.ReceiptTexts
 import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 import kz.mybrain.superkassa.strings.api.textsOf
 
@@ -52,7 +52,7 @@ fun ExciseRefusal.words(texts: SaleTexts): String = when (this) {
  * главный экран и смена: своя фраза здесь развела бы одну блокировку
  * на два разных объяснения.
  */
-fun lookupProblemWords(problem: LookupProblem, blockReason: Int?, language: Language, texts: SaleStrings): String =
+fun lookupProblemWords(problem: LookupProblem, blockReason: Int?, language: Language, texts: ReceiptTexts): String =
     when (problem) {
         LookupProblem.Missing -> texts.barcodeMissing
         LookupProblem.Unavailable -> texts.barcodeUnavailable

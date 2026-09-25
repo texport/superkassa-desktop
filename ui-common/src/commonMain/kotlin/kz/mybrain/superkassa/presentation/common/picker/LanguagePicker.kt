@@ -37,7 +37,7 @@ fun LanguagePicker(look: LookViewModel) {
     var open by remember { mutableStateOf(false) }
     Box {
         IconButton(onClick = { open = true }) {
-            Icon(AppIcons.language, contentDescription = texts.settings.language)
+            Icon(AppIcons.language, contentDescription = texts.settingsScreen.language)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             LanguageMenuItems(look) { open = false }

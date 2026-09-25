@@ -5,7 +5,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.ui.graphics.vector.ImageVector
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.shell.AreaPorts
-import kz.mybrain.superkassa.strings.api.common.SectionStrings
+import kz.mybrain.superkassa.strings.api.common.SectionTexts
 
 /**
  * Разделы кассы.
@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.strings.api.common.SectionStrings
  */
 internal enum class Section(
     val icon: ImageVector,
-    val title: (SectionStrings) -> String,
+    val title: (SectionTexts) -> String,
     /** Раздел, на который узел отвечает только администратору. */
     val adminOnly: Boolean = false
 ) {

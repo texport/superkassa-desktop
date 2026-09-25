@@ -1,9 +1,9 @@
 package kz.mybrain.superkassa.strings.impl.common
 
-import kz.mybrain.superkassa.strings.api.common.EnumStrings
+import kz.mybrain.superkassa.strings.api.common.EnumTexts
 
 /** Название вида оплаты по коду узла; `null` — код незнаком. */
-internal fun paymentName(texts: EnumStrings, code: String): String? = when (code) {
+internal fun paymentName(texts: EnumTexts, code: String): String? = when (code) {
     "CASH" -> texts.paymentCash
     "CARD" -> texts.paymentCard
     "ELECTRONIC" -> texts.paymentElectronic
@@ -14,7 +14,7 @@ internal fun paymentName(texts: EnumStrings, code: String): String? = when (code
 }
 
 /** Название типа документа по коду журнала; `null` — код незнаком. */
-internal fun documentName(texts: EnumStrings, code: String): String? = when (code) {
+internal fun documentName(texts: EnumTexts, code: String): String? = when (code) {
     "CHECK", "TICKET", "RECEIPT" -> texts.docCheck
     "SALE", "SELL" -> texts.docSale
     "RETURN", "SALE_RETURN", "SELL_RETURN" -> texts.docReturn

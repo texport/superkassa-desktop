@@ -67,12 +67,12 @@ private fun DrawPinDialog(kkmTitle: String, onDismiss: () -> Unit, onEnter: (Str
         action = texts.preview.draw,
         close = texts.preview.close,
         busy = false,
-        missing = if (pin.isBlank()) listOf(texts.common.pin) else emptyList(),
+        missing = if (pin.isBlank()) listOf(texts.general.pin) else emptyList(),
         onDismiss = onDismiss,
         onAction = { onEnter(pin) }
     ) {
         Text(text = kkmTitle, style = MaterialTheme.typography.titleMedium)
-        PinField(pin, texts.common.pin) { pin = Pin.digitsOf(it) }
+        PinField(pin, texts.general.pin) { pin = Pin.digitsOf(it) }
         Text(
             text = texts.preview.drawPinHint,
             style = MaterialTheme.typography.bodySmall,

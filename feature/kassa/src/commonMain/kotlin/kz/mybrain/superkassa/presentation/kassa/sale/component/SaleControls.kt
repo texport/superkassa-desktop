@@ -54,10 +54,10 @@ fun SaleHeader(operation: SaleOperation, filled: Boolean, actions: SaleActions) 
         verticalArrangement = Arrangement.spacedBy(Spacing.itemGap),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
-        ScreenTitle(texts.sale.receipt, Modifier.weight(1f, fill = false))
+        ScreenTitle(texts.receipt.receipt, Modifier.weight(1f, fill = false))
         OperationChoice(operation, actions.form::operation)
         if (filled) {
-            TextButton(onClick = actions.basket::clear) { Text(texts.sale.clearBasket) }
+            TextButton(onClick = actions.basket::clear) { Text(texts.receipt.clearBasket) }
         }
     }
 }
@@ -69,7 +69,7 @@ private fun OperationChoice(operation: SaleOperation, onSelect: (SaleOperation) 
     ChoiceSegments(
         options = SaleOperation.entries,
         selected = operation,
-        label = { it.title(texts.sale) },
+        label = { it.title(texts.receipt) },
         onSelect = onSelect
     )
 }
@@ -114,7 +114,7 @@ private fun CustomerBinField(bin: String, onBin: (String) -> Unit) {
     OutlinedTextField(
         value = bin,
         onValueChange = onBin,
-        label = { Text(texts.sale.customerBin) },
+        label = { Text(texts.receipt.customerBin) },
         singleLine = true,
         // ИИН и БИН — двенадцать цифр: клавиатура цифровая.
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),

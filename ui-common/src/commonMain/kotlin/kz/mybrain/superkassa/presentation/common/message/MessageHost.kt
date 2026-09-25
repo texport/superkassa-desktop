@@ -16,7 +16,7 @@ import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
-import kz.mybrain.superkassa.strings.api.common.AppStrings
+import kz.mybrain.superkassa.strings.api.common.CommonTexts
 
 /**
  * Сообщения кассиру — снекбаром поверх содержимого.
@@ -82,7 +82,7 @@ fun MessageEffect(
         val text = messageText(current, texts)
         val result = state.showSnackbar(
             message = text,
-            actionLabel = texts.common.hide,
+            actionLabel = texts.general.hide,
             withDismissAction = current !is Message.Done,
             duration = durationOf(current)
         )
@@ -97,11 +97,11 @@ fun MessageEffect(
  * и «KKM_BRANDING_SETTINGS_REQUIRES_PROGRAMMING» рядом с ними — служебный
  * шум. Код уходит в журнал, а на экран попадает только там, где слов нет вовсе.
  */
-internal fun messageText(message: Message, texts: AppStrings): String = when (message) {
+internal fun messageText(message: Message, texts: CommonTexts): String = when (message) {
     is Message.Done -> message.text
-    is Message.Refusal -> message.text.ifBlank { "${texts.common.refusalCode}: ${message.code}" }
-    is Message.NoAnswer -> "${texts.common.noAnswer}${Glyphs.SEPARATOR}${message.what}"
-    is Message.Failed -> "${texts.common.kassaFailed}${Glyphs.SEPARATOR}${message.what}"
+    is Message.Refusal -> message.text.ifBlank { "${texts.general.refusalCode}: ${message.code}" }
+    is Message.NoAnswer -> "${texts.general.noAnswer}${Glyphs.SEPARATOR}${message.what}"
+    is Message.Failed -> "${texts.general.kassaFailed}${Glyphs.SEPARATOR}${message.what}"
 }
 
 /**

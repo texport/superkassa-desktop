@@ -84,7 +84,7 @@ private fun WideBar(
         horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        PinField(state.pin, actions, Modifier.fieldWidth(LocalStrings.current.common.pin, Sizes.fieldPin), onGo)
+        PinField(state.pin, actions, Modifier.fieldWidth(LocalStrings.current.general.pin, Sizes.fieldPin), onGo)
         ChosenKkm(state, modifier = Modifier.weight(1f).underFieldLabel())
         ReloadButton(actions, Modifier.underFieldLabel())
         EnterButton(ready, actions)
@@ -140,7 +140,7 @@ private fun PinField(pin: String, actions: LoginActions, modifier: Modifier, onG
     OutlinedTextField(
         value = pin,
         onValueChange = actions::typePin,
-        label = { Text(texts.common.pin) },
+        label = { Text(texts.general.pin) },
         singleLine = true,
         visualTransformation = PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword, imeAction = ImeAction.Go),

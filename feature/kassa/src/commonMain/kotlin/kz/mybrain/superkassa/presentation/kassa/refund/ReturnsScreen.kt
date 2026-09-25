@@ -108,7 +108,7 @@ private fun ColumnScope.ReturnHeader(
         ChoiceSegments(
             options = ReturnKind.entries,
             selected = kind,
-            label = { it.shortTitle(texts.sale) },
+            label = { it.shortTitle(texts.receipt) },
             onSelect = onKind
         )
         // Правило возврата — под значком: кассир читает его один раз,

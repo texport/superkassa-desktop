@@ -47,7 +47,7 @@ internal fun KkmBarActions(shell: ShellUiState, look: LookViewModel, onSignOut: 
     KkmStatusChips(shell.kkm)
     if (width >= WidthClass.Large) {
         IconButton(onClick = onRefresh) {
-            Icon(AppIcons.refresh, contentDescription = texts.common.refresh)
+            Icon(AppIcons.refresh, contentDescription = texts.general.refresh)
         }
         ThemeSwitch(look)
         LanguagePicker(look)
@@ -57,7 +57,7 @@ internal fun KkmBarActions(shell: ShellUiState, look: LookViewModel, onSignOut: 
         ShellMenu(look, onRefresh, onSignOut.takeIf { signOutFolded })
     }
     if (!signOutFolded) {
-        TextButton(onClick = onSignOut) { Text(texts.shell.changeCashier) }
+        TextButton(onClick = onSignOut) { Text(texts.topBar.changeCashier) }
     }
 }
 
@@ -73,7 +73,7 @@ private fun ShellMenu(look: LookViewModel, onRefresh: () -> Unit, onSignOut: (()
     val close = { open = false }
     Box {
         IconButton(onClick = { open = true }) {
-            Icon(AppIcons.moreActions, contentDescription = texts.shell.moreActions)
+            Icon(AppIcons.moreActions, contentDescription = texts.topBar.moreActions)
         }
         DropdownMenu(expanded = open, onDismissRequest = close) {
             ShellMenuItems(look, close, onRefresh, onSignOut)
@@ -86,7 +86,7 @@ private fun ShellMenu(look: LookViewModel, onRefresh: () -> Unit, onSignOut: (()
 private fun ShellMenuItems(look: LookViewModel, close: () -> Unit, onRefresh: () -> Unit, onSignOut: (() -> Unit)?) {
     val texts = LocalStrings.current
     DropdownMenuItem(
-        text = { Text(texts.common.refresh) },
+        text = { Text(texts.general.refresh) },
         leadingIcon = { Icon(AppIcons.refresh, contentDescription = null) },
         onClick = {
             close()
@@ -99,7 +99,7 @@ private fun ShellMenuItems(look: LookViewModel, close: () -> Unit, onRefresh: ()
     if (onSignOut != null) {
         HorizontalDivider()
         DropdownMenuItem(
-            text = { Text(texts.shell.changeCashier) },
+            text = { Text(texts.topBar.changeCashier) },
             onClick = {
                 close()
                 onSignOut()

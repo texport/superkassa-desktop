@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.presentation.setup.SetupUiState
  */
 @Composable
 internal fun OfdStep(state: SetupUiState, actions: SetupActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     val form = state.byHand
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),

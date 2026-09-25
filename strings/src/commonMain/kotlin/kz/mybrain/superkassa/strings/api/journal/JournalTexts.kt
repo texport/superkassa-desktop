@@ -18,7 +18,7 @@ data class JournalTexts(
     val shifts: ShiftJournalTexts,
     val queue: QueueJournalTexts,
     /** Доставка чека покупателю из журнала. */
-    val delivery: DeliveryTexts,
+    val delivery: DeliveryJournalTexts,
     /** Отказы БФД словами кассира. */
     val ofdRefusal: OfdRefusalTexts
 )

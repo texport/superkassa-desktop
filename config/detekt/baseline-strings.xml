@@ -48,22 +48,7 @@
     <ID>MaxLineLength:MoneyTextsRu.kt$deleteBlocked = "Единственного администратора удалять нельзя: некому будет заводить кассиров и менять настройки. Заведите второго администратора, потом удаляйте."</ID>
     <ID>MaxLineLength:MoneyTextsRu.kt$listHint</ID>
     <ID>MaxLineLength:MoneyTextsRu.kt$recentHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$autoCashoutHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$printFormHint</ID>
-    <ID>MaxLineLength:ServiceStringsEn.kt$taxSettingsHint</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$mapServicesHint = "Мекенжай көрсетілмегенше, қоғамдастықтың ашық картасы жұмыс істейді: ол барлық иелерге есептелмеген"</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$printFormHint</ID>
-    <ID>MaxLineLength:ServiceStringsKk.kt$taxSettingsHint</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$appearanceHint</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$mapServicesHint = "Пока адрес не задан, работает общедоступная карта сообщества: на всех владельцев она не рассчитана"</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$printFormHint</ID>
-    <ID>MaxLineLength:ServiceStringsRu.kt$taxSettingsHint</ID>
     <ID>MaxLineLength:SetupTextsEn.kt$stepAdminHint = "The token is issued by the cabinet and never written to a file: resume later and a new one is issued"</ID>
-    <ID>MaxLineLength:WorkStringsEn.kt$sendQueuedRules = "Only an admin can flush the queue: the shift must be closed and the register in programming mode."</ID>
-    <ID>MaxLineLength:WorkStringsKk.kt$sendQueuedRules = "Жинақталғанды әкімші жібереді: ауысым жабық болуы және касса бағдарламалау режимінде болуы керек."</ID>
-    <ID>MaxLineLength:WorkStringsRu.kt$sendQueuedRules = "Досылку накопленного делает администратор: смена должна быть закрыта, а касса переведена в режим программирования."</ID>
     <ID>MaximumLineLength:AnalyticsTextsEn.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsTextsKk.kt$ </ID>
     <ID>MaximumLineLength:AnalyticsTextsRu.kt$ </ID>
@@ -73,12 +58,6 @@
     <ID>MaximumLineLength:MoneyTextsEn.kt$ </ID>
     <ID>MaximumLineLength:MoneyTextsKk.kt$ </ID>
     <ID>MaximumLineLength:MoneyTextsRu.kt$ </ID>
-    <ID>MaximumLineLength:ServiceStringsEn.kt$ </ID>
-    <ID>MaximumLineLength:ServiceStringsKk.kt$ </ID>
-    <ID>MaximumLineLength:ServiceStringsRu.kt$ </ID>
     <ID>MaximumLineLength:SetupTextsEn.kt$ </ID>
-    <ID>MaximumLineLength:WorkStringsEn.kt$ </ID>
-    <ID>MaximumLineLength:WorkStringsKk.kt$ </ID>
-    <ID>MaximumLineLength:WorkStringsRu.kt$ </ID>
   </CurrentIssues>
 </SmellBaseline>

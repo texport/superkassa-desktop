@@ -133,6 +133,6 @@ internal val journalTextsEn = JournalTexts(
             "nothing is known about waiting documents.",
         emptyBlockedHint = "Nothing to send: the cash register is blocked and issues no new documents."
     ),
-    delivery = deliveryTextsEn,
+    delivery = deliveryJournalTextsEn,
     ofdRefusal = ofdRefusalTextsEn
 )

@@ -20,7 +20,7 @@ import kotlin.test.assertNull
  */
 class PositionDetailsTest {
 
-    private val labels = textsOf(Language.Ru).common.sale
+    private val labels = textsOf(Language.Ru).common.receipt
     private val texts = textsOf(Language.Ru).kassa.sale
     private val units = measureUnits(Language.Ru)
     private val rates = listOf(VatRate("NO_VAT", "Без НДС"), VatRate("VAT_16", "НДС", percent = 16))

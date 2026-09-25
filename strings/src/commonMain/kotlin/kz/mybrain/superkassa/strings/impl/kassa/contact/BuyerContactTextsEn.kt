@@ -2,11 +2,11 @@ package kz.mybrain.superkassa.strings.impl.kassa.contact
 
 import kz.mybrain.superkassa.strings.api.kassa.contact.BuyerContactTexts
 import kz.mybrain.superkassa.strings.api.kassa.contact.ContactFieldTexts
-import kz.mybrain.superkassa.strings.api.kassa.contact.ContactKindNames
+import kz.mybrain.superkassa.strings.api.kassa.contact.ContactKindTexts
 
 /** Надписи [BuyerContactTexts] по-английски. */
 internal val buyerContactTextsEn = BuyerContactTexts(
-    kinds = ContactKindNames(
+    kinds = ContactKindTexts(
         none = "Don't send",
         phone = "Phone",
         email = "Email",

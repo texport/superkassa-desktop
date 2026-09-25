@@ -52,7 +52,7 @@ internal fun IssuedCard(
             verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
         ) {
             Text(
-                text = "${texts.issued}: ${issued.operation.title(LocalStrings.current.sale)}",
+                text = "${texts.issued}: ${issued.operation.title(LocalStrings.current.receipt)}",
                 style = MaterialTheme.typography.titleLarge
             )
             Figure(texts.issuedSum, issued.total, MoneyStyle.row)

@@ -28,7 +28,7 @@ fun WorkplaceSettingsScreen(board: SettingsBoard, onBack: () -> Unit) {
         // Оформление и язык переключаются и здесь: на экране входа они есть,
         // и терять их, зайдя в настройки, странно — особенно язык, которым
         // читают сами настройки.
-        AppTopBar(title = texts.settings.workplace, onBack = onBack, backLabel = texts.common.hide) {
+        AppTopBar(title = texts.settingsScreen.workplace, onBack = onBack, backLabel = texts.general.hide) {
             ThemeSwitch(board.look)
             LanguagePicker(board.look)
         }

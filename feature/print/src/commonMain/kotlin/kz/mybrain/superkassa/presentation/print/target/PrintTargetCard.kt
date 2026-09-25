@@ -30,13 +30,13 @@ import kz.mybrain.superkassa.strings.api.textsOf
 @Composable
 fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetActions) {
     val texts = LocalStrings.current
-    SectionCard(title = texts.settings.printer, info = texts.settings.printerHint) {
+    SectionCard(title = texts.settingsScreen.printer, info = texts.settingsScreen.printerHint) {
         if (target.systemDialog) {
             SystemDialogNote()
         } else {
             PrinterChoice(target, actions)
         }
-        PartTitle(texts.settings.printKind)
+        PartTitle(texts.settingsScreen.printKind)
         WideChoiceSegments(
             options = PrintKind.entries,
             selected = target.kind,
@@ -56,10 +56,10 @@ fun PrintTargetCard(target: PrintTargetUiState, actions: PrintTargetActions) {
 @Composable
 private fun PrinterChoice(target: PrintTargetUiState, actions: PrintTargetActions) {
     val texts = LocalStrings.current
-    if (target.noPrinters) Warning(texts.settings.printerNone)
+    if (target.noPrinters) Warning(texts.settingsScreen.printerNone)
     if (target.printerGone) Warning(textsOf(LocalLanguage.current).print.printerGone)
     PrinterPicker(target, actions)
-    PartTitle(texts.settings.printCopies)
+    PartTitle(texts.settingsScreen.printCopies)
     WideChoiceSegments(
         options = target.copyChoices,
         selected = target.copies,
@@ -94,7 +94,7 @@ private fun SystemDialogNote() {
  */
 @Composable
 private fun PrinterPicker(target: PrintTargetUiState, actions: PrintTargetActions) {
-    val texts = LocalStrings.current.settings
+    val texts = LocalStrings.current.settingsScreen
     LabelledPicker(
         label = texts.printer,
         options = listOf(Printer(null)) + target.printers.map(::Printer),

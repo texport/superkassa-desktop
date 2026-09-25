@@ -12,7 +12,7 @@ package kz.mybrain.superkassa.strings.api.kassa.contact
  * @property unavailable строка вместо выбора, когда не настроен ни один канал.
  */
 data class BuyerContactTexts(
-    val kinds: ContactKindNames,
+    val kinds: ContactKindTexts,
     val labels: ContactFieldTexts,
     val formats: ContactFieldTexts,
     val hint: String,
@@ -22,7 +22,7 @@ data class BuyerContactTexts(
 )
 
 /** Название каждого вида контакта: так он назван на сегменте выбора. */
-data class ContactKindNames(
+data class ContactKindTexts(
     /** Чек покупателю не отправляется. */
     val none: String,
     val phone: String,
