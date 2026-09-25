@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:AnalyticsKkmDialog.kt$@Composable private fun DialogHead( kkm: AnalyticsKkm, texts: AnalyticsTexts, cabinet: CabinetTexts, onClose: () -&gt; Unit )</ID>
+    <ID>LongMethod:AnalyticsMapLayout.kt$@Composable internal fun HeadOverMap( modifier: Modifier = Modifier, head: @Composable () -&gt; Unit, body: @Composable () -&gt; Unit )</ID>
+    <ID>LongMethod:AnalyticsMapWindow.kt$@Composable internal fun MapWindow( parts: MapParts, fullscreen: Boolean, onFullscreen: () -&gt; Unit, modifier: Modifier = Modifier )</ID>
+    <ID>LongMethod:AnalyticsPinCard.kt$@Composable internal fun AnalyticsPinCard( kkm: AnalyticsKkm?, source: PositionSource, texts: AnalyticsTexts, cabinet: CabinetTexts, modifier: Modifier = Modifier, neighbours: Int = 0, onNeighbours: () -&gt; Unit = {}, onSales: (AnalyticsKkm) -&gt; Unit = {}, expanded: Boolean = true, onToggle: (() -&gt; Unit)? = null )</ID>
+    <ID>LongMethod:AnalyticsSalesBody.kt$@Composable internal fun AnalyticsSalesBody( view: SalesView, texts: AnalyticsTexts, enums: EnumStrings, journal: HistoryJournalTexts, cabinet: CabinetTexts, modifier: Modifier = Modifier, register: String? = null )</ID>
+    <ID>LongMethod:AnalyticsSalesRegions.kt$@Composable private fun RegionShare(percent: Int)</ID>
+    <ID>LongMethod:AnalyticsSalesRenderTest.kt$AnalyticsSalesRenderTest$private fun view(days: Int = DAYS, rows: Int = ROWS)</ID>
+    <ID>LongMethod:AnalyticsUnplaced.kt$@Composable internal fun AnalyticsKkmList( placed: List&lt;PlacedKkm&gt;, unplaced: List&lt;UnplacedKkm&gt;, chosen: String?, source: PositionSource, texts: AnalyticsTexts, onChoose: (PlacedKkm) -&gt; Unit, modifier: Modifier = Modifier, sieved: Boolean = false )</ID>
+    <ID>LongParameterList:AnalyticsPinCard.kt$( kkm: AnalyticsKkm?, source: PositionSource, texts: AnalyticsTexts, cabinet: CabinetTexts, modifier: Modifier = Modifier, neighbours: Int = 0, onNeighbours: () -&gt; Unit = {}, onSales: (AnalyticsKkm) -&gt; Unit = {}, expanded: Boolean = true, onToggle: (() -&gt; Unit)? = null )</ID>
+    <ID>LongParameterList:AnalyticsUnplaced.kt$( placed: List&lt;PlacedKkm&gt;, unplaced: List&lt;UnplacedKkm&gt;, chosen: String?, source: PositionSource, texts: AnalyticsTexts, onChoose: (PlacedKkm) -&gt; Unit, modifier: Modifier = Modifier, sieved: Boolean = false )</ID>
+    <ID>ReturnCount:AnalyticsSalesGeometry.kt$internal fun barAt(x: Float, width: Int, count: Int): Int?</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -8,11 +8,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.Look
+import kz.mybrain.superkassa.MapScene
 import kz.mybrain.superkassa.RenderProbe
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterAddress
 import kz.mybrain.superkassa.idleCabinet
-import kz.mybrain.superkassa.presentation.analytics.AnalyticsLook
 import kz.mybrain.superkassa.presentation.cabinet.places.component.CabinetRegistry
 import kz.mybrain.superkassa.presentation.common.mapview.CITY_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
@@ -36,15 +36,15 @@ class PlaceMapShots {
     /** Метка поставлена: координаты в подвале и кнопка выбора доступна. */
     @Test
     fun `метка поставлена`() = look("place-map-marked") {
-        MapState().also { it.mark(AnalyticsLook.LATITUDE, AnalyticsLook.LONGITUDE) }
+        MapState().also { it.mark(MapScene.LATITUDE, MapScene.LONGITUDE) }
     }
 
     /** Координаты введены руками: карта встала на них, метка та же. */
     @Test
     fun `координаты введены руками`() = look("place-map-by-degrees") {
         MapState().also {
-            it.show(AnalyticsLook.LATITUDE, AnalyticsLook.LONGITUDE, HOUSE_ZOOM)
-            it.mark(AnalyticsLook.LATITUDE, AnalyticsLook.LONGITUDE)
+            it.show(MapScene.LATITUDE, MapScene.LONGITUDE, HOUSE_ZOOM)
+            it.mark(MapScene.LATITUDE, MapScene.LONGITUDE)
         }
     }
 
@@ -52,15 +52,15 @@ class PlaceMapShots {
     @Test
     fun `своё место известно лишь городом`() = look("place-map-city-only") {
         MapState().also {
-            it.showLocation(AnalyticsLook.LATITUDE, AnalyticsLook.LONGITUDE, city = "Алматы", toZoom = CITY_ZOOM)
-            it.mark(AnalyticsLook.LATITUDE, AnalyticsLook.LONGITUDE)
+            it.showLocation(MapScene.LATITUDE, MapScene.LONGITUDE, city = "Алматы", toZoom = CITY_ZOOM)
+            it.mark(MapScene.LATITUDE, MapScene.LONGITUDE)
         }
     }
 
     /** Окно у готовой точки: адрес уже выбран в регистре. */
     @Test
     fun `адрес точки уже выбран`() = look("place-map-with-address", address = HOUSE) {
-        MapState().also { it.mark(AnalyticsLook.LATITUDE, AnalyticsLook.LONGITUDE) }
+        MapState().also { it.mark(MapScene.LATITUDE, MapScene.LONGITUDE) }
     }
 
     /**
@@ -99,7 +99,7 @@ class PlaceMapShots {
 @Composable
 private fun PickerLook(address: RegisterAddress?, state: MapState) {
     val registry = remember { CabinetRegistry(idleCabinet()) }
-    val cases = remember { AnalyticsLook.mapCases() }
+    val cases = remember { MapScene.cases() }
     val parts = remember {
         val pick = MapAddressPick(address, Language.Ru)
         MapPickerParts(cases, cases.tiles(), cases.locating(), registry, pick, state)

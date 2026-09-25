@@ -55,10 +55,15 @@ class ScreensPlugin : Plugin<Project> {
         const val TESTING = ":testing"
         const val DATA = ":data"
 
-        /** Библиотеки проверок JVM: утверждения, корутины, стенд ядра и подставной обмен кабинета. */
+        /**
+         * Библиотеки проверок JVM: утверждения, корутины, стенд ядра и подставной
+         * обмен кабинета. Главный поток проверок без подмены — поток Swing,
+         * как в окне настольной кассы.
+         */
         val TEST_LIBRARIES = listOf(
             "kotlin-test",
             "kotlinx-coroutines-test",
+            "kotlinx-coroutines-swing",
             "superkassa-core-testing",
             "ktor-client-mock",
             "ktor-client-content-negotiation",

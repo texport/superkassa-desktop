@@ -1,5 +1,7 @@
 package kz.mybrain.superkassa.kassa
 
+import kz.mybrain.superkassa.MapScene
+import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.journal.port.NoDeliveries
 import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
@@ -7,7 +9,7 @@ import kz.mybrain.superkassa.domain.kassa.port.Kassa
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
-import kz.mybrain.superkassa.presentation.analytics.analyticsPorts
+import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.settings.MachinePorts
 import kz.mybrain.superkassa.presentation.settings.settingsPorts
@@ -54,7 +56,7 @@ fun areaPorts(
     print = settings.print,
     update = settings.update,
     debug = settings.debug,
-    analytics = analyticsPorts()
+    analytics = AnalyticsPorts(FakeAnalytics(), MapScene.ports())
 )
 
 /** Контейнер окна над кассой рабочего места [CoreDesk] — для снимков окна с каркасом. */

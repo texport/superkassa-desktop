@@ -3,10 +3,12 @@ package kz.mybrain.superkassa.presentation.settings
 import io.github.texport.superkassa.testing.api.kassa.ReadyKassa
 import io.github.texport.superkassa.testing.api.kassa.TestBench
 import kotlinx.coroutines.Dispatchers
+import kz.mybrain.superkassa.MapScene
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliveries
 import kz.mybrain.superkassa.data.kassa.delivery.EmbeddedDeliverySetup
 import kz.mybrain.superkassa.data.kassa.settings.EmbeddedSettings
+import kz.mybrain.superkassa.domain.analytics.port.FakeAnalytics
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.domain.log.port.Journal
@@ -16,7 +18,7 @@ import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.kassa.MemoryLook
 import kz.mybrain.superkassa.kassa.appBench
 import kz.mybrain.superkassa.kassa.appKassa
-import kz.mybrain.superkassa.presentation.analytics.analyticsPorts
+import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.WindowServices
@@ -68,7 +70,7 @@ class SettingsBench : AutoCloseable {
             print = machine.print,
             update = machine.update,
             debug = machine.debug,
-            analytics = analyticsPorts()
+            analytics = AnalyticsPorts(FakeAnalytics(), MapScene.ports())
         )
     )
 

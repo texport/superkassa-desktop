@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.presentation.analytics
 
+import kz.mybrain.superkassa.data.analytics.AnalyticsFixtures
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.TextScale
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance

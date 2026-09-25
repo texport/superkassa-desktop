@@ -18,8 +18,11 @@ object MapScene {
     const val LATITUDE = 43.238949
     const val LONGITUDE = 76.889709
 
-    /** Сценарии карты без сети и со своей памятью: чужие настройки не трогать. */
-    fun cases(): MapCases = MapPorts(QuietMaps(), MemoryMapMemory()).cases()
+    /** Службы карты без сети и со своей памятью: чужие настройки не трогать. */
+    fun ports(): MapPorts = MapPorts(QuietMaps(), MemoryMapMemory())
+
+    /** Сценарии карты на [ports]. */
+    fun cases(): MapCases = ports().cases()
 
     /** Плитки, которых не будет: ни сети, ни чужого кэша. */
     fun tiles(): MapTiles = cases().tiles()

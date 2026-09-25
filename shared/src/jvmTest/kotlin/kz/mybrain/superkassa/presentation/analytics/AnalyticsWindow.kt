@@ -26,12 +26,14 @@ import kz.mybrain.superkassa.CabinetRig
 import kz.mybrain.superkassa.CabinetWire
 import kz.mybrain.superkassa.KassaScene
 import kz.mybrain.superkassa.RenderProbe
+import kz.mybrain.superkassa.data.analytics.AnalyticsFixtures
 import kz.mybrain.superkassa.data.analytics.CabinetReplies
 import kz.mybrain.superkassa.designsystem.theme.Look
 import kz.mybrain.superkassa.designsystem.theme.color.Appearance
 import kz.mybrain.superkassa.desk
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetCompany
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetUser
+import kz.mybrain.superkassa.kassa.analyzing
 import kz.mybrain.superkassa.presentation.common.look.lookModel
 import kz.mybrain.superkassa.presentation.common.model.ProvideWindowModels
 import kz.mybrain.superkassa.presentation.common.model.WindowModels

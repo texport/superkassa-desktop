@@ -5,18 +5,6 @@
 # место, и на исправленное, но не вычеркнутое.
 #
 # Формат: <файл от kz/mybrain/superkassa> -> <токен>
-presentation/analytics/exchange/AnalyticsExchangeScreen.kt -> Sizes.fieldSearch
-presentation/analytics/kkm/AnalyticsKkmDialog.kt -> Sizes.kkmSalesHeight
-presentation/analytics/kkm/AnalyticsKkmDialog.kt -> Sizes.kkmSalesWidth
-presentation/analytics/map/AnalyticsMapFull.kt -> Sizes.unplacedColumn
-presentation/analytics/map/component/AnalyticsMapLegend.kt -> Sizes.mapNoteWidth
-presentation/analytics/map/component/AnalyticsSpotCard.kt -> Sizes.spotList
-presentation/analytics/record/AnalyticsRecordTiles.kt -> Sizes.counterTile
-presentation/analytics/sales/AnalyticsSalesOverview.kt -> Sizes.salesTile
-presentation/analytics/sales/AnalyticsSalesRegions.kt -> Sizes.shareBar
-presentation/analytics/sales/AnalyticsSalesTiles.kt -> Sizes.salesTile
-presentation/analytics/sales/chart/AnalyticsSalesChart.kt -> Sizes.chartHeight
-presentation/analytics/sales/chart/AnalyticsSalesShares.kt -> Sizes.shareBar
 presentation/cabinet/places/component/PlacePoint.kt -> Sizes.fieldForm
 presentation/cabinet/places/component/PlaceTree.kt -> Sizes.registerColumn
 presentation/settings/core/DeliveryCard.kt -> Sizes.fieldForm
