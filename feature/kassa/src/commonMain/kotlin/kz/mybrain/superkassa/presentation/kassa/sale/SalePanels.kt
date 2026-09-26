@@ -11,14 +11,21 @@ import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
  *
  * Названы по смыслу, а не по месту на экране: имя уходит в настройки
  * рабочего места и должно пережить перестановку карточек.
+ *
+ * @property setting подпись переключателя в настройках и что значит
+ *   «включено»; `null` — в настройках раздела нет: ручной ввод позиции
+ *   у нового чека открыт всегда, и переключатель его не менял бы.
  */
-enum class SalePanel(val title: (SettingsScreenTexts) -> String) {
-    PositionEntry({ it.panelPositionEntry }),
-    ReceiptChanges({ it.panelReceiptChanges }),
-    CustomerData({ it.panelCustomerData }),
-    Money({ it.panelMoney }),
-    Till({ it.panelTill })
+enum class SalePanel(val setting: ((SettingsScreenTexts) -> PanelSetting)?) {
+    PositionEntry(null),
+    ReceiptChanges({ PanelSetting(it.panelReceiptChanges, it.panelReceiptChangesHint) }),
+    CustomerData({ PanelSetting(it.panelCustomerData, it.panelCustomerDataHint) }),
+    Money({ PanelSetting(it.panelMoney, it.panelMoneyHint) }),
+    Till({ PanelSetting(it.panelTill, it.panelTillHint) })
 }
+
+/** Переключатель раздела в настройках: название и что будет, когда он включён. */
+class PanelSetting(val title: String, val hint: String)
 
 /**
  * Что развёрнуто в кассовой колонке.

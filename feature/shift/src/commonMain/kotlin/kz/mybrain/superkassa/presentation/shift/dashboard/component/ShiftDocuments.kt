@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.shift.dashboard.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -139,7 +140,15 @@ private fun DocumentRow(
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 }
 
-/** Номер документа, доставка и код отказа — переносятся, а не сжимаются. */
+/**
+ * Номер документа, доставка и код отказа — переносятся, а не сжимаются.
+ *
+ * Всё в строке стоит на одной базовой линии: `ListItem` Material 3 считает
+ * подпись многострочной, когда её первая и последняя базовые линии не
+ * совпадают, и отводит строке рост трёхстрочного пункта. Номер и плашка,
+ * выровненные по середине, давали разные линии, и под каждым документом
+ * главного экрана стояла пустая полоса.
+ */
 @Composable
 private fun DocumentFacts(document: FiscalDocumentResponse) {
     val texts = LocalStrings.current
@@ -149,9 +158,10 @@ private fun DocumentFacts(document: FiscalDocumentResponse) {
         Text(
             text = document.number?.let { "${texts.dashboard.documentNo} $it" } ?: Glyphs.DASH,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.alignByBaseline()
         )
-        DocumentDeliveryChip(document)
+        Box(modifier = Modifier.alignByBaseline()) { DocumentDeliveryChip(document) }
         // Код отказа вместо кнопки повтора: документ, который ОФД
         // отверг, повторной отправкой не исправить — операцию нужно
         // провести заново. Кассиру полезен не повтор, а причина.
@@ -159,7 +169,8 @@ private fun DocumentFacts(document: FiscalDocumentResponse) {
             Text(
                 text = "${texts.general.refusalCode} $code",
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.error
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.alignByBaseline()
             )
         }
     }

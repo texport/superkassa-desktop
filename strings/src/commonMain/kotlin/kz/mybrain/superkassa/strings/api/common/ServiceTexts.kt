@@ -147,13 +147,17 @@ data class SettingsScreenTexts(
     val mapReverse: String,
     val mapLocation: String,
     val mapDefault: String,
+    /** Что значит переключатель раздела продажи: включено — развёрнут, выключено — свёрнут. */
     val panelBehaviourHint: String,
-    val panelPositionEntry: String,
     val panelReceiptChanges: String,
+    val panelReceiptChangesHint: String,
     val panelCustomerData: String,
+    val panelCustomerDataHint: String,
     val panelMoney: String,
-    /** Вся кассовая колонка продажи: сбоку или нижним листом, до итога. */
+    val panelMoneyHint: String,
+    /** Касса продажи нижним листом узкого окна; на широком она видна всегда. */
     val panelTill: String,
+    val panelTillHint: String,
     val printLayoutHint: String,
     val layoutTape58: String,
     val layoutTape80: String,

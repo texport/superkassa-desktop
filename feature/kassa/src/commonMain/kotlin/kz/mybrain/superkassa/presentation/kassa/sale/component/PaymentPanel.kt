@@ -48,6 +48,8 @@ internal fun PaymentPanel(state: SaleUiState, actions: PaymentActions) {
         )
         // Остаётся только правило: принятые деньги и сдачу спрашивают
         // при наличных, и об этом сказано до того, как кассир их искал.
-        Hint(problem = null, hint = if (state.form.split.hasCash) null else extra.takenOnlyCash)
+        // С наличными строки нет вовсе: пустая, она держала место между
+        // «Добавить оплату» и «Принято», и отступ там был втрое шире прочих.
+        if (!state.form.split.hasCash) Hint(problem = null, hint = extra.takenOnlyCash)
     }
 }

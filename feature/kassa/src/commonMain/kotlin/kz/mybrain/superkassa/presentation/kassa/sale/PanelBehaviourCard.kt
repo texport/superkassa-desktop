@@ -26,6 +26,10 @@ fun PanelBehaviourCard(memory: WorkplaceMemory) {
  * Разделы кассовой колонки переключателями — по состоянию, без памяти
  * рабочего места: так группу рисуют и превью.
  *
+ * Переключатель включён — раздел развёрнут при входе в продажу; под
+ * названием сказано, что именно откроется. Прежде стояли одни названия,
+ * и владелец не понимал, включённый раздел — это открытый или скрытый.
+ *
  * @param expanded развёрнут ли раздел, когда продажу открывают.
  * @param onToggle раздел переключили.
  */
@@ -38,7 +42,8 @@ fun PanelBehaviourGroup(expanded: (SalePanel) -> Boolean, onToggle: (SalePanel) 
     ) {
         ListRows {
             SalePanel.entries.forEach { panel ->
-                SwitchRow(panel.title(texts.settingsScreen), expanded(panel), { onToggle(panel) })
+                val words = panel.setting?.invoke(texts.settingsScreen) ?: return@forEach
+                SwitchRow(words.title, expanded(panel), { onToggle(panel) }, hint = words.hint)
             }
         }
     }

@@ -106,8 +106,10 @@ private fun PaymentRow(
  *
  * Остаток чека берёт наличная строка, а без наличных — последняя: поле
  * только показывает остаток и краснеет, когда по прочим видам расписано
- * больше итога. Остаток набран как всякая сумма кассы — разрядами и знаком
- * минуса: отрицательный он был единственной суммой с дефисом и без разрядов.
+ * больше итога. Подпись у него та же — «Сумма», — а откуда она берётся,
+ * сказано под полем: прежде поле называлось «Остаток», и кассир не понимал,
+ * что его не набирают. Остаток набран как всякая сумма кассы — разрядами
+ * и знаком минуса.
  */
 @Composable
 private fun AmountField(split: PaymentSplit, at: Int, total: Long, actions: PaymentActions) {
@@ -117,7 +119,8 @@ private fun AmountField(split: PaymentSplit, at: Int, total: Long, actions: Paym
     val rest = total - split.assigned()
     MoneyField(
         value = if (takesRest) restShown(rest) else line.amount,
-        label = if (takesRest) texts.rest else texts.amount,
+        label = texts.amount,
+        supportingText = texts.rest.takeIf { takesRest },
         modifier = Modifier.fillMaxWidth(),
         isError = if (takesRest) rest <= 0L else line.amount.isNotBlank() && line.value == null,
         readOnly = takesRest,
