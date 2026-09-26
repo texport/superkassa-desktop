@@ -25,6 +25,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.theme.type.MoneyStyle
 import kz.mybrain.superkassa.domain.kassa.model.sale.IssuedReceipt
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.common.print.ShareAction
 import kz.mybrain.superkassa.presentation.kassa.sale.ReceiptOutput
 import kz.mybrain.superkassa.presentation.words.kassa.title
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -70,7 +71,11 @@ private fun Figure(label: String, tiyn: Long, style: TextStyle) {
     MoneyText(Money.formatTiyn(tiyn), Modifier.fillMaxWidth(), style)
 }
 
-/** Показать и распечатать: тональная и обводная, главное действие экрана — не здесь. */
+/**
+ * Показать, распечатать и поделиться: тональная и обводные, главное действие
+ * экрана — не здесь. «Поделиться» отдаёт чек тем, чем покупателю пишут
+ * и так, — окном «Поделиться» Android или мессенджером компьютера.
+ */
 @Composable
 private fun IssuedActions(documentId: String, output: ReceiptOutput, show: String, print: String) {
     WrapRow(spacing = Spacing.buttonGap) {
@@ -79,6 +84,11 @@ private fun IssuedActions(documentId: String, output: ReceiptOutput, show: Strin
         }
         output.print?.let { send ->
             OutlinedButton(onClick = { send(documentId) }) { Labelled(AppIcons.print, print) }
+        }
+        ShareAction(output.shareWays, { way -> output.share(documentId, way) }) { open ->
+            OutlinedButton(onClick = open) {
+                Labelled(AppIcons.share, textsOf(LocalLanguage.current).common.share.share)
+            }
         }
     }
 }

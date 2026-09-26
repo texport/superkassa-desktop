@@ -17,24 +17,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.theme.size.Tape
+import kz.mybrain.superkassa.domain.print.model.ShareWay
+import kz.mybrain.superkassa.presentation.common.print.ShareAction
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Что можно сделать с открытой формой.
  *
  * @param onPrint отправка на принтер; `null` — печатать нечем.
  * @param onSave сохранение в файл; `null` — сохранять нечем.
+ * @param share поделиться формой с покупателем.
  */
 internal class PreviewActions(
     val tapeWidth: Dp,
     val onWidth: (Dp) -> Unit,
     val onPrint: (() -> Unit)?,
     val onSave: (() -> Unit)?,
+    val share: PreviewShare,
     val onDismiss: () -> Unit
 )
+
+/**
+ * «Поделиться» в окне формы: пути машины и что сделать по выбранному.
+ *
+ * @property ways пути этой машины; пусто — кнопки нет.
+ */
+class PreviewShare(val ways: List<ShareWay> = emptyList(), val onShare: (ShareWay) -> Unit = {})
 
 /**
  * Шапка окна печатной формы — полноэкранный диалог Material 3.
@@ -67,10 +80,13 @@ internal fun FullScreenPreviewBar(actions: PreviewActions) {
     )
 }
 
-/** Сохранение и печать — словами; печать главная и стоит залитой. */
+/** Поделиться, сохранение и печать — словами; печать главная и стоит залитой. */
 @Composable
 private fun NamedActions(actions: PreviewActions) {
     val texts = LocalStrings.current.preview
+    ShareAction(actions.share.ways, actions.share.onShare) { open ->
+        TextButton(onClick = open) { Text(textsOf(LocalLanguage.current).common.share.share) }
+    }
     actions.onSave?.let { save -> TextButton(onClick = save) { Text(texts.save) } }
     actions.onPrint?.let { print ->
         Button(onClick = print) {

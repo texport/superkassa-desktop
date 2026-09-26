@@ -23,6 +23,7 @@ data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/map/MacLocation.kt — мес
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/Printing.kt — печать на системный принтер (javax.print, AWT)
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/SystemPrintOut.kt — принтеры и диск настольной машины
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/TapePrintable.kt — лента чека как страница печати AWT
+data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/LinkShare.kt — ссылки WhatsApp, Telegram и mailto открываются браузером и почтой машины (java.awt.Desktop)
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/GithubUpdates.kt — установщик под систему машины и открытие его системой
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/InstallerDownload.kt — скачивание установщика на диск со сверкой SHA-256
 
@@ -35,6 +36,7 @@ data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/workplace/SystemLan
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/log/LogcatJournal.kt — журнал системы Android (Logcat)
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/print/PdfPrintAdapter.kt — документ PDF для системного диалога печати Android
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/print/SystemDialogPrintOut.kt — печать системным диалогом Android
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/print/SystemShare.kt — окно «Поделиться» Android: Intent.ACTION_SEND и файл формы через FileProvider
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/releases/ApkUpdates.kt — APK выпуска отдаётся установщику системы через FileProvider, разрешение ставить приложения — настройкой Android
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/releases/ApkDownload.kt — скачивание APK в кэш приложения со сверкой SHA-256: java.security и движок OkHttp
 

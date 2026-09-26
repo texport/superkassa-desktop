@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.print.preview
 
 import kz.mybrain.superkassa.domain.print.model.PrintSource
+import kz.mybrain.superkassa.domain.print.model.ShareWay
 import kz.mybrain.superkassa.presentation.common.print.PrintActions
 
 /**
@@ -15,6 +16,9 @@ internal interface PaperActions {
 
     /** Сохранение открытой формы в файл выбранного вида. */
     fun saveShown() = Unit
+
+    /** Поделиться открытой формой с покупателем путём [way]. */
+    fun shareShown(way: ShareWay) = Unit
 
     /** Повтор того, на чём касса отказала. */
     fun retry() = Unit
@@ -40,6 +44,11 @@ internal fun PrintViewModel.actions(): PrintActions {
         override fun print(documentId: String) = model.print(PrintSource.Journal(documentId))
 
         override fun printPacket(packet: String) = model.print(PrintSource.Packet(packet, PACKET))
+
+        override val shareWays: List<ShareWay> get() = model.sharing.ways
+
+        override fun share(documentId: String, way: ShareWay) =
+            model.sharing.share(PrintSource.Journal(documentId), file = null, way = way)
     }
 }
 
@@ -50,6 +59,11 @@ internal fun PrintViewModel.paperActions(): PaperActions {
         override fun printShown() = model.printShown()
 
         override fun saveShown() = model.saveShown()
+
+        override fun shareShown(way: ShareWay) {
+            val source = model.shown ?: return
+            model.sharing.share(source, model.state.value.savingName, way)
+        }
 
         override fun retry() = model.retry()
 

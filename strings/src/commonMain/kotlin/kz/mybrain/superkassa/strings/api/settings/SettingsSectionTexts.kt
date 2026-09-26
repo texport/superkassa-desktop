@@ -23,8 +23,6 @@ data class SettingsSectionTexts(
     val taxesAbout: String,
     val bfd: String,
     val bfdAbout: String,
-    val delivery: String,
-    val deliveryAbout: String,
     val look: String,
     val lookAbout: String,
     val language: String,

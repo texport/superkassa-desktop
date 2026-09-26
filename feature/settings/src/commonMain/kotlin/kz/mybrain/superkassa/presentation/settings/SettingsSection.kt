@@ -45,7 +45,6 @@ internal enum class SettingsSection(
     Printing(SettingsShelf.Kkm, AppIcons.sectionPrinting, { it.printing }, { it.printingAbout }),
     Taxes(SettingsShelf.Kkm, AppIcons.sectionTaxes, { it.taxes }, { it.taxesAbout }),
     Bfd(SettingsShelf.Kkm, AppIcons.sectionBfd, { it.bfd }, { it.bfdAbout }),
-    Delivery(SettingsShelf.Kkm, AppIcons.receiptDelivery, { it.delivery }, { it.deliveryAbout }),
     Look(SettingsShelf.App, AppIcons.sectionLook, { it.look }, { it.lookAbout }),
     Language(SettingsShelf.App, AppIcons.sectionLanguage, { it.language }, { it.languageAbout }),
     SalePanels(SettingsShelf.App, AppIcons.sectionSalePanels, { it.salePanels }, { it.salePanelsAbout }),

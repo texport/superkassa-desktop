@@ -1,5 +1,7 @@
 package kz.mybrain.superkassa.presentation.print.preview
 
+import kz.mybrain.superkassa.domain.print.model.ShareWay
+
 /**
  * Печатная форма, открытая поверх разделов, и пин ради неё.
  *
@@ -11,13 +13,15 @@ package kz.mybrain.superkassa.presentation.print.preview
  * @property pinFor название кассы, чей пин спрашивается; `null` — пин
  *   не спрашивают. Пин у касс разный, и владелец должен видеть, к какой.
  * @property savingName как назовётся файл, если открытую форму сохранят.
+ * @property shareWays пути, которыми машина делится чеком; пусто — кнопки нет.
  */
 internal data class PrintUiState(
     val image: ByteArray? = null,
     val drawing: Boolean = false,
     val trouble: PrintTrouble? = null,
     val pinFor: String? = null,
-    val savingName: String? = null
+    val savingName: String? = null,
+    val shareWays: List<ShareWay> = emptyList()
 )
 
 /**

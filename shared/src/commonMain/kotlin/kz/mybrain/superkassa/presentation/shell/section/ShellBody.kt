@@ -14,6 +14,7 @@ import kz.mybrain.superkassa.navigation.step.SetupStepKey
 import kz.mybrain.superkassa.navigation.step.StepKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetScreen
 import kz.mybrain.superkassa.presentation.common.print.LocalPrint
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.presentation.journal.HistoryScreen
 import kz.mybrain.superkassa.presentation.journal.documents.journalViewModel
 import kz.mybrain.superkassa.presentation.journal.queue.QueueScreen
@@ -77,7 +78,7 @@ private fun SectionScreen(app: AppContainer, window: WindowParts, section: Secti
             DashboardScreen(dashboardViewModel(app.services), print::preview) { print.print(it.id) }
         }
         Section.Sale -> LocalPrint.current.let { print ->
-            val output = ReceiptOutput(show = { print.preview(it) }, print = print::print)
+            val output = receiptOutput(print)
             SaleScreen(saleViewModel(app.services, app.areas.kassa), output)
         }
         Section.Returns -> ReturnsScreen(returnsViewModel(app.services, app.areas.kassa), step is ReturnBasisKey)
@@ -94,6 +95,14 @@ private fun SectionScreen(app: AppContainer, window: WindowParts, section: Secti
         Section.Settings -> SettingsScreen(settingsOf(app, window), step as? SettingsSectionKey)
     }
 }
+
+/** Что продажа делает с пробитым чеком: показ, печать и «Поделиться» — печатью окна. */
+private fun receiptOutput(print: PrintActions): ReceiptOutput = ReceiptOutput(
+    show = { print.preview(it) },
+    print = print::print,
+    shareWays = print.shareWays,
+    share = print::share
+)
 
 /**
  * Мастер подключения окна; на платформе без мастера не рисуется ничего: двери к нему там нет.

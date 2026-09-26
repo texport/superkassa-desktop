@@ -5,4 +5,3 @@
 # место, и на исправленное, но не вычеркнутое.
 #
 # Формат: <файл от kz/mybrain/superkassa> -> <токен>
-presentation/settings/core/DeliveryCard.kt -> Sizes.fieldForm

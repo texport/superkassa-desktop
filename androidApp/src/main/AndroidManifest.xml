@@ -50,17 +50,18 @@
             </intent-filter>
         </activity>
 
-        <!-- Скачанный APK новой версии отдаётся установщику системы
-             по ссылке content://, а не путём к файлу: чужому процессу
-             каталог кэша кассы не виден. Отдаётся только каталог updates. -->
+        <!-- Файлы кассы для других программ — по ссылке content://, а не
+             путём: чужому процессу каталог кэша кассы не виден. Отдаются
+             только скачанный APK новой версии (установщику системы)
+             и форма чека, которой делятся с покупателем. -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.updates"
+            android:authorities="${applicationId}.files"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/update_files" />
+                android:resource="@xml/provided_files" />
         </provider>
     </application>
 

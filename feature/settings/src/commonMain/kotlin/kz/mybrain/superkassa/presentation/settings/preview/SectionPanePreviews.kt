@@ -43,10 +43,6 @@ private fun AboutSectionPreview() = Section(SettingsSection.About)
 
 @PanePreviews
 @Composable
-private fun DeliverySectionPreview() = Section(SettingsSection.Delivery)
-
-@PanePreviews
-@Composable
 private fun ConnectionSectionPreview() = Section(SettingsSection.Connection)
 
 @Composable

@@ -76,6 +76,7 @@ import androidx.compose.material.icons.outlined.Print
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sell
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material.icons.outlined.Visibility
@@ -127,6 +128,9 @@ object AppIcons {
 
     /** Просмотр печатной формы на экране. */
     val preview: ImageVector = Icons.Outlined.Visibility
+
+    /** Поделиться чеком с покупателем: окно «Поделиться» или мессенджер. */
+    val share: ImageVector = Icons.Outlined.Share
 
     /** Сохранение печатной формы в файл. */
     val save: ImageVector = Icons.Filled.Download

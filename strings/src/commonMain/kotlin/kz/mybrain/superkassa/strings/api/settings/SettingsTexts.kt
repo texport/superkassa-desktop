@@ -11,7 +11,6 @@ data class SettingsTexts(
     /** Настройки кассы на этой машине: сроки ожидания и связь с БФД. */
     val core: CoreSettingTexts,
     /** Каналы доставки чека покупателю. */
-    val delivery: DeliverySettingTexts,
     /** Сведения о кассе. */
     val facts: KassaFactsTexts,
     /** Список разделов настроек: полки, названия и сводки. */

@@ -3,6 +3,8 @@ package kz.mybrain.superkassa.domain.print.port
 import kz.mybrain.superkassa.domain.print.model.Kept
 import kz.mybrain.superkassa.domain.print.model.PrintKind
 import kz.mybrain.superkassa.domain.print.model.Printed
+import kz.mybrain.superkassa.domain.print.model.ShareWay
+import kz.mybrain.superkassa.domain.print.model.SharedReceipt
 
 /**
  * Принтер и диск для проверок: принтеры те, что дали, ленту не режет.
@@ -48,5 +50,23 @@ class MemoryPrintChoices(override var copies: Int = 1, private var kind: PrintKi
     }
 }
 
+/**
+ * «Поделиться» для проверок: пути те, что дали, отданное записывается.
+ *
+ * @property shared что отдано и каким путём.
+ */
+class FakeShareOut(override val ways: List<ShareWay> = listOf(ShareWay.System), var opens: Boolean = true) : ShareOut {
+    val shared = mutableListOf<Pair<SharedReceipt, ShareWay>>()
+
+    override suspend fun share(receipt: SharedReceipt, way: ShareWay): Boolean {
+        shared += receipt to way
+        return opens
+    }
+}
+
 /** Порты печати для проверок: принтер и диск в памяти, выбор принтера в памяти. */
-fun printPorts(out: PrintOut = FakePrintOut(), choices: PrintChoices = MemoryPrintChoices()) = PrintPorts(out, choices)
+fun printPorts(
+    out: PrintOut = FakePrintOut(),
+    choices: PrintChoices = MemoryPrintChoices(),
+    share: ShareOut = FakeShareOut()
+) = PrintPorts(out, choices, share)

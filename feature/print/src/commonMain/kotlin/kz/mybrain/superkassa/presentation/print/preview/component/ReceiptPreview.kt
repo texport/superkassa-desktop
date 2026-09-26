@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
@@ -60,6 +61,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Tape
  * @param trouble касса форму не нарисовала; `null` — беды нет.
  * @param onPrint отправка на принтер; `null` — печатать нечем.
  * @param onSave сохранение в файл; `null` — сохранять нечем.
+ * @param share поделиться формой с покупателем; путей нет — кнопки нет.
  */
 @Composable
 fun ReceiptPreview(
@@ -68,6 +70,7 @@ fun ReceiptPreview(
     trouble: ScreenState.Trouble? = null,
     onPrint: (() -> Unit)? = null,
     onSave: (() -> Unit)? = null,
+    share: PreviewShare = PreviewShare(),
     onDismiss: () -> Unit
 ) {
     // Масштаб ленты живёт выше окна и переживает его закрытие: кассир
@@ -75,49 +78,62 @@ fun ReceiptPreview(
     // Внутри окна он заводился вместе с ним и умирал вместе с ним же.
     var tapeWidth by remember { mutableStateOf(Tape.defaultWidth) }
     if (image == null && !drawing && trouble == null) return
-    val texts = LocalStrings.current.preview
+    val bitmap = remember(image) { image?.let(::encodedImage) }
+    val actions = PreviewActions(
+        tapeWidth = tapeWidth,
+        onWidth = { tapeWidth = it },
+        onPrint = onPrint.takeIf { bitmap != null },
+        onSave = onSave.takeIf { bitmap != null },
+        share = share.takeIf { bitmap != null } ?: PreviewShare(),
+        onDismiss = onDismiss
+    )
     CloseOnEscape(onDismiss)
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        // Форма занимает окно целиком, как полноэкранный диалог Material,
-        // и на узком окне, и на широком: закрытие стоит слева, где его ищут
-        // у полноэкранного окна. Окном с полями на широком мониторе закрытие
-        // уезжало в правый угол, а раздел за полями отвлекал от ленты.
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            shape = RectangleShape,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh
-        ) {
-            val bitmap = remember(image) {
-                image?.let(::encodedImage)
-            }
-            val state = when {
-                trouble != null -> trouble
-                image == null -> ScreenState.Working
-                bitmap == null -> ScreenState.Empty(AppIcons.warning, texts.missing)
-                else -> ScreenState.Ready
-            }
-            Column(modifier = Modifier.fillMaxSize()) {
-                val actions = PreviewActions(
-                    tapeWidth = tapeWidth,
-                    onWidth = { tapeWidth = it },
-                    onPrint = onPrint.takeIf { bitmap != null },
-                    onSave = onSave.takeIf { bitmap != null },
-                    onDismiss = onDismiss
-                )
-                FullScreenPreviewBar(actions)
-                ScreenSlot(state, Modifier.fillMaxSize(), centered = true) {
-                    bitmap?.let { tape ->
-                        TapeView(bitmap = BitmapPainter(tape), width = tapeWidth, title = texts.title) {
-                            tapeWidth = (tapeWidth + it).coerceIn(Tape.minWidth, Tape.maxWidth)
-                        }
+        PreviewSheet(image, bitmap, trouble, actions)
+    }
+}
+
+/**
+ * Форма на всё окно, как полноэкранный диалог Material, и на узком окне,
+ * и на широком: закрытие стоит слева, где его ищут у полноэкранного окна.
+ * Окном с полями на широком мониторе закрытие уезжало в правый угол,
+ * а раздел за полями отвлекал от ленты.
+ */
+@Composable
+private fun PreviewSheet(
+    image: ByteArray?,
+    bitmap: ImageBitmap?,
+    trouble: ScreenState.Trouble?,
+    actions: PreviewActions
+) {
+    val texts = LocalStrings.current.preview
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        shape = RectangleShape,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh
+    ) {
+        val state = trouble ?: sheetState(image, bitmap, texts.missing)
+        Column(modifier = Modifier.fillMaxSize()) {
+            FullScreenPreviewBar(actions)
+            ScreenSlot(state, Modifier.fillMaxSize(), centered = true) {
+                bitmap?.let { tape ->
+                    TapeView(bitmap = BitmapPainter(tape), width = actions.tapeWidth, title = texts.title) {
+                        actions.onWidth((actions.tapeWidth + it).coerceIn(Tape.minWidth, Tape.maxWidth))
                     }
                 }
             }
         }
     }
+}
+
+/** Что в окне: ожидание, картинка или слова о том, что показать нечего. */
+private fun sheetState(image: ByteArray?, bitmap: ImageBitmap?, missing: String): ScreenState = when {
+    image == null -> ScreenState.Working
+    bitmap == null -> ScreenState.Empty(AppIcons.warning, missing)
+    else -> ScreenState.Ready
 }
 
 /**

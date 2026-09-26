@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.presentation.common.print
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
+import kz.mybrain.superkassa.domain.print.model.ShareWay
 
 /**
  * Что можно сделать с печатной формой — из любого раздела.
@@ -26,6 +27,12 @@ interface PrintActions {
 
     /** Печать документа кабинета без просмотра. */
     fun printPacket(packet: String) = Unit
+
+    /** Пути, которыми эта машина делится чеком; пусто — делиться нечем. */
+    val shareWays: List<ShareWay> get() = emptyList()
+
+    /** Поделиться формой документа журнала с покупателем путём [way]. */
+    fun share(documentId: String, way: ShareWay) = Unit
 }
 
 /** Печать окна для разделов: даёт её каркас окна. */

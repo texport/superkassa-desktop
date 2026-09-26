@@ -9,10 +9,7 @@ import kz.mybrain.superkassa.presentation.common.model.WindowServices
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsActions
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsUiState
-import kz.mybrain.superkassa.presentation.settings.core.DeliveryActions
-import kz.mybrain.superkassa.presentation.settings.core.DeliveryUiState
 import kz.mybrain.superkassa.presentation.settings.core.coreSettingsViewModel
-import kz.mybrain.superkassa.presentation.settings.core.deliveryViewModel
 import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsActions
 import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.kkm.kkmSettingsViewModel
@@ -55,8 +52,6 @@ data class SettingsBoard(
     val ofdActions: OfdSettingsActions = object : OfdSettingsActions {},
     val core: CoreSettingsUiState = CoreSettingsUiState(),
     val coreActions: CoreSettingsActions = object : CoreSettingsActions {},
-    val delivery: DeliveryUiState = DeliveryUiState(),
-    val deliveryActions: DeliveryActions = object : DeliveryActions {},
     val workplace: WorkplaceSettingsUiState = WorkplaceSettingsUiState(),
     val workplaceActions: WorkplaceSettingsActions = object : WorkplaceSettingsActions {},
     val parts: SettingsParts = SettingsParts()
@@ -117,18 +112,15 @@ fun settingsBoard(
     ).withMachine(services, ports)
 }
 
-/** Настройки самой машины и кассы на ней: рабочее место, сроки обмена с БФД и доставка чека. */
+/** Настройки самой машины и кассы на ней: рабочее место и сроки обмена с БФД. */
 @Composable
 private fun SettingsBoard.withMachine(services: WindowServices, ports: SettingsPorts): SettingsBoard {
     val workplace = workplaceSettingsViewModel(services, ports)
     val core = coreSettingsViewModel(services, ports)
-    val delivery = deliveryViewModel(services, ports)
     return copy(
         workplace = workplace.state.collectAsScreenState().value,
         workplaceActions = workplace,
         core = core.state.collectAsScreenState().value,
-        coreActions = core,
-        delivery = delivery.state.collectAsScreenState().value,
-        deliveryActions = delivery
+        coreActions = core
     )
 }

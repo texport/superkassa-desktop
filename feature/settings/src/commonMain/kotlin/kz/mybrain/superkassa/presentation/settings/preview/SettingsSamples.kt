@@ -8,14 +8,11 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.OfdServiceInfoResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TaxRegimeResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
-import kz.mybrain.superkassa.domain.settings.model.DeliveryChannel
-import kz.mybrain.superkassa.domain.settings.model.DeliveryField
 import kz.mybrain.superkassa.domain.settings.model.KassaFacts
 import kz.mybrain.superkassa.domain.settings.model.OfdSummary
 import kz.mybrain.superkassa.domain.workplace.model.MapServices
 import kz.mybrain.superkassa.presentation.settings.SettingsBoard
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsUiState
-import kz.mybrain.superkassa.presentation.settings.core.DeliveryUiState
 import kz.mybrain.superkassa.presentation.settings.kkm.KkmSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.ofd.OfdSettingsUiState
 import kz.mybrain.superkassa.presentation.settings.receipt.ReceiptFormUiState
@@ -75,12 +72,6 @@ internal object SettingsSamples {
         about = KassaFacts(appVersion = "1.0.6", coreVersion = "1.5.0", directory = "~/.superkassa", kkmCount = 2)
     )
 
-    val delivery = DeliveryUiState.of(core).copy(
-        saved = mapOf(DeliveryField.TelegramToken to "***"),
-        enabledSaved = setOf(DeliveryChannel.Telegram),
-        configured = setOf(DeliveryChannel.Telegram)
-    )
-
     val ofd = OfdSettingsUiState(
         kkm = kkm,
         linkAlive = true,
@@ -100,7 +91,6 @@ internal object SettingsSamples {
         form = ReceiptFormUiState(kkm = kkm),
         ofd = ofd.copy(kkm = kkm),
         core = coreState,
-        delivery = delivery,
         workplace = WorkplaceSettingsUiState(
             kkmId = kkm.kkmId,
             cabinetUrl = "https://cabinet.example.kz",

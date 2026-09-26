@@ -58,6 +58,10 @@ internal class PrintDrawer(private val cases: PrintCases, private val talk: Talk
         return answer.map { Drawn(kkm, it) }
     }
 
+    /** Ссылка на электронный чек у кассы [kkm] — тем же пином, что рисовали. */
+    suspend fun link(source: PrintSource, kkm: KkmResponse): String? =
+        cases.link(source, kkm.kkmId, entered.ifBlank { null })
+
     /** Касса-рисовальщик; не заведено ни одной — владельцу сказано об этом словами, а не молчанием. */
     private suspend fun kkm(): KkmResponse? {
         val texts = textsOf(talk.language()).common.preview

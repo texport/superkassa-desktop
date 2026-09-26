@@ -42,6 +42,7 @@ internal fun PrintOverlay(paper: PrintUiState, actions: PaperActions) {
         trouble = paper.trouble?.let { ScreenState.Trouble(texts.missing, it.words, actions::retry) },
         onPrint = actions::printShown,
         onSave = actions::saveShown,
+        share = PreviewShare(paper.shareWays, actions::shareShown),
         onDismiss = actions::close
     )
     paper.pinFor?.let { kkmTitle ->

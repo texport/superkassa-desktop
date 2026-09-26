@@ -36,8 +36,12 @@ internal class PrintViewModel(private val cases: PrintCases, private val talk: T
 
     private val drawer = PrintDrawer(cases, talk)
 
+    /** Поделиться чеком: форма, ссылка и слова — программе, которой пишут покупателю. */
+    val sharing = PrintSharing(cases, drawer, talk, viewModelScope) { asked() }
+
     /** Документ, открытый в просмотре: сохранение повторяет его в нужном виде. */
-    private var shown: PrintSource? = null
+    var shown: PrintSource? = null
+        private set
 
     /** Касса, нарисовавшая открытую форму: печатают по ширине её ленты. */
     private var drawnBy: KkmResponse? = null
@@ -55,6 +59,7 @@ internal class PrintViewModel(private val cases: PrintCases, private val talk: T
     private var generation = 0
 
     init {
+        screen.update { it.copy(shareWays = sharing.ways) }
         // Пин, введённый ради печатной формы, уходит вместе с кассиром:
         // он и жил только в памяти этого рабочего дня.
         follow(cases.observe().map { it.cashier }.distinctUntilChanged().drop(1)) {

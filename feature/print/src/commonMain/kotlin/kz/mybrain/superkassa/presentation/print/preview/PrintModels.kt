@@ -12,6 +12,6 @@ internal fun printViewModel(services: WindowServices, ports: PrintPorts): PrintV
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
 internal fun printModel(services: WindowServices, ports: PrintPorts): PrintViewModel = PrintViewModel(
-    PrintCases(services.kassa, services.signIn, ports.printOut, ports.printChoices, services.memory),
+    PrintCases(services.kassa, services.signIn, ports.printOut, ports.printChoices, services.memory, ports.share),
     services.talk
 )

@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.strings.api.common.GeneralTexts
 import kz.mybrain.superkassa.strings.api.common.LoginTexts
 import kz.mybrain.superkassa.strings.api.common.SectionTexts
 import kz.mybrain.superkassa.strings.api.common.TopBarTexts
+import kz.mybrain.superkassa.strings.impl.share.shareTextsEn
 
 /** Надписи [CommonTexts] по-английски. */
 internal val commonTextsEn = CommonTexts(
@@ -77,6 +78,7 @@ internal val commonTextsEn = CommonTexts(
     users = userTextsEn,
     settingsScreen = settingsScreenTextsEn,
     preview = previewTextsEn,
+    share = shareTextsEn,
     status = statusTextsEn,
     enums = enumTextsEn
 )

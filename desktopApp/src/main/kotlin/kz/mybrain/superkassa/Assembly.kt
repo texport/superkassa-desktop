@@ -29,6 +29,7 @@ import kz.mybrain.superkassa.data.map.MapAddresses
 import kz.mybrain.superkassa.data.map.OpenStreetMaps
 import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
 import kz.mybrain.superkassa.data.map.mapJournal
+import kz.mybrain.superkassa.data.print.LinkShare
 import kz.mybrain.superkassa.data.print.SystemPrintOut
 import kz.mybrain.superkassa.data.releases.GithubUpdates
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
@@ -91,7 +92,7 @@ private fun areaPorts(kassa: Superkassa, preferences: Preferences, language: () 
             coreSettings = EmbeddedSettings(kassa.settings, DataHome.kassa().path),
             workplace = PreferenceChoices(preferences)
         ),
-        print = PrintPorts(SystemPrintOut(), preferences.printing),
+        print = PrintPorts(SystemPrintOut(), preferences.printing, LinkShare()),
         update = UpdatePorts(GithubUpdates(), preferences.updates),
         debug = DebugPorts(AppLogBook(DialogFiles())),
         analytics = analyticsPorts(cabinet.bfd, preferences, language),

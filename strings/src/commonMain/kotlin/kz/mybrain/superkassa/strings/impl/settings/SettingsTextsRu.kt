@@ -1,8 +1,6 @@
 package kz.mybrain.superkassa.strings.impl.settings
 
 import kz.mybrain.superkassa.strings.api.settings.CoreSettingTexts
-import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldTexts
-import kz.mybrain.superkassa.strings.api.settings.DeliverySettingTexts
 import kz.mybrain.superkassa.strings.api.settings.KassaFactsTexts
 import kz.mybrain.superkassa.strings.api.settings.LookTexts
 import kz.mybrain.superkassa.strings.api.settings.SettingsTexts
@@ -28,33 +26,6 @@ internal val settingsTextsRu = SettingsTexts(
         autoClose = "Закрывать смену самой через сутки",
         autoCloseHint = "Смена дольше суток запрещена: касса перестаёт оформлять чеки. С этим переключателем касса " +
             "сама закроет смену и снимет Z-отчёт, если кассир не успел."
-    ),
-    delivery = DeliverySettingTexts(
-        title = "Доставка чека покупателю",
-        hint = "Включённый канал отправляет чек покупателю через службу: SMS-шлюз, бота Telegram, WhatsApp " +
-            "или почтовый сервер. Одни на все кассы рабочего места. Адреса и ключи действуют со следующего чека, " +
-            "включение канала — после перезапуска кассы.",
-        recipient = "Чек уходит на контакт покупателя, указанный в чеке: телефон — по SMS и в WhatsApp, " +
-            "почта — письмом, чат — в Telegram. Без контакта чек покупателю не отправляется.",
-        configured = "Настроен",
-        notConfigured = "Не настроен",
-        secretHint = "Заданные ключи скрыты знаком ***: сотрите ключ, чтобы убрать его, или наберите новый.",
-        malformed = "Проверьте написание",
-        portRange = "Целое число от 1 до 65535",
-        saved = "Доставка чека сохранена. Включение канала подействует после перезапуска кассы",
-        channels = deliveryChannels("Почта"),
-        fields = DeliveryFieldTexts(
-            smsUrl = "Адрес шлюза с {phone} и {text}",
-            smsKey = "Ключ SMS-шлюза",
-            telegramToken = "Токен бота",
-            whatsAppToken = "Ключ доступа",
-            whatsAppSender = "Номер отправителя (ID)",
-            emailHost = "Почтовый сервер",
-            emailPort = "Порт",
-            emailUser = "Пользователь",
-            emailPassword = "Пароль",
-            emailFrom = "Адрес отправителя"
-        )
     ),
     facts = KassaFactsTexts(
         title = "Программа и кассовое ядро",

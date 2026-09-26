@@ -27,6 +27,13 @@ internal fun openInBrowser(url: String): Boolean = opened { Desktop.getDesktop()
  */
 internal fun openWithSystem(file: File): Boolean = opened { Desktop.getDesktop().open(file) }
 
+/**
+ * Открывает письмо в почтовой программе системы по адресу `mailto:`.
+ *
+ * @return удалось ли передать адрес системе; отказ — в журнале.
+ */
+internal fun openMail(uri: String): Boolean = opened { Desktop.getDesktop().mail(URI(uri)) }
+
 private fun opened(open: () -> Unit): Boolean = try {
     open()
     true

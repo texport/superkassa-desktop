@@ -25,5 +25,5 @@ internal val buyerContactTextsEn = BuyerContactTexts(
     hint = "Optional: the receipt goes to the customer at this contact",
     sendsTo = "The receipt goes to",
     notConfigured = "Not set up",
-    unavailable = "Receipt delivery is not set up — show the receipt to the customer or print it"
+    unavailable = "Send the receipt to the buyer with Share once it is issued — or show it and print it"
 )

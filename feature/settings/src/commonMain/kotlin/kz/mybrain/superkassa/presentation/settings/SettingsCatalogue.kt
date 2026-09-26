@@ -2,7 +2,6 @@ package kz.mybrain.superkassa.presentation.settings
 
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsCard
-import kz.mybrain.superkassa.presentation.settings.core.DeliveryCard
 import kz.mybrain.superkassa.presentation.settings.core.KassaFactsCard
 import kz.mybrain.superkassa.presentation.settings.kkm.CurrentKkmCard
 import kz.mybrain.superkassa.presentation.settings.kkm.DecommissionCard
@@ -37,7 +36,6 @@ internal enum class Setting(val section: SettingsSection) {
     OfdSync(SettingsSection.Bfd),
     OfdToken(SettingsSection.Bfd),
     Core(SettingsSection.Bfd),
-    Delivery(SettingsSection.Delivery),
     Appearance(SettingsSection.Look),
     Language(SettingsSection.Language),
     PanelBehaviour(SettingsSection.SalePanels),
@@ -120,7 +118,6 @@ private fun kkmCards() = listOf(
     SettingsCard(Setting.OfdSync, needsRegister = true, adminOnly = true) { OfdSyncCard(it.ofd, it.ofdActions) },
     SettingsCard(Setting.OfdToken, needsRegister = true, adminOnly = true) { OfdTokenCard(it.ofd, it.ofdActions) },
     SettingsCard(Setting.Core, adminOnly = true) { CoreSettingsCard(it.core, it.coreActions) },
-    SettingsCard(Setting.Delivery, adminOnly = true) { DeliveryCard(it.delivery, it.deliveryActions) }
 )
 
 /**

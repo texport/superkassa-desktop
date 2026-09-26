@@ -76,7 +76,7 @@ class ApkUpdates(
         const val DOWNLOADS = "updates"
 
         /** Окончание имени поставщика файлов после имени пакета — как в манифесте. */
-        const val AUTHORITY = ".updates"
+        const val AUTHORITY = ".files"
 
         const val APK = "application/vnd.android.package-archive"
 

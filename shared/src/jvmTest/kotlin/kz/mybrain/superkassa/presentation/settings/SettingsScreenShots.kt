@@ -54,7 +54,7 @@ class SettingsScreenShots {
     @Test
     fun `настройки администратора в кассе`() = sections("settings-admin", KassaScene.desk()) {
         with(it) {
-            listOf(general, printing, taxes, bfd, delivery, look, language, salePanels, debug, about, connection)
+            listOf(general, printing, taxes, bfd, look, language, salePanels, debug, about, connection)
         }
     }
 

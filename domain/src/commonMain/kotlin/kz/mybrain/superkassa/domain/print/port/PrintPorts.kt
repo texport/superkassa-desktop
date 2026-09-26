@@ -8,5 +8,6 @@ package kz.mybrain.superkassa.domain.print.port
  *
  * @property printOut принтер и диск этой машины для печатной формы.
  * @property printChoices принтер кассы, копии и вид файла.
+ * @property share чем машина делится чеком с покупателем.
  */
-data class PrintPorts(val printOut: PrintOut, val printChoices: PrintChoices)
+data class PrintPorts(val printOut: PrintOut, val printChoices: PrintChoices, val share: ShareOut = NoShare)

@@ -29,6 +29,7 @@ import kz.mybrain.superkassa.data.log.LogSettings
 import kz.mybrain.superkassa.data.log.LogSource
 import kz.mybrain.superkassa.data.log.LogcatJournal
 import kz.mybrain.superkassa.data.print.SystemDialogPrintOut
+import kz.mybrain.superkassa.data.print.SystemShare
 import kz.mybrain.superkassa.data.releases.ApkUpdates
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
@@ -132,7 +133,7 @@ class SuperkassaApp : Application() {
                 coreSettings = EmbeddedSettings(kassa.settings, KassaSource.directory(this).path),
                 workplace = PreferenceChoices(preferences)
             ),
-            print = PrintPorts(SystemDialogPrintOut(screen), preferences.printing),
+            print = PrintPorts(SystemDialogPrintOut(screen), preferences.printing, SystemShare(this, screen)),
             update = UpdatePorts(releases = updates, updateMemory = preferences.updates),
             debug = DebugPorts(AppLogBook(DocumentFiles(screen))),
             analytics = analyticsPorts(cabinet, preferences, language),

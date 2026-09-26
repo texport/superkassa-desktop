@@ -21,6 +21,7 @@ data class CommonTexts(
     val users: UserTexts,
     val settingsScreen: SettingsScreenTexts,
     val preview: PreviewTexts,
+    val share: ShareTexts,
     val status: StatusTexts,
     val enums: EnumTexts
 )

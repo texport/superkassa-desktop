@@ -6,7 +6,6 @@ import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
 import kz.mybrain.superkassa.presentation.settings.SettingRequirements
 import kz.mybrain.superkassa.presentation.settings.core.CoreSettingsCard
-import kz.mybrain.superkassa.presentation.settings.core.DeliveryCard
 import kz.mybrain.superkassa.presentation.settings.core.KassaFactsCard
 import kz.mybrain.superkassa.presentation.settings.workplace.AppearanceCard
 import kz.mybrain.superkassa.presentation.settings.workplace.CabinetAddressCard
@@ -34,10 +33,6 @@ private fun FactsPreview() = Group { KassaFactsCard(it.core) }
 @ElementPreviews
 @Composable
 private fun CorePreview() = Group { CoreSettingsCard(it.core, it.coreActions) }
-
-@ElementPreviews
-@Composable
-private fun DeliveryPreview() = Group { DeliveryCard(it.delivery, it.deliveryActions) }
 
 @ElementPreviews
 @Composable

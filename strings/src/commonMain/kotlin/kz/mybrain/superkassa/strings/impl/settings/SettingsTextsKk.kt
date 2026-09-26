@@ -1,8 +1,6 @@
 package kz.mybrain.superkassa.strings.impl.settings
 
 import kz.mybrain.superkassa.strings.api.settings.CoreSettingTexts
-import kz.mybrain.superkassa.strings.api.settings.DeliveryFieldTexts
-import kz.mybrain.superkassa.strings.api.settings.DeliverySettingTexts
 import kz.mybrain.superkassa.strings.api.settings.KassaFactsTexts
 import kz.mybrain.superkassa.strings.api.settings.LookTexts
 import kz.mybrain.superkassa.strings.api.settings.SettingsTexts
@@ -28,34 +26,6 @@ internal val settingsTextsKk = SettingsTexts(
         autoClose = "Бір тәуліктен кейін ауысымды өзі жабу",
         autoCloseHint = "Ауысым бір тәуліктен ұзақ бола алмайды: касса чек ресімдеуді тоқтатады. Бұл ауыстырғышпен " +
             "кассир үлгермесе, касса ауысымды өзі жауып, Z-есепті алады."
-    ),
-    delivery = DeliverySettingTexts(
-        title = "Чекті сатып алушыға жеткізу",
-        hint = "Қосылған арна чекті сатып алушыға қызмет арқылы жібереді: SMS шлюзі, Telegram боты, WhatsApp " +
-            "немесе пошта сервері. Жұмыс орнының барлық кассасына ортақ. Мекенжайлар мен кілттер келесі чектен, " +
-            "арнаны қосу касса қайта іске қосылғаннан кейін әрекет етеді.",
-        recipient = "Чек сатып алушының чекте көрсетілген байланысына жіберіледі: телефон — SMS және " +
-            "WhatsApp арқылы, пошта — хатпен, чат — Telegram-ға. Байланыс болмаса, чек сатып алушыға жіберілмейді.",
-        configured = "Бапталған",
-        notConfigured = "Бапталмаған",
-        secretHint = "Берілген кілттер *** белгісімен жасырылған: кілтті алып тастау үшін өшіріңіз " +
-            "немесе жаңасын теріңіз.",
-        malformed = "Жазылуын тексеріңіз",
-        portRange = "1-ден 65535-ке дейінгі бүтін сан",
-        saved = "Чекті жеткізу сақталды. Арнаны қосу касса қайта іске қосылғаннан кейін әрекет етеді",
-        channels = deliveryChannels("Пошта"),
-        fields = DeliveryFieldTexts(
-            smsUrl = "{phone} және {text} бар шлюз мекенжайы",
-            smsKey = "SMS шлюзінің кілті",
-            telegramToken = "Бот токені",
-            whatsAppToken = "Қол жеткізу кілті",
-            whatsAppSender = "Жіберуші нөмірі (ID)",
-            emailHost = "Пошта сервері",
-            emailPort = "Порт",
-            emailUser = "Пайдаланушы",
-            emailPassword = "Құпиясөз",
-            emailFrom = "Жіберуші мекенжайы"
-        )
     ),
     facts = KassaFactsTexts(
         title = "Бағдарлама және касса ядросы",
