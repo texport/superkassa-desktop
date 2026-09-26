@@ -47,8 +47,8 @@ data class ReleaseFile(val name: String, val url: String, val size: Long, val sh
 /**
  * Установщик какой системы нужен.
  *
- * Выпуск несёт установщики под macOS, Windows и Debian, а кассе нужен
- * ровно один, свой. Опознаётся по расширению файла.
+ * Выпуск несёт установщики под macOS, Windows, Debian и Android, а кассе
+ * нужен ровно один, свой. Опознаётся по расширению файла.
  *
  * @property extension расширение файла установщика.
  */
@@ -60,7 +60,15 @@ enum class ReleasePlatform(val extension: String, private val systemName: String
     Windows(".msi", "windows"),
 
     /** Linux: пакет Debian. */
-    Debian(".deb", "linux");
+    Debian(".deb", "linux"),
+
+    /**
+     * Android: пакет приложения, подписанный ключом выпусков.
+     *
+     * Имя системы Java на Android — «Linux», поэтому по имени Android
+     * не опознаётся: сборка Android называет свою систему сама.
+     */
+    Android(".apk", "android");
 
     /** Опознание системы по её имени. */
     companion object {

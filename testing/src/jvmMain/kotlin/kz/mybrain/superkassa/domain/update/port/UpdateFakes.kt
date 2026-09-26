@@ -9,11 +9,13 @@ import kotlin.time.Instant
  * Служба выпусков для проверок: отвечает тем, что ей дали.
  *
  * @property fetched чем кончится скачивание установщика.
+ * @property allowed разрешила ли система ставить приложения.
  * @property opened что открыто системой: скачанный файл или страница выпуска.
  */
 class FakeReleases(
     var answer: ReleaseAnswer = ReleaseAnswer.Unreachable("no network in checks"),
-    var fetched: Fetched = Fetched.Verified("/downloads/Superkassa-1.0.3.msi")
+    var fetched: Fetched = Fetched.Verified("/downloads/Superkassa-1.0.3.msi"),
+    var allowed: Boolean = true
 ) : Releases {
     val opened = mutableListOf<String>()
 
@@ -37,6 +39,15 @@ class FakeReleases(
     override fun openFile(file: String): Boolean = opened.add(file)
 
     override fun openPage(url: String): Boolean = opened.add(url)
+
+    override fun installAllowed(): Boolean = allowed
+
+    override fun askInstallPermission(): Boolean = opened.add(INSTALL_PERMISSION)
+
+    companion object {
+        /** Что записывается в [opened], когда открыта настройка разрешения установки. */
+        const val INSTALL_PERMISSION = "install permission"
+    }
 }
 
 /** Память о проверке выпусков без диска. */

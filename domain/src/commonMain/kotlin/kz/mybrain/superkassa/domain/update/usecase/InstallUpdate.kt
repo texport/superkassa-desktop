@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.domain.log.port.Journal
 import kz.mybrain.superkassa.domain.update.model.AvailableUpdate
 import kz.mybrain.superkassa.domain.update.model.Fetched
 import kz.mybrain.superkassa.domain.update.model.InstallOutcome
+import kz.mybrain.superkassa.domain.update.model.Installer
 import kz.mybrain.superkassa.domain.update.port.Releases
 
 /**
@@ -17,8 +18,18 @@ import kz.mybrain.superkassa.domain.update.port.Releases
 class InstallUpdate(private val releases: Releases, private val journal: Journal) {
 
     suspend operator fun invoke(update: AvailableUpdate): InstallOutcome {
-        val installer = update.installer?.takeIf { it.verifiable } ?: return openPage(update)
-        return when (val fetched = releases.fetch(installer)) {
+        val installer = update.installer?.takeIf { it.verifiable }
+        return when {
+            installer == null -> openPage(update)
+            // Разрешение спрашивается до скачивания: сорок мегабайт, которые
+            // система потом не откроет, кассиру ни к чему.
+            !releases.installAllowed() -> askPermission()
+            else -> fetchAndOpen(installer)
+        }
+    }
+
+    private suspend fun fetchAndOpen(installer: Installer): InstallOutcome =
+        when (val fetched = releases.fetch(installer)) {
             is Fetched.Verified -> opened(releases.openFile(fetched.file), InstallOutcome.Started)
             Fetched.Mismatch -> InstallOutcome.Tampered.also {
                 journal.failure("installer checksum mismatch, file removed: ${installer.name}")
@@ -27,6 +38,10 @@ class InstallUpdate(private val releases: Releases, private val journal: Journal
                 journal.warn("installer not downloaded: ${fetched.reason}")
             }
         }
+
+    private fun askPermission(): InstallOutcome {
+        journal.info("install permission asked")
+        return opened(releases.askInstallPermission(), InstallOutcome.NeedsPermission)
     }
 
     private fun openPage(update: AvailableUpdate): InstallOutcome {

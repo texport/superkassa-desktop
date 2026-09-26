@@ -31,5 +31,12 @@ data class UpdateTexts(
     /** Сверить установщик нечем: открыта страница выпуска. */
     val pageOpened: String,
     /** Скачанный установщик не совпал с выпуском. */
-    val installerTampered: String
+    val installerTampered: String,
+    /**
+     * Android не разрешил кассе ставить приложения: открыта настройка
+     * системы, и сказано, что в ней включить и что нажать потом.
+     */
+    val installPermission: String,
+    /** Сборка разработчика: выпуски ей не предлагаются, и почему. */
+    val development: String
 )

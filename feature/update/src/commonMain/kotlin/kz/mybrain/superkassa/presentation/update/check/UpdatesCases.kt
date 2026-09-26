@@ -24,6 +24,6 @@ class UpdatesCases(
 ) {
     val check = CheckForUpdate(releases, memory, journal, installed, now)
     val install = InstallUpdate(releases, journal)
-    val schedule = ReadUpdateSchedule(memory, now)
+    val schedule = ReadUpdateSchedule(memory, installed, now)
     val switchAutomatic = SwitchAutomaticChecks(memory)
 }

@@ -35,6 +35,9 @@ kotlin {
             // Подпись в eGov mobile — общим кодом: протокол посредника
             // не зависит от платформы.
             api(project(":integrations:egov-mobile"))
+            // Выпуски кассы на GitHub: последний выпуск и установщик под
+            // систему — и на компьютере, и на Android, мимо магазинов.
+            implementation(project(":integrations:releases"))
             // Настройки и журнал рабочего места — файлами на любой платформе.
             api(libs.kotlinx.io.core)
             implementation(libs.kotlinx.atomicfu)
@@ -42,8 +45,6 @@ kotlin {
         jvmMain.dependencies {
             implementation(libs.ktor.client.cio)
             implementation(libs.jna)
-            // Выпуски кассы: последний выпуск и установщик под систему.
-            implementation(project(":integrations:releases"))
             // Подпись ЭЦП — NCALayer, только на настольных системах.
             api(project(":integrations:ncalayer"))
             // Перенос данных узла в кассу процесса: узел живёт только
@@ -53,15 +54,19 @@ kotlin {
         androidMain.dependencies {
             // Выбор файла и печать Android идут через окно приложения.
             implementation(libs.androidx.activity)
+            // Установщик новой версии скачивается тем же движком, что ходит
+            // к GitHub за выпуском.
+            implementation(libs.ktor.client.okhttp)
             // Подпись файлом ключа НУЦ РК — провайдером Kalkan, только Android:
             // на компьютере подписывает NCALayer.
             implementation(project(":integrations:kalkan"))
         }
-        // Подпись файлом ключа проверяется на JVM машины разработчика:
-        // Kalkan там тот же, что на Android.
+        // Подпись файлом ключа и скачивание APK проверяются на JVM машины
+        // разработчика: Kalkan и java.security там те же, что на Android.
         getByName("androidHostTest").dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.ktor.client.mock)
         }
         jvmTest.dependencies {
             implementation(libs.kotlin.test)

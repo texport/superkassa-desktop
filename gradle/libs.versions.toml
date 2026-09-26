@@ -1,8 +1,7 @@
 [versions]
 # Версия кассы, когда метки выпуска нет: `-PappVersion` её заменяет.
-# Номер сборки Android растёт с каждым выпуском в магазин.
+# Номер сборки Android считается из неё же (androidApp/build.gradle.kts).
 appVersion = "1.0.0"
-appVersionCode = "1"
 kotlin = "2.4.10"
 compose = "1.12.0"
 # Material 3 и значки Compose Multiplatform выпускаются своей линией, не версией

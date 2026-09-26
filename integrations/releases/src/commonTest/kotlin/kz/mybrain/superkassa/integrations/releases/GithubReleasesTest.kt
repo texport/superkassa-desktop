@@ -37,7 +37,12 @@ class GithubReleasesTest {
         assertEquals("v1.0.3", release.tag)
         assertEquals("https://github.com/texport/superkassa-desktop/releases/tag/v1.0.3", release.page)
         assertEquals("Суперкасса 1.0.3", release.title)
-        val names = listOf("Superkassa-1.0.3.dmg", "Superkassa-1.0.3.msi", "superkassa_1.0.3_amd64.deb")
+        val names = listOf(
+            "Superkassa-1.0.3.dmg",
+            "Superkassa-1.0.3.msi",
+            "superkassa_1.0.3_amd64.deb",
+            "Superkassa-1.0.3.apk"
+        )
         assertEquals(names, release.files.map { it.name })
         assertEquals(84_213_760L, release.files[1].size)
     }
@@ -59,6 +64,7 @@ class GithubReleasesTest {
         assertEquals("Superkassa-1.0.3.dmg", release.fileFor(ReleasePlatform.forSystem("Mac OS X"))?.name)
         assertEquals("Superkassa-1.0.3.msi", release.fileFor(ReleasePlatform.forSystem("Windows 11"))?.name)
         assertEquals("superkassa_1.0.3_amd64.deb", release.fileFor(ReleasePlatform.forSystem("Linux"))?.name)
+        assertEquals("Superkassa-1.0.3.apk", release.fileFor(ReleasePlatform.Android)?.name)
         assertNull(release.fileFor(ReleasePlatform.forSystem("FreeBSD")))
         assertNull(release.fileFor(null))
     }
@@ -98,7 +104,10 @@ class GithubReleasesTest {
                  "digest": "sha256:9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
                  "browser_download_url": "https://github.com/texport/superkassa-desktop/releases/download/v1.0.3/Superkassa-1.0.3.msi"},
                 {"name": "superkassa_1.0.3_amd64.deb", "size": 1,
-                 "browser_download_url": "https://github.com/texport/superkassa-desktop/releases/download/v1.0.3/superkassa_1.0.3_amd64.deb"}
+                 "browser_download_url": "https://github.com/texport/superkassa-desktop/releases/download/v1.0.3/superkassa_1.0.3_amd64.deb"},
+                {"name": "Superkassa-1.0.3.apk", "size": 40000000,
+                 "digest": "sha256:2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
+                 "browser_download_url": "https://github.com/texport/superkassa-desktop/releases/download/v1.0.3/Superkassa-1.0.3.apk"}
               ],
               "body": "Что нового"
             }

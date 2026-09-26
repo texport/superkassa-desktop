@@ -62,8 +62,17 @@ class InstallUpdateTest {
         assertTrue(releases.opened.isEmpty())
     }
 
+    @Test
+    fun `без разрешения системы установщик не скачивается — открыта настройка разрешения`() {
+        releases.allowed = false
+        assertEquals(InstallOutcome.NeedsPermission, runBlocking { install(update(APK)) })
+        assertTrue(releases.downloaded.isEmpty(), "установщик скачан, хотя система его не откроет")
+        assertEquals(listOf(FakeReleases.INSTALL_PERMISSION), releases.opened)
+    }
+
     private companion object {
         const val PAGE = "https://github.com/texport/superkassa-desktop/releases/tag/v1.0.3"
+        val APK = Installer("Superkassa-1.0.3.apk", "https://example.test/Superkassa-1.0.3.apk", "cd34")
         val MSI = Installer("Superkassa-1.0.3.msi", "https://example.test/Superkassa-1.0.3.msi", "ab12")
     }
 }

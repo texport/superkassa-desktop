@@ -61,6 +61,13 @@ class GithubUpdatesTest {
     }
 
     @Test
+    fun `Android берёт из того же выпуска свой APK`() {
+        val answer = runBlocking { github(HttpStatusCode.OK, LATEST).latestFor(ReleasePlatform.Android) }
+        val installer = assertIs<ReleaseAnswer.Found>(answer).release.installer
+        assertEquals("Superkassa-1.0.3.apk", installer?.name)
+    }
+
+    @Test
     fun `отказ GitHub — недоступность, а не падение`() {
         val updates = GithubUpdates(github(HttpStatusCode.Forbidden, "{}"), download(ByteArray(0)))
         assertIs<ReleaseAnswer.Unreachable>(runBlocking { updates.latest() })
@@ -114,7 +121,9 @@ class GithubUpdatesTest {
                 {"name": "Superkassa-1.0.3.dmg", "size": 1, "digest": "sha256:00",
                  "browser_download_url": "https://example.test/Superkassa-1.0.3.dmg"},
                 {"name": "Superkassa-1.0.3.msi", "size": 1, "digest": "sha256:$SHA_OF_BODY",
-                 "browser_download_url": "$MSI_URL"}
+                 "browser_download_url": "$MSI_URL"},
+                {"name": "Superkassa-1.0.3.apk", "size": 1, "digest": "sha256:$SHA_OF_BODY",
+                 "browser_download_url": "https://example.test/Superkassa-1.0.3.apk"}
               ]
             }
         """.trimIndent()

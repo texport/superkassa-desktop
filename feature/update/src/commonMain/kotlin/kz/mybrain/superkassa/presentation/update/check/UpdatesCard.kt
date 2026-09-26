@@ -35,6 +35,7 @@ import kz.mybrain.superkassa.strings.api.update.UpdateTexts
 fun UpdatesCard(updates: UpdatesUiState, actions: UpdatesActions) {
     val texts = textsOf(LocalLanguage.current).update
     SettingGroup(title = texts.title, info = texts.hint) {
+        if (updates.version.development) return@SettingGroup DevelopmentBuild(updates, texts)
         SwitchRow(texts.automatic, updates.automatic, actions::switchAutomatic)
         FactLines(texts.appName, factLines(updates, texts), texts.neverChecked)
         // Итог проверки переносится под кнопку целиком, когда ему не хватает
@@ -52,6 +53,22 @@ fun UpdatesCard(updates: UpdatesUiState, actions: UpdatesActions) {
         }
         updates.available?.let { update -> DownloadButton(updates.installing, texts) { actions.install(update) } }
     }
+}
+
+/**
+ * Сборка разработчика: версия и объяснение, почему выпуски ей не предлагаются.
+ *
+ * Ни переключателя, ни «Проверить сейчас»: проверять нечего, а кнопка,
+ * которая всегда отвечает «не для этой сборки», только мешает.
+ */
+@Composable
+private fun DevelopmentBuild(updates: UpdatesUiState, texts: UpdateTexts) {
+    FactLines(texts.appName, listOf(texts.installed to updates.version.label), texts.neverChecked)
+    Text(
+        text = texts.development,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 /** «Скачать»: пока установщик скачивается и сверяется, второе нажатие не принимается. */
@@ -82,6 +99,7 @@ private fun OutcomeWords(outcome: UpdateOutcome?, texts: UpdateTexts) {
     val words = when (outcome) {
         null -> return
         UpdateOutcome.UpToDate -> texts.upToDate
+        UpdateOutcome.Development -> texts.development
         is UpdateOutcome.Available -> "${texts.available} ${outcome.update.version}"
         UpdateOutcome.Unreachable -> texts.unreachable
     }

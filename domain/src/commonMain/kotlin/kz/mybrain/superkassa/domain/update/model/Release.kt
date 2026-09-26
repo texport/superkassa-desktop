@@ -36,6 +36,16 @@ data class AvailableUpdate(
 /** Чем закончилась проверка, запущенная рукой. */
 sealed interface UpdateOutcome {
     data object UpToDate : UpdateOutcome
+
+    /**
+     * Установлена сборка разработчика: выпуски ей не предлагаются.
+     *
+     * Она подписана не ключом выпусков и собрана не из метки: выпуск поверх
+     * неё на Android не встанет, а «1.0.0-dev» ниже любого «1.0.0» — и касса
+     * звала бы «Скачать» на каждой машине разработчика.
+     */
+    data object Development : UpdateOutcome
+
     data class Available(val update: AvailableUpdate) : UpdateOutcome
     data object Unreachable : UpdateOutcome
 }
@@ -48,6 +58,6 @@ sealed interface UpdateOutcome {
  */
 fun UpdateOutcome.after(before: AvailableUpdate?): AvailableUpdate? = when (this) {
     is UpdateOutcome.Available -> update
-    UpdateOutcome.UpToDate -> null
+    UpdateOutcome.UpToDate, UpdateOutcome.Development -> null
     UpdateOutcome.Unreachable -> before
 }

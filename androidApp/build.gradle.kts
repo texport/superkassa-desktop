@@ -11,6 +11,31 @@ plugins {
  * экраны — `shared`, адаптеры портов — `data`.
  * Kotlin здесь встроен в AGP 9, отдельного плагина Kotlin не нужно.
  */
+
+/** Версия кассы: по метке выпуска `-PappVersion`, без неё — версия каталога с «-dev». */
+val appVersion: String = providers.gradleProperty("appVersion").getOrElse("${libs.versions.appVersion.get()}-dev")
+
+/**
+ * Номер сборки Android из чисел версии: 1.2.3 → 1002003.
+ *
+ * Android ставит поверх установленного только APK с номером не меньше
+ * прежнего: номер растёт вместе с меткой выпуска, и помнить его руками
+ * не нужно. Суффикс сборки разработчика в номер не входит.
+ */
+fun versionCodeOf(version: String): Int {
+    val (major, minor, patch) = version.substringBefore('-').split('.').map(String::toInt)
+    return major * 1_000_000 + minor * 1_000 + patch
+}
+
+/**
+ * Ключ выпусков Android — файл хранилища и пароли из переменных окружения.
+ *
+ * На GitHub их кладёт сборка выпуска из секретов репозитория; ключа
+ * в репозитории нет. Без них — на машине разработчика — выпускной APK
+ * подписывается отладочным ключом и поверх выпуска не встанет.
+ */
+val releaseStore: String? = providers.environmentVariable("ANDROID_KEYSTORE_FILE").orNull
+
 android {
     namespace = "kz.mybrain.superkassa"
     compileSdk = libs.versions.androidCompileSdk.get().toInt()
@@ -18,21 +43,27 @@ android {
         applicationId = "kz.mybrain.superkassa"
         minSdk = libs.versions.androidMinSdk.get().toInt()
         targetSdk = libs.versions.androidTargetSdk.get().toInt()
-        versionCode = libs.versions.appVersionCode.get().toInt()
-        versionName = providers.gradleProperty("appVersion").getOrElse("${libs.versions.appVersion.get()}-dev")
+        versionCode = versionCodeOf(appVersion)
+        versionName = appVersion
+    }
+    signingConfigs {
+        if (releaseStore != null) {
+            create("release") {
+                storeFile = file(releaseStore)
+                storePassword = providers.environmentVariable("ANDROID_KEYSTORE_PASSWORD").get()
+                keyAlias = providers.environmentVariable("ANDROID_KEY_ALIAS").get()
+                keyPassword = providers.environmentVariable("ANDROID_KEY_PASSWORD").get()
+            }
+        }
     }
     buildTypes {
         // Выпуск сжимается R8: код и ресурсы, которых никто не зовёт, в APK
         // не попадают. Что ядро берёт отражением, перечислено в правилах.
-        //
-        // Подпись пока отладочная: ключа владельца в сборке нет, а выпускной
-        // APK нужно ставить на устройство и проверять. Ключ владельца
-        // заменит эту строку, когда появится.
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName(if (releaseStore != null) "release" else "debug")
         }
     }
     // Доставку чеков почтой ядро собирает само, на Eclipse Angus Mail, и три

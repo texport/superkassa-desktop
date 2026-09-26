@@ -67,6 +67,7 @@ class UpdatesViewModel(private val cases: UpdatesCases, private val talk: Talk) 
             when (cases.install(update)) {
                 InstallOutcome.Started -> talk.done(texts.installerOpened, INSTALL)
                 InstallOutcome.PageOpened -> talk.done(texts.pageOpened)
+                InstallOutcome.NeedsPermission -> talk.done(texts.installPermission)
                 InstallOutcome.Tampered -> talk.say(INSTALL, Message.Refusal(texts.installerTampered, TAMPERED))
                 InstallOutcome.Failed -> talk.say(INSTALL, Message.Failed(texts.download))
             }

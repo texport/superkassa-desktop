@@ -36,7 +36,8 @@ data/src/androidMain/kotlin/kz/mybrain/superkassa/data/local/workplace/SystemLan
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/log/LogcatJournal.kt — журнал системы Android (Logcat)
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/print/PdfPrintAdapter.kt — документ PDF для системного диалога печати Android
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/print/SystemDialogPrintOut.kt — печать системным диалогом Android
-data/src/androidMain/kotlin/kz/mybrain/superkassa/data/releases/StoreReleases.kt — выпуски на Android приносит магазин приложений
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/releases/ApkUpdates.kt — APK выпуска отдаётся установщику системы через FileProvider, разрешение ставить приложения — настройкой Android
+data/src/androidMain/kotlin/kz/mybrain/superkassa/data/releases/ApkDownload.kt — скачивание APK в кэш приложения со сверкой SHA-256: java.security и движок OkHttp
 
 # Дизайн-система: ожидаемые объявления общего кода, по файлу на платформу.
 designsystem/src/jvmMain/kotlin/kz/mybrain/superkassa/designsystem/image/EncodedImage.jvm.kt — картинка средствами Skia и масштаб колесом мыши настольной машины

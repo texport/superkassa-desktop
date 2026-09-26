@@ -27,5 +27,9 @@ internal val updateTextsEn = UpdateTexts(
         "install the new version with the shift closed",
     pageOpened = "There is nothing to check the installer against: the release page is open, download the file there",
     installerTampered = "The downloaded installer did not match the release and was removed: " +
-        "it must not be installed. Try again later"
+        "it must not be installed. Try again later",
+    installPermission = "Allow the register to install updates: in the settings that opened, turn on " +
+        "“Allow from this source”, come back and press Download again",
+    development = "Development build: releases are not installed over it — it was built without a release " +
+        "tag and signed with another key"
 )

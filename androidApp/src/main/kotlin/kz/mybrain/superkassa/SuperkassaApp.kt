@@ -31,7 +31,7 @@ import kz.mybrain.superkassa.data.log.LogSource
 import kz.mybrain.superkassa.data.log.LogcatJournal
 import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
 import kz.mybrain.superkassa.data.print.SystemDialogPrintOut
-import kz.mybrain.superkassa.data.releases.StoreReleases
+import kz.mybrain.superkassa.data.releases.ApkUpdates
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.journal.port.JournalPorts
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
@@ -124,8 +124,9 @@ class SuperkassaApp : Application() {
      * и ручной — идентификатор и токен.
      */
     private fun areaPorts(kassa: Superkassa, preferences: Preferences, language: () -> Language): AreaPorts {
-        // Выпуски на Android приносит магазин приложений.
-        val updates = StoreReleases()
+        // Выпуски — с GitHub, мимо магазинов: APK скачивается, сверяется
+        // и отдаётся установщику системы, ставит кассир.
+        val updates = ApkUpdates(this, screen)
         val cabinet = androidCabinet(preferences, screen, language)
         return AreaPorts(
             kassa = KassaPorts(EmbeddedDeliverySetup(kassa.settings)),
@@ -135,7 +136,7 @@ class SuperkassaApp : Application() {
                 workplace = PreferenceChoices(preferences)
             ),
             print = PrintPorts(SystemDialogPrintOut(screen), preferences.printing),
-            update = UpdatePorts(releases = updates, updateMemory = updates),
+            update = UpdatePorts(releases = updates, updateMemory = preferences.updates),
             debug = DebugPorts(AppLogBook(DocumentFiles(screen))),
             analytics = analyticsPorts(cabinet, preferences),
             cabinet = cabinet,

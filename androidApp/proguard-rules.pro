@@ -21,3 +21,6 @@
 -keep class kz.gov.pki.kalkan.** { *; }
 -dontwarn javax.naming.**
 -dontwarn javax.smartcardio.**
+# Разметка Lombok (@NonNull) нужна только компилятору Kalkan: в самом jar
+# её классов нет, и в работе она не участвует.
+-dontwarn lombok.**

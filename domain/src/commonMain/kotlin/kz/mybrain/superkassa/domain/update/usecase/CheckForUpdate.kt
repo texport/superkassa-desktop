@@ -25,13 +25,17 @@ class CheckForUpdate(
     private val now: () -> Instant
 ) {
 
-    suspend operator fun invoke(): UpdateOutcome = when (val answer = releases.latest()) {
+    suspend operator fun invoke(): UpdateOutcome = when (val answer = latest()) {
+        null -> UpdateOutcome.Development
         is ReleaseAnswer.Found -> adopt(answer.release)
         is ReleaseAnswer.Unreachable -> {
             journal.warn("releases not checked: ${answer.reason}")
             UpdateOutcome.Unreachable
         }
     }
+
+    /** Свежий выпуск; сборку разработчика со службой не сверяют — `null`. */
+    private suspend fun latest(): ReleaseAnswer? = if (installed.development) null else releases.latest()
 
     private fun adopt(release: Release): UpdateOutcome {
         memory.lastChecked = now()

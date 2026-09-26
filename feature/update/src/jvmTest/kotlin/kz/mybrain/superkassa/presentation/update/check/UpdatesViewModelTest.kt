@@ -91,10 +91,12 @@ class UpdatesViewModelTest {
     }
 
     @Test
-    fun `сборка разработчика с теми же числами считается устаревшей`() {
+    fun `сборке разработчика выпуски не предлагаются, служба не спрашивается`() {
         val model = model("1.0.3-dev")
         model.check()
-        assertIs<UpdateOutcome.Available>(model.state.value.outcome)
+        assertIs<UpdateOutcome.Development>(model.state.value.outcome)
+        assertNull(model.state.value.available, "сборке разработчика предложен выпуск")
+        assertEquals(0, releases.asked, "служба выпусков спрошена из сборки разработчика")
     }
 
     @Test

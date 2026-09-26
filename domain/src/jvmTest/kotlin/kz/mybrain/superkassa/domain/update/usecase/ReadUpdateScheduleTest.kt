@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.domain.update.usecase
 
 import kz.mybrain.superkassa.domain.update.port.MemoryUpdates
+import kz.mybrain.superkassa.domain.version.model.AppVersion
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -14,21 +15,21 @@ class ReadUpdateScheduleTest {
 
     @Test
     fun `ни разу не проверялось — пора`() {
-        assertTrue(ReadUpdateSchedule(MemoryUpdates(lastChecked = null)) { now }().due)
+        assertTrue(ReadUpdateSchedule(MemoryUpdates(lastChecked = null), RELEASE) { now }().due)
     }
 
     @Test
     fun `проверялось меньше суток назад — рано`() {
         val memory = MemoryUpdates(lastChecked = now - 23.hours)
 
-        assertFalse(ReadUpdateSchedule(memory) { now }().due)
+        assertFalse(ReadUpdateSchedule(memory, RELEASE) { now }().due)
     }
 
     @Test
     fun `прошли сутки — пора`() {
         val memory = MemoryUpdates(lastChecked = now - 24.hours)
 
-        assertTrue(ReadUpdateSchedule(memory) { now }().due)
+        assertTrue(ReadUpdateSchedule(memory, RELEASE) { now }().due)
     }
 
     @Test
@@ -36,6 +37,17 @@ class ReadUpdateScheduleTest {
         val memory = MemoryUpdates(automatic = true, lastChecked = null)
         SwitchAutomaticChecks(memory)(false)
 
-        assertFalse(ReadUpdateSchedule(memory) { now }().due)
+        assertFalse(ReadUpdateSchedule(memory, RELEASE) { now }().due)
+    }
+
+    @Test
+    fun `сборку разработчика по расписанию не проверяют`() {
+        val development = AppVersion(1, 0, 0, "dev")
+
+        assertFalse(ReadUpdateSchedule(MemoryUpdates(lastChecked = null), development) { now }().due)
+    }
+
+    private companion object {
+        val RELEASE = AppVersion(1, 0, 3)
     }
 }
