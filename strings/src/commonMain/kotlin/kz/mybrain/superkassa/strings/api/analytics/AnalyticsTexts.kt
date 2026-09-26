@@ -60,8 +60,6 @@ data class AnalyticsTexts(
     val pickPinHint: String,
 
     /** Карта во всё окно и возврат из него: подписи кнопки на самой карте. */
-    val mapFullscreen: String,
-    val mapFullscreenExit: String,
 
     /** Плитки не приехали: кассы на карте стоят, а подложки под ними нет. */
     val mapNoTiles: String,

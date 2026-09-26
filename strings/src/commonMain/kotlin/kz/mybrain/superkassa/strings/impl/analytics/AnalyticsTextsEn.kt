@@ -120,8 +120,6 @@ internal val analyticsTextsEn = AnalyticsTexts(
         "points appear as the lookup goes",
     pickPin = "Pick a cash register on the map",
     pickPinHint = "Click a point — its card appears here",
-    mapFullscreen = "Full screen",
-    mapFullscreenExit = "Exit full screen",
     mapNoTiles = "No map imagery: the tile service did not answer. The registers are still in their places",
     mapShown = "Registers in view",
     mapShownOf = "%s of %s",

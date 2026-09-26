@@ -121,8 +121,6 @@ internal val analyticsTextsKk = AnalyticsTexts(
         "нүктелер іздеу барысында пайда болады",
     pickPin = "Картадан кассаны таңдаңыз",
     pickPinHint = "Нүктені басыңыз — оның картасы осында шығады",
-    mapFullscreen = "Толық экранға",
-    mapFullscreenExit = "Картаны жинау",
     mapNoTiles = "Карта астары жоқ: тақтайша қызметі жауап бермеді. Кассалар өз орындарында тұр",
     mapShown = "Карта терезесіндегі кассалар",
     mapShownOf = "%s / %s",

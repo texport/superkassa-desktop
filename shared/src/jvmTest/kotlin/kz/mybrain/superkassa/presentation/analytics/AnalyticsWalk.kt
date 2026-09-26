@@ -117,7 +117,7 @@ internal class AnalyticsWalk(private val window: AnalyticsWindow, private val ta
     private fun controlsOverLegend(): Boolean {
         val legend = window.find(texts.mapLegend)?.whole ?: return false
         val controls = listOfNotNull(
-            window.find(texts.mapFullscreen),
+            window.find(map.fullscreen),
             window.find(map.zoomIn),
             window.find(map.zoomOut),
             window.find(map.myLocation)

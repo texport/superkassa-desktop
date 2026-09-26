@@ -3,8 +3,6 @@ package kz.mybrain.superkassa.presentation.analytics.map
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,7 +10,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.designsystem.state.EmptyState
-import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.analytics.map.component.MapLegend
 import kz.mybrain.superkassa.presentation.analytics.map.component.MapTally
@@ -21,6 +18,7 @@ import kz.mybrain.superkassa.presentation.analytics.map.component.mapCount
 import kz.mybrain.superkassa.presentation.common.mapview.MapControls
 import kz.mybrain.superkassa.presentation.common.mapview.MapMarks
 import kz.mybrain.superkassa.presentation.common.mapview.MapView
+import kz.mybrain.superkassa.presentation.common.mapview.control.FullscreenButton
 
 /**
  * Само окно карты касс: плитки, ярлычки мест и управление в углу.
@@ -74,12 +72,8 @@ internal fun MapWindow(
             locating = parts.tools.locating,
             modifier = Modifier.align(Alignment.TopEnd).padding(Spacing.fieldGap)
         ) {
-            IconButton(onClick = onFullscreen) {
-                Icon(
-                    imageVector = if (fullscreen) AppIcons.fullscreenExit else AppIcons.fullscreen,
-                    contentDescription = if (fullscreen) parts.texts.mapFullscreenExit else parts.texts.mapFullscreen
-                )
-            }
+            // Та же кнопка, что у окна выбора места: одна на все карты.
+            FullscreenButton(fullscreen, parts.cabinetTexts.map, onFullscreen)
         }
     }
 }
