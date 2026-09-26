@@ -24,8 +24,7 @@ class PlaceTreeWaitingTest {
             PlaceTree(
                 texts = cabinet,
                 language = Language.Ru,
-                collapsed = false,
-                onToggle = {},
+                onCollapse = {},
                 rows = emptyList(),
                 total = 0,
                 loading = true,

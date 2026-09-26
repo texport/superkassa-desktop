@@ -98,6 +98,12 @@ data class AnalyticsTexts(
     val searchKkmLabel: String,
     val allPlaces: String,
 
+    /** Поиск в меню торговых точек — их у сети тысячи. */
+    val placeSearch: String,
+
+    /** Подходящих точек больше, чем показано: `%1$s` — сколько показано. */
+    val placesMore: String,
+
     /**
      * Слова отбора: учёт КГД, признаки кассы, пустой результат и сброс.
      *

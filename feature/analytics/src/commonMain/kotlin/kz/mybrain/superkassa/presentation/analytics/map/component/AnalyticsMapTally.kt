@@ -9,12 +9,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.section.Collapsible
+import kz.mybrain.superkassa.designsystem.section.SectionHeader
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.analytics.map.KkmGroup
 import kz.mybrain.superkassa.presentation.analytics.map.onRecordCount
 import kz.mybrain.superkassa.presentation.analytics.map.sieved
 import kz.mybrain.superkassa.presentation.common.format.Money
+import kz.mybrain.superkassa.presentation.common.mapview.MapFold
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.fill
 
@@ -31,6 +34,9 @@ import kz.mybrain.superkassa.strings.api.fill
  * касс на учёте четыре, и число заведённых касс само по себе говорит
  * о сети совсем не то, что о ней подумают.
  *
+ * Итог сворачивается заголовком, как легенда рядом: свёрнут ли он,
+ * помнит рабочее место ([fold]).
+ *
  * Строка об отборе появляется только при действующем отборе: без него
  * «отобрано две тысячи из двух тысяч» — шум.
  */
@@ -38,6 +44,7 @@ import kz.mybrain.superkassa.strings.api.fill
 internal fun MapTally(
     shown: MapCount,
     sieved: Boolean,
+    fold: MapFold,
     texts: AnalyticsTexts,
     modifier: Modifier = Modifier
 ) {
@@ -51,15 +58,25 @@ internal fun MapTally(
             modifier = Modifier.padding(horizontal = Spacing.fieldGap, vertical = Spacing.itemGap),
             verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
-            Text(text = texts.mapShown, style = MaterialTheme.typography.labelMedium)
-            Text(
-                text = texts.mapShownOf.fill(Money.count(shown.kkms), Money.count(shown.placed)),
-                style = MaterialTheme.typography.titleMedium
-            )
-            TallyNote(texts.mapOnRecordOf.fill(Money.count(shown.onRecord), Money.count(shown.kkms)))
-            if (sieved) {
-                TallyNote(texts.mapSievedOf.fill(Money.count(shown.placed), Money.count(shown.whole)))
-            }
+            // Свёрнутый итог — одна строка заголовка: карте нужен угол,
+            // а число касс в окне читают не всё время.
+            SectionHeader(texts.mapShown, fold.expanded, fold::toggle)
+            Collapsible(fold.expanded) { TallyLines(shown, sieved, texts) }
+        }
+    }
+}
+
+/** Числа итога: сколько касс видно, сколько из них на учёте и что отобрано. */
+@Composable
+private fun TallyLines(shown: MapCount, sieved: Boolean, texts: AnalyticsTexts) {
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
+        Text(
+            text = texts.mapShownOf.fill(Money.count(shown.kkms), Money.count(shown.placed)),
+            style = MaterialTheme.typography.titleMedium
+        )
+        TallyNote(texts.mapOnRecordOf.fill(Money.count(shown.onRecord), Money.count(shown.kkms)))
+        if (sieved) {
+            TallyNote(texts.mapSievedOf.fill(Money.count(shown.placed), Money.count(shown.whole)))
         }
     }
 }

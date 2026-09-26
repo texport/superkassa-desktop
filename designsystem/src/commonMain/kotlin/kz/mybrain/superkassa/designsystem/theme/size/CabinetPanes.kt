@@ -1,7 +1,5 @@
 package kz.mybrain.superkassa.designsystem.theme.size
 
-import androidx.compose.ui.unit.Dp
-
 /**
  * Панели раздела торговых точек кабинета: колонка точек и касс
  * и карточка выбранного — «список и подробности» Material 3.
@@ -17,10 +15,4 @@ object CabinetPanes {
 
     /** Доля окна под развёрнутую колонку: поровну с карточкой. */
     const val PLACES_SHARE = 0.5f
-
-    /**
-     * Свёрнутая колонка — шириной рельса: ей не нужно ничего сверх
-     * значков, и всё остальное — карточке.
-     */
-    val placesRail: Dp = Sizes.rail
 }

@@ -2,10 +2,7 @@ package kz.mybrain.superkassa.presentation.analytics.sales
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.format.Dates
 import kz.mybrain.superkassa.designsystem.state.ScreenSlot
@@ -111,6 +107,9 @@ internal fun salesRangeText(span: SalesSpan): String =
  * границ нет, стрелок полоса не показывает вовсе, а у сводки границы
  * обязательны. Тогда они и сказаны строкой: за какой срок посчитано,
  * владелец обязан видеть всегда.
+ *
+ * «Обновить» стоит в ряду полосы срока, у правого края, как в адресах
+ * обмена: своим рядом под полосой кнопка оставляла пустую строку.
  */
 @Composable
 private fun SalesHead(
@@ -120,25 +119,17 @@ private fun SalesHead(
     onPeriod: (JournalPeriod) -> Unit,
     onRefresh: () -> Unit
 ) {
-    JournalPeriodBar(journal, state.period, state.reading.loading, onPeriod)
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val span = state.reading.value?.range
-        if (state.period.range == null && span != null) {
-            Text(
-                text = "${texts.sales.forPeriod} ${salesRangeText(span)}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.weight(1f)
-            )
-        } else {
-            Spacer(Modifier.weight(1f))
-        }
+    JournalPeriodBar(journal, state.period, state.reading.loading, onPeriod) {
         IconButton(onClick = onRefresh, enabled = !state.reading.loading) {
             Icon(AppIcons.refresh, contentDescription = texts.refresh)
         }
+    }
+    val span = state.reading.value?.range
+    if (state.period.range == null && span != null) {
+        Text(
+            text = "${texts.sales.forPeriod} ${salesRangeText(span)}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

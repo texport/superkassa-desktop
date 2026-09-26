@@ -110,6 +110,14 @@ class ViewPreferences(private val directory: Path) {
         get() = readSetting(mapLegendFile) == COLLAPSED
         set(value) = writeSetting(mapLegendFile, if (value) COLLAPSED else null)
 
+    /**
+     * Свёрнут ли счёт касс в окне карты: как и легенду, его читают
+     * не всё время, а угол карты он занимает всегда.
+     */
+    var mapTallyCollapsed: Boolean
+        get() = readSetting(mapTallyFile) == COLLAPSED
+        set(value) = writeSetting(mapTallyFile, if (value) COLLAPSED else null)
+
     private val languageFile = Path(directory, "language")
 
     private val appearanceFile = Path(directory, "appearance")
@@ -131,6 +139,8 @@ class ViewPreferences(private val directory: Path) {
     private val mapCardFile = Path(directory, "map-card")
 
     private val mapLegendFile = Path(directory, "map-legend")
+
+    private val mapTallyFile = Path(directory, "map-tally")
 
     companion object {
         /** Ширина и высота разделены крестиком: строка читаема глазами. */

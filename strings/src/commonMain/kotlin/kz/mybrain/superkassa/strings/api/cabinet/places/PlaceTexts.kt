@@ -21,6 +21,16 @@ data class PlaceTexts(
     val addressNeedsReregistration: String,
     val exists: String,
     val removeBlocked: String,
+
+    /** Удалить точку — кнопка карточки и подтверждение. */
+    val delete: String,
+
+    /** Вопрос перед удалением: `%1$s` — название точки. */
+    val deleteWhat: String,
+    val deleteExplain: String,
+
+    /** Место точки на карте — строка сведений карточки. */
+    val point: String,
     val latitude: String,
     val longitude: String,
     val pickOnMap: String,

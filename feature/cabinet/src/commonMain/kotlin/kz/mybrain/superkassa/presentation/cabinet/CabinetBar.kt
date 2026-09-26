@@ -1,14 +1,14 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.section.BarAction
 import kz.mybrain.superkassa.designsystem.section.BarLead
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.cabinet.component.cabinetHead
 import kz.mybrain.superkassa.presentation.cabinet.signin.ownerLine
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
@@ -68,7 +68,8 @@ private fun barLead(back: (() -> Unit)?, backLabel: String, onMenu: (() -> Unit)
 }
 
 /**
- * Язык и выход — теми же элементами, что и у кассы.
+ * Язык и выход — теми же элементами, что и у кассы: значками, выход —
+ * последним, с названием в подсказке.
  *
  * Язык переключается и до входа: кабинет государственный, и владелец
  * вправе читать экран входа по-казахски.
@@ -77,6 +78,6 @@ private fun barLead(back: (() -> Unit)?, backLabel: String, onMenu: (() -> Unit)
 private fun RowScope.CabinetBarActions(look: CabinetLook, open: Boolean, signOut: String, onSignOut: () -> Unit) {
     look.switches(this)
     if (open) {
-        TextButton(onClick = onSignOut) { Text(signOut) }
+        BarAction(AppIcons.signOut, signOut, onSignOut)
     }
 }

@@ -23,5 +23,11 @@ internal fun analyticsMapModel(ports: AnalyticsPorts): AnalyticsMapViewModel =
 @Composable
 internal fun mapTools(ports: AnalyticsPorts): MapTools = remember(ports) {
     val map = ports.map.cases()
-    MapTools(tiles = map.tiles(), locating = map.locating(), panel = map.card(), legend = map.legend())
+    MapTools(
+        tiles = map.tiles(),
+        locating = map.locating(),
+        panel = map.card(),
+        legend = map.legend(),
+        tally = map.tally()
+    )
 }

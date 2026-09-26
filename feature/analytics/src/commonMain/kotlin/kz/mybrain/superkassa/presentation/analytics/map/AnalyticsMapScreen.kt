@@ -66,7 +66,11 @@ internal fun AnalyticsMapScreen(
         head = {
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
                 AnalyticsSourceBar(state, parts.placement, texts, model)
-                AnalyticsSieveBar(state.sieve, sievePlaces(state.reading.value), texts, model::sift)
+                // Точки отбора собираются по всем кассам: пересобирать их
+                // на каждый сдвиг карты и каждый найденный адрес незачем.
+                val reading = state.reading.value
+                val places = remember(reading) { sievePlaces(reading) }
+                AnalyticsSieveBar(state.sieve, places, texts, model::sift)
             }
         }
     ) {
@@ -104,13 +108,14 @@ internal fun mapParts(
 
 /**
  * Чем карта касс рисуется: плитки, определение своего места и то,
- * как владелец разложил карточку и легенду. Живут, пока открыто окно.
+ * как владелец разложил карточку, легенду и счёт касс в окне. Живут, пока открыто окно.
  */
 internal class MapTools(
     val tiles: MapTiles,
     val locating: MapLocating,
     val panel: MapFold,
-    val legend: MapFold
+    val legend: MapFold,
+    val tally: MapFold
 )
 
 /**

@@ -122,6 +122,12 @@ class Preferences(directory: Path) : WorkplaceMemory, SetupMemory, LookMemory {
             view.mapLegendCollapsed = value
         }
 
+    var mapTallyCollapsed: Boolean
+        get() = view.mapTallyCollapsed
+        set(value) {
+            view.mapTallyCollapsed = value
+        }
+
     var locationAllowed: Boolean?
         get() = location.allowed
         set(value) {

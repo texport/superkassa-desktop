@@ -13,7 +13,6 @@ internal val companyTextsKk = CompanyTexts(
     primaryOked = "Негізгі",
     saveOkeds = "Қызмет түрлерін сақтау",
     addOked = "Қызмет түрін қосу",
-    makePrimary = "Негізгі ету",
     okedSearch = "ЭҚЖЖ жіктеуішінен іздеу",
     okedNotFound = "Ештеңе табылмады. Жіктеуіш тек өз тұжырымдарын біледі: дәріхана онда фармацевтикалық тауарлар " +
         "саудасы деп аталады",

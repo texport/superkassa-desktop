@@ -56,5 +56,6 @@ interface Maps {
 interface MapMemory {
     var cardCollapsed: Boolean
     var legendCollapsed: Boolean
+    var tallyCollapsed: Boolean
     var locationAllowed: Boolean?
 }

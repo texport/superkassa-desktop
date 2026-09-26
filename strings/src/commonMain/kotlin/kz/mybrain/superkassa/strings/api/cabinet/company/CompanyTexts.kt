@@ -9,7 +9,6 @@ data class CompanyTexts(
     val primaryOked: String,
     val saveOkeds: String,
     val addOked: String,
-    val makePrimary: String,
     val okedSearch: String,
     val okedNotFound: String,
 

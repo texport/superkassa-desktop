@@ -8,11 +8,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.field.SearchField
 import kz.mybrain.superkassa.designsystem.field.fieldMinWidth
 import kz.mybrain.superkassa.designsystem.picker.MenuChip
+import kz.mybrain.superkassa.designsystem.picker.MenuSearch
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
@@ -22,6 +24,7 @@ import kz.mybrain.superkassa.presentation.analytics.map.MapSieve
 import kz.mybrain.superkassa.presentation.analytics.map.SievePlace
 import kz.mybrain.superkassa.presentation.words.cabinet.recordTitle
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
+import kz.mybrain.superkassa.strings.api.fill
 
 /**
  * Отбор касс над картой.
@@ -110,10 +113,11 @@ private fun Records(sieve: MapSieve, texts: AnalyticsTexts, onSieve: (MapSieve) 
 }
 
 /**
- * Торговая точка — плашкой со списком.
+ * Торговая точка — плашкой со списком и поиском в нём.
  *
- * Точек у сети десятки, и набор плашек занял бы пол-экрана: выбор
- * из списка здесь тот же, что и у отбора по смене в журнале кассы.
+ * Точек у сети бывают тысячи: набор плашек занял бы пол-экрана, а меню
+ * из двух тысяч пунктов подтормаживало при каждом открытии. Меню
+ * показывает первые [PLACES_SHOWN] и ищет по названию и адресу.
  */
 @Composable
 private fun Places(
@@ -123,16 +127,21 @@ private fun Places(
     onSieve: (MapSieve) -> Unit,
     modifier: Modifier
 ) {
-    val chosen = places.firstOrNull { it.id == sieve.place }
+    val chosen = remember(places, sieve.place) { places.firstOrNull { it.id == sieve.place } }
+    val options = remember(places) { listOf(null) + places }
     MenuChip(
         value = chosen?.name ?: texts.allPlaces,
-        options = listOf(null) + places,
+        options = options,
         title = { it?.name ?: texts.allPlaces },
         chosen = chosen != null,
         modifier = modifier,
+        search = MenuSearch(texts.placeSearch, texts.placesMore.fill(PLACES_SHOWN), PLACES_SHOWN),
         onSelect = { onSieve(sieve.copy(place = it?.id)) }
     )
 }
+
+/** Сколько точек меню показывает разом; остальные находятся поиском. */
+private const val PLACES_SHOWN = 50
 
 /** Нажатая плашка добавляется к отбору, нажатая повторно — убирается. */
 private fun toggled(marks: Set<KkmMark>, mark: KkmMark): Set<KkmMark> =

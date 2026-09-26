@@ -1,12 +1,15 @@
 package kz.mybrain.superkassa.presentation.cabinet.places
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.PaneScaffoldScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -15,9 +18,11 @@ import kz.mybrain.superkassa.designsystem.adaptive.listDetailDirective
 import kz.mybrain.superkassa.designsystem.adaptive.listDetailValue
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.CabinetPanes
+import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.navigation.step.PlaceCardKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetUiState
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
+import kz.mybrain.superkassa.presentation.cabinet.places.component.ListToggle
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceCreateButtons
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceRow
 import kz.mybrain.superkassa.presentation.cabinet.places.component.PlaceTree
@@ -35,12 +40,14 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  * под каждой её кассы, а выбранная касса раскрывается справа вместе
  * со своими документами.
  *
- * Список сворачивается, как рельс разделов: когда работают с одной кассой,
- * её карточке нужна вся ширина окна, а свёрнутая колонка остаётся рельсом
- * значков. Выбор помнится рабочим местом.
+ * Колонку можно убрать: когда работают с одной кассой, её карточке нужна
+ * вся ширина окна. Вернуть колонку — кнопкой у края карточки, на том же
+ * месте, где стояла кнопка, которая колонку убрала. Выбор помнится рабочим
+ * местом. Прежде свёрнутая колонка оставалась рельсом одинаковых значков
+ * точек и касс, по которому при сотнях точек ничего не найти.
  *
  * Колонка и карточка — «список и подробности» Material 3: рядом, начиная
- * с расширенного окна, и поровну, а свёрнутая колонка — шириной рельса.
+ * с расширенного окна, и поровну.
  * На узком окне выбранное открывается поверх колонки шагом истории окна
  * ([detailStep]): назад к колонке ведёт стрелка в шапке окна, жест
  * и Escape, а не своя кнопка над карточкой.
@@ -54,21 +61,22 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 internal fun PlacesScreen(cabinet: CabinetWindow, texts: CabinetTexts, stepped: Boolean = false) {
-    val collapsed = cabinet.look.placesCollapsed()
     val model = placesViewModel(cabinet.cabinet)
     val chosen by model.state.collectAsScreenState()
     val listState = rememberLazyListState()
     val directive = listDetailDirective()
-    val picked = chosen.place != null || chosen.register != null
-    val step = detailStep(stepped, picked, beside = directive.maxHorizontalPartitions > 1)
+    val beside = directive.maxHorizontalPartitions > 1
+    if (cabinet.look.placesCollapsed() && beside) {
+        CardAlone(cabinet, texts, chosen)
+        return
+    }
+    val step = detailStep(stepped, chosen.place != null || chosen.register != null, beside = beside)
     ListDetailPaneScaffold(
         directive = directive,
         value = listDetailValue(directive, step.over),
         listPane = {
-            AnimatedPane(modifier = placesWidth(collapsed)) {
-                PlacesColumn(cabinet, texts, model, chosen, listState, Modifier.fillMaxSize()) {
-                    step.opened(PlaceCardKey)
-                }
+            AnimatedPane(modifier = Modifier.preferredWidth(CabinetPanes.PLACES_SHARE)) {
+                PlacesColumn(cabinet, texts, model, chosen, listState, beside) { step.opened(PlaceCardKey) }
             }
         },
         detailPane = { AnimatedPane { PlaceDetail(cabinet, texts, chosen) } },
@@ -76,17 +84,19 @@ internal fun PlacesScreen(cabinet: CabinetWindow, texts: CabinetTexts, stepped: 
     )
 }
 
-/** Ширина колонки: развёрнутая — долей окна, свёрнутая — рельсом. */
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-private fun PaneScaffoldScope.placesWidth(collapsed: Boolean): Modifier = if (collapsed) {
-    Modifier.preferredWidth(CabinetPanes.placesRail)
-} else {
-    Modifier.preferredWidth(CabinetPanes.PLACES_SHARE)
+/** Колонка убрана: карточка на всё окно, у её края — кнопка вернуть колонку. */
+@Composable
+private fun CardAlone(cabinet: CabinetWindow, texts: CabinetTexts, chosen: PlacesUiState) {
+    Row(modifier = Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(Spacing.itemGap)) {
+        ListToggle(shown = false, onToggle = cabinet.look.togglePlaces)
+        Box(modifier = Modifier.weight(1f).fillMaxHeight()) { PlaceDetail(cabinet, texts, chosen) }
+    }
 }
 
 /**
  * Колонка точек с кассами под ними; выбор строки открывает карточку.
  *
+ * @param beside колонка стоит рядом с карточкой: только тогда её можно убрать.
  * @param onOpened выбрана точка или касса: на узком окне карточка сменяет колонку.
  */
 @Composable
@@ -96,15 +106,15 @@ private fun PlacesColumn(
     model: PlacesViewModel,
     chosen: PlacesUiState,
     listState: LazyListState,
-    modifier: Modifier,
+    beside: Boolean,
     onOpened: () -> Unit
 ) {
     val window by cabinet.cabinet.state.collectAsScreenState()
     PlaceTree(
         texts = texts,
         language = LocalLanguage.current,
-        collapsed = cabinet.look.placesCollapsed(),
-        onToggle = cabinet.look.togglePlaces,
+        // Убрать колонку есть смысл, только когда она стоит рядом с карточкой.
+        onCollapse = cabinet.look.togglePlaces.takeIf { beside },
         rows = rememberRows(window, chosen),
         // Сколько точек у компании — по словам кабинета: пока список
         // дочитывается, прочитано меньше, и колонка об этом говорит.
@@ -128,7 +138,7 @@ private fun PlacesColumn(
         onRegister = { model.selectRegister(it).also { onOpened() } },
         footer = { PlaceCreateButtons(cabinet, texts, chosen.place) },
         listState = listState,
-        modifier = modifier
+        modifier = Modifier.fillMaxSize()
     )
 }
 

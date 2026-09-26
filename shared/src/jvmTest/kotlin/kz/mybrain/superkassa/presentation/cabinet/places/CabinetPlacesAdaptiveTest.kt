@@ -80,15 +80,20 @@ class CabinetPlacesAdaptiveTest {
             val tree = probe.tree()
             probe.click(probe.rows(tree).first { it.whole }.middle())
             val pane = probe.nodes().filter { it.at.x > tree.at.x + tree.width && it.width > 0 }
-            val fields = pane.filter { it.editable }
-            assertTrue(fields.isNotEmpty(), "у карточки точки нет полей")
+            // Правка точки открывается окнами: в карточке — сведения и ряд действий.
+            val actions = pane.filter { it.text in placeActions(scene) }
+            assertEquals(placeActions(scene).size, actions.size, "у карточки точки нет действий: $actions")
             val left = pane.minOf { it.at.x }
             val right = pane.maxOf { it.at.x + it.width }
             // Прежде карточка стояла колонкой чтения, и правая часть панели пустовала.
             assertTrue(right - left > ContentWidths.reading.value, "карточка точки шириной ${right - left}")
-            fields.forEach { assertTrue(it.at.x + it.width <= WIDE_W, "поле карточки за краем окна: $it") }
+            actions.forEach { assertTrue(it.at.x + it.width <= WIDE_W, "действие карточки за краем окна: $it") }
         }
     }
+
+    /** Действия карточки точки: переименовать, сменить адрес, удалить. */
+    private fun placeActions(scene: CabinetPlacesScene): Set<String> =
+        scene.texts.places.let { setOf(it.rename, it.changeAddress, it.delete) }
 
     private companion object {
         const val WHEEL = 12f

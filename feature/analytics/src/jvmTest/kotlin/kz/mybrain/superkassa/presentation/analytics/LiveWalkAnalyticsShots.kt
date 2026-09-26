@@ -76,7 +76,7 @@ class LiveWalkAnalyticsShots {
     @Composable
     private fun PeriodBar() {
         Column(modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding)) {
-            JournalPeriodBar(journal, JournalPeriod.of(JournalSpan.Week).shiftedBy(-1), false) {}
+            JournalPeriodBar(journal, JournalPeriod.of(JournalSpan.Week).shiftedBy(-1), false, onPeriod = {})
         }
     }
 

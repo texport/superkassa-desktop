@@ -1,27 +1,24 @@
 package kz.mybrain.superkassa.presentation.cabinet.company
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import kz.mybrain.superkassa.designsystem.button.BusyButton
+import kz.mybrain.superkassa.designsystem.list.ListRows
 import kz.mybrain.superkassa.designsystem.list.RecordRow
-import kz.mybrain.superkassa.designsystem.list.stripedAt
+import kz.mybrain.superkassa.designsystem.section.BarAction
 import kz.mybrain.superkassa.designsystem.section.CollapsibleCard
 import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.state.EmptyState
-import kz.mybrain.superkassa.designsystem.status.Chip
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.Oked
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
@@ -50,9 +47,10 @@ internal fun OkedsCard(
         if (okeds.isEmpty()) {
             EmptyState(AppIcons.settings, texts.company.okedsEmpty, texts.hints.okedsEmpty)
         }
-        okeds.forEachIndexed { at, oked ->
-            OkedRow(oked, texts, title(oked), stripedAt(at), { actions.markPrimary(oked.code) }) {
-                actions.remove(oked.code)
+        ListRows {
+            okeds.forEachIndexed { at, oked ->
+                if (at > 0) HorizontalDivider()
+                OkedRow(oked, texts, title(oked), { actions.markPrimary(oked.code) }) { actions.remove(oked.code) }
             }
         }
         // На пустом списке кнопка гаснет: кабинет требует ровно один
@@ -101,47 +99,37 @@ internal fun AddOkedCard(search: OkedSearch, language: Language, texts: CabinetT
 }
 
 /**
- * Одна строка вида деятельности.
+ * Одна строка вида деятельности — пункт одиночного выбора основного.
+ *
+ * Основной отмечен переключателем в начале строки, как выбор одного из
+ * списка по Material 3; нажатие на строку делает её основной. Прежде
+ * у основного стояла плашка, у прочих — кнопка «Сделать основным»,
+ * а строки через одну были затенены: затенение читалось как пометка,
+ * и основной вид выглядел выделенным иначе, чем соседний затенённый.
  *
  * Наименование стоит главным, код — служебной строкой под ним: владелец
- * ищет «розничная торговля», а не 47.11. Прежде код и название шли одной
- * строкой через точку и читались как единое имя.
+ * ищет «розничная торговля», а не 47.11. У основного в служебной строке
+ * сказано и это — для тех, кто не различает переключатели.
  */
 @Composable
 private fun OkedRow(
     oked: Oked,
     texts: CabinetTexts,
     title: String,
-    striped: Boolean,
     onPrimary: () -> Unit,
     onRemove: () -> Unit
 ) {
     RecordRow(
         title = title,
-        subtitle = oked.code,
+        modifier = Modifier.semantics { role = Role.RadioButton },
+        subtitle = if (oked.primary) "${texts.company.primaryOked} · ${oked.code}" else oked.code,
         // Формулировка классификатора длинная, и владелец выбирает вид
         // по словам, а не по коду: обрезанная на середине строка отнимала
         // ровно то, чем один вид отличается от соседнего.
         titleLines = OKED_TITLE_LINES,
-        striped = striped,
-        trailing = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // У основного — пометка, у прочих — действие. Прежде рядом
-                // с каждой строкой стояла кнопка «Основной», и список читался
-                // так, будто основными объявлены все сразу.
-                if (oked.primary) {
-                    Chip(texts.company.primaryOked, MaterialTheme.colorScheme.primary)
-                } else {
-                    TextButton(onClick = onPrimary) { Text(texts.company.makePrimary) }
-                }
-                IconButton(onClick = onRemove) {
-                    Icon(AppIcons.close, contentDescription = texts.remove)
-                }
-            }
-        }
+        leading = { RadioButton(selected = oked.primary, onClick = onPrimary) },
+        trailing = { BarAction(AppIcons.remove, texts.remove, onRemove) },
+        onClick = onPrimary
     )
 }
 

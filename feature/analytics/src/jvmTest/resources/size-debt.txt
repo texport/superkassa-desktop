@@ -5,7 +5,6 @@
 # место, и на исправленное, но не вычеркнутое.
 #
 # Формат: <файл от kz/mybrain/superkassa> -> <токен>
-presentation/analytics/exchange/AnalyticsExchangeScreen.kt -> Sizes.fieldSearch
 presentation/analytics/kkm/AnalyticsKkmDialog.kt -> Sizes.kkmSalesHeight
 presentation/analytics/kkm/AnalyticsKkmDialog.kt -> Sizes.kkmSalesWidth
 presentation/analytics/map/AnalyticsMapFull.kt -> Sizes.unplacedColumn

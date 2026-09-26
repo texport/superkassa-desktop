@@ -1,7 +1,9 @@
 package kz.mybrain.superkassa.presentation.common.period
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRowScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -31,13 +33,17 @@ import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
  * Один на журнал кассы и на документы кассы в кабинете: кассе срок уходит
  * границами в миллисекундах, кабинету — датами отбора, но выбирают его
  * одинаково.
+ *
+ * @param actions действия раздела у правого края того же ряда — например,
+ *   «Обновить»: своим рядом под полосой они оставляли пустую строку.
  */
 @Composable
 fun JournalPeriodBar(
     journal: HistoryJournalTexts,
     period: JournalPeriod,
     loading: Boolean,
-    onPeriod: (JournalPeriod) -> Unit
+    onPeriod: (JournalPeriod) -> Unit,
+    actions: (@Composable () -> Unit)? = null
 ) {
     // Полоса переносится, а не сжимается: в окне сводки одной кассы ей
     // не хватало ширины, и «Сегодня» вставало столбиком из отдельных букв —
@@ -67,7 +73,15 @@ fun JournalPeriodBar(
         ) {
             PeriodShift(journal, period, loading, onPeriod)
         }
+        actions?.let { PeriodActions(it) }
     }
+}
+
+/** Действия раздела у правого края ряда: пустое место до них забирает промежуток. */
+@Composable
+private fun FlowRowScope.PeriodActions(actions: @Composable () -> Unit) {
+    Spacer(Modifier.weight(1f))
+    actions()
 }
 
 /** Перелистывание срока: назад, вперёд и «к сегодняшнему». */

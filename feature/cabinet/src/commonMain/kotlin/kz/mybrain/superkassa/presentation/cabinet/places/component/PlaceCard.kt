@@ -2,15 +2,11 @@ package kz.mybrain.superkassa.presentation.cabinet.places.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
@@ -19,10 +15,11 @@ import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.designsystem.tip.InfoTip
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
+import kz.mybrain.superkassa.presentation.cabinet.mapPointOf
 import kz.mybrain.superkassa.presentation.cabinet.places.placesViewModel
+import kz.mybrain.superkassa.presentation.common.mapview.MapPoint
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
 import kz.mybrain.superkassa.presentation.words.cabinet.addressIn
 import kz.mybrain.superkassa.strings.api.Language
@@ -31,9 +28,12 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 /**
  * Торговая точка: что о ней записано и что с ней можно сделать.
  *
- * Открывается справа, когда точка выбрана, а касса ещё нет. Правка живёт
- * здесь же — переименование и переезд относятся ровно к тем строкам,
- * что записаны выше, и отдельного раздела им не нужно.
+ * Открывается справа, когда точка выбрана, а касса ещё нет. Сверху —
+ * название и три строки сведений: адрес, число касс и место на карте;
+ * под ними — ряд действий: переименовать, сменить адрес, удалить.
+ * Правка открывается окном по кнопке: прежде поля названия, подбора
+ * адреса, координаты и три кнопки стояли в карточке подряд, и за ними
+ * не было видно, что о точке уже записано и что к чему относится.
  */
 @Composable
 internal fun PlaceCard(
@@ -46,19 +46,14 @@ internal fun PlaceCard(
     val model = placesViewModel(cabinet.cabinet)
     val window by cabinet.cabinet.state.collectAsScreenState()
     ScrollableColumn(modifier = modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
-        // Удаление стоит в конце карточки, а не в её заголовке: в узком
-        // окне на заголовок приходились два значка подсказки и кнопка,
-        // и «Убрать» выходило как «Убр / ать».
         SectionCard(title = texts.places.place, info = texts.hints.places) {
             PlaceFacts(texts, language, place)
-            PlaceEditRow(cabinet, texts, place, window.busy)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            PlaceRemoval(texts, place, window.busy) { model.remove(place) }
+            PlaceEditRow(cabinet, texts, place, window.busy) { model.remove(place) }
         }
     }
 }
 
-/** Что о точке записано: название крупно, под ним адрес и число касс. */
+/** Что о точке записано: название крупно, под ним адрес, число касс и место на карте. */
 @Composable
 private fun PlaceFacts(texts: CabinetTexts, language: Language, place: RetailPlace) {
     // Две строки, а не одна: название точки владелец придумывает
@@ -80,28 +75,13 @@ private fun PlaceFacts(texts: CabinetTexts, language: Language, place: RetailPla
         // Прочерк — общая отметка отсутствующего значения.
         DetailLine(texts.places.address, addressIn(language, place.address, place.addressKz).ifBlank { Glyphs.DASH })
         DetailLine(texts.places.registerCount, place.cashRegisterCount.toString())
+        DetailLine(texts.places.point, pointLine(texts, mapPointOf(place.latitude, place.longitude)))
     }
 }
 
-/**
- * Удаление точки — и объяснение, когда его нет.
- *
- * Кнопка остаётся на месте и погашенной: убранная целиком, она оставляла
- * в карточке один значок подсказки, и владелец не видел, что точку вообще
- * можно удалить. Рядом с погашенной стоит причина — привязанная касса, —
- * и обе видны разом.
- */
-@Composable
-private fun PlaceRemoval(texts: CabinetTexts, place: RetailPlace, busy: Boolean, onRemove: () -> Unit) {
-    val held = place.cashRegisterCount > 0
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (held) InfoTip(texts.places.removeBlocked)
-        OutlinedButton(enabled = !held && !busy, onClick = onRemove) { Text(texts.remove) }
-    }
-}
+/** Место на карте одной строкой: широта и долгота через запятую — или что его нет. */
+private fun pointLine(texts: CabinetTexts, point: MapPoint?): String =
+    point?.let { "${it.latitude}, ${it.longitude}" } ?: texts.places.pointNotChosen
 
 /** Сколько строк отводится названию в заголовке карточки. */
 private const val TITLE_LINES = 2

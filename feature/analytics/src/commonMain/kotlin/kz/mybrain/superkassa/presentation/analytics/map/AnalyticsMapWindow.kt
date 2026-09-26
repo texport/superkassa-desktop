@@ -1,8 +1,6 @@
 package kz.mybrain.superkassa.presentation.analytics.map
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -93,11 +91,13 @@ internal fun MapWindow(
  * и тем же отбором считается итог: на карте написано ровно то число,
  * которое владелец сейчас видит кружками.
  *
- * Итог и легенда — столбиком в левом верхнем углу, управление — в правом.
- * Легенда стояла в правом нижнем, и в низкой карте кнопка «Во весь экран»
- * ложилась на её угол. Левый нижний занят объяснением о неприехавших
- * плитках. Столбик слева и кнопки справа не встречаются, пока карта
- * не уже [kz.mybrain.superkassa.designsystem.theme.size.Panes.mapAndDetails].
+ * Итог — в левом верхнем углу, управление — в правом верхнем, легенда —
+ * в правом нижнем, под кнопками: так она не отнимает у карты тот угол,
+ * с которого глаз начинает читать, и не ложится на кружки у левого края.
+ * Кнопка «Во весь экран» стоит в столбике управления сверху и с легендой
+ * не встречается. Левый нижний угол занят объяснением о неприехавших
+ * плитках. Итог и легенда сворачиваются заголовком, как карточка под
+ * картой: что свёрнуто, помнит рабочее место.
  */
 @Composable
 private fun MapOverlay(parts: MapParts, canvas: IntSize) {
@@ -106,16 +106,15 @@ private fun MapOverlay(parts: MapParts, canvas: IntSize) {
     MapMarks(model.map, canvas, kkmMarks(shown, model), groupCell(LocalDensity.current.density)) { mark ->
         parts.actions.open(parts.groups.first { it.id == mark.id })
     }
-    Column(
-        modifier = Modifier.padding(Spacing.fieldGap),
-        verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
-    ) {
+    Box(modifier = Modifier.fillMaxSize().padding(Spacing.fieldGap)) {
         MapTally(
             shown = mapCount(shown, parts.placement.placed.size, parts.whole),
             sieved = model.sieve.set,
-            texts = parts.texts
+            fold = parts.tools.tally,
+            texts = parts.texts,
+            modifier = Modifier.align(Alignment.TopStart)
         )
-        MapLegend(parts.tools.legend, parts.texts)
+        MapLegend(parts.tools.legend, parts.texts, Modifier.align(Alignment.BottomEnd))
     }
 }
 

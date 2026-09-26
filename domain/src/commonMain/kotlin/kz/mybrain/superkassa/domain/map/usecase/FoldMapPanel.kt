@@ -10,6 +10,7 @@ class FoldMapPanel(private val memory: MapMemory) {
         when (panel) {
             MapPanel.Card -> memory.cardCollapsed = collapsed
             MapPanel.Legend -> memory.legendCollapsed = collapsed
+            MapPanel.Tally -> memory.tallyCollapsed = collapsed
         }
     }
 }

@@ -86,13 +86,6 @@ class PlaceShots {
         look("place-not-found", places, emptyList(), Shown(sieve = PlaceSieve(needle = "ничего такого нет")))
     }
 
-    /** Свёрнутая колонка: рельс значков вместо пустоты. */
-    @Test
-    fun `колонка свёрнута`() {
-        val places = (1..TEN).map { PlaceLook.place(it) }
-        look("place-rail", places, emptyList(), Shown(open = "p3", collapsed = true))
-    }
-
     /** Узкое окно: карточка точки не должна обрезаться. */
     @Test
     fun `узкое окно`() {
@@ -100,12 +93,11 @@ class PlaceShots {
         look("place-narrow", listOf(place), emptyList(), Shown(open = place.id, width = NARROW, height = SHORT))
     }
 
-    /** Как показан раздел: раскрытая точка, отбор, ожидание, свёрнутая колонка и окно. */
+    /** Как показан раздел: раскрытая точка, отбор, ожидание и окно. */
     private data class Shown(
         val open: String? = null,
         val sieve: PlaceSieve = PlaceSieve(),
         val loading: Boolean = false,
-        val collapsed: Boolean = false,
         val width: Int = WIDE,
         val height: Int = HIGH
     )
@@ -117,7 +109,7 @@ class PlaceShots {
         shown: Shown = Shown()
     ) {
         RenderProbe(shown.width, shown.height) {
-            PlacesLook(places, registers, shown.open, shown.sieve, shown.loading, shown.collapsed)
+            PlacesLook(places, registers, shown.open, shown.sieve, shown.loading)
         }
             .use { probe ->
                 repeat(SETTLE) { probe.frame() }

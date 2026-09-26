@@ -36,7 +36,6 @@ internal fun PlacesLook(
     open: String? = null,
     sieve: PlaceSieve = PlaceSieve(),
     loading: Boolean = false,
-    collapsed: Boolean = false,
     /** Кассы, заблокированные по словам кабинета, и знает ли он о них. */
     locked: Set<String> = emptySet(),
     locksKnown: Boolean = true,
@@ -50,8 +49,7 @@ internal fun PlacesLook(
             PlaceTree(
                 texts = Look.cabinet,
                 language = Language.Ru,
-                collapsed = collapsed,
-                onToggle = {},
+                onCollapse = {},
                 rows = placeRows(places, registers, open, sieve, locked, Language.Ru),
                 total = places.size,
                 loading = loading,

@@ -60,7 +60,6 @@ class BigListRenderTest {
     @Composable
     private fun Tree(
         count: Int,
-        collapsed: Boolean = false,
         query: String = "",
         // Раскрытая точка и выделенная — разные вещи: так проверка
         // выделения не путается с появлением касс под точкой.
@@ -71,8 +70,7 @@ class BigListRenderTest {
         PlaceTree(
             texts = texts,
             language = Language.Ru,
-            collapsed = collapsed,
-            onToggle = {},
+            onCollapse = {},
             rows = placeRows(all, registers(all), open = open, sieve = PlaceSieve(needle = query)),
             total = all.size,
             loading = false,
@@ -116,26 +114,6 @@ class BigListRenderTest {
         println("дерево: $SMALL точек — $small мс, $LARGE точек — $large мс")
         assertTrue(large < BUDGET, "$LARGE точек рисуются $large мс")
         assertTrue(large < small * FACTOR + SLACK, "рост отрисовки с длиной списка: $small → $large мс")
-    }
-
-    @Test
-    fun `свёрнутая колонка держит те же две тысячи точек`() {
-        val collapsed = renderMillis { Tree(LARGE, collapsed = true) }
-        println("свёрнутая колонка: $LARGE точек — $collapsed мс")
-        assertTrue(collapsed < BUDGET, "свёрнутая колонка рисуется $collapsed мс")
-    }
-
-    @Test
-    fun `свёрнутая колонка не пустая и показывает выбранное`() {
-        RenderProbe { Tree(0, collapsed = true) }.use { empty ->
-            RenderProbe { Tree(LARGE, collapsed = true) }.use { filled ->
-                RenderProbe { Tree(LARGE, collapsed = true, chosen = "p3") }.use { other ->
-                    val nothing = empty.frame()
-                    assertTrue(!filled.frame().contentEquals(nothing), "в свёрнутой колонке не видно точек")
-                    assertTrue(!other.frame().contentEquals(filled.frame()), "выбранная точка не выделена")
-                }
-            }
-        }
     }
 
     @Test

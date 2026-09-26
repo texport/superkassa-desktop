@@ -13,7 +13,6 @@ internal val companyTextsEn = CompanyTexts(
     primaryOked = "Primary",
     saveOkeds = "Save activity codes",
     addOked = "Add an activity code",
-    makePrimary = "Make primary",
     okedSearch = "Search the OKED classifier",
     okedNotFound = "Nothing found. The classifier knows only its own wording: a pharmacy there is trade in " +
         "pharmaceutical goods",

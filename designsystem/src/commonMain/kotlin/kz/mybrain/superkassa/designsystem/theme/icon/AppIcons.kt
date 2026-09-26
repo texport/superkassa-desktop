@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.designsystem.theme.icon
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.automirrored.filled.MenuOpen
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.automirrored.filled.Undo
@@ -161,6 +162,9 @@ object AppIcons {
 
     /** Личный кабинет ОФД: дела владельца, а не кассира. */
     val cabinet: ImageVector = Icons.Filled.Business
+
+    /** Выход из кабинета БФД: владелец закрывает свою сессию подписи. */
+    val signOut: ImageVector = Icons.AutoMirrored.Filled.Logout
 
     /** Перелистывание дня в журнале. */
     val earlierDay: ImageVector = Icons.Filled.ChevronLeft
