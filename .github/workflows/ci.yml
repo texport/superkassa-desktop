@@ -54,3 +54,8 @@ jobs:
 
       - name: Android
         run: ./gradlew :androidApp:assembleDebug
+
+      # Снимки экранов и раскладка по размерам окна — своей задачей:
+      # в `check` перед каждым коммитом их нет, здесь они идут всегда.
+      - name: Screenshots
+        run: ./gradlew screenshots

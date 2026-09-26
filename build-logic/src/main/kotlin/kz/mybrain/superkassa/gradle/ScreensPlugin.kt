@@ -7,6 +7,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
 /**
@@ -19,6 +20,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
  * и настройках на диске, как в приложении. Куча проверок вида — 2 ГБ:
  * сцены держат память до сборки мусора, и полному набору 512 МБ по
  * умолчанию не хватает.
+ *
+ * Снимки экранов (`…Shots`) и проверки раскладки по размерам окна
+ * (`…AdaptiveTest`) рисуют экраны в десятках окон, шрифтов и языков и
+ * шли больше половины полной проверки. В `check` их нет: они — отдельная
+ * задача `screenshots` модуля (`./gradlew screenshots` — во всех модулях
+ * разом), её гоняют перед установкой на устройство и в CI. `check` перед
+ * каждым коммитом остаётся со сборкой, detekt и обычными проверками.
  *
  * Превью экранов Android Studio рисует Android-сборкой модуля: отрисовщик
  * превью стоит на её пути исполнения, наружу не отдаётся и в приложение
@@ -50,9 +58,19 @@ class ScreensPlugin : Plugin<Project> {
             }
         }
         dependencies.add(PREVIEW_RUNTIME, lib("compose-ui-tooling"))
-        tasks.named<Test>("jvmTest") {
+        val jvmTest = tasks.named<Test>("jvmTest") {
             useJUnitPlatform()
             maxHeapSize = HEAP
+            exclude(SCREEN_CHECKS)
+        }
+        tasks.register<Test>(SCREENSHOTS) {
+            group = "verification"
+            description = "Снимки экранов и раскладка по размерам окна."
+            testClassesDirs = jvmTest.get().testClassesDirs
+            classpath = jvmTest.get().classpath
+            useJUnitPlatform()
+            maxHeapSize = HEAP
+            include(SCREEN_CHECKS)
         }
     }
 
@@ -78,5 +96,11 @@ class ScreensPlugin : Plugin<Project> {
             "ktor-serialization-json"
         )
         const val HEAP = "2g"
+
+        /** Задача снимков экранов модуля: `./gradlew screenshots`. */
+        const val SCREENSHOTS = "screenshots"
+
+        /** Классы снимков и проверок раскладки по размерам окна. */
+        val SCREEN_CHECKS = listOf("**/*Shots.class", "**/*Shots$*.class", "**/*AdaptiveTest.class", "**/*AdaptiveTest$*.class")
     }
 }
