@@ -96,8 +96,12 @@ private fun Window(app: AppContainer) {
         ProvideStrings(look.language) {
             // Клавиатура сдвигает окно, а не ложится поверх: иначе поля
             // «Получено» и «Пробить чек» внизу кассы уходили под неё.
-            Box(modifier = Modifier.fillMaxSize().imePadding()) {
-                WindowClassRoot { ShellScreen(app) }
+            // Класс окна меряется по всему окну, до сдвига: иначе открытая
+            // клавиатура делала планшет лёжа «низким» окном, рельс менялся
+            // на полосу над клавиатурой, экран собирался заново и поле,
+            // в которое начали печатать, теряло фокус.
+            WindowClassRoot {
+                Box(modifier = Modifier.fillMaxSize().imePadding()) { ShellScreen(app) }
             }
             // Журнал в режиме отладки — поверх кассы: соседнего окна здесь нет.
             LogDialog(app.services, app.areas.debug)
