@@ -6,21 +6,22 @@ package kz.mybrain.superkassa.integrations.maps
  * Модуль требует хранилище, а не держит его сам: где лежат файлы, знает
  * платформа — каталог данных на настольной машине, кэш приложения на
  * Android. Раз положенная плитка больше у службы не спрашивается: правила
- * OSM запрещают массовую выкачку, а карта нужна на минуту.
+ * OSM запрещают массовую выкачку, а карта нужна на минуту. Плитки разных
+ * поставщиков лежат раздельно: карта Яндекса не должна показать плитку OSM.
  */
 interface TileStore {
 
-    /** Плитка из хранилища; `null` — её там нет. */
-    suspend fun read(tile: MapTile): ByteArray?
+    /** Плитка поставщика [provider] ([TileProvider.id]) из хранилища; `null` — её там нет. */
+    suspend fun read(provider: String, tile: MapTile): ByteArray?
 
     /** Кладёт полученную плитку; неудача записи не должна ронять показ карты. */
-    suspend fun write(tile: MapTile, image: ByteArray)
+    suspend fun write(provider: String, tile: MapTile, image: ByteArray)
 
     /** Хранилища нет: каждая плитка спрашивается у службы. */
     companion object None : TileStore {
-        override suspend fun read(tile: MapTile): ByteArray? = null
+        override suspend fun read(provider: String, tile: MapTile): ByteArray? = null
 
-        override suspend fun write(tile: MapTile, image: ByteArray) = Unit
+        override suspend fun write(provider: String, tile: MapTile, image: ByteArray) = Unit
     }
 }
 

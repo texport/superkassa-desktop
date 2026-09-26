@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.data.map
 
 import kz.mybrain.superkassa.domain.map.model.MapPlace
 import kz.mybrain.superkassa.domain.map.model.MapPointPlace
+import kz.mybrain.superkassa.domain.map.model.MapProvider
 import kz.mybrain.superkassa.domain.map.port.Maps
 import kz.mybrain.superkassa.integrations.maps.MapTile
 import kz.mybrain.superkassa.integrations.maps.OpenMaps
@@ -28,7 +29,9 @@ class OpenStreetMaps(
     private val machine: suspend () -> MapPlace? = { null }
 ) : Maps {
 
-    override suspend fun tile(zoom: Int, x: Int, y: Int): ByteArray? = maps.tile(MapTile(zoom, x, y))
+    override suspend fun tile(zoom: Int, x: Int, y: Int): ByteArray? = maps.tile(MapTile(zoom, x, y), language())
+
+    override fun provider(): MapProvider = maps.provider().domain()
 
     override suspend fun find(address: String): List<MapPlace>? =
         maps.find(address, language())?.map { it.domain() }

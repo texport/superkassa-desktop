@@ -39,6 +39,24 @@ class WorkplaceSettingsViewModelTest {
     @AfterTest
     fun reset() = Dispatchers.resetMain()
 
+    /**
+     * Карта выбирается сразу, без кнопки «Сохранить»: это выбор из списка.
+     * Карта по умолчанию записывается пустым значением — сменится умолчание,
+     * и владелец, ничего не выбиравший, увидит новое.
+     */
+    @Test
+    fun `выбранная карта сохраняется сразу, а по умолчанию — пустым значением`() {
+        val model = workplaceSettingsModel(services, settings)
+        assertEquals("osm", model.state.value.mapProvider?.id)
+
+        model.chooseMapProvider("yandex")
+        assertEquals("yandex", machine.maps.provider)
+        assertEquals("yandex", model.state.value.mapProvider?.id)
+
+        model.chooseMapProvider("osm")
+        assertNull(machine.maps.provider)
+    }
+
     /** Адрес без схемы приложение не разберёт вовсе: такой не сохраняется. */
     @Test
     fun `негодный адрес кабинета не уходит в настройки`() {

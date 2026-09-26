@@ -127,6 +127,21 @@ data class SettingsScreenTexts(
     val addressMalformed: String,
     val mapServices: String,
     val mapServicesHint: String,
+    /** Выбор поставщика плиток карты. */
+    val mapProvider: String,
+
+    /** Что общего у всех карт на выбор: без ключей, поиск — по открытой карте. */
+    val mapProviderHint: String,
+
+    /** Под OpenStreetMap: открытые данные, по умолчанию. */
+    val mapProviderOsm: String,
+
+    /** Под 2ГИС: подробные планы городов. */
+    val mapProvider2gis: String,
+
+    /** Под картами с подписями на языке кассира. */
+    val mapProviderLocal: String,
+
     val mapTiles: String,
     val mapSearch: String,
     val mapReverse: String,

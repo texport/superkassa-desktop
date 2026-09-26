@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.presentation.settings.workplace
 
+import kz.mybrain.superkassa.domain.map.model.MapProvider
 import kz.mybrain.superkassa.domain.workplace.model.MapServices
 import kz.mybrain.superkassa.domain.workplace.model.ServiceAddress
 import kz.mybrain.superkassa.domain.workplace.model.custom
@@ -18,6 +19,7 @@ import kz.mybrain.superkassa.domain.workplace.model.tidy
  * @property mapDrafts набранные адреса служб карты; `null` — не трогали.
  * @property publicMaps общедоступные службы: видны подсказкой в пустых полях.
  * @property domainCode вид отрасли выбранной кассы; `null` — торговля.
+ * @property mapProviders поставщики плиток карты на выбор; первый — по умолчанию.
  */
 data class WorkplaceSettingsUiState(
     val kkmId: String? = null,
@@ -28,8 +30,13 @@ data class WorkplaceSettingsUiState(
     val maps: MapServices = MapServices(),
     val mapDrafts: MapServices? = null,
     val publicMaps: MapServices = MapServices(),
-    val domainCode: String? = null
+    val domainCode: String? = null,
+    val mapProviders: List<MapProvider> = emptyList()
 ) {
+    /** Выбранный поставщик плиток: сохранённый, иначе по умолчанию. */
+    val mapProvider: MapProvider?
+        get() = mapProviders.firstOrNull { it.id == maps.provider } ?: mapProviders.firstOrNull()
+
     /** Адрес кабинета в поле: набранный, иначе сохранённый. */
     val cabinetField: String get() = cabinetDraft ?: cabinetUrl
 

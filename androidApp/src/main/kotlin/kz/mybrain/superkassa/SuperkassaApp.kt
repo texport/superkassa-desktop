@@ -11,7 +11,6 @@ import kotlinx.coroutines.async
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.background.BackgroundWork
 import kz.mybrain.superkassa.data.analytics.CabinetAnalytics
-import kz.mybrain.superkassa.data.analytics.MapsNotOnAndroid
 import kz.mybrain.superkassa.data.cabinet.RemoteCabinet
 import kz.mybrain.superkassa.data.cabinet.setup.CabinetSetup
 import kz.mybrain.superkassa.data.kassa.EmbeddedKassa
@@ -29,7 +28,6 @@ import kz.mybrain.superkassa.data.log.AppLogBook
 import kz.mybrain.superkassa.data.log.LogSettings
 import kz.mybrain.superkassa.data.log.LogSource
 import kz.mybrain.superkassa.data.log.LogcatJournal
-import kz.mybrain.superkassa.data.map.WorkplaceMapMemory
 import kz.mybrain.superkassa.data.print.SystemDialogPrintOut
 import kz.mybrain.superkassa.data.releases.ApkUpdates
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
@@ -42,7 +40,6 @@ import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.update.port.UpdatePorts
 import kz.mybrain.superkassa.domain.workplace.model.WorkplaceLook
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
-import kz.mybrain.superkassa.presentation.common.mapview.MapPorts
 import kz.mybrain.superkassa.presentation.common.message.Notices
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.presentation.common.model.WindowServices
@@ -138,7 +135,7 @@ class SuperkassaApp : Application() {
             print = PrintPorts(SystemDialogPrintOut(screen), preferences.printing),
             update = UpdatePorts(releases = updates, updateMemory = preferences.updates),
             debug = DebugPorts(AppLogBook(DocumentFiles(screen))),
-            analytics = analyticsPorts(cabinet, preferences),
+            analytics = analyticsPorts(cabinet, preferences, language),
             cabinet = cabinet,
             setup = SetupPorts(memory = preferences, cabinet = CabinetSetup(cabinet))
         )
@@ -146,12 +143,13 @@ class SuperkassaApp : Application() {
 
     /**
      * Аналитика — из того же кабинета, что и его разделы: доступ вошедшего
-     * модуль кабинета наружу не отдаёт. Карты на Android пока нет.
+     * модуль кабинета наружу не отдаёт. Карты — те же службы, что на компьютере ([androidMaps]).
      */
-    private fun analyticsPorts(cabinet: RemoteCabinet, preferences: Preferences) = AnalyticsPorts(
-        cabinet = CabinetAnalytics(cabinet.bfd, AppJournal(LogSource.Cabinet)),
-        map = MapPorts(MapsNotOnAndroid(), WorkplaceMapMemory(preferences))
-    )
+    private fun analyticsPorts(cabinet: RemoteCabinet, preferences: Preferences, language: () -> Language) =
+        AnalyticsPorts(
+            cabinet = CabinetAnalytics(cabinet.bfd, AppJournal(LogSource.Cabinet)),
+            map = androidMaps(this, preferences, language)
+        )
 }
 
 private const val TAG = "Superkassa"

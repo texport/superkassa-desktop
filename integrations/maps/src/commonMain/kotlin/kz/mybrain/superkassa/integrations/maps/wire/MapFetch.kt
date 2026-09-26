@@ -30,14 +30,15 @@ internal class MapFetch(
     private val journal: MapJournal,
     private val userAgent: () -> String
 ) {
-    suspend fun get(service: String, url: String, wait: Duration, query: HttpRequestBuilder.() -> Unit = {}): Answer? {
+    suspend fun get(
+        service: String,
+        url: String,
+        wait: Duration,
+        connect: Duration = wait,
+        query: HttpRequestBuilder.() -> Unit = {}
+    ): Answer? {
         val answer = try {
-            val response = http.get(url) {
-                headers.append(HttpHeaders.UserAgent, userAgent())
-                timeout { requestTimeoutMillis = wait.inWholeMilliseconds }
-                query()
-            }
-            Answer(response.status, response.headers[HttpHeaders.ContentType].orEmpty(), response.bodyAsBytes())
+            read(url, wait, connect, query)
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (failure: IOException) {
@@ -54,6 +55,23 @@ internal class MapFetch(
             journal.failed(service, "HTTP ${answer.status.value}")
         }
         return answer?.takeIf { it.status.isSuccess() }
+    }
+
+    private suspend fun read(
+        url: String,
+        wait: Duration,
+        connect: Duration,
+        query: HttpRequestBuilder.() -> Unit
+    ): Answer {
+        val response = http.get(url) {
+            headers.append(HttpHeaders.UserAgent, userAgent())
+            timeout {
+                connectTimeoutMillis = connect.inWholeMilliseconds
+                requestTimeoutMillis = wait.inWholeMilliseconds
+            }
+            query()
+        }
+        return Answer(response.status, response.headers[HttpHeaders.ContentType].orEmpty(), response.bodyAsBytes())
     }
 
     private fun silence(service: String, failure: Exception): Answer? {

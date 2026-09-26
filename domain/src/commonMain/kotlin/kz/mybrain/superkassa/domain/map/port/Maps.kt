@@ -2,6 +2,7 @@ package kz.mybrain.superkassa.domain.map.port
 
 import kz.mybrain.superkassa.domain.map.model.MapPlace
 import kz.mybrain.superkassa.domain.map.model.MapPointPlace
+import kz.mybrain.superkassa.domain.map.model.MapProvider
 
 /**
  * Службы карты: плитки, поиск адреса, место под точкой и своё место.
@@ -17,8 +18,14 @@ import kz.mybrain.superkassa.domain.map.model.MapPointPlace
  */
 interface Maps {
 
-    /** Плитка карты в PNG; `null` — взять её неоткуда. */
+    /** Плитка карты выбранного поставщика в PNG; `null` — взять её неоткуда. */
     suspend fun tile(zoom: Int, x: Int, y: Int): ByteArray?
+
+    /**
+     * Чьи плитки отдаёт [tile] сейчас. Читается при открытии карты: владелец
+     * меняет поставщика в настройках, и следующая карта уже его.
+     */
+    fun provider(): MapProvider = MapProvider.OpenStreetMap
 
     /** Места по адресу, ближайшее первым; пусто — не нашлось; `null` — служба не ответила. */
     suspend fun find(address: String): List<MapPlace>?

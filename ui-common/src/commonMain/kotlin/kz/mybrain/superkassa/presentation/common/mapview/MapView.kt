@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -23,7 +24,6 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
@@ -47,6 +47,7 @@ import kz.mybrain.superkassa.strings.api.map.MapTexts
  * пустым, и об этом сказано строкой поверх него: серый прямоугольник
  * без объяснения читается как сломанный экран. Точка на нём всё равно
  * ставится: широта и долгота считаются из проекции, а не из картинки.
+ * Не пришедшие плитки спрашиваются снова (см. [MapTiles]).
  */
 @Composable
 fun MapView(
@@ -63,37 +64,8 @@ fun MapView(
     overlay: @Composable (IntSize) -> Unit = {}
 ) {
     var canvas by remember { mutableStateOf(IntSize.Zero) }
-    // Ни одной плитки не доехало: объяснение поверх пустого поля.
-    // До первой попытки поле не объясняется — жаловаться ещё не на что.
-    var blank by remember { mutableStateOf(false) }
     val wheel = remember { MapWheel() }
-
-    // Плитки берутся сразу несколькими, а не по одной вслед за другой.
-    // Прежде они запрашивались подряд, и прокрутка открывала десяток
-    // новых плиток одна за другой: пока приходила последняя, владелец
-    // смотрел на серое поле секунды. Каждая пришедшая обновляет показ
-    // отдельно — ждать всю сетку незачем.
-    //
-    // Одновременных запросов немного намеренно: плитки отданы сообществом
-    // OpenStreetMap, и их правила запрещают массовую выкачку.
-    LaunchedEffect(state.zoom, state.centerLatitude, state.centerLongitude, canvas) {
-        val wanted = visibleTiles(state, canvas)
-        if (wanted.isEmpty()) return@LaunchedEffect
-        val gate = Semaphore(TILES_AT_ONCE)
-        // Плитки спрашиваются в потоке показа по очереди его точек
-        // приостановки: счётчику своя защита не нужна.
-        var arrived = 0
-        coroutineScope {
-            wanted.forEach { tile ->
-                launch {
-                    gate.withPermit {
-                        if (tiles.fetch(state.zoom, tile.x, tile.y)) arrived++
-                    }
-                }
-            }
-        }
-        blank = arrived == 0
-    }
+    LoadTiles(state, tiles) { canvas }
 
     val paint = MapPaint(
         chosen = MapColors.chosen,
@@ -119,7 +91,10 @@ fun MapView(
     ) {
         MapGlide(state)
         MapCanvas(state, tiles, canvas, paint)
-        if (blank) BlankNotice(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.fieldGap))
+        // Ни одной плитки не доехало: объяснение поверх пустого поля.
+        // До первой неудачи поле не объясняется — жаловаться ещё не на что.
+        if (tiles.blank) MapNote(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.fieldGap))
+        MapNote(tiles.provider.attribution, Modifier.align(Alignment.BottomEnd).padding(Spacing.fieldGap))
         overlay(canvas)
     }
 }
@@ -145,14 +120,15 @@ private suspend fun PointerInputScope.zoomByWheel(state: MapState, canvas: IntSi
 }
 
 /**
- * Почему поле карты пустое.
+ * Строка поверх карты: почему поле пустое, или чья это карта.
  *
  * Стоит в нижнем углу, а не в середине: середину занимает метка, и ради
  * объяснения закрывать её нельзя. Заливка поверхности с тенью — иначе
  * надпись теряется на подложке там, где плитки всё-таки доехали.
+ * Подпись авторства — в правом углу: её требуют условия поставщика плиток.
  */
 @Composable
-private fun BlankNotice(notice: String, modifier: Modifier = Modifier) {
+private fun MapNote(notice: String, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(Sizes.corner),
@@ -167,6 +143,42 @@ private fun BlankNotice(notice: String, modifier: Modifier = Modifier) {
         )
     }
 }
+
+/**
+ * Загрузка плиток, попадающих в окно, — одна на всё время карты.
+ *
+ * Прежде загрузка перезапускалась на каждом сдвиге центра и обрывала
+ * плитки в пути: при перетаскивании карты они не доходили никогда, а
+ * оборванные числились не пришедшими. Теперь новые плитки берутся в работу,
+ * как только попадают в окно, а начатые доходят до конца. Плитки берутся
+ * сразу несколькими — каждая пришедшая обновляет показ отдельно, — но
+ * одновременных запросов немного: плитки отданы сообществом OpenStreetMap,
+ * и его правила запрещают массовую выкачку.
+ */
+@Composable
+private fun LoadTiles(state: MapState, tiles: MapTiles, canvas: () -> IntSize) {
+    LaunchedEffect(tiles) {
+        val gate = Semaphore(TILES_AT_ONCE)
+        snapshotFlow { Wanted(state.zoom, visibleTiles(state, canvas(), tiles.provider.grid), tiles.failures) }
+            .collect { wanted ->
+                wanted.tiles.filter { tiles.claim(wanted.zoom, it.x, it.y) }.forEach { tile ->
+                    launch { load(tiles, gate, wanted.zoom, tile) }
+                }
+            }
+    }
+}
+
+/** Одна плитка: загрузка под общим ограничением и отпуск в любом исходе. */
+private suspend fun load(tiles: MapTiles, gate: Semaphore, zoom: Int, tile: TileIndex) {
+    try {
+        gate.withPermit { tiles.fetch(zoom, tile.x, tile.y) }
+    } finally {
+        tiles.release(zoom, tile.x, tile.y)
+    }
+}
+
+/** Что показ хочет видеть: плитки окна при этом увеличении и число неудач — повод спросить снова. */
+private data class Wanted(val zoom: Int, val tiles: List<TileIndex>, val failures: Int)
 
 /**
  * Сколько плиток запрашивать одновременно.

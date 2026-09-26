@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.update
 import kz.mybrain.superkassa.domain.debug.port.DebugPorts
 import kz.mybrain.superkassa.domain.debug.port.LogBook
 import kz.mybrain.superkassa.domain.debug.port.MemoryLogBook
+import kz.mybrain.superkassa.domain.map.model.MapProvider
+import kz.mybrain.superkassa.domain.map.model.TileGrid
 import kz.mybrain.superkassa.domain.print.port.FakePrintOut
 import kz.mybrain.superkassa.domain.print.port.MemoryPrintChoices
 import kz.mybrain.superkassa.domain.print.port.PrintChoices
@@ -97,7 +99,11 @@ class MemoryChoices(
     override var cabinetServer: String = "",
     override var maps: MapServices = MapServices(),
     override val publicMaps: MapServices = MapServices(tiles = "https://tile.openstreetmap.org"),
-    val memory: MemoryWorkplace = MemoryWorkplace()
+    val memory: MemoryWorkplace = MemoryWorkplace(),
+    override val mapProviders: List<MapProvider> = listOf(
+        MapProvider.OpenStreetMap,
+        MapProvider(id = "yandex", name = "Яндекс", attribution = "© Яндекс", grid = TileGrid.EllipticalMercator)
+    )
 ) : WorkplaceChoices {
 
     override fun chooseDomain(kkmId: String, code: String?) {

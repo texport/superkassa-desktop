@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.domain.map.model.MapPlace
 import kz.mybrain.superkassa.integrations.maps.MapServices
 import kz.mybrain.superkassa.integrations.maps.MapTile
 import kz.mybrain.superkassa.integrations.maps.OpenMaps
+import kz.mybrain.superkassa.integrations.maps.TileProviders
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
@@ -39,7 +40,7 @@ class OpenStreetMapsTest {
      */
     @Test
     fun `служба, по адресу которой сеть не ходит, — молчание, а не сбой`() {
-        val services = MapServices(tiles = "file:///no-tiles", search = "file:///no-search")
+        val services = MapServices(provider = TileProviders.custom("file:///no-tiles"), search = "file:///no-search")
         val maps = OpenStreetMaps(OpenMaps(services = { services }), language = { "ru" })
 
         assertNull(runBlocking { maps.tile(12, 1, 1) })
@@ -52,15 +53,18 @@ class OpenStreetMapsTest {
         val tiles = DiskTiles(folder.path)
         val tile = MapTile(12, 2345, 1456)
 
-        assertNull(runBlocking { tiles.read(tile) })
-        runBlocking { tiles.write(tile, PNG) }
+        assertNull(runBlocking { tiles.read(OSM, tile) })
+        runBlocking { tiles.write(OSM, tile, PNG) }
 
-        assertContentEquals(PNG, runBlocking { tiles.read(tile) })
-        assertContentEquals(PNG, runBlocking { DiskTiles(folder.path).read(tile) }, "плитка не пережила закрытие карты")
+        assertContentEquals(PNG, runBlocking { tiles.read(OSM, tile) })
+        val reopened = runBlocking { DiskTiles(folder.path).read(OSM, tile) }
+        assertContentEquals(PNG, reopened, "плитка не пережила закрытие карты")
+        assertNull(runBlocking { tiles.read("2gis", tile) }, "плитка OSM показана картой 2ГИС")
     }
 
     private companion object {
         val JSON = headersOf(HttpHeaders.ContentType, "application/json")
         val PNG = byteArrayOf(-119, 80, 78, 71, 13, 10, 26, 10)
+        const val OSM = "osm"
     }
 }

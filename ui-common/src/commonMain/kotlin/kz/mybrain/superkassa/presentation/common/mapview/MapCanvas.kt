@@ -10,6 +10,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
+import kz.mybrain.superkassa.domain.map.model.TileGrid
+import kz.mybrain.superkassa.presentation.common.mapview.grid.TileRows
 import kotlin.math.roundToInt
 
 /** Само полотно: плитки, своё место и метка выбранной точки. */
@@ -35,14 +37,22 @@ internal data class MapPaint(
     val halo: Color
 )
 
-/** Рисует плитки, попадающие в окно. */
+/**
+ * Рисует плитки, попадающие в окно, — каждую по сетке её поставщика.
+ *
+ * Высота плитки берётся из сетки, а не 256 точек: у эллиптической сетки
+ * строка в сферической чуть выше или ниже, и без растяжения между
+ * строками оставались бы щели в точку.
+ */
 private fun DrawScope.drawTiles(state: MapState, tiles: MapTiles, canvas: IntSize) {
     val corner = topLeft(state, canvas)
-    visibleTiles(state, canvas).forEach { tile ->
+    val grid = tiles.provider.grid
+    visibleTiles(state, canvas, grid).forEach { tile ->
         val bitmap = tiles.ready(state.zoom, tile.x, tile.y) ?: return@forEach
         val x = (tile.x * MapProjection.TILE - corner.x).roundToInt()
-        val y = (tile.y * MapProjection.TILE - corner.y).roundToInt()
-        drawImage(bitmap, dstOffset = IntOffset(x, y))
+        val top = (TileRows.top(grid, state.zoom, tile.y) - corner.y).roundToInt()
+        val bottom = (TileRows.top(grid, state.zoom, tile.y + 1) - corner.y).roundToInt()
+        drawImage(bitmap, dstOffset = IntOffset(x, top), dstSize = IntSize(MapProjection.TILE, bottom - top))
     }
 }
 
@@ -83,15 +93,15 @@ private fun DrawScope.drawMarker(state: MapState, canvas: IntSize, paint: MapPai
 private fun topLeft(state: MapState, canvas: IntSize): MapPixel =
     MapProjection.corner(state.centerLatitude, state.centerLongitude, state.zoom, canvas.width, canvas.height)
 
-/** Какие плитки попадают в окно. */
-internal fun visibleTiles(state: MapState, canvas: IntSize): List<TileIndex> {
+/** Какие плитки сетки [grid] попадают в окно. */
+internal fun visibleTiles(state: MapState, canvas: IntSize, grid: TileGrid = TileGrid.WebMercator): List<TileIndex> {
     if (canvas.width == 0 || canvas.height == 0) return emptyList()
     val corner = topLeft(state, canvas)
     val edge = MapProjection.tiles(state.zoom)
     val fromX = MapProjection.tileOf(corner.x)
-    val fromY = MapProjection.tileOf(corner.y)
+    val fromY = TileRows.at(grid, state.zoom, corner.y)
     val toX = MapProjection.tileOf(corner.x + canvas.width)
-    val toY = MapProjection.tileOf(corner.y + canvas.height)
+    val toY = TileRows.at(grid, state.zoom, corner.y + canvas.height)
     val tiles = mutableListOf<TileIndex>()
     for (y in fromY..toY) {
         for (x in fromX..toX) {

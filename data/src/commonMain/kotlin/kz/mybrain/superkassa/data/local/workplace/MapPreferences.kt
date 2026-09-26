@@ -26,6 +26,11 @@ class MapPreferences(private val directory: Path) {
         get() = readSetting(reverseFile)
         set(value) = writeSetting(reverseFile, value)
 
+    /** Чьи плитки у карты: имя поставщика из каталога модуля карт; пусто — по умолчанию. */
+    var provider: String?
+        get() = readSetting(providerFile)
+        set(value) = writeSetting(providerFile, value)
+
     /** Чем определяется место по адресу подключения. */
     var location: String?
         get() = readSetting(locationFile)
@@ -38,4 +43,6 @@ class MapPreferences(private val directory: Path) {
     private val reverseFile = Path(directory, "map-reverse")
 
     private val locationFile = Path(directory, "map-location")
+
+    private val providerFile = Path(directory, "map-provider")
 }

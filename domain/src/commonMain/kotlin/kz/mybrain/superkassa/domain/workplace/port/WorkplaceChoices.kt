@@ -1,5 +1,6 @@
 package kz.mybrain.superkassa.domain.workplace.port
 
+import kz.mybrain.superkassa.domain.map.model.MapProvider
 import kz.mybrain.superkassa.domain.workplace.model.MapServices
 
 /**
@@ -28,6 +29,9 @@ interface WorkplaceChoices {
 
     /** Общедоступные службы, которыми карта работает там, где поле пусто. */
     val publicMaps: MapServices
+
+    /** Поставщики плиток на выбор; первый — по умолчанию. */
+    val mapProviders: List<MapProvider> get() = listOf(MapProvider.OpenStreetMap)
 
     /** Вид отрасли кассы, как его называет ядро; `null` — торговля. */
     fun chooseDomain(kkmId: String, code: String?)

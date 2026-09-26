@@ -118,6 +118,12 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     addressMalformed = "The address starts with http:// or https:// and contains no spaces",
     mapServices = "Map services",
     mapServicesHint = "Until an address is set, the community map is used: it is not meant for every owner",
+    mapProvider = "Map",
+    mapProviderHint = "No map needs a key. Addresses are searched on the open community map whichever map is chosen. " +
+        "Your own tile server below overrides the chosen map",
+    mapProviderOsm = "Open data, no display restrictions. Default",
+    mapProvider2gis = "Detailed city plans of Kazakhstan",
+    mapProviderLocal = "Labels in the cashier’s language",
     mapTiles = "Map tiles",
     mapSearch = "Address search",
     mapReverse = "Address by marker",

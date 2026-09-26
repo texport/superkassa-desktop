@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
@@ -52,6 +56,10 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * @param address уже выбранный адрес точки: окно открывается на нём.
  * @param onAddress адрес, выбранный в самом окне: у формы точки и у карты
  *   он один и тот же.
+ *
+ * Окно раскрывается на весь экран кнопкой среди кнопок карты: в окне
+ * фиксированного размера на планшете стоймя и на телефоне карта
+ * оставалась узкой полосой.
  */
 @Composable
 internal fun MapPickerDialog(
@@ -66,20 +74,26 @@ internal fun MapPickerDialog(
     val language = LocalLanguage.current
     val texts = textsOf(language).cabinet
     val parts = rememberPickerParts(services, registry, address, language, point)
+    var full by remember { mutableStateOf(false) }
 
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Surface(
             // Высота окна задана, а карта берёт остаток: при высоте
             // по содержимому карта распирала окно, и подсказку с шапкой
-            // выдавливало за верхний край.
-            modifier = Modifier.width(Sizes.mapWidth).height(Sizes.mapDialogHeight),
-            shape = RoundedCornerShape(Sizes.corner),
+            // выдавливало за верхний край. Раскрытое — во всё окно
+            // приложения, без скругления: так же, как карта касс в аналитике.
+            modifier = pickerSize(full),
+            shape = if (full) RectangleShape else RoundedCornerShape(Sizes.corner),
             tonalElevation = Sizes.dialogElevation
         ) {
-            MapPickerBody(texts, parts, address, onAddress, onDismiss, onPicked)
+            MapPickerBody(texts, parts, address, onAddress, onDismiss, onPicked, MapFull(full) { full = !full })
         }
     }
 }
+
+/** Размер окна: заданный, а раскрытое — во всё окно приложения. */
+private fun pickerSize(full: Boolean): Modifier =
+    if (full) Modifier.fillMaxSize() else Modifier.width(Sizes.mapWidth).height(Sizes.mapDialogHeight)
 
 /**
  * Набор окна живёт, пока окно открыто: метка, поставленная владельцем,
@@ -138,7 +152,8 @@ fun MapPickerBody(
     address: RegisterAddress?,
     onAddress: (RegisterAddress) -> Unit,
     onDismiss: () -> Unit,
-    onPicked: (MapPoint) -> Unit
+    onPicked: (MapPoint) -> Unit,
+    full: MapFull? = null
 ) {
     val language = LocalLanguage.current
     val state = parts.state
@@ -152,7 +167,7 @@ fun MapPickerBody(
         // Карта видна и до выбора адреса: когда адрес подбирается по метке,
         // метка ставится раньше него. Остаток высоты — карте: чем меньше
         // шагов раскрыто, тем больше видно улицы вокруг метки.
-        MapArea(state, parts.tiles, texts, parts.locating, Modifier.weight(1f))
+        MapArea(state, parts.tiles, texts, parts.locating, Modifier.weight(1f), full)
         PointAddress(parts.registry, state, parts.cases.namePoint, notices) { chosen ->
             parts.pick.byPoint(chosen, language)
             onAddress(chosen)

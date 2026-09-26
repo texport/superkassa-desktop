@@ -3,6 +3,8 @@ package kz.mybrain.superkassa.data.map
 import kotlinx.io.files.Path
 import kz.mybrain.superkassa.data.local.workplace.Preferences
 import kz.mybrain.superkassa.integrations.maps.MapServices
+import kz.mybrain.superkassa.integrations.maps.MapTile
+import kz.mybrain.superkassa.integrations.maps.TileProviders
 import java.nio.file.Files
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,7 +35,7 @@ class MapServicesTest {
     fun `без настройки работают общедоступные службы`() {
         val services = MapAddresses(preferences().maps).services()
 
-        assertEquals(MapServices.TILES, services.tiles)
+        assertEquals(TileProviders.OpenStreetMap, services.provider)
         assertEquals(MapServices.SEARCH, services.search)
         assertEquals(MapServices.REVERSE, services.reverse)
         assertEquals(MapServices.LOCATION, services.location)
@@ -49,7 +51,7 @@ class MapServicesTest {
 
         val services = MapAddresses(preferences.maps).services()
 
-        assertEquals("https://tiles.bfd.kz", services.tiles)
+        assertEquals("https://tiles.bfd.kz/12/1/2.png", services.provider.url(MapTile(12, 1, 2), "ru"))
         assertEquals("https://search.bfd.kz/find", services.search)
         assertEquals("https://search.bfd.kz/reverse", services.reverse)
         assertEquals("https://where.bfd.kz/json", services.location)
@@ -61,6 +63,16 @@ class MapServicesTest {
         preferences.maps.tiles = "https://tiles.bfd.kz"
         preferences.maps.tiles = null
 
-        assertEquals(MapServices.TILES, MapAddresses(preferences.maps).services().tiles)
+        assertEquals(TileProviders.OpenStreetMap, MapAddresses(preferences.maps).services().provider)
+    }
+
+    @Test
+    fun `выбранный поставщик плиток доходит до карты, а свой сервер важнее выбора`() {
+        val preferences = preferences()
+        preferences.maps.provider = TileProviders.Yandex.id
+        assertEquals(TileProviders.Yandex, MapAddresses(preferences.maps).services().provider)
+
+        preferences.maps.tiles = "https://tiles.bfd.kz"
+        assertEquals(TileProviders.CUSTOM, MapAddresses(preferences.maps).services().provider.id)
     }
 }

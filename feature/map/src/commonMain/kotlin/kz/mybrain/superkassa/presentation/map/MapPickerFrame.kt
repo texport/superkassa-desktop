@@ -26,6 +26,7 @@ import kz.mybrain.superkassa.presentation.common.mapview.MapState
 import kz.mybrain.superkassa.presentation.common.mapview.MapTiles
 import kz.mybrain.superkassa.presentation.common.mapview.MapView
 import kz.mybrain.superkassa.presentation.common.mapview.cabinetDegrees
+import kz.mybrain.superkassa.presentation.common.mapview.control.FullscreenButton
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
@@ -63,14 +64,24 @@ internal fun MapArea(
     tiles: MapTiles,
     texts: CabinetTexts,
     locating: MapLocating,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    full: MapFull? = null
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
         // Нажатие по карте ставит место точки: за этим окно и открыто.
         MapView(state, tiles, texts.map, Modifier.fillMaxSize(), onTap = state::mark)
-        MapControls(state, texts, locating, Modifier.align(Alignment.TopEnd).padding(Spacing.fieldGap))
+        MapControls(state, texts, locating, Modifier.align(Alignment.TopEnd).padding(Spacing.fieldGap)) {
+            full?.let { FullscreenButton(it.on, texts.map, it.toggle) }
+        }
     }
 }
+
+/**
+ * Раскрыто ли окно выбора места на весь экран и как это переключить.
+ *
+ * @property on окно раскрыто.
+ */
+class MapFull(val on: Boolean, val toggle: () -> Unit)
 
 /** Что выбрано и что с этим делать. */
 @Composable

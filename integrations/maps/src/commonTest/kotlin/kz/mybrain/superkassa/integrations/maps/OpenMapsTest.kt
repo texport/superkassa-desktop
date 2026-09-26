@@ -128,22 +128,59 @@ class OpenMapsTest {
     fun unacceptableAddressIsSilence() = runTest {
         val nowhere = "file:///superkassa-no-service"
         val failures = mutableListOf<String>()
-        val services = MapServices(tiles = nowhere, search = nowhere, location = nowhere, searchPause = 0.milliseconds)
+        val services = MapServices(
+            provider = TileProviders.custom(nowhere),
+            search = nowhere,
+            location = nowhere,
+            searchPause = 0.milliseconds
+        )
         val maps = OpenMaps(services = { services }, journal = { service, _ -> failures += service })
 
         assertNull(maps.tile(MapTile(1, 0, 0)))
         assertNull(maps.find("Абая 10", "ru"))
         assertNull(maps.locateByConnection())
-        assertEquals(listOf("tiles", "search", "location"), failures)
+        assertEquals(listOf("tiles", "tiles", "search", "location"), failures, "плитка спрошена дважды: с повтором")
+    }
+
+    /** Оборванная первая попытка не оставляет дыру: плитка приходит со второй. */
+    @Test
+    fun droppedTileIsAskedAgain() = runTest {
+        val png = byteArrayOf(-119, 80, 78, 71)
+        var calls = 0
+        val fake = MapsFake {
+            if (calls++ == 0) throw kotlinx.io.IOException("reset")
+            respond(png, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "image/png"))
+        }
+
+        assertContentEquals(png, OpenMaps(engine = fake.engine).tile(MapTile(12, 2871, 1478)))
+        assertEquals(2, calls)
+    }
+
+    /** Плитки поставщиков лежат раздельно: сменивший карту владелец не видит чужих плиток. */
+    @Test
+    fun tilesOfProvidersAreKeptApart() = runTest {
+        val png = byteArrayOf(-119, 80, 78, 71)
+        val fake = MapsFake { respond(png, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, "image/png")) }
+        val store = MemoryTiles()
+        var provider = TileProviders.OpenStreetMap
+        val maps = OpenMaps(services = { MapServices(provider = provider) }, tiles = store, engine = fake.engine)
+
+        maps.tile(MapTile(12, 2923, 1505))
+        provider = TileProviders.TwoGis
+        maps.tile(MapTile(12, 2923, 1505))
+
+        assertEquals(2, fake.asked.size)
+        assertEquals(setOf("osm", "2gis"), store.saved.keys.map { it.first }.toSet())
+        assertEquals("tile0.maps.2gis.com", fake.asked.last().url.host)
     }
 
     private class MemoryTiles : TileStore {
-        val saved = mutableMapOf<MapTile, ByteArray>()
+        val saved = mutableMapOf<Pair<String, MapTile>, ByteArray>()
 
-        override suspend fun read(tile: MapTile): ByteArray? = saved[tile]
+        override suspend fun read(provider: String, tile: MapTile): ByteArray? = saved[provider to tile]
 
-        override suspend fun write(tile: MapTile, image: ByteArray) {
-            saved[tile] = image
+        override suspend fun write(provider: String, tile: MapTile, image: ByteArray) {
+            saved[provider to tile] = image
         }
     }
 }

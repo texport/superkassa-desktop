@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.domain.map.usecase.FoldMapPanel
 import kz.mybrain.superkassa.domain.map.usecase.LocateSelf
 import kz.mybrain.superkassa.domain.map.usecase.NamePoint
 import kz.mybrain.superkassa.domain.map.usecase.ReadMapPanels
+import kz.mybrain.superkassa.domain.map.usecase.ReadMapProvider
 import kz.mybrain.superkassa.domain.map.usecase.ReadTile
 
 /**
@@ -34,6 +35,7 @@ class MapPorts(val maps: Maps, val memory: MapMemory) {
 /** Сценарии карты: плитки, поиск, место под меткой, своё место и свёрнутые части. */
 class MapCases(ports: MapPorts) {
     val readTile = ReadTile(ports.maps)
+    val readProvider = ReadMapProvider(ports.maps)
     val findAddress = FindAddress(ports.maps)
     val findHouses = FindHouses(ports.maps)
     val namePoint = NamePoint(ports.maps)
@@ -42,8 +44,8 @@ class MapCases(ports: MapPorts) {
     val readPanels = ReadMapPanels(ports.memory)
     val foldPanel = FoldMapPanel(ports.memory)
 
-    /** Плитки на время одной карты. */
-    fun tiles(): MapTiles = MapTiles(readTile)
+    /** Плитки на время одной карты — поставщика, выбранного сейчас. */
+    fun tiles(): MapTiles = MapTiles(readTile, readProvider())
 
     /** Кнопка «Где я» на время одной карты. */
     fun locating(): MapLocating = MapLocating(locateSelf, answerAsk)

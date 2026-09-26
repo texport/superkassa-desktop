@@ -26,6 +26,8 @@ interface WorkplaceSettingsActions {
 
     fun resetMaps() = Unit
 
+    fun chooseMapProvider(id: String) = Unit
+
     fun chooseDomain(code: String?) = Unit
 }
 
@@ -37,7 +39,8 @@ internal class WorkplaceSettingsViewModel(private val cases: WorkplaceCases) : V
                 cabinetUrl = saved.cabinetUrl,
                 cabinetServer = saved.cabinetServer,
                 maps = saved.maps,
-                publicMaps = saved.publicMaps
+                publicMaps = saved.publicMaps,
+                mapProviders = saved.mapProviders
             )
         }
     )
@@ -77,6 +80,17 @@ internal class WorkplaceSettingsViewModel(private val cases: WorkplaceCases) : V
     override fun resetMaps() {
         typeMaps(MapServices())
         saveMaps()
+    }
+
+    /**
+     * Карта меняется сразу, как владелец её выбрал: это выбор из списка,
+     * а не набранный адрес, и подтверждать его нечем. Набранные адреса
+     * служб при этом остаются набранными.
+     */
+    override fun chooseMapProvider(id: String) {
+        val chosen = id.takeUnless { it == screen.value.mapProviders.firstOrNull()?.id }
+        val saved = cases.saveMaps(screen.value.maps.copy(provider = chosen))
+        screen.update { it.copy(maps = saved, mapDrafts = it.mapDrafts?.copy(provider = chosen)) }
     }
 
     override fun chooseDomain(code: String?) {

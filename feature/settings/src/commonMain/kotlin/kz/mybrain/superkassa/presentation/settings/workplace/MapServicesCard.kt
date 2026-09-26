@@ -9,9 +9,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
+import kz.mybrain.superkassa.designsystem.picker.RadioRows
 import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.domain.map.model.MapProvider
 import kz.mybrain.superkassa.presentation.settings.title
+import kz.mybrain.superkassa.strings.api.common.SettingsScreenTexts
 
 /**
  * Чьей картой пользуется рабочее место.
@@ -32,6 +35,7 @@ internal fun MapServicesCard(workplace: WorkplaceSettingsUiState, actions: Workp
     val maps = workplace.mapFields
     val standard = workplace.publicMaps
     SettingGroup(title = texts.mapServices, info = texts.mapServicesHint) {
+        MapProviderChoice(workplace, actions)
         ServiceField(texts.mapTiles, maps.tiles, standard.tiles) { actions.typeMaps(maps.copy(tiles = it)) }
         ServiceField(texts.mapSearch, maps.search, standard.search) { actions.typeMaps(maps.copy(search = it)) }
         ServiceField(texts.mapReverse, maps.reverse, standard.reverse) { actions.typeMaps(maps.copy(reverse = it)) }
@@ -44,6 +48,39 @@ internal fun MapServicesCard(workplace: WorkplaceSettingsUiState, actions: Workp
         }
     }
 }
+
+/**
+ * Чья карта — радиокнопками Material 3: вариантов немного, и у каждого
+ * есть что сказать под названием. Название поставщика — его собственное,
+ * на всех языках одно.
+ */
+@Composable
+private fun MapProviderChoice(workplace: WorkplaceSettingsUiState, actions: WorkplaceSettingsActions) {
+    val chosen = workplace.mapProvider ?: return
+    val texts = LocalStrings.current.settingsScreen
+    Text(
+        text = texts.mapProviderHint,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
+    RadioRows(
+        options = workplace.mapProviders,
+        selected = chosen,
+        title = { it.name },
+        hint = { providerHint(it, texts) },
+        onSelect = { actions.chooseMapProvider(it.id) }
+    )
+}
+
+/** Что сказать о поставщике под его названием. */
+private fun providerHint(provider: MapProvider, texts: SettingsScreenTexts): String = when (provider.id) {
+    OSM -> texts.mapProviderOsm
+    TWO_GIS -> texts.mapProvider2gis
+    else -> texts.mapProviderLocal
+}
+
+private const val OSM = "osm"
+private const val TWO_GIS = "2gis"
 
 /** Поле адреса службы: пустое означает общедоступную, и она видна подсказкой. */
 @Composable

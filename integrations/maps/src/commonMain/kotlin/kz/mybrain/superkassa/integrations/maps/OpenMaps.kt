@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.parameter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kz.mybrain.superkassa.integrations.maps.wire.MapFetch
@@ -11,6 +12,7 @@ import kz.mybrain.superkassa.integrations.maps.wire.SearchPace
 import kz.mybrain.superkassa.integrations.maps.wire.locationOf
 import kz.mybrain.superkassa.integrations.maps.wire.placesOf
 import kz.mybrain.superkassa.integrations.maps.wire.pointPlaceOf
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource
 
 /**
@@ -50,11 +52,34 @@ class OpenMaps(
     private val found = mutableMapOf<String, List<MapPlace>>()
 
     /**
-     * Плитка карты: из хранилища, а нет там — у службы.
+     * Плитка карты выбранного поставщика: из хранилища, а нет там — у службы.
      *
+     * Не пришедшая плитка спрашивается ещё раз после короткой паузы: на
+     * мобильной связи первая попытка часто обрывается, и без повтора
+     * на карте оставалась серая дыра.
+     *
+     * @param language язык подписей на плитке — у тех поставщиков, что его знают.
      * @return картинка плитки; `null` — взять её неоткуда.
      */
-    suspend fun tile(tile: MapTile): ByteArray? = tiles.read(tile) ?: fetchTile(tile)?.also { tiles.write(tile, it) }
+    suspend fun tile(tile: MapTile, language: String = DEFAULT_LANGUAGE): ByteArray? {
+        val provider = services().provider
+        return tiles.read(provider.id, tile)
+            ?: fetchAgain(provider, tile, language)?.also { tiles.write(provider.id, tile, it) }
+    }
+
+    /** Плитка у поставщика с повтором после паузы. */
+    private suspend fun fetchAgain(provider: TileProvider, tile: MapTile, language: String): ByteArray? {
+        var image: ByteArray? = null
+        var attempt = 0
+        while (image == null && attempt < TILE_ATTEMPTS) {
+            if (attempt++ > 0) delay(TILE_RETRY_PAUSE)
+            image = fetchTile(provider, tile, language)
+        }
+        return image
+    }
+
+    /** Чьи плитки отдаёт [tile] сейчас — по настройке, прочитанной при этом вызове. */
+    fun provider(): TileProvider = services().provider
 
     /**
      * Места по адресу, ближайшее к запросу первым.
@@ -120,12 +145,12 @@ class OpenMaps(
         return answer?.let { placesOf(it.text()) }
     }
 
-    /** Плитка у службы; ответ не картинкой — не плитка, и хранить его нельзя. */
-    private suspend fun fetchTile(tile: MapTile): ByteArray? {
+    /** Плитка у поставщика; ответ не картинкой — не плитка, и хранить его нельзя. */
+    private suspend fun fetchTile(provider: TileProvider, tile: MapTile, language: String): ByteArray? {
+        if (tile.zoom > provider.maxZoom) return null
         val current = services()
-        val url = "${current.tiles.trimEnd('/')}/${tile.zoom}/${tile.x}/${tile.y}.png"
-        val answer = fetch.get("tiles", url, current.tileWait) ?: return null
-        return answer.takeIf { it.contentType.startsWith(IMAGE) }?.bytes
+        val answer = fetch.get("tiles", provider.url(tile, language), current.tileWait, current.connectWait)
+        return answer?.takeIf { it.contentType.startsWith(IMAGE) }?.bytes
     }
 
     private companion object {
@@ -140,5 +165,14 @@ class OpenMaps(
 
         /** Вид ответа с картинкой. */
         const val IMAGE = "image/"
+
+        /** Язык подписей на плитках, когда вызывающий его не назвал. */
+        const val DEFAULT_LANGUAGE = "ru"
+
+        /** Сколько раз спрашивать плитку: первая попытка и один повтор. */
+        const val TILE_ATTEMPTS = 2
+
+        /** Пауза перед повтором плитки. */
+        val TILE_RETRY_PAUSE = 700.milliseconds
     }
 }

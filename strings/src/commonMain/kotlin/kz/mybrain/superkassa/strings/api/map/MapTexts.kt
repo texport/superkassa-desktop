@@ -24,6 +24,12 @@ data class MapTexts(
     val showDegrees: String,
     val zoomIn: String,
     val zoomOut: String,
+
+    /** Раскрыть карту на весь экран. */
+    val fullscreen: String,
+
+    /** Вернуть карту в окно. */
+    val fullscreenExit: String,
     val myLocation: String,
     val myLocationShown: String,
     val myLocationPrecise: String,
