@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -83,11 +85,30 @@ fun MapMarks(
     )
     val density = LocalDensity.current
     marks.sortedBy { it.chosen }.forEach { mark ->
-        val at = MapProjection.screen(mark.latitude, mark.longitude, state.zoom, corner)
-        if (!inside(at, canvas)) return@forEach
-        val radius = with(density) { markSide(mark.count).toPx() } / 2.0
-        Mark(mark, if (cell > 0) MapProjection.keptInCell(at, corner, cell, radius) else at, onPick)
+        if (!inside(MapProjection.screen(mark.latitude, mark.longitude, state.zoom, corner), canvas)) return@forEach
+        key(mark.id) {
+            val radius = with(density) { markSide(mark.count).toPx() } / 2.0
+            // Место считается при раскладке, а не при сборке: сдвиг карты
+            // двигает ярлычок, не пересобирая его. Пересобирались все
+            // ярлычки окна на каждом кадре перетаскивания — сотни поверхностей
+            // с тенью, и на планшете карта касс шла рывками.
+            val place = remember(mark, state, canvas, cell, radius) { { placeOf(mark, state, canvas, cell, radius) } }
+            Mark(mark, place, onPick)
+        }
     }
+}
+
+/** Где стоит ярлычок сейчас: читается при раскладке, по свежему центру карты. */
+private fun placeOf(mark: MapMark, state: MapState, canvas: IntSize, cell: Double, radius: Double): MapPixel {
+    val corner = MapProjection.corner(
+        state.centerLatitude,
+        state.centerLongitude,
+        state.zoom,
+        canvas.width,
+        canvas.height
+    )
+    val at = MapProjection.screen(mark.latitude, mark.longitude, state.zoom, corner)
+    return if (cell > 0) MapProjection.keptInCell(at, corner, cell, radius) else at
 }
 
 /** Попадает ли место в окно карты — с запасом на сам ярлычок. */
@@ -103,7 +124,7 @@ fun inside(at: MapPixel, canvas: IntSize): Boolean =
  * обводка и выше тень, — и виден среди сотни соседей сразу.
  */
 @Composable
-private fun Mark(mark: MapMark, at: MapPixel, onPick: (MapMark) -> Unit) {
+private fun Mark(mark: MapMark, place: () -> MapPixel, onPick: (MapMark) -> Unit) {
     val filled = mark.chosen
     Surface(
         onClick = { onPick(mark) },
@@ -113,7 +134,7 @@ private fun Mark(mark: MapMark, at: MapPixel, onPick: (MapMark) -> Unit) {
         border = BorderStroke(if (filled) Sizes.mapMarkEdgeChosen else Sizes.mapMarkEdge, mark.tone),
         shadowElevation = if (filled) Sizes.mapMarkLiftChosen else Sizes.mapMarkLift,
         modifier = Modifier
-            .offset { IntOffset(at.x.roundToInt(), at.y.roundToInt()) }
+            .offset { place().let { IntOffset(it.x.roundToInt(), it.y.roundToInt()) } }
             // Ярлычок стоит серединой на месте, а не углом: угол уводил
             // бы его вниз-вправо от дома на полтора десятка точек.
             .graphicsLayer {

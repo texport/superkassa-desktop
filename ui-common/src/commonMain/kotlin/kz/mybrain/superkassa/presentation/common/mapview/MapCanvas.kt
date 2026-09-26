@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -42,18 +43,39 @@ internal data class MapPaint(
  *
  * Высота плитки берётся из сетки, а не 256 точек: у эллиптической сетки
  * строка в сферической чуть выше или ниже, и без растяжения между
- * строками оставались бы щели в точку.
+ * строками оставались бы щели в точку. Плитки, которой ещё нет, заменяет
+ * четверть плитки предыдущего увеличения, растянутая вдвое, — пока грузится
+ * подробная, карта уже видна.
  */
 private fun DrawScope.drawTiles(state: MapState, tiles: MapTiles, canvas: IntSize) {
+    // Пришедшая плитка меняет счётчик — и полотно перерисовывается.
+    if (tiles.version < 0) return
     val corner = topLeft(state, canvas)
     val grid = tiles.provider.grid
     visibleTiles(state, canvas, grid).forEach { tile ->
-        val bitmap = tiles.ready(state.zoom, tile.x, tile.y) ?: return@forEach
         val x = (tile.x * MapProjection.TILE - corner.x).roundToInt()
         val top = (TileRows.top(grid, state.zoom, tile.y) - corner.y).roundToInt()
         val bottom = (TileRows.top(grid, state.zoom, tile.y + 1) - corner.y).roundToInt()
-        drawImage(bitmap, dstOffset = IntOffset(x, top), dstSize = IntSize(MapProjection.TILE, bottom - top))
+        val place = IntSize(MapProjection.TILE, bottom - top)
+        val bitmap = tiles.ready(state.zoom, tile.x, tile.y)
+        if (bitmap != null) {
+            drawImage(bitmap, dstOffset = IntOffset(x, top), dstSize = place)
+        } else {
+            tiles.cover(state.zoom, tile.x, tile.y)?.let { drawCover(it, tile, IntOffset(x, top), place) }
+        }
     }
+}
+
+/** Четверть плитки предыдущего увеличения на месте плитки [tile]. */
+private fun DrawScope.drawCover(cover: ImageBitmap, tile: TileIndex, at: IntOffset, place: IntSize) {
+    val half = MapProjection.TILE / 2
+    drawImage(
+        cover,
+        srcOffset = IntOffset(tile.x % 2 * half, tile.y % 2 * half),
+        srcSize = IntSize(half, half),
+        dstOffset = at,
+        dstSize = place
+    )
 }
 
 /**

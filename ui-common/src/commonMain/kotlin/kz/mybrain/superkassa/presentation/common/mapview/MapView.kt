@@ -5,10 +5,6 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,8 +24,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kz.mybrain.superkassa.designsystem.theme.MapColors
-import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.common.mapview.control.MapNotes
 import kz.mybrain.superkassa.strings.api.map.MapTexts
 
 /**
@@ -91,10 +87,12 @@ fun MapView(
     ) {
         MapGlide(state)
         MapCanvas(state, tiles, canvas, paint)
-        // Ни одной плитки не доехало: объяснение поверх пустого поля.
-        // До первой неудачи поле не объясняется — жаловаться ещё не на что.
-        if (tiles.blank) MapNote(texts.noTiles, Modifier.align(Alignment.BottomStart).padding(Spacing.fieldGap))
-        MapNote(tiles.provider.attribution, Modifier.align(Alignment.BottomEnd).padding(Spacing.fieldGap))
+        MapNotes(
+            blank = tiles.blank,
+            attribution = tiles.provider.attribution,
+            texts = texts,
+            modifier = Modifier.align(Alignment.BottomStart).padding(Spacing.fieldGap)
+        )
         overlay(canvas)
     }
 }
@@ -116,31 +114,6 @@ private suspend fun PointerInputScope.zoomByWheel(state: MapState, canvas: IntSi
             state.wheeled(canvas, change.position, wheel.turn(change.scrollDelta.y))
             change.consume()
         }
-    }
-}
-
-/**
- * Строка поверх карты: почему поле пустое, или чья это карта.
- *
- * Стоит в нижнем углу, а не в середине: середину занимает метка, и ради
- * объяснения закрывать её нельзя. Заливка поверхности с тенью — иначе
- * надпись теряется на подложке там, где плитки всё-таки доехали.
- * Подпись авторства — в правом углу: её требуют условия поставщика плиток.
- */
-@Composable
-private fun MapNote(notice: String, modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(Sizes.corner),
-        color = MaterialTheme.colorScheme.surface,
-        shadowElevation = Sizes.mapMarkLift
-    ) {
-        Text(
-            text = notice,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(horizontal = Spacing.fieldGap, vertical = Spacing.itemGap)
-        )
     }
 }
 
