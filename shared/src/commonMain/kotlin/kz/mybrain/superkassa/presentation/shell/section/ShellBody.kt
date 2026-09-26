@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.designsystem.adaptive.LocalFrameBottom
 import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
 import kz.mybrain.superkassa.navigation.step.PlaceCardKey
 import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
@@ -66,7 +68,9 @@ internal fun SectionContent(
 @Composable
 internal fun SectionPlace(app: AppContainer, content: @Composable () -> Unit) {
     PrintDesk(app.services, app.areas.print) {
-        Box(modifier = Modifier.sectionFrame().fillMaxHeight()) { content() }
+        CompositionLocalProvider(LocalFrameBottom provides windowMargin) {
+            Box(modifier = Modifier.sectionFrame().fillMaxHeight()) { content() }
+        }
     }
 }
 
@@ -118,12 +122,14 @@ internal fun Connect(app: AppContainer, window: WindowParts, onBack: (() -> Unit
 /**
  * Место раздела правее рельса: вся ширина с полем окна.
  *
- * Поле окна — слева и справа, как у Material 3: сверху раздел отделяет
- * шапка. Ставит его каркас один раз, а не каждый экран сам: прежде слева
+ * Поле окна — слева, справа и снизу, как у Material 3: сверху раздел
+ * отделяет шапка. Снизу поле прежде было нулевым, и карта, списки и итог
+ * кассы упирались в край окна. Ставит его каркас один раз, а не каждый экран сам: прежде слева
  * стояло 12, а справа то 12, то 28. Разделы идут на всю ширину — рабочие
  * столы прежде вставали посередине в пределах 1440 точек, и на мониторе
  * 1920 по бокам оставалось по 180 пустых точек, на 2560 — по 500.
  * Широкое окно делят панели самих экранов, а не пустые поля.
  */
 @Composable
-internal fun Modifier.sectionFrame(): Modifier = fillMaxWidth().padding(horizontal = windowMargin)
+internal fun Modifier.sectionFrame(): Modifier =
+    fillMaxWidth().padding(start = windowMargin, end = windowMargin, bottom = windowMargin)

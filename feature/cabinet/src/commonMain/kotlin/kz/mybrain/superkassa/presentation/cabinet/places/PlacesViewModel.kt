@@ -52,7 +52,20 @@ internal class PlacesViewModel(private val cabinet: CabinetViewModel) : ViewMode
         }
     }
 
-    fun selectPlace(id: String) = screen.update { it.copy(place = id, register = null) }
+    /**
+     * Нажатие на точку: раскрывает её кассы и открывает её карточку, а
+     * повторное нажатие на уже раскрытую — сворачивает её кассы.
+     *
+     * Прежде повторное нажатие ничего не делало, и раскрытые кассы точки
+     * убрать можно было только выбором другой точки.
+     *
+     * @return раскрыта ли теперь точка: только тогда открывается карточка.
+     */
+    fun selectPlace(id: String): Boolean {
+        val folding = screen.value.let { it.place == id && it.register == null }
+        screen.update { if (folding) it.copy(place = null) else it.copy(place = id, register = null) }
+        return !folding
+    }
 
     fun selectRegister(id: String) = screen.update { it.copy(register = id) }
 

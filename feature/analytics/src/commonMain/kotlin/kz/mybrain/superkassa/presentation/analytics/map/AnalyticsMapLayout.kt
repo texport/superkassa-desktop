@@ -101,6 +101,8 @@ internal fun MapAndDetails(
  * нет. Прежде раскладка всегда брала третью часть и на планшете падала
  * при открытии аналитики.
  *
+ * Список берёт остаток высоты, свёрнутый — только свой заголовок.
+ *
  * @param scrollbar полоса прокрутки карточки; на Android и iOS — пустая.
  */
 @Composable
@@ -122,9 +124,9 @@ internal fun ListOverCard(
         val width = constraints.maxWidth
         val height = constraints.maxHeight
         val cap = (height * Panes.STACKED_SECOND_SHARE).toInt()
-        val lower = measurables[1].measure(Constraints(minWidth = width, maxWidth = width, maxHeight = cap))
+        val lower = measurables[1].measure(column(width, cap))
         val gap = if (lower.height > 0) Spacing.fieldGap.roundToPx() else 0
-        val upper = measurables[0].measure(Constraints.fixed(width, (height - lower.height - gap).coerceAtLeast(0)))
+        val upper = measurables[0].measure(column(width, (height - lower.height - gap).coerceAtLeast(0)))
         // Полосы прокрутки на Android и iOS нет вовсе — узла под неё тоже нет.
         val bar = measurables.getOrNull(2)?.measure(Constraints.fixedHeight(lower.height))
         layout(width, height) {
@@ -134,3 +136,6 @@ internal fun ListOverCard(
         }
     }
 }
+
+/** Ограничения части столбца: вся его ширина и не выше [height]. */
+private fun column(width: Int, height: Int) = Constraints(minWidth = width, maxWidth = width, maxHeight = height)

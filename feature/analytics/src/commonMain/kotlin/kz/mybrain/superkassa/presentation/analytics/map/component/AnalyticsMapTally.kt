@@ -1,92 +1,41 @@
 package kz.mybrain.superkassa.presentation.analytics.map.component
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import kz.mybrain.superkassa.designsystem.section.Collapsible
-import kz.mybrain.superkassa.designsystem.section.SectionHeader
-import kz.mybrain.superkassa.designsystem.theme.size.Sizes
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.presentation.analytics.map.KkmGroup
 import kz.mybrain.superkassa.presentation.analytics.map.onRecordCount
-import kz.mybrain.superkassa.presentation.analytics.map.sieved
 import kz.mybrain.superkassa.presentation.common.format.Money
-import kz.mybrain.superkassa.presentation.common.mapview.MapFold
 import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
 import kz.mybrain.superkassa.strings.api.fill
 
 /**
- * Сколько касс сейчас на виду и сколько из них работает по закону.
+ * Сколько касс сейчас на виду и сколько из них работает по закону —
+ * первой строкой раскрытой легенды.
  *
  * Сеть в две тысячи касс на карте страны — это полсотни кружков с числами,
- * и сложить их глазами владелец не может: он видит, что касс много,
- * и не знает, сколько именно и всю ли сеть он сейчас видит. Счёт идёт
- * по видимому куску карты и пересчитывается при каждом её сдвиге —
- * иначе он отвечал бы не на тот вопрос, который задан глазами.
+ * и сложить их глазами владелец не может. Счёт идёт по видимому куску
+ * карты и пересчитывается при каждом её сдвиге.
  *
- * Строка об учёте стоит второй и не прячется: в кабинете показа из 3294
- * касс на учёте четыре, и число заведённых касс само по себе говорит
- * о сети совсем не то, что о ней подумают.
+ * Прежде счёт стоял отдельной плашкой поверх карты и закрывал её угол,
+ * а в узком окне растягивался на всю ширину и закрывал карту целиком.
+ * Теперь он — строка легенды: там же, где объяснено, что на карте.
  *
- * Итог сворачивается заголовком, как легенда рядом: свёрнут ли он,
- * помнит рабочее место ([fold]).
- *
- * Строка об отборе появляется только при действующем отборе: без него
- * «отобрано две тысячи из двух тысяч» — шум.
+ * Об отборе сказано только при действующем отборе: без него «отобрано
+ * две тысячи из двух тысяч» — шум.
  */
 @Composable
-internal fun MapTally(
-    shown: MapCount,
-    sieved: Boolean,
-    fold: MapFold,
-    texts: AnalyticsTexts,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = RoundedCornerShape(Sizes.corner),
-        tonalElevation = Sizes.dialogElevation,
-        shadowElevation = Sizes.mapMarkLift
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = Spacing.fieldGap, vertical = Spacing.itemGap),
-            verticalArrangement = Arrangement.spacedBy(Spacing.inline)
-        ) {
-            // Свёрнутый итог — одна строка заголовка: карте нужен угол,
-            // а число касс в окне читают не всё время.
-            SectionHeader(texts.mapShown, fold.expanded, fold::toggle)
-            Collapsible(fold.expanded) { TallyLines(shown, sieved, texts) }
-        }
-    }
-}
-
-/** Числа итога: сколько касс видно, сколько из них на учёте и что отобрано. */
-@Composable
-private fun TallyLines(shown: MapCount, sieved: Boolean, texts: AnalyticsTexts) {
-    Column(verticalArrangement = Arrangement.spacedBy(Spacing.inline)) {
-        Text(
-            text = texts.mapShownOf.fill(Money.count(shown.kkms), Money.count(shown.placed)),
-            style = MaterialTheme.typography.titleMedium
-        )
-        TallyNote(texts.mapOnRecordOf.fill(Money.count(shown.onRecord), Money.count(shown.kkms)))
-        if (sieved) {
-            TallyNote(texts.mapSievedOf.fill(Money.count(shown.placed), Money.count(shown.whole)))
-        }
-    }
-}
-
-/** Пояснительная строка итога: тише главного числа, но читается рядом с ним. */
-@Composable
-private fun TallyNote(words: String) {
+internal fun TallyLine(shown: MapCount?, sieved: Boolean, texts: AnalyticsTexts) {
+    shown ?: return
+    val parts = listOfNotNull(
+        "${texts.mapShown}: ${texts.mapShownOf.fill(Money.count(shown.kkms), Money.count(shown.placed))}",
+        texts.mapOnRecordOf.fill(Money.count(shown.onRecord), Money.count(shown.kkms)).lowercase(),
+        texts.mapSievedOf.fill(Money.count(shown.placed), Money.count(shown.whole)).lowercase().takeIf { sieved }
+    )
     Text(
-        text = words,
-        style = MaterialTheme.typography.labelMedium,
+        text = parts.joinToString(Glyphs.SEPARATOR),
+        style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant
     )
 }

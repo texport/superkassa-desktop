@@ -1,21 +1,17 @@
 package kz.mybrain.superkassa.presentation.common.document
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
 import kz.mybrain.superkassa.designsystem.field.SearchField
+import kz.mybrain.superkassa.designsystem.picker.SieveChip
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.designsystem.theme.size.fieldLabelReserve
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
 
 /**
@@ -43,10 +39,10 @@ internal fun JournalToolbar(journal: HistoryJournalTexts, query: JournalQuery, o
             hint = journal.searchHint,
             clearLabel = journal.clearSearch
         )
-        // Плашки порядка стоят на высоте рамки поля, а не по центру всей
-        // его высоты: поле держит над рамкой место под поднятую подпись.
-        // В узком окне они переносятся по одной, а не рвут надпись плашки.
-        WrapRow(modifier = Modifier.padding(top = fieldLabelReserve()), spacing = Spacing.buttonGap) {
+        // Плашки порядка того же роста, что поле поиска, и стоят с ним
+        // вровень. В узком окне они переносятся по одной, а не рвут
+        // надпись плашки.
+        WrapRow(spacing = Spacing.buttonGap) {
             SortChips(journal, query, onQuery)
         }
     }
@@ -57,19 +53,16 @@ internal fun JournalToolbar(journal: HistoryJournalTexts, query: JournalQuery, o
  *
  * Поле выбирается плашками, сторона — значком рядом: два набора плашек
  * под одно решение читались как шесть не связанных между собой отборов.
+ * Подписи «Порядок» перед плашками нет: «По времени», «По сумме» говорят
+ * сами за себя.
  */
 @Composable
 private fun SortChips(journal: HistoryJournalTexts, query: JournalQuery, onQuery: (JournalQuery) -> Unit) {
-    Text(
-        text = journal.sort,
-        style = MaterialTheme.typography.labelMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
     JournalSort.entries.forEach { sort ->
-        FilterChip(
+        SieveChip(
             selected = query.sort == sort,
-            onClick = { onQuery(query.copy(sort = sort)) },
-            label = { Text(sort.title(journal)) }
+            label = sort.title(journal),
+            onClick = { onQuery(query.copy(sort = sort)) }
         )
     }
     IconButton(onClick = { onQuery(query.copy(descending = !query.descending)) }) {

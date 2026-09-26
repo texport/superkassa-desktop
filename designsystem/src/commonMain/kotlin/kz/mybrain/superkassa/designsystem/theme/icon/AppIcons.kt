@@ -78,8 +78,10 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Sell
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.SwitchAccount
 import androidx.compose.material.icons.outlined.TaskAlt
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material.icons.outlined.VpnKey
 import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -132,6 +134,9 @@ object AppIcons {
     /** Поделиться чеком с покупателем: окно «Поделиться» или мессенджер. */
     val share: ImageVector = Icons.Outlined.Share
 
+    /** Скрыть набранный пароль: перечёркнутый глаз рядом с «показать». */
+    val hideSecret: ImageVector = Icons.Outlined.VisibilityOff
+
     /** Сохранение печатной формы в файл. */
     val save: ImageVector = Icons.Filled.Download
 
@@ -166,6 +171,9 @@ object AppIcons {
 
     /** Личный кабинет ОФД: дела владельца, а не кассира. */
     val cabinet: ImageVector = Icons.Filled.Business
+
+    /** Сменить кассира: за кассу садится другой, вход по его пину. */
+    val changeCashier: ImageVector = Icons.Outlined.SwitchAccount
 
     /** Выход из кабинета БФД: владелец закрывает свою сессию подписи. */
     val signOut: ImageVector = Icons.AutoMirrored.Filled.Logout

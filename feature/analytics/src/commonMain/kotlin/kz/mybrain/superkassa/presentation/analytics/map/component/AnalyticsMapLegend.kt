@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -29,9 +31,17 @@ import kz.mybrain.superkassa.strings.api.analytics.AnalyticsTexts
  *
  * Стоит на своей поверхности поверх плиток, как и кнопки управления:
  * подпись без подложки на пёстрой карте не читается вовсе.
+ *
+ * @param tally сколько касс сейчас видно на карте — первой строкой
+ *   раскрытой легенды.
  */
 @Composable
-internal fun MapLegend(legend: MapFold, texts: AnalyticsTexts, modifier: Modifier = Modifier) {
+internal fun MapLegend(
+    legend: MapFold,
+    texts: AnalyticsTexts,
+    modifier: Modifier = Modifier,
+    tally: @Composable () -> Unit = {}
+) {
     Surface(
         modifier = modifier.width(Sizes.mapNoteWidth),
         shape = RoundedCornerShape(Sizes.corner),
@@ -43,7 +53,15 @@ internal fun MapLegend(legend: MapFold, texts: AnalyticsTexts, modifier: Modifie
             verticalArrangement = Arrangement.spacedBy(Spacing.inline)
         ) {
             SectionHeader(texts.mapLegend, legend.expanded, legend::toggle)
-            Collapsible(legend.expanded) { LegendLines(texts) }
+            Collapsible(legend.expanded) {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(Spacing.itemGap)
+                ) {
+                    tally()
+                    LegendLines(texts)
+                }
+            }
         }
     }
 }

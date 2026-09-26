@@ -30,6 +30,9 @@ import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
  * Вперёд дальше сегодняшнего дня идти некуда: документов из будущего
  * не бывает, и стрелка на краю гаснет, а не отдаёт пустой список.
  *
+ * Подписи «Срок» перед сегментами нет: «День», «Неделя», «Месяц» говорят
+ * сами за себя, а лишнее слово в начале ряда читалось не к месту.
+ *
  * Один на журнал кассы и на документы кассы в кабинете: кассе срок уходит
  * границами в миллисекундах, кабинету — датами отбора, но выбирают его
  * одинаково.
@@ -54,12 +57,6 @@ fun JournalPeriodBar(
     // и листание со стрелками и датой. Стрелка, уехавшая на другую строку
     // от даты, которую она листает, читалась как отдельная кнопка.
     WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
-        Text(
-            text = journal.period,
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            softWrap = false
-        )
         ChoiceSegments(
             options = JournalSpan.entries,
             selected = period.span,

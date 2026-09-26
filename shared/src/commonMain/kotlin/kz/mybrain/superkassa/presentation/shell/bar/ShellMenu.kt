@@ -7,7 +7,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import kz.mybrain.superkassa.designsystem.adaptive.LocalWindowClass
 import kz.mybrain.superkassa.designsystem.adaptive.WidthClass
+import kz.mybrain.superkassa.designsystem.section.BarAction
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.common.look.LookViewModel
@@ -34,8 +34,11 @@ import kz.mybrain.superkassa.presentation.shell.frame.ShellUiState
  * заголовка, уходит в меню «Ещё», — так и здесь:
  *
  * - большое окно и шире — всё значками, как было;
- * - расширенное — обновить, тема и язык уходят в меню;
- * - среднее и уже — туда же уходит «Сменить кассира».
+ * - уже — обновить, тема и язык уходят в меню.
+ *
+ * «Сменить кассира» — значком с подписью в подсказке при любой ширине:
+ * надпись занимала полстроки, а значок места почти не берёт. Меню «Ещё»
+ * по Material 3 стоит последним в строке.
  *
  * Плашки состояния остаются на виду при любой ширине: о блокировке
  * и разрыве связи кассир узнаёт до того, как пробьёт чек.
@@ -52,22 +55,15 @@ internal fun KkmBarActions(shell: ShellUiState, look: LookViewModel, onSignOut: 
         ThemeSwitch(look)
         LanguagePicker(look)
     }
-    val signOutFolded = width < WidthClass.Expanded
+    BarAction(AppIcons.changeCashier, texts.topBar.changeCashier, onSignOut)
     if (width < WidthClass.Large) {
-        ShellMenu(look, onRefresh, onSignOut.takeIf { signOutFolded })
-    }
-    if (!signOutFolded) {
-        TextButton(onClick = onSignOut) { Text(texts.topBar.changeCashier) }
+        ShellMenu(look, onRefresh)
     }
 }
 
-/**
- * Меню «Ещё»: те же действия, что значками в широком окне.
- *
- * @param onSignOut смена кассира, если и ей не хватило места в строке.
- */
+/** Меню «Ещё»: те же действия, что значками в широком окне. */
 @Composable
-private fun ShellMenu(look: LookViewModel, onRefresh: () -> Unit, onSignOut: (() -> Unit)?) {
+private fun ShellMenu(look: LookViewModel, onRefresh: () -> Unit) {
     val texts = LocalStrings.current
     var open by remember { mutableStateOf(false) }
     val close = { open = false }
@@ -76,14 +72,14 @@ private fun ShellMenu(look: LookViewModel, onRefresh: () -> Unit, onSignOut: (()
             Icon(AppIcons.moreActions, contentDescription = texts.topBar.moreActions)
         }
         DropdownMenu(expanded = open, onDismissRequest = close) {
-            ShellMenuItems(look, close, onRefresh, onSignOut)
+            ShellMenuItems(look, close, onRefresh)
         }
     }
 }
 
-/** Пункты меню «Ещё»: обновить, тема, языки и, если ушла сюда, смена кассира. */
+/** Пункты меню «Ещё»: обновить, тема и языки. */
 @Composable
-private fun ShellMenuItems(look: LookViewModel, close: () -> Unit, onRefresh: () -> Unit, onSignOut: (() -> Unit)?) {
+private fun ShellMenuItems(look: LookViewModel, close: () -> Unit, onRefresh: () -> Unit) {
     val texts = LocalStrings.current
     DropdownMenuItem(
         text = { Text(texts.general.refresh) },
@@ -96,14 +92,4 @@ private fun ShellMenuItems(look: LookViewModel, close: () -> Unit, onRefresh: ()
     ThemeMenuItem(look, close)
     HorizontalDivider()
     LanguageMenuItems(look, close)
-    if (onSignOut != null) {
-        HorizontalDivider()
-        DropdownMenuItem(
-            text = { Text(texts.topBar.changeCashier) },
-            onClick = {
-                close()
-                onSignOut()
-            }
-        )
-    }
 }

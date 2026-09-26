@@ -98,12 +98,31 @@ data class TopBarTexts(
     val autonomous: String,
     val blocked: String,
     val changeCashier: String,
+
+    /** Что значат плашки шапки — подсказка по нажатию на плашку. */
+    val statusHints: StatusHints,
     /**
      * Меню действий шапки, которым в узком окне не хватило места:
      * обновить, тема, язык, а в самом узком — и смена кассира.
      * Название кассы важнее значков.
      */
     val moreActions: String
+)
+
+/**
+ * Подсказки к плашкам шапки: что значит состояние и что с ним делать.
+ *
+ * Кассир видел «В работе» и «Смена открыта» и не понимал, что это за
+ * плашки: название без объяснения читалось как украшение.
+ */
+data class StatusHints(
+    val active: String,
+    val blocked: String,
+    val programming: String,
+    val registration: String,
+    val autonomous: String,
+    val shiftOpen: String,
+    val shiftClosed: String
 )
 
 /** Названия разделов навигации. */

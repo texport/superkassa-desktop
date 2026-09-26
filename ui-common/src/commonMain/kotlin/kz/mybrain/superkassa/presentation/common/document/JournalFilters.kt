@@ -3,7 +3,6 @@ package kz.mybrain.superkassa.presentation.common.document
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
 import kz.mybrain.superkassa.designsystem.picker.MenuChip
+import kz.mybrain.superkassa.designsystem.picker.SieveChip
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
@@ -56,18 +56,18 @@ private fun TypeChips(
     ChipGroup(
         title = journal.documentType,
         first = {
-            FilterChip(
+            SieveChip(
                 selected = query.type == null,
-                onClick = { onQuery(query.copy(type = null)) },
-                label = { Text(journal.allTypes) }
+                label = journal.allTypes,
+                onClick = { onQuery(query.copy(type = null)) }
             )
         }
     ) {
         types.forEach { type ->
-            FilterChip(
+            SieveChip(
                 selected = query.type == type.code,
-                onClick = { onQuery(query.copy(type = type.code)) },
-                label = { Text(type.title) }
+                label = type.title,
+                onClick = { onQuery(query.copy(type = type.code)) }
             )
         }
     }
@@ -86,18 +86,18 @@ private fun DeliveryChips(
     ChipGroup(
         title = journal.deliveryState,
         first = {
-            FilterChip(
+            SieveChip(
                 selected = query.delivery == null,
-                onClick = { onQuery(query.copy(delivery = null)) },
-                label = { Text(journal.allStates) }
+                label = journal.allStates,
+                onClick = { onQuery(query.copy(delivery = null)) }
             )
         }
     ) {
         deliveries.forEach { state ->
-            FilterChip(
+            SieveChip(
                 selected = query.delivery == state,
-                onClick = { onQuery(query.copy(delivery = state)) },
-                label = { Text(state.title(states)) }
+                label = state.title(states),
+                onClick = { onQuery(query.copy(delivery = state)) }
             )
         }
     }

@@ -134,7 +134,7 @@ private fun PlacesColumn(
         locksKnown = window.blocked != null,
         place = chosen.place,
         register = chosen.register,
-        onPlace = { model.selectPlace(it).also { onOpened() } },
+        onPlace = { if (model.selectPlace(it)) onOpened() },
         onRegister = { model.selectRegister(it).also { onOpened() } },
         footer = { PlaceCreateButtons(cabinet, texts, chosen.place) },
         listState = listState,

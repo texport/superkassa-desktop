@@ -1,18 +1,25 @@
 package kz.mybrain.superkassa.presentation.analytics.map
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import kz.mybrain.superkassa.designsystem.state.EmptyState
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.analytics.map.component.MapLegend
-import kz.mybrain.superkassa.presentation.analytics.map.component.MapTally
+import kz.mybrain.superkassa.presentation.analytics.map.component.TallyLine
 import kz.mybrain.superkassa.presentation.analytics.map.component.emptyMapReason
 import kz.mybrain.superkassa.presentation.analytics.map.component.mapCount
 import kz.mybrain.superkassa.presentation.common.mapview.MapControls
@@ -53,6 +60,8 @@ internal fun MapWindow(
         )
         return
     }
+    // Сколько высоты занимает столбик кнопок: легенда под ним не выше остатка.
+    var controls by remember { mutableIntStateOf(0) }
     Box(modifier = modifier.testTag(MAP_TAG)) {
         MapView(
             state = model.map,
@@ -64,13 +73,13 @@ internal fun MapWindow(
             // Нажатие мимо ярлычка снимает выбор: раскрытое место
             // закрывается тем же способом, каким открылось.
             onTap = { _, _ -> parts.actions.forget() },
-            overlay = { canvas -> MapOverlay(parts, canvas) }
+            overlay = { canvas -> MapOverlay(parts, canvas, controls) }
         )
         MapControls(
             state = model.map,
             texts = parts.cabinetTexts,
             locating = parts.tools.locating,
-            modifier = Modifier.align(Alignment.TopEnd).padding(Spacing.fieldGap)
+            modifier = Modifier.align(Alignment.TopEnd).onSizeChanged { controls = it.height }.padding(Spacing.fieldGap)
         ) {
             // Та же кнопка, что у окна выбора места: одна на все карты.
             FullscreenButton(fullscreen, parts.cabinetTexts.map, onFullscreen)
@@ -85,32 +94,35 @@ internal fun MapWindow(
  * и тем же отбором считается итог: на карте написано ровно то число,
  * которое владелец сейчас видит кружками.
  *
- * Итог — в левом верхнем углу, управление — в правом верхнем, легенда —
- * в правом нижнем, под кнопками: так она не отнимает у карты тот угол,
- * с которого глаз начинает читать, и не ложится на кружки у левого края.
- * Кнопка «Во весь экран» стоит в столбике управления сверху и с легендой
- * не встречается. Левый нижний угол занят объяснением о неприехавших
- * плитках. Итог и легенда сворачиваются заголовком, как карточка под
- * картой: что свёрнуто, помнит рабочее место.
+ * Управление — в правом верхнем углу, легенда — в правом нижнем, под
+ * кнопками: так она не отнимает у карты тот угол, с которого глаз начинает
+ * читать. Левый нижний угол занят объяснением о неприехавших плитках.
+ * Итог по видимому куску карты — первой строкой раскрытой легенды:
+ * отдельной плашкой поверх карты он закрывал её угол, а в узком окне
+ * растягивался на всю ширину и закрывал карту целиком.
  */
 @Composable
-private fun MapOverlay(parts: MapParts, canvas: IntSize) {
+private fun MapOverlay(parts: MapParts, canvas: IntSize, controls: Int) {
     val model = parts.state
     val shown = onScreen(parts.groups, model.map, canvas)
     MapMarks(model.map, canvas, kkmMarks(shown, model), groupCell(LocalDensity.current.density)) { mark ->
         parts.actions.open(parts.groups.first { it.id == mark.id })
     }
-    Box(modifier = Modifier.fillMaxSize().padding(Spacing.fieldGap)) {
-        MapTally(
-            shown = mapCount(shown, parts.placement.placed.size, parts.whole),
-            sieved = model.sieve.set,
-            fold = parts.tools.tally,
-            texts = parts.texts,
-            modifier = Modifier.align(Alignment.TopStart)
-        )
-        MapLegend(parts.tools.legend, parts.texts, Modifier.align(Alignment.BottomEnd))
+    val count = mapCount(shown, parts.placement.placed.size, parts.whole)
+    BoxWithConstraints(modifier = Modifier.fillMaxSize().padding(Spacing.fieldGap)) {
+        // Не выше того, что остаётся под кнопками карты: в невысоком окне
+        // раскрытая легенда ложилась на «Во весь экран». В самой низкой
+        // карте ей остаётся хотя бы треть — дальше строки прокручиваются.
+        val under = maxHeight - with(LocalDensity.current) { controls.toDp() }
+        val room = Modifier.align(Alignment.BottomEnd).heightIn(max = maxOf(under, maxHeight / LEGEND_LEAST))
+        MapLegend(parts.tools.legend, parts.texts, room) {
+            TallyLine(count, model.sieve.set, parts.texts)
+        }
     }
 }
+
+/** Меньше какой доли карты легенда не становится: трети. */
+private const val LEGEND_LEAST = 3
 
 /**
  * Метка окна карты для проверок раскладки.

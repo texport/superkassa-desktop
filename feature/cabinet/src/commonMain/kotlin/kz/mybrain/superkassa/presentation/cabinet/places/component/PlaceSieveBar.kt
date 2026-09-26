@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -13,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.picker.MenuChip
+import kz.mybrain.superkassa.designsystem.picker.SieveChip
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
@@ -90,13 +90,12 @@ private fun BlockedChip(
     onSieve: (PlaceSieve) -> Unit,
     modifier: Modifier
 ) {
-    FilterChip(
-        modifier = modifier,
+    SieveChip(
         selected = sieve.blocked,
-        enabled = locksKnown,
+        label = texts.places.sieve.blocked,
         onClick = { onSieve(sieve.copy(blocked = !sieve.blocked)) },
-        label = { Text(texts.places.sieve.blocked, maxLines = 1) },
-        leadingIcon = { if (sieve.blocked) Icon(AppIcons.chosen, contentDescription = null) }
+        modifier = modifier,
+        enabled = locksKnown
     )
 }
 

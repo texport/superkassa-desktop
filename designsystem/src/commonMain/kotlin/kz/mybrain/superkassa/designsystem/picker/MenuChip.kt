@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -53,10 +52,11 @@ fun <T> MenuChip(
     // Ширину, заданную рядом (доля строки отбора), плашка берёт целиком,
     // а без неё — по своей подписи.
     Box(modifier = modifier, propagateMinConstraints = true) {
-        FilterChip(
+        SieveChip(
             selected = chosen,
+            label = value,
             onClick = { open = true },
-            label = { Text(text = value, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            checked = false,
             trailingIcon = { ChipArrow() }
         )
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {

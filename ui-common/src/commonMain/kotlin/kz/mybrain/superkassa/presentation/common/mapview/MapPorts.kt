@@ -56,8 +56,8 @@ class MapCases(ports: MapPorts) {
     /** Легенда карты касс: свёрнута ли она, помнит рабочее место. */
     fun legend(): MapFold = MapFold(MapPanel.Legend, !readPanels().legendCollapsed, foldPanel)
 
-    /** Счёт касс в окне карты: свёрнут ли он, помнит рабочее место. */
-    fun tally(): MapFold = MapFold(MapPanel.Tally, !readPanels().tallyCollapsed, foldPanel)
+    /** Список касс рядом с картой: свёрнут ли он, помнит рабочее место. */
+    fun kkmList(): MapFold = MapFold(MapPanel.List, !readPanels().listCollapsed, foldPanel)
 }
 
 /**

@@ -64,6 +64,10 @@ data class EdsTexts(
     /** Поле пароля к ключу. */
     val keyPassword: String,
 
+    /** Показать и скрыть набранный пароль — значок «глаз» в поле. */
+    val showPassword: String,
+    val hidePassword: String,
+
     /** Подписать ключом — главное действие окна. */
     val keySign: String,
 

@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.common.GeneralTexts
 import kz.mybrain.superkassa.strings.api.common.LoginTexts
 import kz.mybrain.superkassa.strings.api.common.SectionTexts
+import kz.mybrain.superkassa.strings.api.common.StatusHints
 import kz.mybrain.superkassa.strings.api.common.TopBarTexts
 import kz.mybrain.superkassa.strings.impl.share.shareTextsEn
 
@@ -53,6 +54,20 @@ internal val commonTextsEn = CommonTexts(
         autonomous = "Autonomous mode",
         blocked = "Blocked",
         changeCashier = "Change cashier",
+        statusHints = StatusHints(
+            active = "The register is active: it issues receipts and sends them to the BFD.",
+            blocked = "The register is blocked: the BFD does not accept its receipts. See the reason " +
+                "and how to unblock it in the BFD cabinet.",
+            programming = "The register is in programming mode: receipts cannot be issued while it is on. " +
+                "Turn it off in the register settings, “General”.",
+            registration = "The register is not yet registered with the KGD: receipts cannot be issued. " +
+                "Submit an application in the BFD cabinet.",
+            autonomous = "No connection to the BFD: receipts are issued and queued, and the register sends " +
+                "them itself once the connection is back.",
+            shiftOpen = "The shift is open: you can issue receipts. Close it with a Z report on the home " +
+                "screen before the day ends.",
+            shiftClosed = "The shift is closed: open it on the home screen to issue receipts."
+        ),
         moreActions = "More"
     ),
     sections = SectionTexts(

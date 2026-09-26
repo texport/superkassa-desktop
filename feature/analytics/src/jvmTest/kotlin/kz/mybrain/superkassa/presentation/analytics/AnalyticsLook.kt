@@ -64,7 +64,7 @@ internal object AnalyticsLook {
     /** Средства карты касс без сети. */
     fun tools(panel: MapFold = panel()): MapTools {
         val map = mapCases()
-        return MapTools(map.tiles(), map.locating(), panel, map.legend(), map.tally())
+        return MapTools(map.tiles(), map.locating(), panel, map.legend(), map.kkmList())
     }
 
     /** Касса аналитики: одна и та же во всех наборах снимков. */

@@ -4,6 +4,7 @@ import kz.mybrain.superkassa.strings.api.common.CommonTexts
 import kz.mybrain.superkassa.strings.api.common.GeneralTexts
 import kz.mybrain.superkassa.strings.api.common.LoginTexts
 import kz.mybrain.superkassa.strings.api.common.SectionTexts
+import kz.mybrain.superkassa.strings.api.common.StatusHints
 import kz.mybrain.superkassa.strings.api.common.TopBarTexts
 import kz.mybrain.superkassa.strings.impl.share.shareTextsRu
 
@@ -54,6 +55,19 @@ internal val commonTextsRu = CommonTexts(
         autonomous = "Автономный режим",
         blocked = "Заблокирована",
         changeCashier = "Сменить кассира",
+        statusHints = StatusHints(
+            active = "Касса в работе: пробивает чеки и отправляет их в БФД.",
+            blocked = "Касса заблокирована: БФД не принимает её чеки. Причину и снятие блокировки " +
+                "смотрите в кабинете БФД.",
+            programming = "Касса в режиме программирования: пока он включён, чеки не пробиваются. Выключить " +
+                "— в настройках кассы, раздел «Основное».",
+            registration = "Касса ещё не поставлена на учёт в КГД: чеки пробивать нельзя. Подайте заявление " +
+                "в кабинете БФД.",
+            autonomous = "Нет связи с БФД: чеки пробиваются и копятся в очереди, касса дошлёт их сама, " +
+                "когда связь вернётся.",
+            shiftOpen = "Смена открыта: можно пробивать чеки. Закройте её Z-отчётом на главной до конца суток.",
+            shiftClosed = "Смена закрыта: чтобы пробивать чеки, откройте смену на главной."
+        ),
         moreActions = "Ещё"
     ),
     sections = SectionTexts(

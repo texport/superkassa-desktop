@@ -122,10 +122,10 @@ class Preferences(directory: Path) : WorkplaceMemory, SetupMemory, LookMemory {
             view.mapLegendCollapsed = value
         }
 
-    var mapTallyCollapsed: Boolean
-        get() = view.mapTallyCollapsed
+    var mapListCollapsed: Boolean
+        get() = view.mapListCollapsed
         set(value) {
-            view.mapTallyCollapsed = value
+            view.mapListCollapsed = value
         }
 
     var locationAllowed: Boolean?

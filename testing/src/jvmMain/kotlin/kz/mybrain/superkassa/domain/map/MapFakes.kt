@@ -42,6 +42,6 @@ class QuietMaps(
 class MemoryMapMemory(
     override var cardCollapsed: Boolean = false,
     override var legendCollapsed: Boolean = false,
-    override var tallyCollapsed: Boolean = false,
+    override var listCollapsed: Boolean = false,
     override var locationAllowed: Boolean? = null
 ) : MapMemory

@@ -18,7 +18,6 @@ import kz.mybrain.superkassa.domain.analytics.model.placement
 import kz.mybrain.superkassa.presentation.analytics.AnalyticsPorts
 import kz.mybrain.superkassa.presentation.analytics.common.analyticsScreenState
 import kz.mybrain.superkassa.presentation.analytics.kkm.AnalyticsKkmDialog
-import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsKkmList
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSieveBar
 import kz.mybrain.superkassa.presentation.analytics.map.component.AnalyticsSourceBar
 import kz.mybrain.superkassa.presentation.analytics.map.component.UnderMap
@@ -108,14 +107,14 @@ internal fun mapParts(
 
 /**
  * Чем карта касс рисуется: плитки, определение своего места и то,
- * как владелец разложил карточку, легенду и счёт касс в окне. Живут, пока открыто окно.
+ * как владелец разложил карточку, легенду и список касс. Живут, пока открыто окно.
  */
 internal class MapTools(
     val tiles: MapTiles,
     val locating: MapLocating,
     val panel: MapFold,
     val legend: MapFold,
-    val tally: MapFold
+    val list: MapFold
 )
 
 /**
@@ -170,23 +169,5 @@ internal fun MapBody(parts: MapParts, modifier: Modifier = Modifier) {
         map = { MapWindow(parts, fullscreen = false, onFullscreen = { fullscreen = true }, Modifier.fillMaxSize()) },
         list = { KkmList(parts) },
         card = { UnderMap(parts) }
-    )
-}
-
-/**
- * Список всех касс, а не только непоставленных: точки на карте
- * неотличимы, и владелец сети искал свою кассу глазами.
- */
-@Composable
-internal fun KkmList(parts: MapParts, modifier: Modifier = Modifier) {
-    AnalyticsKkmList(
-        placed = parts.placement.placed,
-        unplaced = parts.placement.unplaced,
-        chosen = parts.state.chosen,
-        source = parts.state.source,
-        texts = parts.texts,
-        onChoose = { row -> parts.actions.show(row, parts.groups) },
-        modifier = modifier.fillMaxSize(),
-        sieved = parts.state.sieve.set
     )
 }

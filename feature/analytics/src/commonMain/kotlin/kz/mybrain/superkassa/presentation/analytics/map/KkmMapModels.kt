@@ -28,6 +28,6 @@ internal fun mapTools(ports: AnalyticsPorts): MapTools = remember(ports) {
         locating = map.locating(),
         panel = map.card(),
         legend = map.legend(),
-        tally = map.tally()
+        list = map.kkmList()
     )
 }

@@ -18,10 +18,10 @@ class WorkplaceMapMemory(private val preferences: Preferences) : MapMemory {
             preferences.mapLegendCollapsed = value
         }
 
-    override var tallyCollapsed: Boolean
-        get() = preferences.mapTallyCollapsed
+    override var listCollapsed: Boolean
+        get() = preferences.mapListCollapsed
         set(value) {
-            preferences.mapTallyCollapsed = value
+            preferences.mapListCollapsed = value
         }
 
     override var locationAllowed: Boolean?

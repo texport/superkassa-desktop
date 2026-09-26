@@ -39,6 +39,9 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * и её низ под ним не прячется. Лист тянут за ручку — ручка Material 3
  * сама разворачивает и сворачивает его и нажатием; второй кнопки рядом
  * нет, чтобы не спорить со стрелками разделов внутри.
+ *
+ * Лист прикреплён к нижнему краю окна и поле окна снизу перекрывает
+ * ([LocalFrameBottom]): висящий над краем лист не читался бы листом.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,6 +60,7 @@ internal fun SupportingSheet(
     var peek by remember { mutableStateOf(Spacing.flush) }
     val density = LocalDensity.current
     BottomSheetScaffold(
+        modifier = Modifier.bleedToWindowEdge(LocalFrameBottom.current),
         scaffoldState = rememberBottomSheetScaffoldState(sheet),
         sheetPeekHeight = peek,
         sheetDragHandle = null,

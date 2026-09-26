@@ -3,8 +3,6 @@ package kz.mybrain.superkassa.presentation.analytics.map.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -15,7 +13,7 @@ import kz.mybrain.superkassa.designsystem.field.SearchField
 import kz.mybrain.superkassa.designsystem.field.fieldMinWidth
 import kz.mybrain.superkassa.designsystem.picker.MenuChip
 import kz.mybrain.superkassa.designsystem.picker.MenuSearch
-import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
+import kz.mybrain.superkassa.designsystem.picker.SieveChip
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.KkmRecord
@@ -81,14 +79,10 @@ private fun Marks(sieve: MapSieve, texts: AnalyticsTexts, onSieve: (MapSieve) ->
     val chosen = sieve.marks
     KkmMark.entries.forEach { mark ->
         val on = mark in chosen
-        FilterChip(
+        SieveChip(
             selected = on,
-            onClick = { onSieve(sieve.copy(marks = toggled(chosen, mark))) },
-            label = { Text(mark.title(texts.sieve)) },
-            // Галочка у нажатой плашки — то же правило, что у сегментов
-            // в ряду выше: без неё нажатое отличалось только заливкой,
-            // и в одном ряду выходило два разных языка выбора.
-            leadingIcon = { if (on) Icon(AppIcons.chosen, contentDescription = null) }
+            label = mark.title(texts.sieve),
+            onClick = { onSieve(sieve.copy(marks = toggled(chosen, mark))) }
         )
     }
 }

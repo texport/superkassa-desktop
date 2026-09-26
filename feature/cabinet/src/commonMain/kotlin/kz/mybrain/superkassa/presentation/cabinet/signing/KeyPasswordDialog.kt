@@ -3,9 +3,11 @@ package kz.mybrain.superkassa.presentation.cabinet.signing
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.OutlinedSecureTextField
@@ -13,7 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -71,14 +76,29 @@ private fun KeyFileLine(file: String, eds: EdsTexts, onOther: () -> Unit) {
     )
 }
 
-/** Поле пароля: скрытый ввод, фокус сразу в нём, «Готово» на клавиатуре подписывает. */
+/**
+ * Поле пароля: скрытый ввод, фокус сразу в нём, «Готово» на клавиатуре подписывает.
+ *
+ * Глаз в конце поля показывает набранное: пароль ключа длинный, и владелец
+ * не видел, где ошибся, пока подпись не отказывала.
+ */
 @Composable
 private fun PasswordField(state: TextFieldState, problem: String?, eds: EdsTexts, onDone: () -> Unit) {
     val focus = remember { FocusRequester() }
+    var shown by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { focus.requestFocus() }
     OutlinedSecureTextField(
         state = state,
         label = { Text(eds.keyPassword) },
+        textObfuscationMode = if (shown) TextObfuscationMode.Visible else TextObfuscationMode.RevealLastTyped,
+        trailingIcon = {
+            IconButton(onClick = { shown = !shown }) {
+                Icon(
+                    imageVector = if (shown) AppIcons.hideSecret else AppIcons.preview,
+                    contentDescription = if (shown) eds.hidePassword else eds.showPassword
+                )
+            }
+        },
         isError = problem != null,
         supportingText = problem?.let { { Text(it) } },
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),

@@ -13,26 +13,35 @@ import kz.mybrain.superkassa.designsystem.status.toneColor
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.tip.TapTip
 import kz.mybrain.superkassa.domain.kkm.model.isAutonomous
 import kz.mybrain.superkassa.domain.kkm.model.isBlocked
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
 import kz.mybrain.superkassa.strings.api.common.EnumTexts
+import kz.mybrain.superkassa.strings.api.common.StatusHints
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Плашка шапки: слово и роль цвета.
  *
+ * @property hint что плашка значит и что с этим делать — по нажатию.
  * @property urgent мешает пробить чек: касса заблокирована, программируется
  *   или работает без связи с БФД. Такие плашки стоят и в узкой шапке.
  */
-internal data class KkmStatusChip(val text: String, val tone: StatusTone, val urgent: Boolean = false)
+internal data class KkmStatusChip(
+    val text: String,
+    val tone: StatusTone,
+    val urgent: Boolean = false,
+    val hint: String = ""
+)
 
 /** Слова шапки, уже переведённые на язык кассира. */
 internal data class KkmStatusWords(
     val state: String,
     val autonomous: String,
     val shiftOpen: String,
-    val shiftClosed: String
+    val shiftClosed: String,
+    val hints: StatusHints? = null
 )
 
 /**
@@ -45,13 +54,27 @@ internal data class KkmStatusWords(
  * Собирается без композиции, чтобы повтор ловился проверкой, а не глазами.
  */
 internal fun kkmStatusChips(kkm: KkmResponse?, words: KkmStatusWords): List<KkmStatusChip> = listOfNotNull(
-    kkm?.let { stateChip(words.state, stateTone(it.isBlocked, it.isProgramming)) },
-    kkm?.takeIf { it.isAutonomous }?.let { KkmStatusChip(words.autonomous, StatusTone.Waiting, urgent = true) },
+    kkm?.let { stateChip(words.state, stateTone(it.isBlocked, it.isProgramming), stateHint(it.state, words.hints)) },
+    kkm?.takeIf { it.isAutonomous }?.let {
+        KkmStatusChip(words.autonomous, StatusTone.Waiting, urgent = true, hint = words.hints?.autonomous.orEmpty())
+    },
     kkm?.let { shiftChip(it.isShiftOpen, words) }
 )
 
 /** Состояние кассы; всякое, кроме рабочего, мешает пробить чек. */
-private fun stateChip(word: String, tone: StatusTone) = KkmStatusChip(word, tone, urgent = tone != StatusTone.Good)
+private fun stateChip(word: String, tone: StatusTone, hint: String) =
+    KkmStatusChip(word, tone, urgent = tone != StatusTone.Good, hint = hint)
+
+/** Что значит состояние кассы; незнакомое ядру состояние — без подсказки. */
+private fun stateHint(code: String, hints: StatusHints?): String = when (
+    KkmState.entries.firstOrNull { it.name == code }
+) {
+    KkmState.ACTIVE -> hints?.active
+    KkmState.BLOCKED -> hints?.blocked
+    KkmState.PROGRAMMING -> hints?.programming
+    KkmState.REGISTRATION -> hints?.registration
+    null -> null
+}.orEmpty()
 
 /**
  * Смена со слов кассы: касса отдаёт её состояние вместе с собой.
@@ -59,7 +82,11 @@ private fun stateChip(word: String, tone: StatusTone) = KkmStatusChip(word, tone
  * Закрытая смена — ожидание, а не отказ: утром касса стоит именно так.
  */
 private fun shiftChip(open: Boolean, words: KkmStatusWords): KkmStatusChip =
-    if (open) KkmStatusChip(words.shiftOpen, StatusTone.Good) else KkmStatusChip(words.shiftClosed, StatusTone.Waiting)
+    if (open) {
+        KkmStatusChip(words.shiftOpen, StatusTone.Good, hint = words.hints?.shiftOpen.orEmpty())
+    } else {
+        KkmStatusChip(words.shiftClosed, StatusTone.Waiting, hint = words.hints?.shiftClosed.orEmpty())
+    }
 
 /**
  * Название состояния кассы на языке кассира.
@@ -100,7 +127,15 @@ fun KkmStatusChips(kkm: KkmResponse?, all: Boolean = true) {
         verticalArrangement = Arrangement.spacedBy(Spacing.inline),
         itemVerticalAlignment = Alignment.CenterVertically
     ) {
-        chips.forEach { chip -> Chip(chip.text, toneColor(chip.tone)) }
+        // Плашка объясняет себя по нажатию: «В работе» и «Смена открыта»
+        // без объяснения кассир принимал за украшение шапки.
+        chips.forEach { chip ->
+            if (chip.hint.isBlank()) {
+                Chip(chip.text, toneColor(chip.tone))
+            } else {
+                TapTip(chip.hint) { Chip(chip.text, toneColor(chip.tone)) }
+            }
+        }
     }
 }
 
@@ -113,7 +148,8 @@ private fun statusWords(kkm: KkmResponse?): KkmStatusWords {
         state = kkm?.let { texts.enums.kkmState(it.state) }.orEmpty(),
         autonomous = texts.topBar.autonomous,
         shiftOpen = core.shiftOpenShort,
-        shiftClosed = core.shiftClosedShort
+        shiftClosed = core.shiftClosedShort,
+        hints = texts.topBar.statusHints
     )
 }
 
