@@ -19,6 +19,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Камера — сканер штрихкода в поле продажи. Спрашивается, когда
+         кассир открыл сканер, а не при запуске; снимки не сохраняются.
+         Касса без камеры ставится и работает: сканера там просто нет. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <uses-permission
         android:name="android.permission.FOREGROUND_SERVICE"
         tools:node="remove" />

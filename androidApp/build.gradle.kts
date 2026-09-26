@@ -89,4 +89,10 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.lifecycle.process)
+    // Сканер штрихкода камерой: CameraX — картинка и кадры, ZXing — распознавание
+    // без сервисов Google Play (касса работает и на Huawei без них).
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.zxing.core)
 }

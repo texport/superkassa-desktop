@@ -71,6 +71,7 @@ import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material.icons.outlined.Password
 import androidx.compose.material.icons.outlined.Percent
 import androidx.compose.material.icons.outlined.PhonelinkLock
+import androidx.compose.material.icons.outlined.PhotoCamera
 import androidx.compose.material.icons.outlined.PointOfSale
 import androidx.compose.material.icons.outlined.Print
 import androidx.compose.material.icons.outlined.QrCodeScanner
@@ -248,6 +249,9 @@ object AppIcons {
 
     /** Поле штрихкода: включить буквы — у маркировочного кода они бывают. */
     val keyboardLetters: ImageVector = Icons.Outlined.Keyboard
+
+    /** Поле штрихкода: читать код камерой устройства. */
+    val camera: ImageVector = Icons.Outlined.PhotoCamera
 
     /** Поле штрихкода: вернуть цифровую клавиатуру. */
     val keyboardDigits: ImageVector = Icons.Outlined.Dialpad

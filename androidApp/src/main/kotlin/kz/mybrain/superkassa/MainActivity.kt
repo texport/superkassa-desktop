@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.Deferred
 import kz.mybrain.superkassa.designsystem.adaptive.WindowClassRoot
@@ -20,12 +23,14 @@ import kz.mybrain.superkassa.domain.kassa.model.StartProblem
 import kz.mybrain.superkassa.domain.kassa.model.StartRefusal
 import kz.mybrain.superkassa.presentation.common.look.lookViewModel
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.scan.LocalCodeCamera
 import kz.mybrain.superkassa.presentation.common.strings.workplaceLanguage
 import kz.mybrain.superkassa.presentation.debug.log.LogDialog
 import kz.mybrain.superkassa.presentation.shell.AppContainer
 import kz.mybrain.superkassa.presentation.shell.frame.ShellScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartRefusedScreen
 import kz.mybrain.superkassa.presentation.shell.starting.StartingScreen
+import kz.mybrain.superkassa.scan.CameraScanner
 
 /**
  * Точка входа кассы на Android — единственная активность.
@@ -101,7 +106,12 @@ private fun Window(app: AppContainer) {
             // на полосу над клавиатурой, экран собирался заново и поле,
             // в которое начали печатать, теряло фокус.
             WindowClassRoot {
-                Box(modifier = Modifier.fillMaxSize().imePadding()) { ShellScreen(app) }
+                // Камера устройства — сканер штрихкода в поле продажи.
+                val context = LocalContext.current
+                val camera = remember(context) { CameraScanner(context.applicationContext) }
+                CompositionLocalProvider(LocalCodeCamera provides camera) {
+                    Box(modifier = Modifier.fillMaxSize().imePadding()) { ShellScreen(app) }
+                }
             }
             // Журнал в режиме отладки — поверх кассы: соседнего окна здесь нет.
             LogDialog(app.services, app.areas.debug)

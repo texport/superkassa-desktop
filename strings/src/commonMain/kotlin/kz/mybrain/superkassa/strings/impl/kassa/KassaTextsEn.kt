@@ -7,6 +7,7 @@ import kz.mybrain.superkassa.strings.api.kassa.UnitTexts
 import kz.mybrain.superkassa.strings.impl.kassa.checkout.checkoutTextsEn
 import kz.mybrain.superkassa.strings.impl.kassa.contact.buyerContactTextsEn
 import kz.mybrain.superkassa.strings.impl.kassa.refusal.kassaRefusalTextsEn
+import kz.mybrain.superkassa.strings.impl.kassa.scan.cameraScanTextsEn
 
 /** Надписи [KassaTexts] по-английски. */
 internal val kassaTextsEn = KassaTexts(
@@ -70,5 +71,6 @@ internal val kassaTextsEn = KassaTexts(
     ),
     contact = buyerContactTextsEn,
     checkout = checkoutTextsEn,
-    refusal = kassaRefusalTextsEn
+    refusal = kassaRefusalTextsEn,
+    scan = cameraScanTextsEn
 )

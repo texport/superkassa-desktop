@@ -30,12 +30,14 @@ import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.presentation.common.scan.LocalCodeCamera
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.presentation.kassa.sale.component.Hint
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
 import kz.mybrain.superkassa.presentation.words.kassa.lookupProblemWords
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Добавление позиции по штрихкоду.
@@ -76,14 +78,14 @@ internal fun BarcodeField(state: SaleUiState, actions: EntryActions) {
  * Штрихкод — цифры, и экранная клавиатура открывается цифровой: на
  * буквенной кассир искал цифры во втором ряду. Маркировочный код товара
  * бывает с буквами — их включает значок в поле. Значок стоит только при
- * вводе касанием: с клавиатурой и сканером выбирать нечего.
+ * вводе касанием: с клавиатурой и сканером выбирать нечего. Третий способ —
+ * камера устройства: значок камеры стоит там, где камера есть.
  */
 @Composable
 private fun BarcodeInput(state: SaleUiState, actions: EntryActions) {
     val texts = LocalStrings.current
     var letters by rememberSaveable { mutableStateOf(false) }
     val focus = barcodeFocus(state.barcodeTurn)
-    val touch = LocalInputModeManager.current.inputMode == InputMode.Touch
     OutlinedTextField(
         value = state.search.barcode,
         onValueChange = actions::typeBarcode,
@@ -91,16 +93,41 @@ private fun BarcodeInput(state: SaleUiState, actions: EntryActions) {
         singleLine = true,
         keyboardOptions = barcodeKeys(letters),
         keyboardActions = enterKeyboardActions(),
-        trailingIcon = {
-            Row {
-                if (touch) LettersToggle(letters) { letters = !letters }
-                IconButton(enabled = state.search.ready && state.kkm != null, onClick = { actions.search() }) {
-                    Icon(AppIcons.find, contentDescription = texts.receipt.barcodeFind)
-                }
-            }
-        },
+        trailingIcon = { BarcodeTools(state, actions, letters) { letters = !letters } },
         modifier = Modifier.fillMaxWidth().focusRequester(focus)
     )
+}
+
+/**
+ * Значки в поле кода: буквы или цифры, камера и поиск.
+ *
+ * Код, прочитанный камерой, ложится в поле и ищется сразу — как код
+ * сканера, который сам дописывает Enter.
+ */
+@Composable
+private fun BarcodeTools(state: SaleUiState, actions: EntryActions, letters: Boolean, onLetters: () -> Unit) {
+    val texts = LocalStrings.current
+    val camera = LocalCodeCamera.current
+    var scanning by rememberSaveable { mutableStateOf(false) }
+    val touch = LocalInputModeManager.current.inputMode == InputMode.Touch
+    Row {
+        if (touch) LettersToggle(letters, onLetters)
+        if (camera.available) {
+            IconButton(onClick = { scanning = true }) {
+                Icon(AppIcons.camera, contentDescription = textsOf(LocalLanguage.current).kassa.scan.scan)
+            }
+        }
+        IconButton(enabled = state.search.ready && state.kkm != null, onClick = { actions.search() }) {
+            Icon(AppIcons.find, contentDescription = texts.receipt.barcodeFind)
+        }
+    }
+    if (scanning) {
+        CameraScanDialog(camera, onDismiss = { scanning = false }, onCode = { code ->
+            scanning = false
+            actions.typeBarcode(code)
+            actions.search()
+        })
+    }
 }
 
 /**
