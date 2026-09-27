@@ -27,6 +27,10 @@ data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/print/LinkShare.kt — ссы
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/GithubUpdates.kt — установщик под систему машины и открытие его системой
 data/src/jvmMain/kotlin/kz/mybrain/superkassa/data/releases/InstallerDownload.kt — скачивание установщика на диск со сверкой SHA-256
 
+# Слой данных: JVM и Android одним исходником.
+data/src/jvmCommonMain/kotlin/kz/mybrain/superkassa/data/log/CoreLogProvider.kt — привязка SLF4J, через которую пишет ядро: SLF4J есть только на JVM/Android
+data/src/jvmCommonMain/kotlin/kz/mybrain/superkassa/data/log/CoreLogger.kt — строки ядра из SLF4J в журнал рабочего места: SLF4J есть только на JVM/Android
+
 # Слой данных: Android.
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/eds/KeyFilePicker.kt — файл ключа системным окном выбора файлов Android
 data/src/androidMain/kotlin/kz/mybrain/superkassa/data/eds/KeyFileSigning.kt — подпись файлом ключа провайдером Kalkan: он есть только на JVM/Android

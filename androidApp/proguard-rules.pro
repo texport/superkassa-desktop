@@ -24,3 +24,7 @@
 # Разметка Lombok (@NonNull) нужна только компилятору Kalkan: в самом jar
 # её классов нет, и в работе она не участвует.
 -dontwarn lombok.**
+
+# Журнал ядра: SLF4J находит привязку через ServiceLoader по имени класса
+# из META-INF/services — R8 не видит прямой ссылки на неё.
+-keep class kz.mybrain.superkassa.data.log.CoreLogProvider { <init>(); }

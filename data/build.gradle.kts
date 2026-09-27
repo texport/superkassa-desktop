@@ -42,7 +42,18 @@ kotlin {
             api(libs.kotlinx.io.core)
             implementation(libs.kotlinx.atomicfu)
         }
+        // Журнал ядра одинаков на JVM и Android: ядро пишет через SLF4J,
+        // и один исходник передаёт его строки в журнал рабочего места.
+        jvmMain {
+            kotlin.srcDir("src/jvmCommonMain/kotlin")
+            resources.srcDir("src/jvmCommonMain/resources")
+        }
+        androidMain {
+            kotlin.srcDir("src/jvmCommonMain/kotlin")
+            resources.srcDir("src/jvmCommonMain/resources")
+        }
         jvmMain.dependencies {
+            implementation(libs.slf4j.api)
             implementation(libs.ktor.client.cio)
             implementation(libs.jna)
             // Подпись ЭЦП — NCALayer, только на настольных системах.
@@ -52,6 +63,7 @@ kotlin {
             api(libs.superkassa.core.import.node)
         }
         androidMain.dependencies {
+            implementation(libs.slf4j.api)
             // Выбор файла и печать Android идут через окно приложения.
             implementation(libs.androidx.activity)
             // Установщик новой версии скачивается тем же движком, что ходит

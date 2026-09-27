@@ -15,6 +15,7 @@ serialization = "1.11.0"
 coroutines = "1.11.0"
 detekt = "1.23.8"
 jna = "5.19.0"
+slf4j = "2.0.18"
 # Криптопровайдер Kalkan НУЦ РК: в Maven Central его нет, НУЦ выдаёт его
 # разработчикам по запросу — берётся из локального хранилища Maven.
 kalkan = "0.7.5"
@@ -86,6 +87,7 @@ ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlin
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
 jna = { group = "net.java.dev.jna", name = "jna", version.ref = "jna" }
+slf4j-api = { group = "org.slf4j", name = "slf4j-api", version.ref = "slf4j" }
 kalkan-provider = { group = "kz.gov.pki.kalkan", name = "knca_provider_jce_kalkan", version.ref = "kalkan" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
