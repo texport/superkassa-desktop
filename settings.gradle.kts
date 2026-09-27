@@ -20,19 +20,6 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-        // Kalkan НУЦ РК в открытых хранилищах не лежит. На машине
-        // разработчика он в локальном Maven, а сборке на GitHub адрес
-        // закрытого хранилища и вход в него дают секреты репозитория.
-        // Незаведённый секрет GitHub отдаёт пустой строкой, а не пропуском.
-        providers.environmentVariable("KALKAN_MAVEN_URL").orNull?.takeIf { it.isNotBlank() }?.let { address ->
-            maven(address) {
-                credentials {
-                    username = providers.environmentVariable("KALKAN_MAVEN_USER").orNull
-                    password = providers.environmentVariable("KALKAN_MAVEN_PASSWORD").orNull
-                }
-                content { includeGroup("kz.gov.pki.kalkan") }
-            }
-        }
     }
 }
 

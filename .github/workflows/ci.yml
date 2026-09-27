@@ -28,12 +28,10 @@ jobs:
   build:
     name: Build & Test
     runs-on: macos-latest
-    # Kalkan НУЦ РК — из закрытого хранилища Maven: адрес и вход в него
-    # лежат в секретах репозитория (см. settings.gradle.kts).
+    # Kalkan НУЦ РК публиковать нельзя: он лежит в приватном репозитории
+    # texport/kalkan, и сборка берёт его токеном только на чтение.
     env:
-      KALKAN_MAVEN_URL: ${{ secrets.KALKAN_MAVEN_URL }}
-      KALKAN_MAVEN_USER: ${{ secrets.KALKAN_MAVEN_USER }}
-      KALKAN_MAVEN_PASSWORD: ${{ secrets.KALKAN_MAVEN_PASSWORD }}
+      KALKAN_REPO_TOKEN: ${{ secrets.KALKAN_REPO_TOKEN }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -59,24 +57,41 @@ jobs:
       - name: Build Siblings from Sources
         uses: ./.github/actions/siblings
 
+      # Kalkan кладётся туда же, где он лежит на машине разработчика, —
+      # в локальный Maven: сборка берёт его оттуда первым.
+      - name: Kalkan
+        if: env.KALKAN_REPO_TOKEN != ''
+        uses: actions/checkout@v7
+        with:
+          repository: texport/kalkan
+          token: ${{ secrets.KALKAN_REPO_TOKEN }}
+          path: .kalkan
+
+      - name: Kalkan в локальный Maven
+        if: env.KALKAN_REPO_TOKEN != ''
+        run: |
+          mkdir -p ~/.m2/repository
+          cp -R .kalkan/kz ~/.m2/repository/
+          rm -rf .kalkan
+
       # detekt, компиляция всех модулей и целей и все проверки — одной
       # задачей `check`; предупреждение компилятора роняет сборку.
       #
       # Android без Kalkan не компилируется: подпись файлом ключа стоит
-      # на нём. Пока хранилища Kalkan в секретах нет, проверяется всё, что
+      # на нём. Пока токена к Kalkan в секретах нет, проверяется всё, что
       # от него не зависит, — общий код, JVM и снимки экранов, — а о пропуске
       # Android сказано в сводке запуска.
       - name: Check
         run: |
-          if [ -n "$KALKAN_MAVEN_URL" ]; then
+          if [ -n "$KALKAN_REPO_TOKEN" ]; then
             ./gradlew check
           else
-            echo "::warning::Нет секрета KALKAN_MAVEN_URL — Android не проверен: без Kalkan он не компилируется"
+            echo "::warning::Нет секрета KALKAN_REPO_TOKEN — Android не проверен: без Kalkan он не компилируется"
             ./gradlew jvmTest detekt :detekt-rules:test
           fi
 
       - name: Android
-        if: env.KALKAN_MAVEN_URL != ''
+        if: env.KALKAN_REPO_TOKEN != ''
         run: ./gradlew :androidApp:assembleDebug
 
       # Снимки экранов и раскладка по размерам окна — своей задачей:

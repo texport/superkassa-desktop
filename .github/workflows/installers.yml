@@ -126,16 +126,14 @@ jobs:
   # поверх ни одной кассы, поэтому без ключа он не собирается вовсе.
   #
   # Выпуск для компьютеров Android не ждёт: пока нет ключа выпусков или
-  # хранилища Kalkan, выпуск выходит с установщиками, а здесь в сводке
+  # токена к Kalkan, выпуск выходит с установщиками, а здесь в сводке
   # запуска сказано, чего не хватило для APK.
   android:
     needs: [ version, release ]
     if: ${{ !cancelled() && needs.release.result == 'success' }}
     runs-on: ubuntu-latest
     env:
-      KALKAN_MAVEN_URL: ${{ secrets.KALKAN_MAVEN_URL }}
-      KALKAN_MAVEN_USER: ${{ secrets.KALKAN_MAVEN_USER }}
-      KALKAN_MAVEN_PASSWORD: ${{ secrets.KALKAN_MAVEN_PASSWORD }}
+      KALKAN_REPO_TOKEN: ${{ secrets.KALKAN_REPO_TOKEN }}
       ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
     steps:
       - name: Есть ли из чего собрать APK
@@ -143,7 +141,7 @@ jobs:
         shell: bash
         run: |
           missing=""
-          [ -n "$KALKAN_MAVEN_URL" ] || missing="$missing KALKAN_MAVEN_URL"
+          [ -n "$KALKAN_REPO_TOKEN" ] || missing="$missing KALKAN_REPO_TOKEN"
           [ -n "$ANDROID_KEYSTORE_BASE64" ] || missing="$missing ANDROID_KEYSTORE_BASE64"
           if [ -n "$missing" ]; then
             echo "::warning::APK в выпуск не добавлен — нет секретов:$missing"
@@ -174,6 +172,22 @@ jobs:
       - name: Build Siblings from Sources
         if: steps.ready.outputs.ready == 'true'
         uses: ./.github/actions/siblings
+
+      # Kalkan — из приватного репозитория, в локальный Maven (см. ci.yml).
+      - name: Kalkan
+        if: steps.ready.outputs.ready == 'true'
+        uses: actions/checkout@v7
+        with:
+          repository: texport/kalkan
+          token: ${{ secrets.KALKAN_REPO_TOKEN }}
+          path: .kalkan
+
+      - name: Kalkan в локальный Maven
+        if: steps.ready.outputs.ready == 'true'
+        run: |
+          mkdir -p ~/.m2/repository
+          cp -R .kalkan/kz ~/.m2/repository/
+          rm -rf .kalkan
 
       # Хранилище ключа лежит в секрете base64-строкой и пишется во
       # временный каталог запуска: в репозиторий и в артефакты оно не
