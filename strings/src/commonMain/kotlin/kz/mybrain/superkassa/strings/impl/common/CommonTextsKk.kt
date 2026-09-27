@@ -24,6 +24,7 @@ internal val commonTextsKk = CommonTexts(
         deliveredToOfd = "БФД-ға жеткізілді",
         queuedNoLink = "байланыс жоқ — кезекке қойылды",
         deliveryState = "Жеткізу күйі",
+        notAccepted = "%1\$s, бірақ БФД оны қабылдамады: %2\$s",
         collapse = "Жию",
         explain = "Түсіндірме",
         expand = "Жаю",

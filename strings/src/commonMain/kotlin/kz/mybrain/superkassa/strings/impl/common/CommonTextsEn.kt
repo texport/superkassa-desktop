@@ -25,6 +25,7 @@ internal val commonTextsEn = CommonTexts(
         deliveredToOfd = "delivered to the BFD",
         queuedNoLink = "no link — queued",
         deliveryState = "Delivery state",
+        notAccepted = "%1\$s, but the BFD did not accept it: %2\$s",
         collapse = "Collapse",
         explain = "Explanation",
         expand = "Expand",

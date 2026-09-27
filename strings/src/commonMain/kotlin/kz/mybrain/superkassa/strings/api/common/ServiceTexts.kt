@@ -147,7 +147,7 @@ data class SettingsScreenTexts(
     val mapReverse: String,
     val mapLocation: String,
     val mapDefault: String,
-    /** Что значит переключатель раздела продажи: включено — развёрнут, выключено — свёрнут. */
+    /** Что значит переключатель раздела продажи: включено — свёрнут, выключено — развёрнут. */
     val panelBehaviourHint: String,
     val panelReceiptChanges: String,
     val panelReceiptChangesHint: String,

@@ -97,7 +97,7 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
         "a picture, HTML as a browser page. On Android printing goes through the system dialog as" +
         " PDF",
     printCopies = "Copies when printing",
-    panelBehaviour = "What is open when the sale opens",
+    panelBehaviour = "Collapsed when the sale opens",
     taxSettings = "Register taxes",
     taxSettingsHint = "The tax regime and VAT rate of this cash register: the tax of every receipt is computed from " +
         "them. Set them from the KGD records — a mismatch sends receipts out with the wrong tax",
@@ -129,9 +129,9 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     mapReverse = "Address by marker",
     mapLocation = "Location lookup",
     mapDefault = "Back to community",
-    panelBehaviourHint = "On — the section is expanded, off — collapsed to its title. On the sale screen a section " +
-        "is collapsed with the arrow in its title — the choice is remembered and shown here. " +
-        "Manual item entry is always open for a new receipt.",
+    panelBehaviourHint = "On — the section is collapsed to its title when the sale opens, off — expanded. " +
+        "On the sale screen a section is collapsed and expanded with the arrow in its title — " +
+        "the choice is remembered and shown here. Manual item entry is always open for a new receipt.",
     panelReceiptChanges = "Discounts and markups",
     panelReceiptChangesHint = "Discount and markup fields for the whole receipt",
     panelCustomerData = "Customer details",
@@ -139,8 +139,7 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     panelMoney = "Payment",
     panelMoneyHint = "Payment types, cash taken and change under the amount to pay",
     panelTill = "The register on phone and tablet",
-    panelTillHint = "The bottom sheet with payment and discounts is fully open. " +
-        "On a wide screen the register is always visible",
+    panelTillHint = "The bottom sheet with payment and discounts. On a wide screen the register is always visible",
     printLayoutHint = "58 and 80 mm tape are for receipt printers; the page is for plain paper " +
         "and for sending to the customer.",
     layoutTape58 = "58 mm tape",

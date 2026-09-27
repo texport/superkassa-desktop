@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.shift.dashboard
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.github.texport.superkassa.core.presentation.api.model.ofd.DeliveryStatus
+import io.github.texport.superkassa.core.presentation.api.model.shift.ReportResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +13,7 @@ import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.domain.kassa.model.map
 import kz.mybrain.superkassa.domain.signin.model.SignInState
 import kz.mybrain.superkassa.domain.signin.model.sameSeat
+import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.deliveryReport
 import kz.mybrain.superkassa.presentation.common.model.Busy
 import kz.mybrain.superkassa.presentation.common.model.Talk
@@ -20,7 +22,9 @@ import kz.mybrain.superkassa.presentation.common.model.followSeat
 import kz.mybrain.superkassa.presentation.common.model.latest
 import kz.mybrain.superkassa.presentation.common.model.shown
 import kz.mybrain.superkassa.presentation.common.model.whileBusy
+import kz.mybrain.superkassa.presentation.words.common.of
 import kz.mybrain.superkassa.strings.api.common.CommonTexts
+import kz.mybrain.superkassa.strings.api.fill
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -90,13 +94,13 @@ class DashboardViewModel(private val cases: DashboardCases, private val talk: Ta
      * Итог действия объявляется до перечитывания, и беда перечитывания
      * его не перебивает: кассир спрашивал, что сделала кнопка.
      */
-    private fun act(doing: String, action: String, done: String, request: suspend () -> Answer<DeliveryStatus?>) {
+    private fun act(doing: String, action: String, done: String, request: suspend () -> Answer<ReportResponse?>) {
         if (screen.value.kkm == null) return
         whileBusy(busy) {
             talk.clear()
             val answer = request()
             if (answer is Answer.Done) {
-                talk.done(deliveryReport(done, answer.value, texts), action)
+                talk.announce(done, action, answer.value, texts)
             } else {
                 answer.shown(doing, action, talk)
             }
@@ -138,3 +142,22 @@ class DashboardViewModel(private val cases: DashboardCases, private val talk: Ta
         screen.update { it.copy(operators = it.operators + operators) }
     }
 }
+
+/**
+ * Итог отчёта словами: доставлен, в очереди — или не принят БФД.
+ *
+ * Отказ БФД — отказ, а не успех: «X-отчёт сформирован. Состояние
+ * доставки: отклонён» стояло зелёной строкой без причины, и владелец
+ * не знал, что отчёт до БФД не дошёл и почему. Теперь причина — словами
+ * БФД, а код — рядом.
+ */
+private fun Talk.announce(done: String, action: String, report: ReportResponse?, texts: CommonTexts) {
+    val refused = report?.takeIf { it.deliveryStatus == DeliveryStatus.ONLINE_ERROR }
+        ?: return done(deliveryReport(done, report?.deliveryStatus, texts), action)
+    val why = refused.deliveryError?.of(language()) ?: texts.status.refused
+    val words = texts.general.notAccepted.fill(done, why)
+    say(action, Message.Refusal(words, refused.bfdResultCode?.toString() ?: NOT_ACCEPTED))
+}
+
+/** Код для строки сообщений: БФД не принял отчёт и своего кода не прислал. */
+private const val NOT_ACCEPTED = "BFD_NOT_ACCEPTED"

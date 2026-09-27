@@ -44,6 +44,12 @@ data class GeneralTexts(
     val deliveredToOfd: String,
     val queuedNoLink: String,
     val deliveryState: String,
+    /**
+     * Документ снят, а БФД его не принял: `%1$s` — что сделано, `%2$s` —
+     * причина словами БФД. Прежде это объявлялось успехом «X-отчёт
+     * сформирован. Состояние доставки: отклонён», и причины не было.
+     */
+    val notAccepted: String,
     val collapse: String,
     val explain: String,
     val expand: String,
