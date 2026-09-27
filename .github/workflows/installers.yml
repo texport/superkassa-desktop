@@ -4,7 +4,9 @@
 # на Windows, deb — на Linux, dmg — на macOS. Поэтому матрица, а не один
 # запуск.
 #
-# Установщик собирается только из того, что прошло проверку (ci.yml).
+# Проверка (ci.yml) и сборка установщиков идут одновременно: выпуск
+# публикуется, только когда зелёные обе, но собирать ради этого ждать
+# проверку незачем — друг за другом выпуск шёл больше получаса.
 #
 # Касса работает в процессе приложения: узла в установщике нет, и собирать
 # его не нужно.
@@ -67,7 +69,7 @@ jobs:
       screenshots: false
 
   installers:
-    needs: [ version, ci ]
+    needs: version
     strategy:
       fail-fast: false
       matrix:
@@ -210,7 +212,7 @@ jobs:
   # по которой скачивается файл, — это выпуск. Он делается из main и из
   # метки; запуск руками с другой ветки только собирает.
   release:
-    needs: [ version, installers ]
+    needs: [ version, ci, installers ]
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
