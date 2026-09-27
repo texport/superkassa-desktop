@@ -15,6 +15,11 @@ on:
   pull_request:
     branches: [ main ]
   workflow_call:
+    inputs:
+      screenshots:
+        description: Снимать ли кадры экранов
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -75,6 +80,10 @@ jobs:
         run: ./gradlew :androidApp:assembleDebug
 
       # Снимки экранов и раскладка по размерам окна — своей задачей:
-      # в `check` перед каждым коммитом их нет, здесь они идут всегда.
+      # в `check` перед каждым коммитом их нет, здесь они идут на каждой ветке.
+      #
+      # Выпуск их не ждёт: кадры — для приёмки вёрстки, а на машине GitHub
+      # они идут дольше всей остальной проверки вместе взятой.
       - name: Screenshots
+        if: inputs.screenshots != false
         run: ./gradlew screenshots
