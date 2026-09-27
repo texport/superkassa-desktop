@@ -8,7 +8,6 @@ import kotlin.concurrent.thread
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -68,8 +67,15 @@ class HeldRequestTest {
         """"dataURL":"${base()}/data","signURL":"${base()}/sign"}"""
 
     private companion object {
-        val QUICK = 400.milliseconds
-        const val HELD = 1500L
+        /**
+         * Срок ответа — с запасом на холодный первый запрос: на машине
+         * GitHub OkHttp поднимался дольше 0,4 с, и регистрация падала
+         * по сроку раньше, чем доходило до удержанных данных.
+         */
+        val QUICK = 2.seconds
+
+        /** Посредник держит данные заведомо дольше срока ответа. */
+        const val HELD = 3000L
         const val SIGNED = """{"documentsToSign":[{"id":1,"nameRu":"","nameKz":"","nameEn":"",""" +
             """"document":{"file":{"data":"MIIC"}}}]}"""
     }
