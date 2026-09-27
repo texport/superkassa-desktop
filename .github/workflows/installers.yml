@@ -8,22 +8,63 @@
 #
 # Касса работает в процессе приложения: узла в установщике нет, и собирать
 # его не нужно.
+#
+# Выпуск делается сам: каждый пуш в main, прошедший проверку, становится
+# следующей версией — номер после последней метки v*, на единицу больше.
+# Метку ставит сам выпуск; метка, поставленная руками, выпускает ровно её.
 name: Установщики
 
 on:
   workflow_dispatch:
   push:
+    branches: [ main ]
     tags: [ 'v*' ]
 
 permissions:
   contents: write
 
+# Два пуша подряд не должны взять один и тот же номер: выпуски идут
+# по очереди, и второй видит метку первого.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
+  # Номер выпуска. По метке v1.2.3 — 1.2.3; иначе — следующий после
+  # последней метки: v1.0.6 → 1.0.7.
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.next.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Номер выпуска
+        id: next
+        shell: bash
+        run: |
+          case "$GITHUB_REF" in
+            refs/tags/v[0-9]*) version="${GITHUB_REF_NAME#v}" ;;
+            *)
+              last=$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n 1)
+              last="${last#v}"
+              IFS=. read -r major minor patch <<< "${last:-0.0.0}"
+              version="$major.$minor.$((patch + 1))"
+              ;;
+          esac
+          echo "Выпуск $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
   ci:
     uses: ./.github/workflows/ci.yml
+    # Проверке нужен вход в хранилище Kalkan из секретов репозитория.
+    secrets: inherit
 
   installers:
-    needs: ci
+    needs: [ version, ci ]
     strategy:
       fail-fast: false
       matrix:
@@ -55,16 +96,9 @@ jobs:
 
       - name: Собрать установщик
         shell: bash
-        run: |
-          # По метке v1.0.2 установщик называется 1.0.2; без метки остаётся
-          # значение по умолчанию из сборки.
-          version="${GITHUB_REF_NAME#v}"
-          case "$version" in
-            [0-9]*) ;;
-            *) version="" ;;
-          esac
-          ./gradlew :desktopApp:packageDistributionForCurrentOS \
-            ${version:+-PappVersion="$version"}
+        env:
+          VERSION: ${{ needs.version.outputs.version }}
+        run: ./gradlew :desktopApp:packageDistributionForCurrentOS -PappVersion="$VERSION"
 
       - name: Выложить установщик
         uses: actions/upload-artifact@v7
@@ -85,8 +119,12 @@ jobs:
   # из секретов репозитория. Без ключа APK не собирается вовсе: подписанный
   # отладочным ключом, он не встал бы поверх ни одной кассы.
   android:
-    needs: ci
+    needs: [ version, ci ]
     runs-on: ubuntu-latest
+    env:
+      KALKAN_MAVEN_URL: ${{ secrets.KALKAN_MAVEN_URL }}
+      KALKAN_MAVEN_USER: ${{ secrets.KALKAN_MAVEN_USER }}
+      KALKAN_MAVEN_PASSWORD: ${{ secrets.KALKAN_MAVEN_PASSWORD }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -128,15 +166,11 @@ jobs:
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          VERSION: ${{ needs.version.outputs.version }}
         run: |
-          version="${GITHUB_REF_NAME#v}"
-          case "$version" in
-            [0-9]*) ;;
-            *) version="" ;;
-          esac
-          ./gradlew :androidApp:assembleRelease ${version:+-PappVersion="$version"}
+          ./gradlew :androidApp:assembleRelease -PappVersion="$VERSION"
           mkdir -p apk
-          cp androidApp/build/outputs/apk/release/androidApp-release.apk "apk/Superkassa-${version:-dev}.apk"
+          cp androidApp/build/outputs/apk/release/androidApp-release.apk "apk/Superkassa-$VERSION.apk"
 
       - name: Выложить APK
         uses: actions/upload-artifact@v7
@@ -149,10 +183,11 @@ jobs:
   #
   # Собранное иначе живёт артефактами запуска: они пропадают через
   # девяносто дней и требуют входа в GitHub. Проверяющему нужна ссылка,
-  # по которой скачивается файл, — это выпуск, и делается он по метке.
+  # по которой скачивается файл, — это выпуск. Он делается из main и из
+  # метки; запуск руками с другой ветки только собирает.
   release:
-    needs: [ installers, android ]
-    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [ version, installers, android ]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     steps:
       - name: Забрать установщики
@@ -165,18 +200,22 @@ jobs:
       # что в нём поменялось. Тогда установщики докладываются в него,
       # а не создаётся второй: попытка создать существующий роняла шаг,
       # и выпуск оставался без файлов, хотя все три собрались.
+      # Метку ставит сам выпуск на проверенный коммит: у пуша в main её
+      # ещё нет. Метка, созданная так, нового запуска не вызывает.
       - name: Выпустить
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: v${{ needs.version.outputs.version }}
         run: |
           built=$(find installers -type f \( -name '*.msi' -o -name '*.deb' -o -name '*.dmg' -o -name '*.apk' \) -print)
           echo "$built"
-          if gh release view "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            gh release upload "${GITHUB_REF_NAME}" --repo "${GITHUB_REPOSITORY}" --clobber $built
+          if gh release view "$TAG" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            gh release upload "$TAG" --repo "${GITHUB_REPOSITORY}" --clobber $built
           else
-            gh release create "${GITHUB_REF_NAME}" \
+            gh release create "$TAG" \
               --repo "${GITHUB_REPOSITORY}" \
-              --title "Суперкасса ${GITHUB_REF_NAME}" \
+              --target "${GITHUB_SHA}" \
+              --title "Суперкасса $TAG" \
               --notes "Установщики для Windows, Linux и macOS и APK для Android. Касса работает сама по себе — ставить и запускать отдельно ничего не нужно." \
               $built
           fi

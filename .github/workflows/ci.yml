@@ -1,5 +1,6 @@
 # Проверка каждого изменения. Её же вызывают установщики (installers.yml):
-# установщик собирается только из того, что прошло эту проверку.
+# установщик собирается только из того, что прошло эту проверку. Пуш в main
+# проверяют они же — отдельный запуск здесь повторил бы ту же работу.
 #
 # Шаги настройки (checkout, Java, Gradle, соседи) — те же, что у библиотек
 # и у узла; дальше — задачи самой кассы.
@@ -10,7 +11,7 @@ name: CI Build
 
 on:
   push:
-    branches: [ '**' ]
+    branches-ignore: [ main ]
   pull_request:
     branches: [ main ]
   workflow_call:
@@ -22,6 +23,12 @@ jobs:
   build:
     name: Build & Test
     runs-on: macos-latest
+    # Kalkan НУЦ РК — из закрытого хранилища Maven: адрес и вход в него
+    # лежат в секретах репозитория (см. settings.gradle.kts).
+    env:
+      KALKAN_MAVEN_URL: ${{ secrets.KALKAN_MAVEN_URL }}
+      KALKAN_MAVEN_USER: ${{ secrets.KALKAN_MAVEN_USER }}
+      KALKAN_MAVEN_PASSWORD: ${{ secrets.KALKAN_MAVEN_PASSWORD }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
@@ -46,6 +53,12 @@ jobs:
 
       - name: Build Siblings from Sources
         uses: ./.github/actions/siblings
+
+      - name: Хранилище Kalkan
+        if: env.KALKAN_MAVEN_URL == ''
+        run: |
+          echo "::error::Нет секрета KALKAN_MAVEN_URL — без Kalkan не собирается подпись файлом ключа на Android"
+          exit 1
 
       # detekt, компиляция всех модулей и целей и все проверки — одной
       # задачей `check`; предупреждение компилятора роняет сборку.
