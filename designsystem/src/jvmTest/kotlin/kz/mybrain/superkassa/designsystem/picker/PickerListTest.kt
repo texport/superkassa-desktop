@@ -24,38 +24,47 @@ import kotlin.test.assertTrue
  * строк стоило втрое дороже, чем двадцати, — 657 мс против 269 мс
  * на этой машине. Пустой набор раскрывался пустой рамкой, и та читалась
  * как сбой приложения.
+ *
+ * Стоимость раскрытия считается строками, которые список собрал, а не
+ * секундомером: на общей машине проверки время скачет, и сравнение
+ * миллисекунд падало там, где список был в порядке.
  */
 class PickerListTest {
 
     @Composable
-    private fun Picker(count: Int) {
+    private fun Picker(count: Int, composed: IntArray = IntArray(1)) {
         val options = (1..count).map { "Торговая точка $it" }
         Box(modifier = Modifier.fillMaxSize().padding(Spacing.blockPadding)) {
             LabelledPicker(
                 label = "Торговая точка",
                 options = options,
                 selected = options.firstOrNull(),
-                title = { it.orEmpty() },
+                title = {
+                    composed[0]++
+                    it.orEmpty()
+                },
                 onSelect = {}
             )
         }
     }
 
-    /** Сколько стоит раскрыть список: нажатие по полю и кадры до конца хода. */
-    private fun openMillis(count: Int): Long = RenderProbe { Picker(count) }.use { probe ->
-        probe.frame()
-        val started = System.nanoTime()
-        probe.click(FIELD)
-        (System.nanoTime() - started) / 1_000_000
+    /** Сколько строк список собрал, раскрываясь: нажатие по полю и кадры до конца хода. */
+    private fun openedRows(count: Int): Int {
+        val composed = IntArray(1)
+        return RenderProbe { Picker(count, composed) }.use { probe ->
+            probe.frame()
+            composed[0] = 0
+            probe.click(FIELD)
+            composed[0]
+        }
     }
 
     @Test
     fun `раскрытие длинного списка стоит столько же, сколько короткого`() {
-        openMillis(SHORT)
-        val short = openMillis(SHORT)
-        val long = openMillis(LONG)
-        println("раскрытие: $SHORT строк — $short мс, $LONG строк — $long мс")
-        assertTrue(long < short * FACTOR + SLACK, "рост раскрытия с длиной списка: $short → $long мс")
+        val short = openedRows(SHORT)
+        val long = openedRows(LONG)
+        println("раскрытие собрало строк: из $SHORT — $short, из $LONG — $long")
+        assertTrue(long <= short * FACTOR, "раскрытие растёт с длиной списка: $short → $long строк")
     }
 
     /**
@@ -90,11 +99,12 @@ class PickerListTest {
         const val SHORT = 20
         const val LONG = 2000
 
-        /** Во сколько раз длинный список вправе оказаться дороже короткого. */
+        /**
+         * Во сколько раз длинный список вправе собрать больше строк, чем
+         * короткий: видимых строк у обоих поровну, а собранный целиком
+         * длинный список собрал бы в сто раз больше.
+         */
         const val FACTOR = 2
-
-        /** Запас на разогрев машины, не зависящий от длины списка. */
-        const val SLACK = 150L
 
         const val EMPTY_SHOT = "/tmp/picker-empty.png"
     }
