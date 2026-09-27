@@ -27,6 +27,9 @@ kotlin {
             implementation(libs.ktor.client.mock)
         }
         jvmMain.dependencies { implementation(libs.ktor.client.java) }
+        // Удержанный запрос проверяется движком Android: только OkHttp
+        // обрывает соединение по сроку тишины сокета, и дефект виден на нём.
+        jvmTest.dependencies { implementation(libs.ktor.client.okhttp) }
         androidMain.dependencies { implementation(libs.ktor.client.okhttp) }
         iosMain.dependencies { implementation(libs.ktor.client.darwin) }
     }

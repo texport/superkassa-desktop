@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.timeout
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -43,7 +44,7 @@ internal class EgovHttp(settings: EgovSettings, private val journal: EgovJournal
         val response = try {
             client.post(url) {
                 setBody(TextContent(json, ContentType.Application.Json))
-                wait?.let { timeout { requestTimeoutMillis = it.inWholeMilliseconds.coerceAtLeast(1) } }
+                wait?.let { held(it) }
             }
         } catch (failure: IOException) {
             journal.record("$step failed", failure)
@@ -61,13 +62,26 @@ internal class EgovHttp(settings: EgovSettings, private val journal: EgovJournal
      */
     suspend fun poll(url: String, wait: Duration): Result<String> {
         val response = try {
-            client.get(url) { timeout { requestTimeoutMillis = wait.inWholeMilliseconds.coerceAtLeast(1) } }
+            client.get(url) { held(wait) }
         } catch (failure: IOException) {
             journal.record("await signature interrupted", failure)
             return Result.failure(failure)
         }
         journal.record("await signature -> ${response.status.value}", null)
         return Result.success(textOf(response))
+    }
+
+/**
+     * Запрос, который посредник держит, пока владелец не отзовётся в eGov
+     * mobile: весь этот срок по соединению не идёт ни байта. Поэтому срок
+     * тишины сокета — тот же, что у запроса: общий срок ответа в полминуты
+     * обрывал удержанный запрос, пока владелец ещё сканировал QR, и вход
+     * кончался словами «служба подписи не отвечает».
+     */
+    private fun HttpRequestBuilder.held(wait: Duration) = timeout {
+        val millis = wait.inWholeMilliseconds.coerceAtLeast(1)
+        requestTimeoutMillis = millis
+        socketTimeoutMillis = millis
     }
 
     fun close() = client.close()
