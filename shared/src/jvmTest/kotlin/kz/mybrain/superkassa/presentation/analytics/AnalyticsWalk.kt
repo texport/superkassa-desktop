@@ -62,11 +62,15 @@ internal class AnalyticsWalk(private val window: AnalyticsWindow, private val ta
      * сперва едет раздел, пока карточка не покажется, потом сама карточка.
      */
     fun kkmSalesReachable(): Boolean {
-        repeat(SCROLLS) {
+        repeat(SCROLLS) { turn ->
             val sales = window.find(texts.openKkmSales) ?: return false
             if (visible(sales.shown, sales.whole)) return true
             val list = window.all().firstOrNull { it.words.startsWith("${texts.kkmCount} · ") }?.shown ?: return false
-            window.probe.wheel(Offset(list.center.x, window.height - BOTTOM), WHEEL)
+            // Через раз колесо — над зазором над списком: так едет весь
+            // раздел, когда карточка кассы ниже края окна и крутить её
+            // саму бесполезно; через раз — у нижнего края, над карточкой.
+            val y = if (turn % 2 == 0) list.top - GAP_ABOVE_LIST else window.height - BOTTOM
+            window.probe.wheel(Offset(list.center.x, y), WHEEL)
         }
         return window.find(texts.openKkmSales)?.let { visible(it.shown, it.whole) } == true
     }
@@ -162,7 +166,10 @@ internal class AnalyticsWalk(private val window: AnalyticsWindow, private val ta
 
     private companion object {
         const val STARTUP = 80
-        const val SCROLLS = 12
+        const val SCROLLS = 24
+
+        /** Над заголовком списка касс: зазор между отбором и панелями, не прокручиваемый сам. */
+        const val GAP_ABOVE_LIST = 10f
 
         /** Над самым низом окна: поле раздела и край карточки. */
         const val BOTTOM = 40f

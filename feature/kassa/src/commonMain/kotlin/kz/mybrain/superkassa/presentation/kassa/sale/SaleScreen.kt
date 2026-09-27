@@ -1,10 +1,8 @@
 package kz.mybrain.superkassa.presentation.kassa.sale
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +16,6 @@ import kz.mybrain.superkassa.designsystem.adaptive.SupportingPanes
 import kz.mybrain.superkassa.designsystem.list.ScrollableColumn
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.size.KassaLayout
 import kz.mybrain.superkassa.designsystem.theme.size.Panes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
@@ -138,7 +135,7 @@ private fun StampDialog(basket: Basket, at: Int, actions: BasketActions, onClose
 @Composable
 private fun TillBody(state: SaleUiState, actions: SaleActions) {
     val toggle = actions.toggle
-    ScrollableColumn(modifier = Modifier.fillMaxSize(), gutter = KassaLayout.tillGutter) {
+    ScrollableColumn(modifier = Modifier.fillMaxSize()) {
         // Штрихкод стоит первым: сканер вводит код в поле, которое
         // кассир видит, а реквизиты отрасли прежде уводили его под
         // сгиб. Незаполненный реквизит назовёт строка под кнопкой.
@@ -157,19 +154,16 @@ private fun TillBody(state: SaleUiState, actions: SaleActions) {
  */
 @Composable
 private fun Checkout(state: SaleUiState, actions: SaleActions) {
-    // Итог стоит в тех же полях, что и прокручиваемое над ним.
-    Box(modifier = Modifier.padding(end = KassaLayout.tillGutter)) {
-        CheckoutPanel {
-            ReceiptTotals(
-                state = state,
-                payments = actions.payments,
-                expanded = state.expanded(SalePanel.Money),
-                onToggle = { actions.toggle(SalePanel.Money) },
-                onTaken = actions.form::taken,
-                modifier = Modifier.weight(1f, fill = false)
-            )
-            IssueRow(state, actions.issue)
-        }
+    CheckoutPanel {
+        ReceiptTotals(
+            state = state,
+            payments = actions.payments,
+            expanded = state.expanded(SalePanel.Money),
+            onToggle = { actions.toggle(SalePanel.Money) },
+            onTaken = actions.form::taken,
+            modifier = Modifier.weight(1f, fill = false)
+        )
+        IssueRow(state, actions.issue)
     }
 }
 

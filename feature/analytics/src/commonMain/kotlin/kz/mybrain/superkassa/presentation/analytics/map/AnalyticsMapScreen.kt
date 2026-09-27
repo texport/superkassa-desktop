@@ -168,6 +168,7 @@ internal fun MapBody(parts: MapParts, modifier: Modifier = Modifier) {
         modifier = modifier,
         map = { MapWindow(parts, fullscreen = false, onFullscreen = { fullscreen = true }, Modifier.fillMaxSize()) },
         list = { KkmList(parts) },
-        card = { UnderMap(parts) }
+        card = { UnderMap(parts) },
+        listOpen = parts.tools.list.expanded
     )
 }

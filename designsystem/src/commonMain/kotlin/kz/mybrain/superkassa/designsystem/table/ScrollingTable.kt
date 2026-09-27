@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -23,7 +22,7 @@ import androidx.compose.ui.unit.Dp
 import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
 import kz.mybrain.superkassa.designsystem.list.ListScrollbar
 import kz.mybrain.superkassa.designsystem.list.RowScrollbar
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.designsystem.list.besideEdge
 import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
 
 /**
@@ -104,14 +103,14 @@ fun ScrollingTable(
 ) {
     BoxWithConstraints(modifier = modifier) {
         val across = rememberScrollState()
-        val room = maxWidth - Spacing.scrollbarGutter
+        val room = maxWidth
         val sized = tableWidths(columns, room)
         if (pinned > 0) {
             PinnedBody(TableWidths(columns, sized, pinned, across, room), state, header, rows)
         } else {
             TableBody(TableWidths(columns, sized), across, state, header, rows)
         }
-        ListScrollbar(state, Modifier.align(Alignment.CenterEnd).fillMaxHeight())
+        ListScrollbar(state, Modifier.align(Alignment.CenterEnd).fillMaxHeight().besideEdge())
         RowScrollbar(across, Modifier.align(Alignment.BottomCenter).fillMaxWidth())
     }
 }
@@ -119,8 +118,8 @@ fun ScrollingTable(
 /**
  * Заголовок и строки, которые едут вбок вместе.
  *
- * Справа за последним столбцом — поле под полосу прокрутки: доехав
- * до края, кнопка строки не прячется под полосу.
+ * Полоса прокрутки — за правым краем таблицы, в поле окна: край таблицы
+ * тот же, что у остальных разделов.
  */
 @Composable
 private fun TableBody(
@@ -130,7 +129,7 @@ private fun TableBody(
     header: @Composable (TableWidths) -> Unit,
     rows: LazyListScope.(TableWidths) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().horizontalScroll(across).padding(end = Spacing.scrollbarGutter)) {
+    Column(modifier = Modifier.fillMaxSize().horizontalScroll(across)) {
         Box(modifier = Modifier.width(widths.total)) { header(widths) }
         LazyColumn(
             state = state,

@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
 
 /** Заголовок и строки с прибитыми столбцами: вбок едет каждая строка сама, общей прокруткой. */
@@ -27,7 +26,7 @@ internal fun PinnedBody(
     header: @Composable (TableWidths) -> Unit,
     rows: LazyListScope.(TableWidths) -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize().padding(end = Spacing.scrollbarGutter)) {
+    Column(modifier = Modifier.fillMaxSize()) {
         header(widths)
         LazyColumn(
             state = state,

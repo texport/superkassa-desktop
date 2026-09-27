@@ -92,6 +92,7 @@ private fun FullscreenHead(texts: AnalyticsTexts, cabinet: CabinetTexts, onClose
 private fun KkmColumn(parts: MapParts) {
     ListOverCard(
         modifier = Modifier.width(Sizes.unplacedColumn).fillMaxHeight(),
+        listOpen = parts.tools.list.expanded,
         list = { KkmList(parts) },
         card = { UnderMap(parts) }
     )

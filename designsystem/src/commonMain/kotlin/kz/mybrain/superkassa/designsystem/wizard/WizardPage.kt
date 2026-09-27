@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,17 +42,17 @@ fun WizardPage(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(vertical = Spacing.itemGap),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)
     ) {
-        // Полоса хода и строка действий стоят вне прокрутки и отступают
-        // справа на поле под её полосу: правый край у всего шага один.
-        ProgressLine(progress, Modifier.padding(end = Spacing.scrollbarGutter))
+        // Поля шага — поля окна, как у главной: своих отступов сверху
+        // и справа у шага нет, полоса прокрутки лежит в поле окна.
+        ProgressLine(progress, Modifier)
         ScrollableColumn(modifier = Modifier.weight(1f).fillMaxWidth(), spacing = Spacing.sectionGap) {
             StepBody(heading, content)
         }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(end = Spacing.scrollbarGutter),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
             verticalAlignment = Alignment.CenterVertically
         ) {

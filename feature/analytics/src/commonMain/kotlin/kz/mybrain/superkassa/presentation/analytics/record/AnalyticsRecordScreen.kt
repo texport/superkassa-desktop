@@ -135,9 +135,9 @@ private fun RecordSections(
     modifier: Modifier
 ) {
     // Таблицы меряют место под собой сами: строки живут в общем списке
-    // вкладки, и ширину им назначает он, за вычетом поля под полосу.
+    // вкладки, и ширину им назначает он — во всю ширину раздела.
     BoxWithConstraints(modifier = modifier) {
-        val room = maxWidth - Spacing.scrollbarGutter
+        val room = maxWidth
         val refusals = rememberTableAcross(REFUSAL_COLUMNS, room)
         val areas = rememberTableAcross(REGION_COLUMNS, room)
         ScrollableList(Modifier.fillMaxSize()) {

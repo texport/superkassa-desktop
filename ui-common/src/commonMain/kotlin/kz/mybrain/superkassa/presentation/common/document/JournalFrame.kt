@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -16,6 +15,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
 import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
 import kz.mybrain.superkassa.designsystem.list.ColumnScrollbar
+import kz.mybrain.superkassa.designsystem.list.besideEdge
 import kz.mybrain.superkassa.designsystem.theme.size.HistoryLayout
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kotlin.math.roundToInt
@@ -73,13 +73,12 @@ private fun Head(content: @Composable ColumnScope.() -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(scroll)
-                .scrolledByKeys(scroll) { scroll.viewportSize }
-                .padding(end = Spacing.scrollbarGutter),
+                .scrolledByKeys(scroll) { scroll.viewportSize },
             verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
             content = content
         )
         Box(modifier = Modifier.matchParentSize()) {
-            ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight())
+            ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight().besideEdge())
         }
     }
 }

@@ -6,17 +6,19 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
 import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
 import kz.mybrain.superkassa.designsystem.keyboard.scrolledByKeys
 import kz.mybrain.superkassa.designsystem.list.ColumnScrollbar
+import kz.mybrain.superkassa.designsystem.list.besideEdge
 import kz.mybrain.superkassa.designsystem.theme.size.AnalyticsLayout
 import kz.mybrain.superkassa.designsystem.theme.size.Panes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
@@ -59,7 +61,7 @@ internal fun HeadOverMap(
                 bottom.place(0, top.height + gap)
             }
         }
-        ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight())
+        ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight().besideEdge())
     }
 }
 
@@ -77,24 +79,26 @@ internal fun MapAndDetails(
     modifier: Modifier = Modifier,
     map: @Composable () -> Unit,
     list: @Composable () -> Unit,
-    card: @Composable () -> Unit
+    card: @Composable () -> Unit,
+    listOpen: Boolean = true
 ) {
     TwoPane(
         split = Panes.mapAndDetails,
         modifier = modifier,
         first = map,
-        second = { ListOverCard(list = list, card = card) }
+        second = { ListOverCard(listOpen = listOpen, list = list, card = card) }
     )
 }
 
 /**
- * Список касс, а под ним карточка выбранной.
+ * Список касс, а под ним карточка выбранной — одной ширины, одна над другой.
  *
- * Карточка берёт свою высоту, но не больше [Panes.STACKED_SECOND_SHARE]
- * панели, и прокручивается сама: в малом окне «Аналитика кассы» уходила
- * за нижний край, и открыть её было нечем. Остальное — списку. Карточка
- * под списком, а не над ним: выбранная строка не уезжает из-под указателя,
- * когда карточка раскрывается.
+ * Карточка берёт свою высоту и прокручивается сама, но не выше предела:
+ * раскрыт список — половина колонки, свёрнут — всё до его нижнего края.
+ * Прежде предел был долей колонки при любом списке, и свёрнутый список
+ * оставлял над карточкой пустоту, а раскрытая карточка в низком окне
+ * уходила низом за экран. Карточка под списком, а не над ним: выбранная
+ * строка не уезжает из-под указателя, когда карточка раскрывается.
  *
  * Полоса прокрутки карточки — только там, где она есть: на Android
  * и iOS её показывает сама прокрутка пальцем, и третьей части у раскладки
@@ -103,11 +107,13 @@ internal fun MapAndDetails(
  *
  * Список берёт остаток высоты, свёрнутый — только свой заголовок.
  *
+ * @param listOpen раскрыт ли список касс.
  * @param scrollbar полоса прокрутки карточки; на Android и iOS — пустая.
  */
 @Composable
 internal fun ListOverCard(
     modifier: Modifier = Modifier,
+    listOpen: Boolean = true,
     list: @Composable () -> Unit,
     card: @Composable () -> Unit,
     scrollbar: @Composable (ScrollState) -> Unit = { ColumnScrollbar(it, Modifier) }
@@ -117,24 +123,42 @@ internal fun ListOverCard(
         modifier = modifier.fillMaxSize(),
         content = {
             Box { list() }
-            Box(modifier = Modifier.verticalScroll(scroll).padding(end = Spacing.scrollbarGutter)) { card() }
+            Box(modifier = Modifier.verticalScroll(scroll)) { card() }
             scrollbar(scroll)
         }
     ) { measurables, constraints ->
         val width = constraints.maxWidth
         val height = constraints.maxHeight
-        val cap = (height * Panes.STACKED_SECOND_SHARE).toInt()
-        val lower = measurables[1].measure(column(width, cap))
-        val gap = if (lower.height > 0) Spacing.fieldGap.roundToPx() else 0
-        val upper = measurables[0].measure(column(width, (height - lower.height - gap).coerceAtLeast(0)))
+        val gap = Spacing.fieldGap.roundToPx()
+        val (upper, lower) = stack(listOpen, width, height, gap, measurables[0], measurables[1])
         // Полосы прокрутки на Android и iOS нет вовсе — узла под неё тоже нет.
         val bar = measurables.getOrNull(2)?.measure(Constraints.fixedHeight(lower.height))
         layout(width, height) {
             upper.place(0, 0)
             lower.place(0, height - lower.height)
-            bar?.place(width - bar.width, height - lower.height)
+            bar?.place(width - bar.width + Spacing.scrollbarOutset.roundToPx(), height - lower.height)
         }
     }
+}
+
+/**
+ * Список и карточка по правилу колонки: раскрытый список делит её
+ * с карточкой пополам и берёт остаток, свёрнутый отдаёт карточке всё ниже
+ * своего заголовка.
+ */
+private fun stack(
+    listOpen: Boolean,
+    width: Int,
+    height: Int,
+    gap: Int,
+    list: Measurable,
+    card: Measurable
+): Pair<Placeable, Placeable> = if (listOpen) {
+    val lower = card.measure(column(width, (height - gap) / 2))
+    list.measure(column(width, (height - lower.height - gap).coerceAtLeast(0))) to lower
+} else {
+    val upper = list.measure(column(width, height))
+    upper to card.measure(column(width, (height - upper.height - gap).coerceAtLeast(0)))
 }
 
 /** Ограничения части столбца: вся его ширина и не выше [height]. */

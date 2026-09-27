@@ -56,14 +56,17 @@ internal fun SupportingSheet(
         initialValue = if (expanded) SheetValue.Expanded else SheetValue.PartiallyExpanded,
         skipHiddenState = true
     )
-    SheetFollows(sheet, expanded, onToggle)
     var peek by remember { mutableStateOf(Spacing.flush) }
+    SheetFollows(sheet, expanded, peek, onToggle)
     val density = LocalDensity.current
     BottomSheetScaffold(
         modifier = Modifier.bleedToWindowEdge(LocalFrameBottom.current),
         scaffoldState = rememberBottomSheetScaffoldState(sheet),
         sheetPeekHeight = peek,
         sheetDragHandle = null,
+        // Во всю ширину раздела: по умолчанию лист не шире 640 точек, и на
+        // планшете стоймя по бокам от кассы просвечивал чек.
+        sheetMaxWidth = Dp.Unspecified,
         containerColor = Color.Transparent,
         sheetContent = {
             SheetBody(Modifier.onSizeChanged { peek = with(density) { it.height.toDp() } }, summary, supporting)
@@ -76,11 +79,16 @@ internal fun SupportingSheet(
 /**
  * Лист и модель знают одно и то же: кнопка сводки двигает лист, а лист,
  * дотянутый жестом, сообщает модели, развёрнут ли он.
+ *
+ * Высота свёрнутого листа [peek] известна только после первого замера
+ * сводки. Свёрнутый лист на новую высоту сам не вставал и оставался
+ * полоской с ручкой у края — касса на планшете стоймя и на телефоне
+ * пропадала. Поэтому со сменой высоты свёрнутый лист доводится до неё.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SheetFollows(sheet: SheetState, expanded: Boolean, onToggle: () -> Unit) {
-    LaunchedEffect(expanded) { if (expanded) sheet.expand() else sheet.partialExpand() }
+private fun SheetFollows(sheet: SheetState, expanded: Boolean, peek: Dp, onToggle: () -> Unit) {
+    LaunchedEffect(expanded, peek) { if (expanded) sheet.expand() else sheet.partialExpand() }
     LaunchedEffect(sheet.currentValue) { if ((sheet.currentValue == SheetValue.Expanded) != expanded) onToggle() }
 }
 

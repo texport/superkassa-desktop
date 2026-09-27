@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -30,11 +31,10 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
  * должны быть одинаковыми в каждой панели. Клавиатура двигает столбец
  * так же, как колесо, — см. [scrolledByKeys].
  *
- * @param gutter поле под полосу прокрутки. Задаётся снаружи там, где
- *   от него зависит вёрстка соседей: у колонки касс это поле и есть
- *   зазор до разделителя, и с общим значением он получался вдвое шире
- *   отступа от края экрана. [Spacing.flush] — полоса ложится на поле,
- *   которое содержимое держит само: у групп настроек оно уже есть.
+ * @param gutter поле под полосу прокрутки внутри столбца. По умолчанию его
+ *   нет: столбец идёт до края раздела, как у главной, а полоса вынесена
+ *   за край в поле окна ([Spacing.scrollbarOutset]). Своё поле задаётся
+ *   только там, где за краем места нет, — внутри карточки.
  * @param focus чем столбцу забрать ввод с клавиатуры: открытый раздел
  *   листается PageDown сразу, без Tab.
  */
@@ -42,7 +42,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
     spacing: Dp = Spacing.cardGap,
-    gutter: Dp = Spacing.scrollbarGutter,
+    gutter: Dp = Spacing.flush,
     focus: FocusRequester? = null,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -58,6 +58,13 @@ fun ScrollableColumn(
             verticalArrangement = Arrangement.spacedBy(spacing),
             content = content
         )
-        ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight())
+        ColumnScrollbar(scroll, Modifier.align(Alignment.CenterEnd).fillMaxHeight().besideEdge(gutter))
     }
 }
+
+/**
+ * Полоса прокрутки за краем содержимого: без своего поля — в поле окна
+ * или зазоре панелей, со своим полем — в нём.
+ */
+fun Modifier.besideEdge(gutter: Dp = Spacing.flush): Modifier =
+    if (gutter == Spacing.flush) offset(x = Spacing.scrollbarOutset) else this
