@@ -21,5 +21,12 @@ internal suspend fun GithubReleases.latestFor(platform: ReleasePlatform?): Relea
         is GithubAnswer.Unreachable -> ReleaseAnswer.Unreachable(answer.reason)
     }
 
-private fun GithubRelease.forSystem(platform: ReleasePlatform?): Release =
-    Release(tag, page, fileFor(platform)?.let { Installer(it.name, it.url, it.sha256) })
+private fun GithubRelease.forSystem(platform: ReleasePlatform?): Release {
+    val file = fileFor(platform)
+    return Release(
+        tag = tag,
+        page = page,
+        installer = file?.let { Installer(it.name, it.url, it.sha256) },
+        installerPending = platform != null && file == null
+    )
+}

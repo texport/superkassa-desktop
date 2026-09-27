@@ -10,8 +10,17 @@ import kz.mybrain.superkassa.domain.version.model.AppVersion
  *
  * @property installer установщик под эту систему; `null` — своего нет,
  *   и кассиру открывают страницу выпуска.
+ * @property installerPending система известна, а её файла в выпуске ещё
+ *   нет: выпуск выходит с установщиками для компьютеров, APK докладывается
+ *   следом. Такой выпуск не предлагается — страница без своего файла
+ *   кассиру ничего не даёт, — его найдёт следующая проверка.
  */
-data class Release(val tag: String, val page: String, val installer: Installer? = null)
+data class Release(
+    val tag: String,
+    val page: String,
+    val installer: Installer? = null,
+    val installerPending: Boolean = false
+)
 
 /** Чем закончился вопрос о свежем выпуске. */
 sealed interface ReleaseAnswer {

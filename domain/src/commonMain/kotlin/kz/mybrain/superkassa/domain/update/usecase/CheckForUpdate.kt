@@ -40,7 +40,16 @@ class CheckForUpdate(
     private fun adopt(release: Release): UpdateOutcome {
         memory.lastChecked = now()
         val latest = AppVersion.parse(release.tag) ?: return unreadable(release.tag)
-        return if (latest > installed) available(release, latest) else UpdateOutcome.UpToDate
+        return when {
+            latest <= installed -> UpdateOutcome.UpToDate
+            release.installerPending -> pending(latest)
+            else -> available(release, latest)
+        }
+    }
+
+    private fun pending(latest: AppVersion): UpdateOutcome {
+        journal.info("update $latest: installer for this system not uploaded yet")
+        return UpdateOutcome.UpToDate
     }
 
     private fun available(release: Release, latest: AppVersion): UpdateOutcome {

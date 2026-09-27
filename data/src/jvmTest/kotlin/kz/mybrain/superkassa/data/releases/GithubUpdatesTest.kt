@@ -68,6 +68,14 @@ class GithubUpdatesTest {
     }
 
     @Test
+    fun `APK ещё не доложен в выпуск — Android ждёт его`() {
+        val android = runBlocking { github(HttpStatusCode.OK, DESKTOP_ONLY).latestFor(ReleasePlatform.Android) }
+        assertTrue(assertIs<ReleaseAnswer.Found>(android).release.installerPending)
+        val windows = runBlocking { github(HttpStatusCode.OK, DESKTOP_ONLY).latestFor(ReleasePlatform.Windows) }
+        assertFalse(assertIs<ReleaseAnswer.Found>(windows).release.installerPending)
+    }
+
+    @Test
     fun `отказ GitHub — недоступность, а не падение`() {
         val updates = GithubUpdates(github(HttpStatusCode.Forbidden, "{}"), download(ByteArray(0)))
         assertIs<ReleaseAnswer.Unreachable>(runBlocking { updates.latest() })
@@ -112,7 +120,7 @@ class GithubUpdatesTest {
 
         val SHA_OF_BODY: String = MessageDigest.getInstance("SHA-256").digest(BODY).toHexString()
 
-        val LATEST = """
+        val DESKTOP_ONLY = """
             {
               "html_url": "https://github.com/texport/superkassa-desktop/releases/tag/v1.0.3",
               "tag_name": "v1.0.3",
@@ -121,11 +129,16 @@ class GithubUpdatesTest {
                 {"name": "Superkassa-1.0.3.dmg", "size": 1, "digest": "sha256:00",
                  "browser_download_url": "https://example.test/Superkassa-1.0.3.dmg"},
                 {"name": "Superkassa-1.0.3.msi", "size": 1, "digest": "sha256:$SHA_OF_BODY",
-                 "browser_download_url": "$MSI_URL"},
-                {"name": "Superkassa-1.0.3.apk", "size": 1, "digest": "sha256:$SHA_OF_BODY",
-                 "browser_download_url": "https://example.test/Superkassa-1.0.3.apk"}
+                 "browser_download_url": "$MSI_URL"}
               ]
             }
         """.trimIndent()
+
+        /** Тот же выпуск, когда в него уже доложен APK. */
+        val LATEST = DESKTOP_ONLY.replace(
+            "\"$MSI_URL\"}",
+            "\"$MSI_URL\"}, {\"name\": \"Superkassa-1.0.3.apk\", \"size\": 1, \"digest\": \"sha256:$SHA_OF_BODY\", " +
+                "\"browser_download_url\": \"https://example.test/Superkassa-1.0.3.apk\"}"
+        )
     }
 }
