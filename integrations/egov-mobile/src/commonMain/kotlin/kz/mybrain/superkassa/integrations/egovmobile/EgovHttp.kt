@@ -32,11 +32,19 @@ internal class EgovHttp(settings: EgovSettings, private val journal: EgovJournal
         }
     }
 
-    /** POST одного шага процедуры: JSON туда, текст ответа обратно; [step] — имя шага для журнала. */
-    suspend fun post(url: String, json: String, step: String): String {
+    /**
+     * POST одного шага процедуры: JSON туда, текст ответа обратно; [step] — имя шага для журнала.
+     *
+     * @param wait сколько ждать ответа, когда посредник держит запрос дольше
+     *   обычного — до шага владельца в eGov mobile; `null` — обычный срок.
+     */
+    suspend fun post(url: String, json: String, step: String, wait: Duration? = null): String {
         val started = TimeSource.Monotonic.markNow()
         val response = try {
-            client.post(url) { setBody(TextContent(json, ContentType.Application.Json)) }
+            client.post(url) {
+                setBody(TextContent(json, ContentType.Application.Json))
+                wait?.let { timeout { requestTimeoutMillis = it.inWholeMilliseconds.coerceAtLeast(1) } }
+            }
         } catch (failure: IOException) {
             journal.record("$step failed", failure)
             throw EgovRefusal(EgovReason.Unreachable, failure::class.simpleName.orEmpty(), failure)

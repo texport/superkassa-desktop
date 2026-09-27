@@ -42,6 +42,13 @@ class EgovMobileTest {
     }
 
     @Test
+    fun dataIsHandedOnlyWhileWaitingSoTheQrShowsFirst() = runTest {
+        val egov = relay(signed = signedWith("MIIC"))
+        egov.open("AA==", document)
+        assertTrue(sent.isEmpty(), "данные ушли посреднику до окна с QR")
+    }
+
+    @Test
     fun ownerRefusalInEgovMobileIsCancelled() = runTest {
         val egov = relay(signed = """{"status":"CANCELED","documentsToSign":[]}""")
         val refusal = assertFailsWith<EgovRefusal> { egov.await(egov.open("AA==", document)) }

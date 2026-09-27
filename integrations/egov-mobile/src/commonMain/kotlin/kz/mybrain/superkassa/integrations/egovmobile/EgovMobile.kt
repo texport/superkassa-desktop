@@ -14,16 +14,22 @@ import kz.mybrain.superkassa.integrations.egovmobile.protocol.decoded
 import kz.mybrain.superkassa.integrations.egovmobile.protocol.encoded
 import kotlin.io.encoding.Base64
 import kotlin.time.Instant
+import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
 /**
  * Подпись в eGov mobile через посредника.
  *
- * Два шага, между которыми владелец подписывает: [open] регистрирует
- * процедуру и передаёт данные — и возвращает QR и ссылку запуска; [await]
- * ждёт подписи. Между ними приложение показывает владельцу QR и кнопку
- * «Открыть eGov mobile». Ключ остаётся в eGov mobile, касса получает
- * только подпись.
+ * Два шага: [open] регистрирует процедуру и возвращает QR и ссылку
+ * запуска; [await] передаёт данные и ждёт подписи. Между ними приложение
+ * показывает владельцу QR и кнопку «Открыть eGov mobile», и окно стоит
+ * всё время [await]. Ключ остаётся в eGov mobile, касса получает только
+ * подпись.
+ *
+ * Данные передаются внутри [await], а не в [open]: посредник держит запрос
+ * с данными, пока eGov mobile их не заберёт. Переданные сразу, они держали
+ * [open] до срока, окно с QR так и не появлялось, и вход обрывался
+ * словами «служба подписи не отвечает».
  *
  * @param settings адрес посредника и сроки.
  * @param journal куда писать ход обмена.
@@ -37,7 +43,7 @@ class EgovMobile(
     private val http = EgovHttp(settings, journal, engine)
 
     /**
-     * Регистрирует процедуру подписи и передаёт в неё данные.
+     * Регистрирует процедуру подписи; данные уйдут посреднику в [await].
      *
      * @param content что подписывается, в base64.
      * @throws EgovRefusal посредник не отвечает или отказал.
@@ -46,11 +52,7 @@ class EgovMobile(
         val asked = encoded(Registration(document.description))
         val registered = decoded<Registered>(http.post(register(), asked, REGISTER))
         registered.message?.let { throw EgovRefusal(EgovReason.Refused, it) }
-        val procedure = procedureOf(registered)
-        val data = encoded(toSign(content, document))
-        val sent = decoded<Signed>(http.post(registered.dataURL.orEmpty(), data, SEND))
-        sent.message?.let { throw EgovRefusal(EgovReason.Refused, it) }
-        return procedure
+        return procedureOf(registered, encoded(toSign(content, document)))
     }
 
     /**
@@ -64,6 +66,7 @@ class EgovMobile(
      */
     suspend fun await(procedure: EgovProcedure): String {
         val deadline = TimeSource.Monotonic.markNow() + settings.signWindow
+        hand(procedure, deadline)
         var silent: Throwable? = null
         while (deadline.hasNotPassedNow()) {
             val answer = http.poll(procedure.signUrl, -deadline.elapsedNow())
@@ -75,18 +78,49 @@ class EgovMobile(
             ?: EgovRefusal(EgovReason.Expired)
     }
 
+    /**
+     * Передаёт данные посреднику и ждёт, пока eGov mobile их заберёт.
+     *
+     * Срок — тот же, что у подписи: владелец в это время открывает
+     * eGov mobile и входит в него. Не дождались до срока — срок вышел,
+     * а не посредник молчит.
+     */
+    private suspend fun hand(procedure: EgovProcedure, deadline: TimeMark) {
+        val answer = try {
+            http.post(procedure.dataUrl, procedure.payload, SEND, wait = -deadline.elapsedNow())
+        } catch (refusal: EgovRefusal) {
+            throw expiredOr(refusal, deadline)
+        }
+        decoded<Signed>(answer).message?.let { throw EgovRefusal(EgovReason.Refused, it) }
+    }
+
+    /** Молчание посредника после срока — вышедший срок, а не пропавшая связь. */
+    private fun expiredOr(refusal: EgovRefusal, deadline: TimeMark): EgovRefusal =
+        if (refusal.reason == EgovReason.Unreachable && deadline.hasPassedNow()) {
+            EgovRefusal(EgovReason.Expired)
+        } else {
+            refusal
+        }
+
     /** Закрывает соединения. */
     override fun close() = http.close()
 
     private fun register(): String = settings.relay.trimEnd('/') + REGISTER_PATH
 
     /** Процедура из ответа на регистрацию; без ссылки, адресов или QR она бесполезна. */
-    private fun procedureOf(registered: Registered): EgovProcedure {
+    private fun procedureOf(registered: Registered, payload: String): EgovProcedure {
         val qr = registered.qrCode?.let { runCatching { Base64.decode(it) }.getOrNull() }
         val launch = registered.eGovMobileLaunchLink
         val sign = registered.signURL?.takeIf { registered.dataURL != null }
         if (launch == null || sign == null || qr == null) throw EgovRefusal(EgovReason.Refused, INCOMPLETE)
-        return EgovProcedure(launch, qr, registered.expireAt?.let(Instant::fromEpochMilliseconds), sign)
+        return EgovProcedure(
+            launch = launch,
+            qr = qr,
+            expiresAt = registered.expireAt?.let(Instant::fromEpochMilliseconds),
+            signUrl = sign,
+            dataUrl = registered.dataURL.orEmpty(),
+            payload = payload
+        )
     }
 
     private fun toSign(content: String, document: EgovDocument) = ToSign(
