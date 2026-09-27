@@ -34,22 +34,14 @@
 ./gradlew :androidApp:assembleDebug  # приложение для Android
 ```
 
-Части протокола и ядра нужных версий в Maven Central не выложены, поэтому
-собираются из исходников по порядку. Все репозитории — рядом, одним
-родителем:
+Ядро — вместе с кодеком и протоколом, с которыми оно собрано, — сборка
+берёт готовым из выпуска [superkassa-core](https://github.com/texport/superkassa-core/releases)
+той версии, что в `gradle/libs.versions.toml` (`superkassa-core`): архив
+`superkassa-core-maven-<версия>.zip` при первой сборке раскладывается
+в локальный Maven. Собирать соседей из исходников не нужно.
 
-```
-git clone https://github.com/texport/ofd-kt-proto.git
-git clone https://github.com/texport/ofd-proto-codec.git
-git clone https://github.com/texport/superkassa-core.git
-
-(cd ofd-kt-proto     && ./gradlew publishToMavenLocal)
-(cd ofd-proto-codec  && ./gradlew publishToMavenLocal)
-(cd superkassa-core  && ./gradlew publishToMavenLocal)
-```
-
-Тот же порядок держит проверка и сборка установщиков —
-[`.github/actions/siblings`](.github/actions/siblings/action.yml).
+Правка ядра вместе с кассой — версия `-SNAPSHOT` в каталоге и своя сборка
+ядра: `(cd superkassa-core && ./gradlew publishToMavenLocal)`.
 
 ## Установщик для текущей системы
 

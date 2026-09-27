@@ -14,6 +14,49 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
+/**
+ * Версия из каталога `gradle/libs.versions.toml` — до того, как Gradle его прочтёт.
+ */
+fun catalogVersion(key: String): String =
+    file("gradle/libs.versions.toml").readLines().firstNotNullOf { line ->
+        Regex("""^$key\s*=\s*"(.+)"\s*$""").find(line)?.groupValues?.get(1)
+    }
+
+/**
+ * Готовая сборка нашей библиотеки из её выпуска на GitHub.
+ *
+ * Выпуск несёт архив `<архив>-maven-<версия>.zip` — собранную библиотеку
+ * для всех целей с метаданными Gradle. Он раскладывается в локальный Maven
+ * один раз на версию; дальше сборка берёт библиотеку оттуда, как и прежде.
+ * Собирать соседей из исходников не нужно ни на GitHub, ни у разработчика.
+ * Версию `-SNAPSHOT` не скачивают: это своя локальная сборка библиотеки.
+ *
+ * @param repository репозиторий texport с выпусками.
+ * @param artifact артефакт, по которому видно, что версия уже разложена.
+ */
+fun releasedLibrary(repository: String, artifact: String, version: String) {
+    if (version.endsWith("-SNAPSHOT")) return
+    val local = File(System.getProperty("user.home"), ".m2/repository").canonicalFile
+    if (File(local, "io/github/texport/$artifact/$version").isDirectory) return
+    val address = "https://github.com/texport/$repository/releases/download/v$version/$repository-maven-$version.zip"
+    val unpacked = File(local, ".superkassa-unpacking").apply { deleteRecursively(); mkdirs() }
+    java.util.zip.ZipInputStream(uri(address).toURL().openStream().buffered()).use { zip ->
+        generateSequence { zip.nextEntry }.filterNot { it.isDirectory }.forEach { entry ->
+            val target = File(unpacked, entry.name).canonicalFile
+            require(target.startsWith(unpacked)) { "Файл вне архива: ${entry.name}" }
+            target.parentFile.mkdirs()
+            target.outputStream().use { zip.copyTo(it) }
+        }
+    }
+    // Уже лежащее не трогается: список версий артефакта в локальном Maven
+    // знает и свои сборки, а архив — только свою версию.
+    unpacked.copyRecursively(local, overwrite = false) { _, _ -> OnErrorAction.SKIP }
+    unpacked.deleteRecursively()
+}
+
+// Ядро несёт в своём архиве и кодек с протоколом, с которыми оно собрано.
+releasedLibrary("superkassa-core", "superkassa-core-embedded", catalogVersion("superkassa-core"))
+
 dependencyResolutionManagement {
     repositories {
         mavenLocal()

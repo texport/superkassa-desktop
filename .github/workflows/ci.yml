@@ -2,11 +2,12 @@
 # установщик собирается только из того, что прошло эту проверку. Пуш в main
 # проверяют они же — отдельный запуск здесь повторил бы ту же работу.
 #
-# Шаги настройки (checkout, Java, Gradle, соседи) — те же, что у библиотек
-# и у узла; дальше — задачи самой кассы.
+# Проверка разбита на задачи, которые идут одновременно: JVM, Android
+# и detekt — на Linux, iOS — на macOS. Одной задачей на macOS всё шло друг
+# за другом больше получаса; теперь выпуск ждёт самую долгую из них.
 #
-# macOS — потому что у интеграций есть iOS-цели, а компилируются и
-# проверяются они только там; Android SDK на раннере macOS уже стоит.
+# Ядро с кодеком и протоколом сборка берёт готовыми из выпуска ядра на
+# GitHub (settings.gradle.kts): из исходников соседи не собираются.
 name: CI Build
 
 on:
@@ -25,9 +26,11 @@ permissions:
   contents: read
 
 jobs:
+  # На Linux цели iOS выключены сами (kotlin.native.ignoreDisabledTargets),
+  # и `check` проверяет всё остальное: общий код, JVM, Android, detekt.
   build:
     name: Build & Test
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     # Kalkan НУЦ РК публиковать нельзя: он лежит в приватном репозитории
     # texport/kalkan, и сборка берёт его токеном только на чтение.
     env:
@@ -36,14 +39,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v7
 
-      # Касса собирается на 21 (jvmToolchain), соседи — на 17: их Gradle
-      # берёт 17 сам, но с готовым JDK не тратит время на загрузку.
       - name: Set up Java
         uses: actions/setup-java@v6
         with:
-          java-version: |
-            17
-            21
+          java-version: '21'
           distribution: 'temurin'
 
       # Кэш v6 — закрытый компонент gradle-actions-caching: пользуясь им,
@@ -53,9 +52,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-provider: enhanced
-
-      - name: Build Siblings from Sources
-        uses: ./.github/actions/siblings
 
       # Kalkan кладётся туда же, где он лежит на машине разработчика, —
       # в локальный Maven: сборка берёт его оттуда первым.
@@ -74,31 +70,66 @@ jobs:
           cp -R .kalkan/kz ~/.m2/repository/
           rm -rf .kalkan
 
-      # detekt, компиляция всех модулей и целей и все проверки — одной
-      # задачей `check`; предупреждение компилятора роняет сборку.
+      # detekt, компиляция модулей и все проверки — одной задачей `check`;
+      # предупреждение компилятора роняет сборку. Проверки экранов рисуют
+      # окна Compose — им нужен экран, и на Linux его даёт xvfb.
       #
       # Android без Kalkan не компилируется: подпись файлом ключа стоит
       # на нём. Пока токена к Kalkan в секретах нет, проверяется всё, что
-      # от него не зависит, — общий код, JVM и снимки экранов, — а о пропуске
-      # Android сказано в сводке запуска.
+      # от него не зависит, а о пропуске Android сказано в сводке запуска.
       - name: Check
         run: |
           if [ -n "$KALKAN_REPO_TOKEN" ]; then
-            ./gradlew check
+            xvfb-run -a ./gradlew check :androidApp:assembleDebug
           else
             echo "::warning::Нет секрета KALKAN_REPO_TOKEN — Android не проверен: без Kalkan он не компилируется"
-            ./gradlew jvmTest detekt :detekt-rules:test
+            xvfb-run -a ./gradlew jvmTest detekt :detekt-rules:test
           fi
 
-      - name: Android
-        if: env.KALKAN_REPO_TOKEN != ''
-        run: ./gradlew :androidApp:assembleDebug
+  # Цели iOS компилируются и проверяются только на macOS.
+  ios:
+    name: iOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
 
-      # Снимки экранов и раскладка по размерам окна — своей задачей:
-      # в `check` перед каждым коммитом их нет, здесь они идут на каждой ветке.
-      #
-      # Выпуск их не ждёт: кадры — для приёмки вёрстки, а на машине GitHub
-      # они идут дольше всей остальной проверки вместе взятой.
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: enhanced
+
+      - name: iOS
+        run: ./gradlew iosSimulatorArm64Test
+
+  # Снимки экранов и раскладка по размерам окна — своей задачей: в `check`
+  # перед каждым коммитом их нет, здесь они идут на каждой ветке. Выпуск
+  # их не ждёт: кадры — для приёмки вёрстки, а на машине GitHub они идут
+  # дольше всей остальной проверки вместе взятой.
+  screenshots:
+    name: Screenshots
+    if: inputs.screenshots != false
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: enhanced
+
       - name: Screenshots
-        if: inputs.screenshots != false
         run: ./gradlew screenshots
