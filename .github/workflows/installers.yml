@@ -241,7 +241,7 @@ jobs:
             gh release create "$TAG" \
               --repo "${GITHUB_REPOSITORY}" \
               --target "${GITHUB_SHA}" \
-              --title "Суперкасса $TAG" \
+              --title "Release $TAG" \
               --notes "Установщики для Windows, Linux и macOS; APK для Android докладывается следом. Касса работает сама по себе — ставить и запускать отдельно ничего не нужно." \
               $built
           fi
