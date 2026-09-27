@@ -132,6 +132,8 @@ internal val settingsScreenTextsEn = SettingsScreenTexts(
     panelBehaviourHint = "On — the section is collapsed to its title when the sale opens, off — expanded. " +
         "On the sale screen a section is collapsed and expanded with the arrow in its title — " +
         "the choice is remembered and shown here. Manual item entry is always open for a new receipt.",
+    panelPositionEntry = "Manual item entry",
+    panelPositionEntryHint = "Name, price and quantity under the barcode field. The barcode is always visible",
     panelReceiptChanges = "Discounts and markups",
     panelReceiptChangesHint = "Discount and markup fields for the whole receipt",
     panelCustomerData = "Customer details",

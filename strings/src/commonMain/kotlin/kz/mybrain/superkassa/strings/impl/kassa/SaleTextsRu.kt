@@ -5,7 +5,8 @@ import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 /** Надписи [SaleTexts] по-русски. */
 internal val saleTextsRu = SaleTexts(
     basketEmpty = "Корзина пуста",
-    basketEmptyHint = "Отсканируйте штрихкод или введите позицию вручную — Enter добавит её в чек.",
+    basketEmptyHint = "Отсканируйте штрихкод или введите позицию вручную в разделе «Новая позиция» — " +
+        "Enter добавит её в чек.",
     positionsCount = "Позиций",
     itemsSum = "Сумма позиций",
     change = "Сдача",

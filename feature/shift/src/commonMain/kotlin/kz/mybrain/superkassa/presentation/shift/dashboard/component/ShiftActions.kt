@@ -67,6 +67,9 @@ internal fun ShiftActions(state: DashboardUiState, actions: DashboardActions) {
  * Главное действие экрана одно и зависит от состояния смены: закрытую
  * открывают, открытую закрывают. Остальное — тональное.
  *
+ * X-отчёт в смене без чеков и внесений выключен: БФД такую смену ещё
+ * не открыл, и отчёт вернулся бы отказом.
+ *
  * Заблокированной кассе — и снятой с учёта в том числе — кнопок нет вовсе:
  * фискальных команд она не принимает. Неизвестное состояние смены — не повод
  * предлагать действие: «Открыть смену» над открытой сменой получало
@@ -83,7 +86,7 @@ private fun ShiftButtons(state: DashboardUiState, actions: DashboardActions, onC
             Button(onClick = onClose, modifier = main, enabled = state.canAct) {
                 Text(texts.dashboard.closeShift)
             }
-            FilledTonalButton(onClick = actions::xReport, modifier = main, enabled = state.canAct) {
+            FilledTonalButton(onClick = actions::xReport, modifier = main, enabled = state.canTakeXReport) {
                 Text(texts.dashboard.xReport)
             }
         } else if (offer && state.isAdmin) {

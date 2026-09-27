@@ -5,7 +5,7 @@ import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 /** Надписи [SaleTexts] по-английски. */
 internal val saleTextsEn = SaleTexts(
     basketEmpty = "The basket is empty",
-    basketEmptyHint = "Scan a barcode or type an item — Enter adds it to the receipt.",
+    basketEmptyHint = "Scan a barcode or type an item under “New item” — Enter adds it to the receipt.",
     positionsCount = "Items",
     itemsSum = "Items subtotal",
     change = "Change",

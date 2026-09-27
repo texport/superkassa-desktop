@@ -67,7 +67,7 @@ class SaleViewModel(private val cases: SaleCases, private val talk: Talk) : View
      * меняют в других разделах, и они перечитываются. Корзина остаётся как была.
      */
     fun visit() {
-        screen.update { it.copy(collapsed = panelsOf(cases.panels())).withEntryOpen() }
+        screen.update { it.copy(collapsed = panelsOf(cases.panels())) }
         reading.restart { readSeat() }
         viewModelScope.launch { readChannels() }
     }

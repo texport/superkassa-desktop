@@ -149,6 +149,9 @@ data class SettingsScreenTexts(
     val mapDefault: String,
     /** Что значит переключатель раздела продажи: включено — свёрнут, выключено — развёрнут. */
     val panelBehaviourHint: String,
+    /** Ручной ввод позиции под полем штрихкода; сам штрихкод виден всегда. */
+    val panelPositionEntry: String,
+    val panelPositionEntryHint: String,
     val panelReceiptChanges: String,
     val panelReceiptChangesHint: String,
     val panelCustomerData: String,

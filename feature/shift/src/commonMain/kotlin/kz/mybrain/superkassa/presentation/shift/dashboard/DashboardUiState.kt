@@ -9,6 +9,7 @@ import kz.mybrain.superkassa.domain.kkm.model.isProgramming
 import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.domain.shift.model.queueResendAllowed
 import kz.mybrain.superkassa.domain.shift.model.shiftActionsAllowed
+import kz.mybrain.superkassa.domain.shift.model.xReportAllowed
 import kz.mybrain.superkassa.strings.api.Language
 
 /**
@@ -57,6 +58,9 @@ data class DashboardUiState(
 
     /** Действие со сменой можно предложить: касса выбрана, свободна и не в программировании. */
     val canAct: Boolean get() = !busy && shiftActionsAllowed(kkm)
+
+    /** X-отчёт снимается, когда в смене есть документ с суммой: иначе БФД его не примет. */
+    val canTakeXReport: Boolean get() = canAct && xReportAllowed(documents)
 
     /** Досылку накопленного касса сейчас примет: иначе кнопки нет, а её условия названы строкой. */
     val canSendQueued: Boolean get() = queueResendAllowed(kkm, isAdmin, shift)

@@ -109,21 +109,10 @@ data class SaleUiState(
     /** Итог пробитого чека на экране: только пока корзина следующего пуста. */
     val shownIssued: IssuedReceipt? get() = issued?.takeIf { basket.positions.isEmpty() }
 
-    /**
-     * Ручной ввод позиции раскрыт, пока чек пуст.
-     *
-     * Подсказка пустого чека зовёт ввести позицию вручную, а свёрнутая
-     * кассиром в прошлом чеке карточка прятала поля: подсказка лгала.
-     * Каждый новый чек начинается с раскрытого ввода; свернуть его можно
-     * снова, и выбор помнится как прежде.
-     */
-    fun withEntryOpen(): SaleUiState =
-        if (basket.positions.isEmpty()) copy(collapsed = collapsed - SalePanel.PositionEntry) else this
-
     /** Принятый чек становится итогом на экране; прочий исход прежний итог не трогает. */
     fun withIssued(receipt: SaleReceipt, answer: Answer<Fiscal>): SaleUiState {
         val fiscal = (answer as? Answer.Done)?.value?.takeUnless { it.rejected } ?: return this
-        return copy(issued = receipt.issued(fiscal)).withEntryOpen().toBarcode()
+        return copy(issued = receipt.issued(fiscal)).toBarcode()
     }
 
     /** Каналы доставки перечитаны: вид контакта, чей канал пропал, становится «не отправлять». */

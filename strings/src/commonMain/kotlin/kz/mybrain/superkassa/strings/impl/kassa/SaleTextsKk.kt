@@ -5,7 +5,8 @@ import kz.mybrain.superkassa.strings.api.kassa.SaleTexts
 /** Надписи [SaleTexts] по-казахски. */
 internal val saleTextsKk = SaleTexts(
     basketEmpty = "Себет бос",
-    basketEmptyHint = "Штрих-кодты сканерлеңіз немесе позицияны қолмен енгізіңіз — Enter оны чекке қосады.",
+    basketEmptyHint = "Штрих-кодты сканерлеңіз немесе позицияны «Жаңа позиция» бөлімінде қолмен енгізіңіз — " +
+        "Enter оны чекке қосады.",
     positionsCount = "Позиция саны",
     itemsSum = "Позициялар сомасы",
     change = "Қайтарым",

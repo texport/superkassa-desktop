@@ -1,6 +1,9 @@
 package kz.mybrain.superkassa.domain.shift.model
 
+import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
+import kz.mybrain.superkassa.domain.document.model.hasOwnAmount
+import kz.mybrain.superkassa.domain.document.model.refusedByOfd
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
 
 /**
@@ -23,3 +26,17 @@ fun shiftActionsAllowed(kkm: KkmResponse?): Boolean = kkm != null && !kkm.isProg
  */
 fun queueResendAllowed(kkm: KkmResponse?, isAdmin: Boolean, shift: ShiftState): Boolean =
     isAdmin && shift == ShiftState.Closed && kkm?.isProgramming == true
+
+/**
+ * Есть ли в смене из чего снять X-отчёт.
+ *
+ * Смену у БФД открывает не кнопка «Открыть смену» — такой команды в CPCR
+ * нет, — а первый документ с суммой: чек или внесение. Пока его нет,
+ * БФД на X-отчёт отвечает кодом 13 «накопленного отчёта нет», и кассир
+ * получал отказ на пустом месте. Отвергнутый БФД документ смены у него
+ * не открыл; пробитый без связи — фискальный и уйдёт первым в очереди.
+ *
+ * @param documents документы открытой смены.
+ */
+fun xReportAllowed(documents: List<FiscalDocumentResponse>): Boolean =
+    documents.any { it.hasOwnAmount && !it.refusedByOfd }

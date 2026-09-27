@@ -23,10 +23,10 @@ import kotlin.test.assertTrue
 /**
  * Переключатели «Что открыто при входе в продажу» действуют на экран продажи.
  *
- * Владелец: «по-моему некоторые не работают». Переключатель ручного ввода
- * и правда не работал — у нового чека ввод раскрывается всегда, — и его
- * в настройках больше нет. Каждый оставшийся выключают в карточке
- * настроек и открывают продажу: раздел свёрнут; включают — развёрнут.
+ * Владелец: «галки включены, чтобы сворачивалось всё, а свёрнуто не всё».
+ * Ручной ввод позиции касса раскрывала у каждого нового чека сама и в
+ * настройки его не пускала. Теперь переключатель есть у каждого раздела:
+ * его меняют в карточке настроек, открывают продажу — раздел такой, как выбран.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class SalePanelSettingsTest {
@@ -65,9 +65,8 @@ class SalePanelSettingsTest {
     }
 
     @Test
-    fun `ручного ввода в настройках нет — у нового чека он открыт всегда`() {
-        assertEquals(null, SalePanel.PositionEntry.setting)
-        assertEquals(SalePanel.entries - SalePanel.PositionEntry, configurable)
+    fun `в настройках сворачивается каждый раздел продажи`() {
+        assertEquals(SalePanel.entries, configurable)
     }
 
     private val configurable = SalePanel.entries.filter { it.setting != null }

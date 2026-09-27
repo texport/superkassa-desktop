@@ -79,17 +79,16 @@ class SaleIssuedTest {
     }
 
     @Test
-    fun `новый чек начинается с раскрытого ручного ввода, даже если его свернули`() {
+    fun `свёрнутый ручной ввод остаётся свёрнутым и в новом чеке`() {
         val model = model()
         model.togglePanel(SalePanel.PositionEntry)
-        assertFalse(model.state.value.expanded(SalePanel.PositionEntry))
         model.bread()
 
         model.issue()
 
-        assertTrue(model.state.value.expanded(SalePanel.PositionEntry), "пустой чек со свёрнутым ручным вводом")
+        assertFalse(model.state.value.expanded(SalePanel.PositionEntry), "новый чек раскрыл свёрнутый ввод")
         model.visit()
-        assertTrue(model.state.value.expanded(SalePanel.PositionEntry), "вход в раздел свернул ручной ввод")
+        assertFalse(model.state.value.expanded(SalePanel.PositionEntry), "вход в раздел раскрыл свёрнутый ввод")
     }
 
     @Test
