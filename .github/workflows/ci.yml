@@ -2,9 +2,11 @@
 # установщик собирается только из того, что прошло эту проверку. Пуш в main
 # проверяют они же — отдельный запуск здесь повторил бы ту же работу.
 #
-# Проверка разбита на задачи, которые идут одновременно: JVM, Android
-# и detekt — на Linux, iOS — на macOS. Одной задачей на macOS всё шло друг
-# за другом больше получаса; теперь выпуск ждёт самую долгую из них.
+# Проверка разбита на задачи, которые идут одновременно: Android и detekt —
+# на Linux, JVM и iOS — на macOS. Одной задачей на macOS всё шло друг за
+# другом больше получаса; теперь выпуск ждёт самую долгую из них. Проверки
+# JVM рисуют экраны Compose и остаются на macOS: на Linux другие шрифты
+# рвали строки плашек, а Skia без экрана роняла виртуальную машину.
 #
 # Ядро с кодеком и протоколом сборка берёт готовыми из выпуска ядра на
 # GitHub (settings.gradle.kts): из исходников соседи не собираются.
@@ -16,20 +18,15 @@ on:
   pull_request:
     branches: [ main ]
   workflow_call:
-    inputs:
-      screenshots:
-        description: Снимать ли кадры экранов
-        type: boolean
-        default: true
 
 permissions:
   contents: read
 
 jobs:
-  # На Linux цели iOS выключены сами (kotlin.native.ignoreDisabledTargets),
-  # и `check` проверяет всё остальное: общий код, JVM, Android, detekt.
-  build:
-    name: Build & Test
+  # На Linux цели iOS выключены сами (kotlin.native.ignoreDisabledTargets):
+  # `check` без JVM проверяет Android и detekt.
+  android:
+    name: Android
     runs-on: ubuntu-latest
     # Kalkan НУЦ РК публиковать нельзя: он лежит в приватном репозитории
     # texport/kalkan, и сборка берёт его токеном только на чтение.
@@ -70,21 +67,40 @@ jobs:
           cp -R .kalkan/kz ~/.m2/repository/
           rm -rf .kalkan
 
-      # detekt, компиляция модулей и все проверки — одной задачей `check`;
-      # предупреждение компилятора роняет сборку. Проверки экранов рисуют
-      # окна Compose — им нужен экран, и на Linux его даёт xvfb.
-      #
-      # Android без Kalkan не компилируется: подпись файлом ключа стоит
-      # на нём. Пока токена к Kalkan в секретах нет, проверяется всё, что
-      # от него не зависит, а о пропуске Android сказано в сводке запуска.
-      - name: Check
+      # Предупреждение компилятора роняет сборку. Android без Kalkan не
+      # компилируется: подпись файлом ключа стоит на нём. Пока токена
+      # к Kalkan в секретах нет, здесь идёт только detekt, а о пропуске
+      # Android сказано в сводке запуска.
+      - name: Android и detekt
         run: |
           if [ -n "$KALKAN_REPO_TOKEN" ]; then
-            xvfb-run -a ./gradlew check :androidApp:assembleDebug
+            ./gradlew check -x jvmTest :androidApp:assembleDebug
           else
             echo "::warning::Нет секрета KALKAN_REPO_TOKEN — Android не проверен: без Kalkan он не компилируется"
-            xvfb-run -a ./gradlew jvmTest detekt :detekt-rules:test
+            ./gradlew detekt
           fi
+
+  # Общий код и JVM: модели, сценарии и экраны, нарисованные Compose.
+  jvm:
+    name: JVM
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: enhanced
+
+      - name: JVM
+        run: ./gradlew jvmTest :detekt-rules:test
 
   # Цели iOS компилируются и проверяются только на macOS.
   ios:
@@ -112,9 +128,11 @@ jobs:
   # перед каждым коммитом их нет, здесь они идут на каждой ветке. Выпуск
   # их не ждёт: кадры — для приёмки вёрстки, а на машине GitHub они идут
   # дольше всей остальной проверки вместе взятой.
+  #
+  # В вызове из выпуска github.workflow — имя выпуска, а не этой проверки.
   screenshots:
     name: Screenshots
-    if: inputs.screenshots != false
+    if: github.workflow == 'CI Build'
     runs-on: macos-latest
     steps:
       - name: Checkout Repository

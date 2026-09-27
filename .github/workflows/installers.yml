@@ -64,9 +64,6 @@ jobs:
     uses: ./.github/workflows/ci.yml
     # Проверке нужен вход в хранилище Kalkan из секретов репозитория.
     secrets: inherit
-    # Кадры экранов снимает проверка веток; выпуск их не ждёт.
-    with:
-      screenshots: false
 
   installers:
     needs: version
