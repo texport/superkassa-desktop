@@ -18,6 +18,7 @@ import kz.mybrain.superkassa.renderMillis
 import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -106,14 +107,25 @@ class BigListRenderTest {
         }
     }
 
+    /**
+     * Дерево на две тысячи точек рисуется в пределах бюджета и собирает
+     * строки только видимой части.
+     *
+     * Рост с длиной списка считается собранными строками, а не сравнением
+     * миллисекунд: на общей машине проверки время скачет. Бюджет целиком
+     * остаётся временем — он щедрый и ловит только настоящую беду.
+     */
     @Test
     fun `дерево из двух тысяч точек рисуется быстро и не зависит от длины списка`() {
         renderMillis { Tree(SMALL) }
-        val small = renderMillis { Tree(SMALL) }
         val large = renderMillis { Tree(LARGE) }
-        println("дерево: $SMALL точек — $small мс, $LARGE точек — $large мс")
+        val rows = RenderProbe { Tree(LARGE) }.use { probe ->
+            probe.frame()
+            probe.nodes().count { it.text.startsWith(PLACE_NAME) }
+        }
+        println("дерево: $LARGE точек — $large мс, собрано строк $rows")
         assertTrue(large < BUDGET, "$LARGE точек рисуются $large мс")
-        assertTrue(large < small * FACTOR + SLACK, "рост отрисовки с длиной списка: $small → $large мс")
+        assertTrue(rows <= SHOWN, "дерево собрало $rows строк из $LARGE — список собирается целиком")
     }
 
     @Test
@@ -161,22 +173,26 @@ class BigListRenderTest {
      * и весь набор в нём стоил полсекунды на каждое нажатие по полю.
      * Сразу показана первая полусотня совпадений, остальное просят
      * последней строкой.
+     *
+     * Стоимость считается строками раскрытого меню, а не секундомером:
+     * на общей машине проверки время скачет, и сравнение миллисекунд
+     * падало там, где меню было в порядке.
      */
     @Test
     fun `раскрытие списка точек не зависит от их числа`() {
-        openMillis(SMALL)
-        val small = openMillis(SMALL)
-        val large = openMillis(LARGE)
-        println("раскрытие: $SMALL точек — $small мс, $LARGE точек — $large мс")
-        assertTrue(large < small * FACTOR + SLACK, "рост раскрытия с длиной набора: $small → $large мс")
+        val small = openedRows(SMALL)
+        val large = openedRows(LARGE)
+        println("раскрытие показало строк: из $SMALL — $small, из $LARGE — $large")
+        assertEquals(SMALL, small, "короткий набор раскрылся не целиком")
+        assertTrue(large <= SHOWN, "раскрытие растёт с длиной набора: $LARGE точек — $large строк")
     }
 
-    /** Сколько миллисекунд занимает раскрыть список точек нажатием по полю. */
-    private fun openMillis(count: Int): Long = RenderProbe { PlacesPicker(count) }.use { probe ->
+    /** Сколько строк точек показало меню, раскрытое нажатием по полю. */
+    private fun openedRows(count: Int): Int = RenderProbe { PlacesPicker(count) }.use { probe ->
         repeat(SETTLE) { probe.frame() }
-        val started = System.nanoTime()
         probe.click(Offset(FIELD_X, FIELD_Y))
-        (System.nanoTime() - started) / 1_000_000
+        probe.frame()
+        probe.nodes().count { it.text.startsWith(PLACE_NAME) }
     }
 
     private companion object {
@@ -192,17 +208,14 @@ class BigListRenderTest {
         const val BUDGET = 1500L
 
         /**
-         * Во сколько раз длинный список вправе оказаться дороже короткого.
-         *
-         * Порог выбран замером: тот же состав строк в собранном целиком
-         * столбце стоил 396 мс против 45 мс списком, а короткий — 46 мс.
-         * Двух с запасом хватает, чтобы отличить одно от другого и не
-         * ловить дрожание машины.
+         * Сколько строк точек вправе собрать дерево или меню из двух тысяч:
+         * видимая часть и первая полусотня совпадений меню помещаются в этот
+         * предел, а собранный целиком список дал бы все две тысячи.
          */
-        const val FACTOR = 2
+        const val SHOWN = 50
 
-        /** Запас на разогрев машины, не зависящий от длины списка. */
-        const val SLACK = 150L
+        /** Начало названия каждой точки набора: по нему строки меню и считаются. */
+        const val PLACE_NAME = "Торговая точка"
 
         /** Где на сцене стоит первое поле формы: по нему и нажимают. */
         const val FIELD_X = 300f

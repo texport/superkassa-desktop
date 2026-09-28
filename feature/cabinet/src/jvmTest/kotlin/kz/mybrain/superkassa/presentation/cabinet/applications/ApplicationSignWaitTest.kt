@@ -52,7 +52,7 @@ class ApplicationSignWaitTest {
             RenderProbe(CARD, TALL) { Actions(cabinet) }.use { probe ->
                 val before = probe.frame()
                 probe.tap { it.text == texts.applications.submit }
-                val waiting = probe.frame()
+                val waiting = firstChange(probe, before)
                 File("/tmp/fix-15-cabinet-wait.png").writeBytes(waiting)
 
                 assertFalse(waiting.contentEquals(before), "ожидание подписи на экране не показано")
@@ -74,6 +74,23 @@ class ApplicationSignWaitTest {
                 assertFalse(cabinet.model.state.value.busy, "после отмены приложение осталось занятым")
             }
         }
+    }
+
+    /**
+     * Первый кадр, отличный от [before], — или последний, если срок вышел.
+     *
+     * Подача идёт в фоне: кабинет готовит заявление, и только потом касса
+     * ждёт подписи. На медленной машине отсчёт появлялся кадром позже,
+     * и проверка единственного кадра падала там, где экран был верен.
+     */
+    private fun firstChange(probe: RenderProbe, before: ByteArray): ByteArray {
+        val until = System.nanoTime() + WAIT.inWholeNanoseconds
+        var frame = probe.frame()
+        while (frame.contentEquals(before) && System.nanoTime() < until) {
+            Thread.sleep(STEP.inWholeMilliseconds)
+            frame = probe.frame()
+        }
+        return frame
     }
 
     /** Действия кассы-черновика в кабинете: кнопка подачи и её ожидание. */
