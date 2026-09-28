@@ -28,7 +28,17 @@ data class CompanyProfile(
     val bin: String,
     val name: String,
     val okeds: List<Oked> = emptyList()
-)
+) {
+    /**
+     * ОКЭД, с которым заводится касса компании: основной вид деятельности,
+     * а если основной не отмечен — первый из списка; `null` — видов нет.
+     *
+     * Касса без ОКЭДа не заводится, а БФД о кассе его может и не прислать:
+     * стенд отвечал пустым кодом, и заведение кассы на учёте срывалось.
+     */
+    val enrollmentOked: String?
+        get() = (okeds.firstOrNull { it.primary } ?: okeds.firstOrNull())?.code?.takeIf { it.isNotBlank() }
+}
 
 /** Позиция классификатора ОКЭД, какой её отдаёт кабинет. */
 data class OkedEntry(

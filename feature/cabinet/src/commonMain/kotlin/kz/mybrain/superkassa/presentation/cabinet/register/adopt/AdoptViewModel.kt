@@ -17,6 +17,7 @@ import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.presentation.cabinet.CabinetViewModel
 import kz.mybrain.superkassa.presentation.cabinet.value
 import kz.mybrain.superkassa.presentation.common.model.shown
+import kz.mybrain.superkassa.strings.api.Language
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
@@ -73,6 +74,7 @@ internal class AdoptViewModel(private val cabinet: CabinetViewModel) : ViewModel
                 val token = tokenFor(register) ?: return@launch
                 val what = textsOf(talk.language()).cabinet.machine.workHere
                 val kkm = cases.enrollKkm(register, BFD_PROVIDER, environment, adminPin, token)
+                    .okedExplained()
                     .shown(what, "adopt kkm", talk)
                 if (kkm == null) {
                     screen.update { it.copy(stranded = it.stranded + register.id) }
@@ -101,6 +103,21 @@ internal class AdoptViewModel(private val cabinet: CabinetViewModel) : ViewModel
         return token
     }
 }
+
+/**
+ * Отказ «ОКЭД обязателен» — словами о том, что делать.
+ *
+ * Касса сама говорит только «ОКЭД обязателен», и владелец не знал, где
+ * его взять: ОКЭД кассы — вид деятельности компании из вкладки «Компания».
+ */
+private fun <T> Answer<T>.okedExplained(): Answer<T> {
+    if (this !is Answer.Refused || code != OKED_REQUIRED) return this
+    fun words(language: Language) = textsOf(language).cabinet.machine.okedMissing
+    return copy(ru = words(Language.Ru), kk = words(Language.Kk), en = words(Language.En))
+}
+
+/** Код отказа кассы, заведённой без ОКЭДа. */
+private const val OKED_REQUIRED = "OKED_REQUIRED"
 
 /** Значение удавшегося ответа кассы; `null` — не удалось. */
 private fun <T> Answer<T>.value(): T? = (this as? Answer.Done)?.value

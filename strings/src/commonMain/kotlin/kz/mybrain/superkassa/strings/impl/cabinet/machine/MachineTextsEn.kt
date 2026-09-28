@@ -17,5 +17,7 @@ internal val machineTextsEn = MachineTexts(
     done = "The register is set up — the cashier signs in with this administrator PIN",
     stranded = "The token was issued, but the register was not set up on this machine. Retry: " +
         "the same token is sent again, it is not issued twice.",
+    okedMissing = "The company has no primary activity (OKED), and a cash register " +
+        "cannot be set up without it. Set it on the Company tab and try again.",
     retry = "Retry"
 )

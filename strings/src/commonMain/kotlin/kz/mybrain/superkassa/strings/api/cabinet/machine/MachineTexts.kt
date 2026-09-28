@@ -20,5 +20,7 @@ data class MachineTexts(
     val handoverUnderstood: String,
     val done: String,
     val stranded: String,
+    /** Касса не заводится без ОКЭДа: что сделать владельцу. */
+    val okedMissing: String,
     val retry: String
 )

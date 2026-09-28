@@ -93,7 +93,7 @@ class CabinetCases(kassa: Kassa, signIn: SignIn, memory: WorkplaceMemory, ports:
     val removeRegister = RemoveRegister(ports.registers)
     val issueToken = IssueToken(ports.registers)
     val writeToken = WriteTokenHere(kassa, signIn)
-    val enrollKkm = EnrollKkmHere(kassa)
+    val enrollKkm = EnrollKkmHere(kassa, ports.company)
     val workOn = WorkOnKkm(signIn, memory)
     val readEnvironments = ReadOfdEnvironments(kassa)
     val readKkmStates = ReadKkmStates(kassa)
