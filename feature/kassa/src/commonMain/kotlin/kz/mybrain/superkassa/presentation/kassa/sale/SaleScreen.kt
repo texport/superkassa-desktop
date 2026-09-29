@@ -20,6 +20,7 @@ import kz.mybrain.superkassa.designsystem.theme.size.Panes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.sale.Basket
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.kassa.payment.ReceiptOutput
 import kz.mybrain.superkassa.presentation.kassa.sale.component.BasketCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.CheckoutPanel
 import kz.mybrain.superkassa.presentation.kassa.sale.component.CustomerDataCard
@@ -27,8 +28,9 @@ import kz.mybrain.superkassa.presentation.kassa.sale.component.DomainCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ExciseDialog
 import kz.mybrain.superkassa.presentation.kassa.sale.component.IssueRow
 import kz.mybrain.superkassa.presentation.kassa.sale.component.IssuedCard
+import kz.mybrain.superkassa.presentation.kassa.sale.component.PaymentCard
 import kz.mybrain.superkassa.presentation.kassa.sale.component.ReceiptChangesCard
-import kz.mybrain.superkassa.presentation.kassa.sale.component.ReceiptTotals
+import kz.mybrain.superkassa.presentation.kassa.sale.component.ReceiptTotal
 import kz.mybrain.superkassa.presentation.kassa.sale.component.SaleHeader
 import kz.mybrain.superkassa.presentation.kassa.sale.entry.PositionEntryCard
 import kz.mybrain.superkassa.presentation.kassa.sale.position.LocalUnits
@@ -143,26 +145,23 @@ private fun TillBody(state: SaleUiState, actions: SaleActions) {
             toggle(SalePanel.PositionEntry)
         }
         DomainCard(state.domainKind, state.form.domain, actions.form::domain)
+        // Оплата — сразу за вводом позиции: она нужна в каждом чеке,
+        // а скидки и данные покупателя — не в каждом и стоят ниже.
+        val money = state.expanded(SalePanel.Money)
+        PaymentCard(state, actions.payments, money, { toggle(SalePanel.Money) }, actions.form::taken)
         TillExtras(state, actions)
     }
 }
 
 /**
  * «К оплате» с единственной кнопкой — то, без чего чек не пробить: сумма
- * к оплате и «Пробить чек» на экране всегда, сколько бы позиций ни
- * набралось. Оплата — в том же блоке и сворачивается вниз вместе с ним.
+ * к оплате и «Пробить чек» на экране всегда, сколько бы позиций и оплат
+ * ни набралось. Оплата — в прокручиваемой части кассы, сразу за вводом позиции.
  */
 @Composable
 private fun Checkout(state: SaleUiState, actions: SaleActions) {
     CheckoutPanel {
-        ReceiptTotals(
-            state = state,
-            payments = actions.payments,
-            expanded = state.expanded(SalePanel.Money),
-            onToggle = { actions.toggle(SalePanel.Money) },
-            onTaken = actions.form::taken,
-            modifier = Modifier.weight(1f, fill = false)
-        )
+        ReceiptTotal(state)
         IssueRow(state, actions.issue)
     }
 }

@@ -22,9 +22,10 @@ import kz.mybrain.superkassa.strings.api.kassa.KkmSetupTexts
  * Требования переносятся, а не жмутся в строку: перенос оставляет на виду
  * все, в том числе невыполненное.
  *
- * Знак впереди подписи — не украшение: подпись у выполненного и
- * невыполненного требования одна и та же, и без знака их различал бы
- * только цвет плашки.
+ * Знак впереди подписи — не украшение: без него выполненное
+ * и невыполненное различал бы только цвет плашки. Невыполненное названо
+ * действием — «Закройте смену», а не состоянием: красное «Смена закрыта»
+ * рядом с «Смена открыта» в шапке окна читалось как противоречие.
  */
 @Composable
 internal fun SettingRequirements(needs: List<KkmNeed>, texts: KkmSetupTexts) {
@@ -51,7 +52,16 @@ internal fun SettingRequirements(needs: List<KkmNeed>, texts: KkmSetupTexts) {
  */
 internal fun requirementLine(need: KkmNeed, texts: KkmSetupTexts): String {
     val mark = if (need.met) Glyphs.MET else Glyphs.UNMET
-    return "$mark${Glyphs.NBSP}${need.demand.title(texts)}"
+    val words = if (need.met) need.demand.title(texts) else need.demand.todo(texts)
+    return "$mark${Glyphs.NBSP}$words"
+}
+
+/** Что сделать, чтобы требование выполнилось, — словами кассира. */
+internal fun KkmDemand.todo(texts: KkmSetupTexts): String = when (this) {
+    KkmDemand.Programming -> texts.doProgramming
+    KkmDemand.ShiftClosed -> texts.doShiftClosed
+    KkmDemand.QueueEmpty -> texts.doQueueEmpty
+    KkmDemand.Online -> texts.doOnline
 }
 
 /** Требование кассы словами кассира. */

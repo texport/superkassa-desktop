@@ -100,6 +100,10 @@ internal val moneyTextsEn = MoneyTexts(
         needShiftClosed = "The shift is closed",
         needQueueEmpty = "The delivery queue is empty",
         needOnline = "Autonomous mode is off",
+        doProgramming = "Enter programming mode",
+        doShiftClosed = "Close the shift",
+        doQueueEmpty = "Send the queue to BFD",
+        doOnline = "Leave autonomous mode",
         decommissionConfirm = "Remove the register %s from this machine?",
         decommissionDone = "The register has been removed from this workplace"
     )

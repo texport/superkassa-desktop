@@ -85,6 +85,9 @@ internal class CabinetLists(
         }
     }
 
+    /** Перечитывает кассы этой машины: их меняют и вне кабинета (см. `RereadRegistersHere`). */
+    suspend fun rereadHere() = useCases.rereadHere(screen.value.registers).forEach(::registerChanged)
+
     /** Ставит в список только что заведённую точку, если её там ещё нет. */
     fun placeAdded(place: RetailPlace) = screen.update { now ->
         if (now.places.any { it.id == place.id }) now else now.copy(places = now.places + place)

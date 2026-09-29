@@ -84,7 +84,8 @@ class KassaSaleLookTest {
                 BasketCard(state.basket, Modifier.weight(1f), {}, {}, {})
                 Column(modifier = Modifier.width(TILL), verticalArrangement = Arrangement.spacedBy(Spacing.cardGap)) {
                     ReceiptChangesCard(state, NO_FORM, expanded = true, onToggle = {})
-                    ReceiptTotals(state, NO_PAYMENTS, expanded = true, onToggle = {}, onTaken = {})
+                    PaymentCard(state, NO_PAYMENTS, expanded = true, onToggle = {}, onTaken = {})
+                    ReceiptTotal(state)
                     IssueRow(state) {}
                 }
             }

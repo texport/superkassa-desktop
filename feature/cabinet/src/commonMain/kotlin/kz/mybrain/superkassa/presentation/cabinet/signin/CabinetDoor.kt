@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import kz.mybrain.superkassa.navigation.step.StepKey
 import kz.mybrain.superkassa.presentation.cabinet.CabinetScreen
 import kz.mybrain.superkassa.presentation.cabinet.CabinetWindow
 import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
@@ -23,13 +24,13 @@ import kz.mybrain.superkassa.presentation.common.navigation.LocalToKassa
  * печатной формы стоит над обоими входами и живёт в каркасе окна.
  *
  * @param onBack возврат на вход: им же «перейти к кассе» уводит из двери.
- * @param stepped открыта карточка точки или кассы шагом истории окна.
+ * @param step открытый шаг истории окна: карточка точки или кассы, документы кассы.
  */
 @Composable
-fun CabinetDoor(window: CabinetWindow, onBack: () -> Unit, stepped: Boolean = false) {
+fun CabinetDoor(window: CabinetWindow, onBack: () -> Unit, step: StepKey? = null) {
     // За дверью разделов кассы нет, и просьба показать раздел значит одно:
     // выйти из кабинета на вход, где уже выбрана нужная касса.
     CompositionLocalProvider(LocalToKassa provides onBack) {
-        Column(modifier = Modifier.fillMaxSize()) { CabinetScreen(window, stepped) }
+        Column(modifier = Modifier.fillMaxSize()) { CabinetScreen(window, step) }
     }
 }

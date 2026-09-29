@@ -17,6 +17,7 @@ internal fun DashboardUiState.adopt(snapshot: ShiftSnapshot): DashboardUiState =
     documents = snapshot.documents.orEmpty(),
     documentsRead = snapshot.documents != null,
     cashInDrawer = snapshot.cash,
+    lastClosed = snapshot.lastClosed,
     reading = false
 )
 

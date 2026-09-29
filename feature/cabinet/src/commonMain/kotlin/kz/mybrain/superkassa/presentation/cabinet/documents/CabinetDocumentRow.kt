@@ -38,15 +38,16 @@ fun receiptRow(receipt: CabinetReceipt, texts: CabinetTexts): CabinetDocumentRow
             moment = Dates.momentOf(receipt.createdAt),
             typeCode = receipt.operationType,
             type = documentTitle(receipt.operationType, texts),
-            number = receipt.receiptNumber ?: Glyphs.DASH,
-            numberOrder = receipt.receiptNumber?.toLongOrNull(),
+            // Номера документа по счётчику кассы в списке кабинета нет:
+            // он приходит только с чеком целиком.
+            number = Glyphs.DASH,
+            numberOrder = null,
             amount = Money.format(receipt.total),
             amountOrder = receipt.total,
-            // В столбце признака стоит отметка КГД: своего фискального
-            // признака кабинет в списке не отдаёт, а отметка — то же
-            // по смыслу, чем государство помечает принятый документ,
-            // и по ней владелец сверяет чек с покупателем.
-            sign = receipt.kgdMark ?: Glyphs.DASH,
+            // «Номер чека» кабинета — фискальный признак, который БФД
+            // выдал кассе: то же число, что в журнале кассы и на ленте.
+            // Отметка КГД — другое число, она названа в описании строки.
+            sign = receipt.receiptNumber ?: Glyphs.DASH,
             delivery = kgd.journal(),
             shiftNo = receipt.shiftNumber?.toLong(),
             about = receipt.kgdMark?.let { texts.documents.kgdMarked }.orEmpty(),

@@ -12,5 +12,6 @@ internal val cabinetRefusalTextsRu = CabinetRefusalTexts(
     signWindowClosed = "Окно подписи закрыто",
     signCancelled = "Подпись отменена в NCALayer",
     kkmNotActive = "Касса не допущена к обслуживанию на сервере приёма данных",
-    defaultPinNotAllowed = "У кассы стоит пин по умолчанию — смените его в самой кассе"
+    defaultPinNotAllowed = "У кассы стоит пин по умолчанию — смените его в самой кассе",
+    accessDenied = "Кабинет БФД закрыт для этой компании — обратитесь в БФД, чтобы открыть доступ"
 )

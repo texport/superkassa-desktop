@@ -31,6 +31,8 @@ data class DashboardTexts(
     val refusedHint: String,
     val openShift: String,
     val xReport: String,
+    /** Z-отчёт последней закрытой смены: `%s` — номер смены. */
+    val lastZReport: String,
     val closeShift: String,
     /** Вопрос перед Z-отчётом: он не отменяется. */
     val closeShiftAsk: String,

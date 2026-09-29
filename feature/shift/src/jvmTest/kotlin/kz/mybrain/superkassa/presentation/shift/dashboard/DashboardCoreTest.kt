@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.kassa.CoreDesk
 import kz.mybrain.superkassa.kassa.tiyn
 import kz.mybrain.superkassa.presentation.common.message.Message
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -73,6 +74,28 @@ class DashboardCoreTest {
         val z = desk.bfd.closeShifts().single().z_report
         val sells = z?.ticket_operations?.single { it.operation == OperationTypeEnum.OPERATION_SELL }
         assertEquals(SOLD, sells?.tickets_sum.tiyn())
+    }
+
+    /** Сразу после закрытия Z-отчёт приходилось искать в журнале по сменам. */
+    @Test
+    fun `Z-отчёт только что закрытой смены открывается с главного экрана`() {
+        val kassa = desk.register().also { it.openShift() }
+        kassa.sell("500.00", "3")
+        desk.sit(kassa, admin = true)
+        val model = dashboardModel(desk.services)
+        var shown: String? = null
+        val print = object : PrintActions {
+            override fun preview(documentId: String?, file: String?) {
+                shown = documentId
+            }
+        }
+
+        model.closeShift()
+        val closed = assertNotNull(model.state.value.zReportShift, "у закрытой смены нет Z-отчёта на главном экране")
+        model.actions(print).zReport(closed)
+
+        assertEquals(1L, closed.shiftNo)
+        assertEquals(closed.closeDocumentId, shown, "кнопка открыла не Z-отчёт закрытой смены")
     }
 
     @Test

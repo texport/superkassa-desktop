@@ -75,7 +75,7 @@ private fun DoorTop(
     val entering = login.state.collectAsScreenState().value.entering
     val office = window.cabinet?.cabinet?.state?.collectAsScreenState()?.value
     Column {
-        DoorBar(window, door, onMenu, onBack)
+        DoorBar(window, door, onMenu, onBack, login::reload.takeIf { door == DoorSection.Kkms })
         BusyLine(entering || (door == DoorSection.Cabinet && office?.busy == true))
     }
 }

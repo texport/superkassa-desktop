@@ -50,16 +50,17 @@ internal fun UserRow(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
-        support = { Text(roleTitle) },
+        // Единственный администратор назван так прямо в строке: почему его
+        // нельзя удалить, видно без нажатия на значок рядом.
+        support = { Text(if (deletable) roleTitle else money.cashiers.onlyInRole) },
         trailing = { RowActions(money.cashiers, user, deletable, actions) }
     )
 }
 
 /**
  * Новый пин и корзина. У единственного администратора на месте корзины —
- * предупреждение: удалить его нельзя, и прямо там, где удаляют, значок
- * объясняет почему. Погашенная корзина молчала, а плашка с надписью
- * у роли делала его строку выше соседних.
+ * предупреждение: удалить его нельзя, строка так и подписана, а значок
+ * по нажатию объясняет почему. Погашенная корзина молчала.
  */
 @Composable
 private fun RowActions(money: CashierTexts, user: UserResponse, deletable: Boolean, actions: UsersActions) {

@@ -31,6 +31,9 @@ object PrintFileName {
                 ?.let { append('-').append(it) }
         }
 
+    /** Z-отчёт закрытой смены: у него есть только номер смены. */
+    fun zReport(shiftNo: Long?): String = of(SHIFT_CLOSE, number = null, shiftNo = shiftNo)
+
     /** Документ кабинета: вид и номер из строки журнала. */
     fun of(typeCode: String?, number: String?, shiftNo: Long?): String = buildString {
         append(kindOf(typeCode))
@@ -59,4 +62,7 @@ object PrintFileName {
         "SHIFT_OPEN" -> "shift-open"
         else -> "document"
     }
+
+    /** Вид документа закрытия смены, как его называет касса. */
+    private const val SHIFT_CLOSE = "SHIFT_CLOSE"
 }

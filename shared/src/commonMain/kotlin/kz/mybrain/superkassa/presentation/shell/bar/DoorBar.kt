@@ -2,7 +2,9 @@ package kz.mybrain.superkassa.presentation.shell.bar
 
 import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.designsystem.section.AppTopBar
+import kz.mybrain.superkassa.designsystem.section.BarAction
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
+import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.presentation.cabinet.CabinetBar
 import kz.mybrain.superkassa.presentation.common.navigation.LocalScreenBar
 import kz.mybrain.superkassa.presentation.common.picker.LanguagePicker
@@ -23,9 +25,17 @@ import kz.mybrain.superkassa.strings.api.common.CommonTexts
  *
  * @param onMenu открыть разделы окна — на телефоне, где их не видно.
  * @param onBack снять шаг внутри раздела; `null` — открыт сам раздел.
+ * @param onReload перечитать кассы — у раздела касс; действие экрана
+ *   стоит в шапке, как «Обновить» рабочего окна, а не в полосе пина.
  */
 @Composable
-internal fun DoorBar(window: WindowParts, door: DoorSection, onMenu: (() -> Unit)?, onBack: (() -> Unit)?) {
+internal fun DoorBar(
+    window: WindowParts,
+    door: DoorSection,
+    onMenu: (() -> Unit)?,
+    onBack: (() -> Unit)?,
+    onReload: (() -> Unit)? = null
+) {
     val texts = LocalStrings.current
     val cabinet = window.cabinet
     if (door == DoorSection.Cabinet && cabinet != null) {
@@ -34,6 +44,7 @@ internal fun DoorBar(window: WindowParts, door: DoorSection, onMenu: (() -> Unit
     }
     val step = LocalScreenBar.current
     AppTopBar(title = step.title ?: door.barTitle(texts), subtitle = step.subtitle, lead = barLead(onMenu, onBack)) {
+        onReload?.let { BarAction(AppIcons.refresh, texts.login.reload, it) }
         ThemeSwitch(window.look)
         LanguagePicker(window.look)
     }

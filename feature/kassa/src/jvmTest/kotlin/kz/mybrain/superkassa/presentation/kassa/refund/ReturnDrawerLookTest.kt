@@ -1,6 +1,5 @@
 package kz.mybrain.superkassa.presentation.kassa.refund
 
-import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -43,7 +42,7 @@ class ReturnDrawerLookTest {
             content = { ReturnsScreen(model) }
         ).use { probe ->
             repeat(SETTLE) { probe.frame() }
-            probe.click(Offset(BASIS_X, BASIS_Y))
+            probe.click(BASIS)
             repeat(SETTLE) { probe.frame() }
             val frame = probe.frame()
             File("/tmp/audit-returns-refund-drawer-$folder.png").writeBytes(frame)
@@ -64,8 +63,9 @@ class ReturnDrawerLookTest {
 
     private companion object {
         const val SETTLE = 40
-        const val BASIS_X = 300f
-        const val BASIS_Y = 230f
+
+        /** Строка чека-основания в списке — по надписи, а не по месту на экране. */
+        const val BASIS = "Чек №"
 
         /** Сумма чека-основания: она же по умолчанию стоит суммой возврата. */
         const val TOTAL = 1_137_250L

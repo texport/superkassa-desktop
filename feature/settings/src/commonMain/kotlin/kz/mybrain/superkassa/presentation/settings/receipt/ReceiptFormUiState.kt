@@ -4,6 +4,8 @@ import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.ReceiptBrandingRequest
 import io.github.texport.superkassa.core.presentation.api.model.reference.PaperWidthResponse
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
+import kz.mybrain.superkassa.domain.settings.model.KkmNeed
+import kz.mybrain.superkassa.domain.settings.model.KkmSettingRules
 import kz.mybrain.superkassa.domain.settings.model.brandingRequest
 import kz.mybrain.superkassa.presentation.settings.KkmDrafts
 
@@ -44,6 +46,9 @@ data class ReceiptFormUiState(
 
     /** Касса меняет оформление только в режиме программирования. */
     val editable: Boolean get() = kkm?.isProgramming == true
+
+    /** Чего кассе не хватает, чтобы принять оформление: названо над погашенными полями. */
+    val needs: List<KkmNeed> get() = kkm?.let(KkmSettingRules::branding).orEmpty()
 
     /** Макеты на выбор: из справочника кассы, а без него — свои. */
     val layoutCodes: List<String> get() = paperWidths.map { it.code }.ifEmpty { PrintLayout.entries.map { it.code } }

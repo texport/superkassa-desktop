@@ -1,18 +1,15 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import kz.mybrain.superkassa.designsystem.section.Collapsible
-import kz.mybrain.superkassa.designsystem.section.SectionHeader
+import kz.mybrain.superkassa.designsystem.section.CollapsibleSection
+import kz.mybrain.superkassa.designsystem.section.SectionTitle
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.text.MoneyText
@@ -29,50 +26,49 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
- * Блок «К оплате» — итог чека и всё, чем за него платят.
+ * Итог чека — «К оплате» самым крупным начертанием денег на экране.
  *
- * Внизу кассы, в блоке оплаты ([CheckoutPanel]): «К оплате» — самым
- * крупным начертанием денег на экране; сумму к оплате кассир видит
- * всегда. Под ней, в одном блоке с ней, — виды оплаты, принятые деньги
- * и сдача: прежде виды оплаты стояли отдельной карточкой выше, и кассир
- * рассчитывался в двух местах колонки. Блок сворачивается вниз стрелкой
- * в своём заголовке, как остальные разделы кассы, — остаются итог
- * и «Пробить чек».
- *
- * Сдача показана так же крупно и вторичной ролью схемы: кассир считает её
- * в уме под взглядом очереди, и ошибка здесь стоит живых денег. Суммы
- * набраны целиком одной строкой: от миллиарда они переносились посреди
- * числа. Пока оплата не наличными, строк «принято» и «сдача» нет вовсе —
- * к безналичному расчёту они отношения не имеют.
+ * Закреплён внизу кассы вместе с «Пробить чек» ([CheckoutPanel]): сумму
+ * к оплате кассир видит всегда, сколько бы ни было позиций и оплат.
+ * Сами оплаты — в прокручиваемой части кассы, сразу за вводом позиции
+ * ([PaymentCard]): прежде они прокручивались внутри закреплённого блока,
+ * и на планшете лёжа поле «Принято» уходило под кнопку, а вводу позиции
+ * оставалась полоска со штрихкодом.
  */
 @Composable
-internal fun ReceiptTotals(
-    state: SaleUiState,
-    payments: PaymentActions,
-    expanded: Boolean,
-    onToggle: () -> Unit,
-    onTaken: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
+internal fun ReceiptTotal(state: SaleUiState, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Spacing.inline)
     ) {
-        SectionHeader(textsOf(LocalLanguage.current).kassa.checkout.toPay, expanded, onToggle)
+        SectionTitle(textsOf(LocalLanguage.current).kassa.checkout.toPay)
         val color = MaterialTheme.colorScheme.onSurface
         MoneyText(Money.formatTiyn(state.total), Modifier.fillMaxWidth(), MoneyStyle.hero, color)
-        // Оплата прокручивается внутри блока, если ему не хватает высоты:
-        // итог над ней и «Пробить чек» под ней остаются на месте.
-        Box(modifier = Modifier.weight(1f, fill = false)) {
-            Collapsible(expanded) {
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
-                ) {
-                    PaymentPanel(state, payments)
-                    CashTaken(state.form, state.total, onTaken)
-                }
-            }
+    }
+}
+
+/**
+ * Оплата чека — виды оплаты, принятые деньги и сдача одним блоком.
+ *
+ * «Чем платят», «сколько дали» и «сколько сдачи» — один расчёт, и кассир
+ * ведёт его в одном месте. Сдача показана так же
+ * крупно и вторичной ролью схемы: кассир считает её в уме под взглядом
+ * очереди, и ошибка здесь стоит живых денег. Пока оплата не наличными,
+ * строк «принято» и «сдача» нет вовсе. Блок сворачивается стрелкой
+ * в заголовке, как остальные разделы кассы.
+ */
+@Composable
+internal fun PaymentCard(
+    state: SaleUiState,
+    payments: PaymentActions,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    onTaken: (String) -> Unit
+) {
+    TillCard {
+        CollapsibleSection(title = LocalSaleTexts.current.payment, expanded = expanded, onToggle = onToggle) {
+            PaymentPanel(state, payments)
+            CashTaken(state.form, state.total, onTaken)
         }
     }
 }

@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.cabinet.documents
 
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
+import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovement
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
@@ -36,7 +37,7 @@ class CabinetJournalRowsTest {
     fun `чек кабинета становится такой же строкой журнала`() {
         val receipt = CabinetReceipt(
             transactionId = "t-1",
-            receiptNumber = "12",
+            receiptNumber = "4138775047",
             shiftNumber = 3,
             operationType = "SALE",
             total = Decimal.parse("4500.84"),
@@ -48,12 +49,12 @@ class CabinetJournalRowsTest {
         val entry = receiptRow(receipt, cabinet).entry
 
         assertEquals(cabinet.documents.operationSale, entry.type)
-        assertEquals("12", entry.number)
-        assertEquals(12L, entry.numberOrder)
+        assertEquals(Glyphs.DASH, entry.number, "номера по счётчику кассы в списке кабинета нет")
+        assertNull(entry.numberOrder)
         assertEquals(0, Decimal.parse("4500.84").compareTo(requireNotNull(entry.amountOrder)))
         assertEquals(JournalDelivery.Delivered, entry.delivery)
         assertEquals(3L, entry.shiftNo)
-        assertEquals("KGD-77", entry.sign)
+        assertEquals("4138775047", entry.sign, "номер чека кабинета — фискальный признак, как в журнале кассы")
         assertEquals(1_788_807_779_000, entry.at, "время кабинета сортируется числом, а не строкой")
     }
 

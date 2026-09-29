@@ -19,6 +19,7 @@ internal val dashboardTextsKk = DashboardTexts(
         "және баспа түрі жоқ. Бас тарту коды мен кассир қызмет көрсетуге қажет.",
     openShift = "Ауысымды ашу",
     xReport = "X-есеп",
+    lastZReport = "№ %s ауысымның Z-есебі",
     closeShift = "Ауысымды жабу",
     closeShiftAsk = "Ауысымды жабып, Z-есеп алу керек пе?",
     closeShiftExplain = "Ауысымдағы құжат: %s, жәшікте %s. Z-есеп БФД-ға кетеді, ауысым қайтарылмайды.",

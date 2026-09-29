@@ -70,6 +70,7 @@ private fun refusalWords(code: String, texts: CabinetTexts): String? = when (cod
     "STATE_UNKNOWN" -> texts.hints.technicalUnknown
     "KKM_NOT_ACTIVE" -> texts.refusal.kkmNotActive
     "DEFAULT_PIN_NOT_ALLOWED" -> texts.refusal.defaultPinNotAllowed
+    "ACCESS_DENIED" -> texts.refusal.accessDenied
     else -> null
 }
 

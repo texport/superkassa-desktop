@@ -31,3 +31,10 @@ internal fun basisState(state: ReturnsUiState, journal: ReturnJournalTexts, onRe
     !state.dayRead -> ScreenState.Trouble(journal.basisUnread, journal.basisUnreadHint, onRetry)
     else -> ScreenState.Empty(AppIcons.noBasis, state.kind.emptyText(journal), journal.noBasisHint)
 }
+
+/**
+ * Что запрещает возврат целиком: заблокированная касса и закрытая смена.
+ * О них говорится вместо обеих панелей; `null` — возврат возможен.
+ */
+internal fun returnGate(state: ReturnsUiState, journal: ReturnJournalTexts): ScreenState? =
+    basisState(state, journal) {}.takeIf { state.blocked || !state.shiftOpen }

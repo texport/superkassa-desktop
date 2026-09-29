@@ -77,7 +77,7 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
         }
     }
 
-    override fun kind(kind: ReturnKind) = screen.update { it.copy(kind = kind, refund = null) }
+    override fun kind(kind: ReturnKind) = screen.update { it.copy(kind = kind, refund = null, issued = null) }
 
     override fun day(day: LocalDate) {
         screen.update { it.copy(day = day, refund = null, documents = emptyList()) }
@@ -89,7 +89,7 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
     /** Выбранный чек открывает возврат; строки чека касса отдаёт своим обращением. */
     override fun choose(basis: FiscalDocumentResponse) {
         if (busy.now) return
-        screen.update { it.copy(refund = RefundDraft(basis)) }
+        screen.update { it.copy(refund = RefundDraft(basis), issued = null) }
         if (!screen.value.signedIn) return
         viewModelScope.launch {
             val items = cases.readItems(basis.id).shown(texts.returns.title, "read basis items", talk)
@@ -130,8 +130,10 @@ class ReturnsViewModel(private val cases: RefundCases, private val talk: Talk) :
             val what = plan.kind.title(texts.returns)
             val done = textsOf(talk.language()).kassa.checkout.refundDone.fill(what, Money.formatTiyn(plan.refundTiyn))
             val words = FiscalWords(what, done, "refund")
-            val outcome = talk.fiscal(cases.issue(plan, attempt.key), words, texts)
-            screen.update { it.copy(refund = it.refund?.after(outcome)) }
+            val answer = cases.issue(plan, attempt.key)
+            val outcome = talk.fiscal(answer, words, texts)
+            val issued = RefundIssued.of(answer, plan.kind, plan.refundTiyn)
+            screen.update { it.copy(refund = it.refund?.after(outcome), issued = issued ?: it.issued) }
             read()
         }
     }

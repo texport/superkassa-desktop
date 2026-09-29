@@ -51,6 +51,19 @@ class PreferencesTest {
         home.deleteRecursively()
     }
 
+    /** Раскрытая с первого показа, легенда закрывала кружки касс в углу карты. */
+    @Test
+    fun `легенда карты свёрнута, пока её не раскрыли`() {
+        assertEquals(true, preferences().mapLegendCollapsed, "по умолчанию легенда свёрнута")
+
+        preferences().mapLegendCollapsed = false
+        assertEquals(false, preferences().mapLegendCollapsed, "раскрытая владельцем легенда не запомнилась")
+
+        preferences().mapLegendCollapsed = true
+        assertEquals(true, preferences().mapLegendCollapsed)
+        home.deleteRecursively()
+    }
+
     /**
      * Файлы на диске — те же, что писала касса до переноса настроек
      * в общий код: владелец обновляется и находит свою кассу, свой вид

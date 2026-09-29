@@ -1,11 +1,8 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -45,22 +42,17 @@ internal fun DomainCard(kind: DomainKind, input: DomainInput, onChange: (DomainI
     if (kind.fields.isEmpty()) return
     val texts = LocalStrings.current
     val extra = LocalSaleTexts.current
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
-        ) {
-            SectionTitle(kind.title(texts.enums))
-            DomainFields(kind, input, onChange)
-            // Упрёк — только о том, что кассир уже набрал: «Заполните:
-            // Номер машины» над нетронутой карточкой ругает за работу,
-            // которую он ещё не начинал. Незаполненное назовёт строка
-            // под кнопкой, где причина стоит всегда.
-            Hint(
-                problem = input.spoiled(kind)?.reason(extra),
-                hint = extra.domainHint
-            )
-        }
+    TillCard {
+        SectionTitle(kind.title(texts.enums))
+        DomainFields(kind, input, onChange)
+        // Упрёк — только о том, что кассир уже набрал: «Заполните:
+        // Номер машины» над нетронутой карточкой ругает за работу,
+        // которую он ещё не начинал. Незаполненное назовёт строка
+        // под кнопкой, где причина стоит всегда.
+        Hint(
+            problem = input.spoiled(kind)?.reason(extra),
+            hint = extra.domainHint
+        )
     }
 }
 

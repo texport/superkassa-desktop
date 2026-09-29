@@ -104,11 +104,13 @@ class ViewPreferences(private val directory: Path) {
      * Свёрнута ли легенда карты касс.
      *
      * Что значат цвета кружков, читают один раз: дальше легенда только
-     * занимает угол карты. Помнится так же, как карточка под картой.
+     * занимает угол карты. Поэтому она свёрнута и тогда, когда владелец
+     * её ещё не трогал: раскрытая с первого показа, она закрывала кружки
+     * касс в углу карты. Раскрытая владельцем — помнится раскрытой.
      */
     var mapLegendCollapsed: Boolean
-        get() = readSetting(mapLegendFile) == COLLAPSED
-        set(value) = writeSetting(mapLegendFile, if (value) COLLAPSED else null)
+        get() = readSetting(mapLegendFile) != EXPANDED
+        set(value) = writeSetting(mapLegendFile, if (value) COLLAPSED else EXPANDED)
 
     /**
      * Свёрнут ли список касс рядом с картой: владелец, который ищет
@@ -151,5 +153,8 @@ class ViewPreferences(private val directory: Path) {
 
         /** Отметка свёрнутого рельса: файла с другим содержимым не бывает. */
         const val COLLAPSED = "collapsed"
+
+        /** Отметка раскрытого там, где свёрнутое — по умолчанию. */
+        const val EXPANDED = "expanded"
     }
 }

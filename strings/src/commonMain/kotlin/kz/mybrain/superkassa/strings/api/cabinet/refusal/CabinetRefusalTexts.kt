@@ -22,5 +22,7 @@ data class CabinetRefusalTexts(
     val signWindowClosed: String,
     val signCancelled: String,
     val kkmNotActive: String,
-    val defaultPinNotAllowed: String
+    val defaultPinNotAllowed: String,
+    /** Кабинет закрыт компании: отвечает `ACCESS_DENIED` английской строкой. */
+    val accessDenied: String
 )

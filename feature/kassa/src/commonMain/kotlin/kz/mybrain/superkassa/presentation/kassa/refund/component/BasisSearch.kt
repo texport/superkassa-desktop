@@ -1,12 +1,12 @@
 package kz.mybrain.superkassa.presentation.kassa.refund.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import kotlinx.datetime.LocalDate
@@ -30,8 +30,8 @@ internal fun BasisSearch(
     onNumber: (String) -> Unit,
     onDay: (LocalDate) -> Unit
 ) {
-    // Номер тянется на остаток ряда: его края — края списка чеков под ним.
-    Row(horizontalArrangement = Arrangement.spacedBy(Spacing.cardGap), verticalAlignment = Alignment.CenterVertically) {
+    // День, под ним номер во всю ширину панели: края поля — края списка чеков под ним.
+    Column(verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
         DayBar(history, day, loading, onDay)
         OutlinedTextField(
             value = number,
@@ -40,7 +40,7 @@ internal fun BasisSearch(
             singleLine = true,
             // Номер чека — цифры: на планшете открывается цифровая клавиатура.
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

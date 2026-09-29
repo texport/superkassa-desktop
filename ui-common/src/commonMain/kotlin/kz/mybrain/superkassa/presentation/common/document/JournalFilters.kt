@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
 import kz.mybrain.superkassa.designsystem.picker.MenuChip
-import kz.mybrain.superkassa.designsystem.picker.SieveChip
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
@@ -23,10 +22,11 @@ import kz.mybrain.superkassa.strings.api.journal.HistoryJournalTexts
  * ни один документ не оказался, обещает разделение, за которым пустой
  * список. Поэтому наборы приходят снаружи — из того, что прочитано.
  *
- * Виды и состояния — плашками: их единицы, и нажатие на них сразу видно.
- * Смена — тоже плашкой, но с выпадающим списком: за месяц смен шестьдесят,
- * и шестьдесят плашек заняли бы пол-экрана, а поле ввода в ряду плашек
- * торчало вдвое выше соседей.
+ * Каждый отбор — плашкой с выпадающим списком (Material 3, Chips → Filter
+ * chips with menu), и выбранное стоит на самой плашке. Плашки на каждый
+ * вид и состояние переносились в два-три ряда, не помещались в отведённую
+ * отбору долю высоты, и нижний ряд срезался посередине пустыми рамками;
+ * строка, листаемая вбок, не листалась колесом мыши.
  */
 @Composable
 internal fun JournalFilters(
@@ -38,44 +38,36 @@ internal fun JournalFilters(
     onQuery: (JournalQuery) -> Unit
 ) {
     WrapRow(modifier = Modifier.fillMaxWidth(), spacing = Spacing.fieldGap) {
-        TypeChips(journal, types, query, onQuery)
-        DeliveryChips(journal, deliveries, query, onQuery)
+        TypeChip(journal, types, query, onQuery)
+        DeliveryChip(journal, deliveries, query, onQuery)
         ShiftChip(journal, shifts, query, onQuery)
     }
 }
 
 /** Отбор по виду документа: названия — от источника, а не свои. */
 @Composable
-private fun TypeChips(
+private fun TypeChip(
     journal: HistoryJournalTexts,
     types: List<JournalType>,
     query: JournalQuery,
     onQuery: (JournalQuery) -> Unit
 ) {
     if (types.isEmpty()) return
-    ChipGroup(
-        title = journal.documentType,
-        first = {
-            SieveChip(
-                selected = query.type == null,
-                label = journal.allTypes,
-                onClick = { onQuery(query.copy(type = null)) }
-            )
-        }
-    ) {
-        types.forEach { type ->
-            SieveChip(
-                selected = query.type == type.code,
-                label = type.title,
-                onClick = { onQuery(query.copy(type = type.code)) }
-            )
-        }
+    val title = { code: String? -> types.firstOrNull { it.code == code }?.title ?: journal.allTypes }
+    ChipGroup(journal.documentType) {
+        MenuChip(
+            value = title(query.type),
+            options = listOf(null) + types.map { it.code },
+            title = title,
+            chosen = query.type != null,
+            onSelect = { onQuery(query.copy(type = it)) }
+        )
     }
 }
 
 /** Отбор по состоянию доставки: доставлен, в очереди, отклонён. */
 @Composable
-private fun DeliveryChips(
+private fun DeliveryChip(
     journal: HistoryJournalTexts,
     deliveries: List<JournalDelivery>,
     query: JournalQuery,
@@ -83,32 +75,19 @@ private fun DeliveryChips(
 ) {
     if (deliveries.size < 2) return
     val states = LocalStrings.current.status
-    ChipGroup(
-        title = journal.deliveryState,
-        first = {
-            SieveChip(
-                selected = query.delivery == null,
-                label = journal.allStates,
-                onClick = { onQuery(query.copy(delivery = null)) }
-            )
-        }
-    ) {
-        deliveries.forEach { state ->
-            SieveChip(
-                selected = query.delivery == state,
-                label = state.title(states),
-                onClick = { onQuery(query.copy(delivery = state)) }
-            )
-        }
+    val title = { state: JournalDelivery? -> state?.title(states) ?: journal.allStates }
+    ChipGroup(journal.deliveryState) {
+        MenuChip(
+            value = title(query.delivery),
+            options = listOf(null) + deliveries,
+            title = title,
+            chosen = query.delivery != null,
+            onSelect = { onQuery(query.copy(delivery = it)) }
+        )
     }
 }
 
-/**
- * Отбор по смене: за месяц их десятки, поэтому выпадающим списком.
- *
- * Подпись и рост — от плашки, как у отбора по виду и по состоянию:
- * три отбора стоят одним рядом, и разного размера им быть не за что.
- */
+/** Отбор по смене: за месяц их десятки. */
 @Composable
 private fun ShiftChip(
     journal: HistoryJournalTexts,
@@ -117,48 +96,33 @@ private fun ShiftChip(
     onQuery: (JournalQuery) -> Unit
 ) {
     if (shifts.isEmpty()) return
-    ChipGroup(
-        title = journal.colShift,
-        first = {
-            MenuChip(
-                value = shiftLabel(query.shiftNo, journal),
-                options = listOf(null) + shifts,
-                title = { shiftLabel(it, journal) },
-                chosen = query.shiftNo != null,
-                onSelect = { onQuery(query.copy(shiftNo = it)) }
-            )
-        }
-    )
+    ChipGroup(journal.colShift) {
+        MenuChip(
+            value = shiftLabel(query.shiftNo, journal),
+            options = listOf(null) + shifts,
+            title = { shiftLabel(it, journal) },
+            chosen = query.shiftNo != null,
+            onSelect = { onQuery(query.copy(shiftNo = it)) }
+        )
+    }
 }
 
 /** Как названа смена в отборе: номер, а «ничего не выбрано» — словами. */
 internal fun shiftLabel(shift: Long?, journal: HistoryJournalTexts): String =
     shift?.toString() ?: journal.allShifts
 
-/**
- * Подпись отбора и его плашки.
- *
- * Плашки переносятся по одной, а не сжимаются: в узком окне обычный ряд
- * ставил последнюю плашку столбиком по букве. Подпись не уходит от первой
- * плашки — строка, начатая подписью без плашек, читалась бы оборванной.
- *
- * @param first плашка «все», которая стоит вплотную к подписи.
- * @param chips остальные плашки отбора.
- */
+/** Подпись отбора и его плашка: отбор читается от своего названия. */
 @Composable
-private fun ChipGroup(title: String, first: @Composable () -> Unit, chips: @Composable () -> Unit = {}) {
-    WrapRow(spacing = Spacing.buttonGap) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            first()
-        }
-        chips()
+private fun ChipGroup(title: String, chip: @Composable () -> Unit) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        chip()
     }
 }

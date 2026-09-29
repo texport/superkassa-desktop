@@ -39,6 +39,9 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
 
     val state: StateFlow<CabinetUiState> = screen.asStateFlow()
 
+    /** Что открыто в разделе: вкладка и документы кассы. */
+    val view = CabinetView(screen)
+
     /** Чем владелец подписывает и что подписывающий просит у него сейчас. */
     val signature = CabinetSigning(useCases.signing)
 
@@ -87,6 +90,14 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
         viewModelScope.launch { lists.readAll() }
     }
 
+    /**
+     * Перечитывает кассы этой машины при возврате в кабинет: мастер ставит
+     * кассу на учёт без кабинета, и в списке она оставалась черновиком.
+     */
+    fun rereadHere() {
+        viewModelScope.launch { lists.rereadHere() }
+    }
+
     /** Перечитывает точки; `false` — кабинет их не отдал. */
     suspend fun readPlaces(): Boolean = lists.readPlaces()
 
@@ -107,11 +118,6 @@ class CabinetViewModel(val useCases: CabinetCases, val talk: Talk) : ViewModel()
      * списка сети незачем.
      */
     fun registerChanged(register: CabinetRegister) = lists.registerChanged(register)
-
-    /** Открывает документы кассы поверх кабинета: выбранная касса остаётся выбранной. */
-    fun openDocuments(register: CabinetRegister) = screen.update { it.copy(documentsOf = register) }
-
-    fun closeDocuments() = screen.update { it.copy(documentsOf = null) }
 
     /**
      * Вошёл владелец — хозяйство его компании читается сразу; вышел или

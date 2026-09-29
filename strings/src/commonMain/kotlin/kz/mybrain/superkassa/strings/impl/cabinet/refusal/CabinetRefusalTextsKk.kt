@@ -12,5 +12,6 @@ internal val cabinetRefusalTextsKk = CabinetRefusalTexts(
     signWindowClosed = "Қол қою терезесі жабылды",
     signCancelled = "Қол қою NCALayer-де тоқтатылды",
     kkmNotActive = "Касса деректерді қабылдау серверінде қызмет көрсетуге жіберілмеген",
-    defaultPinNotAllowed = "Кассада әдепкі пин тұр — оны кассаның өзінде ауыстырыңыз"
+    defaultPinNotAllowed = "Кассада әдепкі пин тұр — оны кассаның өзінде ауыстырыңыз",
+    accessDenied = "БФД кабинеті бұл компания үшін жабық — қолжетімділікті ашу үшін БФД-ға хабарласыңыз"
 )

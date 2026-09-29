@@ -1,5 +1,9 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetOwner
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
@@ -53,4 +57,27 @@ data class CabinetUiState(
 
     /** Сколько точек показать итогом: прочитанное не меньше объявленного. */
     val shownTotal: Int get() = maxOf(places.size, placesTotal)
+}
+
+/**
+ * Что открыто в разделе кабинета: вкладка и документы кассы.
+ *
+ * Живёт в модели кабинета, а не в разметке: вкладка переживает и шаги
+ * истории окна, и уход в другой раздел — владелец возвращается туда,
+ * откуда ушёл, а не на вкладку компании.
+ */
+class CabinetView internal constructor(private val screen: MutableStateFlow<CabinetUiState>) {
+    private val chosen = MutableStateFlow(CabinetTab.Company)
+
+    /** Открытая вкладка. */
+    internal val tab: StateFlow<CabinetTab> = chosen.asStateFlow()
+
+    internal fun selectTab(tab: CabinetTab) {
+        chosen.value = tab
+    }
+
+    /** Открывает документы кассы поверх кабинета: выбранная касса остаётся выбранной. */
+    fun openDocuments(register: CabinetRegister) = screen.update { it.copy(documentsOf = register) }
+
+    fun closeDocuments() = screen.update { it.copy(documentsOf = null) }
 }

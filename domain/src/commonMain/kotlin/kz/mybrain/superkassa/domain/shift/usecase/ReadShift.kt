@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.domain.shift.model.ShiftPart
 import kz.mybrain.superkassa.domain.shift.model.ShiftSnapshot
 import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.domain.shift.model.ShiftTrouble
+import kz.mybrain.superkassa.domain.shift.model.isClosed
 import kz.mybrain.superkassa.domain.signin.port.SignedKkm
 
 /**
@@ -43,9 +44,17 @@ class ReadShift(private val kassa: Kassa, private val signed: SignedKkm) {
             open = open.takeIf { state == ShiftState.Open },
             documents = (documents as? Documents.Read)?.list,
             cash = cash,
-            trouble = troubles.firstOrNull()
+            trouble = troubles.firstOrNull(),
+            lastClosed = if (state == ShiftState.Closed) lastClosed(kkmId, pin) else null
         )
     }
+
+    /**
+     * Последняя закрытая смена — молча: без неё главный экран теряет
+     * только ссылку на Z-отчёт, и беда её чтения экрану не беда.
+     */
+    private suspend fun lastClosed(kkmId: String, pin: String): ShiftResponse? =
+        (kassa.ask { it.listShifts(kkmId, 1, 0, pin) } as? Answer.Done)?.value?.firstOrNull { it.isClosed }
 
     /** Документы открытой смены, страницами: за раз касса отдаёт не больше [PAGE]. */
     private suspend fun readDocuments(

@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -30,7 +28,6 @@ import kz.mybrain.superkassa.designsystem.button.underFieldLabel
 import kz.mybrain.superkassa.designsystem.field.fieldWidth
 import kz.mybrain.superkassa.designsystem.keyboard.onEnter
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
-import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Sizes
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.signin.model.Pin
@@ -43,9 +40,9 @@ import kz.mybrain.superkassa.domain.signin.model.Pin
  * не отступом, а собственным уровнем поверхности.
  *
  * На телефоне — колонкой: касса над пином, пин рядом со входом. В одну
- * строку поле пина, название кассы, «Обновить» и «Войти» на 360 dp
- * не помещались, и название кассы сжималось до буквы — а это первый
- * экран телефона.
+ * строку поле пина, название кассы и «Войти» на 360 dp не помещались,
+ * и название кассы сжималось до буквы — а это первый экран телефона.
+ * «Перечитать список» — действие экрана, и стоит оно в шапке окна.
  */
 @Composable
 internal fun SignInBar(state: LoginUiState, actions: LoginActions) {
@@ -70,7 +67,7 @@ internal fun SignInBar(state: LoginUiState, actions: LoginActions) {
     }
 }
 
-/** Всё одной строкой: пин, касса, «Обновить», «Войти» — окно шире телефона. */
+/** Всё одной строкой: пин, касса и «Войти» — окно шире телефона. */
 @Composable
 private fun WideBar(
     state: LoginUiState,
@@ -86,12 +83,11 @@ private fun WideBar(
     ) {
         PinField(state.pin, actions, Modifier.fieldWidth(LocalStrings.current.general.pin, Sizes.fieldPin), onGo)
         ChosenKkm(state, modifier = Modifier.weight(1f).underFieldLabel())
-        ReloadButton(actions, Modifier.underFieldLabel())
         EnterButton(ready, actions)
     }
 }
 
-/** Телефон: касса с «Обновить» строкой выше, пин во всю ширину рядом со входом. */
+/** Телефон: касса строкой выше, пин во всю ширину рядом со входом. */
 @Composable
 private fun StackedBar(
     state: LoginUiState,
@@ -101,10 +97,7 @@ private fun StackedBar(
     onGo: () -> Unit
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            ChosenKkm(state, modifier = Modifier.weight(1f))
-            ReloadButton(actions)
-        }
+        ChosenKkm(state, modifier = Modifier.fillMaxWidth())
         Row(
             horizontalArrangement = Arrangement.spacedBy(Spacing.fieldGap),
             verticalAlignment = Alignment.CenterVertically
@@ -112,13 +105,6 @@ private fun StackedBar(
             PinField(state.pin, actions, Modifier.weight(1f), onGo)
             EnterButton(ready, actions)
         }
-    }
-}
-
-@Composable
-private fun ReloadButton(actions: LoginActions, modifier: Modifier = Modifier) {
-    IconButton(onClick = actions::reload, modifier = modifier) {
-        Icon(AppIcons.refresh, contentDescription = LocalStrings.current.login.reload)
     }
 }
 

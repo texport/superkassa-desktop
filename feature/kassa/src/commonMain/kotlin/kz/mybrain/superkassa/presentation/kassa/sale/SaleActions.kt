@@ -7,7 +7,6 @@ import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
 import kz.mybrain.superkassa.domain.kassa.model.sale.DomainInput
 import kz.mybrain.superkassa.domain.kassa.model.sale.Position
 import kz.mybrain.superkassa.domain.kassa.model.sale.SaleOperation
-import kz.mybrain.superkassa.domain.print.model.ShareWay
 import kz.mybrain.superkassa.presentation.kassa.payment.PaymentActions
 
 /** Что кассир делает со строками чека. По умолчанию пусто — для снимков вида. */
@@ -98,21 +97,3 @@ class SaleActions(
 /** Действия экрана, выполняемые этой моделью. */
 internal fun SaleViewModel.actions(): SaleActions =
     SaleActions(::issue, ::nextReceipt, ::togglePanel, basket, entry, form, payments)
-
-/**
- * Что сделать с пробитым чеком: показать, распечатать, поделиться с покупателем.
- *
- * Печать — чужая продаже область, её подаёт каркас окна; без неё
- * кнопок нет, а итог чека остаётся.
- *
- * @property show открыть чек по документу кассы; `null` — показывать негде.
- * @property print распечатать чек по документу кассы; `null` — печатать негде.
- * @property shareWays пути, которыми машина делится чеком; пусто — кнопки нет.
- * @property share поделиться чеком по документу кассы выбранным путём.
- */
-class ReceiptOutput(
-    val show: ((String) -> Unit)? = null,
-    val print: ((String) -> Unit)? = null,
-    val shareWays: List<ShareWay> = emptyList(),
-    val share: (String, ShareWay) -> Unit = { _, _ -> }
-)

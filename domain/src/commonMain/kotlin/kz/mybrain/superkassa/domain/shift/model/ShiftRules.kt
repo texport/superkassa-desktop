@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.domain.journal.model
+package kz.mybrain.superkassa.domain.shift.model
 
 import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftResponse
 import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftStatus

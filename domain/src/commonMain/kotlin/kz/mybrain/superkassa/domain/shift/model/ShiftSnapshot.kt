@@ -13,6 +13,8 @@ import kz.mybrain.superkassa.domain.kassa.model.Answer
  * @property documents документы открытой смены; `null` — касса их не отдала.
  * @property cash наличные в ящике, в тиынах; `null` — касса не сказала.
  * @property trouble первая беда перечитывания; `null` — прочиталось всё.
+ * @property lastClosed последняя закрытая смена, пока новая не открыта:
+ *   её Z-отчёт кассир открывает с главного экрана сразу после закрытия.
  */
 class ShiftSnapshot(
     val kkm: KkmResponse?,
@@ -20,7 +22,8 @@ class ShiftSnapshot(
     val open: ShiftResponse?,
     val documents: List<FiscalDocumentResponse>?,
     val cash: Long?,
-    val trouble: ShiftTrouble?
+    val trouble: ShiftTrouble?,
+    val lastClosed: ShiftResponse? = null
 )
 
 /** Что именно не прочиталось: экран называет это своими словами. */

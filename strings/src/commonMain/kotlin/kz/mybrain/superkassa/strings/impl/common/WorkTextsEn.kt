@@ -19,6 +19,7 @@ internal val dashboardTextsEn = DashboardTexts(
         "counters and they have no printed form. The refusal code and the cashier are for support.",
     openShift = "Open shift",
     xReport = "X report",
+    lastZReport = "Z report of shift %s",
     closeShift = "Close shift",
     closeShiftAsk = "Close the shift and take the Z report?",
     closeShiftExplain = "Documents in the shift: %s, %s in the drawer. The Z report goes to BFD and cannot be undone.",

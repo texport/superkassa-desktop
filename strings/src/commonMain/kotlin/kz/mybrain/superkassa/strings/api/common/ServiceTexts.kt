@@ -63,8 +63,6 @@ data class SettingsScreenTexts(
     val ofdSilent: String,
     val ofdInfo: String,
     val programmingMode: String,
-    val enterProgramming: String,
-    val exitProgramming: String,
     /** Плашка состояния: касса сейчас в режиме программирования. */
     val programmingOn: String,
     val enteredProgramming: String,

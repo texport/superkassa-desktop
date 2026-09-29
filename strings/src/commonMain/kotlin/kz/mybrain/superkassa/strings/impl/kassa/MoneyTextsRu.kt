@@ -98,6 +98,10 @@ internal val moneyTextsRu = MoneyTexts(
         needShiftClosed = "Смена закрыта",
         needQueueEmpty = "Очередь отправки пуста",
         needOnline = "Автономный режим выключен",
+        doProgramming = "Войдите в программирование",
+        doShiftClosed = "Закройте смену",
+        doQueueEmpty = "Дошлите очередь в БФД",
+        doOnline = "Выйдите из автономного режима",
         decommissionConfirm = "Убрать кассу %s с этой машины?",
         decommissionDone = "Касса убрана с этого рабочего места"
     )

@@ -101,6 +101,10 @@ internal val moneyTextsKk = MoneyTexts(
         needShiftClosed = "Ауысым жабық",
         needQueueEmpty = "Жіберу кезегі бос",
         needOnline = "Дербес режим өшірулі",
+        doProgramming = "Бағдарламалауға кіріңіз",
+        doShiftClosed = "Ауысымды жабыңыз",
+        doQueueEmpty = "Кезекті БФД-ға жіберіңіз",
+        doOnline = "Дербес режимнен шығыңыз",
         decommissionConfirm = "%s кассасы осы машинадан алып тасталсын ба?",
         decommissionDone = "Касса осы жұмыс орнынан алып тасталды"
     )

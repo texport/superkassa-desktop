@@ -1,6 +1,7 @@
 package kz.mybrain.superkassa.presentation.analytics.map
 
 import kz.mybrain.superkassa.domain.analytics.model.PlacedKkm
+import kz.mybrain.superkassa.domain.kkm.model.CountryBounds
 import kz.mybrain.superkassa.presentation.common.mapview.HOUSE_ZOOM
 import kz.mybrain.superkassa.presentation.common.mapview.MapProjection
 import kotlin.math.abs
@@ -18,11 +19,16 @@ internal data class AnalyticsMapFit(val latitude: Double, val longitude: Double,
  * Увеличение подбирается от крупного к мелкому: берётся самое крупное,
  * при котором размах набора ещё умещается в окно. Одна касса — самое
  * крупное из возможных: на нём различимы дома.
+ *
+ * Охватываются кассы в пределах страны ([CountryBounds]); точки вне её —
+ * ошибки координат — видны, если отдалить карту, но охват не растягивают.
+ * Нет ни одной кассы в стране — охватывается весь набор.
  */
 internal fun fitting(points: List<PlacedKkm>, width: Int, height: Int): AnalyticsMapFit? {
-    if (points.isEmpty()) return null
-    val latitudes = points.map { it.latitude }
-    val longitudes = points.map { it.longitude }
+    val framed = points.filter { CountryBounds.contains(it.latitude, it.longitude) }.ifEmpty { points }
+    if (framed.isEmpty()) return null
+    val latitudes = framed.map { it.latitude }
+    val longitudes = framed.map { it.longitude }
     val zoom = (HOUSE_ZOOM downTo COUNTRY_ZOOM).firstOrNull { zoom ->
         fits(latitudes, longitudes, zoom, width, height)
     } ?: COUNTRY_ZOOM

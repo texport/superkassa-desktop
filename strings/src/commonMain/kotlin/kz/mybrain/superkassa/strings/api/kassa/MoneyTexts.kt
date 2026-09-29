@@ -128,6 +128,11 @@ data class KkmSetupTexts(
     val needShiftClosed: String,
     val needQueueEmpty: String,
     val needOnline: String,
+    /** Невыполненные требования — что сделать, а не состояние: «Закройте смену». */
+    val doProgramming: String,
+    val doShiftClosed: String,
+    val doQueueEmpty: String,
+    val doOnline: String,
     val decommissionConfirm: String,
     val decommissionDone: String
 )

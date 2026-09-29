@@ -84,7 +84,7 @@ class ReturnsLookTest {
         ).use { probe ->
             repeat(SETTLE) { probe.frame() }
             val before = probe.frame()
-            probe.click(androidx.compose.ui.geometry.Offset(BASIS_X, BASIS_Y))
+            probe.click(BASIS)
             repeat(SETTLE) { probe.frame() }
             val after = probe.frame()
             java.io.File("/tmp/kassa-return-basis-chosen.png").writeBytes(after)
@@ -122,7 +122,7 @@ class ReturnsLookTest {
             content = { ReturnsScreen(model) }
         ).use { probe ->
             repeat(SETTLE) { probe.frame() }
-            probe.click(androidx.compose.ui.geometry.Offset(BASIS_X, BASIS_Y))
+            probe.click(BASIS)
             repeat(SETTLE) { probe.frame() }
             val frame = probe.frame()
             java.io.File("/tmp/kassa-$folder.png").writeBytes(frame)
@@ -144,8 +144,9 @@ class ReturnsLookTest {
         const val BUTTON_STRIP = 60
 
         /** Первая строка списка чеков-оснований: по ней и щёлкаем. */
-        const val BASIS_X = 300f
-        const val BASIS_Y = 230f
+
+        /** Строка чека-основания в списке — по надписи, а не по месту на экране. */
+        const val BASIS = "Чек №"
 
         val ITEMS = listOf(
             ReturnsScene.item("Баранина на косточке, охлаждённая", "3450.00", 1_450, "5002.50", unit = "116"),

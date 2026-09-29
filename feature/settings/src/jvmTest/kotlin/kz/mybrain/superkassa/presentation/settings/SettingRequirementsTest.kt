@@ -29,6 +29,7 @@ class SettingRequirementsTest {
                 val unmet = requirementLine(KkmNeed(demand, met = false), texts)
                 assertNotEquals(met, unmet, "$language: $demand читается одинаково без цвета")
                 assertTrue(demand.title(texts) in met, "$language: $demand потерял своё название")
+                assertTrue(demand.todo(texts) in unmet, "$language: невыполненное $demand не говорит, что сделать")
             }
         }
     }

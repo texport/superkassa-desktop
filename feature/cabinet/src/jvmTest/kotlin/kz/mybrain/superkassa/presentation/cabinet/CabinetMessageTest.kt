@@ -101,6 +101,15 @@ class CabinetMessageTest {
         assertEquals(texts.applications.shiftOpenTitle, assertIs<Message.Refusal>(message).text)
     }
 
+    /** Закрытый кабинет приходил английской строкой сервера на экран владельца. */
+    @Test
+    fun `закрытый компании кабинет назван словами владельца`() {
+        val problem = CabinetProblem.Refused("ACCESS_DENIED", "Company is not allowed to use the cabinet")
+        val message = assertIs<Message.Refusal>(cabinetMessage(problem, texts))
+        assertEquals(texts.refusal.accessDenied, message.text)
+        assertEquals("ACCESS_DENIED", message.code)
+    }
+
     @Test
     fun `истёкший доступ и отказ подписи говорят по-русски`() {
         assertEquals(

@@ -75,6 +75,16 @@ class AnalyticsMapPointsTest {
         assertNull(fitting(emptyList(), width, height))
     }
 
+    /** Одна касса с координатами в Европе растягивала охват сети на пол-Евразии. */
+    @Test
+    fun `касса с координатами вне страны охват не растягивает`() {
+        val home = listOf(placed("c1", almatyLatitude, almatyLongitude), placed("c2", 51.089753, 71.406166))
+        val stray = placed("c3", 52.520008, 13.404954)
+
+        assertEquals(fitting(home, width, height), fitting(home + stray, width, height))
+        assertEquals(stray.latitude, fitting(listOf(stray), width, height)?.latitude, "касса вне страны — одна")
+    }
+
     @Test
     fun `кассы с координатами кабинета встают на карту сразу`() {
         val view = KkmMapView(

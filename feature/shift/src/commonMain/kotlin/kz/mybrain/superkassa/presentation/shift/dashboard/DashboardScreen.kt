@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
 import kz.mybrain.superkassa.designsystem.adaptive.TwoPane
 import kz.mybrain.superkassa.designsystem.adaptive.WrapRow
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
@@ -29,6 +28,7 @@ import kz.mybrain.superkassa.domain.document.model.printable
 import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.model.collectAsScreenState
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.AutonomousCard
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.DashboardPage
 import kz.mybrain.superkassa.presentation.shift.dashboard.component.RefusedDocuments
@@ -45,15 +45,11 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * своя смена, а история — отдельный раздел.
  */
 @Composable
-fun DashboardScreen(
-    model: DashboardViewModel,
-    onPreview: (FiscalDocumentResponse) -> Unit,
-    onPrint: (FiscalDocumentResponse) -> Unit
-) {
+fun DashboardScreen(model: DashboardViewModel, print: PrintActions) {
     val state by model.state.collectAsScreenState()
     // Продажа, возврат и деньги меняют смену: вернувшись, кассир видит их.
     LaunchedEffect(model) { model.refresh() }
-    DashboardContent(state, model.actions(onPreview, onPrint))
+    DashboardContent(state, model.actions(print))
 }
 
 /** Главный экран по готовому состоянию: снимки вида рисуют его без модели. */

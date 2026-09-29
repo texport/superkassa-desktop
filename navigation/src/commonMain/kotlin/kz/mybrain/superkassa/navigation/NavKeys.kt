@@ -17,6 +17,7 @@ import kz.mybrain.superkassa.navigation.section.SaleKey
 import kz.mybrain.superkassa.navigation.section.SettingsKey
 import kz.mybrain.superkassa.navigation.section.UsersKey
 import kz.mybrain.superkassa.navigation.step.PlaceCardKey
+import kz.mybrain.superkassa.navigation.step.RegisterDocumentsKey
 import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
 import kz.mybrain.superkassa.navigation.step.SetupStepKey
@@ -58,5 +59,6 @@ private fun PolymorphicModuleBuilder<NavKey>.steps() {
     subclass(SettingsSectionKey::class, SettingsSectionKey.serializer())
     subclass(ReturnBasisKey::class, ReturnBasisKey.serializer())
     subclass(PlaceCardKey::class, PlaceCardKey.serializer())
+    subclass(RegisterDocumentsKey::class, RegisterDocumentsKey.serializer())
     subclass(SetupStepKey::class, SetupStepKey.serializer())
 }

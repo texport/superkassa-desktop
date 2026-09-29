@@ -7,8 +7,10 @@ import io.github.texport.superkassa.core.presentation.api.model.reference.Paymen
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.domain.kassa.model.ContactChannels
 import kz.mybrain.superkassa.domain.kassa.model.ContactKind
+import kz.mybrain.superkassa.domain.kassa.model.Fiscal
 import kz.mybrain.superkassa.domain.kassa.model.refund.RefundDraft
 import kz.mybrain.superkassa.domain.kassa.model.refund.ReturnKind
 import kz.mybrain.superkassa.domain.kassa.model.refund.matches
@@ -28,6 +30,8 @@ import kotlin.time.Clock
  * @property confirming кассир нажал «Вернуть», и касса спрашивает сумму вслух:
  *   возврат, как и деньги из ящика, не отменяется.
  * @property channels какими видами контакта можно отправить чек возврата покупателю.
+ * @property issued оформленный возврат: его чек показывают и печатают, пока
+ *   кассир не взялся за следующий.
  */
 data class ReturnsUiState(
     val kkm: KkmResponse? = null,
@@ -46,7 +50,8 @@ data class ReturnsUiState(
     val refund: RefundDraft? = null,
     val working: Boolean = false,
     val confirming: Boolean = false,
-    val channels: ContactChannels = ContactChannels()
+    val channels: ContactChannels = ContactChannels(),
+    val issued: RefundIssued? = null
 ) {
     val blocked: Boolean get() = kkm?.isBlocked == true
 
@@ -66,4 +71,17 @@ data class ReturnsUiState(
 
     /** Вернуть можно: сумма принята, оплаты сходятся и прежний возврат кончился. */
     val canRefund: Boolean get() = !working && signedIn && refund?.ready == true
+}
+
+/**
+ * Оформленный возврат: чек возврата в кассе, его вид и сумма.
+ *
+ * @property total сумма возврата, в тиынах.
+ */
+data class RefundIssued(val documentId: String, val kind: ReturnKind, val total: Long) {
+    companion object {
+        /** Оформлен ли возврат по ответу кассы: принятый документ, а не отказ БФД; `null` — не оформлен. */
+        fun of(answer: Answer<Fiscal>, kind: ReturnKind, total: Long): RefundIssued? =
+            (answer as? Answer.Done)?.value?.takeIf { !it.rejected }?.let { RefundIssued(it.documentId, kind, total) }
+    }
 }

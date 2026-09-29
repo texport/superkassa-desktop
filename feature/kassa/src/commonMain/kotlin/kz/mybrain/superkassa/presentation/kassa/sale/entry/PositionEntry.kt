@@ -1,18 +1,12 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.entry
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.section.CollapsibleSection
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.presentation.kassa.sale.EntryActions
 import kz.mybrain.superkassa.presentation.kassa.sale.LocalSaleTexts
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
+import kz.mybrain.superkassa.presentation.kassa.sale.component.TillCard
 
 /**
  * Ввод позиции: штрихкодом или руками.
@@ -33,21 +27,16 @@ import kz.mybrain.superkassa.presentation.kassa.sale.SaleUiState
 @Composable
 internal fun PositionEntryCard(state: SaleUiState, actions: EntryActions, expanded: Boolean, onToggle: () -> Unit) {
     val extra = LocalSaleTexts.current
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
+    TillCard {
+        CollapsibleSection(
+            title = extra.positionEntry,
+            expanded = expanded,
+            onToggle = onToggle,
+            info = extra.barcodeHint,
+            always = { BarcodeField(state, actions) }
         ) {
-            CollapsibleSection(
-                title = extra.positionEntry,
-                expanded = expanded,
-                onToggle = onToggle,
-                info = extra.barcodeHint,
-                always = { BarcodeField(state, actions) }
-            ) {
-                HorizontalDivider()
-                AddPositionForm(state.draft, actions)
-            }
+            HorizontalDivider()
+            AddPositionForm(state.draft, actions)
         }
     }
 }

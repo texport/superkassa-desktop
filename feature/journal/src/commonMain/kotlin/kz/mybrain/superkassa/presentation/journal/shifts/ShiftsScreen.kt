@@ -15,7 +15,7 @@ import kz.mybrain.superkassa.designsystem.state.ScreenState
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.icon.AppIcons
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
-import kz.mybrain.superkassa.domain.journal.model.zReportId
+import kz.mybrain.superkassa.domain.shift.model.zReportId
 import kz.mybrain.superkassa.presentation.common.document.color
 import kz.mybrain.superkassa.presentation.common.period.text
 import kz.mybrain.superkassa.presentation.common.print.PrintActions
@@ -45,7 +45,7 @@ fun ShiftsScreen(state: ShiftsUiState, actions: ShiftsActions, print: PrintActio
         )
         if (opened == null) {
             ShiftList(journal, state, actions) { shift ->
-                print.preview(shift.zReportId, PrintFileName.of(Z_REPORT, number = null, shiftNo = shift.shiftNo))
+                print.preview(shift.zReportId, PrintFileName.zReport(shift.shiftNo))
             }
         } else {
             ShiftDocuments(journal, state, actions, print)
@@ -93,6 +93,3 @@ internal fun shiftsState(
     shifts == 0 -> ScreenState.Empty(AppIcons.noDocuments, journal.none, journal.noneHint)
     else -> ScreenState.Ready
 }
-
-/** Вид документа закрытия смены, как его называет касса. */
-private const val Z_REPORT = "SHIFT_CLOSE"

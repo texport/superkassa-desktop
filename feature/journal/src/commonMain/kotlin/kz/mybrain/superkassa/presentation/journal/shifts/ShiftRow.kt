@@ -27,8 +27,8 @@ import kz.mybrain.superkassa.designsystem.theme.StatusColors
 import kz.mybrain.superkassa.designsystem.theme.size.HistoryLayout
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.designsystem.theme.size.TableColumns
-import kz.mybrain.superkassa.domain.journal.model.isClosed
-import kz.mybrain.superkassa.domain.journal.model.zReportId
+import kz.mybrain.superkassa.domain.shift.model.isClosed
+import kz.mybrain.superkassa.domain.shift.model.zReportId
 import kz.mybrain.superkassa.presentation.common.document.color
 import kz.mybrain.superkassa.presentation.common.document.rowTint
 import kz.mybrain.superkassa.presentation.common.period.text

@@ -43,6 +43,8 @@ internal class RefundEditor(
 
     override fun cancel() = screen.update { it.copy(confirming = false) }
 
+    override fun next() = screen.update { it.copy(issued = null) }
+
     private fun edit(change: (RefundDraft) -> RefundDraft) =
         screen.update { now -> if (busy.now) now else now.copy(refund = now.refund?.let(change)) }
 }

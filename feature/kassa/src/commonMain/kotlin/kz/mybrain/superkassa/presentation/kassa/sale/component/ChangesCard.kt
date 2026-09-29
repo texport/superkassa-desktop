@@ -1,10 +1,6 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,7 +10,6 @@ import kz.mybrain.superkassa.designsystem.section.NamedSumRow
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
-import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.kassa.model.entry.amount
 import kz.mybrain.superkassa.domain.kassa.model.sale.Adjustment
 import kz.mybrain.superkassa.domain.kassa.model.sale.AdjustmentUnit
@@ -50,18 +45,13 @@ import kz.mybrain.superkassa.strings.api.textsOf
 @Composable
 internal fun ReceiptChangesCard(sale: SaleUiState, actions: FormActions, expanded: Boolean, onToggle: () -> Unit) {
     val extra = LocalSaleTexts.current
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
-        ) {
-            val title = if (sale.vatPayer) extra.receiptChangesVat else extra.receiptChanges
-            CollapsibleSection(title = title, expanded = expanded, onToggle = onToggle) {
-                ChangeFields(sale, actions)
-                if (sale.vatPayer) ReceiptVatFields(sale, actions.vat)
-                HorizontalDivider()
-                ChangeSummary(sale.form, sale.basket)
-            }
+    TillCard {
+        val title = if (sale.vatPayer) extra.receiptChangesVat else extra.receiptChanges
+        CollapsibleSection(title = title, expanded = expanded, onToggle = onToggle) {
+            ChangeFields(sale, actions)
+            if (sale.vatPayer) ReceiptVatFields(sale, actions.vat)
+            HorizontalDivider()
+            ChangeSummary(sale.form, sale.basket)
         }
     }
 }

@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import kz.mybrain.superkassa.designsystem.picker.SwitchRow
 import kz.mybrain.superkassa.designsystem.section.SettingGroup
 import kz.mybrain.superkassa.designsystem.status.Chip
+import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.strings.LocalStrings
 import kz.mybrain.superkassa.designsystem.theme.StatusColors
+import kz.mybrain.superkassa.strings.api.textsOf
 
 /**
  * Режим программирования: в нём ли касса, и переключатель, который это меняет.
@@ -30,7 +32,10 @@ internal fun ProgrammingCard(kkm: KkmSettingsUiState, actions: KkmSettingsAction
         trailing = { if (inside) Chip(texts.programmingOn, StatusColors.pending) }
     ) {
         SwitchRow(
-            title = if (inside) texts.exitProgramming else texts.enterProgramming,
+            // Подпись называет состояние и не меняется от положения
+            // переключателя (Material 3, Switch): «Выйти из программирования»
+            // у включённого читалось как кнопка, а не как положение.
+            title = textsOf(LocalLanguage.current).kassa.money.kkm.needProgramming,
             checked = inside,
             onSwitch = { actions.switchProgramming() },
             enabled = !kkm.busy,

@@ -1,12 +1,10 @@
 package kz.mybrain.superkassa.presentation.kassa.sale.component
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -98,19 +96,14 @@ internal fun CustomerDataCard(
     onToggle: () -> Unit
 ) {
     val extra = LocalSaleTexts.current
-    Card(modifier = Modifier.fillMaxWidth()) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(Spacing.cardPadding),
-            verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
+    TillCard {
+        CollapsibleSection(
+            title = extra.customerData,
+            expanded = expanded,
+            onToggle = onToggle
         ) {
-            CollapsibleSection(
-                title = extra.customerData,
-                expanded = expanded,
-                onToggle = onToggle
-            ) {
-                BuyerContactFields(form.contact, channels, actions.contact::kind, actions.contact::text)
-                CustomerBinField(form.customerBin, actions::customerBin)
-            }
+            BuyerContactFields(form.contact, channels, actions.contact::kind, actions.contact::text)
+            CustomerBinField(form.customerBin, actions::customerBin)
         }
     }
 }

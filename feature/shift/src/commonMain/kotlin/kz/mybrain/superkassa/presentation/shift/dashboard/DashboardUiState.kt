@@ -3,6 +3,7 @@ package kz.mybrain.superkassa.presentation.shift.dashboard
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import io.github.texport.superkassa.core.presentation.api.model.reference.TrilingualMessageResponse
+import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftResponse
 import kz.mybrain.superkassa.domain.document.model.printable
 import kz.mybrain.superkassa.domain.kkm.model.isBlocked
 import kz.mybrain.superkassa.domain.kkm.model.isProgramming
@@ -10,6 +11,7 @@ import kz.mybrain.superkassa.domain.shift.model.ShiftState
 import kz.mybrain.superkassa.domain.shift.model.queueResendAllowed
 import kz.mybrain.superkassa.domain.shift.model.shiftActionsAllowed
 import kz.mybrain.superkassa.domain.shift.model.xReportAllowed
+import kz.mybrain.superkassa.domain.shift.model.zReportId
 import kz.mybrain.superkassa.strings.api.Language
 
 /**
@@ -29,6 +31,7 @@ import kz.mybrain.superkassa.strings.api.Language
  * @property operators кто оформил отклонённые документы: ключ — документ.
  * @property reading касса перечитывается.
  * @property busy идёт действие со сменой: кнопки не принимают второго нажатия.
+ * @property lastClosed последняя закрытая смена, пока новая не открыта.
  */
 data class DashboardUiState(
     val kkm: KkmResponse? = null,
@@ -43,7 +46,8 @@ data class DashboardUiState(
     val documentTypes: Map<String, TrilingualMessageResponse> = emptyMap(),
     val operators: Map<String, String> = emptyMap(),
     val reading: Boolean = false,
-    val busy: Boolean = false
+    val busy: Boolean = false,
+    val lastClosed: ShiftResponse? = null
 ) {
     /** Документы смены, которые ОФД отверг. */
     val refused: List<FiscalDocumentResponse> get() = documents.filterNot { it.printable }
@@ -61,6 +65,13 @@ data class DashboardUiState(
 
     /** X-отчёт снимается, когда в смене есть документ с суммой: иначе БФД его не примет. */
     val canTakeXReport: Boolean get() = canAct && xReportAllowed(documents)
+
+    /**
+     * Z-отчёт, который кассир открывает с главного экрана: смена закрыта
+     * и отчёт у неё есть. Сразу после закрытия его иначе приходилось
+     * искать в журнале по сменам.
+     */
+    val zReportShift: ShiftResponse? get() = lastClosed?.takeIf { shift == ShiftState.Closed && it.zReportId != null }
 
     /** Досылку накопленного касса сейчас примет: иначе кнопки нет, а её условия названы строкой. */
     val canSendQueued: Boolean get() = queueResendAllowed(kkm, isAdmin, shift)

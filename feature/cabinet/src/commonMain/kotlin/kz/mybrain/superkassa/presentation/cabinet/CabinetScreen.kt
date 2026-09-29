@@ -1,25 +1,26 @@
 package kz.mybrain.superkassa.presentation.cabinet
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import kz.mybrain.superkassa.designsystem.strings.LocalLanguage
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
+import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
+import kz.mybrain.superkassa.navigation.LocalNavigator
+import kz.mybrain.superkassa.navigation.step.PlaceCardKey
+import kz.mybrain.superkassa.navigation.step.RegisterDocumentsKey
+import kz.mybrain.superkassa.navigation.step.StepKey
 import kz.mybrain.superkassa.presentation.cabinet.company.CompanyScreen
 import kz.mybrain.superkassa.presentation.cabinet.documents.CabinetDocumentsScreen
 import kz.mybrain.superkassa.presentation.cabinet.documents.LocalRegisterDocuments
@@ -43,11 +44,12 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * пустые списки компании, которой ещё нет, значит обещать данные, которых
  * взять неоткуда.
  *
- * @param stepped открыта карточка точки или кассы поверх их списка — шагом
- *   истории окна на узком окне. Вкладки — уровень списка, и в шаге их нет.
+ * @param step открытый шаг истории окна: карточка точки или кассы поверх
+ *   их списка на узком окне, документы кассы поверх её карточки. Вкладки —
+ *   уровень списка, и в шаге их нет.
  */
 @Composable
-fun CabinetScreen(window: CabinetWindow, stepped: Boolean = false) {
+fun CabinetScreen(window: CabinetWindow, step: StepKey? = null) {
     val model = window.cabinet
     val state by model.state.collectAsScreenState()
     val language = LocalLanguage.current
@@ -57,22 +59,47 @@ fun CabinetScreen(window: CabinetWindow, stepped: Boolean = false) {
         return
     }
     // Вошли из мастера — хозяйство не читалось: раздел читает его сам.
-    LaunchedEffect(state.owner) { if (!state.placesRead) model.reload() }
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Документы кассы открываются экраном поверх кабинета, а не вместо
-        // него: выбранная точка и выбранная касса остаются выбранными, и по
-        // возврату владелец видит ту же карточку, из которой уходил. Возврат
-        // рисует шапка окна: навигация в приложении одна и живёт там.
-        CompositionLocalProvider(LocalRegisterDocuments provides model::openDocuments) {
-            if (stepped) PlacesScreen(window, texts, stepped = true) else CabinetTabsBody(window, texts)
-        }
-        val register = state.documentsOf
-        if (register != null) {
-            Surface(modifier = Modifier.fillMaxSize()) {
-                CabinetDocumentsScreen(model, texts, register)
-            }
-        }
+    // Прочитанное раньше обновляется в кассах этой машины: их меняют и вне
+    // кабинета, а весь список сети — сотни обращений.
+    LaunchedEffect(state.owner) { if (!state.placesRead) model.reload() else model.rereadHere() }
+    when (step) {
+        RegisterDocumentsKey -> DocumentsStep(model, texts, state.documentsOf)
+        else -> CabinetLevels(window, texts, stepped = step is PlaceCardKey)
     }
+}
+
+/**
+ * Список и карточки кабинета. Документы кассы открываются шагом истории
+ * окна поверх её карточки: «назад» — жест, Escape, стрелка в шапке —
+ * возвращает к той же карточке, а выбранные точка и касса остаются
+ * выбранными.
+ */
+@Composable
+private fun CabinetLevels(window: CabinetWindow, texts: CabinetTexts, stepped: Boolean) {
+    val model = window.cabinet
+    val navigator = LocalNavigator.current
+    val open: (CabinetRegister) -> Unit = { register ->
+        model.view.openDocuments(register)
+        navigator.open(RegisterDocumentsKey)
+    }
+    CompositionLocalProvider(LocalRegisterDocuments provides open) {
+        if (stepped) PlacesScreen(window, texts, stepped = true) else CabinetTabsBody(window, texts)
+    }
+}
+
+/**
+ * Документы кассы шагом истории окна.
+ *
+ * Шаг снят — документы закрыты: как бы владелец ни ушёл, шапка перестаёт
+ * называть их. Шаг без кассы — модель выгружена вместе с приложением —
+ * снимается сам: пустой экран вместо карточки ничего не даёт.
+ */
+@Composable
+private fun DocumentsStep(model: CabinetViewModel, texts: CabinetTexts, register: CabinetRegister?) {
+    val navigator = LocalNavigator.current
+    LaunchedEffect(register == null) { if (register == null) navigator.back() }
+    DisposableEffect(model) { onDispose(model.view::closeDocuments) }
+    if (register != null) CabinetDocumentsScreen(model, texts, register)
 }
 
 /**
@@ -82,18 +109,19 @@ fun CabinetScreen(window: CabinetWindow, stepped: Boolean = false) {
  * отнимало у списка точек в малом окне ещё четверть строки и ничего
  * не отделяло — вкладки и так черта.
  *
- * Открытая вкладка переживает шаг истории окна: вернувшись из карточки
- * точки, владелец видит точки, а не вкладку компании.
+ * Открытая вкладка живёт в модели кабинета: вернувшись из карточки точки,
+ * из документов кассы или из другого раздела окна, владелец видит ту
+ * вкладку, из которой уходил, а не вкладку компании.
  */
 @Composable
 private fun CabinetTabsBody(window: CabinetWindow, texts: CabinetTexts) {
-    var page by rememberSaveable { mutableStateOf(CabinetTab.Company) }
+    val page by window.cabinet.view.tab.collectAsScreenState()
     Column(
         modifier = Modifier
             .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(Spacing.fieldGap)
     ) {
-        CabinetTabs(page, LocalLanguage.current) { page = it }
+        CabinetTabs(page, LocalLanguage.current) { window.cabinet.view.selectTab(it) }
         CabinetPage(window, texts, page)
     }
 }

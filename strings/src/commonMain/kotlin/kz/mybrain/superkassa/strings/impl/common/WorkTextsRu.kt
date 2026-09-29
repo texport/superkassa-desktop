@@ -19,6 +19,7 @@ internal val dashboardTextsRu = DashboardTexts(
         "и печатной формы у них нет. Код отказа и кассир нужны обслуживанию.",
     openShift = "Открыть смену",
     xReport = "X-отчёт",
+    lastZReport = "Z-отчёт смены № %s",
     closeShift = "Закрыть смену",
     closeShiftAsk = "Закрыть смену и снять Z-отчёт?",
     closeShiftExplain = "В смене документов: %s, в ящике %s. Z-отчёт уйдёт в БФД, и смена не отменяется.",

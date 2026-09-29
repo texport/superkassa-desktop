@@ -9,7 +9,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import kz.mybrain.superkassa.designsystem.adaptive.LocalFrameBottom
 import kz.mybrain.superkassa.designsystem.adaptive.windowMargin
-import kz.mybrain.superkassa.navigation.step.PlaceCardKey
 import kz.mybrain.superkassa.navigation.step.ReturnBasisKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
 import kz.mybrain.superkassa.navigation.step.SetupStepKey
@@ -24,9 +23,9 @@ import kz.mybrain.superkassa.presentation.journal.queue.queueViewModel
 import kz.mybrain.superkassa.presentation.journal.shifts.shiftsViewModel
 import kz.mybrain.superkassa.presentation.kassa.cash.CashScreen
 import kz.mybrain.superkassa.presentation.kassa.cash.cashViewModel
+import kz.mybrain.superkassa.presentation.kassa.payment.ReceiptOutput
 import kz.mybrain.superkassa.presentation.kassa.refund.ReturnsScreen
 import kz.mybrain.superkassa.presentation.kassa.refund.returnsViewModel
-import kz.mybrain.superkassa.presentation.kassa.sale.ReceiptOutput
 import kz.mybrain.superkassa.presentation.kassa.sale.SaleScreen
 import kz.mybrain.superkassa.presentation.kassa.sale.saleViewModel
 import kz.mybrain.superkassa.presentation.print.preview.PrintDesk
@@ -78,14 +77,12 @@ internal fun SectionPlace(app: AppContainer, content: @Composable () -> Unit) {
 @Composable
 private fun SectionScreen(app: AppContainer, window: WindowParts, section: Section, step: StepKey?) {
     when (section) {
-        Section.Dashboard -> LocalPrint.current.let { print ->
-            DashboardScreen(dashboardViewModel(app.services), print::preview) { print.print(it.id) }
-        }
+        Section.Dashboard -> DashboardScreen(dashboardViewModel(app.services), LocalPrint.current)
         Section.Sale -> LocalPrint.current.let { print ->
             val output = receiptOutput(print)
             SaleScreen(saleViewModel(app.services, app.areas.kassa), output)
         }
-        Section.Returns -> ReturnsScreen(returnsViewModel(app.services, app.areas.kassa), step is ReturnBasisKey)
+        Section.Returns -> Returns(app, step)
         Section.Cash -> CashScreen(cashViewModel(app.services))
         Section.History -> HistoryScreen(
             journalViewModel(app.services, app.areas.journal),
@@ -95,9 +92,16 @@ private fun SectionScreen(app: AppContainer, window: WindowParts, section: Secti
         Section.Queue -> QueueScreen(queueViewModel(app.services))
         Section.Users -> UsersScreen(usersViewModel(app.services))
         Section.Register -> Connect(app, window, step = step as? SetupStepKey)
-        Section.Cabinet -> window.cabinet?.let { CabinetScreen(it, step is PlaceCardKey) }
+        Section.Cabinet -> window.cabinet?.let { CabinetScreen(it, step) }
         Section.Settings -> SettingsScreen(settingsOf(app, window), step as? SettingsSectionKey)
     }
+}
+
+/** Возврат: чек возврата показывают, печатают и отдают покупателю печатью окна. */
+@Composable
+private fun Returns(app: AppContainer, step: StepKey?) {
+    val model = returnsViewModel(app.services, app.areas.kassa)
+    ReturnsScreen(model, step is ReturnBasisKey, receiptOutput(LocalPrint.current))
 }
 
 /** Что продажа делает с пробитым чеком: показ, печать и «Поделиться» — печатью окна. */

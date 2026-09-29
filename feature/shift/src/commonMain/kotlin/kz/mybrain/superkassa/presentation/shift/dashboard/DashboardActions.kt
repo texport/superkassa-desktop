@@ -1,6 +1,10 @@
 package kz.mybrain.superkassa.presentation.shift.dashboard
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.FiscalDocumentResponse
+import io.github.texport.superkassa.core.presentation.api.model.shift.ShiftResponse
+import kz.mybrain.superkassa.domain.shift.model.zReportId
+import kz.mybrain.superkassa.presentation.common.print.PrintActions
+import kz.mybrain.superkassa.presentation.common.print.PrintFileName
 
 /**
  * Что кассир может сделать на главном экране.
@@ -28,13 +32,13 @@ interface DashboardActions {
 
     /** Отправить печатную форму на принтер рабочего места. */
     fun print(document: FiscalDocumentResponse) = Unit
+
+    /** Показать Z-отчёт закрытой смены. */
+    fun zReport(shift: ShiftResponse) = Unit
 }
 
-/** Действия экрана, выполняемые этой моделью; печать — у того, кто её умеет. */
-internal fun DashboardViewModel.actions(
-    preview: (FiscalDocumentResponse) -> Unit,
-    print: (FiscalDocumentResponse) -> Unit
-): DashboardActions {
+/** Действия экрана, выполняемые этой моделью; печать — у окна. */
+internal fun DashboardViewModel.actions(print: PrintActions): DashboardActions {
     val model = this
     return object : DashboardActions {
         override fun refresh() = model.refresh()
@@ -49,8 +53,11 @@ internal fun DashboardViewModel.actions(
 
         override fun sendQueued() = model.sendQueued()
 
-        override fun preview(document: FiscalDocumentResponse) = preview.invoke(document)
+        override fun preview(document: FiscalDocumentResponse) = print.preview(document)
 
-        override fun print(document: FiscalDocumentResponse) = print.invoke(document)
+        override fun print(document: FiscalDocumentResponse) = print.print(document.id)
+
+        override fun zReport(shift: ShiftResponse) =
+            print.preview(shift.zReportId, PrintFileName.zReport(shift.shiftNo))
     }
 }

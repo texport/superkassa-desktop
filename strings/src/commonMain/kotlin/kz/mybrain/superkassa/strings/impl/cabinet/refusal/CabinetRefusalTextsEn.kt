@@ -12,5 +12,6 @@ internal val cabinetRefusalTextsEn = CabinetRefusalTexts(
     signWindowClosed = "The signing window was closed",
     signCancelled = "Signing was cancelled in NCALayer",
     kkmNotActive = "The register is not admitted to service at the acceptance server",
-    defaultPinNotAllowed = "The register still has the default PIN — change it on the register itself"
+    defaultPinNotAllowed = "The register still has the default PIN — change it on the register itself",
+    accessDenied = "The BFD cabinet is closed to this company — contact BFD to open access"
 )

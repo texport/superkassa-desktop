@@ -28,7 +28,7 @@ import kz.mybrain.superkassa.strings.api.textsOf
  * @param onExit выход из кабинета — только у двери с экрана входа.
  * @param onMenu открыть разделы окна — на телефоне, где их не видно.
  * @param onStep шаг назад по истории окна: открыта карточка точки
- *   или кассы поверх их списка.
+ *   или кассы поверх их списка, документы кассы поверх её карточки.
  */
 @Composable
 fun CabinetBar(
@@ -49,7 +49,7 @@ fun CabinetBar(
         texts = texts,
         documentsTitle = journal.registerDocuments
     )
-    val back = if (head.inDocuments) model::closeDocuments else onStep ?: onExit
+    val back = onStep ?: (model.view::closeDocuments).takeIf { head.inDocuments } ?: onExit
     val backLabel = if (head.inDocuments) journal.backToRegister else LocalStrings.current.settingsScreen.back
     AppTopBar(title = head.title, subtitle = head.subtitle, lead = barLead(back, backLabel, onMenu)) {
         CabinetBarActions(look, state.open, texts.signin.signOut, model::signOut)

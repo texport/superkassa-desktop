@@ -89,10 +89,8 @@ private fun ShiftButtons(state: DashboardUiState, actions: DashboardActions, onC
             FilledTonalButton(onClick = actions::xReport, modifier = main, enabled = state.canTakeXReport) {
                 Text(texts.dashboard.xReport)
             }
-        } else if (offer && state.isAdmin) {
-            Button(onClick = actions::openShift, modifier = main, enabled = state.canAct) {
-                Text(texts.dashboard.openShift)
-            }
+        } else if (offer) {
+            ClosedShiftButtons(state, actions, main)
         }
     }
 }

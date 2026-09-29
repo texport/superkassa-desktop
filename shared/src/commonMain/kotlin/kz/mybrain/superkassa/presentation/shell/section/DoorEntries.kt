@@ -10,6 +10,7 @@ import kz.mybrain.superkassa.navigation.section.KkmsKey
 import kz.mybrain.superkassa.navigation.section.RegisterKey
 import kz.mybrain.superkassa.navigation.section.SettingsKey
 import kz.mybrain.superkassa.navigation.step.PlaceCardKey
+import kz.mybrain.superkassa.navigation.step.RegisterDocumentsKey
 import kz.mybrain.superkassa.navigation.step.SettingsSectionKey
 import kz.mybrain.superkassa.navigation.step.SetupStepKey
 import kz.mybrain.superkassa.presentation.cabinet.signin.CabinetDoor
@@ -42,7 +43,10 @@ internal fun EntryProviderScope<NavKey>.doorEntries(
     entry<SetupStepKey>(metadata = step) { SectionPlace(app) { Connect(app, window, toKkms, it) } }
     entry<CabinetKey> { SectionPlace(app) { window.cabinet?.let { CabinetDoor(it, toKkms) } } }
     entry<PlaceCardKey>(metadata = step) {
-        SectionPlace(app) { window.cabinet?.let { CabinetDoor(it, toKkms, stepped = true) } }
+        SectionPlace(app) { window.cabinet?.let { cabinet -> CabinetDoor(cabinet, toKkms, it) } }
+    }
+    entry<RegisterDocumentsKey>(metadata = step) {
+        SectionPlace(app) { window.cabinet?.let { cabinet -> CabinetDoor(cabinet, toKkms, it) } }
     }
     entry<SettingsKey> { SectionPlace(app) { WorkplaceSettingsScreen(settingsOf(app, window)) } }
     entry<SettingsSectionKey>(metadata = step) {

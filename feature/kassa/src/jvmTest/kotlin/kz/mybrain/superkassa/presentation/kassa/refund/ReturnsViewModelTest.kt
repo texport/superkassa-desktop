@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import kz.mybrain.superkassa.domain.kassa.model.Tenge
+import kz.mybrain.superkassa.domain.kassa.model.refund.ReturnKind
 import kz.mybrain.superkassa.domain.kassa.port.FixedDeliverySetup
 import kz.mybrain.superkassa.domain.kassa.port.KassaPorts
 import kz.mybrain.superkassa.kassa.CoreScene
@@ -140,5 +141,20 @@ class ReturnsViewModelTest {
 
         val said = (notices.last as Message.Done).text
         assertTrue(said.startsWith("Возврат продажи на 900,00"), said)
+    }
+
+    /** Чек возврата искали в журнале: после возврата оставалась одна строка сообщений. */
+    @Test
+    fun `оформленный возврат остаётся на экране чеком, пока кассир не взялся за следующий`() {
+        val model = model()
+        model.choose(basis)
+
+        model.refund.refund()
+        model.refund.confirm()
+
+        val issued = model.state.value.issued
+        assertEquals(RefundIssued("ret-1", ReturnKind.Sell, 90_000), issued)
+        model.refund.next()
+        assertNull(model.state.value.issued)
     }
 }
