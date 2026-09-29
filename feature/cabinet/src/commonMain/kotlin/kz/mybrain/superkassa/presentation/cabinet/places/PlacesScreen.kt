@@ -125,7 +125,8 @@ private fun PlacesColumn(
         // Почему список пуст: кабинет отказал или у владельца и правда
         // нет ни одной точки. Слова — те же, какими отказал кабинет.
         trouble = window.placesTrouble.takeIf { window.places.isEmpty() },
-        onRetry = cabinet.cabinet::reload,
+        // Второе нажатие, пока кабинет ещё отвечает, ничего не добавит.
+        onRetry = { if (!window.busy) cabinet.cabinet.reload() },
         sieve = chosen.sieve,
         onSieve = model::sieve,
         // Блокировку кабинет отдаёт не списком касс, а сводкой:

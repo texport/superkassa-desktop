@@ -5,6 +5,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.KkmModel
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterCreate
 import kz.mybrain.superkassa.domain.cabinet.model.RegisterEdit
+import kz.mybrain.superkassa.domain.cabinet.model.RetailPlaceRef
 import kz.mybrain.superkassa.domain.cabinet.model.TokenIssued
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RegisterState
 import kz.mybrain.superkassa.domain.cabinet.port.CabinetRegisters
@@ -31,11 +32,18 @@ internal class RemoteRegisters(
 
     override suspend fun one(id: String): CabinetRegister = cabinetCall { registers.one(id) }.register()
 
+    /**
+     * Заводит кассу. Точку, если кабинет не назвал её в ответе, касса берёт
+     * из запроса: без неё она не встаёт ни под одну точку, и в списке
+     * точек заведённой кассы не было до перечитывания кабинета.
+     */
     override suspend fun add(register: RegisterCreate): CabinetRegister {
         val create = with(register) {
             BfdCreate(retailPlaceId, modelCode, factoryNumber, manufactureYear, internalName)
         }
-        return cabinetCall { registers.add(create) }.register()
+        val added = cabinetCall { registers.add(create) }.register()
+        if (added.retailPlace != null) return added
+        return added.copy(retailPlace = RetailPlaceRef(register.retailPlaceId))
     }
 
     override suspend fun edit(id: String, edit: RegisterEdit): CabinetRegister {

@@ -13,6 +13,7 @@ import kz.mybrain.superkassa.KeptFiles
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetExpired
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRefusal
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetUnreachable
+import kz.mybrain.superkassa.domain.cabinet.model.RegisterCreate
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlaceAddress
 import kz.mybrain.superkassa.domain.cabinet.port.CabinetPorts
 import kz.mybrain.superkassa.domain.cabinet.port.Signer
@@ -103,6 +104,22 @@ class RemoteCabinetTest {
         }
         assertEquals("260940000031", all.single().registrationNumber)
         assertEquals("Магазин у дома", all.single().retailPlace?.name)
+    }
+
+    /**
+     * Заведённая касса встаёт под свою точку, даже если кабинет не назвал
+     * точку в ответе: без неё касса не появлялась в списке точек до нового
+     * входа.
+     */
+    @Test
+    fun `заведённая касса стоит под выбранной точкой`() {
+        val added = runBlocking {
+            cabinetReturning(
+                HttpStatusCode.OK,
+                """{"id":"44444444","kkmId":2000303,"status":"DRAFT","internalName":"Демо 1"}"""
+            ).registers.add(RegisterCreate("33333333", "M1", "SN-1", 2026, "Демо 1"))
+        }
+        assertEquals("33333333", added.retailPlace?.id, "касса без точки не встанет ни под одну точку")
     }
 
     /** 401 при выданном доступе — конец сеанса: владельца возвращают ко входу, а не показывают отказ. */

@@ -47,6 +47,8 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  *   три» от «их всего три».
  * @param loading ответа кабинета ещё не было: на месте строк ожидание.
  * @param trouble кабинет списка не отдал — его словами; `null` — отдал.
+ * @param onRetry перечитать точки и кассы из кабинета: после отказа
+ *   и кнопкой обновления в шапке.
  * @param locksKnown ответил ли кабинет, какие кассы заблокированы.
  * @param footer кнопки создания под списком.
  * @param listState прокрутка списка точек. Хранится снаружи: на узком
@@ -89,7 +91,7 @@ internal fun PlaceTree(
             trouble != null -> ScreenState.Trouble(trouble, onRetry = onRetry)
             else -> treeEmpty(texts, sieve)
         }
-        TreeHead(texts, onCollapse) {
+        TreeHead(texts, onCollapse, onRetry) {
             // Счёт стоит над строками: без строк считать нечего, а над словами
             // отказа «Показано 0 из 1004» читается как потеря тысячи точек.
             if (state !is ScreenState.Trouble && !loading) PlaceCount(texts, rows, total, Modifier.weight(1f))
@@ -119,13 +121,23 @@ internal fun PlaceTree(
  * и касс: при сотнях точек по нему ничего не найти, а кнопка разворота
  * стояла у края полосы, не по её середине. Теперь колонка убирается
  * целиком, и вернуть её можно кнопкой у края карточки ([ListToggle]).
+ *
+ * Обновление — в конце строки, как в разделах аналитики: касса или точка,
+ * заведённая в кабинете с другой машины, иначе появлялась только после
+ * нового входа.
  */
 @Composable
-private fun TreeHead(texts: CabinetTexts, onCollapse: (() -> Unit)?, count: @Composable RowScope.() -> Unit) {
+private fun TreeHead(
+    texts: CabinetTexts,
+    onCollapse: (() -> Unit)?,
+    onRefresh: () -> Unit,
+    count: @Composable RowScope.() -> Unit
+) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         onCollapse?.let { ListToggle(shown = true, onToggle = it) }
         InfoTip(texts.hints.placesTree)
         count()
+        BarAction(icon = AppIcons.refresh, label = texts.refresh, onClick = onRefresh)
     }
 }
 
