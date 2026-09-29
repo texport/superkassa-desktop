@@ -48,6 +48,17 @@ data class LoginUiState(
             ?: kkms.firstOrNull { it.kkmId == rememberedId }
             ?: kkms.firstOrNull { it.kkmId == selectedId }
 
+    /**
+     * Касса рабочего места, прочитанная заново.
+     *
+     * Сменилась она — её выбрали снаружи: мастер завёл новую кассу или
+     * кабинет перевёл место на свою. Прежний выбор мышью и набранный поиск
+     * тогда отменяются: иначе они перебивали эту кассу, и вход открывался
+     * на той, что выбирали когда-то раньше.
+     */
+    fun remembering(id: String?): LoginUiState =
+        if (id == rememberedId) this else copy(rememberedId = id, pickedId = null, search = "")
+
     /** Как зовут кассу на этом рабочем месте. */
     fun nameOf(kkm: KkmResponse): String = kkm.displayName(localNames[kkm.kkmId])
 }

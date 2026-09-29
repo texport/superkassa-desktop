@@ -20,4 +20,8 @@ internal fun setupViewModel(services: WindowServices, ports: SetupPorts, calls: 
 
 /** Модель со сценариями, собранными из портов окна; проверки зовут её без окна. */
 internal fun setupModel(services: WindowServices, ports: SetupPorts, calls: CabinetCalls): SetupViewModel =
-    SetupViewModel(SetupCases(services.kassa, ports, services.talk.journal), services.talk, calls)
+    SetupViewModel(
+        SetupCases(services.kassa, ports, services.talk.journal, services.signIn, services.memory),
+        services.talk,
+        calls
+    )

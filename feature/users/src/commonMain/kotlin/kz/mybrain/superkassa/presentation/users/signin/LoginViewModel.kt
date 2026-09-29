@@ -71,12 +71,11 @@ class LoginViewModel(private val cases: LoginCases, private val talk: Talk) : Vi
         val choice = cases.readKkms(screen.value.kkms)
         val read = choice.answer.shown(textsOf(talk.language()).common.login.reload, "read kkm list", talk) != null
         screen.update { now ->
-            now.copy(
+            now.remembering(choice.rememberedId).copy(
                 kkms = choice.kkms,
                 localNames = choice.localNames,
                 answered = true,
                 listRead = read || now.listRead,
-                rememberedId = choice.rememberedId,
                 selectedId = cases.observe().value.kkm?.kkmId
             )
         }

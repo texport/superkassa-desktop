@@ -60,6 +60,24 @@ class LoginViewModelTest {
         assertEquals("kkm-2", state.chosen?.kkmId)
     }
 
+    /**
+     * Мастер завёл кассу или кабинет перевёл место на свою: вход открывается
+     * на ней. Прежде выбор мышью, оставшийся с прошлого раза, перебивал её,
+     * и кассир видел выбранной другую кассу.
+     */
+    @Test
+    fun `касса, выбранная мастером или кабинетом, перебивает прежний выбор мышью`() {
+        core.on("listKkms") { listOf(first, second).let(CoreScene::page) }
+        memory.rememberedKkmId = "kkm-1"
+        val model = model().apply { reload() }
+        model.pick(first)
+
+        memory.rememberedKkmId = "kkm-2"
+        model.reload()
+
+        assertEquals("kkm-2", model.state.value.chosen?.kkmId)
+    }
+
     /** Касса, не отдавшая список, — не касса без касс: о них неизвестно ничего. */
     @Test
     fun `непрочитанный список не выдаётся за пустой`() {

@@ -16,6 +16,7 @@ import kz.mybrain.superkassa.domain.setup.port.SetupPorts
 import kz.mybrain.superkassa.kassa.CoreScene
 import kz.mybrain.superkassa.kassa.FakeCore
 import kz.mybrain.superkassa.kassa.MemorySetup
+import kz.mybrain.superkassa.kassa.MemoryWorkplace
 import kz.mybrain.superkassa.kassa.services
 import kz.mybrain.superkassa.presentation.common.message.Message
 import kz.mybrain.superkassa.presentation.common.message.Notices
@@ -44,6 +45,7 @@ class SetupViewModelTest {
     private val texts = textsOf(Language.Ru).setup
     private var done = 0
     private val cabinet = FakeSetupCabinet(token = "3735928559")
+    private val workplace = MemoryWorkplace()
 
     @BeforeTest
     fun inlineMain() {
@@ -56,7 +58,11 @@ class SetupViewModelTest {
     fun restoreMain() = Dispatchers.resetMain()
 
     private fun model(): SetupViewModel =
-        setupModel(CoreScene.services(core, notices = notices), SetupPorts(memory, cabinet), DirectCalls())
+        setupModel(
+            CoreScene.services(core, notices = notices, memory = workplace),
+            SetupPorts(memory, cabinet),
+            DirectCalls()
+        )
             .apply { reload() }
 
     private fun byHand(model: SetupViewModel) {
@@ -84,6 +90,8 @@ class SetupViewModelTest {
         assertEquals(Message.Done(texts.connected), notices.last)
         assertEquals(1, done)
         assertEquals(KkmForm(), model.state.value.byHand, "набранный токен остался на экране")
+        // Вход открывается на заведённой кассе, а не на той, что была раньше.
+        assertEquals("kkm-9", workplace.rememberedKkmId, "заведённая касса не стала кассой рабочего места")
     }
 
     /** Дефект ядра: при недоступной БФД `initKkm` отвечает кассой, которой нет в базе. */

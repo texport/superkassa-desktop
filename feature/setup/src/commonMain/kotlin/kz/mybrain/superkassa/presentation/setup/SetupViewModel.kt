@@ -104,6 +104,9 @@ internal class SetupViewModel(
             screen.update { it.withForm(it.form.copy(busy = false)) }
             if (notIssued) talk.say(INIT_KKM, Message.Refusal(textsOf(talk.language()).setup.noToken, NO_TOKEN))
             if (!outcome.announced(talk)) return@launch
+            // Заведённая касса — касса этого места: вход открывается на ней,
+            // а не на той, за которой работали прежде.
+            (outcome as? EnrollOutcome.Enrolled)?.let { cases.workOn(it.kkm) }
             // Касса подключена: пройденное забывается — следующей кассе нужен
             // свой заводской номер, — а набранный токен стирается: на экране
             // ему не место.
