@@ -19,7 +19,7 @@ import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 @Composable
 internal fun StateCell(entry: JournalEntry) {
     if (entry.delivery != null) {
-        JournalDeliveryChip(entry.delivery, entry.refusal)
+        JournalDeliveryChip(entry.delivery, entry.refusal, entry.deliveryWords)
     } else {
         JournalStateChip(entry.state)
     }

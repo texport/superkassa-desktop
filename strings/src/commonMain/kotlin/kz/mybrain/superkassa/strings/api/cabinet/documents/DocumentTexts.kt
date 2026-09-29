@@ -35,6 +35,36 @@ data class DocumentTexts(
     val deliveryRefused: String,
     val kgdMarked: String,
     val noKgdMark: String,
+
+    /** Строка карточки о доставке документа в КГД. */
+    val kgdDelivery: String,
+
+    /** Почему КГД отклонил документ — подпись причины в карточке. */
+    val kgdReason: String,
+
+    /** Состояние в КГД: принят. */
+    val kgdAccepted: String,
+
+    /** Состояние в КГД: отклонён. */
+    val kgdRejected: String,
+
+    /** Состояние в КГД: не доставлен, попытки исчерпаны. */
+    val kgdFailed: String,
+
+    /** Состояние в КГД: отправлен, ответа ещё нет. */
+    val kgdSent: String,
+
+    /** Состояние в КГД: передаётся службе передачи. */
+    val kgdTransferring: String,
+
+    /** Состояние в КГД: ошибка передачи, будет повтор. */
+    val kgdTransferFailed: String,
+
+    /** Состояние в КГД: ждёт отправки. */
+    val kgdAwaiting: String,
+
+    /** X-отчёт и движение денег: в КГД не передаются. */
+    val kgdNotSent: String,
     val moment: String,
 
     /**

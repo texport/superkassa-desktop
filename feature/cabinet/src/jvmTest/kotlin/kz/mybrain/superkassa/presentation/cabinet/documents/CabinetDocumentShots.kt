@@ -160,7 +160,7 @@ class CabinetDocumentShots {
             """{"transactionId":"t-$at","receiptNumber":"$at","shiftNumber":${at / 20 + 1},
                "operationType":"$kind","total":${at * 137}.${"%02d".format(at % 100)},
                "createdAt":"2026-09-0${at % 7 + 1}T1${at % 10}:02:59Z",
-               "deliveryStatus":"ONLINE_OK","kgdMark":$mark}"""
+               "deliveryStatus":"DELIVERED","kgdMark":$mark}"""
         }
         return """{"page":0,"size":100,"totalElements":100,"items":[$rows]}"""
     }

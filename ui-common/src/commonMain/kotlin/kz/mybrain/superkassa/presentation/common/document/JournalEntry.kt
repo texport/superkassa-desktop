@@ -30,6 +30,9 @@ import io.github.texport.superkassa.core.domain.api.model.common.Decimal
  *   В столбец она не помещается и стоит подсказкой у плашки, но искать
  *   по ней нужно: «все отказы из-за одного и того же» — обычный вопрос
  *   обслуживанию.
+ * @param deliveryWords слова состояния, когда у источника они свои:
+ *   кабинет говорит о доставке в КГД восемью состояниями, а цвет и отбор
+ *   берутся из [delivery]; `null` — слова журнала.
  * @param printable есть ли у документа печатная форма.
  * @param openable открывается ли строка нажатием: у кассы — только чек,
  *   у которого есть доставка покупателю; отчёт нажатием не открыть.
@@ -50,6 +53,7 @@ data class JournalEntry(
     val state: JournalState? = null,
     val about: String = "",
     val refusal: String? = null,
+    val deliveryWords: String? = null,
     val printable: Boolean = true,
     val openable: Boolean = true
 ) {
@@ -73,7 +77,8 @@ data class JournalEntry(
             moment,
             shiftNo?.toString().orEmpty(),
             about,
-            refusal.orEmpty()
+            refusal.orEmpty(),
+            deliveryWords.orEmpty()
         ).joinToString(" ").lowercase()
 }
 

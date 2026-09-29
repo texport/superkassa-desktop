@@ -13,8 +13,8 @@ object CabinetBodies {
     /** Один чек в списке: с него раскрывают карточку. */
     const val ONE_RECEIPT = """{"page":0,"size":50,"totalElements":1,"items":[
         {"transactionId":"t-1","receiptNumber":"12","shiftNumber":3,"operationType":"SALE",
-         "total":435.84,"createdAt":"2026-09-07T19:02:59Z","deliveryStatus":"ONLINE_OK",
-         "kgdMark":"210000000001"}]}"""
+         "total":435.84,"createdAt":"2026-09-07T19:02:59Z","sendStatus":"ACCEPTED",
+         "deliveryStatus":"DELIVERED","kgdMark":"210000000001"}]}"""
 
     /** Пустая страница любого вида документов. */
     const val NOTHING = """{"page":0,"size":50,"totalElements":0,"items":[]}"""
@@ -33,9 +33,9 @@ object CabinetBodies {
 
     const val REPORTS = """{"page":0,"size":50,"totalElements":2,"items":[
         {"transactionId":"z-1","reportType":"Z","shiftNumber":3,"createdAt":"2026-09-07T15:05:31Z",
-         "saleTotal":3570.00,"deliveryStatus":"ONLINE_OK"},
+         "saleTotal":3570.00,"sendStatus":"ACCEPTED","deliveryStatus":"DELIVERED"},
         {"transactionId":"x-1","reportType":"X","shiftNumber":3,"createdAt":"2026-09-07T13:00:00Z",
-         "saleTotal":1200.00,"deliveryStatus":"ONLINE_OK"}]}"""
+         "saleTotal":1200.00}]}"""
 
     const val MOVEMENTS = """{"page":0,"size":50,"totalElements":2,"items":[
         {"transactionId":"m-1","movementType":"DEPOSIT","amount":5000.00,"shiftNumber":3,
@@ -50,7 +50,8 @@ object CabinetBodies {
         "operator":{"code":1,"name":"Администратор"},
         "items":[{"positionNumber":1,"name":"Кофе молотый «Эфиопия Иргачеффе» 250 г","quantity":3.0,
                   "price":150.55,"amount":435.84,"taxPercent":16,"taxAmount":60.12}],
-        "deliveryStatus":"ONLINE_OK","kgdMark":"210000000001","kgdMarkAt":"2026-09-07T19:03:01Z",
+        "sendStatus":"ACCEPTED","deliveryStatus":"DELIVERED","deliveryResultAt":"2026-09-07T19:03:01Z",
+        "kgdMark":"210000000001","kgdMarkAt":"2026-09-07T19:03:01Z",
         "protocolDocumentId":"3846668294"}"""
 
     /** Тот же чек, до БФД не доехавший: отметки КГД нет вовсе. */
@@ -59,7 +60,7 @@ object CabinetBodies {
         "createdAt":"2026-09-07T19:02:59Z","operator":{"code":1,"name":"Администратор"},
         "items":[{"positionNumber":1,"name":"Кофе","quantity":3.0,"price":150.55,"amount":435.84,
                   "taxPercent":16,"taxAmount":60.12}],
-        "deliveryStatus":"OFFLINE","protocolDocumentId":"3846668294"}"""
+        "sendStatus":"IN_PROGRESS","protocolDocumentId":"3846668294"}"""
 
     /** Действующая регистрационная карта кассы. */
     const val CARD = """{"cashRegisterId":"r-1","status":"REGISTERED","companyBin":"230140000000",

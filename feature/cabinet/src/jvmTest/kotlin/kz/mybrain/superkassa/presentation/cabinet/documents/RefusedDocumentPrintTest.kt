@@ -25,32 +25,36 @@ class RefusedDocumentPrintTest {
     private val texts = textsOf(Language.Ru).cabinet
 
     @Test
-    fun `отвергнутый чек кабинета не открывается печатной формой`() {
-        val refused = CabinetReceipt(transactionId = "t-1", deliveryStatus = "DELIVERY_ERROR")
-
-        assertFalse(receiptRow(refused, texts).entry.printable, "отвергнутый чек выдан за фискальный")
+    fun `чек, отклонённый или не полученный КГД, не открывается печатной формой`() {
+        listOf("REJECTED", "FAILED").forEach { code ->
+            val refused = CabinetReceipt(transactionId = "t-$code", deliveryStatus = code)
+            assertFalse(receiptRow(refused, texts).entry.printable, "чек под вопросом у КГД печатается: $code")
+        }
     }
 
     @Test
-    fun `отвергнутый отчёт и отвергнутое движение денег тоже не печатаются`() {
-        val report = CabinetReport(transactionId = "r-1", sendStatus = "SEND_FAIL")
-        val movement = CabinetCashMovement(transactionId = "m-1", sendStatus = "REJECTED")
+    fun `Z-отчёт, отклонённый КГД, тоже не печатается, а движение денег печатается всегда`() {
+        val report = CabinetReport(transactionId = "r-1", type = "Z", deliveryStatus = "REJECTED")
+        val movement = CabinetCashMovement(transactionId = "m-1", type = "DEPOSIT", sendStatus = "FAILED")
 
-        assertFalse(reportRow(report, texts).entry.printable, "отвергнутый отчёт выдан за фискальный")
-        assertFalse(movementRow(movement, texts).entry.printable, "отвергнутое движение выдано за фискальное")
+        assertFalse(reportRow(report, texts).entry.printable, "отклонённый Z-отчёт выдан за фискальный")
+        assertTrue(movementRow(movement, texts).entry.printable, "движение денег в КГД не уходит")
     }
 
     /**
-     * Чек, пробитый без связи, печатается: он фискальный, просто ещё
-     * не доставлен. Смешать его с отказом значило бы отнять печатную
-     * форму у половины смены на плохой связи.
+     * Чек в пути печатается: он фискальный, просто ещё не доставлен.
+     * Ошибка передачи службе — тоже: её повторят, и отнимать у чека
+     * печатную форму из-за временного сбоя значило бы оставить
+     * покупателя без чека на плохой связи.
      */
     @Test
-    fun `принятый и ждущий отправки чеки печатаются по-прежнему`() {
-        val delivered = CabinetReceipt(transactionId = "t-2", deliveryStatus = "ONLINE_OK")
-        val queued = CabinetReceipt(transactionId = "t-3", sendStatus = "OFFLINE_QUEUED")
+    fun `принятый, ждущий и чек с ошибкой передачи печатаются`() {
+        val delivered = CabinetReceipt(transactionId = "t-2", deliveryStatus = "DELIVERED")
+        val queued = CabinetReceipt(transactionId = "t-3", sendStatus = "ACCEPTED")
+        val retried = CabinetReceipt(transactionId = "t-4", sendStatus = "FAILED")
 
-        assertTrue(receiptRow(delivered, texts).entry.printable)
-        assertTrue(receiptRow(queued, texts).entry.printable)
+        listOf(delivered, queued, retried).forEach { receipt ->
+            assertTrue(receiptRow(receipt, texts).entry.printable, receipt.transactionId)
+        }
     }
 }

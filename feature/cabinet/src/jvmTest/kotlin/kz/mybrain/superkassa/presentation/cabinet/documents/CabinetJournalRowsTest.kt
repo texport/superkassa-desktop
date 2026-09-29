@@ -1,7 +1,9 @@
 package kz.mybrain.superkassa.presentation.cabinet.documents
 
 import io.github.texport.superkassa.core.domain.api.model.common.Decimal
+import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovement
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
+import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
 import kz.mybrain.superkassa.presentation.common.document.JournalDelivery
 import kz.mybrain.superkassa.presentation.common.document.journalTypesIn
@@ -25,7 +27,7 @@ class CabinetJournalRowsTest {
 
     @Test
     fun `кабинет причины отказа не отдаёт, и придумывать её строка не станет`() {
-        val receipt = CabinetReceipt(transactionId = "t-2", deliveryStatus = "DELIVERY_ERROR")
+        val receipt = CabinetReceipt(transactionId = "t-2", deliveryStatus = "REJECTED")
 
         assertNull(receiptRow(receipt, cabinet).entry.refusal)
     }
@@ -39,7 +41,7 @@ class CabinetJournalRowsTest {
             operationType = "SALE",
             total = Decimal.parse("4500.84"),
             createdAt = "2026-09-07T19:02:59Z",
-            deliveryStatus = "ONLINE_OK",
+            deliveryStatus = "DELIVERED",
             kgdMark = "KGD-77"
         )
 
@@ -82,14 +84,52 @@ class CabinetJournalRowsTest {
         assertEquals(cabinet.documents.operationPurchaseReturn, types.single { it.code == "BUY_RETURN" }.title)
     }
 
+    /**
+     * Столбец «Состояние» — доставка в КГД, а не одно «Принят» на всех.
+     *
+     * Каждая строка правила: слова строки журнала и группа для цвета,
+     * отбора и печати.
+     */
     @Test
-    fun `состояния кабинета и узла сходятся в одних словах`() {
-        assertEquals(JournalDelivery.Delivered, cabinetDelivery("ONLINE_OK"))
-        assertEquals(JournalDelivery.Delivered, cabinetDelivery("DELIVERED"))
-        assertEquals(JournalDelivery.Refused, cabinetDelivery("DELIVERY_ERROR"))
-        assertEquals(JournalDelivery.Refused, cabinetDelivery("REJECTED"))
-        assertEquals(JournalDelivery.Queued, cabinetDelivery("OFFLINE_QUEUED"))
-        assertNull(cabinetDelivery(" "))
+    fun `чек называет своё состояние в КГД по итогу, а без итога — по передаче`() {
+        val docs = cabinet.documents
+        val cases = listOf(
+            Triple("DELIVERED", "ACCEPTED", docs.kgdAccepted to JournalDelivery.Delivered),
+            Triple("REJECTED", "ACCEPTED", docs.kgdRejected to JournalDelivery.Refused),
+            Triple("FAILED", "ACCEPTED", docs.kgdFailed to JournalDelivery.Refused),
+            Triple("SENT", "ACCEPTED", docs.kgdSent to JournalDelivery.Queued),
+            Triple(null, "IN_PROGRESS", docs.kgdTransferring to JournalDelivery.Queued),
+            Triple(null, "FAILED", docs.kgdTransferFailed to JournalDelivery.Refused),
+            Triple(null, "ACCEPTED", docs.kgdAwaiting to JournalDelivery.Queued),
+            Triple(null, null, docs.kgdAwaiting to JournalDelivery.Queued)
+        )
+        cases.forEach { (delivery, send, expected) ->
+            val receipt = CabinetReceipt(
+                transactionId = "t",
+                operationType = "SALE",
+                deliveryStatus = delivery,
+                sendStatus = send
+            )
+            val entry = receiptRow(receipt, cabinet).entry
+            assertEquals(expected.first, entry.deliveryWords, "$delivery / $send")
+            assertEquals(expected.second, entry.delivery, "$delivery / $send")
+        }
+    }
+
+    @Test
+    fun `в КГД уходят чеки и Z-отчёт, а X-отчёт и движение денег — никогда`() {
+        val docs = cabinet.documents
+        val x = reportRow(CabinetReport(transactionId = "x", type = "X", deliveryStatus = "DELIVERED"), cabinet).entry
+        val z = reportRow(CabinetReport(transactionId = "z", type = "Z", deliveryStatus = "DELIVERED"), cabinet).entry
+        val moves = listOf("DEPOSIT", "WITHDRAWAL").map { type ->
+            val movement = CabinetCashMovement(transactionId = type, type = type, sendStatus = "IN_PROGRESS")
+            movementRow(movement, cabinet).entry
+        }
+
+        assertEquals(docs.kgdNotSent, x.deliveryWords)
+        assertEquals(JournalDelivery.Internal, x.delivery)
+        assertEquals(docs.kgdAccepted, z.deliveryWords)
+        moves.forEach { assertEquals(docs.kgdNotSent, it.deliveryWords) }
     }
 
     @Test

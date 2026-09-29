@@ -1,56 +1,45 @@
 package kz.mybrain.superkassa.presentation.cabinet.documents
 
+import kz.mybrain.superkassa.domain.cabinet.model.documents.KgdDelivery
+import kz.mybrain.superkassa.domain.cabinet.model.documents.KgdTone
 import kz.mybrain.superkassa.presentation.common.document.JournalDelivery
+import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 import kotlin.time.Instant
 
 /**
  * Есть ли у документа кабинета печатная форма.
  *
- * Отвергнутый БФД документ фискальным не стал: его нет ни в БФД,
- * ни в отчётности. Печатная форма при этом выглядит как настоящий чек —
- * с номером, признаком и QR-кодом, — и покупатель принимает её
- * за подтверждение покупки.
- *
- * Журнал кассы так и решает про свои документы; кабинет заполняет
- * ту же таблицу, и мера у обоих одна. Чек, пробитый без связи, сюда
- * не попадает: он фискальный, просто ещё не доставлен.
+ * Документ, который КГД отклонил или так и не получил, стоит в отчётности
+ * под вопросом, а печатная форма выглядит как настоящий чек — с номером,
+ * признаком и QR-кодом, — и покупатель принимает её за подтверждение
+ * покупки. Остальные печатаются: ошибка передачи службе — временная,
+ * её повторят, а X-отчёт и движение денег в КГД не уходят вовсе.
  */
-internal fun drawable(delivery: JournalDelivery?): Boolean = delivery != JournalDelivery.Refused
+internal fun KgdDelivery.drawable(): Boolean = this != KgdDelivery.Rejected && this != KgdDelivery.Failed
 
 /**
- * Состояние доставки кабинета словами журнала.
- *
- * Кабинет отдаёт коды своего сервера — `ONLINE_OK`, `DELIVERY_ERROR`, —
- * и узел называет то же самое иначе. Обоим состояние приводится к одному
- * перечислению, иначе отбор «отклонённые» на двух экранах находил бы
- * разное.
+ * Состояние в КГД — группой общего журнала: по ней цвет плашки, отбор
+ * по состоянию и печать. Слова у кабинета свои ([words]): три слова
+ * журнала кассы не различают «передаётся» и «отправлен в КГД».
  */
-internal fun cabinetDelivery(code: String?): JournalDelivery? = when {
-    code.isNullOrBlank() -> null
-    REFUSED.any { code.contains(it, ignoreCase = true) } -> JournalDelivery.Refused
-    // `ACCEPTED` — слово ближнего плеча: сервис приёма документ принял.
-    // Без него состояние съезжало в «ждёт отправки», хотя ждать уже нечего.
-    code.contains("OK", ignoreCase = true) ||
-        code.equals("DELIVERED", ignoreCase = true) ||
-        code.equals("ACCEPTED", ignoreCase = true) -> JournalDelivery.Delivered
-
-    else -> JournalDelivery.Queued
+internal fun KgdDelivery.journal(): JournalDelivery = when (tone) {
+    KgdTone.Done -> JournalDelivery.Delivered
+    KgdTone.Waiting -> JournalDelivery.Queued
+    KgdTone.Refused -> JournalDelivery.Refused
+    KgdTone.Neutral -> JournalDelivery.Internal
 }
 
-/**
- * Состояние документа в кабинете по двум плечам передачи.
- *
- * Дальнее плечо — доставка в органы госдоходов, ближнее — приём
- * сервисом приёма. Пока службы передачи в контуре нет, дальнее пусто
- * у каждого документа, и столбец состояния выглядел сломанным: пустая
- * клетка на всю страницу. Ближнее известно всегда, и оно отвечает
- * на вопрос владельца «ушло ли из кассы».
- *
- * @param delivery состояние доставки в КГД, как его отдаёт кабинет.
- * @param send состояние приёма сервисом приёма.
- */
-internal fun cabinetState(delivery: String?, send: String?): JournalDelivery? =
-    cabinetDelivery(delivery) ?: cabinetDelivery(send)
+/** Слова состояния в КГД — одни на строку журнала и карточку документа. */
+internal fun KgdDelivery.words(texts: CabinetTexts): String = when (this) {
+    KgdDelivery.Accepted -> texts.documents.kgdAccepted
+    KgdDelivery.Rejected -> texts.documents.kgdRejected
+    KgdDelivery.Failed -> texts.documents.kgdFailed
+    KgdDelivery.Sent -> texts.documents.kgdSent
+    KgdDelivery.Transferring -> texts.documents.kgdTransferring
+    KgdDelivery.TransferFailed -> texts.documents.kgdTransferFailed
+    KgdDelivery.Awaiting -> texts.documents.kgdAwaiting
+    KgdDelivery.NotSent -> texts.documents.kgdNotSent
+}
 
 /**
  * Момент документа числом.
@@ -63,6 +52,3 @@ internal fun cabinetMillis(iso: String?): Long? {
     val value = iso?.takeIf { it.isNotBlank() } ?: return null
     return runCatching { Instant.parse(value).toEpochMilliseconds() }.getOrNull()
 }
-
-/** Хвосты кодов, означающих отказ доставки. */
-private val REFUSED = listOf("FAIL", "ERROR", "REJECT")

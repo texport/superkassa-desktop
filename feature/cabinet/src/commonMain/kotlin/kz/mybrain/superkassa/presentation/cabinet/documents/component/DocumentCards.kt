@@ -15,11 +15,9 @@ import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovementDetails
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReportDetails
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
+import kz.mybrain.superkassa.domain.cabinet.model.documents.KgdDelivery
 import kz.mybrain.superkassa.domain.cabinet.model.documents.ShiftTotals
-import kz.mybrain.superkassa.presentation.cabinet.documents.cabinetState
 import kz.mybrain.superkassa.presentation.cabinet.documents.documentTitle
-import kz.mybrain.superkassa.presentation.common.document.JournalDelivery
-import kz.mybrain.superkassa.presentation.common.document.JournalDeliveryChip
 import kz.mybrain.superkassa.presentation.common.format.Money
 import kz.mybrain.superkassa.presentation.common.status.CabinetStatusChip
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
@@ -44,9 +42,10 @@ internal fun ReportCard(report: CabinetReportDetails, texts: CabinetTexts, onClo
             report.shiftNumber?.let { "${texts.register.shift} $it" }
         ).joinToString(Glyphs.SEPARATOR),
         info = texts.hints.reportCard,
-        trailing = { CardTail(cabinetState(report.deliveryStatus, report.sendStatus), texts, onClose) }
+        trailing = { CardTail(kgdOf(report), texts, onClose) }
     ) {
         DetailLine(texts.documents.moment, Dates.momentOf(report.createdAt))
+        KgdLines(kgdOf(report), report.deliveryResultAt, report.deliveryMessage, texts)
         DetailLine(texts.documents.receipts, report.receiptsCount?.toString())
         DetailLine(texts.documents.kkmDocumentNumber, report.kkmDocumentNumber)
         MinorSumLine(texts.documents.sales, Money.format(report.total))
@@ -111,7 +110,7 @@ internal fun CashMovementCard(movement: CabinetCashMovementDetails, texts: Cabin
     SectionCard(
         title = documentTitle(movement.type, texts),
         info = texts.hints.cashMovement,
-        trailing = { CardTail(cabinetState(null, movement.sendStatus), texts, onClose) }
+        trailing = { CardTail(KgdDelivery.ofMovement(), texts, onClose) }
     ) {
         DetailLine(texts.documents.moment, Dates.momentOf(movement.createdAt))
         DetailLine(texts.register.shift, movement.shiftNumber?.toString())
@@ -122,12 +121,16 @@ internal fun CashMovementCard(movement: CabinetCashMovementDetails, texts: Cabin
 
 /** Правый край карточки: состояние доставки, если оно есть, и выход. */
 @Composable
-private fun CardTail(delivery: JournalDelivery?, texts: CabinetTexts, onClose: () -> Unit) {
+private fun CardTail(kgd: KgdDelivery, texts: CabinetTexts, onClose: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        JournalDeliveryChip(delivery)
+        KgdChip(kgd, texts)
         TextButton(onClick = onClose) { Text(texts.close) }
     }
 }
+
+/** Состояние отчёта в КГД: X-отчёт туда не передаётся. */
+private fun kgdOf(report: CabinetReportDetails): KgdDelivery =
+    KgdDelivery.ofReport(report.type, report.deliveryStatus, report.sendStatus)

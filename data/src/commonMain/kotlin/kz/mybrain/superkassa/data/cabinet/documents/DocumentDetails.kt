@@ -35,6 +35,7 @@ internal fun BfdReceiptDetails.details() = CabinetReceiptDetails(
     deliveryStatus = deliveryStatus,
     sentAt = sentAt,
     deliveryResultAt = deliveryResultAt,
+    deliveryMessage = deliveryMessage,
     kgdMark = kgdMark,
     kgdMarkAt = kgdMarkAt,
     packet = packet
@@ -54,6 +55,8 @@ internal fun BfdReportDetails.details() = CabinetReportDetails(
     kkmDocumentNumber = kkmDocumentNumber,
     sendStatus = sendStatus,
     deliveryStatus = deliveryStatus,
+    deliveryResultAt = deliveryResultAt,
+    deliveryMessage = deliveryMessage,
     packet = packet
 )
 

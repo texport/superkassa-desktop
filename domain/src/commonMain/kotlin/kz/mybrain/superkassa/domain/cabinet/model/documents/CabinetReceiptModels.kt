@@ -70,6 +70,8 @@ data class CabinetReceiptDetails(
     val deliveryStatus: String? = null,
     val sentAt: String? = null,
     val deliveryResultAt: String? = null,
+    /** Почему КГД отклонил документ; пусто — не отклонял. */
+    val deliveryMessage: String? = null,
     val kgdMark: String? = null,
     val kgdMarkAt: String? = null,
     override val packet: String? = null

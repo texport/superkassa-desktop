@@ -51,6 +51,9 @@ data class ReceiptSearch(
  *
  * @property kkmDocumentNumber номер документа кассы (`protocolDocumentId`).
  * @property kgdMark отметка КГД; `null` — чек до КГД не доехал.
+ * @property deliveryStatus итог в КГД: `SENT`, `DELIVERED`, `REJECTED`, `FAILED`; пусто — итога нет.
+ * @property deliveryMessage почему КГД отклонил чек; пусто — не отклонял.
+ * @property sdfRequestId номер запроса к службе передачи в КГД — для поддержки.
  */
 @Serializable
 data class CabinetReceiptDetails(
@@ -71,6 +74,8 @@ data class CabinetReceiptDetails(
     val deliveryStatus: String? = null,
     val sentAt: String? = null,
     val deliveryResultAt: String? = null,
+    val deliveryMessage: String? = null,
+    val sdfRequestId: String? = null,
     val kgdMark: String? = null,
     val kgdMarkAt: String? = null,
     override val payload: JsonElement? = null

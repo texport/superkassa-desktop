@@ -12,9 +12,8 @@ import kz.mybrain.superkassa.designsystem.section.SectionCard
 import kz.mybrain.superkassa.designsystem.theme.icon.Glyphs
 import kz.mybrain.superkassa.designsystem.theme.size.Spacing
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceiptDetails
-import kz.mybrain.superkassa.presentation.cabinet.documents.cabinetState
+import kz.mybrain.superkassa.domain.cabinet.model.documents.KgdDelivery
 import kz.mybrain.superkassa.presentation.cabinet.documents.documentTitle
-import kz.mybrain.superkassa.presentation.common.document.JournalDeliveryChip
 import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 
 /**
@@ -24,7 +23,8 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
  * ли позиции с итогом, какой налог начислен, кто оформил и дошла ли
  * отметка КГД.
  *
- * Плашка состояния показывает настоящую доставку. Прежде она строилась
+ * Плашка состояния и строка «Доставка в КГД» показывают настоящую доставку
+ * в КГД, при отказе — с его причиной. Прежде она строилась
  * так, что любой ответ кабинета — в том числе отказ — превращался в
  * «Принято» зелёным: у чека, до ОФД не доехавшего, стояла отметка
  * о приёме.
@@ -49,6 +49,7 @@ internal fun ReceiptCard(receipt: CabinetReceiptDetails, texts: CabinetTexts, on
         // продолжают подпись, а не повторяют её: в строке стояло
         // «Отметка КГД · Отметки КГД нет».
         DetailLine(texts.documents.kgdMarked, receipt.kgdMark ?: texts.documents.noKgdMark)
+        KgdLines(kgdOf(receipt), receipt.deliveryResultAt, receipt.deliveryMessage, texts)
         ReceiptBreakdown(receipt, texts)
     }
 }
@@ -60,7 +61,11 @@ private fun ReceiptTail(receipt: CabinetReceiptDetails, texts: CabinetTexts, onC
         horizontalArrangement = Arrangement.spacedBy(Spacing.buttonGap),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        JournalDeliveryChip(cabinetState(receipt.deliveryStatus, receipt.sendStatus))
+        KgdChip(kgdOf(receipt), texts)
         TextButton(onClick = onClose) { Text(texts.close) }
     }
 }
+
+/** Состояние чека в КГД. */
+private fun kgdOf(receipt: CabinetReceiptDetails): KgdDelivery =
+    KgdDelivery.ofReceipt(receipt.deliveryStatus, receipt.sendStatus)

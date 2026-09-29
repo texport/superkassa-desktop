@@ -27,6 +27,9 @@ data class CabinetReport(
  *
  * @property cashBalance наличные в ящике на момент отчёта.
  * @property kkmDocumentNumber номер документа кассы (`protocolDocumentId`).
+ * @property deliveryStatus итог в КГД: `SENT`, `DELIVERED`, `REJECTED`, `FAILED`; пусто — итога нет.
+ * @property deliveryMessage почему КГД отклонил отчёт; пусто — не отклонял.
+ * @property sdfRequestId номер запроса к службе передачи в КГД — для поддержки.
  */
 @Serializable
 data class CabinetReportDetails(
@@ -43,6 +46,9 @@ data class CabinetReportDetails(
     @SerialName("protocolDocumentId") val kkmDocumentNumber: String? = null,
     val sendStatus: String? = null,
     val deliveryStatus: String? = null,
+    val deliveryResultAt: String? = null,
+    val deliveryMessage: String? = null,
+    val sdfRequestId: String? = null,
     override val payload: JsonElement? = null
 ) : ProtocolDocument
 

@@ -6,6 +6,7 @@ import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetCashMovement
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReceipt
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetReport
 import kz.mybrain.superkassa.domain.cabinet.model.documents.CabinetShift
+import kz.mybrain.superkassa.domain.cabinet.model.documents.KgdDelivery
 import kz.mybrain.superkassa.domain.cabinet.model.documents.RowTarget
 import kz.mybrain.superkassa.presentation.common.document.JournalEntry
 import kz.mybrain.superkassa.presentation.common.document.JournalState
@@ -28,8 +29,9 @@ import kz.mybrain.superkassa.strings.api.cabinet.CabinetTexts
 data class CabinetDocumentRow(val entry: JournalEntry, val target: RowTarget?)
 
 /** Чек: вид операции, номер, сумма и отметка КГД. */
-fun receiptRow(receipt: CabinetReceipt, texts: CabinetTexts): CabinetDocumentRow =
-    CabinetDocumentRow(
+fun receiptRow(receipt: CabinetReceipt, texts: CabinetTexts): CabinetDocumentRow {
+    val kgd = KgdDelivery.ofReceipt(receipt.deliveryStatus, receipt.sendStatus)
+    return CabinetDocumentRow(
         entry = JournalEntry(
             key = receipt.transactionId,
             at = cabinetMillis(receipt.createdAt),
@@ -45,13 +47,15 @@ fun receiptRow(receipt: CabinetReceipt, texts: CabinetTexts): CabinetDocumentRow
             // по смыслу, чем государство помечает принятый документ,
             // и по ней владелец сверяет чек с покупателем.
             sign = receipt.kgdMark ?: Glyphs.DASH,
-            delivery = cabinetState(receipt.deliveryStatus, receipt.sendStatus),
+            delivery = kgd.journal(),
             shiftNo = receipt.shiftNumber?.toLong(),
             about = receipt.kgdMark?.let { texts.documents.kgdMarked }.orEmpty(),
-            printable = drawable(cabinetState(receipt.deliveryStatus, receipt.sendStatus))
+            deliveryWords = kgd.words(texts),
+            printable = kgd.drawable()
         ),
         target = RowTarget.Remote(receipt.transactionId)
     )
+}
 
 /**
  * Смена.
@@ -87,9 +91,10 @@ internal fun shiftRow(shift: CabinetShift, texts: CabinetTexts): CabinetDocument
         target = RowTarget.Local(shift)
     )
 
-/** Отчёт: X или Z, смена и её итог. */
-internal fun reportRow(report: CabinetReport, texts: CabinetTexts): CabinetDocumentRow =
-    CabinetDocumentRow(
+/** Отчёт: X или Z, смена и её итог; X-отчёт в КГД не передаётся. */
+internal fun reportRow(report: CabinetReport, texts: CabinetTexts): CabinetDocumentRow {
+    val kgd = KgdDelivery.ofReport(report.type, report.deliveryStatus, report.sendStatus)
+    return CabinetDocumentRow(
         entry = JournalEntry(
             key = report.transactionId,
             at = cabinetMillis(report.createdAt),
@@ -101,16 +106,19 @@ internal fun reportRow(report: CabinetReport, texts: CabinetTexts): CabinetDocum
             amount = Money.format(report.total),
             amountOrder = report.total,
             sign = Glyphs.DASH,
-            delivery = cabinetState(report.deliveryStatus, report.sendStatus),
+            delivery = kgd.journal(),
             shiftNo = report.shiftNumber?.toLong(),
-            printable = drawable(cabinetState(report.deliveryStatus, report.sendStatus))
+            deliveryWords = kgd.words(texts),
+            printable = kgd.drawable()
         ),
         target = RowTarget.Remote(report.transactionId)
     )
+}
 
-/** Внесение или изъятие денег из ящика. */
-internal fun movementRow(movement: CabinetCashMovement, texts: CabinetTexts): CabinetDocumentRow =
-    CabinetDocumentRow(
+/** Внесение или изъятие денег из ящика: в КГД не передаётся. */
+internal fun movementRow(movement: CabinetCashMovement, texts: CabinetTexts): CabinetDocumentRow {
+    val kgd = KgdDelivery.ofMovement()
+    return CabinetDocumentRow(
         entry = JournalEntry(
             key = movement.transactionId,
             at = cabinetMillis(movement.createdAt),
@@ -122,12 +130,14 @@ internal fun movementRow(movement: CabinetCashMovement, texts: CabinetTexts): Ca
             amount = Money.format(movement.amount),
             amountOrder = movement.amount,
             sign = Glyphs.DASH,
-            delivery = cabinetState(null, movement.sendStatus),
+            delivery = kgd.journal(),
             shiftNo = movement.shiftNumber?.toLong(),
-            printable = drawable(cabinetState(null, movement.sendStatus))
+            deliveryWords = kgd.words(texts),
+            printable = kgd.drawable()
         ),
         target = RowTarget.Remote(movement.transactionId)
     )
+}
 
 /** Начало ключа строки смены: своего идентификатора у неё нет. */
 private const val SHIFT_KEY = "shift-"

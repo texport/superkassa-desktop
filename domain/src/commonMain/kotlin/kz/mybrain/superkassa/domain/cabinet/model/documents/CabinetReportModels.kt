@@ -39,5 +39,9 @@ data class CabinetReportDetails(
     val kkmDocumentNumber: String? = null,
     val sendStatus: String? = null,
     val deliveryStatus: String? = null,
+    /** Когда КГД ответил; пусто — ответа ещё нет. */
+    val deliveryResultAt: String? = null,
+    /** Почему КГД отклонил отчёт; пусто — не отклонял. */
+    val deliveryMessage: String? = null,
     override val packet: String? = null
 ) : ProtocolDocument

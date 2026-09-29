@@ -117,13 +117,15 @@ fun DocumentDeliveryChip(document: FiscalDocumentResponse) {
  * источника, и подсказки нет у того, кто её не даёт.
  *
  * @param reason почему документ отвергнут: слова кассира и код отказа.
+ * @param words слова источника вместо слов журнала: кабинет называет
+ *   доставку в КГД точнее, чем три слова журнала кассы; цвет — по [delivery].
  */
 @Composable
-fun JournalDeliveryChip(delivery: JournalDelivery?, reason: String? = null) {
+fun JournalDeliveryChip(delivery: JournalDelivery?, reason: String? = null, words: String? = null) {
     val state = delivery ?: return
     val chip = @Composable {
         Chip(
-            text = state.title(LocalStrings.current.status),
+            text = words ?: state.title(LocalStrings.current.status),
             color = state.color(),
             style = ROW_LABEL
         )
