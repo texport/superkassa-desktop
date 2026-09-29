@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kz.mybrain.superkassa.domain.cabinet.model.CabinetRegister
 import kz.mybrain.superkassa.domain.cabinet.model.RetailPlace
+import kz.mybrain.superkassa.domain.cabinet.model.withRegister
 import kz.mybrain.superkassa.domain.kassa.model.Answer
 import kz.mybrain.superkassa.presentation.common.model.Talk
 import kz.mybrain.superkassa.strings.api.textsOf
@@ -91,12 +92,17 @@ internal class CabinetLists(
 
     /**
      * Заменяет в списке одну перечитанную кассу, а только что заведённую —
-     * ставит в него; без обращения к кабинету.
+     * ставит в него; без обращения к кабинету. Число касс у точек
+     * сдвигается вместе с ней.
      */
     fun registerChanged(register: CabinetRegister) = screen.update { now ->
-        val known = now.registers.any { it.id == register.id }
-        val replaced = now.registers.map { if (it.id == register.id) register else it }
-        now.copy(registers = if (known) replaced else now.registers + register)
+        val before = now.registers.firstOrNull { it.id == register.id }
+        val registers = if (before != null) {
+            now.registers.map { if (it.id == register.id) register else it }
+        } else {
+            now.registers + register
+        }
+        now.copy(registers = registers, places = now.places.withRegister(before, register))
     }
 
     /** Прочитанное выкладывается, только пока оно не короче показанного. */
