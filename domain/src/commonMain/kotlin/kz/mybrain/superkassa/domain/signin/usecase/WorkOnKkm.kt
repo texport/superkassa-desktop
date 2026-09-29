@@ -1,4 +1,4 @@
-package kz.mybrain.superkassa.domain.cabinet.usecase.register
+package kz.mybrain.superkassa.domain.signin.usecase
 
 import io.github.texport.superkassa.core.presentation.api.model.kkm.KkmResponse
 import kz.mybrain.superkassa.domain.signin.model.SignIn

@@ -41,7 +41,6 @@ import kz.mybrain.superkassa.domain.cabinet.usecase.register.ReadRegistrationAct
 import kz.mybrain.superkassa.domain.cabinet.usecase.register.RemoveRegister
 import kz.mybrain.superkassa.domain.cabinet.usecase.register.RenameRegister
 import kz.mybrain.superkassa.domain.cabinet.usecase.register.RestampRegister
-import kz.mybrain.superkassa.domain.cabinet.usecase.register.WorkOnKkm
 import kz.mybrain.superkassa.domain.cabinet.usecase.register.WriteTokenHere
 import kz.mybrain.superkassa.domain.cabinet.usecase.signin.ReadCabinetAddress
 import kz.mybrain.superkassa.domain.cabinet.usecase.signin.SignInToCabinet
@@ -50,6 +49,7 @@ import kz.mybrain.superkassa.domain.cabinet.usecase.signin.WatchCabinetOwner
 import kz.mybrain.superkassa.domain.kassa.port.Kassa
 import kz.mybrain.superkassa.domain.signin.model.SignIn
 import kz.mybrain.superkassa.domain.signin.usecase.ObserveSignIn
+import kz.mybrain.superkassa.domain.signin.usecase.WorkOnKkm
 import kz.mybrain.superkassa.domain.workplace.port.WorkplaceMemory
 import kz.mybrain.superkassa.domain.workplace.usecase.ReadLocalName
 import kz.mybrain.superkassa.presentation.cabinet.signing.SigningCases
